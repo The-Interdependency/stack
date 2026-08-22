@@ -23,5 +23,8 @@ jobs:
       - name: Verify stack manifest
         run: python3 tools/check_stack_manifest.py
 
+      - name: Verify stack MSDMD pointers
+        run: python3 tools/check_msdmd_paths.py
+
       - name: Check whitespace
         run: git diff --check

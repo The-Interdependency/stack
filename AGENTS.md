@@ -24,4 +24,5 @@ Before committing root infrastructure or manifest changes, run:
 
 ```bash
 python3 tools/check_stack_manifest.py
+python3 tools/check_msdmd_paths.py
 ```

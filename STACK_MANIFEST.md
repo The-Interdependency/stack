@@ -8,6 +8,7 @@ Provenance and archive identity record for the consolidated research stack in
 - Work-graph digest (SHA-256 over canonical `repositories` + `boundaries` JSON):
   `4756dcd6147b3ebea473689fbd1a1b9f749cf5c886f839967de8c90aee305256`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
+- Root MSDMD index: [`stack_msdmd.ts`](stack_msdmd.ts)
 
 ## Participants
 
@@ -70,10 +71,12 @@ Run:
 
 ```bash
 python3 tools/check_stack_manifest.py
+python3 tools/check_msdmd_paths.py
 ```
 
 The verifier checks manifest schema, work-graph digest, archived tree identities,
-declared paths, non-transfer boundaries, and generated artifact hygiene.
+declared paths, non-transfer boundaries, generated artifact hygiene, and root MSDMD
+pointers into archived collection points.
 
 ## hmmm
 

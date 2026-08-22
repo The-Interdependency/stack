@@ -34,7 +34,8 @@ stack/
 ├── frontend/
 │   └── cli/                  # empty scaffold
 ├── STACK_MANIFEST.md         # human-readable provenance record
-└── stack-manifest.json       # machine-readable stack manifest (schema 1.0.0)
+├── stack-manifest.json       # machine-readable stack manifest (schema 1.0.0)
+└── stack_msdmd.ts            # root MSDMD index over archived collection points
 ```
 
 ## Usage guidance
@@ -65,10 +66,12 @@ and work-graph digest, and commit with the archived source commit SHAs in the me
 
 ```bash
 python3 tools/check_stack_manifest.py
+python3 tools/check_msdmd_paths.py
 ```
 
 The verifier checks the machine manifest schema, digest, archived tree identities,
-declared paths, non-transfer boundaries, and generated artifact hygiene.
+declared paths, non-transfer boundaries, generated artifact hygiene, and root MSDMD
+pointers into archived collection points.
 
 ## License
 
