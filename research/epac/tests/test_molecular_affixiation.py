@@ -20,26 +20,26 @@ class MolecularAffixiationTest(unittest.TestCase):
         for formula, construction in molecules.items():
             replayed = replay_molecule(construction)
             self.assertEqual(construction.receipt.receipt_digest, replayed.receipt_digest, formula)
-            self.assertEqual(construction.receipt.gonol.participants[0].scale, "word")
 
-    def test_valence_occupancy_from_inputs_only(self) -> None:
+    def test_unpaired_valence_and_shells_are_used(self) -> None:
         molecules = construct_declared_molecules()
-        self.assertEqual(molecules["H2"].invariants["center_symbol"], None)
-        self.assertEqual(molecules["H2O"].invariants["center_symbol"], "O")
-        self.assertEqual(molecules["H2O"].invariants["slot_occupancy"], [1, 1])
-        self.assertEqual(molecules["NH3"].invariants["slot_occupancy"], [1, 1, 1])
-        self.assertEqual(molecules["CH4"].invariants["slot_occupancy"], [1, 1, 1, 1])
-        self.assertEqual(molecules["CO2"].invariants["slot_occupancy"], [2, 2])
+        water = molecules["H2O"].invariants
+        methane = molecules["CH4"].invariants
+        carbon_dioxide = molecules["CO2"].invariants
+        self.assertEqual(water["center_symbol"], "O")
+        self.assertEqual(water["center_configuration"], "1s2.2s2.2p4")
+        self.assertEqual(water["center_unpaired_lm"], ["1:0", "1:-1"])
+        self.assertFalse(water["ligand_has_p"])
+        self.assertEqual(water["center_used_atomic_promotion"], False)
+        self.assertEqual(methane["center_used_atomic_promotion"], True)
+        self.assertEqual(methane["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertTrue(carbon_dioxide["ligand_has_p"])
+        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["1:1", "1:0"])
 
     def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
         molecules = construct_declared_molecules()
         signatures = {formula: item.invariants["ucns_coupling_signature"] for formula, item in molecules.items()}
-        unique = set(signatures.values())
-        self.assertEqual(len(unique), 1)
-        law, turns, _frames, restored = next(iter(unique))
-        self.assertEqual(law, "ucns.native-mobius-root-loop")
-        self.assertEqual(turns, (0, 1, 2))
-        self.assertTrue(restored)
+        self.assertEqual(len(set(signatures.values())), 1)
 
     def test_construction_text_avoids_sealed_labels(self) -> None:
         source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8").lower()

@@ -18,43 +18,33 @@ SEALED = EPAC_ROOT / "data" / "sealed_known_molecular_geometry.json"
 
 
 class GeometryComparisonAfterConstructionTest(unittest.TestCase):
-    def test_ucns_coupling_does_not_predict_sealed_shapes(self) -> None:
+    def test_what_atomic_shells_add_versus_ucns_coupling(self) -> None:
         constructions = construct_declared_molecules()
         sealed = json.loads(SEALED.read_text(encoding="utf-8"))["molecules"]
-
-        ucns_signatures = {
-            formula: item.invariants["ucns_coupling_signature"]
-            for formula, item in constructions.items()
-        }
-        controls = {
-            formula: matched_information_control(item.invariants)
-            for formula, item in constructions.items()
-        }
         known_shapes = {formula: sealed[formula]["known_shape"] for formula in constructions}
 
-        # Construction finished. Comparison opens sealed labels only now.
-        distinct_shapes = set(known_shapes.values())
-        distinct_ucns = set(ucns_signatures.values())
-        distinct_controls = set(controls.values())
+        ucns = {f: c.invariants["ucns_coupling_signature"] for f, c in constructions.items()}
+        atomic = {f: c.invariants["atomic_coupling_signature"] for f, c in constructions.items()}
+        control = {f: matched_information_control(c.invariants) for f, c in constructions.items()}
 
-        water_co2_same_ucns = ucns_signatures["H2O"] == ucns_signatures["CO2"]
-        water_co2_same_shape = known_shapes["H2O"] == known_shapes["CO2"]
-        water_co2_same_control = controls["H2O"] == controls["CO2"]
+        self.assertGreater(len(set(known_shapes.values())), 1)
+        self.assertEqual(len(set(ucns.values())), 1)
+        self.assertNotEqual(known_shapes["H2O"], known_shapes["CO2"])
+        self.assertNotEqual(control["H2O"], control["CO2"])
+        self.assertNotEqual(atomic["H2O"], atomic["CO2"])
+        self.assertTrue(constructions["CO2"].invariants["ligand_has_p"])
+        self.assertFalse(constructions["H2O"].invariants["ligand_has_p"])
 
-        self.assertGreater(len(distinct_shapes), 1)
-        self.assertEqual(len(distinct_ucns), 1)
-        self.assertTrue(water_co2_same_ucns)
-        self.assertFalse(water_co2_same_shape)
-        self.assertFalse(water_co2_same_control)
-        self.assertGreater(len(distinct_controls), 1)
+        # UCNS Möbius is identical across sealed shape classes.
+        ucns_predicts_shape = len(set(ucns.values())) == len(set(known_shapes.values()))
+        self.assertFalse(ucns_predicts_shape)
 
-        standing = (
-            "FALSIFIED-as-prediction"
-            if len(distinct_ucns) == 1 and len(distinct_shapes) > 1
-            else "UNRESOLVED"
-        )
-        self.assertEqual(standing, "FALSIFIED-as-prediction")
-        self.assertEqual(len(distinct_controls), len(constructions))
+        # Atomic shell/unpaired-(l,m) signatures distinguish the formulas, but
+        # they are functions of the atoms already named in the formula.
+        atomic_equals_control = set(atomic.values()) == set(control.values())
+        self.assertFalse(atomic_equals_control)
+        self.assertEqual(len(set(atomic.values())), len(constructions))
+        self.assertEqual(len(set(control.values())), len(constructions))
 
 
 if __name__ == "__main__":

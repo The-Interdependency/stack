@@ -35,11 +35,12 @@ element gonols
 
 ## Inputs allowed in construction
 
-- atomic number Z
-- element symbol
-- period, IUPAC group
-- ground-state electron configuration
-- typical main-group valence (hydride valence)
+- atomic number Z, default isotope A, proton and neutron counts
+- every electron: n, l, m_l, m_s, shell, subshell
+- hydrogenic angular identity Y_l^m, radial node count n-l-1
+- Slater atomic Z_eff and hydrogenic Rydberg energy -Z_eff²/n²
+- unpaired valence electrons from Hund filling
+- atomic s→p promotion in the same n when more unpaired sites are required
 - caller-supplied stoichiometric formula (element counts only)
 
 ## Inputs forbidden in construction
@@ -74,9 +75,9 @@ Opened only after molecular gonols exist:
 3. Open `data/sealed_known_molecular_geometry.json`.
 4. Ask whether UCNS coupling invariants distinguish formulas that chemistry
    distinguishes by shape.
-5. Matched-information control: atom count plus valence/stoichiometry without
-   Möbius. If the construction's distinguishing power equals that control, UCNS
-   coupling did not add shape information.
+5. Compare three signatures: UCNS Möbius coupling; atomic unpaired (l, m_l)
+   plus ligand shell content; and a matched-information control of formula
+   symbols only.
 
 ## Terminal standings for the hmmm question
 
