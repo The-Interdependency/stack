@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "4756dcd6147b3ebea473689fbd1a1b9f749cf5c886f839967de8c90aee305256",
+  "work_graph_sha256": "720b2d842252d20a31a04bfb13e7e918bfdabe646497e61615cf529ad70b12a3",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -31,7 +31,14 @@
       "relation": "archived source tree at research/ucns/",
       "archive_status": "archived-source-tree",
       "source_tree_git_sha1": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
-      "tree_sha256": "a6fa5a674950b1847738c48e57c7df2e8727c8951db16b698318fe2ca9611d65"
+      "tree_sha256": "a6fa5a674950b1847738c48e57c7df2e8727c8951db16b698318fe2ca9611d65",
+      "stack_overlay_paths": [
+        {
+          "path": "research/ucns/ucns_msdmd.ts",
+          "sha256": "9d8ec5ca7aa6091a0359657bfc742d70e04048fe639c82a1fd1ff294b51aa45b",
+          "purpose": "stack-local repo-level MSDMD collection generated from archived UCNS src, tests, and tools"
+        }
+      ]
     },
     {
       "repository": "The-Interdependency/edcm",

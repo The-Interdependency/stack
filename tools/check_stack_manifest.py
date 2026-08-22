@@ -56,7 +56,8 @@ def require_text(mapping: dict[str, Any], key: str, context: str) -> str:
     return value
 
 
-def tracked_tree_digest(path_text: str) -> str:
+def tracked_tree_digest(path_text: str, *, exclude_paths: set[str] | None = None) -> str:
+    exclude_paths = exclude_paths or set()
     entries = subprocess.check_output(
         ["git", "ls-tree", "-r", "-z", "HEAD", path_text],
         cwd=ROOT,
@@ -70,6 +71,8 @@ def tracked_tree_digest(path_text: str) -> str:
         if object_type != "blob":
             fail(f"unexpected git object type under {path_text}: {object_type}")
         file_path = file_path_b.decode("utf-8")
+        if file_path in exclude_paths:
+            continue
         prefix = f"{path_text}/"
         relative = file_path[len(prefix) :] if file_path.startswith(prefix) else file_path
         data = subprocess.check_output(["git", "show", f"HEAD:{file_path}"], cwd=ROOT)
@@ -82,6 +85,10 @@ def tracked_tree_digest(path_text: str) -> str:
     return digest.hexdigest()
 
 
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def generated_artifacts(path: Path) -> list[str]:
     found: list[str] = []
     for item in path.rglob("*"):
@@ -91,6 +98,37 @@ def generated_artifacts(path: Path) -> list[str]:
         elif item.is_file() and item.name.endswith(GENERATED_SUFFIXES):
             found.append(rel)
     return found
+
+
+def validate_overlay_paths(entry: dict[str, Any], path_text: str, repository: str) -> set[str]:
+    overlays = entry.get("stack_overlay_paths", [])
+    if not isinstance(overlays, list):
+        fail(f"{repository}.stack_overlay_paths must be a list when present")
+
+    overlay_paths: set[str] = set()
+    prefix = f"{path_text}/"
+    for index, overlay in enumerate(overlays):
+        context = f"{repository}.stack_overlay_paths[{index}]"
+        if not isinstance(overlay, dict):
+            fail(f"{context} must be an object")
+        overlay_path_text = require_text(overlay, "path", context)
+        overlay_path = Path(overlay_path_text)
+        if overlay_path.is_absolute() or ".." in overlay_path.parts:
+            fail(f"{context}.path must be repository-relative")
+        if not overlay_path_text.startswith(prefix):
+            fail(f"{context}.path must live under {path_text}")
+        if overlay_path_text in overlay_paths:
+            fail(f"{context}.path is duplicated: {overlay_path_text}")
+
+        full_path = ROOT / overlay_path
+        if not full_path.is_file():
+            fail(f"{context}.path does not name a file: {overlay_path_text}")
+        declared_sha256 = require_text(overlay, "sha256", context)
+        if file_sha256(full_path) != declared_sha256:
+            fail(f"{context}.sha256 mismatch for {overlay_path_text}")
+        require_text(overlay, "purpose", context)
+        overlay_paths.add(overlay_path_text)
+    return overlay_paths
 
 
 def validate_archived_entry(entry: dict[str, Any], seen: set[str]) -> None:
@@ -123,13 +161,18 @@ def validate_archived_entry(entry: dict[str, Any], seen: set[str]) -> None:
     if (full_path / ".git").exists():
         fail(f"{repository} path contains nested VCS metadata: {path_text}")
 
+    overlay_paths = validate_overlay_paths(entry, path_text, repository)
+
     declared_tree = require_text(entry, "source_tree_git_sha1", repository)
-    actual_tree = git("rev-parse", f"HEAD:{path_text}")
-    if actual_tree != declared_tree:
-        fail(f"{repository} tree object mismatch: {actual_tree} != {declared_tree}")
+    if not HEX40.fullmatch(declared_tree):
+        fail(f"{repository} source_tree_git_sha1 must be a 40-hex SHA")
+    if not overlay_paths:
+        actual_tree = git("rev-parse", f"HEAD:{path_text}")
+        if actual_tree != declared_tree:
+            fail(f"{repository} tree object mismatch: {actual_tree} != {declared_tree}")
 
     declared_digest = require_text(entry, "tree_sha256", repository)
-    actual_digest = tracked_tree_digest(path_text)
+    actual_digest = tracked_tree_digest(path_text, exclude_paths=overlay_paths)
     if actual_digest != declared_digest:
         fail(f"{repository} tree_sha256 mismatch: {actual_digest} != {declared_digest}")
 

@@ -46,6 +46,8 @@ stack/
   source tree at the pinned commit (README, AGENTS/CLAUDE, source, tests, and docs).
 - **Preserve provenance.** Do not delete named repository identities just because active
   research has moved into `stack`; those names are the replay trail.
+- **Use [`stack_msdmd.ts`](stack_msdmd.ts) for root MSDMD discovery.** It points at
+  participant collection points and records stack-local metadata overlays explicitly.
 - **`libs/` is reserved, not implemented.** Its scaffolds mark where consolidated library
   surfaces will live; nothing in this repo depends on them yet.
 - **`backend/` and `frontend/cli/` are empty scaffolds** reserved for stack-level

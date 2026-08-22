@@ -199,6 +199,8 @@ def main() -> int:
         fail("stack_msdmd.ts repo must be The-Interdependency/stack")
     declarations = _declarations_by_file(collection)
     gaps = _gaps_by_file(collection)
+    if gaps:
+        fail(f"stack_msdmd.ts carries unresolved gaps: {', '.join(sorted(gaps))}")
 
     repositories = manifest.get("repositories")
     if not isinstance(repositories, list):
@@ -216,14 +218,7 @@ def main() -> int:
                 fail(f"stack_msdmd.ts missing pointer for {collection_point}")
             _validate_archived_pointer(entry, declaration, collection_point)
             continue
-        stack_path = entry.get("path")
-        if not isinstance(stack_path, str):
-            fail(f"{entry.get('repository')} archived entry missing path")
-        gap = gaps.get(stack_path)
-        if gap is None:
-            fail(f"stack_msdmd.ts missing gap for absent collection point {collection_point}")
-        if "MODULE_BUILD" not in gap["missing"]:
-            fail(f"stack_msdmd.ts gap for {stack_path} must include MODULE_BUILD")
+        fail(f"archived repository is missing collection point: {collection_point}")
 
     print(f"stack msdmd ok: {STACK_MSDMD_PATH.relative_to(ROOT)}")
     return 0

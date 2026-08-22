@@ -6,7 +6,7 @@ Provenance and archive identity record for the consolidated research stack in
 - Snapshot UTC: `2026-08-22T10:19:43Z`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.0.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `boundaries` JSON):
-  `4756dcd6147b3ebea473689fbd1a1b9f749cf5c886f839967de8c90aee305256`
+  `720b2d842252d20a31a04bfb13e7e918bfdabe646497e61615cf529ad70b12a3`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 - Root MSDMD index: [`stack_msdmd.ts`](stack_msdmd.ts)
 
@@ -26,6 +26,16 @@ Each archived source-tree participant is the complete tracked working tree of it
 repository at the pinned commit, produced with `git archive HEAD`. VCS data, virtualenvs,
 caches, and untracked files are excluded by construction. Source tree identities and
 snapshot SHA-256 digests are verified by `tools/check_stack_manifest.py`.
+
+## Stack metadata overlays
+
+| Repository | Overlay path | Purpose | SHA-256 |
+|---|---|---|---|
+| `The-Interdependency/ucns` | `research/ucns/ucns_msdmd.ts` | stack-local repo-level MSDMD collection generated from archived UCNS `src/`, `tests/`, and `tools/` | `9d8ec5ca7aa6091a0359657bfc742d70e04048fe639c82a1fd1ff294b51aa45b` |
+
+Stack metadata overlays do not replace source archive identity. The manifest verifier
+hashes the archived source tree with declared overlay paths excluded, then verifies each
+overlay by its own SHA-256.
 
 ## License status at snapshot commits
 

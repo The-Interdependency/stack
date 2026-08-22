@@ -2,7 +2,7 @@ import { defineMsdmdCollection } from "./skill-lib/msdmd/collection";
 
 export default defineMsdmdCollection({
   "repo": "The-Interdependency/stack",
-  "source_commit": "stack-manifest:4756dcd6147b3ebea473689fbd1a1b9f749cf5c886f839967de8c90aee305256",
+  "source_commit": "stack-manifest:720b2d842252d20a31a04bfb13e7e918bfdabe646497e61615cf529ad70b12a3",
   "declarations": [
     {
       "file": "skill-lib/skill-lib_msdmd.ts",
@@ -36,6 +36,24 @@ export default defineMsdmdCollection({
         "source_tree_git_sha1": "9d83b8bb393a7420062c5049cfa2baa572336ace",
         "tree_sha256": "bc91150d10edba747a779e29da4428c1a5eab7dc7a5ee8a0ae40c6a5118581ae",
         "summary": "root stack pointer to the archived metapat repo-level MSDMD collection point"
+      }
+    },
+    {
+      "file": "research/ucns/ucns_msdmd.ts",
+      "block": "MODULE_BUILD",
+      "id": "stack_ucns_msdmd_collection",
+      "fields": {
+        "module_name": "ucns MSDMD collection",
+        "module_kind": "archive-index",
+        "repository": "The-Interdependency/ucns",
+        "stack_path": "research/ucns",
+        "collection_point": "research/ucns/ucns_msdmd.ts",
+        "archive_status": "archived-source-tree",
+        "source_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+        "source_tree_git_sha1": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+        "tree_sha256": "a6fa5a674950b1847738c48e57c7df2e8727c8951db16b698318fe2ca9611d65",
+        "stack_overlay_paths": "research/ucns/ucns_msdmd.ts",
+        "summary": "root stack pointer to the stack-local UCNS repo-level MSDMD collection overlay"
       }
     },
     {
@@ -90,15 +108,7 @@ export default defineMsdmdCollection({
       }
     }
   ],
-  "gaps": [
-    {
-      "file": "research/ucns",
-      "missing": [
-        "MODULE_BUILD"
-      ],
-      "reason": "No repo-level research/ucns/ucns_msdmd.ts collection point exists in archived UCNS snapshot 1975fe70cf4e0826a8020c2da3047569e277af64."
-    }
-  ],
+  "gaps": [],
   "edges": [
     {
       "from": "stack_skill_lib_msdmd_collection",
@@ -113,6 +123,13 @@ export default defineMsdmdCollection({
       "kind": "indexes",
       "source_block": "MODULE_BUILD",
       "source_id": "stack_metapat_msdmd_collection"
+    },
+    {
+      "from": "stack_ucns_msdmd_collection",
+      "to": "The-Interdependency/ucns",
+      "kind": "indexes",
+      "source_block": "MODULE_BUILD",
+      "source_id": "stack_ucns_msdmd_collection"
     },
     {
       "from": "stack_edcm_msdmd_collection",
