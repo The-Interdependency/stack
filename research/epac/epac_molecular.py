@@ -8,7 +8,8 @@ are construction invariants. Construction uses ``epac.public_gonol``, not
 
 The three-dimensional structure is the combination of declared oriented
 couplings and each arity's charge state (nuclear Z plus Möbius ε at t=0)
-with degree. It is not an inferred cartesian embedding.
+with degree. Every ligand instance has its own (center, instance) coupling.
+It is not an inferred cartesian embedding.
 """
 
 from __future__ import annotations
