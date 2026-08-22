@@ -206,3 +206,61 @@ The frozen minimal decisive action from §7 is now implemented locally (not push
 - Independent replay (`replay_element`) is byte-identical for all four elements.
 - Status remains `CROSS-DOMAIN-HYPOTHESIS / provisional`. Nothing here establishes position
   operations, geometry between positions, harmonic notation, physics, or canon.
+
+## 10. Physically sourced harmonic candidates (2026-08-22)
+
+Per METAPAT's evidence contract, harmonic candidates do **not** wait for a UCNS harmonic
+notation. Each candidate declares participants, ordered parameter, recurrence mapping,
+equivalence condition, information loss, and physical provenance. The ordered parameter is
+the time-agnostic nucleon-content sequence `(A, Z)`, not time and not an unsourced phase.
+No Public Gonol position operation is invented.
+
+- `nuclear_harmonic_candidates.py` — five candidates with `MODULE_BUILD` + `CONTRACTS`.
+- `test_nuclear_harmonic_candidates.py` — five witnesses with `CHECKS`. **10/10 tests pass**
+  across both modules; CONTRACTS↔CHECKS audit **closed** (10 contracts / 10 checks).
+- `receipts/harmonic_*.json` — sealed candidate records.
+
+| Candidate | Kind | Li-7 | C-12 | Receipt |
+|---|---|---|---|---|
+| alpha-cluster recurrence | recurrence | recurs | recurs | `212fd1bf…e5ad` |
+| N/Z ratio commensurability | ratio | no (4/3) | recurs (1) | `8a49097a…f030` |
+| ground-state spin-parity symmetry | symmetry | no (3/2⁻) | recurs (0⁺) | `b0d5eded…dd77a` |
+| binding-per-nucleon commensurability | commensurability | no (~21% dev) | recurs (~8% dev) | `6a888f65…54e9` |
+| proton↔neutron inversion symmetry | inversion | no (N≠Z) | recurs (N=Z) | `9ac380f4…52f9` |
+
+Surviving relation across Li and C: **only the alpha-cluster recurrence** survives both;
+the four N=Z / even-even relations survive C-12 but not Li-7. Physical provenance for the
+numeric nuclear data is web-pinned 2026-08-22; alpha-cluster and isospin citations remain
+`hmmm` (standard references, exact citation not web-pinned this session). All results remain
+`CROSS-DOMAIN-HYPOTHESIS / hmmm` — no physics validation or canon is claimed.
+
+## 11. Subatomic gonol (2026-08-22)
+
+The subatomic gonol closes one element gonol per symbol from three separately addressable
+layers, using the EDCM gonol candidate constructor (`edcm.gonol/v1`) with
+`ucns.public_gonol` supplied as the explicit geometry authority:
+
+1. **nucleus participant** — subatomic identity (proton/neutron Public Gonol carrier
+   positions and glyphs, Möbius t-state frame sequence) plus harmonic relation results;
+2. **electron-shell participants** — the quantum layer from `epac_atomic` (n, l, m_l, m_s,
+   shell, subshell, hydrogenic angular id, radial nodes, Slater Z_eff, Rydberg energy);
+3. **element closure** — relation `epac.subatomic.element`, carried options Z/period/group/A,
+   electron configuration, valence count, surviving harmonic relations, status
+   `CROSS-DOMAIN-HYPOTHESIS`.
+
+- `subatomic_gonol.py` — constructor with `MODULE_BUILD` + `CONTRACTS`.
+- `test_subatomic_gonol.py` — five witnesses with `CHECKS`. **15/15 tests pass** across all
+  three subatomic modules; CONTRACTS↔CHECKS audit **closed** (15 contracts / 15 checks).
+- `receipts/gonol_*.json` — sealed gonol receipts; `replay_gonol` byte-identical for all.
+
+| Element | Gonol receipt digest |
+|---|---|
+| H | `3191f743…bc22b` |
+| He | `37991f4b…6c3c37` |
+| Li | `ff23abd7…312c95` |
+| C | `f951b648…45f0e3` |
+
+Layers stay distinct inside the gonol: nucleus and electron shells remain individually
+addressable participants with their own source_ids. No position operation, no Möbius coupling
+law, and no scale interchange is introduced. Standing is `implemented-candidate`,
+`selection_effect: none` — the gonol is a candidate, not selected canon.
