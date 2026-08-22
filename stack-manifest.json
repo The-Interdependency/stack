@@ -1,43 +1,67 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "f7a56ead99174598fd37e044f25c88b5dd47f53f9e4836c41620781bc3e6494a",
+  "work_graph_sha256": "4756dcd6147b3ebea473689fbd1a1b9f749cf5c886f839967de8c90aee305256",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
       "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
       "authority": "organization-wide build and evidence doctrine",
-      "relation": "full snapshot at stack root skill-lib/"
+      "path": "skill-lib",
+      "relation": "archived source tree at stack root skill-lib/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "859a9f4cddea0937579f0fb48a36bce4c1a19c99",
+      "tree_sha256": "a1a89697b9722b1e3897e83b0ff465adb7e0832a9068080c0ef429b0edcf27a9"
     },
     {
       "repository": "The-Interdependency/metapat",
       "commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
       "authority": "semantic authority (Meta Energy Theory)",
-      "relation": "full snapshot at research/metapat/"
+      "path": "research/metapat",
+      "relation": "archived source tree at research/metapat/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "9d83b8bb393a7420062c5049cfa2baa572336ace",
+      "tree_sha256": "bc91150d10edba747a779e29da4428c1a5eab7dc7a5ee8a0ae40c6a5118581ae"
     },
     {
       "repository": "The-Interdependency/ucns",
       "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
       "authority": "geometry and mathematical representation",
-      "relation": "full snapshot at research/ucns/"
+      "path": "research/ucns",
+      "relation": "archived source tree at research/ucns/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+      "tree_sha256": "a6fa5a674950b1847738c48e57c7df2e8727c8951db16b698318fe2ca9611d65"
     },
     {
       "repository": "The-Interdependency/edcm",
       "commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
       "authority": "measurement and text-gonol construction",
-      "relation": "full snapshot at research/edcm/"
+      "path": "research/edcm",
+      "relation": "archived source tree at research/edcm/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "92e7fd2040a6d8b162636083739e1927cac8326b",
+      "tree_sha256": "61426c7d592b2376cce03bff12e8fbb07a857ccddcd1fe411ff4b00d2cec3afa"
     },
     {
       "repository": "The-Interdependency/pcea",
       "commit": "4d2c581448b97bfb71da92b35487e74e6e3bcedc",
       "authority": "prime circle encryption algorithm",
-      "relation": "full snapshot at research/pcea/"
+      "path": "research/pcea",
+      "relation": "archived source tree at research/pcea/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "521b26b36692ca91baa73ef65d5314efbc7c9cba",
+      "tree_sha256": "173b5f8c27eeb54744f0cf9ddd406afa5f7a7a533ad8e4bf649c490dcb908f63"
     },
     {
       "repository": "The-Interdependency/ptcna",
       "commit": "97abdd1bbda61a68e0aac8595a32a3cb0ce73487",
       "authority": "prime tensor circled neural architecture",
-      "relation": "full snapshot at research/ptcna/"
+      "path": "research/ptcna",
+      "relation": "archived source tree at research/ptcna/",
+      "archive_status": "archived-source-tree",
+      "source_tree_git_sha1": "0820e25698b8fdefa41da635a5d5dc43b230b396",
+      "tree_sha256": "1610b6d24391989472476ae2f38dd5574f31a4af3efb454d9ce458fd28d750a1"
     },
     {
       "repository": "The-Interdependency/epac",
@@ -50,12 +74,14 @@
     "authority_transfer": false,
     "proof_status_transfer": false,
     "measurement_status_transfer": false,
-    "semantic_mapping": "external-provenance",
+    "semantic_mapping": "archive-provenance",
     "agent_scope": "cross-repository-work-graph",
+    "archive_provenance_required": true,
+    "public_gonol_timing": "after-research-closure",
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 1975fe7",
       "epac is a placeholder with no source repository",
-      "research/ snapshots are not source of truth; canonical sources remain The-Interdependency/<repo>"
+      "repo-level Public Gonol closure receipts are downstream of research"
     ]
   }
 }
