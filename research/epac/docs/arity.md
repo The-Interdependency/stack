@@ -2,24 +2,26 @@
 
 Status: **CROSS-DOMAIN-HYPOTHESIS / provisional**. Not org canon.
 
-Dimension tells where. Arity tells what intersects at once.
+Dimension tells where. Arity tells what intersects at once. Degree tells how a
+dimension is incident on declared couplings.
 
 ```text
-ambient_dimensions: declared independent axes
-couplings: only explicitly declared intersections
-Coupling.arity = number of dimensions in that one coupling
+(z, x) ≠ (x, z)
+(x, z) and (y, z) ↛ (x, y, z)   without an explicit proof
 ```
 
-Ambient size and arity are independent. Three ambient dimensions do not create
-a ternary coupling. `{z,x}` and `{z,y}` remain two arity-2 declarations that
-share `z`. They do not declare `{x,y}` or `{x,y,z}`.
+Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 
-Geometry is generated from declared couplings, not from the power set of
-available axes. The same ambient space may hold mixed arities. There is no
-x/y/z special case; ids may be `d1…dk`.
+```text
+deg(z) = 2 at slot 0
+deg(x) = 1 at slot 1
+deg(y) = 1 at slot 1
+```
 
-`hmmm`: whether `{x,z}` and `{z,x}` are the same coupling or oriented
-declarations is undeclared. The implementation stores declaration sequence
-only.
+That incidence structure is the geometry of two binary couplings sharing `z`.
+It is not a ternary coupling and not `(x,y)`.
+
+Overlap of members is not a proof. Forbidden inference rules include
+`overlap-closure`, `permutation-identity`, and `ambient-power-set`.
 
 See `epac_dimensional_arity.py`.

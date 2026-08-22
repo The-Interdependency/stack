@@ -1,45 +1,36 @@
-"""Declared dimensional arity.
+"""Declared dimensional arity, orientation, and degree.
 
-Dimension tells where. Arity tells what intersects at once.
+Dimension tells where. Arity tells what intersects at once. Degree tells how
+a dimension is incident on declared couplings.
 
-Ambient dimension count and coupling arity are independent. Geometry is
-generated only from explicitly declared couplings. Overlapping lower-arity
-couplings do not create a higher-arity coupling.
+``(z, x)`` is not ``(x, z)``. Shared members of ``(x, z)`` and ``(y, z)`` do
+not yield ``(x, y, z)`` without an explicit proof. Overlap is not a proof.
 
-Domain claims (provisional, this candidate):
+Domain claims (provisional):
 
-- surface_form: dimension
-  term_id: epac.dimensional.dimension
-  claiming_domain: epac candidate
-  claimed_sense: an independent coordinate axis in a declared ambient space
-  excluded: coupling arity; participant count; x/y/z as the general model
+- dimension: independent coordinate axis
+- arity: number of dimensions in one declared coupling
+- degree: incidence of one dimension on declared couplings, including slot
+- coupling: ordered declaration of participating dimensions
 
-- surface_form: arity
-  term_id: epac.dimensional.arity
-  claiming_domain: epac candidate
-  claimed_sense: number of dimensions participating in one declared coupling
-  excluded: ambient dimension count; gonol participant-count policies
-            (edcm.gonol arity_policy is a different sense)
-
-- surface_form: coupling
-  term_id: epac.dimensional.coupling
-  claiming_domain: epac candidate
-  claimed_sense: one explicit intersection of exactly k declared dimensions
-  excluded: the power set of ambient dimensions; inferred closures
-
-Collision: edcm.gonol ScaleOptionSet.arity_policy counts closed gonol
-participants, not dimensional intersections. Resolution: different term ids.
-
-hmmm: whether a coupling is intrinsically unordered ({x,z} = {z,x}) or may
-carry orientation (zx ≠ xz) is undeclared. This module stores the declared
-sequence as declaration identity only. It does not quotient by permutation
-and does not treat order as geometric orientation.
+Collision: edcm.gonol arity_policy counts gonol participants, not dimensional
+intersections.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Iterable, Mapping, Sequence
+
+
+FORBIDDEN_INFERENCE_RULES = frozenset(
+    {
+        "ambient-power-set",
+        "overlap-closure",
+        "permutation-identity",
+        "shared-dimension-join",
+    }
+)
 
 
 class DimensionalArityError(ValueError):
@@ -59,7 +50,7 @@ class Dimension:
 
 @dataclass(frozen=True, slots=True)
 class Coupling:
-    """One explicitly declared intersection of dimensions."""
+    """One explicitly declared ordered intersection of dimensions."""
 
     dimensions: tuple[Dimension, ...]
 
@@ -78,31 +69,75 @@ class Coupling:
     def declared_ids(self) -> tuple[str, ...]:
         return tuple(dimension.id for dimension in self.dimensions)
 
-    @property
-    def member_ids(self) -> frozenset[str]:
-        """Membership view only. Not geometric identity."""
 
-        return frozenset(self.declared_ids)
+@dataclass(frozen=True, slots=True)
+class DegreeRelation:
+    """How one dimension sits in declared couplings.
+
+    degree is the number of incidences. slot_degrees counts incidences at each
+    ordered position. (z,x) puts z in slot 0; (x,z) puts z in slot 1.
+    """
+
+    dimension: Dimension
+    incidences: tuple[tuple[tuple[str, ...], int], ...]
+
+    @property
+    def degree(self) -> int:
+        return len(self.incidences)
+
+    @property
+    def slot_degrees(self) -> tuple[tuple[int, int], ...]:
+        counts: dict[int, int] = {}
+        for _declared, slot in self.incidences:
+            counts[slot] = counts.get(slot, 0) + 1
+        return tuple(sorted(counts.items()))
+
+
+@dataclass(frozen=True, slots=True)
+class CouplingProof:
+    """Certificate required before a higher-arity coupling may be installed."""
+
+    conclusion: Coupling
+    premises: tuple[Coupling, ...]
+    rule_id: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.rule_id, str) or not self.rule_id or self.rule_id.isspace():
+            raise DimensionalArityError("a coupling proof must declare a non-empty rule_id")
+        if self.rule_id in FORBIDDEN_INFERENCE_RULES:
+            raise DimensionalArityError(
+                f"rule {self.rule_id!r} is not a proof; overlap/permutation/ambient fill are forbidden"
+            )
+        if not self.premises:
+            raise DimensionalArityError("a coupling proof must cite at least one premise coupling")
 
 
 @dataclass(frozen=True, slots=True)
 class DimensionalSpace:
-    """Ambient axes plus only those couplings that were declared."""
+    """Ambient axes, declared couplings, degree relations, and optional proofs."""
 
     ambient_dimensions: tuple[Dimension, ...]
     couplings: tuple[Coupling, ...]
+    proofs: tuple[CouplingProof, ...] = ()
 
     def __post_init__(self) -> None:
         ambient_ids = [dimension.id for dimension in self.ambient_dimensions]
         if len(ambient_ids) != len(set(ambient_ids)):
             raise DimensionalArityError("ambient dimensions must be unique")
         ambient = set(ambient_ids)
-        for coupling in self.couplings:
-            missing = [item for item in coupling.declared_ids if item not in ambient]
+        for item in self.couplings:
+            missing = [name for name in item.declared_ids if name not in ambient]
             if missing:
                 raise DimensionalArityError(
-                    f"coupling {coupling.declared_ids} uses undeclared dimensions {tuple(missing)}"
+                    f"coupling {item.declared_ids} uses undeclared dimensions {tuple(missing)}"
                 )
+        declared = {item.declared_ids for item in self.couplings}
+        for proof in self.proofs:
+            for premise in proof.premises:
+                if premise.declared_ids not in declared:
+                    raise DimensionalArityError(
+                        f"proof {proof.rule_id!r} cites missing premise {premise.declared_ids}"
+                    )
 
 
 def dimension(id: str) -> Dimension:
@@ -118,6 +153,7 @@ def coupling(dimension_ids: Sequence[str]) -> Coupling:
 def space(
     ambient_ids: Sequence[str],
     coupling_declarations: Sequence[Sequence[str]] = (),
+    proofs: Sequence[CouplingProof] = (),
 ) -> DimensionalSpace:
     if not isinstance(ambient_ids, Sequence) or isinstance(ambient_ids, (str, bytes)):
         raise DimensionalArityError("ambient dimensions must be a declared sequence")
@@ -125,33 +161,99 @@ def space(
     return DimensionalSpace(
         ambient_dimensions=tuple(Dimension(item) for item in ambient_ids),
         couplings=declared,
+        proofs=tuple(proofs),
     )
 
 
-def observed_shared_ids(left: Coupling, right: Coupling) -> frozenset[str]:
-    """Shared members of two declarations. This is not a new coupling."""
+def degree_relations(declared: DimensionalSpace) -> tuple[DegreeRelation, ...]:
+    incidences: dict[str, list[tuple[tuple[str, ...], int]]] = {
+        item.id: [] for item in declared.ambient_dimensions
+    }
+    for item in declared.couplings:
+        for slot, axis in enumerate(item.dimensions):
+            incidences[axis.id].append((item.declared_ids, slot))
+    return tuple(
+        DegreeRelation(dimension=axis, incidences=tuple(incidences[axis.id]))
+        for axis in declared.ambient_dimensions
+    )
 
-    return left.member_ids & right.member_ids
+
+def observed_common_ids(left: Coupling, right: Coupling) -> frozenset[str]:
+    """Common dimension ids. Not a coupling and not a proof."""
+
+    return frozenset(left.declared_ids) & frozenset(right.declared_ids)
+
+
+def has_declared_coupling(declared: DimensionalSpace, dimension_ids: Sequence[str]) -> bool:
+    target = tuple(dimension_ids)
+    return any(item.declared_ids == target for item in declared.couplings)
+
+
+def install_proven_coupling(declared: DimensionalSpace, proof: CouplingProof) -> DimensionalSpace:
+    """Add a coupling only with an explicit non-forbidden proof."""
+
+    if proof.conclusion.declared_ids in {item.declared_ids for item in declared.couplings}:
+        return DimensionalSpace(
+            ambient_dimensions=declared.ambient_dimensions,
+            couplings=declared.couplings,
+            proofs=declared.proofs + (proof,),
+        )
+    missing = [
+        name
+        for name in proof.conclusion.declared_ids
+        if name not in {axis.id for axis in declared.ambient_dimensions}
+    ]
+    if missing:
+        raise DimensionalArityError(
+            f"proven coupling {proof.conclusion.declared_ids} uses undeclared dimensions {tuple(missing)}"
+        )
+    declared_ids = {item.declared_ids for item in declared.couplings}
+    for premise in proof.premises:
+        if premise.declared_ids not in declared_ids:
+            raise DimensionalArityError(
+                f"proof {proof.rule_id!r} cites missing premise {premise.declared_ids}"
+            )
+    return DimensionalSpace(
+        ambient_dimensions=declared.ambient_dimensions,
+        couplings=declared.couplings + (proof.conclusion,),
+        proofs=declared.proofs + (proof,),
+    )
 
 
 def geometry_from_declared_couplings(declared: DimensionalSpace) -> Mapping[str, object]:
-    """Geometry is the declared couplings, not the power set of ambient axes."""
-
+    degrees = degree_relations(declared)
     return {
         "ambient_ids": tuple(item.id for item in declared.ambient_dimensions),
         "ambient_count": len(declared.ambient_dimensions),
         "couplings": tuple(
             {
-                "declared_ids": coupling.declared_ids,
-                "arity": coupling.arity,
+                "declared_ids": item.declared_ids,
+                "arity": item.arity,
             }
-            for coupling in declared.couplings
+            for item in declared.couplings
         ),
         "arity_counts": _arity_counts(declared.couplings),
-        "observed_shares": tuple(_share_records(declared.couplings)),
+        "degree_relations": tuple(
+            {
+                "dimension": item.dimension.id,
+                "degree": item.degree,
+                "slot_degrees": item.slot_degrees,
+                "incidences": item.incidences,
+            }
+            for item in degrees
+        ),
+        "observed_common_ids": tuple(_common_records(declared.couplings)),
+        "proofs": tuple(
+            {
+                "rule_id": proof.rule_id,
+                "premises": tuple(item.declared_ids for item in proof.premises),
+                "conclusion": proof.conclusion.declared_ids,
+            }
+            for proof in declared.proofs
+        ),
         "inferred_from_ambient": False,
         "inferred_higher_arity_from_overlap": False,
-        "order_identity": "hmmm",
+        "zx_equals_xz": False,
     }
 
 
@@ -162,40 +264,35 @@ def _arity_counts(couplings: tuple[Coupling, ...]) -> tuple[tuple[int, int], ...
     return tuple(sorted(counts.items()))
 
 
-def _share_records(couplings: tuple[Coupling, ...]) -> Iterable[Mapping[str, object]]:
+def _common_records(couplings: tuple[Coupling, ...]) -> Iterable[Mapping[str, object]]:
     for i, left in enumerate(couplings):
         for j, right in enumerate(couplings):
             if j <= i:
                 continue
-            shared = observed_shared_ids(left, right)
+            shared = observed_common_ids(left, right)
             if shared:
                 yield {
                     "left": left.declared_ids,
                     "right": right.declared_ids,
-                    "shared_ids": tuple(sorted(shared)),
-                    "creates_higher_arity_coupling": False,
+                    "common_ids": tuple(sorted(shared)),
+                    "proof_of_higher_arity": False,
                 }
-
-
-def has_declared_coupling(declared: DimensionalSpace, dimension_ids: Sequence[str]) -> bool:
-    """True only if this exact declaration sequence is present.
-
-    Permuted declarations are not treated as the same or as different geometry.
-    """
-
-    target = tuple(dimension_ids)
-    return any(item.declared_ids == target for item in declared.couplings)
 
 
 __all__ = [
     "Coupling",
+    "CouplingProof",
+    "DegreeRelation",
     "Dimension",
     "DimensionalArityError",
     "DimensionalSpace",
+    "FORBIDDEN_INFERENCE_RULES",
     "coupling",
+    "degree_relations",
     "dimension",
     "geometry_from_declared_couplings",
     "has_declared_coupling",
-    "observed_shared_ids",
+    "install_proven_coupling",
+    "observed_common_ids",
     "space",
 ]
