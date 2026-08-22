@@ -14,7 +14,8 @@ from typing import Any, Mapping
 from edcm.gonol import ClosedGonol, GonolReceipt, construct_gonol, replay_gonol
 from ucns.direct_mobius import native_mobius_state
 
-from epac_atomic import AtomicRecord, atomic_record
+from epac_atomic import AtomicRecord
+from epac_dimensional_arity import geometry_from_declared_couplings, space
 from epac_periodic import atomic_of, carried, construct_element_gonol, symbol_of
 
 
@@ -80,6 +81,24 @@ def _attachment_set(record: AtomicRecord, needed: int) -> tuple[tuple[int, int],
     )
 
 
+def _atom_dimension_id(gonol: ClosedGonol) -> str:
+    return f"{symbol_of(gonol)}#{gonol.occurrence}"
+
+
+def _declared_dimensional_space(
+    participants: tuple[ClosedGonol, ...],
+    center: ClosedGonol | None,
+    ligands: tuple[ClosedGonol, ...],
+):
+    ambient = [_atom_dimension_id(item) for item in participants]
+    if center is None:
+        declarations = [[_atom_dimension_id(participants[0]), _atom_dimension_id(participants[1])]]
+    else:
+        center_id = _atom_dimension_id(center)
+        declarations = [[center_id, _atom_dimension_id(ligand)] for ligand in ligands]
+    return space(ambient, declarations)
+
+
 def _mobius_coupling() -> Mapping[str, Any]:
     origin = native_mobius_state(0)
     one = origin.advance(1)
@@ -133,6 +152,8 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         geometry_authority=__import__("ucns.public_gonol", fromlist=["public_gonol"]),
     )
     mobius = _mobius_coupling()
+    dimensional = _declared_dimensional_space(participants, center, ligands)
+    geometry = geometry_from_declared_couplings(dimensional)
     distinct_p_m = tuple(sorted({m for l, m in center_sites if l == 1}))
     ligand_has_p = any(any(l == 1 for l, _m in sites) for sites in ligand_sites)
     invariants = {
@@ -163,6 +184,8 @@ def construct_molecule(formula: str) -> MolecularConstruction:
             tuple(mobius["frame"]),
             mobius["complete_restored"],
         ),
+        "dimensional_geometry": geometry,
+        "declared_coupling_arities": [item["arity"] for item in geometry["couplings"]],
     }
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 

@@ -12,10 +12,13 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
   provisional research candidate: hydrogen → helium baseline and the lithium/carbon
   construction form over current METAPAT affixiation semantics and UCNS carrier identity.
   Status: CROSS-DOMAIN-HYPOTHESIS / proposed. Not org canon.
+- [`docs/arity.md`](docs/arity.md) — arity is declared dimensional coupling,
+  not ambient dimension count.
 - [`docs/preregistration-molecular-geometry-from-element-gonols.md`](docs/preregistration-molecular-geometry-from-element-gonols.md) —
   provisional candidate: Z=1–18 element gonols from atomic structure only, then
-  affixiation of H₂, H₂O, NH₃, CH₄, CO₂ through valence arity and UCNS Möbius
-  coupling. Known chemistry is sealed until after construction.
+  affixiation of H₂, H₂O, NH₃, CH₄, CO₂ through unpaired valence electrons,
+  declared dimensional couplings, and UCNS Möbius observation. Known chemistry
+  is sealed until after construction.
 
 ## Usage
 

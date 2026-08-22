@@ -36,6 +36,21 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertTrue(carbon_dioxide["ligand_has_p"])
         self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["1:1", "1:0"])
 
+    def test_declared_couplings_are_binary_and_do_not_fill_ambient(self) -> None:
+        molecules = construct_declared_molecules()
+        water = molecules["H2O"].invariants["dimensional_geometry"]
+        self.assertEqual(water["ambient_count"], 3)
+        self.assertEqual([c["arity"] for c in water["couplings"]], [2, 2])
+        ids = [c["declared_ids"] for c in water["couplings"]]
+        self.assertEqual(len(ids), 2)
+        self.assertTrue(all(len(item) == 2 for item in ids))
+        methane = molecules["CH4"].invariants["dimensional_geometry"]
+        self.assertEqual(methane["ambient_count"], 5)
+        self.assertEqual([c["arity"] for c in methane["couplings"]], [2, 2, 2, 2])
+        self.assertFalse(any(c["arity"] == 5 for c in methane["couplings"]))
+        self.assertFalse(methane["inferred_from_ambient"])
+        self.assertFalse(methane["inferred_higher_arity_from_overlap"])
+
     def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
         molecules = construct_declared_molecules()
         signatures = {formula: item.invariants["ucns_coupling_signature"] for formula, item in molecules.items()}
