@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "metapat"
+dynamic = ["version"]
+description = "Canonical Meta Energy Theory semantic authority and provenance envelopes"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+authors = [
+  { name = "The Interdependency" },
+]
+keywords = ["energy-theory", "metapat", "semantic-authority", "provenance", "ucns", "edcm"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/The-Interdependency/metapat"
+Repository = "https://github.com/The-Interdependency/metapat"
+Issues = "https://github.com/The-Interdependency/metapat/issues"
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2",
+  "pytest>=8.0",
+  "twine>=5.0",
+]
+# UCNS remains separately installed from the exact producer commit. The runtime
+# adapter verifies producer epoch, profile, bridge identity, and source commit.
+ucns = []
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+metapat = ["py.typed", "fixtures/*.json"]
+
+[tool.setuptools.dynamic]
+version = { attr = "metapat.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.metapat]
+canonical_root = true
+upstream_owner = "The-Interdependency"
+authority_consumers = ["The-Interdependency/ucns", "The-Interdependency/edcm"]
+runtime_geometry_provider = "The-Interdependency/ucns@19f1afddb993f7d933ac8727627e7d5e1c3b88fc"
+measurement_consumer = "The-Interdependency/edcm"
+proof_status_transfer = false

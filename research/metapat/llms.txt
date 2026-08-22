@@ -1,0 +1,34 @@
+# LLM Instructions for METAPAT
+
+## Project Overview
+METAPAT is the canonical semantic authority for Meta Energy Theory. It protects exact canon text and every canon-bearing file identity. Catalog v2 makes current root, axiom, postulate, theorem, and theory surfaces addressable. Application schema 1.0.0 binds domain applications to exact catalog identities, source statements, scales, transfer limits, evidence requirements, and unresolved hmmm without becoming UCNS algebra, EDCM measurement, formal proof, or domain validation.
+
+## Key Definitions (never infer or expand these)
+- **METAPAT** = Meta Energy Theory — Axioms, Postulates, Theorems, and Theories.
+- **root_spine** = Legible difference is distinction; distinction defines boundaries; boundaries define simplex; boundary is simplex of distinction; simplex holds or modifies energy in a state of being.
+- **tensor** = Primitive simultaneous arrangement of energy-states.
+- **time** = Sequential tensor alteration.
+- **registration** = Capacity of a simplex to preserve, express, or transmit sequential tensor alteration.
+- **observer** = A simplex performing registration; observer does not necessarily mean mind.
+- **question** = A bounded unresolved energy-state.
+- **semantic_catalog_v2** = 40 ordered doctrine modules and 52 exact source-declared derived-from relations bound to metapat-canon-v2.
+- **application_module** = A source-checked domain application bound to exact catalog version, digest, module identities, module digests, module statuses, evidence boundaries, and deterministic application identity.
+
+## Architecture Summary
+- METAPAT owns semantic authority, the addressable catalog, application provenance, and explicit Phi semantic authorization.
+- Actual UCNS owns geometry and its proof status; domain evidence remains answerable to its source domain; EDCM owns measurement.
+- Canon, catalog, application, module, relation, geometry, policy, authorization, consumer-epoch, and proof identities remain separate.
+- No implementation owns the root.
+
+## How to Use This Repo with LLMs / Agents
+- Preserve canon text exactly unless a canon change is separately authorized. Treat CANON_VERSION, CANON_FILE_BLOBS, identity schema 2.0.0, and canon_digest() as one complete identity boundary.
+- The Fourth Axiom root statement remains exactly "Tensor is primitive." Domain formalisms and examples may explicate or represent the tensor; they do not redefine the root.
+- Use exact catalog module IDs, MetapatModuleEnvelope, MetapatModuleRelation, ApplicationCatalogBinding, MetapatApplicationModule, and current packaged fixtures for semantic authority and provenance. Reject malformed types rather than coercing them. Do not recreate UCNS algebra.
+- Catalog v2 remains exactly one root, twelve axioms, seven postulates, eight theorems, twelve theories, and fifty-two source-declared relations. Preserve WORKING-POSTULATE and CROSS-DOMAIN-HYPOTHESIS status. Never infer ancestry or constitutive meaning from analogy, repeated terms, catalog order, or derived-from relations.
+- Application modules bind exact catalog identities and preserve domains, scales, transfer and non-transfer statements, evidence requirements, source references, and unresolved hmmm. Root impact and METAPAT, domain, measurement, theorem-transfer, and UCNS-topology validation fields remain false.
+- The actual UCNS adapter defaults to external-provenance. Only explicit canon-bound constitutive-simultaneous authorization may alter semantic meaning; downstream topology verification remains required.
+- Consumers pinned to metapat-canon-v1 must reject metapat-canon-v2 until migrated. Consumer repositories own their local epoch names and bind them to exact v2 identities.
+- Never turn semantic labels into EDCM metric values or transfer UCNS theorem status. Source modules own CONTRACTS; tests own CHECKS. Run canon, catalog, application, fixture, generated-msdmd, Phi-policy, package, clean-wheel, and actual-UCNS gates.
+- Generated fixtures, metapat_msdmd.ts, and llms.txt are regenerated from their constructors or source blocks; do not hand-maintain them.
+
+This file is the single source of truth. If something is not explicitly stated in the files listed above, it does not exist in this repository.

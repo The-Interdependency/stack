@@ -1,0 +1,127 @@
+{
+  "supported_profile": [
+    "ucns.profile.edcm-word-gonol",
+    "0.2.0"
+  ],
+  "profile_scope": "edcm-only",
+  "pinned_ucns_commit": "a98c9e6c69804a8a08d0786b1d8b450bb2c49a97",
+  "pinned_skill_lib_commit": "2b24be24947223b86440f59f1bd9766130f9cc11",
+  "adapter_activation_status": "exact-profile-active-when-matching-package-is-installed",
+  "ucns_full_corpus_gate": {
+    "admitted_archive_sha256": "d377a176f5ec82dc9f6a97e4653d4eddc6cad917704c1aaaa5a8ee3e79f63a8e",
+    "declared_turn_count": 143048,
+    "runner_schema": "edcm.multiwoz21-full-corpus/1.3.0",
+    "schema": "ucns.edcm.full-corpus-execution/0.14.1",
+    "sealed_edcm_commit": "7b93764377e92d4f2807170f58ba07535bb0c66c",
+    "sealed_edcm_tree": "f55ca30e16e1d45fb3b0b94794615f672edbbde6",
+    "sealed_receipt_id": "921ceacad026de1d884eec3e049b090246014706c937c062bd32f40bbff01f0c",
+    "status": "sealed-complete"
+  },
+  "sealed_corpus_evidence": {
+    "corpus_id": "multiwoz-2.1",
+    "edcm_commit": "fbee2ee57f765b47c362a6877521493cc1afe20a",
+    "receipt_digest": "6150c05c64ff6d07593775b9e83d8634e912d27668f872032460391afeb6e7b9",
+    "receipt_path": "experiments/corpora/receipts/2026-07-28-multiwoz-2.1-space-origin-complete.json",
+    "report_digest": "3d3d1aaf81e052a569c29200689f75e684d7441952392f8fab04b990cd8bc5e8",
+    "report_path": "experiments/corpora/results/2026-07-28-multiwoz-2.1-space-origin-rerun.json",
+    "status": "complete",
+    "ucns_commit": "c799b3547afc91a6039a5d3b15f997426eed138a"
+  },
+  "sealed_ucns_v0141_corpus_evidence": {
+    "corpus_id": "multiwoz-2.1",
+    "edcm_commit": "2e667f648bfcfa9f067997eb7e56d2346a4ba30c",
+    "exact_stream_sha256": "e94ba2e5e1e9d52b23fd5b9c33303be009dae32f4c3bc6a1d5186a353acb40b5",
+    "receipt_digest": "4ebbb9a69be3690c01271e6a041de227e91615c073ad9e8601bdb9096fe41783",
+    "receipt_id": "921ceacad026de1d884eec3e049b090246014706c937c062bd32f40bbff01f0c",
+    "receipt_path": "experiments/corpora/receipts/2026-07-31-multiwoz-2.1-ucns-v0.14.1-complete.json",
+    "receipt_sha256": "2730dd5413187fc7c2c33092c83cce8cb93d2606f9df8c4e0bf148085fccfb79",
+    "report_digest": "ff4718ba80d40028cc18fc222eae53295d8ab9efebe4a5da6b0e7c47e6088b77",
+    "report_path": "experiments/corpora/results/2026-07-31-multiwoz-2.1-ucns-v0.14.1-full.json",
+    "report_sha256": "f2044a4c1555b7fa52f9f05a562136f24b8960902630dc32cfce7fcdb0af7fde",
+    "status": "complete",
+    "ucns_commit": "868d80878c9ecd93ff30e91ca289122ded805a49"
+  },
+  "sealed_ucns_v019_corpus_evidence": {
+    "corpus_id": "multiwoz-2.1",
+    "edcm_tree": "658767bc64936f152e19c2f1cebb9ae86c1932cb",
+    "exact_stream_sha256": "e94ba2e5e1e9d52b23fd5b9c33303be009dae32f4c3bc6a1d5186a353acb40b5",
+    "receipt_digest": "feb7e98891cdb4baee521cc90c68a695922d9ce70d665678fa9e9ea3dde5f629",
+    "receipt_id": "921ceacad026de1d884eec3e049b090246014706c937c062bd32f40bbff01f0c",
+    "receipt_path": "experiments/corpora/receipts/2026-07-31-multiwoz-2.1-ucns-v0.19-complete.json",
+    "receipt_sha256": "ec384e9151d17a110240ad07545ce6448414b582bae1403e592972be6f48f9da",
+    "report_digest": "2dd40a6c220db0fb99bfdbca8237ab7910d041dede1cd33d2ae4873dd3a9e4b4",
+    "report_path": "experiments/corpora/results/2026-07-31-multiwoz-2.1-ucns-v0.19-full.json",
+    "report_sha256": "2ba500a78bff3f805b26dd9505fc3305207a28c69ae420732ddba1176d14174d",
+    "status": "complete",
+    "ucns_commit": "872f53571d5dc2f133ff1813b7bdffd3a9c309f8"
+  },
+  "sealed_ucns_v019_integrated_corpus_evidence": {
+    "corpus_id": "multiwoz-2.1",
+    "edcm_tree": "f55ca30e16e1d45fb3b0b94794615f672edbbde6",
+    "exact_stream_sha256": "e94ba2e5e1e9d52b23fd5b9c33303be009dae32f4c3bc6a1d5186a353acb40b5",
+    "receipt_digest": "c74abbfaed4a0c18b0296d6245d59b436ad74c1eebc3d1cdd6e092f48534ff65",
+    "receipt_id": "921ceacad026de1d884eec3e049b090246014706c937c062bd32f40bbff01f0c",
+    "receipt_path": "experiments/corpora/receipts/2026-08-01-multiwoz-2.1-ucns-v0.19-integrated-complete.json",
+    "receipt_sha256": "8d20f99f3f788e09e9edad40f7d28a2b97de9d634868652bd058e50d504fe9c9",
+    "report_digest": "ddc0996126bd4903ca3ec08b043f2b949bcc3bed9077f01d7a609e3e54e3b03d",
+    "report_path": "experiments/corpora/results/2026-08-01-multiwoz-2.1-ucns-v0.19-integrated-full.json",
+    "report_sha256": "e228b9cb74c60ec4d6efb66f1d86c38069f613a875fa4c91f2973b46d20436f6",
+    "status": "complete",
+    "ucns_commit": "a98c9e6c69804a8a08d0786b1d8b450bb2c49a97"
+  },
+  "input_contract": "full ordered corpus as exact (speaker_id, text) tuples",
+  "fixed_options": {
+    "carrier_requirement": "mobius-origin-hidden-zero",
+    "corpus_execution": "full-corpus",
+    "gonol_initiation": "mobius-twist",
+    "nesting_boundary": "superpositioned-space",
+    "normalization": "none-preserve-source",
+    "occurrence_operation": "ordered-concatenation",
+    "out_of_alphabet": "retain-and-report",
+    "profile_scope": "edcm-only",
+    "smallest_gonol": "word",
+    "source_domain": "unicode-scalar-values",
+    "space_assignment": "unicode-white-space-origin-v1",
+    "support": "one-unit-per-speaker-turn",
+    "token_alphabet": "public-gonol-157",
+    "token_identity": "unicode-code-point"
+  },
+  "retired_current_inputs": [
+    "ucns_object",
+    "ucns_bridge_record",
+    "ucns_bridge_record_json",
+    "ucns_bridge_record_dict",
+    "ucns_factorization_evidence",
+    "ucns_factorization_evidence_json",
+    "ucns_factorization_evidence_dict"
+  ],
+  "tests_proving_fail_closed_behavior": [
+    "archived UCNS package cannot activate",
+    "profile option drift suspends activation",
+    "SPACE code-point pin and Unicode-scalar source-domain drift suspend activation",
+    "retired bridge, object, and factorization inputs are rejected",
+    "flattened transcript does not invent speaker-turn boundaries",
+    "NA remains distinct from zero"
+  ],
+  "tests_proving_exact_profile_behavior": [
+    "all full-corpus turns preserve order and unit support",
+    "all pinned SPACE manifestations map to carrier position zero while retaining exact source witnesses",
+    "word gonols preserve ordered concatenation and Mobius initiation",
+    "true non-SPACE out-of-alphabet Unicode remains exact evidence",
+    "profile observation identity is deterministic",
+    "geometry, factorization, theorem, and measurement-validity transfer remain absent"
+  ],
+  "historical_experiment_ucns_commit": "5331ae9a4cf7eddfa1de72b8caed28e2358cc0ed",
+  "unresolved_constraints": [
+    "UCNS v0.19 supplies a nonselected ordered source-coordinate candidate over its fixed full producer demonstration, but this observation adapter does not attach or consume it.",
+    "Higher-gonol composition and the hyper-dimensional lattice relation law remain open.",
+    "Projection policy must deepen only with experimental evidence.",
+    "True non-SPACE coverage outside the 157-token carrier alphabet requires further real-system corpus pressure.",
+    "Historical v0.1-v0.4 experiment reports remain historical evidence and are not rewritten.",
+    "The sealed UCNS v0.14.1 completion receipt proves bounded execution and reconciliation only; it does not supply formal geometry or measurement validity."
+  ],
+  "theorem_transfer": false,
+  "measurement_validity": false,
+  "metapat_validity": false,
+  "hmmm": "The merged v0.19-integrity producer MultiWOZ reseal verifies source-preserved SPACE-origin assignment plus bounded complete execution and preserves the historical exact stream and gate receipt. The v0.19 coordinate candidate remains limited to its fixed full demonstration, and EDCM does not attach that evidence or acquire measurement validity; neither result permits missing higher geometry or true non-SPACE coverage to collapse into a convenient bridge."
+}

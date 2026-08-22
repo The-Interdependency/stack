@@ -1,0 +1,9 @@
+{
+  "document": "docs/PREREGISTRATION_P7_PHASE_ALEXANDER.md",
+  "document_sha256": "f8f1a6eae5de2c8235a576266a140c93492554248c2756d838845a19240b23cc",
+  "evaluation_status": "not-yet-run-at-freeze",
+  "frozen_on": "2026-08-11",
+  "schema_id": "ucns.p7-exact-milnor-alexander.preregistration",
+  "schema_version": "0.1.0",
+  "selection_effect": "none"
+}

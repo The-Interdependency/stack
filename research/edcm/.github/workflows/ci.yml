@@ -1,0 +1,232 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  base-package:
+    name: Base package / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+      - run: python -m pytest -q
+
+  integrity-gate:
+    name: Frozen canon and authority integrity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+      - run: python -m edcm.integrity
+      - run: python -m pytest -q tests/test_integrity.py
+
+  ucns-absence:
+    name: UCNS absence remains typed and operational
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .[dev]
+      - run: |
+          python -m pytest -q \
+            tests/test_ucns_adapter.py \
+            tests/test_ucns_dependency.py \
+            tests/test_measurement.py \
+            tests/test_shared_stack_contract.py
+      - name: Prove transcript measurement survives absent UCNS
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import edcm
+          assert importlib.util.find_spec("ucns") is None
+          result = edcm.build_default_layers().run({"transcript": "A: Preserve typed absence."})
+          status = result["ucns_integration"]
+          contract = result["edcm_result"]
+          assert status["ucns_package_available"] is False
+          assert status["ucns_adapter_active"] is False
+          assert contract["ucns_profile_observation"]["state"] == "NA"
+          assert contract["ucns_geometry_identity"]["state"] == "NA"
+          assert contract["ucns_factorization_evidence"]["state"] == "NA"
+          assert contract["readouts"]["state"] == "measured"
+          assert contract["status_evidence"]["proof_status_transfers_to_measurement_validity"] is False
+          PY
+
+  metapat-integration:
+    name: Exact METAPAT semantic producer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,metapat]"
+      - run: |
+          python -m pytest -q \
+            tests/test_metapat_adapter.py \
+            tests/test_measurement.py
+      - name: Prove semantic authority remains independent of geometry
+        run: |
+          python - <<'PY'
+          import edcm
+          import metapat
+          envelope = metapat.root_spine_module_envelope()
+          result = edcm.build_default_layers().run({
+              "transcript": "A: Preserve exact semantic authority.",
+              "metapat_envelope": envelope,
+          })
+          assert result["metapat_semantics"]["canon_digest"] == envelope.canon_digest
+          assert result["metapat_semantics"]["provenance_digest"] == envelope.provenance_digest
+          assert result["edcm_result"]["ucns_profile_observation"]["state"] == "NA"
+          assert result["edcm_result"]["ucns_geometry_identity"]["state"] == "NA"
+          assert result["edcm_result"]["readouts"]["state"] == "measured"
+          PY
+
+  exact-shared-stack:
+    name: METAPAT / UCNS / EDCM exact-profile stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,full-stack]"
+      - run: |
+          python -m pytest -q \
+            tests/test_goal_vector_experiment.py \
+            tests/test_metapat_adapter.py \
+            tests/test_ucns_adapter.py \
+            tests/test_multiwoz21_corpus.py \
+            tests/test_ucns_dependency.py \
+            tests/test_measurement.py \
+            tests/test_shared_stack_contract.py
+      - name: Prove exact word-gonol observations survive the complete stack
+        run: |
+          python - <<'PY'
+          import edcm
+          import metapat
+          import ucns
+          from edcm.edcmucns import PolicyManifest
+
+          envelope = metapat.root_spine_module_envelope()
+          assert ucns.EDCM_PROFILE_ID == "ucns.profile.edcm-word-gonol"
+          assert ucns.EDCM_PROFILE_VERSION == "0.2.0"
+          assert ucns.EDCM_SOURCE_DOMAIN == "unicode-scalar-values"
+          assert ucns.EDCM_SPACE_ASSIGNMENT_POLICY == "unicode-white-space-origin-v1"
+          assert ucns.V014_FULL_CORPUS_SCHEMA_ID == "ucns.edcm.full-corpus-execution"
+          assert ucns.V014_FULL_CORPUS_SCHEMA_VERSION == "0.14.1"
+          assert len(ucns.EDCM_SPACE_CODE_POINTS) == 25
+          assert len(ucns.PUBLIC_GONOL_157) == 157
+          result = edcm.build_default_layers().run({
+              "transcript": "A: Preserve the exact shared-stack boundary.\nB: Keep spaces  exact.",
+              "source_ref": "ci://exact-stack",
+              "metapat_envelope": envelope,
+              "ucns_turns": (
+                  ("A", "Preserve the exact shared-stack boundary."),
+                  ("B", "Keep spaces  exact."),
+              ),
+          })
+          contract = result["edcm_result"]
+          observation = contract["ucns_profile_observation"]
+          assert observation["profile_id"] == "ucns.profile.edcm-word-gonol"
+          assert observation["source_commit"] == "a98c9e6c69804a8a08d0786b1d8b450bb2c49a97"
+          assert observation["source_domain"] == "unicode-scalar-values"
+          assert observation["space_assignment_policy"] == "unicode-white-space-origin-v1"
+          assert observation["space_code_points_sha256"] == "a5dc5ec34775d511a02b17911aa385c5d92908ee58749ea16d721cd53d19b944"
+          assert tuple(turn["speaker_id"] for turn in observation["turns"]) == ("A", "B")
+          assert observation["turns"][1]["nesting_boundary_count"] == 3
+          assert contract["metapat_semantic_constraints"]["canon_digest"] == envelope.canon_digest
+          assert contract["ucns_geometry_identity"]["state"] == "NA"
+          assert contract["ucns_factorization_evidence"]["state"] == "NA"
+          assert contract["edcm_policy_manifest"]["manifest_hash"] == PolicyManifest().manifest_hash()
+          assert contract["readouts"]["state"] == "measured"
+          assert contract["status_evidence"]["ucns_profile_observation_attached"] is True
+          assert contract["status_evidence"]["ucns_bridge_record_attached"] is False
+          assert contract["status_evidence"]["ucns_factorization_evidence_attached"] is False
+          assert contract["status_evidence"]["ucns_theorem_status_attached"] is False
+          assert contract["status_evidence"]["proof_status_transfers_to_measurement_validity"] is False
+          PY
+      - name: Run the controlled goal-vector contradiction experiment twice
+        run: |
+          python -m edcm.goal_vector_experiment \
+            --edcm-commit "${GITHUB_SHA}" \
+            --output /tmp/goal-vector.json
+          python -m edcm.goal_vector_experiment \
+            --edcm-commit "${GITHUB_SHA}" \
+            --output /tmp/goal-vector-repeat.json
+          diff -u /tmp/goal-vector.json /tmp/goal-vector-repeat.json
+
+  build-and-wheel-smoke:
+    name: Build, metadata, and clean-wheel smoke
+    runs-on: ubuntu-latest
+    needs: [base-package, integrity-gate]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+      - run: python -m build
+      - run: python -m twine check dist/*
+      - run: |
+          python -m venv .wheel-venv
+          .wheel-venv/bin/python -m pip install --upgrade pip
+          .wheel-venv/bin/python -m pip install dist/*.whl
+      - run: .wheel-venv/bin/python -m edcm.integrity
+      - name: Smoke-test installed base package
+        run: |
+          .wheel-venv/bin/python - <<'PY'
+          from importlib.metadata import version
+          from importlib.resources import files
+          import edcm
+          assert version("edcm") == edcm.__version__
+          assert callable(edcm.build_default_layers)
+          assert callable(edcm.select_ucns_adapter)
+          assert callable(edcm.select_metapat_adapter)
+          assert callable(edcm.build_result_contract)
+          assert edcm.run_integrity_gate().passed is True
+          assert files("edcm.measurement.canon").joinpath("data", "markers_v1.json").is_file()
+          corpus_data = files("edcm.corpora").joinpath("data")
+          assert corpus_data.joinpath("multiwoz_2_1_admission.json").is_file()
+          assert corpus_data.joinpath("multiwoz_2_1_admission_v1_0_0.json").is_file()
+          result = edcm.build_default_layers().run({"input": "wheel smoke"})
+          assert result["ucns_integration"]["ucns_package_available"] is False
+          assert result["metapat_integration"]["metapat_package_available"] is False
+          assert result["edcm_result"]["readouts"]["state"] == "NA"
+          assert result["edcm_result"]["ucns_factorization_evidence"]["state"] == "NA"
+          PY

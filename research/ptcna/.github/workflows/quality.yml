@@ -1,0 +1,50 @@
+name: quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+
+      - name: Test runtime
+        run: python -m pytest -q
+
+      - name: Audit contract graph
+        run: python scripts/check_contracts.py
+
+      - name: Verify ratios
+        run: python .agents/skills/ratios/ratios_check.py --root ptcna --strict
+
+      - name: Verify metadata collection
+        run: |
+          PYTHONPATH=.agents/skills python .agents/skills/msdmd/collect.py \
+            --root . --repo ptcna --out /tmp/ptcna_msdmd.ts
+          cmp /tmp/ptcna_msdmd.ts ptcna_msdmd.ts
+
+      - name: Build and inspect distributions
+        run: |
+          python -m build
+          python -m twine check dist/*
+
+      - name: Smoke-test wheel
+        run: |
+          python -m venv /tmp/ptcna-wheel-smoke
+          /tmp/ptcna-wheel-smoke/bin/python -m pip install dist/ptcna-*.whl
+          /tmp/ptcna-wheel-smoke/bin/python -c \
+            "import ptcna; assert ptcna.__version__ == '0.1.1'"

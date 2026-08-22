@@ -1,0 +1,28 @@
+{
+  "claim_rules": {
+    "parity": "FALSIFIED for superiority only",
+    "scope": "in-sample acquisition on the declared phi/psi/omega role surface; no generalization, geometry, EDCM, external-validity, or privacy claim",
+    "superiority": "target_accuracy - comparator_accuracy >= minimum_target_advantage_vs_fallback",
+    "usefulness": "target_accuracy >= minimum_target_accuracy"
+  },
+  "plan_digest": "67cdad3aefb3e33f6fbf3994de54e1b73a01105527bf241fce08947ed7046bbe",
+  "receipt": {
+    "case_evaluations": 90,
+    "comparator_accuracy": 0.9444444444444444,
+    "comparator_backend": "fallback.hashed-linear.v1",
+    "duration_ms": 46675.045,
+    "failure_reason": null,
+    "plan_digest": "67cdad3aefb3e33f6fbf3994de54e1b73a01105527bf241fce08947ed7046bbe",
+    "plan_id": "ptcna-critical-role-acquisition-v1",
+    "superiority_status": "FALSIFIED",
+    "target_accuracy": 0.3333333333333333,
+    "target_advantage_vs_fallback": -0.6111111111111112,
+    "target_backend": "ptcna.experimental.v1",
+    "training_steps": 270,
+    "usefulness_status": "FALSIFIED"
+  },
+  "result_digest": "3d73f08f3e0eeaf0f5e508aba762844c9e8d11b7146b654fd562aff425e30f13",
+  "schema": "ptcna.critical-evaluation-result",
+  "schema_version": "1.0.0",
+  "source_commit": "3d67f359af05e58c1e426dad14621d0e69b5ec4c"
+}

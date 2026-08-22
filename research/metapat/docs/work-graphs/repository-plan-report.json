@@ -1,0 +1,147 @@
+{
+  "schema": "the-interdependency.repository-plan-report",
+  "version": "1.0.0",
+  "repository": "The-Interdependency/metapat",
+  "contract": {
+    "repository": "The-Interdependency/skill-lib",
+    "path": "interdependent-work-graph/repository-plan-report.schema.json",
+    "version": "1.0.0",
+    "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
+  },
+  "source": {
+    "branch": "main",
+    "commit": "1fc2e5a273721acb0297dccc4cbfe3a3e3e9cd72",
+    "generated_at": "2026-08-07",
+    "note": "This report describes the cited METAPAT main commit. The report commit is coordination metadata and does not alter canon, ontology validity, domain validity, proof status, or measurement validity."
+  },
+  "authority": {
+    "owns": [
+      "Meta Energy Theory semantic canon, terminology, interpretation constraints, derivation declarations, and claim-status labels",
+      "byte-complete METAPAT canon identity and addressable semantic catalog identities",
+      "METAPAT semantic module envelopes, application modules, provenance, and evidence firewalls",
+      "explicit METAPAT authorization of the constitutive-simultaneous UCNS Phi semantic relation"
+    ],
+    "does_not_own": [
+      "UCNS geometry, carrier algebra, object topology, or UCNS proof status",
+      "EDCM metric values, measurement validity, or empirical result authority",
+      "a0 runtime, agent lifecycle, deployment, or orchestration authority",
+      "skill-lib organization-wide build and cross-repository workflow doctrine"
+    ],
+    "non_transfer": [
+      "METAPAT claim status does not become application or empirical validation",
+      "UCNS theorem or domain status does not establish METAPAT ontology validity",
+      "METAPAT semantic authorization does not define UCNS geometry",
+      "METAPAT constraints do not become EDCM metric values",
+      "cross-domain application hypotheses do not alter root canon"
+    ]
+  },
+  "portfolio_role": {
+    "summary": "Provide the semantic authority layer: exact doctrine identities, interpretation constraints, bounded application mappings, and explicit semantic authorizations while keeping geometry, measurement, and empirical evidence answerable to their owning repositories.",
+    "upstream_contract": "METAPAT canon and application sources remain source-checked and byte-addressable; external domain evidence remains external authority.",
+    "downstream_contract": "UCNS and EDCM consumers may bind exact METAPAT modules and constraints while preserving separate geometry, measurement, proof, and application identities.",
+    "reports_to": {
+      "repository": "The-Interdependency/skill-lib",
+      "skill": "interdependent-work-graph",
+      "relation": "repo-owned semantic-plan and claim-status input; no authority transfer"
+    }
+  },
+  "status": {
+    "state": "active semantic canon and integration research",
+    "current_claim": "METAPAT canon, catalog, envelopes, one application vertical slice, actual-UCNS adapter, and explicit Phi semantic authorization are implemented; physics validation, downstream EDCM semantic consumption, and the shared stack fixture remain unresolved.",
+    "canon_version": "metapat-canon-v1",
+    "catalog_version": "metapat-semantic-catalog-v1"
+  },
+  "delivered": [
+    {
+      "surface": "byte-complete canon identity",
+      "status": "implemented and continuously checked",
+      "boundary": "digest identity is not empirical validation or formal proof of the ontology"
+    },
+    {
+      "surface": "semantic module envelope and complete 39-module catalog",
+      "status": "implemented with deterministic identities and 52 declared derivation edges",
+      "boundary": "catalog status does not transfer into applications, UCNS objects, EDCM measurements, or downstream theorems"
+    },
+    {
+      "surface": "quantum-magnetism application module",
+      "status": "first source-checked vertical slice at CROSS-DOMAIN-HYPOTHESIS status",
+      "boundary": "root impact is none; physics validation and differentiated predictions remain unresolved"
+    },
+    {
+      "surface": "actual UCNS adapter",
+      "status": "implemented optional adapter with external-provenance default",
+      "boundary": "METAPAT defines no local UCNS geometry or composition algebra"
+    },
+    {
+      "surface": "UCNS Phi semantic authorization",
+      "status": "implemented explicit-only constitutive-simultaneous policy",
+      "boundary": "authorization binds semantic meaning only; exact UCNS topology binding remains downstream work"
+    }
+  ],
+  "active_frontier": [
+    "define downstream topology-binding records for exact UCNS parent, payload path, ordered child hashes, authorization digest, and encoding-policy identity",
+    "add fail-closed checks for missing declarations, order drift, object-hash drift, canon drift, and external-edge-as-containment substitution",
+    "define testable physical variables and boundaries for the quantum-magnetism application and derive predictions that differ from restating established physics",
+    "implement a separate EDCM semantic consumer that keeps semantic labels distinct from metric values",
+    "build the shared METAPAT-UCNS-EDCM fixture once the downstream semantic consumer exists"
+  ],
+  "next_actions": [
+    {
+      "action": "specify the topology-bound Phi integration record without importing UCNS geometry authority into METAPAT",
+      "owner": "The-Interdependency/metapat + The-Interdependency/ucns",
+      "dependency": "exact UCNS parent identity and encoding surface must be available"
+    },
+    {
+      "action": "implement or coordinate the EDCM semantic consumer against exact catalog/application identities",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "consumer must preserve METAPAT, UCNS, and EDCM identities separately"
+    },
+    {
+      "action": "construct the shared stack fixture after the downstream consumer exists",
+      "owner": "The-Interdependency/metapat + The-Interdependency/ucns + The-Interdependency/edcm",
+      "dependency": "topology binding and EDCM semantic-consumer path"
+    }
+  ],
+  "blocked": [
+    "shared stack fixture is blocked on a downstream EDCM semantic consumer and exact topology-bound Phi integration"
+  ],
+  "cross_repository_relations": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "relation": "geometry adapter target and separate mathematical authority; receives exact semantic envelopes and explicit Phi authorizations",
+      "authority_transfer": false,
+      "proof_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "relation": "downstream semantic consumer and separate measurement authority",
+      "authority_transfer": false,
+      "measurement_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "relation": "build/evidence doctrine and cross-repository coordination source",
+      "authority_transfer": false
+    }
+  ],
+  "machine_entrypoints": {
+    "repo_report": "docs/work-graphs/repository-plan-report.json",
+    "system_overview": "README.md",
+    "roadmap": "ROADMAP.md",
+    "claims_ledger": "docs/claims-ledger.md",
+    "canon_api": "src/metapat/canon.py",
+    "catalog_api": "src/metapat/catalog.py",
+    "application_api": "src/metapat/application.py",
+    "envelope_api": "src/metapat/envelope.py"
+  },
+  "hmmm": [
+    "migration consequences for future catalog or canon rotations",
+    "whether later catalog versions require additional relation kinds",
+    "exact downstream topology-binding record for Phi authorization",
+    "official UCNS bridge-record consumption if UCNS standardizes one",
+    "any semantic mapping beyond external-provenance and explicit constitutive-simultaneous authorization",
+    "physical validation and differentiated predictions for the quantum-magnetism application",
+    "EDCM semantic consumer implementation",
+    "shared cross-repository stack fixture"
+  ]
+}

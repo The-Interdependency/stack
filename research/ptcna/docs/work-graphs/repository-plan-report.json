@@ -1,0 +1,188 @@
+{
+  "schema": "the-interdependency.repository-plan-report",
+  "version": "1.0.0",
+  "repository": "The-Interdependency/ptcna",
+  "contract": {
+    "repository": "The-Interdependency/skill-lib",
+    "path": "interdependent-work-graph/repository-plan-report.schema.json",
+    "version": "1.0.0",
+    "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
+  },
+  "source": {
+    "branch": "main",
+    "commit": "9fb593cb03f57666632cf7147e0de164194335f2",
+    "generated_at": "2026-08-17",
+    "note": "This report describes the cited PTCNA main commit after restoration of the audit-before-architecture prerequisite. The existing executable runtime is preserved as historical pre-audit experimental scaffolding; report-only maintenance does not upgrade either scaffold or intended-architecture standing."
+  },
+  "authority": {
+    "owns": [
+      "preservation and exact description of the historical PTCNA scaffold and its sealed evaluation evidence",
+      "future PTCNA architecture construction after receipt of exact UCNS neural-audit evidence",
+      "PTCNA-side consumption of UCNS Unicode-character gonols in the intended language-input path",
+      "PTCNA producer-side runtime evidence for any future audit-derived candidate",
+      "PTCNA-local fallback attribution and historical scaffold provenance"
+    ],
+    "does_not_own": [
+      "UCNS mathematical representation canon, Unicode-character gonol definitions, neural-audit evidence, higher-gonol producer profiles, or proof status",
+      "EDCM measurement definitions, empirical validity, or result authority",
+      "METAPAT semantic authority",
+      "skill-lib organization-wide build and evidence doctrine",
+      "ZFAE repository authority outside a separately declared PTCNA-local adapter boundary"
+    ],
+    "non_transfer": [
+      "historical scaffold execution does not establish intended PTCNA architecture",
+      "the sealed scaffold falsification does not establish failure or success of the not-yet-built intended PTCNA",
+      "UCNS-compatible 157x7x7x53 state does not satisfy the required conventional-neural-network audit prerequisite",
+      "UCNS proof or representation status does not establish PTCNA learning efficacy",
+      "a conventional tokenizer, subword id, whole-string hash, or opaque embedding vector cannot silently substitute for the intended Unicode-character-gonol input primitive",
+      "EDCM measurement results do not become PTCNA-owned evidence merely because a caller injects them"
+    ]
+  },
+  "portfolio_role": {
+    "summary": "Preserve the historical PTCNA research scaffold and, only after UCNS audits a functioning conventional neural network, construct and test an architecture derived from that evidence without filling unresolved structure by assumption.",
+    "upstream_contract": "Intended PTCNA construction consumes an exact UCNS neural-audit producer contract plus UCNS Unicode-character gonols; absent evidence remains hmmm rather than inferred architecture.",
+    "downstream_contract": "PTCNA emits runtime behavior and state under explicit candidate identity without transferring architectural necessity, UCNS proof status, or EDCM measurement validity to consumers.",
+    "reports_to": {
+      "repository": "The-Interdependency/skill-lib",
+      "skill": "interdependent-work-graph",
+      "relation": "repo-owned runtime, historical evidence, and future architecture-plan input; no authority transfer"
+    }
+  },
+  "status": {
+    "state": "intended construction BLOCKED on UCNS neural audit; historical pre-audit scaffold preserved",
+    "current_claim": "The current four-layer 157x7x7x53 PTCNA-shaped runtime is historical pre-audit experimental scaffolding. Its frozen 18-case role-acquisition result remains sealed: target accuracy 0.3333333333 versus 0.9444444444 for the hashed-linear fallback, so both declared usefulness and superiority claims are FALSIFIED for that exact scaffold and scope. The intended PTCNA has not yet been built: UCNS must first audit a functioning conventional neural network and provide source-bound relational construction evidence. The intended language primitive is a UCNS Unicode-character gonol, not the scaffold's whole-string SHA feature representation.",
+    "latest_main_milestone": {
+      "commit": "9fb593cb03f57666632cf7147e0de164194335f2",
+      "description": "corrected the architecture dependency: intended PTCNA is audit-derived, current runtime is pre-audit scaffolding, and Unicode-character gonols are the intended language-input primitives"
+    }
+  },
+  "delivered": [
+    {
+      "surface": "historical four-layer PTCNA scaffold",
+      "status": "implemented and preserved",
+      "boundary": "the neural/circle/seed/core structure, ring sizes, constants, weights, routing, and whole-string hash input are historical scaffold choices, not audit-derived intended architecture"
+    },
+    {
+      "surface": "historical neural-only reverse-mode differentiation boundary",
+      "status": "implemented and tested on the scaffold",
+      "boundary": "this behavior does not predict what the UCNS neural audit will recover for the intended PTCNA"
+    },
+    {
+      "surface": "historical UCNS 157x7x7x53 receipt integration",
+      "status": "exact receipt consumer preserved",
+      "boundary": "construction compatibility for the scaffold does not satisfy the upstream neural-audit prerequisite and transfers no proof or efficacy standing"
+    },
+    {
+      "surface": "external measurement boundary",
+      "status": "implemented injected-provider contract in the scaffold",
+      "boundary": "PTCNA does not own EDCM measurement semantics or validity"
+    },
+    {
+      "surface": "explicit historical target/fallback runtime boundary",
+      "status": "implemented and attributed",
+      "boundary": "the hashed-linear fallback remains a control/operational surface for the historical task and is not intended PTCNA"
+    },
+    {
+      "surface": "frozen historical evaluation and terminal receipt",
+      "status": "executed and sealed",
+      "boundary": "usefulness and superiority are FALSIFIED only for ptcna.experimental.v1 on the declared in-sample role-acquisition scope"
+    },
+    {
+      "surface": "intended-construction gate",
+      "status": "authority-declared",
+      "boundary": "no intended PTCNA construction before UCNS neural-audit evidence; no gap may be completed by assumption"
+    }
+  ],
+  "active_frontier": [
+    "preserve the historical scaffold, exact UCNS receipt, target/fallback routing evidence, and sealed FALSIFIED result without repairing or reinterpreting them into the intended architecture",
+    "define the future PTCNA consumer contract for UCNS neural-audit evidence without choosing the topology that the audit is supposed to reveal",
+    "preserve the intended language-input invariant: primitive input objects are UCNS Unicode-character gonols; no conventional tokenizer, subword id, whole-string hash, or opaque embedding substitution",
+    "wait for UCNS to audit a functioning conventional neural network and separate raw observations from derived relational structure before constructing a new PTCNA candidate",
+    "resolve whether the embedded historical ZetaEngine remains only scaffold history or has a separately justified role after the audit-derived architecture exists",
+    "keep operational-shell maintenance from silently promoting scaffold behavior into intended architecture"
+  ],
+  "next_actions": [
+    {
+      "action": "define the exact PTCNA-side schema for consuming future UCNS neural-audit evidence while leaving topology, sizes, routing, prime structure, and learning law unset",
+      "owner": "The-Interdependency/ptcna",
+      "dependency": "The-Interdependency/ucns docs/PTCNA_NEURAL_AUDIT_PREREQUISITE.md; schema work may define provenance and required evidence fields but must not preselect the audit outcome"
+    },
+    {
+      "action": "preserve the current scaffold and frozen critical result as immutable historical evidence; do not repair the scaffold and call the repair intended PTCNA",
+      "owner": "The-Interdependency/ptcna",
+      "dependency": "sealed result merge 2e7096f7496820a947614c8d77c4028482c77606 and current intended-construction gate"
+    },
+    {
+      "action": "after UCNS produces an exact neural-audit-derived construction contract, build a new separately identified PTCNA candidate from that evidence using Unicode-character gonols as the primitive language input",
+      "owner": "The-Interdependency/ptcna",
+      "dependency": "complete source-bound UCNS neural-audit evidence; no construction begins from the historical scaffold by default"
+    },
+    {
+      "action": "only after the new audit-derived candidate exists, preregister a new usefulness/comparison evaluation without weakening or replacing the historical falsification",
+      "owner": "The-Interdependency/ptcna",
+      "dependency": "new candidate identity and frozen evaluation protocol"
+    }
+  ],
+  "blocked": [
+    "intended PTCNA construction is BLOCKED until UCNS audits a functioning conventional neural network and produces sufficient source-bound relational construction evidence",
+    "claiming that the current four-layer 157x7x7x53 runtime is the intended PTCNA is blocked by the restored audit-before-architecture prerequisite",
+    "claiming intended PTCNA usefulness or failure from the sealed 0.3333333333 scaffold result is blocked because that result's referent is ptcna.experimental.v1 only",
+    "intended language-path implementation is blocked from using the scaffold's whole-string SHA projection as a substitute for UCNS Unicode-character gonols",
+    "claiming continuous seven-fold UCNS geometry from the historical candidate initialization receipt remains blocked"
+  ],
+  "cross_repository_relations": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "relation": "upstream authority for the required conventional-neural-network audit, the future audit-derived construction contract, and the Unicode-character gonols used as intended language-input primitives",
+      "authority_transfer": false,
+      "proof_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "relation": "external measurement authority; any future PTCNA measurement integration requires an explicit contract and transfers no validity",
+      "authority_transfer": false,
+      "measurement_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "relation": "separate semantic authority; may constrain distinctions but cannot fill missing PTCNA architecture without the required UCNS audit evidence",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "relation": "canonical build, evidence, skill propagation, and cross-repository coordination doctrine",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/a0",
+      "relation": "downstream consumer that may preserve the historical scaffold region but must not represent it as canonical intended PTCNA while the neural-audit prerequisite is unmet",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/zfae",
+      "relation": "separate repository whose future relationship to an audit-derived PTCNA remains unresolved; historical embedded scaffold code transfers no authority",
+      "authority_transfer": false
+    }
+  ],
+  "machine_entrypoints": {
+    "repo_report": "docs/work-graphs/repository-plan-report.json",
+    "system_overview": "README.md",
+    "architecture": "docs/architecture.md",
+    "intended_construction_gate": "docs/INTENDED_CONSTRUCTION_GATE.md",
+    "runtime_boundary": "ptcna/runtime.py",
+    "frozen_evaluation": "ptcna/evaluation.py",
+    "historical_neural_runtime": "ptcna/neural/pcna.py",
+    "historical_ucns_boundary": "ptcna/ucns_integration.py",
+    "historical_external_measurement_adapter": "ptcna/neural/zeta.py",
+    "quality_workflow": ".github/workflows/quality.yml"
+  },
+  "hmmm": [
+    "the minimum conventional-neural-network observations UCNS must retain to derive sufficient PTCNA construction evidence",
+    "the architecture, layer structure, sizes, prime/ring topology, routing, and learning laws that will actually be recovered from the UCNS audit",
+    "the lawful path from UCNS Unicode-character gonols through the future audit-derived architecture",
+    "whether any historical scaffold structure survives the audit as independently recovered rather than assumed",
+    "whether the historical hashed-linear fallback has any role beyond the sealed scaffold experiment",
+    "the future authority boundary, if any, between audit-derived PTCNA and The-Interdependency/zfae",
+    "the Git commit provenance of the published PyPI 0.1.1 artifacts; the GitHub repository currently exposes no release or tag binding"
+  ]
+}

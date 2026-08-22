@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ucns"
+version = "0.0.0.dev0"
+description = "UCNS geometric and topological construction research"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Erin Spencer"}]
+dependencies = ["mpmath>=1.3", "numpy>=1.24"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8",
+  "mpmath>=1.3,<2",
+  "sympy>=1.12,<2",
+]
+research = [
+  "mpmath>=1.3,<2",
+  "sympy>=1.12,<2",
+]
+build = ["build>=1.2", "twine>=5"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

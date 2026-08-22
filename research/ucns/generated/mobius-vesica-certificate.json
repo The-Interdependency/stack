@@ -1,0 +1,695 @@
+{
+  "artifact_payload_sha256": "ec58784e5a556a8abcfcba68848c4bfbd65c20210c34e27e2a99bcc6d999bfa9",
+  "authority": "Erin Spencer",
+  "boundary_contacts": {
+    "arbitrary_3d_perturbation_stability": "not claimed; isolated curve contacts in R3 are not generic",
+    "exact_count": 4,
+    "height_equation_branches": {
+      "difference_branch": "t-s = 1/2 (mod 2), obstructed because equality would require 2*radius=center_distance",
+      "difference_branch_obstructed": true,
+      "sum_branch": "t+s = 1/2 (mod 2), reduced to the certified cubic"
+    },
+    "maximum_witness_residual_binary64": 3.561664244800633e-11,
+    "minimum_tangent_cross_norm_binary64": 33.890124786859246,
+    "root_to_contact_multiplicity": 2,
+    "semantic_type": "physical equality of the two single continuous boundary curves in R3",
+    "sturm_certificate": {
+      "coefficient_order": "ascending",
+      "distinct_root_count": 2,
+      "domain": {
+        "lower": "-1",
+        "upper": "1"
+      },
+      "endpoint_values": {
+        "lower": "49/50",
+        "upper": "51/50"
+      },
+      "equation": "4*w*x^3 + 4*x^2 - 2*w*x - 3 = 0",
+      "isolating_intervals": [
+        {
+          "lower": "-465621301/536870912",
+          "midpoint_binary64": -0.8672872576789814,
+          "upper": "-59599526527/68719476736",
+          "width": "1/68719476736"
+        },
+        {
+          "lower": "59427710653/68719476736",
+          "midpoint_binary64": 0.8647870076456456,
+          "upper": "29713855327/34359738368",
+          "width": "1/68719476736"
+        }
+      ],
+      "polynomial": [
+        "-3",
+        "-1/50",
+        "4",
+        "1/25"
+      ],
+      "sturm_sequence": [
+        [
+          "-75",
+          "-1/2",
+          "100",
+          "1"
+        ],
+        [
+          "-1/6",
+          "200/3",
+          "1"
+        ],
+        [
+          "625/20003",
+          "1"
+        ],
+        [
+          "1"
+        ]
+      ],
+      "variation_lower": 2,
+      "variation_upper": 0
+    },
+    "symmetry_preserving_width_continuation": "handled separately by mobius_continuation",
+    "witnesses": [
+      {
+        "boundary_tangent_cross_norm_binary64": 34.48237446108381,
+        "contact_id": "BOUNDARY_1_0",
+        "contact_residual_binary64": 1.8016131123047067e-11,
+        "cosine_half_angle_binary64": 0.8647870076456456,
+        "left_boundary_turn": 0.1674533710853184,
+        "point_binary64": {
+          "x": 2.5196858488563123e-16,
+          "y": 0.875996875461768,
+          "z": 0.005021388566993099
+        },
+        "right_boundary_turn": 0.33254662891468156,
+        "root_interval": {
+          "lower": "59427710653/68719476736",
+          "midpoint_binary64": 0.8647870076456456,
+          "upper": "29713855327/34359738368",
+          "width": "1/68719476736"
+        }
+      },
+      {
+        "boundary_tangent_cross_norm_binary64": 33.890124786859246,
+        "contact_id": "BOUNDARY_0_1",
+        "contact_residual_binary64": 3.561664244800633e-11,
+        "cosine_half_angle_binary64": -0.8672872576789814,
+        "left_boundary_turn": 1.1658615812148059,
+        "point_binary64": {
+          "x": -1.0972125985553305e-16,
+          "y": 0.8559961878320266,
+          "z": -0.004978080078380337
+        },
+        "right_boundary_turn": 1.3341384187851941,
+        "root_interval": {
+          "lower": "-465621301/536870912",
+          "midpoint_binary64": -0.8672872576789814,
+          "upper": "-59599526527/68719476736",
+          "width": "1/68719476736"
+        }
+      },
+      {
+        "boundary_tangent_cross_norm_binary64": 33.890124786859246,
+        "contact_id": "BOUNDARY_0_0",
+        "contact_residual_binary64": 3.561642127906941e-11,
+        "cosine_half_angle_binary64": -0.8672872576789814,
+        "left_boundary_turn": 0.8341384187851941,
+        "point_binary64": {
+          "x": -6.591949208711867e-16,
+          "y": -0.8559961878320264,
+          "z": 0.004978080078380338
+        },
+        "right_boundary_turn": 1.6658615812148059,
+        "root_interval": {
+          "lower": "-465621301/536870912",
+          "midpoint_binary64": -0.8672872576789814,
+          "upper": "-59599526527/68719476736",
+          "width": "1/68719476736"
+        }
+      },
+      {
+        "boundary_tangent_cross_norm_binary64": 34.48237446108377,
+        "contact_id": "BOUNDARY_1_1",
+        "contact_residual_binary64": 1.801753278132582e-11,
+        "cosine_half_angle_binary64": 0.8647870076456456,
+        "left_boundary_turn": 1.8325466289146815,
+        "point_binary64": {
+          "x": -2.8059152223924855e-16,
+          "y": -0.8759968754617684,
+          "z": -0.0050213885669931025
+        },
+        "right_boundary_turn": 0.6674533710853185,
+        "root_interval": {
+          "lower": "59427710653/68719476736",
+          "midpoint_binary64": 0.8647870076456456,
+          "upper": "29713855327/34359738368",
+          "width": "1/68719476736"
+        }
+      }
+    ]
+  },
+  "centerline_contacts": {
+    "events": [
+      {
+        "contact_id": "CENTERLINE_TOP",
+        "left_turn": "1/6",
+        "point_binary64": {
+          "x": 0.0,
+          "y": 0.8660254037844386,
+          "z": 0.0
+        },
+        "point_exact": {
+          "x": "0",
+          "y": "(1/2)*sqrt(3)",
+          "z": "0"
+        },
+        "right_turn": "1/3"
+      },
+      {
+        "contact_id": "CENTERLINE_BOTTOM",
+        "left_turn": "5/6",
+        "point_binary64": {
+          "x": 0.0,
+          "y": -0.8660254037844386,
+          "z": 0.0
+        },
+        "point_exact": {
+          "x": "0",
+          "y": "(-1/2)*sqrt(3)",
+          "z": "0"
+        },
+        "right_turn": "2/3"
+      }
+    ],
+    "exact_count": 2,
+    "maximum_residual_binary64": 5.978733960281817e-16,
+    "semantic_type": "physical equality of the two core curves"
+  },
+  "certificate_payload_sha256": "cf8ed83be597197b03661fbd15c127b4c72b01572afc5d0356033248c91286bd",
+  "certificate_status": "certified-existence-in-standard-circular-ribbon-family",
+  "continuation": {
+    "next_proof_obligation": "solve the global phase-and-lift compatibility problem for all twelve structural pairs without importing the local four-contact certificate across the quarter/half-turn mismatch",
+    "phase_continuation_to_current_seed_candidate": {
+      "stages": [
+        {
+          "exact_reason": "quarter-turn height branch reduces to a cubic with two Sturm-certified roots",
+          "index": 0,
+          "physical_boundary_contact_count": 4,
+          "right_phase_turns": "1/4",
+          "standing": "exact-four-contact-certificate"
+        },
+        {
+          "exact_reason": "no exact root-classification theorem is asserted for this intermediate phase",
+          "index": 1,
+          "physical_boundary_contact_count": null,
+          "right_phase_turns": "5/16",
+          "standing": "general-phase-unresolved"
+        },
+        {
+          "exact_reason": "no exact root-classification theorem is asserted for this intermediate phase",
+          "index": 2,
+          "physical_boundary_contact_count": null,
+          "right_phase_turns": "3/8",
+          "standing": "general-phase-unresolved"
+        },
+        {
+          "exact_reason": "no exact root-classification theorem is asserted for this intermediate phase",
+          "index": 3,
+          "physical_boundary_contact_count": null,
+          "right_phase_turns": "7/16",
+          "standing": "general-phase-unresolved"
+        },
+        {
+          "exact_reason": "height equality splits into t=s (mod 2), where planar equality would require |2*w*cos(pi*t)|=1 although 2*w<1, and t+s=1 (mod 2), where planar equality forces sin(2*pi*t)=0 but the x coordinates still differ by one",
+          "index": 4,
+          "physical_boundary_contact_count": 0,
+          "right_phase_turns": "1/2",
+          "standing": "exact-zero-contact-obstruction-in-standard-circular-family"
+        }
+      ],
+      "standing": "certificate is lost before the half-turn endpoint; intermediate phases remain open"
+    },
+    "seed_candidate_comparison": {
+      "certificate_inherits": false,
+      "certified_half_width": "1/100",
+      "certified_phase_turns": "1/4",
+      "certified_physical_boundary_contacts": 4,
+      "chirality_match": true,
+      "phase_match": false,
+      "seed_candidate_branch": "agent/mobius-seed-of-life-v1",
+      "seed_candidate_head": "eae0776de6436b495c8d8b27d139602fde963e43",
+      "seed_candidate_pr": 174,
+      "seed_half_width": "1/100",
+      "seed_phase_physical_boundary_contacts_in_standard_family": 0,
+      "seed_phase_turns": "1/2",
+      "standing": "phase-law reconciliation required before PR-174 structural pairs may inherit the exact physical four-contact certificate",
+      "width_match": true
+    },
+    "structural_pair_placements": {
+      "adjacent_ring": 6,
+      "center_to_ring": 6,
+      "count": 12,
+      "placements": [
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            0.5,
+            0.0
+          ],
+          "pair_id": "CENTER_RING_0",
+          "right_center_binary64": [
+            1.0,
+            0.0
+          ],
+          "right_label": "RING_0",
+          "rotation_turns": "0"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            0.25000000000000006,
+            0.4330127018922193
+          ],
+          "pair_id": "CENTER_RING_1",
+          "right_center_binary64": [
+            0.5000000000000001,
+            0.8660254037844386
+          ],
+          "right_label": "RING_1",
+          "rotation_turns": "1/6"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -0.2499999999999999,
+            0.43301270189221935
+          ],
+          "pair_id": "CENTER_RING_2",
+          "right_center_binary64": [
+            -0.4999999999999998,
+            0.8660254037844387
+          ],
+          "right_label": "RING_2",
+          "rotation_turns": "1/3"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -0.5,
+            6.123233995736766e-17
+          ],
+          "pair_id": "CENTER_RING_3",
+          "right_center_binary64": [
+            -1.0,
+            1.2246467991473532e-16
+          ],
+          "right_label": "RING_3",
+          "rotation_turns": "1/2"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -0.2500000000000002,
+            -0.4330127018922192
+          ],
+          "pair_id": "CENTER_RING_4",
+          "right_center_binary64": [
+            -0.5000000000000004,
+            -0.8660254037844384
+          ],
+          "right_label": "RING_4",
+          "rotation_turns": "2/3"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.0,
+            0.0
+          ],
+          "left_label": "CENTER",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            0.25000000000000006,
+            -0.4330127018922193
+          ],
+          "pair_id": "CENTER_RING_5",
+          "right_center_binary64": [
+            0.5000000000000001,
+            -0.8660254037844386
+          ],
+          "right_label": "RING_5",
+          "rotation_turns": "5/6"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            1.0,
+            0.0
+          ],
+          "left_label": "RING_0",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            0.75,
+            0.4330127018922193
+          ],
+          "pair_id": "RING_0_RING_1",
+          "right_center_binary64": [
+            0.5000000000000001,
+            0.8660254037844386
+          ],
+          "right_label": "RING_1",
+          "rotation_turns": "1/3"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.5000000000000001,
+            0.8660254037844386
+          ],
+          "left_label": "RING_1",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            1.6653345369377348e-16,
+            0.8660254037844386
+          ],
+          "pair_id": "RING_1_RING_2",
+          "right_center_binary64": [
+            -0.4999999999999998,
+            0.8660254037844387
+          ],
+          "right_label": "RING_2",
+          "rotation_turns": "1/2"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            -0.4999999999999998,
+            0.8660254037844387
+          ],
+          "left_label": "RING_2",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -0.7499999999999999,
+            0.4330127018922194
+          ],
+          "pair_id": "RING_2_RING_3",
+          "right_center_binary64": [
+            -1.0,
+            1.2246467991473532e-16
+          ],
+          "right_label": "RING_3",
+          "rotation_turns": "2/3"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            -1.0,
+            1.2246467991473532e-16
+          ],
+          "left_label": "RING_3",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -0.7500000000000002,
+            -0.43301270189221913
+          ],
+          "pair_id": "RING_3_RING_4",
+          "right_center_binary64": [
+            -0.5000000000000004,
+            -0.8660254037844384
+          ],
+          "right_label": "RING_4",
+          "rotation_turns": "5/6"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            -0.5000000000000004,
+            -0.8660254037844384
+          ],
+          "left_label": "RING_4",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            -1.6653345369377348e-16,
+            -0.8660254037844385
+          ],
+          "pair_id": "RING_4_RING_5",
+          "right_center_binary64": [
+            0.5000000000000001,
+            -0.8660254037844386
+          ],
+          "right_label": "RING_5",
+          "rotation_turns": "1"
+        },
+        {
+          "global_simultaneous_realization_claimed": false,
+          "left_center_binary64": [
+            0.5000000000000001,
+            -0.8660254037844386
+          ],
+          "left_label": "RING_5",
+          "local_certificate_preserved": true,
+          "midpoint_binary64": [
+            0.75,
+            -0.4330127018922193
+          ],
+          "pair_id": "RING_5_RING_0",
+          "right_center_binary64": [
+            1.0,
+            0.0
+          ],
+          "right_label": "RING_0",
+          "rotation_turns": "7/6"
+        }
+      ],
+      "standing": "each is a rigid local copy preserving the dyad certificate in isolation; no simultaneous seven-band embedding is claimed"
+    },
+    "width_continuation": {
+      "stages": [
+        {
+          "certificate_sha256": "7ace003dfb2bd06ded055948bb228e6cc78f3ac4d968f398d6b362b29f1d26fe",
+          "half_width": "1/200",
+          "index": 0,
+          "null_clearance_lower_bound": "99/200",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "cf8ed83be597197b03661fbd15c127b4c72b01572afc5d0356033248c91286bd",
+          "half_width": "1/100",
+          "index": 1,
+          "null_clearance_lower_bound": "49/100",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "dd0770ba0c71aef0f84392400b5a4dfdc492d3f3fb1fe17db093ea266e1dbc9a",
+          "half_width": "1/80",
+          "index": 2,
+          "null_clearance_lower_bound": "39/80",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "17bba90c7477ae973874fc802413926993923749bad77d0903930b0f0e59ca16",
+          "half_width": "1/50",
+          "index": 3,
+          "null_clearance_lower_bound": "12/25",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "cc713b5948e377dab3cacee5c3f3a8aaca13a86941705d90df272f0961723066",
+          "half_width": "1/20",
+          "index": 4,
+          "null_clearance_lower_bound": "9/20",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "258cbd9f77e080038a3b0c2d6c20e9b866d9403d13338b77775fcaf50964dabb",
+          "half_width": "1/10",
+          "index": 5,
+          "null_clearance_lower_bound": "2/5",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "f7da6f9c88a6dc71744112df32bc784505e3fc146ec58863c1d6aa2f7414c83a",
+          "half_width": "1/5",
+          "index": 6,
+          "null_clearance_lower_bound": "3/10",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        },
+        {
+          "certificate_sha256": "03a11f4605694b922525c76705cd0b594430df269dbbc60d985c76132a2ccf0f",
+          "half_width": "1/4",
+          "index": 7,
+          "null_clearance_lower_bound": "1/4",
+          "physical_boundary_contact_count": 4,
+          "root_count_in_minus_one_to_one": 2,
+          "standing": "independently-sturm-certified"
+        }
+      ],
+      "standing": "each listed stage independently recertified"
+    }
+  },
+  "embedding": {
+    "bands": [
+      {
+        "center_x": "-1/2",
+        "chirality": "positive",
+        "half_width": "1/100",
+        "phase_turns": "0",
+        "radius": "1",
+        "slot": "LEFT"
+      },
+      {
+        "center_x": "1/2",
+        "chirality": "negative",
+        "half_width": "1/100",
+        "phase_turns": "1/4",
+        "radius": "1",
+        "slot": "RIGHT"
+      }
+    ],
+    "centerline_contacts": [
+      {
+        "contact_id": "CENTERLINE_TOP",
+        "left_turn": "1/6",
+        "point_binary64": {
+          "x": 0.0,
+          "y": 0.8660254037844386,
+          "z": 0.0
+        },
+        "point_exact": {
+          "x": "0",
+          "y": "(1/2)*sqrt(3)",
+          "z": "0"
+        },
+        "right_turn": "1/3"
+      },
+      {
+        "contact_id": "CENTERLINE_BOTTOM",
+        "left_turn": "5/6",
+        "point_binary64": {
+          "x": 0.0,
+          "y": -0.8660254037844386,
+          "z": 0.0
+        },
+        "point_exact": {
+          "x": "0",
+          "y": "(-1/2)*sqrt(3)",
+          "z": "0"
+        },
+        "right_turn": "2/3"
+      }
+    ],
+    "null_clearance_lower_bound": "49/100",
+    "parameters": {
+      "center_distance": "1",
+      "half_width": "1/100",
+      "left_chirality": "positive",
+      "left_phase_turns": "0",
+      "radius": "1",
+      "right_chirality": "negative",
+      "right_phase_turns": "1/4"
+    },
+    "schema_id": "ucns.mobius-vesica",
+    "schema_version": "0.1.0",
+    "selection_effect": "none"
+  },
+  "hmmm": [
+    "the exact four-contact witness uses a quarter-turn phase offset, while the current seven-band candidate records a half-turn first-dyad phase",
+    "the phase mismatch must be reconciled before the seven-band candidate inherits this physical-contact certificate",
+    "physical boundary contacts are symmetry-supported and should not be confused with a stable link of disjoint curves"
+  ],
+  "jurisdiction": {
+    "construction_owner": "UCNS",
+    "edcm_activation": false,
+    "metapat_activation": false,
+    "metapat_role": "later semantic consumer only; no geometry or theorem-status transfer"
+  },
+  "nonclaims": [
+    "not a classification of the complete two-surface intersection locus",
+    "not a proof of arbitrary-perturbation stability",
+    "not a linking-number, Hopf-link, or ambient-isotopy certificate",
+    "not an established electron ontology or Pauli-exclusion derivation",
+    "not a canonical seven-band phase law",
+    "not a spectral operator or correspondence with zeta zeros",
+    "not a proof of the Riemann hypothesis or any zeta-function theorem",
+    "not EDCM measurement validity or METAPAT validity"
+  ],
+  "null_center": {
+    "exact_clearance_lower_bound": "49/100",
+    "point": [
+      "0",
+      "0",
+      "0"
+    ],
+    "standing": "origin excluded from each band by triangle inequality; not promoted to a probability node or UCNS Structural Null"
+  },
+  "pair_surface_intersection_locus": {
+    "reason": "this certificate counts the two centerlines and the two continuous boundaries, not every point where the two two-dimensional surfaces meet",
+    "standing": "unresolved"
+  },
+  "quotient": {
+    "analytic_standing": "follows identically from odd chirality in the frame angle",
+    "maximum_sampled_return_residual_binary64": 9.420675538114398e-16,
+    "maximum_sampled_seam_residual_binary64": 7.108980619395182e-16,
+    "one_turn_identification": "X(t+1,u)=X(t,-u)",
+    "two_turn_return": "X(t+2,u)=X(t,u)"
+  },
+  "record_status": "authority-directed-exact-candidate-certificate",
+  "recorded_on": "2026-08-10",
+  "schema_id": "ucns.mobius-vesica.certificate",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source_basis": {
+    "boundary_claim_line": 10,
+    "centerline_claim_line": 9,
+    "name": "Möbius Strips and Quantum Geometry.txt",
+    "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1",
+    "source_claims": {
+      "centerlines": "exactly two contacts",
+      "single_continuous_boundaries": "exactly four distinct physical contacts"
+    }
+  }
+}

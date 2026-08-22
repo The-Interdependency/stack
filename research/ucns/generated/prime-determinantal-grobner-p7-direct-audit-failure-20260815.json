@@ -1,0 +1,42 @@
+{
+  "schema_id": "ucns.prime-determinantal-grobner.direct-audit-failure",
+  "schema_version": "0.1.0",
+  "prime": 7,
+  "protocol_sha256": "7841af162698efb823db79b70ef7b99a5ac53d27e2bbb318f97f36aecae515b4",
+  "source_commit": "9e606190f99f07473d7a1ec2021ce47675358758",
+  "uncommitted_module_sha256": "c8620ae412dedb1ebb5762bd41b728969ec0eacb898c7227385bfa105edf7ef6",
+  "observed_at": "2026-08-15T13:25:13Z",
+  "outcome": "abandoned-near-wall-boundary",
+  "completed": false,
+  "selection_effect": "none",
+  "execution": {
+    "scheduling": "single-process sequential audit pairs",
+    "elapsed_wall_seconds": 7176.0,
+    "user_cpu_seconds": 7163.53,
+    "system_cpu_seconds": 3.59,
+    "maximum_resident_set_kib": 115976,
+    "protocol_wall_bound_seconds": 7200,
+    "protocol_address_space_bound_gib": 8,
+    "operator_stop_margin_seconds": 24.0,
+    "stop_reason": "The operator interrupted before the hard wall boundary because polling granularity could not guarantee termination at or below exactly 7200 seconds."
+  },
+  "failure": {
+    "stage": "primary direct DomainMatrix determinant within frozen P7 audit set",
+    "exception": "KeyboardInterrupt",
+    "exact_mismatch_observed": false,
+    "completed_pair_count": "hmmm",
+    "stopping_pair": "hmmm",
+    "reason_unknown": "The first implementation did not emit incremental audit progress or a failure receipt before the operator stop."
+  },
+  "interpretation": [
+    "This run is incomplete evidence and not a direct-minor audit certificate.",
+    "No mismatch was observed before interruption, but silence does not establish agreement.",
+    "The single-process schedule did not provide a safe completion margin under the frozen wall bound.",
+    "A retry may change deterministic execution scheduling without changing the frozen subset selection, exact determinant algorithms, coefficient field, or equality criteria."
+  ],
+  "nonclaims": [
+    "not a completed protocol run",
+    "not evidence that the remaining direct minors agree",
+    "not a basis, phase, isotopy, prime-forcing, spectral, zeta, or theorem-status result"
+  ]
+}

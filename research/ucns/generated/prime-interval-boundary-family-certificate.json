@@ -1,0 +1,62 @@
+{
+  "authority": "Erin Spencer",
+  "comparison": {
+    "P5_full_mixed_Smith_factors": [1,1,1,1,1,1,1,1,7,217],
+    "P5_full_mixed_matrix_determinant": 1519,
+    "P5_informative_length_three_Milnor_values": [0,0,0,0,0],
+    "P7_full_mixed_Smith_factors": [1,1,1,1,1,1,1,1,1,1,1,1,1,73423],
+    "P7_full_mixed_matrix_determinant": 73423,
+    "P7_informative_length_three_Milnor_values": [0,0,0,0,0],
+    "finite_width_ribbon_lower_bound": "7/100",
+    "interval_centerline_target": "9/100",
+    "phase_law_warning": "both selected candidates have center phase winding three and therefore the same T(2,7) center-boundary component; this boundary knot type alone does not encode the prime label"
+  },
+  "dependencies": {
+    "mpmath": ">=1.3,<2 for directed interval endpoints",
+    "sympy": ">=1.12,<2 for exact Smith normal form"
+  },
+  "expanded_family_payload_sha256": "76676b8620adbecdf9c93496ba926f346b8eba1635a3db056625153f13fc2e89",
+  "next": "compute length-four Milnor and multivariable Alexander-type invariants, then seek a proof-assistant replay before any spectral object",
+  "nonclaims": ["no arithmetic redefinition","no electron ontology","no complete ambient-isotopy classification","no zeta theorem","no proof of the Riemann hypothesis"],
+  "p5": {
+    "boundary_components": [
+      {"component":"dC","core_boundary_linking":7,"knot_type":"torus knot T(2,7)","slope":{"longitude":2,"meridian":7}},
+      {"component":"dR0","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR1","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR2","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR3","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}}
+    ],
+    "boundary_linking_matrix": {"Smith_nonzero_invariant_factors":[4,4],"nullity_over_Q":3,"rank_over_Q":2},
+    "expanded_prime_payload_sha256": "c138319b3b9e62507f8b873b50ef8f74533d79c7703383b9f14e402131af3bac",
+    "full_core_boundary_matrix": {"Smith_nonzero_invariant_factors":[1,1,1,1,1,1,1,1,7,217],"absolute_determinant_factorization":{"31":1,"7":2},"determinant":1519,"nullity_over_Q":0,"rank_over_Q":10},
+    "generic_core_diagram": {"crossing_count":16,"minimum_height_gap_decimal":"0.1","minimum_turn_gap_decimal":"0.000340771090498766417106550583512","residual_ribbon_clearance":"42/625"},
+    "interval_replay": {"all_pairs_certified":true,"boxes_evaluated":4340,"centerline_target":"9/100","decimal_precision":70,"finite_width_ribbon_separation_lower_bound":"7/100","maximum_depth":20,"method":"mpmath.iv directed interval endpoints plus exact dyadic Lipschitz subdivision","minimum_leaf_lower_bound_decimal":"0.0900086235387926259626106258406","pair_count":10},
+    "length_three_Milnor": {"Borromean_regression":{"antisymmetry_check":true,"cyclic_check":true,"mu_012":-1,"test_link":"closure of (sigma_1 sigma_2^-1)^3"},"informative_triples":[{"triple":["C","R0","R1"],"value":0},{"triple":["C","R0","R2"],"value":0},{"triple":["C","R0","R3"],"value":0},{"triple":["C","R1","R3"],"value":0},{"triple":["R0","R1","R3"],"value":0}],"integer_valued_algebraically_split_triples":5,"nonzero_integer_values":0,"total_component_triples":10},
+    "prime": 5
+  },
+  "p7": {
+    "boundary_components": [
+      {"component":"dC","core_boundary_linking":7,"knot_type":"torus knot T(2,7)","slope":{"longitude":2,"meridian":7}},
+      {"component":"dR0","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR1","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR2","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR3","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR4","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}},
+      {"component":"dR5","core_boundary_linking":1,"knot_type":"unknot (T(2,1))","slope":{"longitude":2,"meridian":1}}
+    ],
+    "boundary_linking_matrix": {"Smith_nonzero_invariant_factors":[4,4,4,4,4,4],"nullity_over_Q":1,"rank_over_Q":6},
+    "expanded_prime_payload_sha256": "4d595e6bc786e66ce01c2dceca654e78298a4696d49477345b8428baf77e3539",
+    "full_core_boundary_matrix": {"Smith_nonzero_invariant_factors":[1,1,1,1,1,1,1,1,1,1,1,1,1,73423],"absolute_determinant_factorization":{"17":1,"617":1,"7":1},"determinant":73423,"nullity_over_Q":0,"rank_over_Q":14},
+    "generic_core_diagram": {"crossing_count":36,"minimum_height_gap_decimal":"0.1","minimum_turn_gap_decimal":"0.000171017593726416038891592024273","residual_ribbon_clearance":"42/625"},
+    "interval_replay": {"all_pairs_certified":true,"boxes_evaluated":6173,"centerline_target":"9/100","decimal_precision":70,"finite_width_ribbon_separation_lower_bound":"7/100","maximum_depth":20,"method":"mpmath.iv directed interval endpoints plus exact dyadic Lipschitz subdivision","minimum_leaf_lower_bound_decimal":"0.0900051500007549715176580207299","pair_count":21},
+    "length_three_Milnor": {"Borromean_regression":{"antisymmetry_check":true,"cyclic_check":true,"mu_012":-1,"test_link":"closure of (sigma_1 sigma_2^-1)^3"},"informative_triples":[{"triple":["R0","R1","R4"],"value":0},{"triple":["R0","R1","R5"],"value":0},{"triple":["R0","R2","R5"],"value":0},{"triple":["R0","R4","R5"],"value":0},{"triple":["R1","R4","R5"],"value":0}],"integer_valued_algebraically_split_triples":5,"nonzero_integer_values":0,"total_component_triples":35},
+    "prime": 7
+  },
+  "payload_sha256": "7111ebf66375152cfad3986f56b5f72cc689a70dfc00adc9be6cf0066aaa6b2b",
+  "recorded_on": "2026-08-11",
+  "research_order": [7,5],
+  "schema_id": "ucns.prime-interval-boundary-links.family.summary",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {"line_basis":[5,6,13,14,15,16,17],"name":"Möbius Strips and Quantum Geometry.txt","sha256":"dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"}
+}

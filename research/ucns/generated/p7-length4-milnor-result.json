@@ -1,0 +1,107 @@
+{
+  "algebraic_gate": {
+    "commutator_convention": "[a,b]=a b a^-1 b^-1",
+    "degree_three_coefficients": {
+      "X1_X2_X3": 1,
+      "X2_X1_X3": -1,
+      "X3_X1_X2": -1,
+      "X3_X2_X1": 1
+    },
+    "lower_degree_nonzero_coefficients": {},
+    "passed": true,
+    "word": "[[x1,x2],x3]"
+  },
+  "crossing_ids": [
+    "R0::R1::0",
+    "R0::R1::1",
+    "R0::R4::0",
+    "R0::R4::1",
+    "R0::R5::0",
+    "R0::R5::1",
+    "R1::R5::0",
+    "R1::R5::1",
+    "R4::R5::0",
+    "R4::R5::1"
+  ],
+  "cyclic_rotations": [
+    {
+      "coefficient": 0,
+      "order": [
+        "R0",
+        "R1",
+        "R4",
+        "R5"
+      ]
+    },
+    {
+      "coefficient": 0,
+      "order": [
+        "R1",
+        "R4",
+        "R5",
+        "R0"
+      ]
+    },
+    {
+      "coefficient": 0,
+      "order": [
+        "R4",
+        "R5",
+        "R0",
+        "R1"
+      ]
+    },
+    {
+      "coefficient": 0,
+      "order": [
+        "R5",
+        "R0",
+        "R1",
+        "R4"
+      ]
+    }
+  ],
+  "diagram_standing": "computer-assisted fixed generic P7 diagram with recorded nonzero margins",
+  "lower_order_gates": {
+    "pairwise_linking_numbers": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "preferred_longitude_nonzero_degree_one_or_two": [],
+    "triple_milnor_invariants": [
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "nonclaims": [
+    "not a complete ambient-isotopy classification",
+    "not a phase law or prime-forcing result",
+    "not a spectral or zeta claim",
+    "not theorem-status escalation"
+  ],
+  "obstruction": null,
+  "preregistered_target": [
+    "R0",
+    "R1",
+    "R4",
+    "R5"
+  ],
+  "preregistration": {
+    "document": "docs/PREREGISTRATION_P7_LENGTH4_MILNOR.md",
+    "frozen_before_evaluation": true,
+    "sha256": "c013b36ff1d1c982c0531b061e8ce024b6db2aa3dbb7a2072bc25a75e74b1bb1"
+  },
+  "primary_coefficient": 0,
+  "primary_invariant": "mu_bar_R0_R1_R4_R5",
+  "reverse_word_coefficient": 0,
+  "schema_id": "ucns.p7-length4-milnor.result",
+  "schema_version": "1.0.0",
+  "selection_effect": "none",
+  "status": "zero"
+}

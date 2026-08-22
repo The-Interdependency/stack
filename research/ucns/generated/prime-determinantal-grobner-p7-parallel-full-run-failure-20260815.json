@@ -1,0 +1,54 @@
+{
+  "schema_id": "ucns.prime-determinantal-grobner.direct-audit-failure",
+  "schema_version": "0.1.0",
+  "prime": 7,
+  "protocol_sha256": "7841af162698efb823db79b70ef7b99a5ac53d27e2bbb318f97f36aecae515b4",
+  "source_commit": "9e606190f99f07473d7a1ec2021ce47675358758",
+  "uncommitted_module_git_blob": "deb8c3056dd9c76e087be1559cd1db2a23b2c230",
+  "observed_at": "2026-08-15T15:38:58Z",
+  "outcome": "hard-wall-bound-exhausted",
+  "completed": false,
+  "selection_effect": "none",
+  "execution": {
+    "scheduling": "two-worker deterministic audit followed by full basis replay",
+    "worker_count": 2,
+    "elapsed_wall_seconds": 7200.0,
+    "user_cpu_seconds": 13894.72,
+    "system_cpu_seconds": 6.09,
+    "maximum_resident_set_kib": 105276,
+    "protocol_wall_bound_seconds": 7200,
+    "protocol_address_space_bound_gib": 8,
+    "external_exit_status": 124,
+    "stop_reason": "The external hard-wall guard delivered SIGINT at exactly 7200 seconds."
+  },
+  "failure": {
+    "stage": "primary direct determinant within the frozen P7 audit set",
+    "exception": "KeyboardInterrupt",
+    "exact_mismatch_observed": false,
+    "completed_pair_count": "hmmm",
+    "stopping_pair": "hmmm",
+    "basis_replay_started": false,
+    "existing_success_receipt_unchanged": true,
+    "reason_unknown": "The implementation intentionally emitted no partial success receipt or incremental pair state before the hard stop."
+  },
+  "follow_up_profile": {
+    "selector": [
+      "nonzero-anchor:first:first",
+      "pivot"
+    ],
+    "sympy_domainmatrix_bareiss_seconds": 136.399662,
+    "independent_fraction_field_gaussian_seconds": 17.521575,
+    "finding": "The primary Bareiss determinant path, not the independent Gaussian path, dominated audit wall time."
+  },
+  "interpretation": [
+    "This run is incomplete evidence and not a direct-minor audit certificate.",
+    "No mismatch was observed before the hard stop, but silence does not establish agreement.",
+    "The two-worker schedule alone did not complete the slow primary determinant backend inside the frozen wall bound.",
+    "The frozen selector set and exact equality criteria remain unchanged for the optimized retry."
+  ],
+  "nonclaims": [
+    "not a completed protocol run",
+    "not evidence that the remaining direct minors agree",
+    "not a basis, phase, isotopy, prime-forcing, spectral, zeta, or theorem-status result"
+  ]
+}

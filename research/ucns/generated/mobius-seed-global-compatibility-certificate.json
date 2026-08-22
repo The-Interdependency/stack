@@ -1,0 +1,227 @@
+{
+  "assumptions": [
+    "structural graph is W7 with six spokes and six rim edges",
+    "each global band has one constant chirality and one constant surface phase",
+    "each inheriting edge is a rigid copy of the certified opposite-chirality quarter-turn dyad",
+    "surface phase is quotiented modulo one half turn; retaining a seam label can only make compatibility stricter"
+  ],
+  "authority": "Erin Spencer",
+  "center_channel_bound": {
+    "minimum_channels_for_six_rigid_spokes": 6,
+    "negative_phases": [
+      "0",
+      "1/12",
+      "1/6",
+      "1/4",
+      "1/3",
+      "5/12"
+    ],
+    "positive_phases": [
+      "0",
+      "1/12",
+      "1/6",
+      "1/4",
+      "1/3",
+      "5/12"
+    ]
+  },
+  "chirality_only": {
+    "maximizers_with_center_positive": [
+      {
+        "CENTER": "positive",
+        "RING_0": "positive",
+        "RING_1": "negative",
+        "RING_2": "positive",
+        "RING_3": "negative",
+        "RING_4": "positive",
+        "RING_5": "negative"
+      },
+      {
+        "CENTER": "positive",
+        "RING_0": "negative",
+        "RING_1": "positive",
+        "RING_2": "negative",
+        "RING_3": "positive",
+        "RING_4": "negative",
+        "RING_5": "positive"
+      }
+    ],
+    "maximum_opposite_edges": 9,
+    "minimum_same_chirality_edges": 3
+  },
+  "full_state": {
+    "compatible_incident_checks": 0,
+    "matching_witness": [
+      "CENTER_RING_0",
+      "RING_1_RING_2",
+      "RING_3_RING_4"
+    ],
+    "maximum_fraction": "1/4",
+    "maximum_matching_count": 20,
+    "maximum_simultaneous_exact_dyads": 3,
+    "minimum_pairs_requiring_relaxation": 9,
+    "oriented_incidence_checks": 132
+  },
+  "graph": {
+    "adjacent_edge_pairs": 33,
+    "edges": [
+      {
+        "axis_turns": "0",
+        "id": "CENTER_RING_0",
+        "left": "CENTER",
+        "right": "RING_0"
+      },
+      {
+        "axis_turns": "1/6",
+        "id": "CENTER_RING_1",
+        "left": "CENTER",
+        "right": "RING_1"
+      },
+      {
+        "axis_turns": "1/3",
+        "id": "CENTER_RING_2",
+        "left": "CENTER",
+        "right": "RING_2"
+      },
+      {
+        "axis_turns": "1/2",
+        "id": "CENTER_RING_3",
+        "left": "CENTER",
+        "right": "RING_3"
+      },
+      {
+        "axis_turns": "2/3",
+        "id": "CENTER_RING_4",
+        "left": "CENTER",
+        "right": "RING_4"
+      },
+      {
+        "axis_turns": "5/6",
+        "id": "CENTER_RING_5",
+        "left": "CENTER",
+        "right": "RING_5"
+      },
+      {
+        "axis_turns": "1/3",
+        "id": "RING_0_RING_1",
+        "left": "RING_0",
+        "right": "RING_1"
+      },
+      {
+        "axis_turns": "1/2",
+        "id": "RING_1_RING_2",
+        "left": "RING_1",
+        "right": "RING_2"
+      },
+      {
+        "axis_turns": "2/3",
+        "id": "RING_2_RING_3",
+        "left": "RING_2",
+        "right": "RING_3"
+      },
+      {
+        "axis_turns": "5/6",
+        "id": "RING_3_RING_4",
+        "left": "RING_3",
+        "right": "RING_4"
+      },
+      {
+        "axis_turns": "1",
+        "id": "RING_4_RING_5",
+        "left": "RING_4",
+        "right": "RING_5"
+      },
+      {
+        "axis_turns": "7/6",
+        "id": "RING_5_RING_0",
+        "left": "RING_5",
+        "right": "RING_0"
+      }
+    ]
+  },
+  "lift_boundary": {
+    "physical_contact": "delta_z=0",
+    "pr174_events": "nonzero sign-reversing lift differences are projected braid crossings, not physical centerline contacts",
+    "same_event_compatible": false,
+    "strict_braid": "delta_z!=0"
+  },
+  "next": [
+    "solve a seam-compatible nonconstant phase field",
+    "test recursive or multichannel carriers; center lower bound is six channels",
+    "classify other local two-plus-four contact families",
+    "split physical contacts from projected braid events"
+  ],
+  "nonclaims": [
+    "not an obstruction to every Möbius Seed embedding",
+    "not a complete lift or ambient-isotopy theorem",
+    "not an electron model or Pauli derivation",
+    "not a zeta theorem or proof of the Riemann hypothesis"
+  ],
+  "payload_sha256": "303b8ab1c5a52f6e1a0cf06ba7f6ebdf07c819aff93a53e07ef28b430bcacb9c",
+  "pr174": {
+    "assignment": {
+      "CENTER": {
+        "chirality": "positive",
+        "phase_mod_half": "0"
+      },
+      "RING_0": {
+        "chirality": "negative",
+        "phase_mod_half": "0"
+      },
+      "RING_1": {
+        "chirality": "negative",
+        "phase_mod_half": "1/12"
+      },
+      "RING_2": {
+        "chirality": "negative",
+        "phase_mod_half": "1/6"
+      },
+      "RING_3": {
+        "chirality": "negative",
+        "phase_mod_half": "1/4"
+      },
+      "RING_4": {
+        "chirality": "negative",
+        "phase_mod_half": "1/3"
+      },
+      "RING_5": {
+        "chirality": "negative",
+        "phase_mod_half": "5/12"
+      }
+    },
+    "inherited_count": 0,
+    "inherited_edges": []
+  },
+  "recorded_on": "2026-08-10",
+  "rotation_law": {
+    "phase_modulus": "1/2 turn",
+    "plus_at_left": [
+      "(+,-rho/2)",
+      "(-,1/4+rho/2)"
+    ],
+    "plus_at_right": [
+      "(-,rho/2)",
+      "(+,1/4-rho/2)"
+    ]
+  },
+  "schema_id": "ucns.mobius-seed.global-compatibility",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "name": "Möbius Strips and Quantum Geometry.txt",
+    "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"
+  },
+  "stack": {
+    "seed": {
+      "branch": "agent/mobius-seed-of-life-v1",
+      "head": "eae0776de6436b495c8d8b27d139602fde963e43",
+      "pr": 174
+    },
+    "vesica": {
+      "branch": "agent/mobius-vesica-certificate",
+      "head": "c7354608711bc7471aef881777800a686c8385c4",
+      "pr": 175
+    }
+  },
+  "status": "obstructed-under-single-constant-state-rigid-copy-assumptions"
+}

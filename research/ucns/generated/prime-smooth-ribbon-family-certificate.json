@@ -1,0 +1,1268 @@
+{
+  "authority": "Erin Spencer",
+  "comparison": {
+    "centerline_target": "9/100",
+    "finite_width_ribbon_lower_bound": "7/100",
+    "p5_linking_matrix_rank": 2,
+    "p5_nonzero_link_pairs": 2,
+    "p7_linking_matrix_rank": 6,
+    "p7_nonzero_link_pairs": 12,
+    "same_protocol": true,
+    "standing": "two independently constructed prime candidates; P5 is not obtained by deleting P7 carriers"
+  },
+  "next": [
+    "replay the separation proof with rigorous interval arithmetic or a proof assistant",
+    "compute higher-order link invariants beyond the complete pairwise linking matrix",
+    "derive boundary-component link invariants and whole-link ambient isotopy",
+    "only then define a spectral operator"
+  ],
+  "nonclaims": [
+    "no arithmetic redefinition",
+    "no electron ontology",
+    "no complete link classification",
+    "no zeta theorem",
+    "no proof of the Riemann hypothesis"
+  ],
+  "p5": {
+    "authority": "Erin Spencer",
+    "complete_pairwise_linking_matrix": {
+      "carrier_order": [
+        "C",
+        "R0",
+        "R1",
+        "R2",
+        "R3"
+      ],
+      "determinant": 0,
+      "matrix": [
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          1,
+          0
+        ]
+      ],
+      "nonzero_link_graph": {
+        "component_count": 3,
+        "cycle_rank": 0,
+        "edge_count": 2
+      },
+      "nullity_over_Q": 3,
+      "orientation_boundary": "reorienting a component conjugates the matrix by a diagonal sign matrix; rank, nullity, determinant, and zero pattern remain invariant",
+      "pair_value_counts": {
+        "0": 8,
+        "1": 2
+      },
+      "rank_over_Q": 2,
+      "regularized_tangent_pairs": [
+        "R0::R2",
+        "R1::R3"
+      ]
+    },
+    "event_semantics": {
+      "physical_boundary_contacts_claimed": 0,
+      "physical_centerline_contacts_claimed": 0,
+      "projected_coincidences": "retained",
+      "strict_braid_order": "retained"
+    },
+    "global_separation": {
+      "all_pairs_certified": true,
+      "centerline_separation_target": "9/100",
+      "global_finite_width_ribbon_separation_lower_bound": "7/100",
+      "maximum_subdivision_depth": 20,
+      "minimum_leaf_lower_bound_binary64": 0.09000862353779256,
+      "pair_certificates": [
+        {
+          "boxes_evaluated": 427,
+          "certified": true,
+          "certified_leaf_boxes": 214,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.0902611315957381,
+          "minimum_sample_distance_binary64": 0.10001567681855256,
+          "pair_id": "C::R0",
+          "right_speed_upper_bound_binary64": 6.396750550424602,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 419,
+          "certified": true,
+          "certified_leaf_boxes": 210,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09026113159573812,
+          "minimum_sample_distance_binary64": 0.10001567681855256,
+          "pair_id": "C::R1",
+          "right_speed_upper_bound_binary64": 6.396750550424602,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 481,
+          "certified": true,
+          "certified_leaf_boxes": 241,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09017339023184964,
+          "minimum_sample_distance_binary64": 0.10001567681855256,
+          "pair_id": "C::R2",
+          "right_speed_upper_bound_binary64": 7.241437537143951,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 513,
+          "certified": true,
+          "certified_leaf_boxes": 257,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09001898272060166,
+          "minimum_sample_distance_binary64": 0.10001567681855256,
+          "pair_id": "C::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 593,
+          "certified": true,
+          "certified_leaf_boxes": 297,
+          "left_speed_upper_bound_binary64": 6.396750550424602,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09064891183583099,
+          "minimum_sample_distance_binary64": 0.1002341686029475,
+          "pair_id": "R0::R1",
+          "right_speed_upper_bound_binary64": 6.396750550424602,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 179,
+          "certified": true,
+          "certified_leaf_boxes": 90,
+          "left_speed_upper_bound_binary64": 6.396750550424602,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09181185776687548,
+          "minimum_sample_distance_binary64": 0.18532149146015878,
+          "pair_id": "R0::R2",
+          "right_speed_upper_bound_binary64": 7.241437537143951,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 415,
+          "certified": true,
+          "certified_leaf_boxes": 208,
+          "left_speed_upper_bound_binary64": 6.396750550424602,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09012657094714016,
+          "minimum_sample_distance_binary64": 0.10023416860294751,
+          "pair_id": "R0::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 381,
+          "certified": true,
+          "certified_leaf_boxes": 191,
+          "left_speed_upper_bound_binary64": 6.396750550424602,
+          "maximum_depth": 19,
+          "minimum_leaf_lower_bound_binary64": 0.09001428240066679,
+          "minimum_sample_distance_binary64": 0.1,
+          "pair_id": "R1::R2",
+          "right_speed_upper_bound_binary64": 7.241437537143951,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 111,
+          "certified": true,
+          "certified_leaf_boxes": 56,
+          "left_speed_upper_bound_binary64": 6.396750550424602,
+          "maximum_depth": 11,
+          "minimum_leaf_lower_bound_binary64": 0.10030979800952992,
+          "minimum_sample_distance_binary64": 0.29766930580629797,
+          "pair_id": "R1::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 821,
+          "certified": true,
+          "certified_leaf_boxes": 411,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 20,
+          "minimum_leaf_lower_bound_binary64": 0.09000862353779256,
+          "minimum_sample_distance_binary64": 0.10009379105689005,
+          "pair_id": "R2::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        }
+      ],
+      "pair_count": 10,
+      "parameter_domain_per_pair": "[0,1] x [0,1]",
+      "ribbon_half_width": "1/100",
+      "roundoff_buffer": 1e-12,
+      "standing": "deterministic binary64 Lipschitz subdivision with declared roundoff buffer; not formal interval arithmetic",
+      "total_boxes_evaluated": 4340,
+      "triangle_inequality": "d(ribbon_i,ribbon_j) >= d(centerline_i,centerline_j)-2*w"
+    },
+    "nonclaims": [
+      "not a redefinition of arithmetic primality",
+      "not an established electron ontology or Pauli-exclusion derivation",
+      "not a complete link classification",
+      "not a zeta-function theorem or proof of the Riemann hypothesis",
+      "not EDCM or METAPAT validity"
+    ],
+    "payload_sha256": "c638dcc096e3a896cea3f2bb6e6e83039dadbec97d6c446f99a54d6ccc4f999f",
+    "prime": 5,
+    "recorded_on": "2026-08-11",
+    "schema_id": "ucns.prime-smooth-ribbons",
+    "schema_version": "0.1.0",
+    "selection_effect": "none",
+    "smooth_realization": {
+      "construction_lineage": "global prime phase-and-lift candidate first; smooth fields replace its lift interpolation only",
+      "fields": [
+        {
+          "carrier": "C",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "0",
+              "turn": "1/12"
+            },
+            {
+              "height": "0",
+              "turn": "1/6"
+            },
+            {
+              "height": "0",
+              "turn": "1/3"
+            },
+            {
+              "height": "0",
+              "turn": "5/12"
+            },
+            {
+              "height": "0",
+              "turn": "7/12"
+            },
+            {
+              "height": "0",
+              "turn": "2/3"
+            },
+            {
+              "height": "0",
+              "turn": "5/6"
+            },
+            {
+              "height": "0",
+              "turn": "11/12"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "0",
+          "period": "1 turn",
+          "value_range": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "carrier": "R0",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "1/10",
+              "turn": "1/4"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/3"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "1/5",
+              "turn": "2/3"
+            },
+            {
+              "height": "1/5",
+              "turn": "3/4"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "6/5",
+          "period": "1 turn",
+          "value_range": [
+            "1/10",
+            "1/5"
+          ]
+        },
+        {
+          "carrier": "R1",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "1/5",
+              "turn": "0"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "1/10",
+              "turn": "7/12"
+            },
+            {
+              "height": "1/5",
+              "turn": "3/4"
+            },
+            {
+              "height": "1/5",
+              "turn": "11/12"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "6/5",
+          "period": "1 turn",
+          "value_range": [
+            "1/10",
+            "1/5"
+          ]
+        },
+        {
+          "carrier": "R2",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "-1/10",
+              "turn": "0"
+            },
+            {
+              "height": "1/5",
+              "turn": "1/6"
+            },
+            {
+              "height": "1/5",
+              "turn": "1/4"
+            },
+            {
+              "height": "1/10",
+              "turn": "3/4"
+            },
+            {
+              "height": "1/10",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "18/5",
+          "period": "1 turn",
+          "value_range": [
+            "-1/10",
+            "1/5"
+          ]
+        },
+        {
+          "carrier": "R3",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "1/10",
+              "turn": "0"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/12"
+            },
+            {
+              "height": "-1/5",
+              "turn": "1/4"
+            },
+            {
+              "height": "1/5",
+              "turn": "5/12"
+            },
+            {
+              "height": "1/5",
+              "turn": "1/2"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "24/5",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "1/5"
+          ]
+        }
+      ],
+      "mobius_return": {
+        "maximum_sampled_one_turn_residual_binary64": 7.550332863779066e-16,
+        "maximum_sampled_two_turn_residual_binary64": 2.340208193699771e-15,
+        "one_turn": "X(t+1,u)=X(t,-u)",
+        "two_turn": "X(t+2,u)=X(t,u)"
+      },
+      "prime": 5,
+      "smoothness": {
+        "class": "C-infinity",
+        "field": "flat-step interpolation on every periodic knot interval",
+        "maximum_event_height_residual_binary64": 0.0,
+        "no_overshoot": true
+      }
+    },
+    "source": {
+      "line_basis": [
+        5,
+        6,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "name": "Möbius Strips and Quantum Geometry.txt",
+      "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"
+    },
+    "tangent_regularization": {
+      "epsilon": "1/100",
+      "pair_count": 2,
+      "pairs": [
+        {
+          "linking_number": 0,
+          "minimum_ribbon_clearance_during_isotopy": "3/50",
+          "moved_carrier": "R0",
+          "pair_id": "R0::R2",
+          "post_translation_projected_center_distance": "201/100",
+          "regularized_projection_crossings": 0,
+          "standing": "pair-specific outward translation; linking number is invariant because the complete ribbon remains disjoint throughout",
+          "translation_epsilon": "1/100",
+          "translation_unit_vector_binary64": [
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "linking_number": 0,
+          "minimum_ribbon_clearance_during_isotopy": "3/50",
+          "moved_carrier": "R1",
+          "pair_id": "R1::R3",
+          "post_translation_projected_center_distance": "201/100",
+          "regularized_projection_crossings": 0,
+          "standing": "pair-specific outward translation; linking number is invariant because the complete ribbon remains disjoint throughout",
+          "translation_epsilon": "1/100",
+          "translation_unit_vector_binary64": [
+            0.0,
+            1.0
+          ]
+        }
+      ]
+    },
+    "unresolved": [
+      "formal interval or proof-assistant replay of the global separation certificate",
+      "ambient-isotopy classification of the whole multi-ribbon link",
+      "higher-order invariants not determined by pairwise linking numbers",
+      "boundary-component link invariants",
+      "spectral operator and prime-power law",
+      "zeta-zero correspondence"
+    ]
+  },
+  "p7": {
+    "authority": "Erin Spencer",
+    "complete_pairwise_linking_matrix": {
+      "carrier_order": [
+        "C",
+        "R0",
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "determinant": 0,
+      "matrix": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          0,
+          0,
+          1,
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ]
+      ],
+      "nonzero_link_graph": {
+        "component_count": 1,
+        "cycle_rank": 6,
+        "edge_count": 12
+      },
+      "nullity_over_Q": 1,
+      "orientation_boundary": "reorienting a component conjugates the matrix by a diagonal sign matrix; rank, nullity, determinant, and zero pattern remain invariant",
+      "pair_value_counts": {
+        "0": 9,
+        "1": 12
+      },
+      "rank_over_Q": 6,
+      "regularized_tangent_pairs": [
+        "R0::R3",
+        "R1::R4",
+        "R2::R5"
+      ]
+    },
+    "event_semantics": {
+      "physical_boundary_contacts_claimed": 0,
+      "physical_centerline_contacts_claimed": 0,
+      "projected_coincidences": "retained",
+      "strict_braid_order": "retained"
+    },
+    "global_separation": {
+      "all_pairs_certified": true,
+      "centerline_separation_target": "9/100",
+      "global_finite_width_ribbon_separation_lower_bound": "7/100",
+      "maximum_subdivision_depth": 20,
+      "minimum_leaf_lower_bound_binary64": 0.09000514999975501,
+      "pair_certificates": [
+        {
+          "boxes_evaluated": 181,
+          "certified": true,
+          "certified_leaf_boxes": 91,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.091757250681211,
+          "minimum_sample_distance_binary64": 0.2019790820236536,
+          "pair_id": "C::R0",
+          "right_speed_upper_bound_binary64": 7.241437537143951,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 221,
+          "certified": true,
+          "certified_leaf_boxes": 111,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09133067822117358,
+          "minimum_sample_distance_binary64": 0.2011749356398679,
+          "pair_id": "C::R1",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 189,
+          "certified": true,
+          "certified_leaf_boxes": 95,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.09022570361952546,
+          "minimum_sample_distance_binary64": 0.20468653537988557,
+          "pair_id": "C::R2",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 205,
+          "certified": true,
+          "certified_leaf_boxes": 103,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.09111936168378004,
+          "minimum_sample_distance_binary64": 0.2019790820236536,
+          "pair_id": "C::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 245,
+          "certified": true,
+          "certified_leaf_boxes": 123,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09108409366953654,
+          "minimum_sample_distance_binary64": 0.20117493563986794,
+          "pair_id": "C::R4",
+          "right_speed_upper_bound_binary64": 9.556067057338886,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 215,
+          "certified": true,
+          "certified_leaf_boxes": 108,
+          "left_speed_upper_bound_binary64": 6.283185307179587,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09000514999975501,
+          "minimum_sample_distance_binary64": 0.2046865353798856,
+          "pair_id": "C::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 281,
+          "certified": true,
+          "certified_leaf_boxes": 141,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09064902880663014,
+          "minimum_sample_distance_binary64": 0.20117493563986796,
+          "pair_id": "R0::R1",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 501,
+          "certified": true,
+          "certified_leaf_boxes": 251,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 20,
+          "minimum_leaf_lower_bound_binary64": 0.0901335952193535,
+          "minimum_sample_distance_binary64": 0.1000365414844334,
+          "pair_id": "R0::R2",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 221,
+          "certified": true,
+          "certified_leaf_boxes": 111,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 15,
+          "minimum_leaf_lower_bound_binary64": 0.09094277524232137,
+          "minimum_sample_distance_binary64": 0.1407498022110162,
+          "pair_id": "R0::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 139,
+          "certified": true,
+          "certified_leaf_boxes": 70,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 10,
+          "minimum_leaf_lower_bound_binary64": 0.09016600412825446,
+          "minimum_sample_distance_binary64": 0.40968749174442454,
+          "pair_id": "R0::R4",
+          "right_speed_upper_bound_binary64": 9.556067057338886,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 249,
+          "certified": true,
+          "certified_leaf_boxes": 125,
+          "left_speed_upper_bound_binary64": 7.241437537143951,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09064902880662398,
+          "minimum_sample_distance_binary64": 0.2011749356398679,
+          "pair_id": "R0::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 731,
+          "certified": true,
+          "certified_leaf_boxes": 366,
+          "left_speed_upper_bound_binary64": 8.68783158241212,
+          "maximum_depth": 20,
+          "minimum_leaf_lower_bound_binary64": 0.09008780416833474,
+          "minimum_sample_distance_binary64": 0.10001567681855253,
+          "pair_id": "R1::R2",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 163,
+          "certified": true,
+          "certified_leaf_boxes": 82,
+          "left_speed_upper_bound_binary64": 8.68783158241212,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.09104622483691732,
+          "minimum_sample_distance_binary64": 0.2679453706036248,
+          "pair_id": "R1::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 135,
+          "certified": true,
+          "certified_leaf_boxes": 68,
+          "left_speed_upper_bound_binary64": 8.68783158241212,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.09222952755924527,
+          "minimum_sample_distance_binary64": 0.26744348204580287,
+          "pair_id": "R1::R4",
+          "right_speed_upper_bound_binary64": 9.556067057338886,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 141,
+          "certified": true,
+          "certified_leaf_boxes": 71,
+          "left_speed_upper_bound_binary64": 8.68783158241212,
+          "maximum_depth": 9,
+          "minimum_leaf_lower_bound_binary64": 0.09024489494836627,
+          "minimum_sample_distance_binary64": 0.5047534882583985,
+          "pair_id": "R1::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 257,
+          "certified": true,
+          "certified_leaf_boxes": 129,
+          "left_speed_upper_bound_binary64": 7.906858896196229,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09245451829355526,
+          "minimum_sample_distance_binary64": 0.20117493563986788,
+          "pair_id": "R2::R3",
+          "right_speed_upper_bound_binary64": 7.906858896196229,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 155,
+          "certified": true,
+          "certified_leaf_boxes": 78,
+          "left_speed_upper_bound_binary64": 7.906858896196229,
+          "maximum_depth": 11,
+          "minimum_leaf_lower_bound_binary64": 0.09381202983575529,
+          "minimum_sample_distance_binary64": 0.2679491924311228,
+          "pair_id": "R2::R4",
+          "right_speed_upper_bound_binary64": 9.556067057338886,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 139,
+          "certified": true,
+          "certified_leaf_boxes": 70,
+          "left_speed_upper_bound_binary64": 7.906858896196229,
+          "maximum_depth": 12,
+          "minimum_leaf_lower_bound_binary64": 0.09211490980286313,
+          "minimum_sample_distance_binary64": 0.2167160814449359,
+          "pair_id": "R2::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 337,
+          "certified": true,
+          "certified_leaf_boxes": 169,
+          "left_speed_upper_bound_binary64": 7.906858896196229,
+          "maximum_depth": 13,
+          "minimum_leaf_lower_bound_binary64": 0.09064252784647206,
+          "minimum_sample_distance_binary64": 0.20117493563986796,
+          "pair_id": "R3::R4",
+          "right_speed_upper_bound_binary64": 9.556067057338886,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 619,
+          "certified": true,
+          "certified_leaf_boxes": 310,
+          "left_speed_upper_bound_binary64": 7.906858896196229,
+          "maximum_depth": 20,
+          "minimum_leaf_lower_bound_binary64": 0.09016172327459815,
+          "minimum_sample_distance_binary64": 0.10003654148443339,
+          "pair_id": "R3::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        },
+        {
+          "boxes_evaluated": 849,
+          "certified": true,
+          "certified_leaf_boxes": 425,
+          "left_speed_upper_bound_binary64": 9.556067057338886,
+          "maximum_depth": 20,
+          "minimum_leaf_lower_bound_binary64": 0.09011693870319731,
+          "minimum_sample_distance_binary64": 0.10001567681855258,
+          "pair_id": "R4::R5",
+          "right_speed_upper_bound_binary64": 8.68783158241212,
+          "roundoff_buffer": 1e-12,
+          "target": "9/100"
+        }
+      ],
+      "pair_count": 21,
+      "parameter_domain_per_pair": "[0,1] x [0,1]",
+      "ribbon_half_width": "1/100",
+      "roundoff_buffer": 1e-12,
+      "standing": "deterministic binary64 Lipschitz subdivision with declared roundoff buffer; not formal interval arithmetic",
+      "total_boxes_evaluated": 6173,
+      "triangle_inequality": "d(ribbon_i,ribbon_j) >= d(centerline_i,centerline_j)-2*w"
+    },
+    "nonclaims": [
+      "not a redefinition of arithmetic primality",
+      "not an established electron ontology or Pauli-exclusion derivation",
+      "not a complete link classification",
+      "not a zeta-function theorem or proof of the Riemann hypothesis",
+      "not EDCM or METAPAT validity"
+    ],
+    "payload_sha256": "e831906a2ae03255da37dbbfe68411b3adcfb507ff109ea151071d564547b125",
+    "prime": 7,
+    "recorded_on": "2026-08-11",
+    "schema_id": "ucns.prime-smooth-ribbons",
+    "schema_version": "0.1.0",
+    "selection_effect": "none",
+    "smooth_realization": {
+      "construction_lineage": "global prime phase-and-lift candidate first; smooth fields replace its lift interpolation only",
+      "fields": [
+        {
+          "carrier": "C",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "0",
+              "turn": "0"
+            },
+            {
+              "height": "0",
+              "turn": "1/6"
+            },
+            {
+              "height": "0",
+              "turn": "1/3"
+            },
+            {
+              "height": "0",
+              "turn": "1/2"
+            },
+            {
+              "height": "0",
+              "turn": "2/3"
+            },
+            {
+              "height": "0",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "0",
+          "period": "1 turn",
+          "value_range": [
+            "0",
+            "0"
+          ]
+        },
+        {
+          "carrier": "R0",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "1/10",
+              "turn": "1/6"
+            },
+            {
+              "height": "-1/5",
+              "turn": "1/3"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "3/10",
+              "turn": "2/3"
+            },
+            {
+              "height": "3/10",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "18/5",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "3/10"
+          ]
+        },
+        {
+          "carrier": "R1",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "3/10",
+              "turn": "0"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/3"
+            },
+            {
+              "height": "-1/5",
+              "turn": "1/2"
+            },
+            {
+              "height": "3/10",
+              "turn": "2/3"
+            },
+            {
+              "height": "3/10",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "6",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "3/10"
+          ]
+        },
+        {
+          "carrier": "R2",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "3/10",
+              "turn": "0"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/6"
+            },
+            {
+              "height": "1/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "-1/5",
+              "turn": "2/3"
+            },
+            {
+              "height": "1/5",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "24/5",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "3/10"
+          ]
+        },
+        {
+          "carrier": "R3",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "-1/10",
+              "turn": "0"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/6"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/3"
+            },
+            {
+              "height": "1/10",
+              "turn": "2/3"
+            },
+            {
+              "height": "-1/5",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "24/5",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "3/10"
+          ]
+        },
+        {
+          "carrier": "R4",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "-1/5",
+              "turn": "0"
+            },
+            {
+              "height": "-3/10",
+              "turn": "1/6"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/3"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "1/10",
+              "turn": "5/6"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "36/5",
+          "period": "1 turn",
+          "value_range": [
+            "-3/10",
+            "3/10"
+          ]
+        },
+        {
+          "carrier": "R5",
+          "derivative_bound_proof": "flat step S has 0<=S'<=2; each interval scales the bound by |delta_z|/delta_t",
+          "event_knots": [
+            {
+              "height": "1/10",
+              "turn": "0"
+            },
+            {
+              "height": "-1/5",
+              "turn": "1/6"
+            },
+            {
+              "height": "-1/5",
+              "turn": "1/3"
+            },
+            {
+              "height": "3/10",
+              "turn": "1/2"
+            },
+            {
+              "height": "3/10",
+              "turn": "2/3"
+            }
+          ],
+          "event_values_preserved": true,
+          "kind": "periodic-C-infinity-flat-step",
+          "maximum_derivative_bound": "6",
+          "period": "1 turn",
+          "value_range": [
+            "-1/5",
+            "3/10"
+          ]
+        }
+      ],
+      "mobius_return": {
+        "maximum_sampled_one_turn_residual_binary64": 8.005932084973442e-16,
+        "maximum_sampled_two_turn_residual_binary64": 2.3914935841127266e-15,
+        "one_turn": "X(t+1,u)=X(t,-u)",
+        "two_turn": "X(t+2,u)=X(t,u)"
+      },
+      "prime": 7,
+      "smoothness": {
+        "class": "C-infinity",
+        "field": "flat-step interpolation on every periodic knot interval",
+        "maximum_event_height_residual_binary64": 0.0,
+        "no_overshoot": true
+      }
+    },
+    "source": {
+      "line_basis": [
+        5,
+        6,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "name": "Möbius Strips and Quantum Geometry.txt",
+      "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"
+    },
+    "tangent_regularization": {
+      "epsilon": "1/100",
+      "pair_count": 3,
+      "pairs": [
+        {
+          "linking_number": 0,
+          "minimum_ribbon_clearance_during_isotopy": "3/50",
+          "moved_carrier": "R0",
+          "pair_id": "R0::R3",
+          "post_translation_projected_center_distance": "201/100",
+          "regularized_projection_crossings": 0,
+          "standing": "pair-specific outward translation; linking number is invariant because the complete ribbon remains disjoint throughout",
+          "translation_epsilon": "1/100",
+          "translation_unit_vector_binary64": [
+            1.0,
+            0.0
+          ]
+        },
+        {
+          "linking_number": 0,
+          "minimum_ribbon_clearance_during_isotopy": "3/50",
+          "moved_carrier": "R1",
+          "pair_id": "R1::R4",
+          "post_translation_projected_center_distance": "201/100",
+          "regularized_projection_crossings": 0,
+          "standing": "pair-specific outward translation; linking number is invariant because the complete ribbon remains disjoint throughout",
+          "translation_epsilon": "1/100",
+          "translation_unit_vector_binary64": [
+            0.5,
+            0.8660254037844386
+          ]
+        },
+        {
+          "linking_number": 0,
+          "minimum_ribbon_clearance_during_isotopy": "3/50",
+          "moved_carrier": "R2",
+          "pair_id": "R2::R5",
+          "post_translation_projected_center_distance": "201/100",
+          "regularized_projection_crossings": 0,
+          "standing": "pair-specific outward translation; linking number is invariant because the complete ribbon remains disjoint throughout",
+          "translation_epsilon": "1/100",
+          "translation_unit_vector_binary64": [
+            -0.5,
+            0.8660254037844386
+          ]
+        }
+      ]
+    },
+    "unresolved": [
+      "formal interval or proof-assistant replay of the global separation certificate",
+      "ambient-isotopy classification of the whole multi-ribbon link",
+      "higher-order invariants not determined by pairwise linking numbers",
+      "boundary-component link invariants",
+      "spectral operator and prime-power law",
+      "zeta-zero correspondence"
+    ]
+  },
+  "payload_sha256": "a2c163ab6f08f57ccedfcc0aff99e24e7212cee20e1ae6b6f2de8e6dc485c1cf",
+  "recorded_on": "2026-08-11",
+  "research_order": [
+    7,
+    5
+  ],
+  "schema_id": "ucns.prime-smooth-ribbons.family",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "line_basis": [
+      5,
+      6,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "name": "Möbius Strips and Quantum Geometry.txt",
+    "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"
+  }
+}

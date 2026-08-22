@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ptcna"
+version = "0.1.1"
+description = "Prime Tensor Circled Neural Architecture — one architecture, four layers (neural/circle/seed/core). Consolidates pcna, pcta, pcsa."
+readme = "README.md"
+license = "MPL-2.0"
+license-files = ["LICENSE"]
+authors = [
+  { name = "Erin Patrick Spencer", email = "wayseer@interdependentway.org" },
+]
+requires-python = ">=3.10"
+# Neural layer uses numpy; circle/seed/core layers are stdlib-only.
+dependencies = [
+  "numpy>=1.21",
+  "ucns @ git+https://github.com/The-Interdependency/ucns.git@b7b6f35cce69c273860923489a1c8b5372d14eb0",
+]
+keywords = [
+  "prime",
+  "tensor",
+  "neural-architecture",
+  "back-propagation",
+  "auditing",
+  "timing",
+  "fick",
+  "unit-circle",
+  "interdependency",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Libraries",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "build", "twine"]
+
+[project.urls]
+Homepage = "https://github.com/The-Interdependency/ptcna"
+Repository = "https://github.com/The-Interdependency/ptcna"
+"Bug Tracker" = "https://github.com/The-Interdependency/ptcna/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ptcna*"]
+# Ship the four layer packages; keep the per-layer test suites out of the wheel.
+exclude = ["*.tests", "*.tests.*"]
+
+[tool.setuptools.package-data]
+ptcna = ["data/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["ptcna"]

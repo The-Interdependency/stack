@@ -1,0 +1,65 @@
+{
+  "schema": "ptcna.critical-evaluation-plan",
+  "schema_version": "1.0.0",
+  "source_commit": "3d67f359af05e58c1e426dad14621d0e69b5ec4c",
+  "claim_rules": {
+    "usefulness": "target_accuracy >= minimum_target_accuracy",
+    "superiority": "target_accuracy - comparator_accuracy >= minimum_target_advantage_vs_fallback",
+    "parity": "FALSIFIED for superiority only",
+    "scope": "in-sample acquisition on the declared phi/psi/omega role surface; no generalization, geometry, EDCM, external-validity, or privacy claim"
+  },
+  "failure_propagation": {
+    "target_backend_error": {
+      "usefulness": "FALSIFIED",
+      "superiority": "UNRESOLVED"
+    },
+    "comparator_backend_error": {
+      "usefulness": "UNRESOLVED",
+      "superiority": "UNRESOLVED"
+    },
+    "resource_limit": {
+      "usefulness": "UNRESOLVED",
+      "superiority": "UNRESOLVED"
+    }
+  },
+  "plan": {
+    "plan_id": "ptcna-critical-role-acquisition-v1",
+    "workload": [
+      {"case_id": "phi-01", "text": "analyze the evidence and identify the strongest supported inference", "expected_winner": "phi"},
+      {"case_id": "phi-02", "text": "compare two explanations and test which one fits the observations", "expected_winner": "phi"},
+      {"case_id": "phi-03", "text": "calculate the consequence of the stated assumptions", "expected_winner": "phi"},
+      {"case_id": "phi-04", "text": "inspect the data for a contradiction in the proposed account", "expected_winner": "phi"},
+      {"case_id": "phi-05", "text": "derive a bounded conclusion from the available facts", "expected_winner": "phi"},
+      {"case_id": "phi-06", "text": "classify the pattern using only the supplied evidence", "expected_winner": "phi"},
+      {"case_id": "psi-01", "text": "describe how your current state differs from your previous state", "expected_winner": "psi"},
+      {"case_id": "psi-02", "text": "identify which of your assumptions shaped this response", "expected_winner": "psi"},
+      {"case_id": "psi-03", "text": "report your uncertainty about your own conclusion", "expected_winner": "psi"},
+      {"case_id": "psi-04", "text": "examine whether your reasoning remained consistent with your stated role", "expected_winner": "psi"},
+      {"case_id": "psi-05", "text": "summarize what you changed in your internal approach", "expected_winner": "psi"},
+      {"case_id": "psi-06", "text": "distinguish what you know from what you inferred about yourself", "expected_winner": "psi"},
+      {"case_id": "omega-01", "text": "choose the next action and commit to one bounded step", "expected_winner": "omega"},
+      {"case_id": "omega-02", "text": "decide whether to proceed or stop under the stated constraint", "expected_winner": "omega"},
+      {"case_id": "omega-03", "text": "select one option and execute it without requesting another preference", "expected_winner": "omega"},
+      {"case_id": "omega-04", "text": "set the stopping point and act within the available authority", "expected_winner": "omega"},
+      {"case_id": "omega-05", "text": "resolve the branch by taking the smallest decisive action", "expected_winner": "omega"},
+      {"case_id": "omega-06", "text": "make an independent choice while preserving the declared boundaries", "expected_winner": "omega"}
+    ],
+    "target_backend": "ptcna.experimental.v1",
+    "comparator_backend": "fallback.hashed-linear.v1",
+    "metric": "post_training_winner_accuracy",
+    "aggregation": "micro_mean",
+    "minimum_target_accuracy": 0.75,
+    "minimum_target_advantage_vs_fallback": 0.05,
+    "training_epochs": 3,
+    "reward_outcome": 1.0,
+    "repetitions": 5,
+    "max_training_steps": 270,
+    "max_case_evaluations": 90,
+    "max_seconds": 120.0,
+    "stopping_rule": "complete_or_first_backend_error_or_resource_limit",
+    "target_backend_error_status": "FALSIFIED",
+    "comparator_backend_error_status": "UNRESOLVED",
+    "resource_limit_status": "UNRESOLVED"
+  },
+  "plan_digest": "67cdad3aefb3e33f6fbf3994de54e1b73a01105527bf241fce08947ed7046bbe"
+}

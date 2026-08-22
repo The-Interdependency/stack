@@ -1,0 +1,182 @@
+{
+  "schema": "the-interdependency.repository-plan-report",
+  "version": "1.0.0",
+  "repository": "The-Interdependency/edcm",
+  "contract": {
+    "repository": "The-Interdependency/skill-lib",
+    "path": "interdependent-work-graph/repository-plan-report.schema.json",
+    "version": "1.0.0",
+    "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
+  },
+  "source": {
+    "branch": "main",
+    "commit": "060d3c64e2758f4d4f4fbfd1351294faa8fc3c2b",
+    "generated_at": "2026-08-18",
+    "note": "This report describes the cited EDCM state plus the current repo-owned plan. Report-only and language-boundary documentation commits are coordination metadata; they do not upgrade measurement, empirical, proof, semantic, or canon status. The current upstream UCNS lexical program selects the xkcd constrained-English 1,000-word vocabulary as lexical-floor candidate and OEWN 2025 Core as the primary contemporary lexical-semantic corpus."
+  },
+  "authority": {
+    "owns": [
+      "EDCM measurement, projection, diagnostic, and result contracts",
+      "EDCM-maintained baseline implementation and integrity evidence",
+      "EDCM experiment designs, candidate-measured results, falsification records, and evidence-state labels",
+      "EDCM corpus runners, receipts, provenance, and measurement-side activation boundaries",
+      "EDCM consumer contracts and evaluation boundaries for exact upstream gonol representations"
+    ],
+    "does_not_own": [
+      "UCNS mathematical representation canon or UCNS proof status",
+      "UCNS xkcd/OEWN source selection, Unicode-character-gonol identity, Mobius glyph-axis construction, morphology, word-gonol construction, definition-gonol construction, atomic closure, or direct interscale coupling law",
+      "METAPAT semantic or ontology validity",
+      "a0 runtime, agent identity, deployment, or orchestration authority",
+      "skill-lib organization-wide build and cross-repository workflow doctrine"
+    ],
+    "non_transfer": [
+      "UCNS proof status does not establish EDCM empirical validity",
+      "EDCM empirical fit does not establish UCNS proof status",
+      "candidate registration or development-fixture success does not select canon",
+      "integrity of the maintained baseline does not establish empirical validation",
+      "a UCNS gonol representation does not activate EDCM measurement or establish semantic validity",
+      "a definition-gonol semantic role does not establish vector-embedding equivalence or efficacy",
+      "historical lexical-floor-named artifacts do not restore the deprecated NGSL floor premise as current architecture",
+      "EDCM may not externalize intrinsic UCNS semantic relationships merely because a graph projection is convenient",
+      "a falsified hypothesis remains research evidence and is not repaired by relabeling status"
+    ]
+  },
+  "portfolio_role": {
+    "summary": "Measure and pressure responses under declared constraints, maintain falsifiable measurement candidates and evidence states, and consume exact upstream gonol representations without treating representation as measurement validity or silently inserting token, subword, opaque-vector, whole-string-hash, pairwise-sidecar, or intermediate-scale-reopening substitutions.",
+    "upstream_contract": "EDCM consumes exact source evidence and pinned UCNS gonol receipts without inheriting their authority. The current upstream lexical sequence is characters -> morphology -> definitions -> recursive gonol relations, with xkcd 1,000 as floor candidate and OEWN 2025 Core as primary corpus. Relationships enter gonols and completed gonols are atomic at the next scale.",
+    "downstream_contract": "EDCM emits measurement artifacts, experiment findings, receipts, and explicit evidence statuses that downstream systems may consume without upgrading them.",
+    "reports_to": {
+      "repository": "The-Interdependency/skill-lib",
+      "skill": "interdependent-work-graph",
+      "relation": "repo-owned measurement-plan and evidence-status input; no authority transfer"
+    }
+  },
+  "status": {
+    "state": "active research and measurement",
+    "current_claim": "EDCM supports represented, candidate-measured, and experiment-supported evidence in declared scopes; canon_selection remains null and empirical validation is not established. For language, EDCM is a downstream consumer of the current UCNS atomic lexical recursion: xkcd 1,000 floor candidate, OEWN 2025 Core corpus, characters -> morphology -> definitions -> recursive gonol relations, intrinsic semantic relationships, atomic closure, scale-invariant affixiation, and permitted direct interscale coupling. Historical NGSL and Scrabble planning no longer define the active source path.",
+    "latest_main_milestone": {
+      "commit": "060d3c64e2758f4d4f4fbfd1351294faa8fc3c2b",
+      "description": "aligned EDCM's consumer boundary with current UCNS xkcd/OEWN atomic lexical recursion"
+    }
+  },
+  "delivered": [
+    {
+      "surface": "frozen maintained EDCM baseline",
+      "status": "executable and integrity-checked candidate baseline",
+      "boundary": "implementation integrity is not empirical validation or final UCNS-EDCM canon"
+    },
+    {
+      "surface": "UCNS-EDCM experiment program",
+      "status": "reproducible experiment-first framework",
+      "boundary": "structural and measurement candidates remain reciprocal and non-self-canonizing"
+    },
+    {
+      "surface": "controlled goal-vector contradiction experiment",
+      "status": "sealed candidate-measured evidence",
+      "boundary": "controlled evidence is not real-system empirical validation"
+    },
+    {
+      "surface": "MultiWOZ 2.1 full-corpus observation and completion path",
+      "status": "source-native corpus evidence and completion receipts",
+      "boundary": "corpus reconciliation does not create formal UCNS geometry or measurement validity"
+    },
+    {
+      "surface": "externally labelled MultiWOZ booking-outcome holdout",
+      "status": "sealed bounded candidate-measured holdout evidence",
+      "boundary": "balanced-accuracy interval spans chance; sensitivity hypothesis is falsified; canon_selection remains null"
+    },
+    {
+      "surface": "gonol-native language consumer boundary",
+      "status": "documented against current UCNS atomic lexical recursion",
+      "boundary": "documentation does not implement upstream gonols or select an EDCM semantic metric"
+    },
+    {
+      "surface": "OEWN 2025 lexical-floor-named experiment",
+      "status": "sealed historical evidence and acquisition/replay precedent",
+      "boundary": "the historical name and artifacts remain unchanged for reproduction; they do not own current UCNS semantic construction"
+    }
+  ],
+  "active_frontier": [
+    "preserve the current UCNS consumer boundary: xkcd 1,000 floor candidate; OEWN 2025 Core corpus; characters -> morphology -> definitions -> recursive gonol relations; relationships intrinsic to gonols; completed gonols atomic at the next scale",
+    "prepare a fail-closed EDCM consumer contract for exact source-bound UCNS atomic word, morphology, definition, and recursive-gonol receipts once the upstream producer exists",
+    "do not impose all-pairs materialization, external semantic-edge authority, or mandatory intermediate-scale reopening on the upstream UCNS representation",
+    "define the smallest preregistered EDCM evaluation that can test semantic behavior, compression, reconstruction, or other declared hypotheses without promoting architecture into efficacy",
+    "design the next genuinely new measurement candidate under the sealed holdout boundary rather than tuning the failed candidate",
+    "preserve development, validation, sealed-test, candidate, witness, and decision authority separation",
+    "pressure measurement candidates against real-system outcomes while retaining falsified and weak results",
+    "integrate METAPAT constraints only through exact semantic identities and explicit transfer limits",
+    "keep EDCM activation distinct from package availability, UCNS proof status, representation availability, and candidate evidence"
+  ],
+  "next_actions": [
+    {
+      "action": "consume no new lexical semantic representation until UCNS freezes exact xkcd 1,000 and OEWN 2025 Core source receipts and emits replayable atomic gonol receipts; reject tokenizer IDs, subword units, opaque vectors, whole-string hashes, pairwise-sidecar substitution, and forced intermediate reopening",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "upstream UCNS source identities and recursive producer must exist first"
+    },
+    {
+      "action": "after the upstream representation exists, freeze one EDCM projection, information-loss declaration, baseline set, hypotheses, metric, aggregation, partitions, stopping rules, and falsifiers before semantic/compression/reconstruction outcome inspection",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "exact UCNS source identities and source-bound atomic gonol receipts"
+    },
+    {
+      "action": "freeze the next experiment packet around one genuinely new measurement candidate with preregistered hypotheses, partitions, custody, stopping rules, failure conditions, and provenance",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "must not tune on the sealed MultiWOZ booking test set"
+    },
+    {
+      "action": "run the next candidate through development and validation before any sealed external test evaluation",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "new candidate and test-custody boundary must be frozen first"
+    },
+    {
+      "action": "bind any METAPAT or UCNS inputs to exact source identities in experiment manifests",
+      "owner": "The-Interdependency/edcm",
+      "dependency": "producer identities and mappings must be explicit and independently checkable"
+    }
+  ],
+  "blocked": [
+    "EDCM semantic integration is BLOCKED until UCNS pins exact xkcd 1,000 and OEWN 2025 Core sources and emits the corrected atomic recursive gonol receipts; EDCM must not rebuild the missing upstream semantics itself"
+  ],
+  "cross_repository_relations": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "relation": "upstream authority for xkcd/OEWN lexical source binding, Unicode-character gonols, Mobius glyph-axis word construction, morphology, semantic definition gonols, atomic closure, direct interscale coupling, and recursive gonol construction",
+      "authority_transfer": false,
+      "proof_status_transfer": false,
+      "measurement_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "relation": "optional semantic-constraint producer whose exact identities may bound interpretation",
+      "authority_transfer": false,
+      "semantic_status_transfer": false,
+      "measurement_status_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "relation": "build/evidence doctrine and current scale-affixiation / atomic-closure procedural boundary; no UCNS geometry authority transfer",
+      "authority_transfer": false
+    }
+  ],
+  "machine_entrypoints": {
+    "repo_report": "docs/work-graphs/repository-plan-report.json",
+    "system_overview": "README.md",
+    "canon": "CANON.md",
+    "gonol_language_boundary": "docs/GONOL_LANGUAGE_BOUNDARY.md",
+    "historical_english_lexical_floor_run": "docs/ENGLISH_LEXICAL_FLOOR.md",
+    "mathematics_index": "docs/EDCM_MATHEMATICS.md",
+    "joint_experiment_program": "docs/UCNS_EDCM_EXPERIMENT_PROGRAM.md",
+    "latest_holdout_design": "docs/experiments/2026-08-02-multiwoz-booking-outcome-holdout-design.md",
+    "latest_holdout_findings": "docs/experiments/2026-08-02-multiwoz-booking-outcome-holdout-findings.md"
+  },
+  "hmmm": [
+    "the exact upstream xkcd 1,000 and OEWN 2025 Core source receipt identities and recursive UCNS producer identity",
+    "the EDCM projection, information-loss accounting, metric, benchmark, and falsifier for evaluating future atomic recursive gonol representations",
+    "empirical validity of maintained and current candidate measurement surfaces",
+    "selection of any final EDCM or joint UCNS-EDCM canon",
+    "external custody arrangement for the next sealed test",
+    "human outcome-label authority and adjudication protocol for future domains",
+    "METAPAT activation and exact semantic constraints for measurement runs",
+    "generalization beyond the declared corpora and bounded experiments"
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "561273008bbac1151126c0925ce99ac6696b5e21a93922463624ee73ad992471",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "289d4959f7920efc214f180cca3443d8090f4095",
+      "authority": "build and evidence doctrine",
+      "relation": "canonical source for the vendored PTCNA skill subset and drift gate"
+    },
+    {
+      "repository": "The-Interdependency/ptcna",
+      "commit": "195ac06be2204c496e2e3ad3a1dc3de1a866dd7a",
+      "authority": "prime tensor circled neural runtime",
+      "relation": "edited producer base for the 0.1.1 reconciliation"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "da78f379b0202b09e629e62d8a9a059fbb490351",
+      "authority": "UCNS mathematical representation and producer-profile status",
+      "relation": "read-only boundary evidence; no PTCNA higher-gonol profile is consumed"
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "commit": "cd5b9494808ef66c15e9ee7244885d5e20a918f2",
+      "authority": "EDCM measurement and result contracts",
+      "relation": "read-only authority replacing the removed PTCNA shadow implementation"
+    },
+    {
+      "repository": "The-Interdependency/interdependent-lib",
+      "commit": "b1026179f0e15ee8735ef44dc6e2c5e9a41f6d6c",
+      "authority": "cross-library role map and optional dependency floors",
+      "relation": "downstream consumer updated after the PTCNA release"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "declared mapping",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "PTCNA-specific UCNS higher-gonol producer profile is unavailable",
+      "PyPI 0.1.1 artifact identity remains unresolved until publication"
+    ]
+  }
+}

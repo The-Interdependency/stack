@@ -1,0 +1,15 @@
+{
+  "supported_producer_epoch": "ucns.post-reset.v1",
+  "supported_profile": ["ucns.profile.edcm-metapat-ordered-occurrence", "1.0.0"],
+  "supported_bridge_schema": ["ucns.bridge.edcm-metapat-ordered-occurrence", "1.0.0"],
+  "pinned_ucns_commit": "19f1afddb993f7d933ac8727627e7d5e1c3b88fc",
+  "adapter_activation_status": "exact-profile-active-when-matching-package-is-installed",
+  "rejected_legacy_schemas": ["metapat-actual-ucns-adapter-v1", "ucns-canonical-json-v1", "ucns.bridge-record@1.0.0", "ucns.factorization-evidence@1.0.0"],
+  "verified_gates": ["base tests on Python 3.11, 3.12, and 3.13", "exact pinned UCNS profile integration", "contract graph and generated msdmd closure", "catalog, applications, canon, build, Twine, and clean-wheel smoke"],
+  "behavior": ["one source statement becomes one ordered UCNS occurrence", "repetition and order are preserved", "semantic text remains external METAPAT provenance", "archived face-bit and universal composition requests fail closed"],
+  "unresolved_constraints": ["No universal UCNS composition or factorization is authorized by this profile.", "Runtime installation must use the exact pinned UCNS commit; import-name resemblance is insufficient."],
+  "theorem_transfer": false,
+  "measurement_validity": false,
+  "metapat_validity": false,
+  "hmmm": "One exact carrier profile is active; all other UCNS interpretations remain unselected."
+}

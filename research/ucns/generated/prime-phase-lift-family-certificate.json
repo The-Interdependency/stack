@@ -1,0 +1,150 @@
+{
+  "authority": "Erin Spencer",
+  "construction_lineage": "global prime primitive first; pair and triad restrictions derived afterward",
+  "nonclaims": [
+    "no arithmetic redefinition",
+    "no electron ontology",
+    "no zeta theorem",
+    "no proof of the Riemann hypothesis"
+  ],
+  "p5": {
+    "arity_spectrum": {
+      "2": 12,
+      "4": 1
+    },
+    "carriers": 5,
+    "centerline_link": "pairwise disjoint by complete projected-event separation",
+    "event_semantics": [
+      "projected-centerline-coincidence",
+      "strict-braid-order"
+    ],
+    "hypernodes": 13,
+    "lift": {
+      "event_ribbon_clearance": "2/25",
+      "field": "F_5",
+      "minimum_height_gap": "1/10",
+      "origin_heights": [
+        "1/10",
+        "1/5",
+        "-1/10",
+        "-1/5"
+      ],
+      "origin_void_lower_bound": "9/100",
+      "primitive_root": 2
+    },
+    "link_summary": {
+      "nonzero_link_graph": {
+        "components": 3,
+        "cycle_rank": 0,
+        "edges": 2
+      },
+      "nonzero_link_pairs": 2,
+      "regular_linking_number_counts": {
+        "0": 6,
+        "1": 2
+      },
+      "tangent_pairs_unresolved": 2
+    },
+    "mobius_return": {
+      "one_turn_residual": 7.550332863779066e-16,
+      "two_turn_residual": 2.318213734067276e-15
+    },
+    "phase_law": {
+      "admissible": 72,
+      "candidates": 84,
+      "center_winding": 3,
+      "minimum_gap": "1/5",
+      "outer_step": "4/5"
+    },
+    "physical_boundary_contacts_claimed": 0,
+    "physical_centerline_contacts_claimed": 0,
+    "prime": 5
+  },
+  "p7": {
+    "arity_spectrum": {
+      "2": 6,
+      "3": 6,
+      "6": 1
+    },
+    "carriers": 7,
+    "centerline_link": "pairwise disjoint by complete projected-event separation",
+    "event_semantics": [
+      "projected-centerline-coincidence",
+      "strict-braid-order"
+    ],
+    "hypernodes": 13,
+    "lift": {
+      "event_ribbon_clearance": "2/25",
+      "field": "F_7",
+      "minimum_height_gap": "1/10",
+      "origin_heights": [
+        "1/10",
+        "3/10",
+        "1/5",
+        "-1/10",
+        "-3/10",
+        "-1/5"
+      ],
+      "origin_void_lower_bound": "9/100",
+      "primitive_root": 3
+    },
+    "link_summary": {
+      "nonzero_link_graph": {
+        "components": 1,
+        "cycle_rank": 6,
+        "edges": 12
+      },
+      "nonzero_link_pairs": 12,
+      "regular_linking_number_counts": {
+        "0": 6,
+        "1": 12
+      },
+      "tangent_pairs_unresolved": 3
+    },
+    "mobius_return": {
+      "one_turn_residual": 8.005932084973442e-16,
+      "two_turn_residual": 2.3657456368741984e-15
+    },
+    "phase_law": {
+      "admissible": 144,
+      "candidates": 174,
+      "center_winding": 3,
+      "minimum_gap": "1/7",
+      "outer_step": "3/7"
+    },
+    "physical_boundary_contacts_claimed": 0,
+    "physical_centerline_contacts_claimed": 0,
+    "prime": 7
+  },
+  "payload_sha256": "89337c2d5d5e8ff0b22677032eb50489999813d720cec5e2172765c5a1ffa4d1",
+  "recorded_on": "2026-08-11",
+  "research_order": [
+    7,
+    5
+  ],
+  "schema_id": "ucns.prime-phase-lift.family",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "line_basis": [
+      5,
+      6,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "name": "Möbius Strips and Quantum Geometry.txt",
+    "sha256": "dc3a94ca5070ffff8f2a246f48db77192b08f521e721bc7c2a011aa05ddeb9a1"
+  },
+  "unresolved": [
+    "smooth lift",
+    "whole-ribbon collision certificate",
+    "tangent regularization",
+    "boundary topology",
+    "ambient isotopy",
+    "spectral operator",
+    "zeta correspondence"
+  ]
+}

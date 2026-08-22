@@ -1,0 +1,60 @@
+{
+  "schema_id": "ucns.p7-length4-milnor.preregistration",
+  "schema_version": "1.0.0",
+  "authority": "Erin Spencer",
+  "status": "frozen-before-evaluation",
+  "selection_effect": "none",
+  "parent": {
+    "pull_request": 183,
+    "branch": "agent/p7-exact-milnor-alexander",
+    "head_at_freeze": "35e432f4348987977411ccd47d33136be4fe30a6"
+  },
+  "document": {
+    "path": "docs/PREREGISTRATION_P7_LENGTH4_MILNOR.md",
+    "git_blob_sha1": "cb8f91b2691d86d0f9b5ec21212881a153d81745",
+    "evaluation_status": "not-yet-run-at-freeze"
+  },
+  "minimal_target": {
+    "ordered_sublink": ["R0", "R1", "R4", "R5"],
+    "primary_invariant": "mu_bar_R0_R1_R4_R5",
+    "magnus_word": ["R0", "R1", "R4"],
+    "longitude_component": "R5",
+    "unique_four_component_pairwise_zero_sublink": true,
+    "pairwise_linking_gate": "all six zero",
+    "triple_milnor_gate": {
+      "R0_R1_R4": 0,
+      "R0_R1_R5": 0,
+      "R0_R4_R5": 0,
+      "R1_R4_R5": 0
+    }
+  },
+  "algebraic_gate": {
+    "word": "[[x1,x2],x3]",
+    "commutator_convention": "[a,b]=a b a^-1 b^-1",
+    "degree_three_coefficients": {
+      "X1_X2_X3": 1,
+      "X2_X1_X3": -1,
+      "X3_X1_X2": -1,
+      "X3_X2_X1": 1
+    },
+    "all_lower_degree_coefficients": 0
+  },
+  "frozen_outcomes": {
+    "nonzero": "detected irreducible four-component linking in the frozen P7 realization",
+    "zero": "no detected length-four Milnor invariant in the unique algebraically split P7 four-sublink",
+    "unresolved": "lower-order, longitude, diagram, or convention gate failed"
+  },
+  "escalation_rule": {
+    "nonzero": "run maximal whole-link program",
+    "zero": "prioritize symbolic Alexander ideals and nilpotent quotients",
+    "unresolved": "certify crossing combinatorics before broader computation"
+  },
+  "nonclaims": [
+    "no length-four result has been evaluated",
+    "not proof-assistant certification of the diagram",
+    "not a complete ambient-isotopy classification",
+    "not an arithmetic redefinition of primality",
+    "not an electron ontology",
+    "not a zeta theorem or proof of the Riemann hypothesis"
+  ]
+}
