@@ -10,6 +10,7 @@ sys.path.insert(0, str(EPAC_ROOT))
 from epac_dimensional_arity import (
     CouplingProof,
     DimensionalArityError,
+    charged_structure_readout,
     coupling,
     degree_relations,
     geometry_from_declared_couplings,
@@ -17,6 +18,7 @@ from epac_dimensional_arity import (
     install_proven_coupling,
     observed_common_ids,
     space,
+    topology_structure_readout,
 )
 
 
@@ -72,6 +74,20 @@ class DimensionalArityTest(unittest.TestCase):
         self.assertEqual(degrees["y"], 1)
         z_slots = next(item for item in geometry["degree_relations"] if item["dimension"] == "z")
         self.assertEqual(z_slots["slot_degrees"], ((1, 2),))
+        hub_first = geometry_from_declared_couplings(
+            space(["z", "x", "y"], [["z", "x"], ["z", "y"]], charges={"z": 8, "x": 1, "y": 1})
+        )
+        other_charges = geometry_from_declared_couplings(
+            space(["z", "x", "y"], [["z", "x"], ["z", "y"]], charges={"z": 6, "x": 8, "y": 8})
+        )
+        self.assertEqual(
+            topology_structure_readout(hub_first["structure"]),
+            topology_structure_readout(other_charges["structure"]),
+        )
+        self.assertNotEqual(
+            charged_structure_readout(hub_first["structure"]),
+            charged_structure_readout(other_charges["structure"]),
+        )
 
     def test_overlap_is_not_an_installable_proof(self) -> None:
         declared = space(["x", "y", "z"], [["x", "z"], ["y", "z"]])

@@ -288,6 +288,58 @@ def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str,
     }
 
 
+def _tuple_tree(value: object) -> object:
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return tuple(_tuple_tree(item) for item in value)
+    return value
+
+
+def charged_structure_readout(structure: Mapping[str, object]) -> tuple[object, ...]:
+    """Order-invariant 3-structure: couplings + charge states + degree.
+
+    Occurrence labels are dropped. Slot order inside each coupling is kept, so
+    ``(8, 1)`` is not ``(1, 8)``.
+    """
+
+    parts = tuple(
+        sorted(
+            (
+                int(part["arity"]),
+                _tuple_tree(part["charge_state"]),
+            )
+            for part in structure["parts"]
+        )
+    )
+    degree = tuple(
+        sorted(
+            (
+                int(item["degree"]),
+                _tuple_tree(item["slot_degrees"]),
+                item["charge"],
+            )
+            for item in structure["degree"]
+        )
+    )
+    return (
+        parts,
+        degree,
+        int(structure["participating_dimension_count"]),
+        bool(structure["ternary_coupling_declared"]),
+    )
+
+
+def topology_structure_readout(structure: Mapping[str, object]) -> tuple[object, ...]:
+    """Arity and degree only. Charge state is omitted."""
+
+    parts, degree, participating, ternary = charged_structure_readout(structure)
+    return (
+        tuple(arity for arity, _charge in parts),
+        tuple((deg, slots) for deg, slots, _charge in degree),
+        participating,
+        ternary,
+    )
+
+
 def geometry_from_declared_couplings(declared: DimensionalSpace) -> Mapping[str, object]:
     degrees = degree_relations(declared)
     couplings = tuple(
@@ -364,6 +416,7 @@ __all__ = [
     "DimensionalSpace",
     "FORBIDDEN_INFERENCE_RULES",
     "MOBIUS_EPSILON_T0",
+    "charged_structure_readout",
     "coupling",
     "degree_relations",
     "dimension",
@@ -373,4 +426,5 @@ __all__ = [
     "observed_common_ids",
     "space",
     "structure_from_charged_couplings",
+    "topology_structure_readout",
 ]

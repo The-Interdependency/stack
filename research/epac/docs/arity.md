@@ -35,4 +35,6 @@ Construction is `epac.public_gonol` on the UCNS Public Gonol carrier, not
 Overlap of members is not a proof. Forbidden inference rules include
 `overlap-closure`, `permutation-identity`, and `ambient-power-set`.
 
-See `epac_dimensional_arity.py`.
+See `epac_dimensional_arity.py`. After construction, `epac_comparison.py` reads
+that 3-structure against sealed known chemistry. Sealed shape names stay out
+of construction.

@@ -19,7 +19,12 @@ from typing import Any, Mapping
 from ucns.direct_mobius import native_mobius_state
 
 from epac_atomic import AtomicRecord
-from epac_dimensional_arity import geometry_from_declared_couplings, space
+from epac_dimensional_arity import (
+    charged_structure_readout,
+    geometry_from_declared_couplings,
+    space,
+    topology_structure_readout,
+)
 from epac_periodic import atomic_of, carried, construct_element_gonol, symbol_of
 from epac_public_gonol import ClosedPublicGonol, PublicGonolReceipt, construct_public_gonol, replay_public_gonol
 
@@ -191,6 +196,8 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         ),
         "dimensional_geometry": geometry,
         "declared_coupling_arities": [item["arity"] for item in geometry["couplings"]],
+        "charged_structure_readout": charged_structure_readout(geometry["structure"]),
+        "topology_structure_readout": topology_structure_readout(geometry["structure"]),
     }
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 

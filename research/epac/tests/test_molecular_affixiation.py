@@ -65,7 +65,7 @@ class MolecularAffixiationTest(unittest.TestCase):
 
     def test_construction_text_avoids_sealed_labels(self) -> None:
         source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8").lower()
-        for term in ("bent", "tetrahedral", "trigonal-pyramidal", "vsepr"):
+        for term in ("bent", "tetrahedral", "trigonal-pyramidal", "vsepr", "linear"):
             self.assertNotIn(term, source)
 
 

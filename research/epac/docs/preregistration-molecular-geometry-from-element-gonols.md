@@ -74,22 +74,25 @@ Opened only after molecular gonols exist:
 1. Construction source and receipts must not contain the sealed shape labels.
 2. Record construction invariants per formula.
 3. Open `data/sealed_known_molecular_geometry.json`.
-4. Ask whether UCNS coupling invariants distinguish formulas that chemistry
-   distinguishes by shape.
-5. Compare three signatures: UCNS Möbius coupling; atomic unpaired (l, m_l)
-   plus ligand shell content; and a matched-information control of formula
-   symbols only.
+4. Ask whether the constructed three-dimensional structure distinguishes
+   formulas that chemistry distinguishes by shape.
+5. Compare four signatures: charged oriented couplings plus degree (the
+   3-structure already in the math); arity/degree topology without charge;
+   UCNS Möbius coupling; atomic unpaired (l, m_l) plus ligand shell content;
+   against a matched-information control of formula symbols only.
+   Do not import sealed shape names into construction.
 
 ## Terminal standings for the hmmm question
 
 The question: does gonol geometry predict molecular shape, or merely reproduce
 information already present in the inputs?
 
-- `SURVIVED` as prediction — only if UCNS coupling invariants distinguish
-  sealed shape classes after subtracting the matched-information control.
-- `FALSIFIED` as prediction — if those invariants are identical across sealed
-  shape classes, or if distinguishing power is already present in
-  valence+stoichiometry.
+- `SURVIVED` as prediction — only if the charged 3-structure is invariant
+  inside each sealed shape class, distinguishes different sealed classes, and
+  is not the matched-information control.
+- `FALSIFIED` as prediction — if the 3-structure splits a sealed class, or
+  collapses classes chemistry splits, or if distinguishing power is already
+  present in valence+stoichiometry.
 - `UNRESOLVED` — if the readout is incomplete.
 - None of these standings select canon.
 

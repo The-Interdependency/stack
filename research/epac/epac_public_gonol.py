@@ -97,7 +97,7 @@ NONCLAIMS: tuple[str, ...] = (
     "not a UCNS geometric function operation",
     "not a UCNS Möbius coupling law",
     "not METAPAT canon promotion",
-    "not molecular shape or VSEPR",
+    "not imported chemistry shape names",
 )
 
 HMMM: tuple[str, ...] = (
