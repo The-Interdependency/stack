@@ -21,6 +21,17 @@ deg(y) = 1 at slot 1
 That incidence structure is the geometry of two binary couplings sharing `z`.
 It is not a ternary coupling and not `(x,y)`.
 
+Charge state rides on each coupling from the math already present: per-slot
+dimension charges (nuclear `Z` when the axis is an atom) and Möbius `ε` at
+`t=0`. `(z,x)` with charges `(q_z, q_x, ε)` is not `(x,z)` with
+`(q_x, q_z, ε)`. The three-dimensional structure **is** that combination —
+oriented couplings, each arity's charge state, and degree. Two charged
+arity-2 couplings on a degree-2 hub already occupy three participating axes.
+It still does not declare `(x,y,z)`.
+
+Construction is `epac.public_gonol` on the UCNS Public Gonol carrier, not
+`edcm.gonol`.
+
 Overlap of members is not a proof. Forbidden inference rules include
 `overlap-closure`, `permutation-identity`, and `ambient-power-set`.
 

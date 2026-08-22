@@ -7,7 +7,6 @@ from pathlib import Path
 EPAC_ROOT = Path(__file__).resolve().parents[1]
 STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
-sys.path.insert(0, str(STACK_ROOT / "research" / "edcm"))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
 from epac_molecular import construct_declared_molecules, replay_molecule
@@ -50,6 +49,14 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertFalse(any(c["arity"] == 5 for c in methane["couplings"]))
         self.assertFalse(methane["inferred_from_ambient"])
         self.assertFalse(methane["inferred_higher_arity_from_overlap"])
+        self.assertEqual(water["structure"]["participating_dimension_count"], 3)
+        self.assertFalse(water["structure"]["ternary_coupling_declared"])
+        self.assertFalse(water["structure"]["inferred_cartesian_embedding"])
+        self.assertEqual(water["couplings"][0]["slot_charges"], (8, 1))
+        self.assertEqual(methane["couplings"][0]["slot_charges"], (6, 1))
+        water_receipt = molecules["H2O"].receipt
+        self.assertEqual(water_receipt.constructor_id, "epac.public_gonol")
+        self.assertEqual(len(water_receipt.structure["parts"]), 2)
 
     def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
         molecules = construct_declared_molecules()

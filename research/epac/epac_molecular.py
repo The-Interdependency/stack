@@ -1,9 +1,14 @@
-"""Molecular gonols from atomic electron-shell gonols plus UCNS Möbius coupling.
+"""Molecular EPAC Public Gonols from atomic electron-shell gonols.
 
 Attachment sites are unpaired valence electrons (atomic Hund filling).
 If ligand count exceeds ground-state unpaired count, the atomic promoted
 valence set (s→p in the same n) is used. Ligand and center (l, m_l) sets
-are construction invariants. No sealed molecular-shape file is opened here.
+are construction invariants. Construction uses ``epac.public_gonol``, not
+``edcm.gonol``. No sealed molecular-shape file is opened here.
+
+The three-dimensional structure is the combination of declared oriented
+couplings and each arity's charge state (nuclear Z plus Möbius ε at t=0)
+with degree. It is not an inferred cartesian embedding.
 """
 
 from __future__ import annotations
@@ -11,12 +16,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
-from edcm.gonol import ClosedGonol, GonolReceipt, construct_gonol, replay_gonol
 from ucns.direct_mobius import native_mobius_state
 
 from epac_atomic import AtomicRecord
 from epac_dimensional_arity import geometry_from_declared_couplings, space
 from epac_periodic import atomic_of, carried, construct_element_gonol, symbol_of
+from epac_public_gonol import ClosedPublicGonol, PublicGonolReceipt, construct_public_gonol, replay_public_gonol
 
 
 MOLECULE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
@@ -28,18 +33,17 @@ MOLECULE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
 }
 
 RELATION = "epac.affixiation.unpaired-valence"
-SCALE = "recursive"
 
 
 @dataclass(frozen=True, slots=True)
 class MolecularConstruction:
     formula: str
-    receipt: GonolReceipt
+    receipt: PublicGonolReceipt
     invariants: Mapping[str, Any]
 
 
-def _instantiate(composition: tuple[tuple[str, int], ...]) -> tuple[ClosedGonol, ...]:
-    instances: list[ClosedGonol] = []
+def _instantiate(composition: tuple[tuple[str, int], ...]) -> tuple[ClosedPublicGonol, ...]:
+    instances: list[ClosedPublicGonol] = []
     occurrence = 0
     for symbol, count in composition:
         for _ in range(count):
@@ -48,11 +52,11 @@ def _instantiate(composition: tuple[tuple[str, int], ...]) -> tuple[ClosedGonol,
     return tuple(instances)
 
 
-def _record_for(gonol: ClosedGonol) -> AtomicRecord:
+def _record_for(gonol: ClosedPublicGonol) -> AtomicRecord:
     return atomic_of(symbol_of(gonol))
 
 
-def _choose_center(participants: tuple[ClosedGonol, ...]) -> ClosedGonol | None:
+def _choose_center(participants: tuple[ClosedPublicGonol, ...]) -> ClosedPublicGonol | None:
     """Center is the unique singleton symbol when ligands share another symbol.
 
     This is stoichiometric, not a shape rule. H2 has no singleton.
@@ -81,22 +85,23 @@ def _attachment_set(record: AtomicRecord, needed: int) -> tuple[tuple[int, int],
     )
 
 
-def _atom_dimension_id(gonol: ClosedGonol) -> str:
+def _atom_dimension_id(gonol: ClosedPublicGonol) -> str:
     return f"{symbol_of(gonol)}#{gonol.occurrence}"
 
 
 def _declared_dimensional_space(
-    participants: tuple[ClosedGonol, ...],
-    center: ClosedGonol | None,
-    ligands: tuple[ClosedGonol, ...],
+    participants: tuple[ClosedPublicGonol, ...],
+    center: ClosedPublicGonol | None,
+    ligands: tuple[ClosedPublicGonol, ...],
 ):
     ambient = [_atom_dimension_id(item) for item in participants]
+    charges = {_atom_dimension_id(item): int(carried(item, "Z")) for item in participants}
     if center is None:
         declarations = [[_atom_dimension_id(participants[0]), _atom_dimension_id(participants[1])]]
     else:
         center_id = _atom_dimension_id(center)
         declarations = [[center_id, _atom_dimension_id(ligand)] for ligand in ligands]
-    return space(ambient, declarations)
+    return space(ambient, declarations, charges=charges)
 
 
 def _mobius_coupling() -> Mapping[str, Any]:
@@ -144,16 +149,16 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         ligand_sites = tuple(
             tuple((e.l, e.m_l) for e in _record_for(item).unpaired_valence) for item in ligands
         )
-    receipt = construct_gonol(
-        scale=SCALE,
-        source_id=f"epac.molecule:{formula}",
-        participants=participants,
-        relation=RELATION,
-        geometry_authority=__import__("ucns.public_gonol", fromlist=["public_gonol"]),
-    )
     mobius = _mobius_coupling()
     dimensional = _declared_dimensional_space(participants, center, ligands)
     geometry = geometry_from_declared_couplings(dimensional)
+    receipt = construct_public_gonol(
+        source_id=f"epac.molecule:{formula}",
+        relation=RELATION,
+        participants=participants,
+        couplings=geometry["couplings"],
+        structure=geometry["structure"],
+    )
     distinct_p_m = tuple(sorted({m for l, m in center_sites if l == 1}))
     ligand_has_p = any(any(l == 1 for l, _m in sites) for sites in ligand_sites)
     invariants = {
@@ -190,8 +195,8 @@ def construct_molecule(formula: str) -> MolecularConstruction:
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 
 
-def replay_molecule(construction: MolecularConstruction) -> GonolReceipt:
-    return replay_gonol(receipt=construction.receipt)
+def replay_molecule(construction: MolecularConstruction) -> PublicGonolReceipt:
+    return replay_public_gonol(construction.receipt)
 
 
 def construct_declared_molecules() -> dict[str, MolecularConstruction]:

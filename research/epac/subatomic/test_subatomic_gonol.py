@@ -81,13 +81,16 @@ def test_keeps_layers_distinct():
 
 def test_invents_no_geometry():
     source = open(m.__file__, encoding="utf-8").read()
-    # The module consumes EDCM gonol construction and supplies the explicit
-    # UCNS public_gonol authority; it must not define position operations.
+    # The module consumes epac.public_gonol; it must not define position operations
+    # and must not import the EDCM text-domain constructor.
     assert "def " + "public_gonol" not in source
+    assert "from edcm" not in source
+    assert "import edcm" not in source
     assert "advance(" not in source
     assert "NativeMobius" not in source
     receipt = m.construct_subatomic_gonol("H")
-    assert receipt.gonol.geometry_digest  # geometry observed from the supplied authority
+    assert receipt.constructor_id == "epac.public_gonol"
+    assert receipt.gonol.geometry_digest
 
 
 def test_stays_cross_domain_hypothesis():

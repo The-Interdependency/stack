@@ -7,7 +7,6 @@ from pathlib import Path
 EPAC_ROOT = Path(__file__).resolve().parents[1]
 STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
-sys.path.insert(0, str(STACK_ROOT / "research" / "edcm"))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
 from epac_periodic import construct_element_gonol, construct_periodic_table, replay_element_gonol
@@ -28,8 +27,9 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(options["valence-electrons"], "4")
         self.assertEqual(options["unpaired-valence-count"], "2")
         self.assertEqual(options["promoted-unpaired-count"], "4")
+        self.assertEqual(carbon.constructor_id, "epac.public_gonol")
         self.assertEqual(len(carbon.gonol.participants), 3)
-        shells = [item for item in carbon.gonol.participants if "".join(item.source_units).startswith("n")]
+        shells = [item for item in carbon.gonol.participants if item.relation == "epac.atomic.shell"]
         electrons = [e for shell in shells for e in shell.participants]
         self.assertEqual(len(electrons), 6)
         quantum = {(dict(e.carried_options)["n"], dict(e.carried_options)["l"], dict(e.carried_options)["m_l"], dict(e.carried_options)["m_s"]) for e in electrons}

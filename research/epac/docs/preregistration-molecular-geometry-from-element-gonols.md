@@ -2,7 +2,8 @@
 
 - Status: **CROSS-DOMAIN-HYPOTHESIS / provisional research candidate**
 - Owner of record: `The-Interdependency/stack` → `research/epac/`
-- Constructor: `edcm.gonol` from the pinned EDCM snapshot
+- Constructor: `epac.public_gonol` on the pinned UCNS Public Gonol carrier.
+  Not `edcm.gonol`.
 - Comparison policy is frozen **before** construction. Known molecular-shape
   labels are sealed and may be opened only by the comparison step.
 
@@ -24,11 +25,11 @@ scopes) until comparison.
 ## Frozen pipeline
 
 ```text
-element gonols
-  -> valence arity
-  -> affixiation
-  -> UCNS coupling geometry (native Möbius only)
-  -> molecular gonol
+element Public Gonols (epac.public_gonol)
+  -> unpaired-valence attachment sites
+  -> declared oriented couplings with per-slot Z and Möbius ε
+  -> three-dimensional structure = those couplings + charge states + degree
+  -> molecular Public Gonol
   -> construction invariants
   -> (only then) compare to sealed known chemistry
 ```

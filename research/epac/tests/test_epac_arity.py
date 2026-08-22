@@ -25,28 +25,43 @@ class DimensionalArityTest(unittest.TestCase):
         declared = space(["x"], [["x"]])
         geometry = geometry_from_declared_couplings(declared)
         self.assertEqual(geometry["ambient_count"], 1)
-        self.assertEqual(geometry["couplings"], ({"declared_ids": ("x",), "arity": 1},))
+        self.assertEqual(geometry["couplings"][0]["declared_ids"], ("x",))
+        self.assertEqual(geometry["couplings"][0]["arity"], 1)
         self.assertEqual(geometry["degree_relations"][0]["degree"], 1)
 
     def test_zx_is_not_xz(self) -> None:
-        declared = space(["x", "z"], [["z", "x"]])
+        declared = space(["x", "z"], [["z", "x"]], charges={"x": 1, "z": 8})
         self.assertTrue(has_declared_coupling(declared, ["z", "x"]))
         self.assertFalse(has_declared_coupling(declared, ["x", "z"]))
         self.assertNotEqual(coupling(["z", "x"]), coupling(["x", "z"]))
+        self.assertNotEqual(declared.couplings[0].charge_state, coupling(["x", "z"], {"x": 1, "z": 8}).charge_state)
         geometry = geometry_from_declared_couplings(declared)
         self.assertFalse(geometry["zx_equals_xz"])
+        self.assertEqual(geometry["couplings"][0]["slot_charges"], (8, 1))
         z_degree = next(item for item in geometry["degree_relations"] if item["dimension"] == "z")
         x_degree = next(item for item in geometry["degree_relations"] if item["dimension"] == "x")
         self.assertEqual(z_degree["slot_degrees"], ((0, 1),))
         self.assertEqual(x_degree["slot_degrees"], ((1, 1),))
 
     def test_xz_and_yz_do_not_give_xyz_without_proof(self) -> None:
-        declared = space(["x", "y", "z"], [["x", "z"], ["y", "z"]])
+        declared = space(["x", "y", "z"], [["x", "z"], ["y", "z"]], charges={"x": 1, "y": 1, "z": 8})
         geometry = geometry_from_declared_couplings(declared)
         self.assertEqual(tuple(item.arity for item in declared.couplings), (2, 2))
         self.assertFalse(has_declared_coupling(declared, ["x", "y", "z"]))
         self.assertFalse(has_declared_coupling(declared, ["x", "y"]))
         self.assertFalse(geometry["inferred_higher_arity_from_overlap"])
+        self.assertEqual(geometry["structure"]["participating_dimension_count"], 3)
+        self.assertFalse(geometry["structure"]["ternary_coupling_declared"])
+        self.assertFalse(geometry["structure"]["inferred_cartesian_embedding"])
+        self.assertEqual(
+            geometry["structure"]["parts"],
+            (
+                {"coupling": ("x", "z"), "arity": 2, "charge_state": ((1, 8), 1)},
+                {"coupling": ("y", "z"), "arity": 2, "charge_state": ((1, 8), 1)},
+            ),
+        )
+        self.assertEqual(geometry["couplings"][0]["charge_state"], ((1, 8), 1))
+        self.assertEqual(geometry["couplings"][1]["charge_state"], ((1, 8), 1))
         common = geometry["observed_common_ids"]
         self.assertEqual(len(common), 1)
         self.assertEqual(common[0]["common_ids"], ("z",))

@@ -8,7 +8,6 @@ from pathlib import Path
 EPAC_ROOT = Path(__file__).resolve().parents[1]
 STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
-sys.path.insert(0, str(STACK_ROOT / "research" / "edcm"))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
 from epac_molecular import construct_declared_molecules, matched_information_control

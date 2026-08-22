@@ -12,16 +12,15 @@ layers, all kept separately addressable:
    (n, l, m_l, m_s, shell, subshell, angular id, radial nodes, Slater Z_eff,
    Rydberg energy).
 
-Construction uses the EDCM gonol candidate constructor
-(``edcm.gonol.construct_gonol``) with ``ucns.public_gonol`` supplied as the
-explicit geometry authority. No Public Gonol position operation and no Möbius
-coupling law is invented.
+Construction uses the EPAC Public Gonol constructor
+(``epac.public_gonol``) on the UCNS carrier. This is not ``edcm.gonol``.
+No Public Gonol position operation and no Möbius coupling law is invented.
 
 Status: CROSS-DOMAIN-HYPOTHESIS / implemented candidate. Not selected canon.
 
 Usage guidance:
 
-    PYTHONPATH="<epac>:<edcm>:<ucns>/src" python3 - <<'PY'
+    PYTHONPATH="<epac>:<ucns>/src" python3 - <<'PY'
     from subatomic_gonol import construct_subatomic_gonol, replay_subatomic_gonol
 
     receipt = construct_subatomic_gonol("He")
@@ -37,13 +36,13 @@ _PARENT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PARENT not in sys.path:
     sys.path.insert(0, _PARENT)
 
-from edcm.gonol import (  # noqa: E402
-    ClosedGonol,
-    GonolReceipt,
-    construct_gonol,
-    replay_gonol,
-)
 from epac_atomic import AtomicRecord, atomic_record  # noqa: E402
+from epac_public_gonol import (  # noqa: E402
+    ClosedPublicGonol,
+    PublicGonolReceipt,
+    construct_public_gonol,
+    replay_public_gonol,
+)
 
 import element_affixiation_candidate as identity  # noqa: E402
 import nuclear_harmonic_candidates as harmonics  # noqa: E402
@@ -52,10 +51,10 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 # id: epac_subatomic_gonol
 #   module_name: subatomic_gonol
 #   module_kind: experiment
-#   summary: closes one subatomic element gonol per symbol from subatomic nucleus identity, nuclear harmonic relations, and quantum-layer electron shells via the EDCM gonol candidate constructor
+#   summary: closes one subatomic element gonol per symbol from subatomic nucleus identity, nuclear harmonic relations, and quantum-layer electron shells via the EPAC Public Gonol constructor
 #   owner: The Interdependency
 #   public_surface: SUPPORTED_SYMBOLS, construct_subatomic_gonol, replay_subatomic_gonol, subatomic_receipt_record
-#   internal_surface: _geometry_authority, _nucleus_participant, _shell_participants, _electron_options, _harmonic_rows
+#   internal_surface: _carrier_glyph, _nucleus_participant, _shell_participants, _electron_options, _harmonic_rows
 #   auth_boundary: none
 #   storage_boundary: none
 #   network_boundary: none
@@ -64,9 +63,9 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 #   tests: subatomic.test_subatomic_gonol
 #   rollout: local candidate module under stack/research/epac/subatomic/
 #   rollback: remove module, tests, and generated receipts
-#   requires: edcm_gonol, epac_atomic, epac_subatomic_element_affixiation_candidate, epac_subatomic_nuclear_harmonic_candidates
+#   requires: epac_public_gonol, epac_atomic, epac_subatomic_element_affixiation_candidate, epac_subatomic_nuclear_harmonic_candidates
 #   since: 2026-08-22
-#   unresolved: UCNS position operations; UCNS harmonic notation; EDCM gonol candidate is not selected canon
+#   unresolved: UCNS position operations; UCNS harmonic notation; EPAC Public Gonol candidate is not selected canon
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -77,7 +76,7 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 #
 # id: subatomic_gonol_replays_byte_identical
 #   given: a subatomic gonol receipt
-#   then: replay_gonol reproduces the same receipt_digest
+#   then: replay_public_gonol reproduces the same receipt_digest
 #   class: correctness
 #
 # id: subatomic_gonol_keeps_layers_distinct
@@ -87,7 +86,7 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 #
 # id: subatomic_gonol_invents_no_geometry
 #   given: construction
-#   then: UCNS geometry is consumed only as the explicit public_gonol authority; no position operation or Möbius coupling law is defined or inferred
+#   then: construction uses epac.public_gonol on the UCNS carrier; no position operation or Möbius coupling law is defined or inferred
 #   class: safety
 #
 # id: subatomic_gonol_stays_cross_domain_hypothesis
@@ -97,12 +96,6 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 # === END CONTRACTS ===
 
 SUPPORTED_SYMBOLS: tuple[str, ...] = ("H", "He", "Li", "C")
-
-
-def _geometry_authority():
-    from ucns import public_gonol
-
-    return public_gonol
 
 
 def _harmonic_rows(symbol: str) -> tuple[harmonics.HarmonicCandidate, ...]:
@@ -130,7 +123,13 @@ def _electron_options(record: AtomicRecord, electron) -> tuple[tuple[str, str], 
     )
 
 
-def _nucleus_participant(symbol: str, occurrence: int) -> ClosedGonol:
+def _carrier_glyph(text: str) -> str | None:
+    if len(text) == 1:
+        return text
+    return None
+
+
+def _nucleus_participant(symbol: str, occurrence: int) -> ClosedPublicGonol:
     element = identity.affixiate_element(symbol)
     carried = [
         ("Z", str(element.Z)),
@@ -157,50 +156,43 @@ def _nucleus_participant(symbol: str, occurrence: int) -> ClosedGonol:
                 ),
             )
         )
-    receipt = construct_gonol(
-        scale="word",
-        source="nuc",
+    return construct_public_gonol(
         source_id=f"epac.subatomic.nucleus:{symbol}#{occurrence}",
         relation="epac.subatomic.nucleus",
         carried_options=carried,
-        geometry_authority=_geometry_authority(),
         occurrence=occurrence,
-    )
-    return receipt.gonol
+    ).gonol
 
 
-def _shell_participants(record: AtomicRecord, occurrence: int) -> tuple[ClosedGonol, ...]:
+def _shell_participants(record: AtomicRecord, occurrence: int) -> tuple[ClosedPublicGonol, ...]:
     by_n: dict[int, list] = {}
     for electron in record.electrons:
         by_n.setdefault(electron.n, []).append(electron)
-    shells: list[ClosedGonol] = []
+    shells: list[ClosedPublicGonol] = []
     for n in sorted(by_n):
-        members: list[ClosedGonol] = []
+        members: list[ClosedPublicGonol] = []
         for electron in by_n[n]:
-            electron_receipt = construct_gonol(
-                scale="word",
-                source="e",
+            electron_receipt = construct_public_gonol(
                 source_id=f"epac.subatomic.electron:{record.symbol}#{occurrence}:{electron.index}",
                 relation="epac.atomic.electron",
+                identity_glyph="e",
                 carried_options=_electron_options(record, electron),
-                geometry_authority=_geometry_authority(),
                 occurrence=electron.index,
             )
             members.append(electron_receipt.gonol)
-        shell_receipt = construct_gonol(
-            scale="word",
-            source=f"n{n}",
+        shell_receipt = construct_public_gonol(
             source_id=f"epac.subatomic.shell:{record.symbol}#{occurrence}:n{n}",
             relation="epac.atomic.shell",
+            identity_glyph=_carrier_glyph(str(n)),
             participants=members,
-            geometry_authority=_geometry_authority(),
             occurrence=n,
+            carried_options=(("n", str(n)),),
         )
         shells.append(shell_receipt.gonol)
     return tuple(shells)
 
 
-def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> GonolReceipt:
+def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolReceipt:
     """Close one subatomic element gonol: nucleus + electron shells."""
     if symbol not in SUPPORTED_SYMBOLS:
         raise ValueError(
@@ -215,6 +207,7 @@ def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> GonolRecei
         if any(harmonics.recurrence_test(candidate).values())
     )
     carried = [
+        ("symbol", symbol),
         ("Z", str(record.Z)),
         ("period", str(record.period)),
         ("group", str(record.group)),
@@ -224,24 +217,22 @@ def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> GonolRecei
         ("harmonic-surviving", harmonic_surviving or "none"),
         ("status", "CROSS-DOMAIN-HYPOTHESIS"),
     ]
-    return construct_gonol(
-        scale="word",
-        source=symbol,
+    return construct_public_gonol(
         source_id=f"epac.subatomic.element:{symbol}#{occurrence}",
         relation="epac.subatomic.element",
+        identity_glyph=_carrier_glyph(symbol),
         participants=(nucleus, *shells),
         carried_options=carried,
-        geometry_authority=_geometry_authority(),
         occurrence=occurrence,
     )
 
 
-def replay_subatomic_gonol(receipt: GonolReceipt) -> str:
+def replay_subatomic_gonol(receipt: PublicGonolReceipt) -> str:
     """Replay a completed subatomic gonol receipt; returns its digest."""
-    return replay_gonol(receipt=receipt).receipt_digest
+    return replay_public_gonol(receipt).receipt_digest
 
 
-def subatomic_receipt_record(receipt: GonolReceipt) -> dict:
+def subatomic_receipt_record(receipt: PublicGonolReceipt) -> dict:
     """JSON-safe summary of one subatomic gonol receipt."""
     gonol = receipt.gonol
     return {
@@ -252,7 +243,7 @@ def subatomic_receipt_record(receipt: GonolReceipt) -> dict:
         "source_id": receipt.source_id,
         "receipt_digest": receipt.receipt_digest,
         "atomic_id": gonol.atomic_id,
-        "scale": gonol.scale,
+        "identity_glyph": gonol.identity_glyph,
         "relation": gonol.relation,
         "participant_kinds": [
             ("nucleus" if "nucleus" in p.source_id else "shell") for p in gonol.participants

@@ -1,30 +1,34 @@
-"""Element gonols closed from full atomic electron-shell structure.
+"""Element gonols closed as EPAC Public Gonols from atomic electron-shell structure.
 
 Usage guidance
 --------------
-Each electron is a closed gonol with (n, l, m_l, m_s), shell, subshell,
-hydrogenic angular id, radial nodes, Slater Z_eff, and Rydberg energy.
-Electrons of one n affixiate as a shell. Shells plus a nucleus gonol
-affixiate as the element. Nothing molecular is encoded.
+Each electron, shell, nucleus, and element is an EPAC Public Gonol on the
+UCNS carrier. This module does not use ``edcm.gonol``. Nothing molecular is
+encoded here.
 
     from epac_periodic import construct_element_gonol, construct_periodic_table
 
     oxygen = construct_element_gonol("O")
+    assert oxygen.constructor_id == "epac.public_gonol"
 """
 
 from __future__ import annotations
 
-from typing import Any, Iterable
+from typing import Iterable
 
-from edcm.gonol import ClosedGonol, GonolReceipt, construct_gonol, replay_gonol
+from epac_atomic import AtomicRecord, ElectronState, iter_table
+from epac_public_gonol import (
+    ClosedPublicGonol,
+    PublicGonolReceipt,
+    construct_public_gonol,
+    replay_public_gonol,
+)
 
-from epac_atomic import AtomicRecord, ElectronState, atomic_record, iter_table
 
-
-def _geometry_authority() -> Any:
-    from ucns import public_gonol
-
-    return public_gonol
+def _carrier_glyph(text: str) -> str | None:
+    if len(text) == 1:
+        return text
+    return None
 
 
 def _electron_options(electron: ElectronState) -> tuple[tuple[str, str], ...]:
@@ -44,16 +48,16 @@ def _electron_options(electron: ElectronState) -> tuple[tuple[str, str], ...]:
     )
 
 
-def _construct_electron(electron: ElectronState, *, symbol: str, atom_occurrence: int) -> ClosedGonol:
-    receipt = construct_gonol(
-        scale="word",
-        source="e",
+def _construct_electron(
+    electron: ElectronState, *, symbol: str, atom_occurrence: int
+) -> ClosedPublicGonol:
+    return construct_public_gonol(
         source_id=f"epac.electron:{symbol}#{atom_occurrence}:{electron.index}",
+        relation="epac.atomic.electron",
+        identity_glyph="e",
         carried_options=_electron_options(electron),
-        geometry_authority=_geometry_authority(),
         occurrence=electron.index,
-    )
-    return receipt.gonol
+    ).gonol
 
 
 def _construct_shell(
@@ -62,37 +66,37 @@ def _construct_shell(
     *,
     symbol: str,
     atom_occurrence: int,
-) -> ClosedGonol:
-    members = tuple(_construct_electron(e, symbol=symbol, atom_occurrence=atom_occurrence) for e in electrons)
-    return construct_gonol(
-        scale="word",
-        source=f"n{n}",
+) -> ClosedPublicGonol:
+    members = tuple(
+        _construct_electron(e, symbol=symbol, atom_occurrence=atom_occurrence) for e in electrons
+    )
+    return construct_public_gonol(
         source_id=f"epac.shell:{symbol}#{atom_occurrence}:n{n}",
-        participants=members,
         relation="epac.atomic.shell",
-        geometry_authority=_geometry_authority(),
+        identity_glyph=_carrier_glyph(str(n)),
+        participants=members,
         occurrence=n,
+        carried_options=(("n", str(n)),),
     ).gonol
 
 
-def _construct_nucleus(record: AtomicRecord, *, atom_occurrence: int) -> ClosedGonol:
-    return construct_gonol(
-        scale="word",
-        source="nuc",
+def _construct_nucleus(record: AtomicRecord, *, atom_occurrence: int) -> ClosedPublicGonol:
+    return construct_public_gonol(
         source_id=f"epac.nucleus:{record.symbol}#{atom_occurrence}",
+        relation="epac.atomic.nucleus",
         carried_options=(
             ("Z", str(record.Z)),
             ("A", str(record.A)),
             ("protons", str(record.proton_count)),
             ("neutrons", str(record.neutron_count)),
+            ("symbol", record.symbol),
         ),
-        geometry_authority=_geometry_authority(),
         occurrence=0,
     ).gonol
 
 
-def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> GonolReceipt:
-    """Close one element gonol whose participants are nucleus + electron shells."""
+def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolReceipt:
+    """Close one element Public Gonol whose participants are nucleus + electron shells."""
 
     record = None
     for item in iter_table():
@@ -101,18 +105,17 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> GonolReceipt
             break
     if record is None:
         raise ValueError(f"no atomic record for symbol {symbol!r}")
-    shells: list[ClosedGonol] = []
+    shells: list[ClosedPublicGonol] = []
     by_n: dict[int, list[ElectronState]] = {}
     for electron in record.electrons:
         by_n.setdefault(electron.n, []).append(electron)
     for n in sorted(by_n):
-        shells.append(
-            _construct_shell(n, by_n[n], symbol=symbol, atom_occurrence=occurrence)
-        )
+        shells.append(_construct_shell(n, by_n[n], symbol=symbol, atom_occurrence=occurrence))
     nucleus = _construct_nucleus(record, atom_occurrence=occurrence)
     unpaired = record.unpaired_valence
     promoted = record.promoted_unpaired_valence
     carried = (
+        ("symbol", record.symbol),
         ("Z", str(record.Z)),
         ("period", str(record.period)),
         ("group", str(record.group)),
@@ -126,24 +129,22 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> GonolReceipt
         ("promoted-unpaired-lm", ",".join(f"{e.l}:{e.m_l}" for e in promoted) or "none"),
         ("valence-angular-ids", ",".join(e.angular_id for e in record.electrons if e.valence)),
     )
-    return construct_gonol(
-        scale="word",
-        source=symbol,
+    return construct_public_gonol(
         source_id=f"epac.periodic:{symbol}#{occurrence}",
-        participants=(nucleus, *shells),
         relation="epac.atomic.element",
+        identity_glyph=_carrier_glyph(symbol),
+        participants=(nucleus, *shells),
         carried_options=carried,
-        geometry_authority=_geometry_authority(),
         occurrence=occurrence,
     )
 
 
-def construct_periodic_table() -> dict[str, GonolReceipt]:
+def construct_periodic_table() -> dict[str, PublicGonolReceipt]:
     return {record.symbol: construct_element_gonol(record.symbol) for record in iter_table()}
 
 
-def replay_element_gonol(receipt: GonolReceipt) -> GonolReceipt:
-    return replay_gonol(receipt=receipt)
+def replay_element_gonol(receipt: PublicGonolReceipt) -> PublicGonolReceipt:
+    return replay_public_gonol(receipt)
 
 
 def atomic_of(symbol: str) -> AtomicRecord:
@@ -153,11 +154,16 @@ def atomic_of(symbol: str) -> AtomicRecord:
     raise ValueError(symbol)
 
 
-def symbol_of(gonol: ClosedGonol) -> str:
-    return "".join(gonol.source_units)
+def symbol_of(gonol: ClosedPublicGonol) -> str:
+    for key, value in gonol.carried_options:
+        if key == "symbol":
+            return value
+    if gonol.identity_glyph:
+        return gonol.identity_glyph
+    raise KeyError("symbol")
 
 
-def carried(gonol: ClosedGonol, key: str) -> str:
+def carried(gonol: ClosedPublicGonol, key: str) -> str:
     for item_key, value in gonol.carried_options:
         if item_key == key:
             return value

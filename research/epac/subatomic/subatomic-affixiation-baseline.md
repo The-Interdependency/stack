@@ -237,8 +237,8 @@ numeric nuclear data is web-pinned 2026-08-22; alpha-cluster and isospin citatio
 ## 11. Subatomic gonol (2026-08-22)
 
 The subatomic gonol closes one element gonol per symbol from three separately addressable
-layers, using the EDCM gonol candidate constructor (`edcm.gonol/v1`) with
-`ucns.public_gonol` supplied as the explicit geometry authority:
+layers, using the EPAC Public Gonol constructor (`epac.public_gonol`) on the UCNS
+Public Gonol carrier. This is not `edcm.gonol`:
 
 1. **nucleus participant** — subatomic identity (proton/neutron Public Gonol carrier
    positions and glyphs, Möbius t-state frame sequence) plus harmonic relation results;
@@ -251,7 +251,8 @@ layers, using the EDCM gonol candidate constructor (`edcm.gonol/v1`) with
 - `subatomic_gonol.py` — constructor with `MODULE_BUILD` + `CONTRACTS`.
 - `test_subatomic_gonol.py` — five witnesses with `CHECKS`. **15/15 tests pass** across all
   three subatomic modules; CONTRACTS↔CHECKS audit **closed** (15 contracts / 15 checks).
-- `receipts/gonol_*.json` — sealed gonol receipts; `replay_gonol` byte-identical for all.
+- `receipts/gonol_*.json` — historical EDCM-constructor receipts, superseded as
+  constructor identity. Replay of the current constructor is `replay_public_gonol`.
 
 | Element | Gonol receipt digest |
 |---|---|

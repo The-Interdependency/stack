@@ -6,12 +6,17 @@ a dimension is incident on declared couplings.
 ``(z, x)`` is not ``(x, z)``. Shared members of ``(x, z)`` and ``(y, z)`` do
 not yield ``(x, y, z)`` without an explicit proof. Overlap is not a proof.
 
+The three-dimensional structure is the combination of declared oriented
+couplings, their arity charge states, and degree. That span can involve three
+axes through two charged binaries. It is not a ternary coupling.
+
 Domain claims (provisional):
 
 - dimension: independent coordinate axis
 - arity: number of dimensions in one declared coupling
 - degree: incidence of one dimension on declared couplings, including slot
 - coupling: ordered declaration of participating dimensions
+- charge state: per-slot charges on a coupling, with Möbius ε at t=0
 
 Collision: edcm.gonol arity_policy counts gonol participants, not dimensional
 intersections.
@@ -22,6 +27,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Iterable, Mapping, Sequence
 
+
+# Established UCNS Möbius frame sign at t=0: ε in (t, ε) ~ (t+n, (-1)^n ε).
+MOBIUS_EPSILON_T0 = 1
 
 FORBIDDEN_INFERENCE_RULES = frozenset(
     {
@@ -39,13 +47,16 @@ class DimensionalArityError(ValueError):
 
 @dataclass(frozen=True, slots=True)
 class Dimension:
-    """One independent coordinate axis."""
+    """One independent coordinate axis, with optional established charge."""
 
     id: str
+    charge: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.id, str) or not self.id or self.id.isspace():
             raise DimensionalArityError("dimension id must be exact non-empty text")
+        if self.charge is not None and (isinstance(self.charge, bool) or not isinstance(self.charge, int)):
+            raise DimensionalArityError("dimension charge must be an int or None")
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,6 +79,16 @@ class Coupling:
     @property
     def declared_ids(self) -> tuple[str, ...]:
         return tuple(dimension.id for dimension in self.dimensions)
+
+    @property
+    def slot_charges(self) -> tuple[int | None, ...]:
+        return tuple(dimension.charge for dimension in self.dimensions)
+
+    @property
+    def charge_state(self) -> tuple[tuple[int | None, ...], int]:
+        """Per-slot charges plus Möbius ε at t=0. Ordered: (z,x) ≠ (x,z)."""
+
+        return (self.slot_charges, MOBIUS_EPSILON_T0)
 
 
 @dataclass(frozen=True, slots=True)
@@ -140,27 +161,36 @@ class DimensionalSpace:
                     )
 
 
-def dimension(id: str) -> Dimension:
-    return Dimension(id)
+def dimension(id: str, charge: int | None = None) -> Dimension:
+    return Dimension(id, charge)
 
 
-def coupling(dimension_ids: Sequence[str]) -> Coupling:
+def coupling(dimension_ids: Sequence[str], charges: Mapping[str, int] | None = None) -> Coupling:
     if not isinstance(dimension_ids, Sequence) or isinstance(dimension_ids, (str, bytes)):
         raise DimensionalArityError("coupling dimensions must be an ordered declaration sequence")
-    return Coupling(tuple(Dimension(item) for item in dimension_ids))
+    charge_map = dict(charges or {})
+    return Coupling(tuple(Dimension(item, charge_map.get(item)) for item in dimension_ids))
 
 
 def space(
     ambient_ids: Sequence[str],
     coupling_declarations: Sequence[Sequence[str]] = (),
     proofs: Sequence[CouplingProof] = (),
+    charges: Mapping[str, int] | None = None,
 ) -> DimensionalSpace:
     if not isinstance(ambient_ids, Sequence) or isinstance(ambient_ids, (str, bytes)):
         raise DimensionalArityError("ambient dimensions must be a declared sequence")
-    declared = tuple(coupling(item) for item in coupling_declarations)
+    charge_map = dict(charges or {})
+    ambient = tuple(Dimension(item, charge_map.get(item)) for item in ambient_ids)
+    by_id = {item.id: item for item in ambient}
+    declared = []
+    for item in coupling_declarations:
+        if not isinstance(item, Sequence) or isinstance(item, (str, bytes)):
+            raise DimensionalArityError("each coupling declaration must be an ordered sequence")
+        declared.append(Coupling(tuple(by_id[name] if name in by_id else Dimension(name) for name in item)))
     return DimensionalSpace(
-        ambient_dimensions=tuple(Dimension(item) for item in ambient_ids),
-        couplings=declared,
+        ambient_dimensions=ambient,
+        couplings=tuple(declared),
         proofs=tuple(proofs),
     )
 
@@ -220,17 +250,62 @@ def install_proven_coupling(declared: DimensionalSpace, proof: CouplingProof) ->
     )
 
 
+def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str, object]:
+    """The three-dimensional structure already present in the couplings.
+
+    Each part is one declared oriented coupling together with its arity charge
+    state. Degree records how those parts sit on shared axes. This is not an
+    inferred cartesian embedding and not a ternary coupling.
+    """
+
+    degrees = degree_relations(declared)
+    parts = tuple(
+        {
+            "coupling": item.declared_ids,
+            "arity": item.arity,
+            "charge_state": item.charge_state,
+        }
+        for item in declared.couplings
+    )
+    return {
+        "kind": "combination-of-oriented-couplings-and-arity-charge-states",
+        "parts": parts,
+        "degree": tuple(
+            {
+                "dimension": item.dimension.id,
+                "charge": item.dimension.charge,
+                "degree": item.degree,
+                "slot_degrees": item.slot_degrees,
+            }
+            for item in degrees
+            if item.degree
+        ),
+        "participating_dimension_count": len(
+            {name for item in declared.couplings for name in item.declared_ids}
+        ),
+        "ternary_coupling_declared": any(item.arity == 3 for item in declared.couplings),
+        "inferred_cartesian_embedding": False,
+    }
+
+
 def geometry_from_declared_couplings(declared: DimensionalSpace) -> Mapping[str, object]:
     degrees = degree_relations(declared)
+    couplings = tuple(
+        {
+            "declared_ids": item.declared_ids,
+            "arity": item.arity,
+            "slot_charges": item.slot_charges,
+            "charge_state": item.charge_state,
+            "mobius_epsilon_t0": MOBIUS_EPSILON_T0,
+        }
+        for item in declared.couplings
+    )
     return {
         "ambient_ids": tuple(item.id for item in declared.ambient_dimensions),
         "ambient_count": len(declared.ambient_dimensions),
-        "couplings": tuple(
-            {
-                "declared_ids": item.declared_ids,
-                "arity": item.arity,
-            }
-            for item in declared.couplings
+        "couplings": couplings,
+        "participating_ids": tuple(
+            dict.fromkeys(name for item in declared.couplings for name in item.declared_ids)
         ),
         "arity_counts": _arity_counts(declared.couplings),
         "degree_relations": tuple(
@@ -254,6 +329,7 @@ def geometry_from_declared_couplings(declared: DimensionalSpace) -> Mapping[str,
         "inferred_from_ambient": False,
         "inferred_higher_arity_from_overlap": False,
         "zx_equals_xz": False,
+        "structure": structure_from_charged_couplings(declared),
     }
 
 
@@ -287,6 +363,7 @@ __all__ = [
     "DimensionalArityError",
     "DimensionalSpace",
     "FORBIDDEN_INFERENCE_RULES",
+    "MOBIUS_EPSILON_T0",
     "coupling",
     "degree_relations",
     "dimension",
@@ -295,4 +372,5 @@ __all__ = [
     "install_proven_coupling",
     "observed_common_ids",
     "space",
+    "structure_from_charged_couplings",
 ]

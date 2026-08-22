@@ -12,8 +12,11 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
   provisional research candidate: hydrogen → helium baseline and the lithium/carbon
   construction form over current METAPAT affixiation semantics and UCNS carrier identity.
   Status: CROSS-DOMAIN-HYPOTHESIS / proposed. Not org canon.
+- [`epac_public_gonol.py`](epac_public_gonol.py) — EPAC Public Gonol constructor
+  on the UCNS carrier. Not the EDCM text-domain constructor.
 - [`docs/arity.md`](docs/arity.md) — arity is declared dimensional coupling,
-  not ambient dimension count.
+  not ambient dimension count. Charged oriented couplings plus degree are the
+  three-dimensional structure.
 - [`docs/preregistration-molecular-geometry-from-element-gonols.md`](docs/preregistration-molecular-geometry-from-element-gonols.md) —
   provisional candidate: Z=1–18 element gonols from atomic structure only, then
   affixiation of H₂, H₂O, NH₃, CH₄, CO₂ through unpaired valence electrons,
@@ -25,7 +28,7 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
 From this directory:
 
 ```bash
-PYTHONPATH=".:../edcm:../ucns/src" python3 -m unittest discover -s tests -q
+PYTHONPATH=".:../ucns/src" python3 -m unittest discover -s tests -q
 ```
 
 Do not open `data/sealed_known_molecular_geometry.json` during construction.
