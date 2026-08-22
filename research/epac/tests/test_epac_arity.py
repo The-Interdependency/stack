@@ -16,7 +16,10 @@ from epac_dimensional_arity import (
     geometry_from_declared_couplings,
     has_declared_coupling,
     install_proven_coupling,
+    instances_missing_oriented_hub_coupling,
     observed_common_ids,
+    oriented_instance_couplings,
+    require_every_instance_has_oriented_hub_coupling,
     space,
     topology_structure_readout,
 )
@@ -88,6 +91,29 @@ class DimensionalArityTest(unittest.TestCase):
             charged_structure_readout(hub_first["structure"]),
             charged_structure_readout(other_charges["structure"]),
         )
+
+    def test_every_instance_has_its_own_zx_and_zy(self) -> None:
+        declared = space(["z", "x0", "x1", "y0"], [["z", "x0"], ["z", "x1"], ["z", "y0"]])
+        self.assertEqual(
+            oriented_instance_couplings(declared, hub_id="z", instance_ids=["x0", "x1", "y0"]),
+            (("z", "x0"), ("z", "x1"), ("z", "y0")),
+        )
+        only_one_x = space(["z", "x0", "x1", "y0"], [["z", "x0"], ["z", "y0"]])
+        self.assertEqual(
+            instances_missing_oriented_hub_coupling(
+                only_one_x, hub_id="z", instance_ids=["x0", "x1", "y0"]
+            ),
+            ("x1",),
+        )
+        reversed_slot = space(["z", "x0", "y0"], [["x0", "z"], ["y0", "z"]])
+        with self.assertRaisesRegex(DimensionalArityError, "every instance must have declared"):
+            require_every_instance_has_oriented_hub_coupling(
+                reversed_slot, hub_id="z", instance_ids=["x0", "y0"]
+            )
+        with self.assertRaisesRegex(DimensionalArityError, "repeated"):
+            require_every_instance_has_oriented_hub_coupling(
+                declared, hub_id="z", instance_ids=["x0", "x0"]
+            )
 
     def test_overlap_is_not_an_installable_proof(self) -> None:
         declared = space(["x", "y", "z"], [["x", "z"], ["y", "z"]])

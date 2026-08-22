@@ -8,7 +8,13 @@ dimension is incident on declared couplings.
 ```text
 (z, x) ≠ (x, z)
 (x, z) and (y, z) ↛ (x, y, z)   without an explicit proof
+
+every instance of x has its own (z, x_i)
+every instance of y has its own (z, y_j)
 ```
+
+A second occurrence is a second instance. `(z, x_0)` does not cover `x_1`.
+`(x_i, z)` does not satisfy `(z, x_i)`.
 
 Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 

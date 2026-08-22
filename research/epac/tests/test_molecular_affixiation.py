@@ -57,6 +57,15 @@ class MolecularAffixiationTest(unittest.TestCase):
         water_receipt = molecules["H2O"].receipt
         self.assertEqual(water_receipt.constructor_id, "epac.public_gonol")
         self.assertEqual(len(water_receipt.structure["parts"]), 2)
+        water_instances = molecules["H2O"].invariants["oriented_instance_couplings"]
+        self.assertEqual(len(water_instances), 2)
+        self.assertEqual({item[0] for item in water_instances}, {"O#2"})
+        self.assertEqual([item[1] for item in water_instances], ["H#0", "H#1"])
+        methane_instances = molecules["CH4"].invariants["oriented_instance_couplings"]
+        self.assertEqual(len(methane_instances), 4)
+        self.assertTrue(all(item[0] == "C#0" for item in methane_instances))
+        self.assertEqual([item[1] for item in methane_instances], ["H#1", "H#2", "H#3", "H#4"])
+        self.assertEqual(molecules["H2"].invariants["oriented_instance_couplings"], ())
 
     def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
         molecules = construct_declared_molecules()

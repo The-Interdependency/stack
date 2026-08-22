@@ -6,6 +6,11 @@ a dimension is incident on declared couplings.
 ``(z, x)`` is not ``(x, z)``. Shared members of ``(x, z)`` and ``(y, z)`` do
 not yield ``(x, y, z)`` without an explicit proof. Overlap is not a proof.
 
+Every instance of ``x`` has its own declared ``(z, x_i)``. Every instance of
+``y`` has its own declared ``(z, y_j)``. A second occurrence is a second
+instance, not a reuse of the first coupling. ``(x_i, z)`` does not satisfy
+``(z, x_i)``.
+
 The three-dimensional structure is the combination of declared oriented
 couplings, their arity charge states, and degree. That span can involve three
 axes through two charged binaries. It is not a ternary coupling.
@@ -17,6 +22,7 @@ Domain claims (provisional):
 - degree: incidence of one dimension on declared couplings, including slot
 - coupling: ordered declaration of participating dimensions
 - charge state: per-slot charges on a coupling, with Möbius ε at t=0
+- instance: occurrence-addressed dimension; each x_i / y_j is distinct
 
 Collision: edcm.gonol arity_policy counts gonol participants, not dimensional
 intersections.
@@ -217,6 +223,68 @@ def observed_common_ids(left: Coupling, right: Coupling) -> frozenset[str]:
 def has_declared_coupling(declared: DimensionalSpace, dimension_ids: Sequence[str]) -> bool:
     target = tuple(dimension_ids)
     return any(item.declared_ids == target for item in declared.couplings)
+
+
+def instances_missing_oriented_hub_coupling(
+    declared: DimensionalSpace,
+    *,
+    hub_id: str,
+    instance_ids: Sequence[str],
+) -> tuple[str, ...]:
+    """Instances that do not have a declared (hub, instance) coupling.
+
+    (instance, hub) does not count. One (z, x) does not cover a second x.
+    """
+
+    ambient = {axis.id for axis in declared.ambient_dimensions}
+    if hub_id not in ambient:
+        raise DimensionalArityError(f"hub {hub_id!r} is not an ambient dimension")
+    missing: list[str] = []
+    seen: set[str] = set()
+    for instance_id in instance_ids:
+        if not isinstance(instance_id, str) or not instance_id or instance_id.isspace():
+            raise DimensionalArityError("instance id must be exact non-empty text")
+        if instance_id == hub_id:
+            raise DimensionalArityError("the hub is not an instance of x or y")
+        if instance_id not in ambient:
+            raise DimensionalArityError(f"instance {instance_id!r} is not an ambient dimension")
+        if instance_id in seen:
+            raise DimensionalArityError(f"instance {instance_id!r} is repeated; occurrences must be unique")
+        seen.add(instance_id)
+        if not has_declared_coupling(declared, [hub_id, instance_id]):
+            missing.append(instance_id)
+    return tuple(missing)
+
+
+def require_every_instance_has_oriented_hub_coupling(
+    declared: DimensionalSpace,
+    *,
+    hub_id: str,
+    instance_ids: Sequence[str],
+) -> None:
+    """Fail closed unless every instance has its own (z, instance)."""
+
+    missing = instances_missing_oriented_hub_coupling(
+        declared, hub_id=hub_id, instance_ids=instance_ids
+    )
+    if missing:
+        raise DimensionalArityError(
+            f"every instance must have declared ({hub_id}, instance); missing {tuple(missing)}"
+        )
+
+
+def oriented_instance_couplings(
+    declared: DimensionalSpace,
+    *,
+    hub_id: str,
+    instance_ids: Sequence[str],
+) -> tuple[tuple[str, str], ...]:
+    """The (z, x_i) / (z, y_j) coupling for each instance, in instance order."""
+
+    require_every_instance_has_oriented_hub_coupling(
+        declared, hub_id=hub_id, instance_ids=instance_ids
+    )
+    return tuple((hub_id, instance_id) for instance_id in instance_ids)
 
 
 def install_proven_coupling(declared: DimensionalSpace, proof: CouplingProof) -> DimensionalSpace:
@@ -423,7 +491,10 @@ __all__ = [
     "geometry_from_declared_couplings",
     "has_declared_coupling",
     "install_proven_coupling",
+    "instances_missing_oriented_hub_coupling",
     "observed_common_ids",
+    "oriented_instance_couplings",
+    "require_every_instance_has_oriented_hub_coupling",
     "space",
     "structure_from_charged_couplings",
     "topology_structure_readout",

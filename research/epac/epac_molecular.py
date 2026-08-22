@@ -22,6 +22,7 @@ from epac_atomic import AtomicRecord
 from epac_dimensional_arity import (
     charged_structure_readout,
     geometry_from_declared_couplings,
+    oriented_instance_couplings,
     space,
     topology_structure_readout,
 )
@@ -156,6 +157,13 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         )
     mobius = _mobius_coupling()
     dimensional = _declared_dimensional_space(participants, center, ligands)
+    instance_couplings: tuple[tuple[str, str], ...] = ()
+    if center is not None:
+        instance_couplings = oriented_instance_couplings(
+            dimensional,
+            hub_id=_atom_dimension_id(center),
+            instance_ids=tuple(_atom_dimension_id(item) for item in ligands),
+        )
     geometry = geometry_from_declared_couplings(dimensional)
     receipt = construct_public_gonol(
         source_id=f"epac.molecule:{formula}",
@@ -198,6 +206,7 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         "declared_coupling_arities": [item["arity"] for item in geometry["couplings"]],
         "charged_structure_readout": charged_structure_readout(geometry["structure"]),
         "topology_structure_readout": topology_structure_readout(geometry["structure"]),
+        "oriented_instance_couplings": instance_couplings,
     }
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 
