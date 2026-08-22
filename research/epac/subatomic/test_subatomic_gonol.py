@@ -33,7 +33,7 @@
 # === END CHECKS ===
 
 import subatomic_gonol as m
-from epac_atomic import atomic_record
+from extended_atomic import atomic_record
 
 
 def _receipts():
@@ -49,8 +49,10 @@ def test_combines_three_sources():
         assert "proton-glyphs" in nucleus_carried
         assert "mobius-t0-frame" in nucleus_carried
         assert "mobius-t2-frame" in nucleus_carried
-        # Harmonic relation results live on the nucleus participant.
-        assert any(key.startswith("harmonic:") for key in nucleus_carried)
+        # Harmonic relation results live on the nucleus participant for the
+        # elements that participate in the declared nuclear candidates.
+        if symbol in {"H", "He", "Li", "C"}:
+            assert any(key.startswith("harmonic:") for key in nucleus_carried)
         # Quantum-layer fields live on the element gonol.
         assert carried["electron-configuration"] == atomic_record(int(carried["Z"])).configuration
         assert "valence-electrons" in carried

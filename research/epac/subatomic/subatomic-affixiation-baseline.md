@@ -265,3 +265,20 @@ Layers stay distinct inside the gonol: nucleus and electron shells remain indivi
 addressable participants with their own source_ids. No position operation, no Möbius coupling
 law, and no scale interchange is introduced. Standing is `implemented-candidate`,
 `selection_effect: none` — the gonol is a candidate, not selected canon.
+
+## 13. Extension to iron and symbol-abbreviation coupling (2026-08-22)
+
+- **Extended quantum layer** (`extended_atomic.py`): Z=1..26. Z≤18 delegates byte-identically
+  to `epac_atomic`; Z=19..26 uses declared ground-state configurations (K through Fe), including
+  the Cr `4s1.3d5` exception. Fe = `1s2.2s2.2p6.3s2.3p6.4s2.3d6`, A=56.
+- **Subatomic gonol now supports all 26 symbols** (`subatomic_gonol.py`), using
+  `extended_atomic` and the EPAC Public Gonol constructor (`epac_public_gonol`).
+- **Symbol-abbreviation coupling** (`symbol_coupling.py`): each element's one- or two-letter
+  abbreviation closes as a symbol gonol (one character gonol for H; two ordered character
+  gonols for He, Fe, ...) and couples to the closed element gonol at declared arity 2 via
+  `epac.symbol-coupling`. This adds the two-letter abbreviation without inventing a single
+  Public Gonol glyph for it.
+- Evidence: **26/26 subatomic tests pass**; sibling epac suite **29 tests OK**;
+  CONTRACTS↔CHECKS audit **closed** (26 contracts / 26 checks).
+- The dimensional-arity doctrine is implemented by the sibling `epac_dimensional_arity.py`
+  (committed); no duplicate is maintained here. Status remains `CROSS-DOMAIN-HYPOTHESIS`.

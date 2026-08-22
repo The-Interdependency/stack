@@ -36,7 +36,12 @@ _PARENT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _PARENT not in sys.path:
     sys.path.insert(0, _PARENT)
 
-from epac_atomic import AtomicRecord, atomic_record  # noqa: E402
+from extended_atomic import (  # noqa: E402
+    EXTENDED_SYMBOLS,
+    SYMBOL_TO_Z,
+    AtomicRecord,
+    atomic_record,
+)
 from epac_public_gonol import (  # noqa: E402
     ClosedPublicGonol,
     PublicGonolReceipt,
@@ -95,7 +100,7 @@ import nuclear_harmonic_candidates as harmonics  # noqa: E402
 #   class: doctrine
 # === END CONTRACTS ===
 
-SUPPORTED_SYMBOLS: tuple[str, ...] = ("H", "He", "Li", "C")
+SUPPORTED_SYMBOLS: tuple[str, ...] = EXTENDED_SYMBOLS
 
 
 def _harmonic_rows(symbol: str) -> tuple[harmonics.HarmonicCandidate, ...]:
@@ -198,7 +203,7 @@ def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> PublicGono
         raise ValueError(
             f"subatomic gonol supports {SUPPORTED_SYMBOLS}; got {symbol!r}"
         )
-    record = atomic_record(identity.ISOTOPE_DEFAULTS[symbol][0])
+    record = atomic_record(SYMBOL_TO_Z[symbol])
     nucleus = _nucleus_participant(symbol, occurrence)
     shells = _shell_participants(record, occurrence)
     harmonic_surviving = ",".join(

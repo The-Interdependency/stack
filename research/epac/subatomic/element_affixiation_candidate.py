@@ -96,11 +96,15 @@ CONSTRUCTION_IDS = {
 }
 
 # Default isotope instances are instance-resolved, not canonical admission law.
+# Extended to Z=1..26 (through iron) for the subatomic gonol program.
 ISOTOPE_DEFAULTS = {
-    "H": (1, 1),
-    "He": (2, 4),
-    "Li": (3, 7),
-    "C": (6, 12),
+    "H": (1, 1), "He": (2, 4), "Li": (3, 7), "Be": (4, 9),
+    "B": (5, 11), "C": (6, 12), "N": (7, 14), "O": (8, 16),
+    "F": (9, 19), "Ne": (10, 20), "Na": (11, 23), "Mg": (12, 24),
+    "Al": (13, 27), "Si": (14, 28), "P": (15, 31), "S": (16, 32),
+    "Cl": (17, 35), "Ar": (18, 40), "K": (19, 39), "Ca": (20, 40),
+    "Sc": (21, 45), "Ti": (22, 48), "V": (23, 51), "Cr": (24, 52),
+    "Mn": (25, 55), "Fe": (26, 56),
 }
 
 
