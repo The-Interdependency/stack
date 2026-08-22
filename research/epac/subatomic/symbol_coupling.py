@@ -6,9 +6,11 @@ Gonol constructor.
 
 - one-letter symbols (H, B, C, ...) close from a single identity glyph;
 - two-letter symbols (He, Li, Be, Fe, ...) close from two ordered character
-  gonols affixiated at arity 2;
-- the coupled gonol declares exactly two participants: element gonol and
-  symbol gonol. Geometry follows the declared coupling only.
+  gonols; each letter instance has its own oriented hub coupling ``(z, x_i)``
+  / ``(z, y_j)``. That is the three-dimensional structure for a two-letter
+  abbreviation.
+- the element/symbol coupling declares exactly two participants: element gonol
+  and symbol gonol. Geometry follows declared couplings only.
 
 Status: CROSS-DOMAIN-HYPOTHESIS / implemented candidate. Not selected canon.
 
@@ -47,6 +49,11 @@ Usage guidance:
 #   then: participants are the exact ordered characters of S with one identity glyph each, and carried abbreviation-length equals len(S)
 #   class: correctness
 #
+# id: symbol_every_letter_instance_has_oriented_hub_coupling
+#   given: a symbol gonol with one or two letter instances
+#   then: every letter instance has its own declared (z, instance) coupling; two-letter symbols occupy three participating dimensions without declaring a ternary coupling
+#   class: construction
+#
 # id: symbol_coupling_arity_two
 #   given: a symbol-coupled gonol
 #   then: exactly two participants (element gonol, symbol gonol) are declared and the coupling declares arity 2
@@ -65,14 +72,27 @@ Usage guidance:
 
 from __future__ import annotations
 
-from epac_public_gonol import (
+import os
+import sys
+
+_PARENT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PARENT not in sys.path:
+    sys.path.insert(0, _PARENT)
+
+from epac_dimensional_arity import (  # noqa: E402
+    geometry_from_declared_couplings,
+    oriented_instance_couplings,
+    space,
+)
+from epac_public_gonol import (  # noqa: E402
     ClosedPublicGonol,
     PublicGonolReceipt,
     construct_public_gonol,
     replay_public_gonol,
 )
+from extended_atomic import SYMBOL_TO_Z  # noqa: E402
 
-import subatomic_gonol
+import subatomic_gonol  # noqa: E402
 
 SUPPORTED_SYMBOLS: tuple[str, ...] = subatomic_gonol.SUPPORTED_SYMBOLS
 
@@ -81,7 +101,11 @@ RELATION_COUPLING = "epac.symbol-coupling"
 
 
 def construct_symbol_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolReceipt:
-    """Close one symbol-abbreviation gonol from its exact ordered characters."""
+    """Close one symbol-abbreviation gonol from its exact ordered characters.
+
+    Every letter instance has declared ``(z, instance)``. Two letters are two
+    instances, so the structure is ``(z, x)`` and ``(z, y)``.
+    """
     if symbol not in SUPPORTED_SYMBOLS:
         raise ValueError(f"symbol {symbol!r} is outside the supported element table")
     characters = tuple(symbol)
@@ -95,14 +119,31 @@ def construct_symbol_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolRe
                 occurrence=index,
             ).gonol
         )
+    hub_id = f"epac.symbol:{symbol}#{occurrence}"
+    instance_ids = tuple(item.source_id for item in glyphs)
+    declared = space(
+        (hub_id, *instance_ids),
+        [[hub_id, instance_id] for instance_id in instance_ids],
+        charges={hub_id: int(SYMBOL_TO_Z[symbol])},
+    )
+    instance_couplings = oriented_instance_couplings(
+        declared, hub_id=hub_id, instance_ids=instance_ids
+    )
+    geometry = geometry_from_declared_couplings(declared)
     return construct_public_gonol(
-        source_id=f"epac.symbol:{symbol}#{occurrence}",
+        source_id=hub_id,
         relation=RELATION_SYMBOL,
         participants=tuple(glyphs),
         occurrence=occurrence,
+        couplings=geometry["couplings"],
+        structure=geometry["structure"],
         carried_options=(
             ("symbol", symbol),
             ("abbreviation-length", str(len(symbol))),
+            (
+                "oriented-instance-couplings",
+                ";".join(f"({hub},{inst})" for hub, inst in instance_couplings),
+            ),
         ),
     )
 

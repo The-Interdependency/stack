@@ -38,8 +38,20 @@ class GeometryComparisonAfterConstructionTest(unittest.TestCase):
         water_charged = charged_structure_readout(water)
         co2_charged = charged_structure_readout(carbon_dioxide)
         self.assertNotEqual(water_charged, co2_charged)
-        self.assertEqual(water_charged[0], ((2, ((8, 1), 1)), (2, ((8, 1), 1))))
-        self.assertEqual(co2_charged[0], ((2, ((6, 8), 1)), (2, ((6, 8), 1))))
+        self.assertEqual(
+            water_charged[0],
+            (
+                (2, ((8, 1), 1), ("O#2", "H#0")),
+                (2, ((8, 1), 1), ("O#2", "H#1")),
+            ),
+        )
+        self.assertEqual(
+            co2_charged[0],
+            (
+                (2, ((6, 8), 1), ("C#0", "O#1")),
+                (2, ((6, 8), 1), ("C#0", "O#2")),
+            ),
+        )
 
     def test_sealed_shape_comparison_uses_charged_structure(self) -> None:
         constructions = construct_declared_molecules()

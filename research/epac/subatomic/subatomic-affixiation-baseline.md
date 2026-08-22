@@ -275,9 +275,11 @@ law, and no scale interchange is introduced. Standing is `implemented-candidate`
   `extended_atomic` and the EPAC Public Gonol constructor (`epac_public_gonol`).
 - **Symbol-abbreviation coupling** (`symbol_coupling.py`): each element's one- or two-letter
   abbreviation closes as a symbol gonol (one character gonol for H; two ordered character
-  gonols for He, Fe, ...) and couples to the closed element gonol at declared arity 2 via
-  `epac.symbol-coupling`. This adds the two-letter abbreviation without inventing a single
-  Public Gonol glyph for it.
+  gonols for He, Fe, ...). Every letter instance has its own oriented hub coupling
+  `(z, instance)`: two-letter symbols are `(z, x)` and `(z, y)` on three participating
+  dimensions, not a ternary coupling and not a single invented Public Gonol glyph. The
+  closed symbol gonol then couples to the closed element gonol at declared arity 2 via
+  `epac.symbol-coupling`.
 - Evidence: **26/26 subatomic tests pass**; sibling epac suite **29 tests OK**;
   CONTRACTS↔CHECKS audit **closed** (26 contracts / 26 checks).
 - The dimensional-arity doctrine is implemented by the sibling `epac_dimensional_arity.py`

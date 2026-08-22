@@ -1,6 +1,12 @@
 """Executable witnesses for the symbol-abbreviation coupling."""
 
 # === CHECKS ===
+# id: check_symbol_every_letter_instance_has_oriented_hub_coupling
+#   proves: symbol_every_letter_instance_has_oriented_hub_coupling
+#   call: self::test_every_letter_instance_has_zx_and_zy
+#   mutates: none
+#   cleanup: none
+#
 # id: check_symbol_gonol_preserves_exact_abbreviation
 #   proves: symbol_gonol_preserves_exact_abbreviation
 #   call: self::test_symbol_gonol_preserves_exact_abbreviation
@@ -27,6 +33,28 @@
 # === END CHECKS ===
 
 import symbol_coupling as m
+
+
+def test_every_letter_instance_has_zx_and_zy():
+    hydrogen = m.construct_symbol_gonol("H")
+    helium = m.construct_symbol_gonol("He")
+    iron = m.construct_symbol_gonol("Fe")
+    h_ids = [item["declared_ids"] for item in hydrogen.gonol.couplings]
+    assert len(h_ids) == 1
+    assert h_ids[0][0] == hydrogen.gonol.source_id
+    assert h_ids[0][1] == hydrogen.gonol.participants[0].source_id
+    assert helium.gonol.structure["participating_dimension_count"] == 3
+    assert helium.gonol.structure["ternary_coupling_declared"] is False
+    assert [item["declared_ids"][0] for item in helium.gonol.couplings] == [
+        helium.gonol.source_id,
+        helium.gonol.source_id,
+    ]
+    assert [item["declared_ids"][1] for item in helium.gonol.couplings] == [
+        helium.gonol.participants[0].source_id,
+        helium.gonol.participants[1].source_id,
+    ]
+    assert [item["slot_charges"] for item in helium.gonol.couplings] == [[2, None], [2, None]]
+    assert [item["slot_charges"] for item in iron.gonol.couplings] == [[26, None], [26, None]]
 
 
 def test_symbol_gonol_preserves_exact_abbreviation():

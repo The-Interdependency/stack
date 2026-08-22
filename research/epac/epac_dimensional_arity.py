@@ -365,8 +365,8 @@ def _tuple_tree(value: object) -> object:
 def charged_structure_readout(structure: Mapping[str, object]) -> tuple[object, ...]:
     """Order-invariant 3-structure: couplings + charge states + degree.
 
-    Occurrence labels are dropped. Slot order inside each coupling is kept, so
-    ``(8, 1)`` is not ``(1, 8)``.
+    Each instance stays in the coupling ids. Slot order inside each coupling is
+    kept, so ``(8, 1)`` is not ``(1, 8)`` and ``(z, x0)`` is not ``(z, x1)``.
     """
 
     parts = tuple(
@@ -374,6 +374,7 @@ def charged_structure_readout(structure: Mapping[str, object]) -> tuple[object, 
             (
                 int(part["arity"]),
                 _tuple_tree(part["charge_state"]),
+                _tuple_tree(part["coupling"]),
             )
             for part in structure["parts"]
         )
@@ -401,7 +402,7 @@ def topology_structure_readout(structure: Mapping[str, object]) -> tuple[object,
 
     parts, degree, participating, ternary = charged_structure_readout(structure)
     return (
-        tuple(arity for arity, _charge in parts),
+        tuple(item[0] for item in parts),
         tuple((deg, slots) for deg, slots, _charge in degree),
         participating,
         ternary,
