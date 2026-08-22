@@ -184,3 +184,25 @@ Do not add local geometry, position-operation semantics, or physics status insid
 - No EDCM measurement projection is declared; nothing here may become empirical validation.
 - Promotion of affixiation from application terminology into METAPAT postulates/theories remains
   unresolved and is not advanced by this candidate.
+
+## 9. Local implementation status (2026-08-22)
+
+The frozen minimal decisive action from §7 is now implemented locally (not pushed):
+
+- `element_affixiation_candidate.py` — identity-only constructor for H/He/Li/C consuming only
+  `ucns.public_gonol_function` and `ucns.native_mobius_state`. Carries `MODULE_BUILD` and
+  `CONTRACTS` blocks; no position operation is defined or inferred.
+- `test_element_affixiation_candidate.py` — five executable witnesses with a `CHECKS` block.
+  Result: **5 passed** against the pinned UCNS snapshot package (`ucns/src` at `1975fe7`).
+- `receipts/` — sealed construction receipts, one per element:
+
+  | Element | Receipt (SHA-256) |
+  |---|---|
+  | H | `be411f204e10c14ac42b2983677f6b22a02d1cb6c4b158bf2026b0b6e88ca3da` |
+  | He | `5d7d82a86bb59223495663cbf285310900fdad9499fb8b50f8fe355786a9edc7` |
+  | Li | `5efefff19f97e4f42fa0d85d9719adbe07c39fc7dab700a5eea13f434611bb3f` |
+  | C | `a4026f197d6a0425b4ea5b3ff72d09d49fd159d5f59440480b5f97793b64cdc6` |
+
+- Independent replay (`replay_element`) is byte-identical for all four elements.
+- Status remains `CROSS-DOMAIN-HYPOTHESIS / provisional`. Nothing here establishes position
+  operations, geometry between positions, harmonic notation, physics, or canon.
