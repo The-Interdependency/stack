@@ -9,12 +9,13 @@ dimension is incident on declared couplings.
 (z, x) ≠ (x, z)
 (x, z) and (y, z) ↛ (x, y, z)   without an explicit proof
 
-every instance of x has its own (z, x_i)
-every instance of y has its own (z, y_j)
+every physical instance of x has its own (z, x_i)
+every physical instance of y has its own (z, y_j)
 ```
 
-A second occurrence is a second instance. `(z, x_0)` does not cover `x_1`.
-`(x_i, z)` does not satisfy `(z, x_i)`.
+A second atom occurrence is a second instance. `(z, x_0)` does not cover `x_1`.
+`(x_i, z)` does not satisfy `(z, x_i)`. Letters and chemical-symbol
+abbreviations are nomenclature, not physics, and are not these instances.
 
 Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 

@@ -6,10 +6,11 @@ a dimension is incident on declared couplings.
 ``(z, x)`` is not ``(x, z)``. Shared members of ``(x, z)`` and ``(y, z)`` do
 not yield ``(x, y, z)`` without an explicit proof. Overlap is not a proof.
 
-Every instance of ``x`` has its own declared ``(z, x_i)``. Every instance of
-``y`` has its own declared ``(z, y_j)``. A second occurrence is a second
-instance, not a reuse of the first coupling. ``(x_i, z)`` does not satisfy
-``(z, x_i)``.
+Every physical instance of ``x`` has its own declared ``(z, x_i)``. Every
+physical instance of ``y`` has its own declared ``(z, y_j)``. A second
+occurrence is a second instance, not a reuse of the first coupling.
+``(x_i, z)`` does not satisfy ``(z, x_i)``. Letters and abbreviations are
+not this domain.
 
 The three-dimensional structure is the combination of declared oriented
 couplings, their arity charge states, and degree. That span can involve three
@@ -22,10 +23,10 @@ Domain claims (provisional):
 - degree: incidence of one dimension on declared couplings, including slot
 - coupling: ordered declaration of participating dimensions
 - charge state: per-slot charges on a coupling, with Möbius ε at t=0
-- instance: occurrence-addressed dimension; each x_i / y_j is distinct
+- instance: occurrence-addressed physical axis or atom; each x_i / y_j is distinct
 
 Collision: edcm.gonol arity_policy counts gonol participants, not dimensional
-intersections.
+intersections. Letters/abbreviations are nomenclature, not physics instances.
 """
 
 from __future__ import annotations

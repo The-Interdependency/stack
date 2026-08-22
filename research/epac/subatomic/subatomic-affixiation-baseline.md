@@ -273,13 +273,11 @@ law, and no scale interchange is introduced. Standing is `implemented-candidate`
   the Cr `4s1.3d5` exception. Fe = `1s2.2s2.2p6.3s2.3p6.4s2.3d6`, A=56.
 - **Subatomic gonol now supports all 26 symbols** (`subatomic_gonol.py`), using
   `extended_atomic` and the EPAC Public Gonol constructor (`epac_public_gonol`).
-- **Symbol-abbreviation coupling** (`symbol_coupling.py`): each element's one- or two-letter
-  abbreviation closes as a symbol gonol (one character gonol for H; two ordered character
-  gonols for He, Fe, ...). Every letter instance has its own oriented hub coupling
-  `(z, instance)`: two-letter symbols are `(z, x)` and `(z, y)` on three participating
-  dimensions, not a ternary coupling and not a single invented Public Gonol glyph. The
-  closed symbol gonol then couples to the closed element gonol at declared arity 2 via
-  `epac.symbol-coupling`.
+- **Nomenclature abbreviation** (`symbol_coupling.py`): letters are **not** a physics
+  domain. A chemical-symbol abbreviation is a name attached to a closed element gonol.
+  Two-letter names (He, Fe) are two ordered name-characters, not physical `(z, x)` /
+  `(z, y)` couplings and not nuclear-Z charge states. Physics 3-structure stays on
+  atom instances only.
 - Evidence: **26/26 subatomic tests pass**; sibling epac suite **29 tests OK**;
   CONTRACTS↔CHECKS audit **closed** (26 contracts / 26 checks).
 - The dimensional-arity doctrine is implemented by the sibling `epac_dimensional_arity.py`
