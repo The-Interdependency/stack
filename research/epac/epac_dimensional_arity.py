@@ -10,7 +10,8 @@ Every physical instance of ``x`` has its own declared ``(z, x_i)``. Every
 physical instance of ``y`` has its own declared ``(z, y_j)``. A second
 occurrence is a second instance, not a reuse of the first coupling.
 ``(x_i, z)`` does not satisfy ``(z, x_i)``. Letters and abbreviations are
-not this domain.
+not this domain. At atomic scale the instances are electrons and the hub is
+the nucleus. At molecular scale the instances are closed atom gonols.
 
 The three-dimensional structure is the combination of declared oriented
 couplings, their arity charge states, and degree. That span can involve three

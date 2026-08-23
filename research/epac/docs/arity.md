@@ -17,6 +17,11 @@ A second atom occurrence is a second instance. `(z, x_0)` does not cover `x_1`.
 `(x_i, z)` does not satisfy `(z, x_i)`. Letters and chemical-symbol
 abbreviations are nomenclature, not physics, and are not these instances.
 
+At atomic scale the hub is the nucleus and every electron instance has its own
+`(nucleus, electron_i)` with slot charges `(Z, -1)`. That structure closes
+inside the element gonol. Molecular scale does not reopen it: water remains
+`(O#2, H#0)` and `(O#2, H#1)`.
+
 Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 
 ```text

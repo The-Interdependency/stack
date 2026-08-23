@@ -9,6 +9,7 @@ STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
+from epac_dimensional_arity import charged_structure_readout
 from epac_periodic import construct_element_gonol, construct_periodic_table, replay_element_gonol
 
 
@@ -54,6 +55,37 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(tuple((e.l, e.m_l) for e in oxygen.unpaired_valence), ((1, 0), (1, -1)))
         self.assertEqual(len(nitrogen.unpaired_valence), 3)
         self.assertEqual({e.m_l for e in nitrogen.unpaired_valence}, {1, 0, -1})
+
+    def test_every_electron_instance_has_nucleus_coupling(self) -> None:
+        oxygen = construct_element_gonol("O")
+        helium = construct_element_gonol("He")
+        self.assertIsNotNone(oxygen.structure)
+        oxygen_readout = charged_structure_readout(oxygen.structure)
+        self.assertEqual(
+            oxygen_readout[0],
+            tuple(
+                (2, ((8, -1), 1), ("epac.nucleus:O#0", f"epac.electron:O#0:{index}"))
+                for index in range(8)
+            ),
+        )
+        nucleus_degree = next(
+            item for item in oxygen.structure["degree"] if item["dimension"] == "epac.nucleus:O#0"
+        )
+        self.assertEqual(nucleus_degree["degree"], 8)
+        self.assertEqual(nucleus_degree["charge"], 8)
+        helium_readout = charged_structure_readout(helium.structure)
+        self.assertEqual(
+            helium_readout[0],
+            (
+                (2, ((2, -1), 1), ("epac.nucleus:He#0", "epac.electron:He#0:0")),
+                (2, ((2, -1), 1), ("epac.nucleus:He#0", "epac.electron:He#0:1")),
+            ),
+        )
+        ids = {name for part in helium_readout[0] for name in part[2]}
+        self.assertNotIn("H", ids)
+        self.assertNotIn("e", ids)
+        self.assertNotIn("He", ids)
+        self.assertFalse(helium.structure["ternary_coupling_declared"])
 
     def test_construction_does_not_carry_shape_labels(self) -> None:
         receipt = construct_element_gonol("N")

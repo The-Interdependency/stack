@@ -26,10 +26,12 @@ scopes) until comparison.
 
 ```text
 element Public Gonols (epac.public_gonol)
+  -> every electron instance: (nucleus, electron_i) with charges (Z, -1)
+  -> close that atomic 3-structure inside the element gonol
   -> unpaired-valence attachment sites
-  -> declared oriented couplings with per-slot Z and Möbius ε
-  -> three-dimensional structure = those couplings + charge states + degree
-  -> molecular Public Gonol
+  -> declared oriented (center, ligand_i) couplings with per-slot Z and Möbius ε
+  -> molecular three-dimensional structure = those atom-instance couplings + charge states + degree
+  -> molecular Public Gonol (closed atoms remain atomic participants)
   -> construction invariants
   -> (only then) compare to sealed known chemistry
 ```

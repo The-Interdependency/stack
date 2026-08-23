@@ -1,5 +1,10 @@
 """Element gonols closed as EPAC Public Gonols from atomic electron-shell structure.
 
+Every electron instance has its own ``(nucleus, electron_i)`` coupling.
+Nuclear ``Z`` and electron charge ``-1`` are the slot charges. That atomic
+3-structure closes with the element gonol. Molecular construction must not
+reopen it. Letters and abbreviations are not these axes.
+
 Usage guidance
 --------------
 Each electron, shell, nucleus, and element is an EPAC Public Gonol on the
@@ -10,6 +15,7 @@ encoded here.
 
     oxygen = construct_element_gonol("O")
     assert oxygen.constructor_id == "epac.public_gonol"
+    assert len(oxygen.structure["parts"]) == 8
 """
 
 from __future__ import annotations
@@ -17,12 +23,20 @@ from __future__ import annotations
 from typing import Iterable
 
 from epac_atomic import AtomicRecord, ElectronState, iter_table
+from epac_dimensional_arity import (
+    geometry_from_declared_couplings,
+    oriented_instance_couplings,
+    space,
+)
 from epac_public_gonol import (
     ClosedPublicGonol,
     PublicGonolReceipt,
     construct_public_gonol,
     replay_public_gonol,
 )
+
+# Elementary charge in units of e. Nuclear Z is proton count in the same units.
+ELECTRON_CHARGE = -1
 
 
 def _carrier_glyph(text: str) -> str | None:
@@ -95,6 +109,35 @@ def _construct_nucleus(record: AtomicRecord, *, atom_occurrence: int) -> ClosedP
     ).gonol
 
 
+def _nucleus_dimension_id(symbol: str, atom_occurrence: int) -> str:
+    return f"epac.nucleus:{symbol}#{atom_occurrence}"
+
+
+def _electron_dimension_id(symbol: str, atom_occurrence: int, index: int) -> str:
+    return f"epac.electron:{symbol}#{atom_occurrence}:{index}"
+
+
+def _declared_atomic_space(record: AtomicRecord, *, atom_occurrence: int):
+    """One ``(nucleus, electron_i)`` coupling for every electron instance.
+
+    Closed shells still participate as instances. Letters do not.
+    """
+
+    hub = _nucleus_dimension_id(record.symbol, atom_occurrence)
+    electron_ids = [
+        _electron_dimension_id(record.symbol, atom_occurrence, electron.index)
+        for electron in record.electrons
+    ]
+    charges = {hub: record.Z, **{electron_id: ELECTRON_CHARGE for electron_id in electron_ids}}
+    declared = space(
+        [hub, *electron_ids],
+        [[hub, electron_id] for electron_id in electron_ids],
+        charges=charges,
+    )
+    oriented_instance_couplings(declared, hub_id=hub, instance_ids=electron_ids)
+    return declared
+
+
 def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolReceipt:
     """Close one element Public Gonol whose participants are nucleus + electron shells."""
 
@@ -129,6 +172,9 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolR
         ("promoted-unpaired-lm", ",".join(f"{e.l}:{e.m_l}" for e in promoted) or "none"),
         ("valence-angular-ids", ",".join(e.angular_id for e in record.electrons if e.valence)),
     )
+    geometry = geometry_from_declared_couplings(
+        _declared_atomic_space(record, atom_occurrence=occurrence)
+    )
     return construct_public_gonol(
         source_id=f"epac.periodic:{symbol}#{occurrence}",
         relation="epac.atomic.element",
@@ -136,6 +182,8 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolR
         participants=(nucleus, *shells),
         carried_options=carried,
         occurrence=occurrence,
+        couplings=geometry["couplings"],
+        structure=geometry["structure"],
     )
 
 
