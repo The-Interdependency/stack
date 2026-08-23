@@ -23,7 +23,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from epac_atomic import AtomicRecord, ElectronState, iter_table
+from epac_atomic import AtomicRecord, ElectronState, iter_table, promoted_atomic_record
 from epac_dimensional_arity import (
     geometry_from_declared_couplings,
     oriented_instance_couplings,
@@ -43,6 +43,8 @@ ELECTRON_CHARGE = -1
 NUCLEUS_RELATION = "epac.atomic.nucleus"
 PROTON_RELATION = "epac.atomic.proton"
 NEUTRON_RELATION = "epac.atomic.neutron"
+SHELL_RELATION = "epac.atomic.shell"
+ELECTRON_RELATION = "epac.atomic.electron"
 
 
 def _carrier_glyph(text: str) -> str | None:
@@ -234,7 +236,9 @@ def _declared_atomic_space(record: AtomicRecord, *, atom_occurrence: int):
     return declared
 
 
-def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolReceipt:
+def construct_element_gonol(
+    symbol: str, *, occurrence: int = 0, promoted: bool = False
+) -> PublicGonolReceipt:
     """Close one element Public Gonol whose participants are nucleus + electron shells."""
 
     record = None
@@ -244,6 +248,8 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolR
             break
     if record is None:
         raise ValueError(f"no atomic record for symbol {symbol!r}")
+    if promoted:
+        record = promoted_atomic_record(record)
     shells: list[ClosedPublicGonol] = []
     by_n: dict[int, list[ElectronState]] = {}
     for electron in record.electrons:
@@ -267,6 +273,7 @@ def construct_element_gonol(symbol: str, *, occurrence: int = 0) -> PublicGonolR
         ("promoted-unpaired-count", str(len(promoted))),
         ("promoted-unpaired-lm", ",".join(f"{e.l}:{e.m_l}" for e in promoted) or "none"),
         ("valence-angular-ids", ",".join(e.angular_id for e in record.electrons if e.valence)),
+        ("promoted", "true" if promoted else "false"),
     )
     geometry = geometry_from_declared_couplings(
         _declared_atomic_space(record, atom_occurrence=occurrence)
@@ -312,3 +319,40 @@ def carried(gonol: ClosedPublicGonol, key: str) -> str:
         if item_key == key:
             return value
     raise KeyError(key)
+
+
+def nucleus_of(gonol: ClosedPublicGonol) -> ClosedPublicGonol:
+    for item in gonol.participants:
+        if item.relation == NUCLEUS_RELATION:
+            return item
+    raise KeyError("nucleus")
+
+
+def electrons_of(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
+    return tuple(
+        electron
+        for shell in gonol.participants
+        if shell.relation == SHELL_RELATION
+        for electron in shell.participants
+        if electron.relation == ELECTRON_RELATION
+    )
+
+
+def unpaired_valence_electrons(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
+    """Unpaired valence electron gonols already closed inside the element."""
+
+    unpaired: list[ClosedPublicGonol] = []
+    for electron in electrons_of(gonol):
+        options = dict(electron.carried_options)
+        if options.get("valence") == "true" and options.get("paired") == "false":
+            unpaired.append(electron)
+    return tuple(unpaired)
+
+
+def nuclear_charge(gonol: ClosedPublicGonol) -> int:
+    return int(dict(nucleus_of(gonol).carried_options)["Z"])
+
+
+def electron_lm(electron: ClosedPublicGonol) -> tuple[int, int]:
+    options = dict(electron.carried_options)
+    return (int(options["l"]), int(options["m_l"]))

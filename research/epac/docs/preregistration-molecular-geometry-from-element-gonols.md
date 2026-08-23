@@ -29,8 +29,9 @@ proton gonols (charge +1) and neutron gonols (charge 0)
   -> nucleus = affixiation of those nucleons; (proton_j, neutron_i)
   -> every electron instance: (nucleus, electron_i) with charges (Z, -1)
   -> close that atomic 3-structure inside the element gonol
-  -> unpaired-valence attachment sites
-  -> declared oriented (center, ligand_i) couplings with per-slot Z and Möbius ε
+  -> unpaired-valence electron gonols already closed inside each atom
+  -> if needed, a closed promoted atomic gonol (same n s→p); no table re-lookup
+  -> declared oriented (center, ligand_i) couplings with charges from closed nuclei
   -> molecular three-dimensional structure = those atom-instance couplings + charge states + degree
   -> each local 3 represented in 4 quaternion components (scalar ε plus the three axis charges)
   -> molecular Public Gonol (closed atoms remain atomic participants)

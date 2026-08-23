@@ -10,7 +10,7 @@ Do not import the sealed molecular comparison file from this module.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Iterator
 
 
@@ -249,6 +249,39 @@ def _promoted_unpaired(electrons: tuple[ElectronState, ...]) -> tuple[ElectronSt
         paired=False,
     )
     return tuple([unpaired_s, new_p, *[e for e in unpaired if not (e.l == 0)]])
+
+
+def apply_atomic_promotion(electrons: tuple[ElectronState, ...]) -> tuple[ElectronState, ...]:
+    """Return a full electron tuple with atomic s→p promotion applied.
+
+    This stays inside one atom. It is not a molecular hybrid.
+    """
+
+    promoted_unpaired = _promoted_unpaired(electrons)
+    if promoted_unpaired == _unpaired_valence(electrons):
+        return electrons
+    replacements = {item.index: item for item in promoted_unpaired}
+    rebuilt = tuple(replacements.get(electron.index, electron) for electron in electrons)
+    occupancy: dict[tuple[int, int, int], int] = {}
+    for electron in rebuilt:
+        key = (electron.n, electron.l, electron.m_l)
+        occupancy[key] = occupancy.get(key, 0) + 1
+    return tuple(replace(electron, paired=occupancy[(electron.n, electron.l, electron.m_l)] == 2) for electron in rebuilt)
+
+
+def promoted_atomic_record(record: AtomicRecord) -> AtomicRecord:
+    electrons = apply_atomic_promotion(record.electrons)
+    if electrons == record.electrons:
+        return record
+    unpaired = _unpaired_valence(electrons)
+    return replace(
+        record,
+        electrons=electrons,
+        configuration=_configuration(electrons),
+        valence_electrons=sum(1 for electron in electrons if electron.valence),
+        unpaired_valence=unpaired,
+        promoted_unpaired_valence=unpaired,
+    )
 
 
 def atomic_record(Z: int) -> AtomicRecord:

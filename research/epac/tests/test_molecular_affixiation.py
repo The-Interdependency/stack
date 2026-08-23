@@ -32,9 +32,11 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertFalse(water["ligand_has_p"])
         self.assertEqual(water["center_used_atomic_promotion"], False)
         self.assertEqual(methane["center_used_atomic_promotion"], True)
-        self.assertEqual(methane["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertEqual(set(methane["center_unpaired_lm"]), {"0:0", "1:-1", "1:1", "1:0"})
+        self.assertEqual(len(methane["center_unpaired_lm"]), 4)
+        self.assertTrue(all(item.startswith("epac.electron:") for item in methane["center_attachment_electron_ids"]))
         self.assertTrue(carbon_dioxide["ligand_has_p"])
-        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertEqual(set(carbon_dioxide["center_unpaired_lm"]), {"0:0", "1:-1", "1:1", "1:0"})
         self.assertEqual(carbon_dioxide["center_attachment_site_count"], 4)
         self.assertEqual(carbon_dioxide["ligand_attachment_site_count"], 4)
 
@@ -91,6 +93,13 @@ class MolecularAffixiationTest(unittest.TestCase):
             8,
         )
         self.assertFalse(any(name.startswith("epac.neutron:") for name in water_ids))
+        self.assertTrue(
+            all(item.startswith("epac.electron:O#2:") for item in molecules["H2O"].invariants["center_attachment_electron_ids"])
+        )
+        self.assertEqual(len(molecules["H2O"].invariants["consumed_atomic_quaternions"]), 3)
+        source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8")
+        self.assertNotIn("atomic_of", source)
+        self.assertNotIn("from epac_atomic", source)
         self.assertEqual(water_receipt.structure["representation_dimension"], 4)
         self.assertEqual(water_receipt.structure["participating_dimension_count"], 3)
         self.assertEqual(

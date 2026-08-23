@@ -43,6 +43,16 @@ class PeriodicElementGonolTest(unittest.TestCase):
         oxygen = table["O"]
         self.assertEqual(dict(oxygen.gonol.carried_options)["unpaired-valence-lm"], "1:0,1:-1")
 
+    def test_promoted_carbon_closes_four_unpaired_valence_electrons(self) -> None:
+        from epac_periodic import unpaired_valence_electrons
+
+        ground = construct_element_gonol("C")
+        promoted = construct_element_gonol("C", promoted=True)
+        self.assertEqual(len(unpaired_valence_electrons(ground.gonol)), 2)
+        self.assertEqual(len(unpaired_valence_electrons(promoted.gonol)), 4)
+        self.assertEqual(dict(promoted.gonol.carried_options)["promoted"], "true")
+        self.assertNotEqual(ground.receipt_digest, promoted.receipt_digest)
+
     def test_replay_matches(self) -> None:
         first = construct_element_gonol("O")
         second = replay_element_gonol(first)
