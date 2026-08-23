@@ -207,17 +207,23 @@ def _promoted_unpaired(electrons: tuple[ElectronState, ...]) -> tuple[ElectronSt
         return tuple(unpaired)
     p_occupied_m = {e.m_l for e in valence if e.l == 1}
     empty_p_m = [m for m in _ml_down(1) if m not in p_occupied_m]
-    s_pairs = [e for e in valence if e.l == 0 and e.paired and e.m_s == 1]
-    if not s_pairs or not empty_p_m:
+    s_pairs_by_orbital: dict[tuple[int, int, int], list[ElectronState]] = {}
+    for electron in valence:
+        if electron.l == 0 and electron.paired:
+            s_pairs_by_orbital.setdefault((electron.n, electron.l, electron.m_l), []).append(electron)
+    s_pair = next((pair for pair in s_pairs_by_orbital.values() if len(pair) == 2), None)
+    if s_pair is None or not empty_p_m:
         return tuple(unpaired)
-    # Promote one valence s electron into the first empty p m, unpairing s and adding p.
-    promoted_from_s = s_pairs[0]
+    # Promote one valence s electron into the first empty p m while preserving
+    # the distinct electron that remains in the s orbital.
+    promoted_from_s = next((item for item in s_pair if item.m_s == 1), s_pair[0])
+    remaining_s = next(item for item in s_pair if item.index != promoted_from_s.index)
     new_p = ElectronState(
         index=promoted_from_s.index,
         n=valence_n,
         l=1,
         m_l=empty_p_m[0],
-        m_s=1,
+        m_s=promoted_from_s.m_s,
         shell=f"n{valence_n}",
         subshell=_subshell_name(valence_n, 1),
         angular_id=_angular_id(1, empty_p_m[0]),
@@ -228,17 +234,17 @@ def _promoted_unpaired(electrons: tuple[ElectronState, ...]) -> tuple[ElectronSt
         paired=False,
     )
     unpaired_s = ElectronState(
-        index=promoted_from_s.index,
-        n=promoted_from_s.n,
+        index=remaining_s.index,
+        n=remaining_s.n,
         l=0,
-        m_l=0,
-        m_s=1,
-        shell=promoted_from_s.shell,
-        subshell=promoted_from_s.subshell,
-        angular_id=promoted_from_s.angular_id,
-        radial_nodes=promoted_from_s.radial_nodes,
-        z_eff=promoted_from_s.z_eff,
-        e_rydberg=promoted_from_s.e_rydberg,
+        m_l=remaining_s.m_l,
+        m_s=remaining_s.m_s,
+        shell=remaining_s.shell,
+        subshell=remaining_s.subshell,
+        angular_id=remaining_s.angular_id,
+        radial_nodes=remaining_s.radial_nodes,
+        z_eff=remaining_s.z_eff,
+        e_rydberg=remaining_s.e_rydberg,
         valence=True,
         paired=False,
     )

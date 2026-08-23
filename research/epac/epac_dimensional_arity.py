@@ -38,8 +38,8 @@ Quaternion basis names are representation labels, not letters-as-physics.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Mapping, Sequence
 
 
 # Established UCNS Möbius frame sign at t=0: ε in (t, ε) ~ (t+n, (-1)^n ε).
@@ -172,6 +172,17 @@ class DimensionalSpace:
                 )
         declared = {item.declared_ids for item in self.couplings}
         for proof in self.proofs:
+            conclusion_missing = [
+                name for name in proof.conclusion.declared_ids if name not in ambient
+            ]
+            if conclusion_missing:
+                raise DimensionalArityError(
+                    f"proof {proof.rule_id!r} conclusion uses undeclared dimensions {tuple(conclusion_missing)}"
+                )
+            if proof.conclusion.declared_ids not in declared:
+                raise DimensionalArityError(
+                    f"proof {proof.rule_id!r} conclusion {proof.conclusion.declared_ids} is not declared"
+                )
             for premise in proof.premises:
                 if premise.declared_ids not in declared:
                     raise DimensionalArityError(
@@ -179,15 +190,20 @@ class DimensionalSpace:
                     )
 
 
+def _require_dimension_id_sequence(value: Sequence[str], *, field: str) -> tuple[str, ...]:
+    if not isinstance(value, Sequence) or isinstance(value, (str, bytes)):
+        raise DimensionalArityError(f"{field} must be an ordered declaration sequence")
+    return tuple(value)
+
+
 def dimension(id: str, charge: int | None = None) -> Dimension:
     return Dimension(id, charge)
 
 
 def coupling(dimension_ids: Sequence[str], charges: Mapping[str, int] | None = None) -> Coupling:
-    if not isinstance(dimension_ids, Sequence) or isinstance(dimension_ids, (str, bytes)):
-        raise DimensionalArityError("coupling dimensions must be an ordered declaration sequence")
+    ids = _require_dimension_id_sequence(dimension_ids, field="coupling dimensions")
     charge_map = dict(charges or {})
-    return Coupling(tuple(Dimension(item, charge_map.get(item)) for item in dimension_ids))
+    return Coupling(tuple(Dimension(item, charge_map.get(item)) for item in ids))
 
 
 def space(
@@ -196,16 +212,14 @@ def space(
     proofs: Sequence[CouplingProof] = (),
     charges: Mapping[str, int] | None = None,
 ) -> DimensionalSpace:
-    if not isinstance(ambient_ids, Sequence) or isinstance(ambient_ids, (str, bytes)):
-        raise DimensionalArityError("ambient dimensions must be a declared sequence")
+    ambient_ids = _require_dimension_id_sequence(ambient_ids, field="ambient dimensions")
     charge_map = dict(charges or {})
     ambient = tuple(Dimension(item, charge_map.get(item)) for item in ambient_ids)
     by_id = {item.id: item for item in ambient}
     declared = []
     for item in coupling_declarations:
-        if not isinstance(item, Sequence) or isinstance(item, (str, bytes)):
-            raise DimensionalArityError("each coupling declaration must be an ordered sequence")
-        declared.append(Coupling(tuple(by_id[name] if name in by_id else Dimension(name) for name in item)))
+        ids = _require_dimension_id_sequence(item, field="each coupling declaration")
+        declared.append(Coupling(tuple(by_id[name] if name in by_id else Dimension(name) for name in ids)))
     return DimensionalSpace(
         ambient_dimensions=ambient,
         couplings=tuple(declared),
@@ -233,7 +247,7 @@ def observed_common_ids(left: Coupling, right: Coupling) -> frozenset[str]:
 
 
 def has_declared_coupling(declared: DimensionalSpace, dimension_ids: Sequence[str]) -> bool:
-    target = tuple(dimension_ids)
+    target = _require_dimension_id_sequence(dimension_ids, field="coupling lookup dimensions")
     return any(item.declared_ids == target for item in declared.couplings)
 
 
@@ -299,34 +313,50 @@ def oriented_instance_couplings(
     return tuple((hub_id, instance_id) for instance_id in instance_ids)
 
 
+def _bind_coupling_to_ambient(
+    item: Coupling, ambient_by_id: Mapping[str, Dimension]
+) -> Coupling:
+    dimensions: list[Dimension] = []
+    for dimension in item.dimensions:
+        ambient = ambient_by_id.get(dimension.id)
+        if ambient is None:
+            raise DimensionalArityError(
+                f"proven coupling {item.declared_ids} uses undeclared dimension {dimension.id!r}"
+            )
+        if dimension.charge is not None and dimension.charge != ambient.charge:
+            raise DimensionalArityError(
+                f"proof conclusion charge for {dimension.id!r} conflicts with ambient charge"
+            )
+        dimensions.append(ambient)
+    return Coupling(tuple(dimensions))
+
+
 def install_proven_coupling(declared: DimensionalSpace, proof: CouplingProof) -> DimensionalSpace:
     """Add a coupling only with an explicit non-forbidden proof."""
 
-    if proof.conclusion.declared_ids in {item.declared_ids for item in declared.couplings}:
-        return DimensionalSpace(
-            ambient_dimensions=declared.ambient_dimensions,
-            couplings=declared.couplings,
-            proofs=declared.proofs + (proof,),
-        )
-    missing = [
-        name
-        for name in proof.conclusion.declared_ids
-        if name not in {axis.id for axis in declared.ambient_dimensions}
-    ]
-    if missing:
-        raise DimensionalArityError(
-            f"proven coupling {proof.conclusion.declared_ids} uses undeclared dimensions {tuple(missing)}"
-        )
+    ambient_by_id = {axis.id: axis for axis in declared.ambient_dimensions}
+    bound_conclusion = _bind_coupling_to_ambient(proof.conclusion, ambient_by_id)
+    bound_proof = CouplingProof(
+        conclusion=bound_conclusion,
+        premises=proof.premises,
+        rule_id=proof.rule_id,
+    )
     declared_ids = {item.declared_ids for item in declared.couplings}
-    for premise in proof.premises:
+    for premise in bound_proof.premises:
         if premise.declared_ids not in declared_ids:
             raise DimensionalArityError(
                 f"proof {proof.rule_id!r} cites missing premise {premise.declared_ids}"
             )
+    if bound_conclusion.declared_ids in declared_ids:
+        return DimensionalSpace(
+            ambient_dimensions=declared.ambient_dimensions,
+            couplings=declared.couplings,
+            proofs=declared.proofs + (bound_proof,),
+        )
     return DimensionalSpace(
         ambient_dimensions=declared.ambient_dimensions,
-        couplings=declared.couplings + (proof.conclusion,),
-        proofs=declared.proofs + (proof,),
+        couplings=declared.couplings + (bound_conclusion,),
+        proofs=declared.proofs + (bound_proof,),
     )
 
 
@@ -415,6 +445,7 @@ def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str,
                 "charge": item.dimension.charge,
                 "degree": item.degree,
                 "slot_degrees": item.slot_degrees,
+                "incidences": item.incidences,
             }
             for item in degrees
             if item.degree
@@ -432,9 +463,27 @@ def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str,
 
 
 def _tuple_tree(value: object) -> object:
+    if isinstance(value, Mapping):
+        return tuple(sorted((str(key), _tuple_tree(item)) for key, item in value.items()))
     if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
         return tuple(_tuple_tree(item) for item in value)
     return value
+
+
+def _sortable_tree(value: object) -> object:
+    if value is None:
+        return (0,)
+    if isinstance(value, bool):
+        return (1, int(value))
+    if isinstance(value, int):
+        return (2, value)
+    if isinstance(value, str):
+        return (3, value)
+    if isinstance(value, Mapping):
+        return (4, tuple(sorted((str(key), _sortable_tree(item)) for key, item in value.items())))
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return (5, tuple(_sortable_tree(item) for item in value))
+    return (6, repr(value))
 
 
 def charged_structure_readout(structure: Mapping[str, object]) -> tuple[object, ...]:
@@ -445,25 +494,23 @@ def charged_structure_readout(structure: Mapping[str, object]) -> tuple[object, 
     """
 
     parts = tuple(
-        sorted(
-            (
-                int(part["arity"]),
-                _tuple_tree(part["charge_state"]),
-                _tuple_tree(part["coupling"]),
-            )
-            for part in structure["parts"]
+        (
+            int(part["arity"]),
+            _tuple_tree(part["charge_state"]),
+            _tuple_tree(part["coupling"]),
         )
+        for part in structure["parts"]
     )
     degree = tuple(
-        sorted(
-            (
-                int(item["degree"]),
-                _tuple_tree(item["slot_degrees"]),
-                item["charge"],
-            )
-            for item in structure["degree"]
+        (
+            int(item["degree"]),
+            _tuple_tree(item["slot_degrees"]),
+            item["charge"],
         )
+        for item in structure["degree"]
     )
+    parts = tuple(sorted(parts, key=_sortable_tree))
+    degree = tuple(sorted(degree, key=_sortable_tree))
     return (
         parts,
         degree,

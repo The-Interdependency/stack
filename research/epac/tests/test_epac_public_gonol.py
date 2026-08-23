@@ -75,9 +75,61 @@ class EpacPublicGonolTest(unittest.TestCase):
         self.assertFalse(receipt.structure["inferred_cartesian_embedding"])
         self.assertEqual(
             [part["charge_state"] for part in receipt.structure["parts"]],
-            [[[8, 1], 1], [[8, 1], 1]],
+            [((8, 1), 1), ((8, 1), 1)],
         )
         self.assertEqual(native_mobius_state(0).frame.sign, 1)
+
+    def test_nested_geometry_is_frozen_after_closure(self) -> None:
+        declared = space(
+            ["z", "x"],
+            [["z", "x"]],
+            charges={"z": 8, "x": 1},
+        )
+        geometry = geometry_from_declared_couplings(declared)
+        receipt = construct_public_gonol(
+            source_id="epac.test:frozen-structure",
+            relation="epac.affixiation.unpaired-valence",
+            couplings=geometry["couplings"],
+            structure=geometry["structure"],
+        )
+        geometry["structure"]["parts"][0]["charge_state"] = ((999, 1), 1)
+        self.assertEqual(receipt.structure["parts"][0]["charge_state"], ((8, 1), 1))
+        with self.assertRaises(TypeError):
+            receipt.structure["parts"][0]["charge_state"] = ((999, 1), 1)
+        with self.assertRaises(AttributeError):
+            receipt.structure["parts"].append({})
+        self.assertEqual(replay_public_gonol(receipt).receipt_digest, receipt.receipt_digest)
+
+    def test_structure_must_match_declared_couplings(self) -> None:
+        declared = space(
+            ["z", "x"],
+            [["z", "x"]],
+            charges={"z": 8, "x": 1},
+        )
+        geometry = geometry_from_declared_couplings(declared)
+        bad_structure = {
+            **geometry["structure"],
+            "parts": (
+                {
+                    "coupling": ("z", "x"),
+                    "arity": 2,
+                    "charge_state": ((8, 99), 1),
+                },
+            ),
+        }
+        with self.assertRaisesRegex(PublicGonolConstructionError, "structure must match"):
+            construct_public_gonol(
+                source_id="epac.test:bad-structure",
+                relation="epac.affixiation.unpaired-valence",
+                couplings=geometry["couplings"],
+                structure=bad_structure,
+            )
+        with self.assertRaisesRegex(PublicGonolConstructionError, "supplied together"):
+            construct_public_gonol(
+                source_id="epac.test:missing-structure",
+                relation="epac.affixiation.unpaired-valence",
+                couplings=geometry["couplings"],
+            )
 
     def test_unknown_glyph_fails_closed(self) -> None:
         with self.assertRaises(PublicGonolConstructionError):

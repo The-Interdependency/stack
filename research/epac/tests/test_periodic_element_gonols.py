@@ -52,6 +52,10 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(len(carbon.electrons), 6)
         self.assertEqual(tuple((e.l, e.m_l) for e in carbon.unpaired_valence), ((1, 1), (1, 0)))
         self.assertEqual(len(carbon.promoted_unpaired_valence), 4)
+        self.assertEqual(
+            len({e.index for e in carbon.promoted_unpaired_valence}),
+            len(carbon.promoted_unpaired_valence),
+        )
         self.assertEqual(tuple((e.l, e.m_l) for e in oxygen.unpaired_valence), ((1, 0), (1, -1)))
         self.assertEqual(len(nitrogen.unpaired_valence), 3)
         self.assertEqual({e.m_l for e in nitrogen.unpaired_valence}, {1, 0, -1})

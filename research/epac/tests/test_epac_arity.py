@@ -43,6 +43,8 @@ class DimensionalArityTest(unittest.TestCase):
         declared = space(["x", "z"], [["z", "x"]], charges={"x": 1, "z": 8})
         self.assertTrue(has_declared_coupling(declared, ["z", "x"]))
         self.assertFalse(has_declared_coupling(declared, ["x", "z"]))
+        with self.assertRaisesRegex(DimensionalArityError, "ordered declaration sequence"):
+            has_declared_coupling(declared, "zx")
         self.assertNotEqual(coupling(["z", "x"]), coupling(["x", "z"]))
         self.assertNotEqual(declared.couplings[0].charge_state, coupling(["x", "z"], {"x": 1, "z": 8}).charge_state)
         geometry = geometry_from_declared_couplings(declared)
@@ -148,6 +150,15 @@ class DimensionalArityTest(unittest.TestCase):
         self.assertTrue(has_declared_coupling(proven, ["x", "y", "z"]))
         self.assertEqual(proven.couplings[-1].arity, 3)
 
+    def test_space_rejects_proof_conclusion_that_is_not_declared(self) -> None:
+        proof = CouplingProof(
+            conclusion=coupling(["x", "y", "z"]),
+            premises=(coupling(["x", "z"]),),
+            rule_id="caller-supplied-certificate",
+        )
+        with self.assertRaisesRegex(DimensionalArityError, "conclusion .* is not declared"):
+            space(["x", "y", "z"], [["x", "z"]], proofs=(proof,))
+
     def test_zx_and_zy_degree_has_z_in_slot_zero_twice(self) -> None:
         declared = space(["x", "y", "z"], [["z", "x"], ["z", "y"]])
         degrees = {item.dimension.id: item for item in degree_relations(declared)}
@@ -229,6 +240,19 @@ class DimensionalArityTest(unittest.TestCase):
         self.assertEqual(two_only["structure"]["participating_dimension_count"], 2)
         self.assertEqual(two_only["structure"]["representation_dimension"], 4)
         self.assertEqual(two_only["structure"]["quaternions"], ())
+
+    def test_mixed_charged_and_uncharged_readout_is_stable(self) -> None:
+        geometry = geometry_from_declared_couplings(
+            space(["charged", "plain"], [["charged"], ["plain"]], charges={"charged": 1})
+        )
+        readout = charged_structure_readout(geometry["structure"])
+        self.assertEqual(
+            readout[0],
+            (
+                (1, ((None,), 1), ("plain",)),
+                (1, ((1,), 1), ("charged",)),
+            ),
+        )
 
 
 if __name__ == "__main__":

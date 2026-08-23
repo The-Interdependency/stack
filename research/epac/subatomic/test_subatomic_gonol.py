@@ -102,3 +102,21 @@ def test_stays_cross_domain_hypothesis():
         assert dict(receipt.gonol.carried_options)["status"] == "CROSS-DOMAIN-HYPOTHESIS"
         assert receipt.nonclaims
         assert receipt.hmmm
+
+
+def test_imports_do_not_mutate_sys_path():
+    source = open(m.__file__, encoding="utf-8").read()
+    assert "sys.path" not in source
+
+
+def test_harmonic_survival_is_symbol_specific():
+    surviving = {
+        symbol: dict(m.construct_subatomic_gonol(symbol).gonol.carried_options)[
+            "harmonic-surviving"
+        ]
+        for symbol in ("H", "He", "Li", "C")
+    }
+    assert surviving["H"] == "none"
+    assert surviving["He"] == "none"
+    assert surviving["Li"] == "alpha_cluster_recurrence"
+    assert "proton_neutron_inversion_symmetry" in surviving["C"]

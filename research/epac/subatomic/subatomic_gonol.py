@@ -20,7 +20,7 @@ Status: CROSS-DOMAIN-HYPOTHESIS / implemented candidate. Not selected canon.
 
 Usage guidance:
 
-    PYTHONPATH="<epac>:<ucns>/src" python3 - <<'PY'
+    PYTHONPATH="<epac>:<epac>/subatomic:<ucns>/src" python3 - <<'PY'
     from subatomic_gonol import construct_subatomic_gonol, replay_subatomic_gonol
 
     receipt = construct_subatomic_gonol("He")
@@ -29,28 +29,21 @@ Usage guidance:
     PY
 """
 
-import os
-import sys
-
-_PARENT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _PARENT not in sys.path:
-    sys.path.insert(0, _PARENT)
-
-from extended_atomic import (  # noqa: E402
+from extended_atomic import (
     EXTENDED_SYMBOLS,
     SYMBOL_TO_Z,
     AtomicRecord,
     atomic_record,
 )
-from epac_public_gonol import (  # noqa: E402
+from epac_public_gonol import (
     ClosedPublicGonol,
     PublicGonolReceipt,
     construct_public_gonol,
     replay_public_gonol,
 )
 
-import element_affixiation_candidate as identity  # noqa: E402
-import nuclear_harmonic_candidates as harmonics  # noqa: E402
+import element_affixiation_candidate as identity
+import nuclear_harmonic_candidates as harmonics
 
 # === MODULE_BUILD ===
 # id: epac_subatomic_gonol
@@ -109,6 +102,19 @@ def _harmonic_rows(symbol: str) -> tuple[harmonics.HarmonicCandidate, ...]:
         for candidate in harmonics.CANDIDATES
         if any(participant.startswith(f"{symbol}-") for participant in candidate.participants)
     )
+
+
+def _harmonic_survives_symbol(
+    candidate: harmonics.HarmonicCandidate,
+    symbol: str,
+) -> bool:
+    recurrence = harmonics.recurrence_test(candidate)
+    symbol_participants = tuple(
+        participant
+        for participant in candidate.participants
+        if participant.startswith(f"{symbol}-")
+    )
+    return any(recurrence.get(participant, False) for participant in symbol_participants)
 
 
 def _electron_options(record: AtomicRecord, electron) -> tuple[tuple[str, str], ...]:
@@ -209,7 +215,7 @@ def construct_subatomic_gonol(symbol: str, *, occurrence: int = 0) -> PublicGono
     harmonic_surviving = ",".join(
         candidate.candidate_id
         for candidate in _harmonic_rows(symbol)
-        if any(harmonics.recurrence_test(candidate).values())
+        if _harmonic_survives_symbol(candidate, symbol)
     )
     carried = [
         ("symbol", symbol),

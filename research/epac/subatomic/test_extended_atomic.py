@@ -56,3 +56,8 @@ def test_extended_atomic_stays_candidate():
         assert electron.n >= 1
         assert electron.z_eff
         assert electron.e_rydberg
+
+
+def test_extended_atomic_does_not_mutate_sys_path():
+    source = open(m.__file__, encoding="utf-8").read()
+    assert "sys.path" not in source

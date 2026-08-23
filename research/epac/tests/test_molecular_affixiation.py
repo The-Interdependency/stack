@@ -34,7 +34,9 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertEqual(methane["center_used_atomic_promotion"], True)
         self.assertEqual(methane["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
         self.assertTrue(carbon_dioxide["ligand_has_p"])
-        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["1:1", "1:0"])
+        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertEqual(carbon_dioxide["center_attachment_site_count"], 4)
+        self.assertEqual(carbon_dioxide["ligand_attachment_site_count"], 4)
 
     def test_declared_couplings_are_binary_and_do_not_fill_ambient(self) -> None:
         molecules = construct_declared_molecules()
@@ -92,10 +94,13 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertEqual(quaternion_structure_readout(molecules["H2"].receipt.structure), ())
         self.assertEqual(len(quaternion_structure_readout(molecules["CH4"].receipt.structure)), 6)
 
-    def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
+    def test_ucns_coupling_binds_declared_attachments(self) -> None:
         molecules = construct_declared_molecules()
         signatures = {formula: item.invariants["ucns_coupling_signature"] for formula, item in molecules.items()}
-        self.assertEqual(len(set(signatures.values())), 1)
+        self.assertEqual(len(set(signatures.values())), len(molecules))
+        self.assertEqual({signature[0] for signature in signatures.values()}, {"ucns.native-mobius-root-loop"})
+        self.assertEqual(len(signatures["CO2"][2]), 4)
+        self.assertEqual(len(signatures["H2O"][2]), 2)
 
     def test_construction_text_avoids_sealed_labels(self) -> None:
         source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8").lower()

@@ -111,13 +111,55 @@ def _declared_dimensional_space(
     return space(ambient, declarations, charges=charges)
 
 
-def _mobius_coupling() -> Mapping[str, Any]:
+def _site_label(site: tuple[int, int]) -> str:
+    return f"{site[0]}:{site[1]}"
+
+
+def _mobius_coupling(
+    *,
+    participants: tuple[ClosedPublicGonol, ...],
+    center: ClosedPublicGonol | None,
+    ligands: tuple[ClosedPublicGonol, ...],
+    center_sites: tuple[tuple[int, int], ...],
+    ligand_sites: tuple[tuple[tuple[int, int], ...], ...],
+) -> Mapping[str, Any]:
     origin = native_mobius_state(0)
     one = origin.advance(1)
     two = origin.advance(2)
+    if center is None:
+        attachment_slots = tuple(
+            {
+                "slot": slot,
+                "participant": _atom_dimension_id(participant),
+                "site": _site_label(site),
+            }
+            for slot, (participant, sites) in enumerate(zip(participants, ligand_sites))
+            for site in sites
+        )
+    else:
+        flattened_ligand_sites = tuple(
+            (ligand, site)
+            for ligand, sites in zip(ligands, ligand_sites)
+            for site in sites
+        )
+        attachment_slots = tuple(
+            {
+                "slot": slot,
+                "center": _atom_dimension_id(center),
+                "center_site": _site_label(center_site),
+                "ligand": _atom_dimension_id(ligand),
+                "ligand_site": _site_label(ligand_site),
+            }
+            for slot, (center_site, (ligand, ligand_site)) in enumerate(
+                zip(center_sites, flattened_ligand_sites)
+            )
+        )
     return {
         "law": "ucns.native-mobius-root-loop",
-        "parameter": "turn-index",
+        "binding": "declared-participants-and-valence-attachment-sites",
+        "parameter": "turn-index-over-declared-attachment-evidence",
+        "participant_axes": tuple(_atom_dimension_id(item) for item in participants),
+        "attachment_slots": attachment_slots,
         "t": [0, 1, 2],
         "visible_phase": [
             str(origin.visible_key[1]),
@@ -148,15 +190,21 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         used_promotion = False
     else:
         ligands = tuple(item for item in participants if item is not center)
-        needed = len(ligands)
         center_record = _record_for(center)
         ground = tuple((e.l, e.m_l) for e in center_record.unpaired_valence)
-        used_promotion = needed > len(ground)
-        center_sites = _attachment_set(center_record, needed)
         ligand_sites = tuple(
             tuple((e.l, e.m_l) for e in _record_for(item).unpaired_valence) for item in ligands
         )
-    mobius = _mobius_coupling()
+        needed = sum(len(sites) for sites in ligand_sites)
+        used_promotion = needed > len(ground)
+        center_sites = _attachment_set(center_record, needed)
+    mobius = _mobius_coupling(
+        participants=participants,
+        center=center,
+        ligands=ligands,
+        center_sites=center_sites,
+        ligand_sites=ligand_sites,
+    )
     dimensional = _declared_dimensional_space(participants, center, ligands)
     instance_couplings: tuple[tuple[str, str], ...] = ()
     if center is not None:
@@ -183,6 +231,8 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         "center_configuration": None if center is None else carried(center, "electron-configuration"),
         "center_valence_electrons": None if center is None else carried(center, "valence-electrons"),
         "center_unpaired_lm": [f"{l}:{m}" for l, m in center_sites],
+        "center_attachment_site_count": len(center_sites),
+        "ligand_attachment_site_count": sum(len(sites) for sites in ligand_sites),
         "center_used_atomic_promotion": used_promotion,
         "center_distinct_p_m": [str(m) for m in distinct_p_m],
         "ligand_symbols": [symbol_of(item) for item in ligands],
@@ -199,6 +249,11 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         "mobius": mobius,
         "ucns_coupling_signature": (
             mobius["law"],
+            tuple(mobius["participant_axes"]),
+            tuple(
+                tuple(sorted(slot.items()))
+                for slot in mobius["attachment_slots"]
+            ),
             tuple(mobius["t"]),
             tuple(mobius["frame"]),
             mobius["complete_restored"],

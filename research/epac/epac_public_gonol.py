@@ -73,9 +73,12 @@ Usage guidance
 
 from __future__ import annotations
 
+from collections.abc import Mapping as MappingABC
+from collections.abc import Sequence as SequenceABC
 from dataclasses import dataclass
 from hashlib import sha256
 import json
+from types import MappingProxyType
 from typing import Any, Mapping, Sequence
 
 from ucns import (
@@ -191,11 +194,64 @@ def _geometry(identity_glyph: str | None, carrier_index: int | None) -> dict[str
 def _freeze_json(value: Any) -> Any:
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
-    if isinstance(value, Mapping):
-        return {str(key): _freeze_json(item) for key, item in value.items()}
-    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-        return [_freeze_json(item) for item in value]
+    if isinstance(value, MappingABC):
+        return MappingProxyType({str(key): _freeze_json(item) for key, item in value.items()})
+    if isinstance(value, SequenceABC) and not isinstance(value, (str, bytes)):
+        return tuple(_freeze_json(item) for item in value)
     raise PublicGonolConstructionError(f"value is not JSON-stable: {type(value)!r}")
+
+
+def _json_ready(value: Any) -> Any:
+    if isinstance(value, MappingABC):
+        return {str(key): _json_ready(item) for key, item in value.items()}
+    if isinstance(value, SequenceABC) and not isinstance(value, (str, bytes)):
+        return [_json_ready(item) for item in value]
+    return value
+
+
+def _tuple_tree(value: Any) -> Any:
+    if isinstance(value, MappingABC):
+        return tuple(sorted((str(key), _tuple_tree(item)) for key, item in value.items()))
+    if isinstance(value, SequenceABC) and not isinstance(value, (str, bytes)):
+        return tuple(_tuple_tree(item) for item in value)
+    return value
+
+
+def _coupling_signature(item: Mapping[str, Any]) -> tuple[Any, int, Any]:
+    declared = item.get("declared_ids", item.get("coupling"))
+    charge_state = item.get("charge_state")
+    if charge_state is None:
+        charge_state = (item.get("slot_charges"), item.get("mobius_epsilon_t0"))
+    return (_tuple_tree(declared), int(item.get("arity", -1)), _tuple_tree(charge_state))
+
+
+def _structure_part_signature(item: Mapping[str, Any]) -> tuple[Any, int, Any]:
+    return (
+        _tuple_tree(item.get("coupling")),
+        int(item.get("arity", -1)),
+        _tuple_tree(item.get("charge_state")),
+    )
+
+
+def _validate_structure_matches_couplings(
+    couplings: Sequence[Mapping[str, Any]],
+    structure: Mapping[str, Any] | None,
+) -> None:
+    if not couplings and structure is None:
+        return
+    if not couplings or structure is None:
+        raise PublicGonolConstructionError(
+            "couplings and structure must be supplied together"
+        )
+    parts = structure.get("parts")
+    if not isinstance(parts, SequenceABC) or isinstance(parts, (str, bytes)):
+        raise PublicGonolConstructionError("structure parts must be a sequence")
+    expected = tuple(sorted((_coupling_signature(item) for item in couplings), key=repr))
+    actual = tuple(sorted((_structure_part_signature(item) for item in parts), key=repr))
+    if expected != actual:
+        raise PublicGonolConstructionError(
+            "structure must match the supplied declared couplings before closure"
+        )
 
 
 def _participant_payload(item: ClosedPublicGonol) -> dict[str, Any]:
@@ -269,9 +325,12 @@ def _receipt_payload(
 
 
 def canonical_receipt_bytes(payload: Mapping[str, Any]) -> bytes:
-    return json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
-        "utf-8"
-    )
+    return json.dumps(
+        _json_ready(payload),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
 
 
 def _digest(payload: Mapping[str, Any]) -> str:
@@ -308,6 +367,7 @@ def construct_public_gonol(
     )
     frozen_couplings = tuple(_freeze_json(item) for item in couplings)
     frozen_structure = None if structure is None else _freeze_json(structure)
+    _validate_structure_matches_couplings(frozen_couplings, frozen_structure)
     glyph, index = _identity_position(identity_glyph)
     geometry = _geometry(glyph, index)
     gonol_payload = _atomic_payload(
