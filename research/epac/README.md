@@ -5,3 +5,38 @@ Reserved for **energy particle affixiation coupling**.
 Status: `hmmm` — no source repository exists yet. This directory carries no doctrine
 until a canonical `The-Interdependency/epac` source is created and pinned in
 `STACK_MANIFEST.md`.
+
+## Current content
+
+- [`subatomic/subatomic-affixiation-baseline.md`](subatomic/subatomic-affixiation-baseline.md) —
+  provisional research candidate: hydrogen → helium baseline and the lithium/carbon
+  construction form over current METAPAT affixiation semantics and UCNS carrier identity.
+  Status: CROSS-DOMAIN-HYPOTHESIS / proposed. Not org canon.
+- [`epac_public_gonol.py`](epac_public_gonol.py) — EPAC Public Gonol constructor
+  on the UCNS carrier. Not the EDCM text-domain constructor.
+- [`docs/arity.md`](docs/arity.md) — arity is declared dimensional coupling,
+  not ambient dimension count. Charged oriented couplings plus degree are the
+  three-dimensional structure.
+- [`docs/preregistration-molecular-geometry-from-element-gonols.md`](docs/preregistration-molecular-geometry-from-element-gonols.md) —
+  provisional candidate: Z=1–18 element gonols from atomic structure only, then
+  affixiation of H₂, H₂O, NH₃, CH₄, CO₂ through unpaired valence electrons,
+  declared dimensional couplings, and UCNS Möbius observation. Known chemistry
+  is sealed until after construction.
+
+## Usage
+
+From this directory:
+
+```bash
+PYTHONPATH=".:../ucns/src" python3 -m unittest discover -s tests -q
+```
+
+Do not open `data/sealed_known_molecular_geometry.json` during construction.
+After construction:
+
+```bash
+PYTHONPATH=".:../ucns/src" python3 - <<'PY'
+from epac_comparison import compare_after_construction
+print(compare_after_construction()["standings"])
+PY
+```
