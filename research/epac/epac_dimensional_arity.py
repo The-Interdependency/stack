@@ -17,6 +17,10 @@ The three-dimensional structure is the combination of declared oriented
 couplings, their arity charge states, and degree. That span can involve three
 axes through two charged binaries. It is not a ternary coupling.
 
+Representing that 3 takes 4 dimensions: a quaternion. The extra coordinate is
+the scalar (Möbius ε already in the math). It is not a fourth ambient axis,
+not Minkowski time, and not a Hamilton-product proof of ``(x, y, z)``.
+
 Domain claims (provisional):
 
 - dimension: independent coordinate axis
@@ -25,9 +29,11 @@ Domain claims (provisional):
 - coupling: ordered declaration of participating dimensions
 - charge state: per-slot charges on a coupling, with Möbius ε at t=0
 - instance: occurrence-addressed physical axis or atom; each x_i / y_j is distinct
+- quaternion: 4-component representation of one local 3-structure
 
 Collision: edcm.gonol arity_policy counts gonol participants, not dimensional
 intersections. Letters/abbreviations are nomenclature, not physics instances.
+Quaternion basis names are representation labels, not letters-as-physics.
 """
 
 from __future__ import annotations
@@ -38,6 +44,9 @@ from typing import Iterable, Mapping, Sequence
 
 # Established UCNS Möbius frame sign at t=0: ε in (t, ε) ~ (t+n, (-1)^n ε).
 MOBIUS_EPSILON_T0 = 1
+REPRESENTED_STRUCTURE_DIMENSION = 3
+QUATERNION_REPRESENTATION_DIMENSION = 4
+QUATERNION_SCALAR_AXIS = "epac.representation.quaternion.scalar"
 
 FORBIDDEN_INFERENCE_RULES = frozenset(
     {
@@ -45,6 +54,7 @@ FORBIDDEN_INFERENCE_RULES = frozenset(
         "overlap-closure",
         "permutation-identity",
         "shared-dimension-join",
+        "hamilton-product-closure",
     }
 )
 
@@ -320,12 +330,71 @@ def install_proven_coupling(declared: DimensionalSpace, proof: CouplingProof) ->
     )
 
 
+def local_three_structures(declared: DimensionalSpace) -> tuple[tuple[str, str, str], ...]:
+    """Each hub with two hub-first arity-2 instances is one local 3.
+
+    ``(z, x)`` and ``(z, y)`` yield ``(z, x, y)`` as a represented triple.
+    That is not a declared ternary coupling. One coupling is not a 3.
+    """
+
+    by_hub: dict[str, list[str]] = {}
+    for item in declared.couplings:
+        if item.arity != 2:
+            continue
+        hub_id, instance_id = item.declared_ids
+        by_hub.setdefault(hub_id, []).append(instance_id)
+    threes: list[tuple[str, str, str]] = []
+    for hub_id, instance_ids in by_hub.items():
+        for index, first in enumerate(instance_ids):
+            for second in instance_ids[index + 1 :]:
+                threes.append((hub_id, first, second))
+    return tuple(threes)
+
+
+def quaternion_of_local_three(
+    declared: DimensionalSpace,
+    represented_ids: tuple[str, str, str],
+) -> Mapping[str, object]:
+    """4 components for one 3: scalar ε plus the three axis charges.
+
+    Hamilton product is not a coupling proof. The scalar axis is representation,
+    not ambient.
+    """
+
+    charges = {axis.id: axis.charge for axis in declared.ambient_dimensions}
+    hub_id, first_id, second_id = represented_ids
+    return {
+        "components": (
+            MOBIUS_EPSILON_T0,
+            charges.get(hub_id),
+            charges.get(first_id),
+            charges.get(second_id),
+        ),
+        "axes": (QUATERNION_SCALAR_AXIS, hub_id, first_id, second_id),
+        "represented_ids": represented_ids,
+        "representation_dimension": QUATERNION_REPRESENTATION_DIMENSION,
+        "represented_structure_dimension": REPRESENTED_STRUCTURE_DIMENSION,
+        "hamilton_product_is_coupling_proof": False,
+        "scalar_axis_is_ambient": False,
+    }
+
+
+def quaternions_from_declared_couplings(
+    declared: DimensionalSpace,
+) -> tuple[Mapping[str, object], ...]:
+    return tuple(
+        quaternion_of_local_three(declared, represented)
+        for represented in local_three_structures(declared)
+    )
+
+
 def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str, object]:
     """The three-dimensional structure already present in the couplings.
 
     Each part is one declared oriented coupling together with its arity charge
-    state. Degree records how those parts sit on shared axes. This is not an
-    inferred cartesian embedding and not a ternary coupling.
+    state. Degree records how those parts sit on shared axes. Representing
+    each local 3 takes a 4-component quaternion. This is not an inferred
+    cartesian embedding and not a ternary coupling.
     """
 
     degrees = degree_relations(declared)
@@ -355,6 +424,10 @@ def structure_from_charged_couplings(declared: DimensionalSpace) -> Mapping[str,
         ),
         "ternary_coupling_declared": any(item.arity == 3 for item in declared.couplings),
         "inferred_cartesian_embedding": False,
+        "representation_kind": "quaternion",
+        "representation_dimension": QUATERNION_REPRESENTATION_DIMENSION,
+        "represented_structure_dimension": REPRESENTED_STRUCTURE_DIMENSION,
+        "quaternions": quaternions_from_declared_couplings(declared),
     }
 
 
@@ -408,6 +481,20 @@ def topology_structure_readout(structure: Mapping[str, object]) -> tuple[object,
         tuple((deg, slots) for deg, slots, _charge in degree),
         participating,
         ternary,
+    )
+
+
+def quaternion_structure_readout(structure: Mapping[str, object]) -> tuple[object, ...]:
+    """Order-invariant 4-component representations of each local 3."""
+
+    return tuple(
+        sorted(
+            (
+                _tuple_tree(item["components"]),
+                _tuple_tree(item["represented_ids"]),
+            )
+            for item in structure.get("quaternions", ())
+        )
     )
 
 
@@ -487,6 +574,9 @@ __all__ = [
     "DimensionalSpace",
     "FORBIDDEN_INFERENCE_RULES",
     "MOBIUS_EPSILON_T0",
+    "QUATERNION_REPRESENTATION_DIMENSION",
+    "QUATERNION_SCALAR_AXIS",
+    "REPRESENTED_STRUCTURE_DIMENSION",
     "charged_structure_readout",
     "coupling",
     "degree_relations",
@@ -495,8 +585,12 @@ __all__ = [
     "has_declared_coupling",
     "install_proven_coupling",
     "instances_missing_oriented_hub_coupling",
+    "local_three_structures",
     "observed_common_ids",
     "oriented_instance_couplings",
+    "quaternion_of_local_three",
+    "quaternion_structure_readout",
+    "quaternions_from_declared_couplings",
     "require_every_instance_has_oriented_hub_coupling",
     "space",
     "structure_from_charged_couplings",

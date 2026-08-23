@@ -41,6 +41,14 @@ oriented couplings, each arity's charge state, and degree. Two charged
 arity-2 couplings on a degree-2 hub already occupy three participating axes.
 It still does not declare `(x,y,z)`.
 
+Representing that 3 takes 4 dimensions: a quaternion
+`(ε, q_z, q_x, q_y)`. The extra coordinate is the scalar, Möbius `ε`, already
+in the math. It is not a fourth ambient axis, not Minkowski time, and not a
+Hamilton-product proof of `(x,y,z)`. `ij = k` does not install a coupling.
+Helium's nucleus plus two electrons is one local 3 in 4-representation;
+the letters `H` and `e` are not those axes. A single binary (H₂, hydrogen
+atom) is not a 3 and has no quaternion.
+
 Construction is `epac.public_gonol` on the UCNS Public Gonol carrier, not
 `edcm.gonol`.
 

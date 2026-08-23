@@ -6,8 +6,9 @@ function operations and a Möbius coupling law remain hmmm.
 
 Charge state is already in the math: per-slot nuclear Z with Möbius ε at t=0
 from ``(t, ε) ~ (t+n, (-1)^n ε)``. Oriented couplings plus those charge
-states plus degree are the three-dimensional structure. No cartesian embedding
-and no ternary coupling are inferred.
+states plus degree are the three-dimensional structure. Representing that 3
+takes a 4-component quaternion; the extra coordinate is the scalar ε. No
+cartesian embedding, ternary coupling, or Hamilton-product coupling is inferred.
 
 Usage guidance
 --------------

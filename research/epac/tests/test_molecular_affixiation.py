@@ -9,6 +9,7 @@ STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
+from epac_dimensional_arity import quaternion_structure_readout
 from epac_molecular import construct_declared_molecules, replay_molecule
 
 
@@ -78,6 +79,18 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertTrue(
             all(part["coupling"][0] == "epac.nucleus:O#2" for part in oxygen.structure["parts"])
         )
+        self.assertEqual(water_receipt.structure["representation_dimension"], 4)
+        self.assertEqual(water_receipt.structure["participating_dimension_count"], 3)
+        self.assertEqual(
+            quaternion_structure_readout(water_receipt.structure),
+            (((1, 8, 1, 1), ("O#2", "H#0", "H#1")),),
+        )
+        self.assertEqual(
+            quaternion_structure_readout(molecules["CO2"].receipt.structure),
+            (((1, 6, 8, 8), ("C#0", "O#1", "O#2")),),
+        )
+        self.assertEqual(quaternion_structure_readout(molecules["H2"].receipt.structure), ())
+        self.assertEqual(len(quaternion_structure_readout(molecules["CH4"].receipt.structure)), 6)
 
     def test_ucns_coupling_is_the_same_mobius_loop(self) -> None:
         molecules = construct_declared_molecules()

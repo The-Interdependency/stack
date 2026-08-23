@@ -10,6 +10,9 @@ sys.path.insert(0, str(EPAC_ROOT))
 from epac_dimensional_arity import (
     CouplingProof,
     DimensionalArityError,
+    QUATERNION_REPRESENTATION_DIMENSION,
+    QUATERNION_SCALAR_AXIS,
+    REPRESENTED_STRUCTURE_DIMENSION,
     charged_structure_readout,
     coupling,
     degree_relations,
@@ -17,8 +20,10 @@ from epac_dimensional_arity import (
     has_declared_coupling,
     install_proven_coupling,
     instances_missing_oriented_hub_coupling,
+    local_three_structures,
     observed_common_ids,
     oriented_instance_couplings,
+    quaternion_structure_readout,
     require_every_instance_has_oriented_hub_coupling,
     space,
     topology_structure_readout,
@@ -123,6 +128,12 @@ class DimensionalArityTest(unittest.TestCase):
                 premises=(coupling(["x", "z"]), coupling(["y", "z"])),
                 rule_id="overlap-closure",
             )
+        with self.assertRaisesRegex(DimensionalArityError, "not a proof"):
+            CouplingProof(
+                conclusion=coupling(["x", "y", "z"]),
+                premises=(coupling(["x", "z"]), coupling(["y", "z"])),
+                rule_id="hamilton-product-closure",
+            )
         self.assertFalse(has_declared_coupling(declared, ["x", "y", "z"]))
 
     def test_explicit_proof_can_install_higher_arity(self) -> None:
@@ -186,6 +197,38 @@ class DimensionalArityTest(unittest.TestCase):
         yz = coupling(["y", "z"])
         self.assertEqual(observed_common_ids(xz, yz), frozenset({"z"}))
         self.assertNotEqual(xz, yz)
+
+    def test_four_dimensions_represent_each_local_three(self) -> None:
+        declared = space(
+            ["z", "x", "y"],
+            [["z", "x"], ["z", "y"]],
+            charges={"z": 8, "x": 1, "y": 1},
+        )
+        geometry = geometry_from_declared_couplings(declared)
+        structure = geometry["structure"]
+        self.assertEqual(structure["participating_dimension_count"], 3)
+        self.assertEqual(structure["representation_dimension"], QUATERNION_REPRESENTATION_DIMENSION)
+        self.assertEqual(structure["represented_structure_dimension"], REPRESENTED_STRUCTURE_DIMENSION)
+        self.assertEqual(structure["representation_kind"], "quaternion")
+        self.assertEqual(local_three_structures(declared), (("z", "x", "y"),))
+        self.assertEqual(len(structure["quaternions"]), 1)
+        quaternion = structure["quaternions"][0]
+        self.assertEqual(quaternion["components"], (1, 8, 1, 1))
+        self.assertEqual(len(quaternion["components"]), 4)
+        self.assertEqual(len(quaternion["represented_ids"]), 3)
+        self.assertEqual(quaternion["axes"][0], QUATERNION_SCALAR_AXIS)
+        self.assertNotIn(QUATERNION_SCALAR_AXIS, geometry["ambient_ids"])
+        self.assertFalse(quaternion["hamilton_product_is_coupling_proof"])
+        self.assertFalse(quaternion["scalar_axis_is_ambient"])
+        self.assertFalse(has_declared_coupling(declared, ["x", "y", "z"]))
+        self.assertEqual(
+            quaternion_structure_readout(structure),
+            (((1, 8, 1, 1), ("z", "x", "y")),),
+        )
+        two_only = geometry_from_declared_couplings(space(["z", "x"], [["z", "x"]], charges={"z": 1, "x": 1}))
+        self.assertEqual(two_only["structure"]["participating_dimension_count"], 2)
+        self.assertEqual(two_only["structure"]["representation_dimension"], 4)
+        self.assertEqual(two_only["structure"]["quaternions"], ())
 
 
 if __name__ == "__main__":

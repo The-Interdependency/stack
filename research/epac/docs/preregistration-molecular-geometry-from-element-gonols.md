@@ -31,6 +31,7 @@ element Public Gonols (epac.public_gonol)
   -> unpaired-valence attachment sites
   -> declared oriented (center, ligand_i) couplings with per-slot Z and Möbius ε
   -> molecular three-dimensional structure = those atom-instance couplings + charge states + degree
+  -> each local 3 represented in 4 quaternion components (scalar ε plus the three axis charges)
   -> molecular Public Gonol (closed atoms remain atomic participants)
   -> construction invariants
   -> (only then) compare to sealed known chemistry

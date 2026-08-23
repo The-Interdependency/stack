@@ -9,7 +9,7 @@ STACK_ROOT = EPAC_ROOT.parents[1]
 sys.path.insert(0, str(EPAC_ROOT))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
-from epac_dimensional_arity import charged_structure_readout
+from epac_dimensional_arity import charged_structure_readout, quaternion_structure_readout
 from epac_periodic import construct_element_gonol, construct_periodic_table, replay_element_gonol
 
 
@@ -86,6 +86,21 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertNotIn("e", ids)
         self.assertNotIn("He", ids)
         self.assertFalse(helium.structure["ternary_coupling_declared"])
+        self.assertEqual(helium.structure["representation_dimension"], 4)
+        self.assertEqual(helium.structure["participating_dimension_count"], 3)
+        self.assertEqual(
+            quaternion_structure_readout(helium.structure),
+            (
+                (
+                    (1, 2, -1, -1),
+                    ("epac.nucleus:He#0", "epac.electron:He#0:0", "epac.electron:He#0:1"),
+                ),
+            ),
+        )
+        hydrogen = construct_element_gonol("H")
+        self.assertEqual(hydrogen.structure["participating_dimension_count"], 2)
+        self.assertEqual(hydrogen.structure["representation_dimension"], 4)
+        self.assertEqual(quaternion_structure_readout(hydrogen.structure), ())
 
     def test_construction_does_not_carry_shape_labels(self) -> None:
         receipt = construct_element_gonol("N")
