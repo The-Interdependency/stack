@@ -81,6 +81,16 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertTrue(
             all(part["coupling"][0] == "epac.nucleus:O#2" for part in oxygen.structure["parts"])
         )
+        o_nucleus = next(item for item in oxygen.participants if item.relation == "epac.atomic.nucleus")
+        self.assertEqual(
+            sum(1 for item in o_nucleus.participants if item.relation == "epac.atomic.neutron"),
+            8,
+        )
+        self.assertEqual(
+            sum(1 for item in o_nucleus.participants if item.relation == "epac.atomic.proton"),
+            8,
+        )
+        self.assertFalse(any(name.startswith("epac.neutron:") for name in water_ids))
         self.assertEqual(water_receipt.structure["representation_dimension"], 4)
         self.assertEqual(water_receipt.structure["participating_dimension_count"], 3)
         self.assertEqual(

@@ -25,7 +25,8 @@ scopes) until comparison.
 ## Frozen pipeline
 
 ```text
-element Public Gonols (epac.public_gonol)
+proton gonols (charge +1) and neutron gonols (charge 0)
+  -> nucleus = affixiation of those nucleons; (proton_j, neutron_i)
   -> every electron instance: (nucleus, electron_i) with charges (Z, -1)
   -> close that atomic 3-structure inside the element gonol
   -> unpaired-valence attachment sites
@@ -39,7 +40,8 @@ element Public Gonols (epac.public_gonol)
 
 ## Inputs allowed in construction
 
-- atomic number Z, default isotope A, proton and neutron counts
+- atomic number Z, default isotope A
+- each proton instance and each neutron instance of that isotope (counts must match Z and A−Z)
 - every electron: n, l, m_l, m_s, shell, subshell
 - hydrogenic angular identity Y_l^m, radial node count n-l-1
 - Slater atomic Z_eff and hydrogenic Rydberg energy -Z_eff²/n²

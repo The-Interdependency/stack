@@ -1,21 +1,22 @@
-"""Element gonols closed as EPAC Public Gonols from atomic electron-shell structure.
+"""Element gonols closed as EPAC Public Gonols from nucleon then electron structure.
 
-Every electron instance has its own ``(nucleus, electron_i)`` coupling.
-Nuclear ``Z`` and electron charge ``-1`` are the slot charges. That atomic
-3-structure closes with the element gonol. Molecular construction must not
-reopen it. Letters and abbreviations are not these axes.
+Precursors: each proton and each neutron is a closed gonol. The nucleus is
+their affixiation. Electrons then couple to that closed nucleus. Molecular
+construction must not reopen nucleons or electrons. Letters are not axes.
 
 Usage guidance
 --------------
-Each electron, shell, nucleus, and element is an EPAC Public Gonol on the
-UCNS carrier. This module does not use ``edcm.gonol``. Nothing molecular is
-encoded here.
+Each nucleon, nucleus, electron, shell, and element is an EPAC Public Gonol
+on the UCNS carrier. This module does not use ``edcm.gonol``.
 
     from epac_periodic import construct_element_gonol, construct_periodic_table
 
-    oxygen = construct_element_gonol("O")
-    assert oxygen.constructor_id == "epac.public_gonol"
-    assert len(oxygen.structure["parts"]) == 8
+    helium = construct_element_gonol("He")
+    nucleus = helium.gonol.participants[0]
+    assert [p.relation for p in nucleus.participants] == [
+        "epac.atomic.proton", "epac.atomic.proton",
+        "epac.atomic.neutron", "epac.atomic.neutron",
+    ]
 """
 
 from __future__ import annotations
@@ -35,8 +36,13 @@ from epac_public_gonol import (
     replay_public_gonol,
 )
 
-# Elementary charge in units of e. Nuclear Z is proton count in the same units.
+# Elementary charge in units of e. Nuclear Z is the proton-count sum.
+PROTON_CHARGE = 1
+NEUTRON_CHARGE = 0
 ELECTRON_CHARGE = -1
+NUCLEUS_RELATION = "epac.atomic.nucleus"
+PROTON_RELATION = "epac.atomic.proton"
+NEUTRON_RELATION = "epac.atomic.neutron"
 
 
 def _carrier_glyph(text: str) -> str | None:
@@ -94,10 +100,98 @@ def _construct_shell(
     ).gonol
 
 
+def _proton_dimension_id(symbol: str, atom_occurrence: int, index: int) -> str:
+    return f"epac.proton:{symbol}#{atom_occurrence}:{index}"
+
+
+def _neutron_dimension_id(symbol: str, atom_occurrence: int, index: int) -> str:
+    return f"epac.neutron:{symbol}#{atom_occurrence}:{index}"
+
+
+def _construct_proton(
+    *, symbol: str, atom_occurrence: int, index: int
+) -> ClosedPublicGonol:
+    return construct_public_gonol(
+        source_id=_proton_dimension_id(symbol, atom_occurrence, index),
+        relation=PROTON_RELATION,
+        occurrence=index,
+        carried_options=(
+            ("charge", str(PROTON_CHARGE)),
+            ("symbol", symbol),
+            ("kind", "proton"),
+        ),
+    ).gonol
+
+
+def _construct_neutron(
+    *, symbol: str, atom_occurrence: int, index: int
+) -> ClosedPublicGonol:
+    return construct_public_gonol(
+        source_id=_neutron_dimension_id(symbol, atom_occurrence, index),
+        relation=NEUTRON_RELATION,
+        occurrence=index,
+        carried_options=(
+            ("charge", str(NEUTRON_CHARGE)),
+            ("symbol", symbol),
+            ("kind", "neutron"),
+        ),
+    ).gonol
+
+
+def _declared_nuclear_space(record: AtomicRecord, *, atom_occurrence: int):
+    """Neutrons couple to protons. Proton-proton and neutron-neutron are not inferred.
+
+    Hydrogen-1 has one proton and no neutrons, so no nuclear 3.
+    """
+
+    if record.proton_count != record.Z:
+        raise ValueError(f"{record.symbol}: proton count must equal Z")
+    if record.neutron_count != record.A - record.Z:
+        raise ValueError(f"{record.symbol}: neutron count must equal A-Z")
+    proton_ids = [
+        _proton_dimension_id(record.symbol, atom_occurrence, index)
+        for index in range(record.proton_count)
+    ]
+    neutron_ids = [
+        _neutron_dimension_id(record.symbol, atom_occurrence, index)
+        for index in range(record.neutron_count)
+    ]
+    charges = {
+        **{proton_id: PROTON_CHARGE for proton_id in proton_ids},
+        **{neutron_id: NEUTRON_CHARGE for neutron_id in neutron_ids},
+    }
+    declarations = [
+        [proton_id, neutron_id] for proton_id in proton_ids for neutron_id in neutron_ids
+    ]
+    declared = space([*proton_ids, *neutron_ids], declarations, charges=charges)
+    for proton_id in proton_ids:
+        if neutron_ids:
+            oriented_instance_couplings(
+                declared, hub_id=proton_id, instance_ids=neutron_ids
+            )
+    return declared
+
+
 def _construct_nucleus(record: AtomicRecord, *, atom_occurrence: int) -> ClosedPublicGonol:
+    protons = tuple(
+        _construct_proton(symbol=record.symbol, atom_occurrence=atom_occurrence, index=index)
+        for index in range(record.proton_count)
+    )
+    neutrons = tuple(
+        _construct_neutron(symbol=record.symbol, atom_occurrence=atom_occurrence, index=index)
+        for index in range(record.neutron_count)
+    )
+    if len(protons) != record.Z or len(neutrons) != record.neutron_count:
+        raise ValueError(f"{record.symbol}: nucleon gonols must match Z and A-Z")
+    geometry = geometry_from_declared_couplings(
+        _declared_nuclear_space(record, atom_occurrence=atom_occurrence)
+    )
+    couplings = geometry["couplings"]
+    structure = geometry["structure"] if couplings else None
     return construct_public_gonol(
         source_id=f"epac.nucleus:{record.symbol}#{atom_occurrence}",
-        relation="epac.atomic.nucleus",
+        relation=NUCLEUS_RELATION,
+        participants=(*protons, *neutrons),
         carried_options=(
             ("Z", str(record.Z)),
             ("A", str(record.A)),
@@ -106,6 +200,8 @@ def _construct_nucleus(record: AtomicRecord, *, atom_occurrence: int) -> ClosedP
             ("symbol", record.symbol),
         ),
         occurrence=0,
+        couplings=couplings,
+        structure=structure,
     ).gonol
 
 
