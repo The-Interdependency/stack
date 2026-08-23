@@ -1,0 +1,30 @@
+name: Stack CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "agent/**"
+
+jobs:
+  root:
+    name: Root stack verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out stack
+        uses: actions/checkout@v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+
+      - name: Verify stack manifest
+        run: python3 tools/check_stack_manifest.py
+
+      - name: Verify stack MSDMD pointers
+        run: python3 tools/check_msdmd_paths.py
+
+      - name: Check whitespace
+        run: git diff --check

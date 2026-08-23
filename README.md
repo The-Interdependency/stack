@@ -2,10 +2,13 @@
 
 "This is how it comes together."
 
-`The-Interdependency/stack` is the consolidated, provenance-bearing aggregation of the
-organization's core repositories. It is an integration surface, not a source of truth:
-each `research/` snapshot is pinned to an exact source commit, and canonical edits still
-happen in the individual repositories.
+`The-Interdependency/stack` is the consolidated, provenance-bearing research stack for the
+organization's core work. Named repository identities are retained as archive provenance:
+their pinned commits, tree identities, authority boundaries, and license status explain
+where each stack participant came from.
+
+Repository-level Public Gonol admission is a promotion artifact. It happens after a body
+of research is ready to close, not before construction starts.
 
 ## Layout
 
@@ -31,23 +34,26 @@ stack/
 ├── frontend/
 │   └── cli/                  # empty scaffold
 ├── STACK_MANIFEST.md         # human-readable provenance record
-└── stack-manifest.json       # machine-readable stack manifest (schema 1.0.0)
+├── stack-manifest.json       # machine-readable stack manifest (schema 1.0.0)
+└── stack_msdmd.ts            # root MSDMD index over archived collection points
 ```
 
 ## Usage guidance
 
-- **Start at [`STACK_MANIFEST.md`](STACK_MANIFEST.md).** It pins the exact source commit,
-  branch, authority, snapshot path, and license status of every participant.
-- **Read research sources in place.** `research/<repo>/` contains that repository's full
-  tracked tree at the pinned commit (README, AGENTS/CLAUDE, source, tests, and docs).
-- **Do not edit `research/` snapshots as doctrine.** Edit the canonical repository first,
-  then refresh this aggregation with the procedure in `STACK_MANIFEST.md`.
+- **Start at [`STACK_MANIFEST.md`](STACK_MANIFEST.md).** It pins each archived source
+  commit, tree identity, authority, stack path, and license status.
+- **Read research sources in place.** Archived participant paths contain their tracked
+  source tree at the pinned commit (README, AGENTS/CLAUDE, source, tests, and docs).
+- **Preserve provenance.** Do not delete named repository identities just because active
+  research has moved into `stack`; those names are the replay trail.
+- **Use [`stack_msdmd.ts`](stack_msdmd.ts) for root MSDMD discovery.** It points at
+  participant collection points and records stack-local metadata overlays explicitly.
 - **`libs/` is reserved, not implemented.** Its scaffolds mark where consolidated library
   surfaces will live; nothing in this repo depends on them yet.
 - **`backend/` and `frontend/cli/` are empty scaffolds** reserved for stack-level
   application work.
 
-## Replaying a snapshot
+## Replaying An Archive
 
 From a clean checkout of the source repository at the desired commit:
 
@@ -55,8 +61,25 @@ From a clean checkout of the source repository at the desired commit:
 git -C <checkout> archive <commit> | tar -x -C research/<name>/
 ```
 
-Then update `STACK_MANIFEST.md` and `stack-manifest.json`, recompute the work-graph digest,
-and commit with the new source commit SHAs in the message.
+Then update `STACK_MANIFEST.md` and `stack-manifest.json`, recompute the tree identities
+and work-graph digest, and commit with the archived source commit SHAs in the message.
+
+## Verification
+
+```bash
+python3 tools/check_stack_manifest.py
+python3 tools/check_msdmd_paths.py
+```
+
+The verifier checks the machine manifest schema, digest, archived tree identities,
+declared paths, non-transfer boundaries, generated artifact hygiene, and root MSDMD
+pointers into archived collection points.
+
+## License
+
+See [`LICENSE_STATUS.md`](LICENSE_STATUS.md). The stack contains archived participant
+trees with mixed license states; no repository-wide stack license is selected by that
+status file.
 
 ## hmmm
 
@@ -65,3 +88,4 @@ and commit with the new source commit SHAs in the message.
 - The exact shape of `backend/` and `frontend/cli/` is not yet declared.
 - `research/epac/` is a placeholder until an energy particle affixiation coupling source
   repository exists.
+- Repo-level Public Gonol closure and promotion receipts are downstream of research.
