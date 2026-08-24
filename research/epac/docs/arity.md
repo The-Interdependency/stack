@@ -25,10 +25,18 @@ Hydrogen-1 is one proton and no neutrons.
 At atomic scale the hub is that closed nucleus and every electron instance has
 its own `(nucleus, electron_i)` with slot charges `(Z, -1)`.
 
-Molecular scale promotes already-closed unpaired valence electrons as arity
-axes. Each bond is `(center_electron, ligand_electron)` with charges `(-1, -1)`.
-Closed atoms remain molecular participants. Nucleons and core electrons stay
-inside those atoms. Water is two valence-electron couplings, not `(O#2, H#0)`.
+Molecular scale has two declared relations:
+
+- 3-structure: hub is the closed center atom; every ligand unpaired valence
+  electron has `(center, ligand_e_i)`.
+- bond: unpaired valence electrons are arity-coupled as
+  `(center_e_i, ligand_e_i)` with charges `(-1, -1)`.
+
+Nucleons and core electrons stay inside closed atoms. Water's 3 is
+`(O#2, H0_e)` and `(O#2, H1_e)`, degree 2 on oxygen. That is not `(O#2, H#0)`
+atom-atom and not a ternary `(x,y,z)`.
+
+See `constraints.md`.
 
 Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 

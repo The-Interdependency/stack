@@ -17,6 +17,8 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
 - [`docs/arity.md`](docs/arity.md) — arity is declared dimensional coupling,
   not ambient dimension count. Charged oriented couplings plus degree are the
   three-dimensional structure.
+- [`docs/constraints.md`](docs/constraints.md) — standing constraints and
+  resolved contradictions for this candidate.
 - [`docs/preregistration-molecular-geometry-from-element-gonols.md`](docs/preregistration-molecular-geometry-from-element-gonols.md) —
   provisional candidate: Z=1–18 element gonols from atomic structure only, then
   affixiation of H₂, H₂O, NH₃, CH₄, CO₂ through unpaired valence electrons,

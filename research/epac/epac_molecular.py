@@ -1,10 +1,13 @@
-"""Molecular EPAC Public Gonols from closed valence-electron arity couplings.
+"""Molecular EPAC Public Gonols from closed atoms and valence-electron arity.
 
-Molecules are made where unpaired valence electrons couple. Each bond is a
-declared arity-2 coupling of two already-closed valence electron gonols:
-``(center_electron, ligand_electron)``. Closed atoms remain molecular
-participants; nucleons and core electrons stay inside them. The table is
-not re-queried.
+Two declared relations:
+
+- 3-structure: hub is the closed center atom; instances are ligand unpaired
+  valence electrons ``(center, ligand_e_i)``.
+- bond: those valence electrons couple as ``(center_e_i, ligand_e_i)``.
+
+Closed atoms remain molecular participants. Nucleons and core electrons stay
+inside them. The table is not re-queried.
 
 Construction uses ``epac.public_gonol``, not ``edcm.gonol``. No sealed
 molecular-shape file is opened here.
@@ -84,29 +87,43 @@ def _atom_dimension_id(gonol: ClosedPublicGonol) -> str:
     return f"{symbol_of(gonol)}#{gonol.occurrence}"
 
 
-def _declared_valence_space(
+def _declared_molecular_space(
+    *,
+    center: ClosedPublicGonol | None,
     bonds: tuple[tuple[ClosedPublicGonol, ClosedPublicGonol], ...],
 ):
-    """Arity-2 couplings of closed valence electrons. Atoms are not these axes."""
+    """Bond couplings plus, when a center exists, the molecular 3-structure.
+
+    Bonds: ``(center_electron, ligand_electron)``.
+    3-structure: ``(closed_center, ligand_electron_i)`` so one hub has every instance.
+    """
 
     ambient: list[str] = []
     charges: dict[str, int] = {}
     declarations: list[list[str]] = []
-    by_hub: dict[str, list[str]] = {}
+
+    def _add(axis_id: str, charge: int) -> None:
+        if axis_id not in charges:
+            ambient.append(axis_id)
+            charges[axis_id] = charge
+
     for hub_electron, instance_electron in bonds:
-        hub_id = hub_electron.source_id
-        instance_id = instance_electron.source_id
-        if hub_id not in charges:
-            ambient.append(hub_id)
-            charges[hub_id] = ELECTRON_CHARGE
-        if instance_id not in charges:
-            ambient.append(instance_id)
-            charges[instance_id] = ELECTRON_CHARGE
-        declarations.append([hub_id, instance_id])
-        by_hub.setdefault(hub_id, []).append(instance_id)
+        _add(hub_electron.source_id, ELECTRON_CHARGE)
+        _add(instance_electron.source_id, ELECTRON_CHARGE)
+        declarations.append([hub_electron.source_id, instance_electron.source_id])
+    ligand_ids = tuple(instance.source_id for _hub, instance in bonds)
+    if center is not None:
+        center_id = _atom_dimension_id(center)
+        _add(center_id, nuclear_charge(center))
+        for ligand_id in ligand_ids:
+            declarations.append([center_id, ligand_id])
     declared = space(ambient, declarations, charges=charges)
-    for hub_id, instance_ids in by_hub.items():
-        oriented_instance_couplings(declared, hub_id=hub_id, instance_ids=tuple(instance_ids))
+    if center is not None and ligand_ids:
+        oriented_instance_couplings(declared, hub_id=_atom_dimension_id(center), instance_ids=ligand_ids)
+    for hub_electron, instance_electron in bonds:
+        oriented_instance_couplings(
+            declared, hub_id=hub_electron.source_id, instance_ids=(instance_electron.source_id,)
+        )
     return declared
 
 
@@ -234,8 +251,13 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         center_attachment_ids = tuple(electron.source_id for electron in center_electrons)
         ligand_attachment_ids = tuple(_attachment_electron_ids(item) for item in ligands)
     mobius = _mobius_coupling(bonds=bonds)
-    dimensional = _declared_valence_space(bonds)
-    instance_couplings = tuple((hub.source_id, instance.source_id) for hub, instance in bonds)
+    dimensional = _declared_molecular_space(center=center, bonds=bonds)
+    valence_electron_bonds = tuple((hub.source_id, instance.source_id) for hub, instance in bonds)
+    instance_couplings = (
+        tuple((_atom_dimension_id(center), instance.source_id) for _hub, instance in bonds)
+        if center is not None
+        else valence_electron_bonds
+    )
     geometry = geometry_from_declared_couplings(dimensional)
     receipt = construct_public_gonol(
         source_id=f"epac.molecule:{formula}",
@@ -292,6 +314,7 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         "charged_structure_readout": charged_structure_readout(geometry["structure"]),
         "topology_structure_readout": topology_structure_readout(geometry["structure"]),
         "oriented_instance_couplings": instance_couplings,
+        "valence_electron_bonds": valence_electron_bonds,
     }
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 

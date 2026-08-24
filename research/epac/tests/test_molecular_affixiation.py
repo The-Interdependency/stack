@@ -43,45 +43,45 @@ class MolecularAffixiationTest(unittest.TestCase):
     def test_declared_couplings_are_binary_and_do_not_fill_ambient(self) -> None:
         molecules = construct_declared_molecules()
         water = molecules["H2O"].invariants["dimensional_geometry"]
-        self.assertEqual(water["ambient_count"], 4)
-        self.assertEqual([c["arity"] for c in water["couplings"]], [2, 2])
+        self.assertEqual(water["ambient_count"], 5)
+        self.assertEqual(len(water["couplings"]), 4)
+        self.assertTrue(all(c["arity"] == 2 for c in water["couplings"]))
         ids = [c["declared_ids"] for c in water["couplings"]]
-        self.assertEqual(len(ids), 2)
         self.assertTrue(all(len(item) == 2 for item in ids))
-        self.assertTrue(all(name.startswith("epac.electron:") for pair in ids for name in pair))
         methane = molecules["CH4"].invariants["dimensional_geometry"]
-        self.assertEqual(methane["ambient_count"], 8)
-        self.assertEqual([c["arity"] for c in methane["couplings"]], [2, 2, 2, 2])
+        self.assertEqual(len(methane["couplings"]), 8)
         self.assertFalse(any(c["arity"] == 5 for c in methane["couplings"]))
         self.assertFalse(methane["inferred_from_ambient"])
         self.assertFalse(methane["inferred_higher_arity_from_overlap"])
-        self.assertEqual(water["structure"]["participating_dimension_count"], 4)
+        self.assertEqual(water["structure"]["participating_dimension_count"], 5)
         self.assertFalse(water["structure"]["ternary_coupling_declared"])
         self.assertFalse(water["structure"]["inferred_cartesian_embedding"])
-        self.assertEqual(water["couplings"][0]["slot_charges"], (-1, -1))
-        self.assertEqual(methane["couplings"][0]["slot_charges"], (-1, -1))
         water_receipt = molecules["H2O"].receipt
         self.assertEqual(water_receipt.constructor_id, "epac.public_gonol")
-        self.assertEqual(len(water_receipt.structure["parts"]), 2)
+        self.assertEqual(len(water_receipt.structure["parts"]), 4)
         water_instances = molecules["H2O"].invariants["oriented_instance_couplings"]
         self.assertEqual(len(water_instances), 2)
-        self.assertTrue(all(item[0].startswith("epac.electron:O#2:") for item in water_instances))
+        self.assertEqual({item[0] for item in water_instances}, {"O#2"})
         self.assertEqual(
             [item[1] for item in water_instances],
             ["epac.electron:H#0:0", "epac.electron:H#1:0"],
         )
+        self.assertEqual(len(molecules["H2O"].invariants["valence_electron_bonds"]), 2)
+        self.assertTrue(
+            all(item[0].startswith("epac.electron:O#2:") for item in molecules["H2O"].invariants["valence_electron_bonds"])
+        )
         methane_instances = molecules["CH4"].invariants["oriented_instance_couplings"]
         self.assertEqual(len(methane_instances), 4)
-        self.assertTrue(all(item[0].startswith("epac.electron:C#0:") for item in methane_instances))
+        self.assertTrue(all(item[0] == "C#0" for item in methane_instances))
         self.assertEqual(
             [item[1] for item in methane_instances],
             ["epac.electron:H#1:0", "epac.electron:H#2:0", "epac.electron:H#3:0", "epac.electron:H#4:0"],
         )
         self.assertEqual(len(molecules["H2"].invariants["oriented_instance_couplings"]), 1)
         water_ids = {name for part in water_receipt.structure["parts"] for name in part["coupling"]}
-        self.assertTrue(all(name.startswith("epac.electron:") for name in water_ids))
-        self.assertNotIn("O#2", water_ids)
+        self.assertIn("O#2", water_ids)
         self.assertNotIn("H#0", water_ids)
+        self.assertTrue(any(name.startswith("epac.electron:H#0:") for name in water_ids))
         oxygen = next(
             item
             for item in water_receipt.gonol.participants
@@ -109,11 +109,10 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertNotIn("atomic_of", source)
         self.assertNotIn("from epac_atomic", source)
         self.assertEqual(water_receipt.structure["representation_dimension"], 4)
-        self.assertEqual(water_receipt.structure["participating_dimension_count"], 4)
-        self.assertEqual(quaternion_structure_readout(water_receipt.structure), ())
-        self.assertEqual(quaternion_structure_readout(molecules["CO2"].receipt.structure), ())
+        self.assertEqual(water_receipt.structure["participating_dimension_count"], 5)
+        water_quat = quaternion_structure_readout(water_receipt.structure)
+        self.assertTrue(any(item[1][0] == "O#2" for item in water_quat))
         self.assertEqual(quaternion_structure_readout(molecules["H2"].receipt.structure), ())
-        self.assertEqual(quaternion_structure_readout(molecules["CH4"].receipt.structure), ())
 
     def test_ucns_coupling_binds_declared_attachments(self) -> None:
         molecules = construct_declared_molecules()
