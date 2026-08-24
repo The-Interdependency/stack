@@ -1,0 +1,54 @@
+name: ahbg-ci
+
+on:
+  pull_request:
+    paths:
+      - "ahbg/**"
+      - ".github/workflows/ahbg-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ahbg/**"
+      - ".github/workflows/ahbg-ci.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install verification dependencies
+        run: python -m pip install --upgrade pip pytest
+      - name: Compile AHBG Python surfaces
+        run: |
+          python - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          import py_compile
+          import tempfile
+
+          out_dir = Path(tempfile.mkdtemp(prefix="ahbg-pyc-"))
+          for path in sorted(Path("ahbg").rglob("*.py")):
+              out = out_dir / (sha256(str(path).encode("utf-8")).hexdigest() + ".pyc")
+              py_compile.compile(str(path), cfile=str(out), doraise=True)
+          PY
+      - name: Run AHBG presentation tests
+        run: python -m unittest discover -s ahbg/presentation/tests -p "test*.py"
+      - name: Reject generated Python caches
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          caches = sorted(str(path) for path in Path("ahbg").rglob("__pycache__"))
+          if caches:
+              raise SystemExit("generated Python caches present: " + ", ".join(caches))
+          PY
