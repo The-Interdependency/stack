@@ -95,7 +95,7 @@ class PersistenceTests(unittest.TestCase):
 
     def test_replay_rejects_unknown_event_kinds(self) -> None:
         _, log = new_game(seed=7, tiles=TILES, units=UNITS)
-        log.append("move", turn=0, data={})
+        log.append("construct", turn=0, data={})
         with self.assertRaisesRegex(ReplayMismatch, "not canonical"):
             replay(log)
 

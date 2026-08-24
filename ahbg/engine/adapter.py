@@ -4,9 +4,9 @@ A0 (and later benchmark agents) may legally see only the public plane state:
 tiles, units, and the current turn. The seed, RNG streams, event log, and DM
 state are engine-internal and are never exposed through an observation.
 
-Actions are declared here as an envelope only. Resolving an action into
-plane mutations is mechanics; until canonical rules land, the turn engine
-fails closed for any submitted plan.
+Actions are declared as an envelope. Resolving an action into plane
+mutations is mechanics; the first canonical action is ``move``, and every
+other kind still fails closed.
 """
 
 from __future__ import annotations
@@ -14,6 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from .errors import ValidationError
 from .plane import Plane
 
 
@@ -40,6 +41,12 @@ class Action:
     kind: str
     data: dict[str, Any]
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.kind, str) or not self.kind:
+            raise ValidationError("action kind must be a non-empty string")
+        if not isinstance(self.data, dict):
+            raise ValidationError("action data must be an object")
+
 
 @dataclass(frozen=True)
 class Plan:
@@ -47,6 +54,14 @@ class Plan:
 
     turn: int
     actions: tuple[Action, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.turn, int) or isinstance(self.turn, bool) or self.turn < 0:
+            raise ValidationError("plan turn must be a non-negative integer")
+        object.__setattr__(self, "actions", tuple(self.actions))
+        for action in self.actions:
+            if not isinstance(action, Action):
+                raise ValidationError("plan actions must be Action instances")
 
 
 class AgentAdapter(Protocol):

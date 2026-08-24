@@ -1,9 +1,12 @@
-"""AHBG engine skeleton.
+"""AHBG engine.
 
 This package owns the executable shell of the AHBG plane: plane state,
-append-only event log, deterministic randomness, persistence, and replay.
-It does **not** invent canonical mechanics. Any surface that touches an
+append-only event log, deterministic randomness, persistence, replay, the
+turn envelope, and canonical mechanics. Any surface that touches an
 unresolved ``hmmm`` rule raises :class:`UnresolvedHmmm` and fails closed.
+
+Canonical mechanics so far: ``move`` (one-tile axial move onto an empty
+adjacent tile, resolved simultaneously).
 """
 
 from .adapter import Action, Observation, Plan, legal_observation
@@ -14,12 +17,14 @@ from .errors import (
     ValidationError,
 )
 from .events import (
+    KIND_MOVE,
     KIND_PLANE_INIT,
     KIND_TURN_BEGIN,
     KIND_TURN_END,
     Event,
     EventLog,
 )
+from .movement import MOVE_ACTION, MoveSpec, axial_neighbors
 from .persistence import load_plane, new_game, replay, save_plane
 from .plane import Plane, Tile, Unit
 from .rng import (
@@ -36,9 +41,12 @@ __all__ = [
     "EngineError",
     "Event",
     "EventLog",
+    "KIND_MOVE",
     "KIND_PLANE_INIT",
     "KIND_TURN_BEGIN",
     "KIND_TURN_END",
+    "MOVE_ACTION",
+    "MoveSpec",
     "Observation",
     "Plan",
     "Plane",
@@ -51,6 +59,7 @@ __all__ = [
     "UnresolvedHmmm",
     "ValidationError",
     "WAR_DOMAIN",
+    "axial_neighbors",
     "legal_observation",
     "load_plane",
     "new_game",

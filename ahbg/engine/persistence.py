@@ -17,8 +17,15 @@ import os
 from pathlib import Path
 from typing import Any
 
+from . import movement
 from .errors import ReplayMismatch, ValidationError
-from .events import KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, EventLog
+from .events import (
+    KIND_MOVE,
+    KIND_PLANE_INIT,
+    KIND_TURN_BEGIN,
+    KIND_TURN_END,
+    EventLog,
+)
 from .plane import Plane
 
 PLANE_FILE = "plane.json"
@@ -40,9 +47,11 @@ def new_game(
 def replay(log: EventLog) -> Plane:
     """Reconstruct a plane by folding the event log from its init event.
 
-    Only the canonical envelope events are replayable today:
-    ``plane.init``, ``turn.begin``, ``turn.end``. Mechanic events do not
-    exist yet, so any other kind fails closed with :class:`ReplayMismatch`.
+    Canonical replayable events today: ``plane.init``, ``turn.begin``,
+    ``move``, ``turn.end``. Moves inside a turn are buffered and applied
+    simultaneously at ``turn.end``, mirroring the resolution kernel, before
+    the state digest is verified. Any other event kind fails closed with
+    :class:`ReplayMismatch`.
     """
     log.verify()
     events = log.events
@@ -63,6 +72,7 @@ def replay(log: EventLog) -> Plane:
         raise ReplayMismatch("initial plane must have turn 0")
 
     phase = "awaiting_begin"
+    buffered_moves: list[movement.MoveSpec] = []
     for event in events[1:]:
         if event.kind == KIND_TURN_BEGIN:
             if phase != "awaiting_begin":
@@ -75,6 +85,17 @@ def replay(log: EventLog) -> Plane:
                     f"match plane turn {plane.turn}"
                 )
             phase = "awaiting_end"
+        elif event.kind == KIND_MOVE:
+            if phase != "awaiting_end":
+                raise ReplayMismatch(
+                    f"move seq {event.seq} arrived outside an open turn"
+                )
+            if event.turn != plane.turn:
+                raise ReplayMismatch(
+                    f"move seq {event.seq} turn {event.turn} does not "
+                    f"match plane turn {plane.turn}"
+                )
+            buffered_moves.append(movement.spec_from_event_data(event.data))
         elif event.kind == KIND_TURN_END:
             if phase != "awaiting_end":
                 raise ReplayMismatch(
@@ -85,6 +106,7 @@ def replay(log: EventLog) -> Plane:
                     f"turn.end seq {event.seq} turn {event.turn} does not "
                     f"match plane turn {plane.turn}"
                 )
+            movement.apply_moves_simultaneously(plane, buffered_moves)
             expected_digest = plane.digest()
             if event.data.get("state_digest") != expected_digest:
                 raise ReplayMismatch(
@@ -93,10 +115,10 @@ def replay(log: EventLog) -> Plane:
                 )
             plane.turn += 1
             phase = "awaiting_begin"
+            buffered_moves = []
         else:
             raise ReplayMismatch(
-                f"event kind {event.kind!r} is not canonical; no mechanic "
-                "events exist yet"
+                f"event kind {event.kind!r} is not canonical"
             )
     return plane
 

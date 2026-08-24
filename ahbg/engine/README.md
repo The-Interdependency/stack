@@ -2,19 +2,35 @@
 
 Codex-owned executable shell for AHBG. This package implements the
 *infrastructure* of the plane — state, provenance, randomness, persistence,
-replay — and deliberately stops at the edge of canonical mechanics.
+replay — plus the first canonical mechanic, and deliberately stops at the
+edge of the remaining unresolved mechanics.
 
 ## Boundary
 
 - **Included**: plane state (axial `q,r` tiles, units on tiles), append-only
   event log with a hash chain, deterministic splitmix64 RNG with named
-  substreams, save/load with replay equivalence, the turn envelope, and the
-  normalized agent observation boundary.
-- **Excluded (unresolved `hmmm`)**: movement, construction, spawning,
-  absence, control/loyalty transitions, War collision resolution, local
-  seven-tile modification rules, DM terrain/world effects, and prompt-injection
-  rolls. Any surface that would touch these fails closed with
-  `UnresolvedHmmm`.
+  substreams, save/load with replay equivalence, the turn envelope, the
+  normalized agent observation boundary, and canonical v1 movement.
+- **Excluded (unresolved `hmmm`)**: construction, spawning, absence,
+  control/loyalty transitions, War collision resolution, local seven-tile
+  modification rules, DM terrain/world effects, and prompt-injection rolls.
+  Any surface that would touch these fails closed with `UnresolvedHmmm`.
+
+## Canonical mechanics
+
+### Movement (v1)
+
+`move` is the first canonical mechanic: a unit may move one step along axial
+hex adjacency onto an empty tile. Semantics are simultaneous — every move in
+a turn is validated against the pre-turn plane, then all moves apply
+atomically.
+
+Still fail-closed:
+
+- moving onto an occupied tile (`UnresolvedHmmm` — War collision resolver),
+- two moves targeting the same tile (`UnresolvedHmmm` — War collision
+  resolver),
+- any action kind other than `move` (`UnresolvedHmmm`).
 
 ## Canonical event envelope
 
@@ -22,9 +38,12 @@ replay — and deliberately stops at the edge of canonical mechanics.
 |---|---|---|
 | `plane.init` | `plane` (canonical plane dict) | bootstrap; must be the first event, turn 0 |
 | `turn.begin` | `turn` | plan phase opened for that turn |
-| `turn.end` | `turn`, `state_digest` | turn closed; digest of the plane before advancing |
+| `move` | `unit_id`, `from_tile_id`, `to_tile_id` | one resolved move, inside an open turn |
+| `turn.end` | `turn`, `state_digest` | turn closed; digest of the plane after resolution, before advancing |
 
-Mechanic events do not exist yet. `replay()` rejects any other kind.
+`replay()` folds moves simultaneously at `turn.end` before verifying the
+state digest, so a replayed plane always matches the original resolution
+kernel. Unknown kinds fail closed.
 
 ## Determinism
 

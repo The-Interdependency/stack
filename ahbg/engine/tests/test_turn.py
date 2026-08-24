@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
-from ahbg.engine.adapter import Plan, legal_observation
+from ahbg.engine.adapter import Action, Plan, legal_observation
 from ahbg.engine.errors import UnresolvedHmmm
 from ahbg.engine.events import KIND_TURN_BEGIN, KIND_TURN_END
 from ahbg.engine.persistence import load_plane, new_game, replay, save_plane
@@ -60,7 +60,7 @@ class TurnEnvelopeTests(unittest.TestCase):
         plane, log = new_game(seed=7, tiles=TILES, units=UNITS)
         engine = TurnEngine(plane=plane, log=log)
         with self.assertRaisesRegex(UnresolvedHmmm, "not yet canonical"):
-            engine.resolve([Plan(turn=0, actions=())])
+            engine.resolve([Plan(turn=0, actions=(Action("construct", {}),))])
 
     def test_observation_excludes_engine_internals(self) -> None:
         plane, _ = new_game(seed=7, tiles=TILES, units=UNITS)
@@ -75,8 +75,8 @@ class TurnEnvelopeTests(unittest.TestCase):
         plane, log = new_game(seed=7, tiles=TILES, units=UNITS)
         engine = TurnEngine(plane=plane, log=log)
         engine.begin_turn()
-        # The plan phase is the adapter's; an empty plan is structurally fine,
-        # but resolving any plan is mechanics and remains fail-closed.
+        # An empty plan is structurally fine: no actions, no mutations.
+        engine.resolve([])
         engine.end_turn()
         self.assertEqual(plane.turn, 1)
         self.assertEqual(replay(log).turn, 1)

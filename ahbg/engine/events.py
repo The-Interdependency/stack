@@ -21,6 +21,7 @@ EVENT_SCHEMA = "ahbg.event/1"
 KIND_PLANE_INIT = "plane.init"
 KIND_TURN_BEGIN = "turn.begin"
 KIND_TURN_END = "turn.end"
+KIND_MOVE = "move"
 
 _EVENT_KEYS = ("schema", "seq", "turn", "kind", "data", "prev_hash")
 
