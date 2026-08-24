@@ -43,6 +43,8 @@ jobs:
               out = out_dir / (sha256(str(path).encode("utf-8")).hexdigest() + ".pyc")
               py_compile.compile(str(path), cfile=str(out), doraise=True)
           PY
+      - name: Run AHBG engine tests
+        run: python -m unittest discover -s ahbg/engine/tests -p "test*.py"
       - name: Run AHBG presentation tests
         run: python -m unittest discover -s ahbg/presentation/tests -p "test*.py"
       - name: Reject generated Python caches
