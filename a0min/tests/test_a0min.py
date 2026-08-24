@@ -1,4 +1,4 @@
-# ratios: loc_comments=143:4 imports_exports=9:3 calls_definitions=86:21
+# ratios: loc_comments=184:4 imports_exports=10:4 calls_definitions=112:26
 """Stdlib-only tests for the a0min harness and CLI.
 
 Run from the a0min project root:
@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -19,7 +20,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 from a0min import (  # noqa: E402  (project root on sys.path via test runner)
     Harness,
     SpawnCapExceeded,
+    available_providers,
     candidate_platonic_agent,
+    load_provider_keys,
+    presence,
+    provider_key,
 )
 
 
@@ -120,6 +125,37 @@ class HarnessCreationTests(unittest.TestCase):
             self.assertEqual(restored._index, self.harness._index)
 
 
+class EnvLoaderTests(unittest.TestCase):
+    def test_loads_provider_keys_without_exposing_them(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / ".env"
+            env_path.write_text(
+                "OPENAI_API_KEY=sk-test-openai\n"
+                "DEEPSEEK_API_KEY=sk-test-deepseek\n"
+                "XAI_API_KEY=xai-test\n",
+                encoding="utf-8",
+            )
+            keys = load_provider_keys(explicit=env_path)
+            self.assertEqual(keys["openai"], "sk-test-openai")
+            self.assertEqual(keys["deepseek"], "sk-test-deepseek")
+            self.assertEqual(keys["xai"], "xai-test")
+
+    def test_presence_never_contains_values(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / ".env"
+            env_path.write_text("OPENAI_API_KEY=sk-secret\n", encoding="utf-8")
+            report = presence(explicit=env_path)
+            self.assertEqual(report, {"openai": True, "deepseek": False, "xai": False})
+            self.assertNotIn("sk-secret", json.dumps(report))
+
+    def test_provider_key_missing_returns_none(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / ".env"
+            env_path.write_text("", encoding="utf-8")
+            self.assertIsNone(provider_key("openai", explicit=env_path))
+            self.assertEqual(available_providers(explicit=env_path), ())
+
+
 class CliSmokeTests(unittest.TestCase):
     def run_cli(self, *args: str) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
@@ -176,7 +212,17 @@ class CliSmokeTests(unittest.TestCase):
         self.assertEqual(len(payload["dimensions"]), 13)
         self.assertEqual(len(payload["regions"]), 11)
 
+    def test_env_json_shows_presence_only(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            env_path = Path(tmp) / ".env"
+            env_path.write_text("OPENAI_API_KEY=sk-secret\n", encoding="utf-8")
+            result = self.run_cli("env", "--env-file", str(env_path), "--json")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            payload = json.loads(result.stdout)
+            self.assertEqual(payload, {"openai": True, "deepseek": False, "xai": False})
+            self.assertNotIn("sk-secret", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=143:4 imports_exports=9:3 calls_definitions=86:21
+# ratios: loc_comments=184:4 imports_exports=10:4 calls_definitions=112:26

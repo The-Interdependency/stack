@@ -1,4 +1,4 @@
-# ratios: loc_comments=201:10 imports_exports=8:1 calls_definitions=84:9
+# ratios: loc_comments=221:11 imports_exports=9:1 calls_definitions=92:10
 """Minimal CLI for the a0min agent harness.
 
 Commands:
@@ -8,6 +8,7 @@ Commands:
     merge ID             mark a created sub-agent merged
     superpotential       dump the imported platonic superpotential
     caps                 show spawn caps for a tier
+    env                  show which provider keys are present (never the values)
 
 Every command accepts ``--json`` for machine-readable output.
 """
@@ -21,6 +22,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from .env import presence as provider_presence
 from .harness import (
     SUPPORTED_CUT_MODES,
     SUPPORTED_ORCHESTRATION_MODES,
@@ -93,6 +95,16 @@ def _build_parser() -> argparse.ArgumentParser:
     caps_parser = sub.add_parser("caps", help="show spawn caps for a tier")
     caps_parser.add_argument("--tier", default="free", help="spawn-cap tier")
     caps_parser.add_argument("--json", action="store_true", dest="as_json")
+
+    env_parser = sub.add_parser(
+        "env", help="show which provider keys are present (never the values)"
+    )
+    env_parser.add_argument(
+        "--env-file",
+        default=None,
+        help="explicit .env file path (default: A0MIN_ENV_PATH, then ./.env, then ~/.env)",
+    )
+    env_parser.add_argument("--json", action="store_true", dest="as_json")
 
     return parser
 
@@ -209,6 +221,16 @@ def _superpotential(harness: Harness, as_json: bool) -> int:
     return 0
 
 
+def _env(args: argparse.Namespace) -> int:
+    report = provider_presence(explicit=args.env_file)
+    if args.as_json:
+        print(json.dumps(report, indent=2))
+        return 0
+    for provider, present in report.items():
+        print(f"{provider}: {'present' if present else 'missing'}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
@@ -236,6 +258,8 @@ def main(argv: list[str] | None = None) -> int:
         else:
             _print_or_json(harness.caps, False)
         code = 0
+    elif args.command == "env":
+        code = _env(args)
     else:
         parser.error(f"unknown command: {args.command}")
         code = 2
@@ -243,4 +267,4 @@ def main(argv: list[str] | None = None) -> int:
     if state_path and code == 0:
         harness.save(state_path)
     return code
-# ratios: loc_comments=201:10 imports_exports=8:1 calls_definitions=84:9
+# ratios: loc_comments=221:11 imports_exports=9:1 calls_definitions=92:10

@@ -1,4 +1,4 @@
-# ratios: loc_comments=32:8 imports_exports=2:1 calls_definitions=0:0
+# ratios: loc_comments=37:10 imports_exports=3:1 calls_definitions=0:0
 """a0min — minimal agent harness over the imported a0 platonic superpotential.
 
 Public surface:
@@ -7,8 +7,11 @@ Public surface:
 - candidate_platonic_agent — the open superpotential with current a0 regions
 - Harness — creates any potential sub-agent by projecting a declared region
 - SubAgent, PotentialSubAgent, SpawnCapExceeded
+- load_provider_keys, provider_key, available_providers, presence
+  (provider-key loader; reads .env, never exposes key values in summaries)
 """
 
+from .env import available_providers, load_provider_keys, presence, provider_key
 from .harness import (
     SUPPORTED_CUT_MODES,
     SUPPORTED_ORCHESTRATION_MODES,
@@ -41,5 +44,9 @@ __all__ = [
     "SpawnCapExceeded",
     "SUPPORTED_ORCHESTRATION_MODES",
     "SUPPORTED_CUT_MODES",
+    "available_providers",
+    "load_provider_keys",
+    "presence",
+    "provider_key",
 ]
-# ratios: loc_comments=32:8 imports_exports=2:1 calls_definitions=0:0
+# ratios: loc_comments=37:10 imports_exports=3:1 calls_definitions=0:0

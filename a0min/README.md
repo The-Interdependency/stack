@@ -70,9 +70,29 @@ python3 -m a0min show a0z-12345678
 python3 -m a0min merge a0z-12345678
 python3 -m a0min superpotential            # dump the imported superpotential
 python3 -m a0min caps --tier seeker
+python3 -m a0min env                       # provider keys present (never values)
 ```
 
 Every command accepts `--json` for machine-readable output.
+
+## Provider keys
+
+`a0min.env` reads provider API keys from a local `.env` file without hardcoding
+them and without ever emitting key values:
+
+```python
+from a0min import load_provider_keys, provider_key, available_providers, presence
+
+keys = load_provider_keys()          # {'openai': ..., 'deepseek': ..., 'xai': ...}
+provider_key("openai")               # the key, or None
+available_providers()                # ('openai', 'deepseek', 'xai') subset
+presence()                           # {'openai': True, ...} — booleans only
+```
+
+Search order: `A0MIN_ENV_PATH`, then `./.env`, then `~/.env` (first match wins
+per provider). Supported variables: `OPENAI_API_KEY`, `DEEPSEEK_API_KEY`,
+`XAI_API_KEY`. The `env` CLI command (and `presence()`) expose presence only —
+key material is returned solely to in-process callers that ask for it.
 
 ## Tests
 
