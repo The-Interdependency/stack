@@ -1,9 +1,10 @@
-"""Molecular EPAC Public Gonols from closed element gonols.
+"""Molecular EPAC Public Gonols from closed valence-electron arity couplings.
 
-Attachment sites and nuclear charges come from already-closed atomic gonols.
-If the closed ground-state center has too few unpaired valence electrons, a
-closed promoted atomic gonol is constructed and consumed instead. The table
-is not re-queried. Nucleons and electrons stay inside those closed atoms.
+Molecules are made where unpaired valence electrons couple. Each bond is a
+declared arity-2 coupling of two already-closed valence electron gonols:
+``(center_electron, ligand_electron)``. Closed atoms remain molecular
+participants; nucleons and core electrons stay inside them. The table is
+not re-queried.
 
 Construction uses ``epac.public_gonol``, not ``edcm.gonol``. No sealed
 molecular-shape file is opened here.
@@ -25,6 +26,7 @@ from epac_dimensional_arity import (
     topology_structure_readout,
 )
 from epac_periodic import (
+    ELECTRON_CHARGE,
     construct_element_gonol,
     electron_lm,
     nuclear_charge,
@@ -82,19 +84,30 @@ def _atom_dimension_id(gonol: ClosedPublicGonol) -> str:
     return f"{symbol_of(gonol)}#{gonol.occurrence}"
 
 
-def _declared_dimensional_space(
-    participants: tuple[ClosedPublicGonol, ...],
-    center: ClosedPublicGonol | None,
-    ligands: tuple[ClosedPublicGonol, ...],
+def _declared_valence_space(
+    bonds: tuple[tuple[ClosedPublicGonol, ClosedPublicGonol], ...],
 ):
-    ambient = [_atom_dimension_id(item) for item in participants]
-    charges = {_atom_dimension_id(item): nuclear_charge(item) for item in participants}
-    if center is None:
-        declarations = [[_atom_dimension_id(participants[0]), _atom_dimension_id(participants[1])]]
-    else:
-        center_id = _atom_dimension_id(center)
-        declarations = [[center_id, _atom_dimension_id(ligand)] for ligand in ligands]
-    return space(ambient, declarations, charges=charges)
+    """Arity-2 couplings of closed valence electrons. Atoms are not these axes."""
+
+    ambient: list[str] = []
+    charges: dict[str, int] = {}
+    declarations: list[list[str]] = []
+    by_hub: dict[str, list[str]] = {}
+    for hub_electron, instance_electron in bonds:
+        hub_id = hub_electron.source_id
+        instance_id = instance_electron.source_id
+        if hub_id not in charges:
+            ambient.append(hub_id)
+            charges[hub_id] = ELECTRON_CHARGE
+        if instance_id not in charges:
+            ambient.append(instance_id)
+            charges[instance_id] = ELECTRON_CHARGE
+        declarations.append([hub_id, instance_id])
+        by_hub.setdefault(hub_id, []).append(instance_id)
+    declared = space(ambient, declarations, charges=charges)
+    for hub_id, instance_ids in by_hub.items():
+        oriented_instance_couplings(declared, hub_id=hub_id, instance_ids=tuple(instance_ids))
+    return declared
 
 
 def _site_label(site: tuple[int, int]) -> str:
@@ -103,48 +116,26 @@ def _site_label(site: tuple[int, int]) -> str:
 
 def _mobius_coupling(
     *,
-    participants: tuple[ClosedPublicGonol, ...],
-    center: ClosedPublicGonol | None,
-    ligands: tuple[ClosedPublicGonol, ...],
-    center_sites: tuple[tuple[int, int], ...],
-    ligand_sites: tuple[tuple[tuple[int, int], ...], ...],
+    bonds: tuple[tuple[ClosedPublicGonol, ClosedPublicGonol], ...],
 ) -> Mapping[str, Any]:
     origin = native_mobius_state(0)
     one = origin.advance(1)
     two = origin.advance(2)
-    if center is None:
-        attachment_slots = tuple(
-            {
-                "slot": slot,
-                "participant": _atom_dimension_id(participant),
-                "site": _site_label(site),
-            }
-            for slot, (participant, sites) in enumerate(zip(participants, ligand_sites))
-            for site in sites
-        )
-    else:
-        flattened_ligand_sites = tuple(
-            (ligand, site)
-            for ligand, sites in zip(ligands, ligand_sites)
-            for site in sites
-        )
-        attachment_slots = tuple(
-            {
-                "slot": slot,
-                "center": _atom_dimension_id(center),
-                "center_site": _site_label(center_site),
-                "ligand": _atom_dimension_id(ligand),
-                "ligand_site": _site_label(ligand_site),
-            }
-            for slot, (center_site, (ligand, ligand_site)) in enumerate(
-                zip(center_sites, flattened_ligand_sites)
-            )
-        )
+    attachment_slots = tuple(
+        {
+            "slot": slot,
+            "center_electron": hub.source_id,
+            "center_site": _site_label(electron_lm(hub)),
+            "ligand_electron": instance.source_id,
+            "ligand_site": _site_label(electron_lm(instance)),
+        }
+        for slot, (hub, instance) in enumerate(bonds)
+    )
     return {
         "law": "ucns.native-mobius-root-loop",
-        "binding": "declared-participants-and-valence-attachment-sites",
+        "binding": "declared-valence-electron-arity-couplings",
         "parameter": "turn-index-over-declared-attachment-evidence",
-        "participant_axes": tuple(_atom_dimension_id(item) for item in participants),
+        "participant_axes": tuple(electron.source_id for bond in bonds for electron in bond),
         "attachment_slots": attachment_slots,
         "t": [0, 1, 2],
         "visible_phase": [
@@ -202,15 +193,22 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         ligands = ()
         if len(participants) != 2:
             raise ValueError("symmetric affixiation is declared only for two equal atoms")
+        left_electrons = unpaired_valence_electrons(participants[0])
+        right_electrons = unpaired_valence_electrons(participants[1])
+        if len(left_electrons) != 1 or len(right_electrons) != 1:
+            raise ValueError("symmetric affixiation requires one unpaired valence electron on each atom")
+        bonds = ((left_electrons[0], right_electrons[0]),)
         ligand_sites = tuple(_sites_from_closed(item) for item in participants)
-        center_sites: tuple[tuple[int, int], ...] = ()
+        center_sites = ()
         used_promotion = False
-        center_attachment_ids: tuple[str, ...] = ()
+        center_attachment_ids = ()
         ligand_attachment_ids = tuple(_attachment_electron_ids(item) for item in participants)
     else:
         ligands = tuple(item for item in participants if item is not center)
-        ligand_sites = tuple(_sites_from_closed(item) for item in ligands)
-        needed = sum(len(sites) for sites in ligand_sites)
+        ligand_electrons = tuple(
+            electron for ligand in ligands for electron in unpaired_valence_electrons(ligand)
+        )
+        needed = len(ligand_electrons)
         center, used_promotion = _consume_center(center, needed)
         participants = tuple(
             center
@@ -219,30 +217,25 @@ def construct_molecule(formula: str) -> MolecularConstruction:
             for item in participants
         )
         ligands = tuple(item for item in participants if item is not center)
+        ligand_electrons = tuple(
+            electron for ligand in ligands for electron in unpaired_valence_electrons(ligand)
+        )
+        needed = len(ligand_electrons)
         center_unpaired = unpaired_valence_electrons(center)
         if len(center_unpaired) < needed:
             raise ValueError(
                 f"{symbol_of(center)} has {len(center_unpaired)} unpaired valence electrons; "
                 f"{needed} attachment sites were requested"
             )
-        center_sites = tuple(electron_lm(electron) for electron in center_unpaired[:needed])
-        center_attachment_ids = _attachment_electron_ids(center, limit=needed)
+        center_electrons = center_unpaired[:needed]
+        bonds = tuple(zip(center_electrons, ligand_electrons))
+        center_sites = tuple(electron_lm(electron) for electron in center_electrons)
+        ligand_sites = tuple(_sites_from_closed(item) for item in ligands)
+        center_attachment_ids = tuple(electron.source_id for electron in center_electrons)
         ligand_attachment_ids = tuple(_attachment_electron_ids(item) for item in ligands)
-    mobius = _mobius_coupling(
-        participants=participants,
-        center=center,
-        ligands=ligands,
-        center_sites=center_sites,
-        ligand_sites=ligand_sites,
-    )
-    dimensional = _declared_dimensional_space(participants, center, ligands)
-    instance_couplings: tuple[tuple[str, str], ...] = ()
-    if center is not None:
-        instance_couplings = oriented_instance_couplings(
-            dimensional,
-            hub_id=_atom_dimension_id(center),
-            instance_ids=tuple(_atom_dimension_id(item) for item in ligands),
-        )
+    mobius = _mobius_coupling(bonds=bonds)
+    dimensional = _declared_valence_space(bonds)
+    instance_couplings = tuple((hub.source_id, instance.source_id) for hub, instance in bonds)
     geometry = geometry_from_declared_couplings(dimensional)
     receipt = construct_public_gonol(
         source_id=f"epac.molecule:{formula}",

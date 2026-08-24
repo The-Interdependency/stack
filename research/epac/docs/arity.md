@@ -23,9 +23,12 @@ slot charges `(+1, 0)`. Proton-proton and neutron-neutron are not inferred.
 Hydrogen-1 is one proton and no neutrons.
 
 At atomic scale the hub is that closed nucleus and every electron instance has
-its own `(nucleus, electron_i)` with slot charges `(Z, -1)`. Molecular scale
-does not reopen nucleons or electrons: water remains `(O#2, H#0)` and
-`(O#2, H#1)`.
+its own `(nucleus, electron_i)` with slot charges `(Z, -1)`.
+
+Molecular scale promotes already-closed unpaired valence electrons as arity
+axes. Each bond is `(center_electron, ligand_electron)` with charges `(-1, -1)`.
+Closed atoms remain molecular participants. Nucleons and core electrons stay
+inside those atoms. Water is two valence-electron couplings, not `(O#2, H#0)`.
 
 Degree is required. For ambient `{x,y,z}` with couplings `(z,x)` and `(z,y)`:
 

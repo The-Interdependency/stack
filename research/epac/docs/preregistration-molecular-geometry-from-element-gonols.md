@@ -31,7 +31,7 @@ proton gonols (charge +1) and neutron gonols (charge 0)
   -> close that atomic 3-structure inside the element gonol
   -> unpaired-valence electron gonols already closed inside each atom
   -> if needed, a closed promoted atomic gonol (same n s→p); no table re-lookup
-  -> declared oriented (center, ligand_i) couplings with charges from closed nuclei
+  -> declared oriented (center_electron, ligand_electron) arity-2 couplings with charges (-1, -1)
   -> molecular three-dimensional structure = those atom-instance couplings + charge states + degree
   -> each local 3 represented in 4 quaternion components (scalar ε plus the three axis charges)
   -> molecular Public Gonol (closed atoms remain atomic participants)
