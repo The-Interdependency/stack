@@ -1,0 +1,100 @@
+:root {
+  --ink: #1b1a17;
+  --paper: #f4efe4;
+  --tile: #e6dcc8;
+  --tile-stroke: #6b5d44;
+  --selected: #c45c26;
+  --unit: #1f4b99;
+  --feed: #2a2722;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.4 "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18rem;
+  min-height: 100vh;
+}
+
+.board-wrap {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+h1,
+h2 {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.note {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+svg {
+  width: min(100%, 36rem);
+  height: auto;
+  align-self: center;
+}
+
+.hex {
+  fill: var(--tile);
+  stroke: var(--tile-stroke);
+  stroke-width: 2;
+  cursor: pointer;
+}
+
+.hex.selected {
+  stroke: var(--selected);
+  stroke-width: 4;
+}
+
+.hex-label {
+  fill: var(--ink);
+  font-size: 12px;
+  pointer-events: none;
+  text-anchor: middle;
+}
+
+.unit {
+  fill: var(--unit);
+  stroke: var(--paper);
+  stroke-width: 2;
+  pointer-events: none;
+}
+
+.feed {
+  background: #efe7d6;
+  border-left: 1px solid var(--tile-stroke);
+  padding: 1.5rem;
+}
+
+.feed ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.inspect {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 720px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  .feed {
+    border-left: 0;
+    border-top: 1px solid var(--tile-stroke);
+  }
+}
