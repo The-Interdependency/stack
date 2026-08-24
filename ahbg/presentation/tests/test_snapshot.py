@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from geometry import adjacent_center_pairs, axial_to_xy, center_distance
 from snapshot import KIND, PresentationSnapshotError, load_snapshot, validate_snapshot
 
 
@@ -24,6 +25,20 @@ class PresentationSnapshotTest(unittest.TestCase):
         snapshot["units"] = [{"id": "A0", "tile": "missing", "label": "A0"}]
         with self.assertRaisesRegex(PresentationSnapshotError, "not a presented tile"):
             validate_snapshot(snapshot)
+
+    def test_seed_of_life_centers_are_one_radius_apart(self) -> None:
+        radius = 10.0
+        origin = axial_to_xy(0, 0, radius)
+        east = axial_to_xy(1, 0, radius)
+        self.assertAlmostEqual(center_distance(origin, east), radius)
+        tiles = [(0, 0), (1, -1), (1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1)]
+        pairs = adjacent_center_pairs(tiles, radius)
+        self.assertEqual(len(pairs), 12)
+        for left, right in pairs:
+            self.assertAlmostEqual(
+                center_distance(axial_to_xy(*left, radius), axial_to_xy(*right, radius)),
+                radius,
+            )
 
     def test_wrong_kind_fails_closed(self) -> None:
         snapshot = copy.deepcopy(dict(load_snapshot()))

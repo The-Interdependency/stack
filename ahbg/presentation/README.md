@@ -9,9 +9,10 @@ is not identity.
 
 ## Boundary
 
-- Included: hex neighborhood rendering, unit marker, selection highlight, human feed
+- Included: Seed of Life circle rendering, tile-as-centerpoint, unit marker, selection, human feed
 - Excluded: turns, movement, construction, War, loyalty, DM rolls, legal observation
 - Codex owns engine state. This snapshot is `ahbg.presentation.snapshot`, not plane state.
+- A tile is the centerpoint. The circle around it is geometry, not the tile.
 
 ## Usage
 
@@ -45,6 +46,6 @@ Unknown mechanic fields are ignored. Missing required visual fields fail closed.
 
 ## hmmm
 
-- exact sacred-geometry vocabulary of the board (hex is a presentation choice)
+- whether later Flower-of-Life rings are presentation-only extensions of this Seed
 - whether Codex plane state will map 1:1 onto this snapshot
 - animation of motion/construction once the engine emits events

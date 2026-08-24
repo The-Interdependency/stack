@@ -46,21 +46,33 @@ svg {
   align-self: center;
 }
 
-.hex {
-  fill: var(--tile);
+.seed-circle {
+  fill: none;
   stroke: var(--tile-stroke);
-  stroke-width: 2;
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.tile-point {
+  fill: var(--tile-stroke);
+  stroke: var(--paper);
+  stroke-width: 1.5;
+  pointer-events: none;
+}
+
+.tile-point.selected {
+  fill: var(--selected);
+  stroke: var(--selected);
+}
+
+.tile-hit {
+  fill: transparent;
   cursor: pointer;
 }
 
-.hex.selected {
-  stroke: var(--selected);
-  stroke-width: 4;
-}
-
-.hex-label {
+.tile-label {
   fill: var(--ink);
-  font-size: 12px;
+  font-size: 11px;
   pointer-events: none;
   text-anchor: middle;
 }
@@ -70,6 +82,13 @@ svg {
   stroke: var(--paper);
   stroke-width: 2;
   pointer-events: none;
+}
+
+.unit-label {
+  fill: var(--paper);
+  font-size: 10px;
+  pointer-events: none;
+  text-anchor: middle;
 }
 
 .feed {

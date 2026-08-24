@@ -17,22 +17,15 @@ const EMBEDDED_SNAPSHOT = {
   feed: [{ turn: 0, text: "plane loaded; A0 at origin" }],
 };
 
-const SIZE = 42;
+// Circle radius equals center-to-center distance. The tile is the centerpoint.
+const RADIUS = 64;
+const TILE_POINT = 6;
 
 function axialToPixel(q, r) {
   return {
-    x: SIZE * Math.sqrt(3) * (q + r / 2),
-    y: SIZE * (3 / 2) * r,
+    x: RADIUS * (q + r / 2),
+    y: RADIUS * (Math.sqrt(3) / 2) * r,
   };
-}
-
-function hexPoints(cx, cy) {
-  const points = [];
-  for (let i = 0; i < 6; i += 1) {
-    const angle = (Math.PI / 180) * (60 * i - 30);
-    points.push(`${cx + SIZE * Math.cos(angle)},${cy + SIZE * Math.sin(angle)}`);
-  }
-  return points.join(" ");
 }
 
 function validateSnapshot(snapshot) {
@@ -62,10 +55,10 @@ function render(snapshot) {
   feed.replaceChildren();
 
   const pixels = snapshot.tiles.map((tile) => axialToPixel(tile.q, tile.r));
-  const minX = Math.min(...pixels.map((p) => p.x)) - SIZE * 2;
-  const minY = Math.min(...pixels.map((p) => p.y)) - SIZE * 2;
-  const maxX = Math.max(...pixels.map((p) => p.x)) + SIZE * 2;
-  const maxY = Math.max(...pixels.map((p) => p.y)) + SIZE * 2;
+  const minX = Math.min(...pixels.map((p) => p.x)) - RADIUS * 1.2;
+  const minY = Math.min(...pixels.map((p) => p.y)) - RADIUS * 1.2;
+  const maxX = Math.max(...pixels.map((p) => p.x)) + RADIUS * 1.2;
+  const maxY = Math.max(...pixels.map((p) => p.y)) + RADIUS * 1.2;
   svg.setAttribute("viewBox", `${minX} ${minY} ${maxX - minX} ${maxY - minY}`);
 
   const byId = Object.fromEntries(snapshot.tiles.map((tile) => [tile.id, tile]));
@@ -74,29 +67,55 @@ function render(snapshot) {
   function paintInspect() {
     const tile = byId[selected];
     const occupants = (snapshot.units || []).filter((unit) => unit.tile === selected);
-    inspect.textContent = `${tile.label || tile.id} (${tile.q},${tile.r})${
+    inspect.textContent = `tile ${tile.label || tile.id} center (${tile.q},${tile.r})${
       occupants.length ? ` — ${occupants.map((unit) => unit.label || unit.id).join(", ")}` : ""
     }`;
   }
 
+  function paintSelection() {
+    svg.querySelectorAll(".tile-point").forEach((node) => {
+      node.setAttribute("class", node.dataset.tile === selected ? "tile-point selected" : "tile-point");
+    });
+    paintInspect();
+  }
+
   snapshot.tiles.forEach((tile) => {
     const { x, y } = axialToPixel(tile.q, tile.r);
-    const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-    poly.setAttribute("points", hexPoints(x, y));
-    poly.setAttribute("class", tile.id === selected ? "hex selected" : "hex");
-    poly.dataset.tile = tile.id;
-    poly.addEventListener("click", () => {
+    const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    circle.setAttribute("cx", x);
+    circle.setAttribute("cy", y);
+    circle.setAttribute("r", RADIUS);
+    circle.setAttribute("class", "seed-circle");
+    svg.appendChild(circle);
+  });
+
+  snapshot.tiles.forEach((tile) => {
+    const { x, y } = axialToPixel(tile.q, tile.r);
+    const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    point.setAttribute("cx", x);
+    point.setAttribute("cy", y);
+    point.setAttribute("r", TILE_POINT);
+    point.setAttribute("class", tile.id === selected ? "tile-point selected" : "tile-point");
+    point.dataset.tile = tile.id;
+    point.addEventListener("click", () => {
       selected = tile.id;
-      svg.querySelectorAll(".hex").forEach((node) => {
-        node.setAttribute("class", node.dataset.tile === selected ? "hex selected" : "hex");
-      });
-      paintInspect();
+      paintSelection();
     });
-    svg.appendChild(poly);
+    svg.appendChild(point);
+    const hit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    hit.setAttribute("cx", x);
+    hit.setAttribute("cy", y);
+    hit.setAttribute("r", RADIUS * 0.28);
+    hit.setAttribute("class", "tile-hit");
+    hit.addEventListener("click", () => {
+      selected = tile.id;
+      paintSelection();
+    });
+    svg.appendChild(hit);
     const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("x", x);
-    text.setAttribute("y", y + 18);
-    text.setAttribute("class", "hex-label");
+    text.setAttribute("y", y + RADIUS * 0.38);
+    text.setAttribute("class", "tile-label");
     text.textContent = tile.label || tile.id;
     svg.appendChild(text);
   });
@@ -106,15 +125,14 @@ function render(snapshot) {
     const { x, y } = axialToPixel(tile.q, tile.r);
     const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
     marker.setAttribute("cx", x);
-    marker.setAttribute("cy", y - 6);
-    marker.setAttribute("r", 10);
+    marker.setAttribute("cy", y);
+    marker.setAttribute("r", 11);
     marker.setAttribute("class", "unit");
     svg.appendChild(marker);
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
     label.setAttribute("x", x);
-    label.setAttribute("y", y - 3);
-    label.setAttribute("class", "hex-label");
-    label.setAttribute("fill", "#f4efe4");
+    label.setAttribute("y", y + 4);
+    label.setAttribute("class", "unit-label");
     label.textContent = unit.label || unit.id;
     svg.appendChild(label);
   });

@@ -20,8 +20,8 @@ Owns visual implementation:
 Grok does not define game mechanics.
 
 Current Grok surface: [`presentation/`](presentation/) renders a
-`ahbg.presentation.snapshot` (seven-tile hex neighborhood, A0 marker, feed,
-tile inspect). That snapshot is not plane state.
+`ahbg.presentation.snapshot` (Seed of Life circles, tile = centerpoint, A0
+marker, feed, inspect). That snapshot is not plane state.
 
 ### Codex — game engine / runtime
 
