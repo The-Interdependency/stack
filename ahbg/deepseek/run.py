@@ -21,8 +21,9 @@ Usage:
 
 from __future__ import annotations
 
+import importlib
 import json
-import math
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -32,37 +33,42 @@ from .ahbg import TurnLoop, UnresolvedHmmm, ValidationError, new_game, replay, s
 
 ARTIFACTS_DIR = Path(__file__).resolve().parent / "artifacts"
 
-# UCNS source authority: stack/research/ucns/src/ucns/mobius_seed.py
-# `_ring_centers()` returns the six exact ring centers at unit radius plus the
-# origin: (1,0), (1/2,sqrt(3)/2), (-1/2,sqrt(3)/2), (-1,0),
-# (-1/2,-sqrt(3)/2), (1/2,-sqrt(3)/2), and (0,0).
-#
-# Axial projection (inverse of the presentation axial map, x = q + r/2,
-# y = (sqrt(3)/2) r):  r = (2/sqrt(3)) y ; q = x - r/2.  For the UCNS
-# centerpoints this lands exactly on integer axial coordinates.
-_UCNS_RING_CENTERS = (
-    (1.0, 0.0),
-    (0.5, math.sqrt(3.0) / 2.0),
-    (-0.5, math.sqrt(3.0) / 2.0),
-    (-1.0, 0.0),
-    (-0.5, -math.sqrt(3.0) / 2.0),
-    (0.5, -math.sqrt(3.0) / 2.0),
-)
-
 _TILE_IDS = ("e", "se", "sw", "w", "nw", "ne")
 
 
-def _project_to_axial(x: float, y: float) -> tuple[int, int]:
-    r = int(round((2.0 / math.sqrt(3.0)) * y))
-    q = int(round(x - r / 2.0))
-    return q, r
+def _load_mobius_seed_module() -> Any:
+    """Load the canonical UCNS source without requiring package installation."""
+    try:
+        return importlib.import_module("ucns.mobius_seed")
+    except ModuleNotFoundError as exc:
+        if exc.name != "ucns":
+            raise
+        source_root = Path(__file__).resolve().parents[2] / "research" / "ucns" / "src"
+        if not source_root.is_dir():
+            raise RuntimeError(f"canonical UCNS source is missing: {source_root}") from exc
+        sys.path.insert(0, str(source_root))
+        return importlib.import_module("ucns.mobius_seed")
+
+
+def _project_ucns_point_to_axial(point: Any) -> tuple[int, int]:
+    """Project an exact UCNS Seed point to AHBG axial tile coordinates."""
+    x = point.x
+    y = point.y
+    if x.sqrt3 != 0 or y.rational != 0:
+        raise RuntimeError("UCNS ring center is not aligned with the AHBG axial projection")
+    r = y.sqrt3 * 2
+    q = x.rational - r / 2
+    if q.denominator != 1 or r.denominator != 1:
+        raise RuntimeError("UCNS ring center does not project to integer axial coordinates")
+    return int(q), int(r)
 
 
 def ucns_seed_board() -> list[dict[str, Any]]:
     """Return the seven axial tiles consumed from UCNS Seed-of-Life centers."""
+    mobius_seed = _load_mobius_seed_module().build_mobius_seed_of_life()
     tiles = [{"tile_id": "c", "q": 0, "r": 0}]
-    for tile_id, (x, y) in zip(_TILE_IDS, _UCNS_RING_CENTERS):
-        q, r = _project_to_axial(x, y)
+    for index, tile_id in enumerate(_TILE_IDS):
+        q, r = _project_ucns_point_to_axial(mobius_seed.node_by_id[f"RING_{index}"].point)
         tiles.append({"tile_id": tile_id, "q": q, "r": r})
     return tiles
 

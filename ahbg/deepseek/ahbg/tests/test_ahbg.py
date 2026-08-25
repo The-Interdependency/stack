@@ -19,6 +19,7 @@ from ahbg.deepseek.ahbg import (
     replay,
     save_world,
 )
+from ahbg.deepseek.run import ucns_seed_board
 
 SEED_TILES = [
     {"tile_id": "c", "q": 0, "r": 0},
@@ -35,6 +36,20 @@ def _plan(turn: int, *moves: dict) -> dict:
 
 
 class WorldTests(unittest.TestCase):
+    def test_ucns_seed_board_projects_canonical_ring_centers(self) -> None:
+        self.assertEqual(
+            ucns_seed_board(),
+            [
+                {"tile_id": "c", "q": 0, "r": 0},
+                {"tile_id": "e", "q": 1, "r": 0},
+                {"tile_id": "se", "q": 0, "r": 1},
+                {"tile_id": "sw", "q": -1, "r": 1},
+                {"tile_id": "w", "q": -1, "r": 0},
+                {"tile_id": "nw", "q": 0, "r": -1},
+                {"tile_id": "ne", "q": 1, "r": -1},
+            ],
+        )
+
     def test_new_game_replays_to_itself(self) -> None:
         world, log = new_game(seed=7, tiles=SEED_TILES, units=SEED_UNITS)
         self.assertEqual(replay(log).canonical_dict(), world.canonical_dict())
