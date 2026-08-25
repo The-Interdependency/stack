@@ -1,0 +1,99 @@
+{
+  "board_authority": "UCNS mobius_seed ring centers (stack/research/ucns/src/ucns/mobius_seed.py)",
+  "board_projection": "axial (q, r) inverse projection of the seven unit-radius Seed-of-Life centerpoints",
+  "builder": "DeepSeek",
+  "evidence_standing_vocabulary": [
+    "SURVIVED",
+    "FALSIFIED",
+    "UNRESOLVED",
+    "BLOCKED"
+  ],
+  "results": [
+    {
+      "a0_history_entries": 12,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/telemetry.jsonl"
+      },
+      "diary_entries": 6,
+      "event_count": 19,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 6,
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "plain_move_loop",
+      "seed": 7,
+      "telemetry_records": 21,
+      "turns": 6,
+      "world_digest": "d596a07c40fe050f5c2e4c2ff95b681b7877e2504c3e2fde166977f0862f8401"
+    },
+    {
+      "a0_history_entries": 5,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/telemetry.jsonl"
+      },
+      "diary_entries": 2,
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 2,
+      "invalid_actions": 0,
+      "refusals": 1,
+      "replay_equal": true,
+      "scenario_id": "hard_veto_illegal_action",
+      "seed": 11,
+      "telemetry_records": 10,
+      "turns": 2,
+      "world_digest": "91694f26d2a506dcece7d0b6f15a48155930162158a1ef5ebbf89c15577940f1"
+    },
+    {
+      "a0_history_entries": 2,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/telemetry.jsonl"
+      },
+      "diary_entries": 1,
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 1,
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "occupied_target_collision",
+      "seed": 13,
+      "telemetry_records": 5,
+      "turns": 1,
+      "world_digest": "2f1a715d354ff57ea5d2be1708961e6c7989b9f9ce482c57ffd742b3f5abdade"
+    },
+    {
+      "a0_history_entries": 2,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/telemetry.jsonl"
+      },
+      "diary_entries": 1,
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 1,
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "dual_target_collision",
+      "seed": 17,
+      "telemetry_records": 5,
+      "turns": 1,
+      "world_digest": "ec64c5022502eb8c06b91f1a3ed87ee5b2740582295d68bbf18b942ff864c14d"
+    }
+  ],
+  "scenario_corpus": "smoke_epoch (provisional-local)",
+  "schema": "interdependency.ahbg.run-manifest/1.0.0",
+  "started_at": "2026-08-25T09:49:21Z",
+  "workspace": "stack/ahbg/deepseek"
+}

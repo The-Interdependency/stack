@@ -1,0 +1,84 @@
+{
+  "schema": "interdependency.ahbg.build-manifest/1.0.0",
+  "builder": "DeepSeek",
+  "workspace": "stack/ahbg/deepseek",
+  "protocol": {
+    "name": "AHBG x a0 Embodiment Calibration Program",
+    "path": "stack/ahbg/CALIBRATION.md",
+    "role_readme": "stack/ahbg/README.md",
+    "workspace_readme": "stack/ahbg/deepseek/README.md"
+  },
+  "resolved_source_commits": {
+    "stack": {
+      "commit": "cafa636ff84d9a85bc7fcabe83103390648cf19f",
+      "branch": "agent/ahbg-presentation",
+      "note": "AHBG host repository; contains the shared protocol, sibling workspaces, and the Codex-owned engine under ahbg/engine/ (read-only authority surface, not copied)."
+    },
+    "skill-lib-vendored": {
+      "commit": "cafa636ff84d9a85bc7fcabe83103390648cf19f",
+      "note": "Vendored skill-lib content tracked inside the stack repository at stack/skill-lib."
+    },
+    "skill-lib-canonical": {
+      "commit": "7a621c290525b05805629a5186d2e0d7cc630f4f",
+      "branch": "agent/gonol-build-compliance-headings"
+    },
+    "ucns": {
+      "commit": "52ce6839c3f884d01a3cf561ae96fd2ef4c35ab8",
+      "note": "Board geometry authority. AHBG consumes UCNS geometry; the DeepSeek workspace does not invent a substitute board."
+    }
+  },
+  "applicable_skill_lib_instructions": [
+    {
+      "skill": "agent-instantiation",
+      "applied_to": "a0 realization lineage and identity",
+      "commitments": [
+        "model/provider is not the instance",
+        "a protocol may be copied; a running instance must be forked with explicit lineage",
+        "each instance binds one lineage to one boundary, perception surface, permission field, scope/scale/role, history, trajectory, uncertainty, capacity, and event record",
+        "state must not leak silently between lineages; fork/merge/reset/suspend/resume/terminate are explicit events"
+      ]
+    },
+    {
+      "skill": "action-calibration",
+      "applied_to": "build sizing",
+      "commitments": [
+        "minimal decisive action: a bounded, replayable single-plane A0 turn loop with telemetry",
+        "maximal coherent action: full calibration corpus + reciprocal checks after all three builds freeze",
+        "shadow epoch: the candidate regulatory cost model does not alter A0 decisions, permissions, scope, or resource allocation"
+      ]
+    }
+  ],
+  "sealed_corpus_identity": {
+    "status": "provisional-local",
+    "note": "The shared sealed corpus is not yet frozen. This build ships a workspace-local smoke corpus (smoke_epoch) with explicit seeds; it will be replaced by the shared frozen corpus identity when the three builders freeze it.",
+    "smoke_scenarios": [
+      "plain_move_loop",
+      "hard_veto_illegal_action",
+      "occupied_target_collision",
+      "dual_target_collision"
+    ]
+  },
+  "provider_relation": {
+    "model": "deepseek-v4-pro",
+    "harness": "deepcode",
+    "note": "Provider identity is a relation/covariate, not agent identity. The A0 build here is deterministic and rule-based; the provider is recorded, not embedded as identity."
+  },
+  "evidence_standing_vocabulary": ["SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED"],
+  "implementation_language": "python",
+  "python_floor": "3.10",
+  "independence_attestation": {
+    "no_code_copied_from": ["stack/ahbg/engine", "stack/ahbg/presentation", "stack/ahbg/grok", "stack/ahbg/codex"],
+    "shared_surfaces_only": [
+      "protocol documents (CALIBRATION.md, README.md)",
+      "event-kind envelope (plane.init, turn.begin, move, turn.end)",
+      "normalized output artifact names required by CALIBRATION.md",
+      "UCNS geometry authority (consumed, not reimplemented)"
+    ]
+  },
+  "hmmm": [
+    "exact shared sealed corpus identity and scenario schemas until frozen by the three builders",
+    "exact regulatory cost functional and resource projection until measured",
+    "whether A0 must consume UCNS geometry through a live adapter or through declared axial projections in the first epoch",
+    "reciprocal check schemas (CHECK_RESULT.json / CHECK_REPORT.md) until the check epoch opens"
+  ]
+}
