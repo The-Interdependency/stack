@@ -2,7 +2,7 @@ const EMBEDDED_SNAPSHOT = {
   kind: "ahbg.presentation.snapshot",
   standing: "not-mechanics",
   plane_id: "plane-0",
-  turn: 0,
+  turn: 1,
   tiles: [
     { id: "c", q: 0, r: 0, label: "origin" },
     { id: "ne", q: 1, r: -1, label: "ne" },
@@ -12,9 +12,13 @@ const EMBEDDED_SNAPSHOT = {
     { id: "w", q: -1, r: 0, label: "w" },
     { id: "nw", q: 0, r: -1, label: "nw" },
   ],
-  units: [{ id: "A0", tile: "c", label: "A0" }],
-  selected_tile: "c",
-  feed: [{ turn: 0, text: "plane loaded; A0 at origin" }],
+  units: [{ id: "A0", tile: "ne", label: "A0" }],
+  selected_tile: "ne",
+  motions: [{ unit: "A0", from: "c", to: "ne" }],
+  feed: [
+    { turn: 0, text: "plane loaded; A0 at origin" },
+    { turn: 1, text: "A0 trace origin to ne" },
+  ],
 };
 
 // Circle radius equals center-to-center distance. The tile is the centerpoint.
@@ -39,9 +43,25 @@ function validateSnapshot(snapshot) {
     throw new Error("tiles must be a non-empty list");
   }
   const ids = new Set(snapshot.tiles.map((tile) => tile.id));
+  const unitIds = new Set();
   for (const unit of snapshot.units || []) {
     if (!ids.has(unit.tile)) {
       throw new Error(`unit ${unit.id} tile is not a presented tile`);
+    }
+    unitIds.add(unit.id);
+  }
+  for (const motion of snapshot.motions || []) {
+    if (!unitIds.has(motion.unit)) {
+      throw new Error(`motion unit ${motion.unit} is not a presented unit`);
+    }
+    if (!ids.has(motion.from)) {
+      throw new Error(`motion from ${motion.from} is not a presented tile`);
+    }
+    if (!ids.has(motion.to)) {
+      throw new Error(`motion to ${motion.to} is not a presented tile`);
+    }
+    if (motion.from === motion.to) {
+      throw new Error(`motion for ${motion.unit} must change tiles`);
     }
   }
   return snapshot;
@@ -89,6 +109,20 @@ function render(snapshot) {
     svg.appendChild(circle);
   });
 
+  (snapshot.motions || []).forEach((motion) => {
+    const fromTile = byId[motion.from];
+    const toTile = byId[motion.to];
+    const from = axialToPixel(fromTile.q, fromTile.r);
+    const to = axialToPixel(toTile.q, toTile.r);
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    path.setAttribute("x1", from.x);
+    path.setAttribute("y1", from.y);
+    path.setAttribute("x2", to.x);
+    path.setAttribute("y2", to.y);
+    path.setAttribute("class", "motion-path");
+    svg.appendChild(path);
+  });
+
   snapshot.tiles.forEach((tile) => {
     const { x, y } = axialToPixel(tile.q, tile.r);
     const point = document.createElementNS("http://www.w3.org/2000/svg", "circle");
@@ -120,21 +154,44 @@ function render(snapshot) {
     svg.appendChild(text);
   });
 
+  const motionByUnit = Object.fromEntries(
+    (snapshot.motions || []).map((motion) => [motion.unit, motion])
+  );
+
   (snapshot.units || []).forEach((unit) => {
     const tile = byId[unit.tile];
-    const { x, y } = axialToPixel(tile.q, tile.r);
+    const dest = axialToPixel(tile.q, tile.r);
+    const motion = motionByUnit[unit.id];
+    const origin = motion ? axialToPixel(byId[motion.from].q, byId[motion.from].r) : dest;
     const marker = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    marker.setAttribute("cx", x);
-    marker.setAttribute("cy", y);
+    marker.setAttribute("cx", origin.x);
+    marker.setAttribute("cy", origin.y);
     marker.setAttribute("r", 11);
     marker.setAttribute("class", "unit");
     svg.appendChild(marker);
     const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    label.setAttribute("x", x);
-    label.setAttribute("y", y + 4);
+    label.setAttribute("x", origin.x);
+    label.setAttribute("y", origin.y + 4);
     label.setAttribute("class", "unit-label");
     label.textContent = unit.label || unit.id;
     svg.appendChild(label);
+    if (motion) {
+      const dur = "0.8s";
+      [
+        ["cx", origin.x, dest.x, marker],
+        ["cy", origin.y, dest.y, marker],
+        ["x", origin.x, dest.x, label],
+        ["y", origin.y + 4, dest.y + 4, label],
+      ].forEach(([name, from, to, node]) => {
+        const animate = document.createElementNS("http://www.w3.org/2000/svg", "animate");
+        animate.setAttribute("attributeName", name);
+        animate.setAttribute("from", from);
+        animate.setAttribute("to", to);
+        animate.setAttribute("dur", dur);
+        animate.setAttribute("fill", "freeze");
+        node.appendChild(animate);
+      });
+    }
   });
 
   (snapshot.feed || []).forEach((item) => {

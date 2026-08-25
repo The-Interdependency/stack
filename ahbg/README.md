@@ -21,7 +21,8 @@ Grok does not define game mechanics.
 
 Current Grok surface: [`presentation/`](presentation/) renders a
 `ahbg.presentation.snapshot` (Seed of Life circles, tile = centerpoint, A0
-marker, feed, inspect). That snapshot is not plane state.
+marker, feed, inspect, optional traces of already-resolved unit motion).
+That snapshot is not plane state. Traces do not decide legality.
 
 ### Codex — game engine / runtime
 

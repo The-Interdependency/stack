@@ -40,6 +40,20 @@ class PresentationSnapshotTest(unittest.TestCase):
                 radius,
             )
 
+    def test_sample_motion_is_a_visual_trace_not_mechanics(self) -> None:
+        snapshot = load_snapshot()
+        self.assertEqual(snapshot["units"][0]["tile"], "ne")
+        self.assertEqual(snapshot["motions"], [{"unit": "A0", "from": "c", "to": "ne"}])
+        source = (ROOT / "snapshot.py").read_text(encoding="utf-8")
+        self.assertNotIn("adjacent", source.lower())
+        self.assertNotIn("war", source.lower())
+
+    def test_unknown_motion_tile_fails_closed(self) -> None:
+        snapshot = copy.deepcopy(dict(load_snapshot()))
+        snapshot["motions"] = [{"unit": "A0", "from": "c", "to": "missing"}]
+        with self.assertRaisesRegex(PresentationSnapshotError, "not a presented tile"):
+            validate_snapshot(snapshot)
+
     def test_wrong_kind_fails_closed(self) -> None:
         snapshot = copy.deepcopy(dict(load_snapshot()))
         snapshot["kind"] = "ahbg.plane"

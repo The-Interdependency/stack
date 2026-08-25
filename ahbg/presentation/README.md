@@ -9,10 +9,11 @@ is not identity.
 
 ## Boundary
 
-- Included: Seed of Life circle rendering, tile-as-centerpoint, unit marker, selection, human feed
-- Excluded: turns, movement, construction, War, loyalty, DM rolls, legal observation
+- Included: Seed of Life circle rendering, tile-as-centerpoint, unit marker, selection, human feed, visual traces of already-resolved unit motion
+- Excluded: turns, legal movement, construction, War, loyalty, DM rolls, legal observation
 - Codex owns engine state. This snapshot is `ahbg.presentation.snapshot`, not plane state.
 - A tile is the centerpoint. The circle around it is geometry, not the tile.
+- Optional `motions` are graphics of engine-emitted `move` events. They do not decide adjacency or legality.
 
 ## Usage
 
@@ -41,11 +42,12 @@ A presentation snapshot must include:
 - unique tile ids with axial `q`,`r`
 - units whose `tile` ids exist
 - a feed list (may be empty)
+- optional `motions` whose `unit`, `from`, and `to` name presented units and tiles
 
-Unknown mechanic fields are ignored. Missing required visual fields fail closed.
+Unknown mechanic fields are ignored. Missing required visual fields fail closed. `motions` do not validate adjacency; that is engine law.
 
 ## hmmm
 
 - whether later Flower-of-Life rings are presentation-only extensions of this Seed
 - whether Codex plane state will map 1:1 onto this snapshot
-- animation of motion/construction once the engine emits events
+- animation of construction once the engine emits construction events

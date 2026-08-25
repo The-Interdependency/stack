@@ -65,6 +65,14 @@ svg {
   stroke: var(--selected);
 }
 
+.motion-path {
+  fill: none;
+  stroke: var(--selected);
+  stroke-width: 2.5;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
 .tile-hit {
   fill: transparent;
   cursor: pointer;

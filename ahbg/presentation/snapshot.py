@@ -1,6 +1,7 @@
 """AHBG presentation snapshot — visual fields only.
 
-This is not plane state and not a mechanics contract.
+This is not plane state and not a mechanics contract. Optional motions are
+traces of already-resolved unit relocation between presented tiles.
 """
 
 from __future__ import annotations
@@ -83,4 +84,23 @@ def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
     for item in feed:
         if not isinstance(item, Mapping) or not isinstance(item.get("text"), str) or not item["text"]:
             raise PresentationSnapshotError("each feed item must have exact non-empty text")
+    motions = payload.get("motions")
+    if motions is None:
+        return payload
+    if not isinstance(motions, list):
+        raise PresentationSnapshotError("motions must be a list when present")
+    for motion in motions:
+        if not isinstance(motion, Mapping):
+            raise PresentationSnapshotError("each motion must be an object")
+        unit_id = motion.get("unit")
+        from_tile = motion.get("from")
+        to_tile = motion.get("to")
+        if unit_id not in unit_ids:
+            raise PresentationSnapshotError(f"motion unit {unit_id!r} is not a presented unit")
+        if from_tile not in ids:
+            raise PresentationSnapshotError(f"motion from {from_tile!r} is not a presented tile")
+        if to_tile not in ids:
+            raise PresentationSnapshotError(f"motion to {to_tile!r} is not a presented tile")
+        if from_tile == to_tile:
+            raise PresentationSnapshotError(f"motion for {unit_id} must change tiles")
     return payload
