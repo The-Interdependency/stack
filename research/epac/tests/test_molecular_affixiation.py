@@ -10,17 +10,70 @@ sys.path.insert(0, str(EPAC_ROOT))
 sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
 from epac_dimensional_arity import quaternion_structure_readout
-from epac_molecular import construct_declared_molecules, replay_molecule
-from epac_periodic import bonding_surfaces, pairing_couplings
+from epac_molecular import (
+    INORGANIC_CARBON_COMPOSITIONS,
+    MOLECULE_COMPOSITIONS,
+    construct_declared_molecules,
+    construct_molecule,
+    replay_molecule,
+)
+from epac_periodic import PRIMARY_RESEARCH_ATOM, bonding_surfaces, pairing_couplings
 
 
 class MolecularAffixiationTest(unittest.TestCase):
     def test_declared_formulas_close_and_replay(self) -> None:
         molecules = construct_declared_molecules()
-        self.assertEqual(set(molecules), {"H2", "H2O", "NH3", "CH4", "CO2"})
+        self.assertEqual(set(molecules), set(MOLECULE_COMPOSITIONS))
+        self.assertTrue({"H2", "H2O", "NH3", "CH4", "CO2"}.issubset(molecules))
+        self.assertEqual(
+            set(INORGANIC_CARBON_COMPOSITIONS),
+            {"CO", "CO2", "CS2", "COS", "CF4", "CCl4", "COF2", "COCl2", "HCN"},
+        )
         for formula, construction in molecules.items():
             replayed = replay_molecule(construction)
             self.assertEqual(construction.receipt.receipt_digest, replayed.receipt_digest, formula)
+
+    def test_carbon_is_hub_for_inorganic_one_carbon_molecules(self) -> None:
+        molecules = construct_declared_molecules()
+        for formula in INORGANIC_CARBON_COMPOSITIONS:
+            inv = molecules[formula].invariants
+            self.assertEqual(inv["center_symbol"], PRIMARY_RESEARCH_ATOM, formula)
+            self.assertEqual(inv["center_Z"], 6, formula)
+            self.assertTrue(
+                all(item.startswith("epac.electron:C#0:") for item in inv["center_attachment_electron_ids"]),
+                formula,
+            )
+            self.assertEqual(
+                {p.relation for p in molecules[formula].receipt.gonol.participants},
+                {"epac.atomic.element"},
+                formula,
+            )
+        carbon_monoxide = molecules["CO"].invariants
+        self.assertFalse(carbon_monoxide["center_used_atomic_promotion"])
+        self.assertEqual(carbon_monoxide["center_attachment_site_count"], 2)
+        self.assertEqual(carbon_monoxide["ligand_symbols"], ["O"])
+        self.assertEqual(len(carbon_monoxide["valence_electron_bonds"]), 2)
+        self.assertEqual(quaternion_structure_readout(molecules["CO"].receipt.structure)[0][1][0], "C#0")
+        carbonyl_sulfide = molecules["COS"].invariants
+        self.assertTrue(carbonyl_sulfide["center_used_atomic_promotion"])
+        self.assertEqual(carbonyl_sulfide["ligand_symbols"], ["O", "S"])
+        self.assertEqual(carbonyl_sulfide["center_attachment_site_count"], 4)
+        hydrogen_cyanide = molecules["HCN"].invariants
+        self.assertTrue(hydrogen_cyanide["center_used_atomic_promotion"])
+        self.assertEqual(hydrogen_cyanide["ligand_symbols"], ["H", "N"])
+        self.assertEqual(hydrogen_cyanide["ligand_attachment_site_count"], 4)
+        carbon_disulfide = molecules["CS2"].invariants
+        self.assertEqual(carbon_disulfide["ligand_symbols"], ["S", "S"])
+        self.assertEqual(carbon_disulfide["center_attachment_site_count"], 4)
+        tetrafluoromethane = molecules["CF4"].invariants
+        self.assertTrue(tetrafluoromethane["center_used_atomic_promotion"])
+        self.assertEqual(tetrafluoromethane["ligand_attachment_site_count"], 4)
+        phosgene = molecules["COCl2"].invariants
+        self.assertEqual(phosgene["ligand_symbols"], ["O", "Cl", "Cl"])
+        self.assertEqual(phosgene["center_attachment_site_count"], 4)
+        self.assertEqual(molecules["H2O"].invariants["center_symbol"], "O")
+        with self.assertRaisesRegex(ValueError, "outside the declared run"):
+            construct_molecule("C2H6")
 
     def test_unpaired_valence_and_shells_are_used(self) -> None:
         molecules = construct_declared_molecules()
@@ -136,7 +189,7 @@ class MolecularAffixiationTest(unittest.TestCase):
 
     def test_construction_text_avoids_sealed_labels(self) -> None:
         source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8").lower()
-        for term in ("bent", "tetrahedral", "trigonal-pyramidal", "vsepr", "linear"):
+        for term in ("bent", "tetrahedral", "trigonal-pyramidal", "trigonal-planar", "vsepr", "linear"):
             self.assertNotIn(term, source)
 
 

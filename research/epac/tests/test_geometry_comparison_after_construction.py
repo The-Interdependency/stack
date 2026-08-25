@@ -48,7 +48,9 @@ class GeometryComparisonAfterConstructionTest(unittest.TestCase):
 
     def test_sealed_shape_comparison_uses_charged_structure(self) -> None:
         constructions = construct_declared_molecules()
-        self.assertEqual(set(constructions), {"H2", "H2O", "NH3", "CH4", "CO2"})
+        from epac_molecular import MOLECULE_COMPOSITIONS
+
+        self.assertEqual(set(constructions), set(MOLECULE_COMPOSITIONS))
         record = compare_after_construction()
         sealed = json.loads(SEALED.read_text(encoding="utf-8"))["molecules"]
         known_shapes = {formula: sealed[formula]["known_shape"] for formula in constructions}

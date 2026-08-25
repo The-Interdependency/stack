@@ -77,7 +77,12 @@ operations remain `hmmm`. No spherical equal-spacing rule is added.
 
 ## Molecules in this run
 
-`H2`, `H2O`, `NH3`, `CH4`, `CO2`
+Primary research atom: carbon. One-carbon inorganic: `CO`, `CO2`, `CS2`,
+`COS`, `CF4`, `CCl4`, `COF2`, `COCl2`, `HCN`. Already-declared carbon hydride:
+`CH4`. Non-carbon regression: `H2`, `H2O`, `NH3`.
+
+Outside this run: multi-carbon chains, rings, ions (`CO3^2-`, `CN-`), and
+group fragments.
 
 ## Comparison policy (frozen)
 

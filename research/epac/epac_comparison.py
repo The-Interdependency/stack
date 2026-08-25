@@ -25,7 +25,14 @@ from epac_molecular import construct_declared_molecules, matched_information_con
 
 EPAC_ROOT = Path(__file__).resolve().parent
 SEALED_PATH = EPAC_ROOT / "data" / "sealed_known_molecular_geometry.json"
-SEALED_SHAPE_LABELS = ("linear", "bent", "trigonal-pyramidal", "tetrahedral", "vsepr")
+SEALED_SHAPE_LABELS = (
+    "linear",
+    "bent",
+    "trigonal-pyramidal",
+    "tetrahedral",
+    "trigonal-planar",
+    "vsepr",
+)
 CONSTRUCTION_FILES = (
     "epac_atomic.py",
     "epac_dimensional_arity.py",

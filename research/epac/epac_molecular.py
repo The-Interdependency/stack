@@ -23,10 +23,11 @@ Usage guidance
     assert water.invariants["matched_bonding_surfaces"][0]["ligand_electron"] == (
         "epac.electron:H#0:0"
     )
-    assert water.invariants["center_bonding_surface_couplings"] == [
-        ["epac.nucleus:O#2", "epac.electron:O#2:5"],
-        ["epac.nucleus:O#2", "epac.electron:O#2:6"],
-    ]
+    carbon_monoxide = construct_molecule("CO")
+    assert carbon_monoxide.invariants["center_symbol"] == "C"
+    assert carbon_monoxide.invariants["center_used_atomic_promotion"] is False
+    phosgene = construct_molecule("COCl2")
+    assert phosgene.invariants["center_used_atomic_promotion"] is True
 """
 
 from __future__ import annotations
@@ -46,6 +47,7 @@ from epac_dimensional_arity import (
 )
 from epac_periodic import (
     ELECTRON_CHARGE,
+    PRIMARY_RESEARCH_ATOM,
     bonding_surface_couplings,
     bonding_surfaces,
     construct_element_gonol,
@@ -57,12 +59,35 @@ from epac_periodic import (
 from epac_public_gonol import ClosedPublicGonol, PublicGonolReceipt, construct_public_gonol, replay_public_gonol
 
 
-MOLECULE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
+# Non-carbon regression formulas. Carbon is the primary research atom.
+NONCARBON_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
     "H2": (("H", 2),),
     "H2O": (("H", 2), ("O", 1)),
     "NH3": (("N", 1), ("H", 3)),
-    "CH4": (("C", 1), ("H", 4)),
+}
+
+# One-carbon closed molecules. Inorganic one-carbon first; CH4 is the already
+# declared carbon hydride. Multi-carbon, ions, and groups remain outside.
+INORGANIC_CARBON_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
+    "CO": (("C", 1), ("O", 1)),
     "CO2": (("C", 1), ("O", 2)),
+    "CS2": (("C", 1), ("S", 2)),
+    "COS": (("C", 1), ("O", 1), ("S", 1)),
+    "CF4": (("C", 1), ("F", 4)),
+    "CCl4": (("C", 1), ("Cl", 4)),
+    "COF2": (("C", 1), ("O", 1), ("F", 2)),
+    "COCl2": (("C", 1), ("O", 1), ("Cl", 2)),
+    "HCN": (("C", 1), ("H", 1), ("N", 1)),
+}
+
+CARBON_HYDRIDE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
+    "CH4": (("C", 1), ("H", 4)),
+}
+
+MOLECULE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
+    **NONCARBON_COMPOSITIONS,
+    **INORGANIC_CARBON_COMPOSITIONS,
+    **CARBON_HYDRIDE_COMPOSITIONS,
 }
 
 RELATION = "epac.affixiation.bonding-surface"
@@ -86,11 +111,20 @@ def _instantiate(composition: tuple[tuple[str, int], ...]) -> tuple[ClosedPublic
 
 
 def _choose_center(participants: tuple[ClosedPublicGonol, ...]) -> ClosedPublicGonol | None:
-    """Center is the unique singleton symbol when ligands share another symbol.
+    """Hub selection. Carbon is the primary research atom.
 
-    This is stoichiometric, not a shape rule. H2 has no singleton.
+    Exactly one carbon instance is the center. Otherwise the unique singleton
+    symbol is the center when ligands share another symbol. Two equal atoms
+    have no center. Multiple carbons are outside this one-carbon run.
     """
 
+    carbons = [item for item in participants if symbol_of(item) == PRIMARY_RESEARCH_ATOM]
+    if len(carbons) > 1:
+        raise ValueError(
+            f"multiple {PRIMARY_RESEARCH_ATOM} instances are outside the one-carbon run"
+        )
+    if len(carbons) == 1:
+        return carbons[0]
     counts: dict[str, int] = {}
     for item in participants:
         counts[symbol_of(item)] = counts.get(symbol_of(item), 0) + 1

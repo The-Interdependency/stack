@@ -32,6 +32,10 @@ At atomic scale there are two declared relations:
 Leftover unpaired valence `(nucleus, electron_i)` incidences are the atom's
 bonding surfaces. Pairing is not a proof of `(nucleus, e_i, e_j)`.
 
+Carbon is the primary research atom. When exactly one carbon instance is
+present it is the molecular hub. Mixed ligands are allowed; the molecule still
+has one hub. Multiple carbons are not this run.
+
 Molecular scale matches those published surfaces. Two declared relations:
 
 - 3-structure: hub is the closed center atom; every ligand electron of a

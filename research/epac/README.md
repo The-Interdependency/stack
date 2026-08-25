@@ -20,10 +20,12 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
 - [`docs/constraints.md`](docs/constraints.md) — standing constraints and
   resolved contradictions for this candidate.
 - [`docs/preregistration-molecular-geometry-from-element-gonols.md`](docs/preregistration-molecular-geometry-from-element-gonols.md) —
-  provisional candidate: Z=1–18 element gonols from nucleons, nucleus–electron
-  couplings, occupancy-2 pairing, and leftover unpaired `(nucleus, e_i)`
-  bonding surfaces, then affixiation of H₂, H₂O, NH₃, CH₄, CO₂ by matching
-  those surfaces. Known chemistry is sealed until after construction.
+  provisional candidate: carbon is the primary research atom. Z=1–18 element
+  gonols from nucleons, nucleus–electron couplings, occupancy-2 pairing, and
+  leftover unpaired `(nucleus, e_i)` bonding surfaces, then affixiation of
+  one-carbon inorganic molecules (`CO`, `CO2`, `CS2`, `COS`, `CF4`, `CCl4`,
+  `COF2`, `COCl2`, `HCN`) plus `CH4` and non-carbon regression formulas by
+  matching those surfaces. Known chemistry is sealed until after construction.
 
 ## Usage
 

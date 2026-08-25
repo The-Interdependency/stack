@@ -16,10 +16,12 @@ from epac_dimensional_arity import (
     space,
 )
 from epac_periodic import (
+    PRIMARY_RESEARCH_ATOM,
     bonding_surface_couplings,
     bonding_surfaces,
     construct_element_gonol,
     construct_periodic_table,
+    construct_primary_research_atom,
     pairing_couplings,
     replay_element_gonol,
     unpaired_valence_electrons,
@@ -44,6 +46,9 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(options["bonding-surface-count"], "2")
         self.assertEqual(options["promoted"], "false")
         self.assertEqual(options["promoted-unpaired-count"], "4")
+        self.assertEqual(PRIMARY_RESEARCH_ATOM, "C")
+        primary = construct_primary_research_atom()
+        self.assertEqual(primary.receipt_digest, carbon.receipt_digest)
         self.assertEqual(carbon.constructor_id, "epac.public_gonol")
         self.assertEqual(len(carbon.gonol.participants), 3)
         shells = [item for item in carbon.gonol.participants if item.relation == "epac.atomic.shell"]

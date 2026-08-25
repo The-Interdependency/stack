@@ -13,12 +13,15 @@ Each nucleon, nucleus, electron, shell, and element is an EPAC Public Gonol
 on the UCNS carrier. This module does not use ``edcm.gonol``.
 
     from epac_periodic import (
+        PRIMARY_RESEARCH_ATOM,
         bonding_surfaces,
         construct_element_gonol,
         construct_periodic_table,
         pairing_couplings,
     )
 
+    carbon = construct_element_gonol(PRIMARY_RESEARCH_ATOM)
+    assert dict(carbon.gonol.carried_options)["symbol"] == "C"
     helium = construct_element_gonol("He")
     nucleus = helium.gonol.participants[0]
     assert [p.relation for p in nucleus.participants] == [
@@ -56,6 +59,7 @@ from epac_public_gonol import (
 PROTON_CHARGE = 1
 NEUTRON_CHARGE = 0
 ELECTRON_CHARGE = -1
+PRIMARY_RESEARCH_ATOM = "C"
 NUCLEUS_RELATION = "epac.atomic.nucleus"
 PROTON_RELATION = "epac.atomic.proton"
 NEUTRON_RELATION = "epac.atomic.neutron"
@@ -363,6 +367,16 @@ def construct_element_gonol(
 
 def construct_periodic_table() -> dict[str, PublicGonolReceipt]:
     return {record.symbol: construct_element_gonol(record.symbol) for record in iter_table()}
+
+
+def construct_primary_research_atom(
+    *, occurrence: int = 0, promoted: bool = False
+) -> PublicGonolReceipt:
+    """Close the primary research atom. Carbon is that atom for this candidate."""
+
+    return construct_element_gonol(
+        PRIMARY_RESEARCH_ATOM, occurrence=occurrence, promoted=promoted
+    )
 
 
 def replay_element_gonol(receipt: PublicGonolReceipt) -> PublicGonolReceipt:

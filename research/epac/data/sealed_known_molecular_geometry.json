@@ -7,6 +7,14 @@
     "H2O": {"atom_count": 3, "known_shape": "bent"},
     "NH3": {"atom_count": 4, "known_shape": "trigonal-pyramidal"},
     "CH4": {"atom_count": 5, "known_shape": "tetrahedral"},
-    "CO2": {"atom_count": 3, "known_shape": "linear"}
+    "CO": {"atom_count": 2, "known_shape": "linear"},
+    "CO2": {"atom_count": 3, "known_shape": "linear"},
+    "CS2": {"atom_count": 3, "known_shape": "linear"},
+    "COS": {"atom_count": 3, "known_shape": "linear"},
+    "CF4": {"atom_count": 5, "known_shape": "tetrahedral"},
+    "CCl4": {"atom_count": 5, "known_shape": "tetrahedral"},
+    "COF2": {"atom_count": 4, "known_shape": "trigonal-planar"},
+    "COCl2": {"atom_count": 4, "known_shape": "trigonal-planar"},
+    "HCN": {"atom_count": 3, "known_shape": "linear"}
   }
 }

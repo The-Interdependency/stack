@@ -25,6 +25,7 @@ now obeys the listed rule. Unresolved remains `hmmm`.
 | C16 | nothing bigger than atoms is an *input* to element construction | resolved |
 | C17 | occupancy-2 `(n,l,m_l)` electrons pair inside the atom as `(e_ms+1, e_ms-1)` | resolved |
 | C18 | bonding surfaces are leftover unpaired valence `(nucleus, e_i)` after pairing | resolved |
+| C19 | carbon is the primary research atom; exactly one C instance is the molecular hub | resolved |
 
 ## Contradictions
 
@@ -58,6 +59,10 @@ Water: `deg(O#2)=2` on `(O#2, H0_e)` and `(O#2, H1_e)`; quaternion `(ε, 8, −1
 ### X4 — internucleon `(every proton, every neutron)` vs no all-pairs authority
 
 **Unresolved / hmmm.** Bipartite `(proton, neutron)` is a declared nuclear candidate, not p–p or n–n fill, and not a selected nuclear force. Multiple proton hubs at nuclear scale is the same *shape* of question as X1 and is not closed here.
+
+### X6 — carbon hub vs stoichiometric singleton
+
+**Resolution:** this candidate freezes carbon as the primary research atom. Exactly one carbon instance is the hub. Without carbon, the unique singleton remains the hub. Multiple carbons, ions, and group fragments stay outside the declared run.
 
 ## Usage
 
