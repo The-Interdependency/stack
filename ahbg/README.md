@@ -21,7 +21,8 @@ monetization, or other deferred architecture.
 | Plane, event log, persistence, replay | Codex engine | implemented candidate |
 | Canonical v1 `move` (one axial step onto empty tile) | Codex engine | implemented candidate |
 | Construction, spawn, absence, loyalty, War, DM rolls | Codex engine | `hmmm` / fail-closed |
-| A0 inhabiting the plane | DeepSeek | declared, not this folder |
+| Observation → presentation snapshot | Grok presentation | implemented candidate |
+| A0 inhabiting the plane | DeepSeek | declared; `ahbg/deepseek/` is a calibration workspace |
 | Triplicate calibration builds | Grok / Codex / DeepSeek workspaces | declared program |
 
 The presentation snapshot is `ahbg.presentation.snapshot`, not plane state.
@@ -90,7 +91,9 @@ unknown action kinds fail closed.
 
 Presentation consumes `ahbg.presentation.snapshot` only. `motions` are optional
 visual traces with `unit`, `from`, and `to`; they validate referenced ids but do
-not validate adjacency or legality.
+not validate adjacency or legality. `presentation/project.py` maps a legal
+observation plus resolved `move` events into that snapshot and drops seed and
+schema. It is not a 1:1 identity with plane state.
 
 ## Tool responsibilities
 
@@ -277,7 +280,8 @@ it does not establish phenomenal consciousness.
 ## hmmm
 
 - exact UCNS geometric operations not yet admitted into gameplay;
-- whether Codex plane state maps 1:1 onto the presentation snapshot;
+- whether Codex plane state maps 1:1 onto the presentation snapshot (a projector exists; identity is not claimed);
+- engine still uses its own axial adjacency rather than a UCNS adapter;
 - construction animation once the engine emits construction events;
 - War collision resolver, occupied-tile moves, dual-target moves;
 - the exact regulatory cost function, calibration thresholds, coupling
