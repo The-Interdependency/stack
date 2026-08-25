@@ -17,6 +17,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any
 
+from .regulatory import RegulatoryLayer
+
 INSTANCE_SCHEMA = "interdependency.ahbg.a0.instance/1.0.0"
 
 
@@ -170,6 +172,7 @@ class A0Instance:
     history: list[dict[str, Any]] = field(default_factory=list)
     uncertainty: dict[str, str] = field(default_factory=dict)
     capacity: ResourceVector = field(default_factory=ResourceVector)
+    regulatory: RegulatoryLayer = field(default_factory=RegulatoryLayer)
 
     def __post_init__(self) -> None:
         _require_plain_int(self.scale, "scale")
@@ -190,6 +193,7 @@ class A0Instance:
             "history_length": len(self.history),
             "uncertainty": dict(sorted(self.uncertainty.items())),
             "capacity": self.capacity.to_dict(),
+            "regulatory": self.regulatory.to_dict(),
         }
 
     def admit(self, observation: dict[str, Any]) -> dict[str, Any] | None:
@@ -216,6 +220,49 @@ class A0Instance:
 
     def record_transition(self, turn: int, transition: str) -> None:
         self.history.append({"kind": "transition", "turn": turn, "transition": transition})
+
+    # -- instancing closure ---------------------------------------------------
+    # Fork, merge, reset, suspension, resumption, and termination are explicit
+    # lifecycle events, never implicit continuity. Each is recorded as history.
+    def record_lifecycle(self, turn: int, event: str, detail: dict[str, Any] | None = None) -> None:
+        self.history.append(
+            {"kind": "lifecycle", "turn": turn, "event": event, "detail": detail or {}}
+        )
+
+    def fork(self, run_id: str, provider: str) -> "A0Instance":
+        """Fork this instance with an explicit child lineage and lifecycle event."""
+        child_lineage = self.lineage.fork(run_id=run_id, provider=provider)
+        child = A0Instance(
+            lineage=child_lineage,
+            boundary=Boundary(self_unit_id=self.boundary.self_unit_id),
+            permissions=PermissionField(
+                allowed_to_be=self.permissions.allowed_to_be,
+                wanted_here=self.permissions.wanted_here,
+                allowed_to_do=self.permissions.allowed_to_do,
+                wanted_to_do=self.permissions.wanted_to_do,
+                hard_vetoes=set(self.permissions.hard_vetoes),
+            ),
+            scope=self.scope,
+            scale=self.scale,
+            role=self.role,
+            uncertainty=dict(self.uncertainty),
+            capacity=ResourceVector(**self.capacity.to_dict()),
+        )
+        self.record_lifecycle(self.history[-1]["turn"] if self.history else 0, "fork", {"child": child_lineage.instance_id})
+        child.record_lifecycle(0, "spawn", {"parent": self.lineage.instance_id})
+        return child
+
+    def suspend(self, turn: int, reason: str) -> None:
+        self.record_lifecycle(turn, "suspend", {"reason": reason})
+
+    def resume(self, turn: int) -> None:
+        self.record_lifecycle(turn, "resume", {})
+
+    def reset(self, turn: int, reason: str) -> None:
+        self.record_lifecycle(turn, "reset", {"reason": reason})
+
+    def terminate(self, turn: int, reason: str) -> None:
+        self.record_lifecycle(turn, "terminate", {"reason": reason})
 
     def measure_latency(self, started_monotonic: float) -> float:
         return max(0.0, (time.monotonic() - started_monotonic) * 1000.0)

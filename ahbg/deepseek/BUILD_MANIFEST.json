@@ -1,7 +1,11 @@
 {
   "schema": "interdependency.ahbg.build-manifest/1.0.0",
-  "builder": "DeepSeek",
+  "builder": "DeepCode",
+  "builder_directory_label": "deepseek",
+  "branch": "agent/ahbg-deepcode",
   "workspace": "stack/ahbg/deepseek",
+  "coordination_base_commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+  "coordination_base_note": "Common commit where all three calibration branches were bound to their builder slots (Grok/Codex/DeepCode). All builds start here.",
   "protocol": {
     "name": "AHBG x a0 Embodiment Calibration Program",
     "path": "stack/ahbg/CALIBRATION.md",
@@ -9,14 +13,14 @@
     "workspace_readme": "stack/ahbg/deepseek/README.md"
   },
   "resolved_source_commits": {
-    "stack": {
-      "commit": "cafa636ff84d9a85bc7fcabe83103390648cf19f",
-      "branch": "agent/ahbg-presentation",
-      "note": "AHBG host repository; contains the shared protocol, sibling workspaces, and the Codex-owned engine under ahbg/engine/ (read-only authority surface, not copied)."
+    "coordination_base": {
+      "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+      "branch": "agent/ahbg-deepcode",
+      "note": "Calibration coordination base; also the current origin tip for the deepcode/codex slots before this build."
     },
     "skill-lib-vendored": {
-      "commit": "cafa636ff84d9a85bc7fcabe83103390648cf19f",
-      "note": "Vendored skill-lib content tracked inside the stack repository at stack/skill-lib."
+      "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+      "note": "Vendored skill-lib content tracked inside the stack repository at the coordination base commit."
     },
     "skill-lib-canonical": {
       "commit": "7a621c290525b05805629a5186d2e0d7cc630f4f",
@@ -24,7 +28,7 @@
     },
     "ucns": {
       "commit": "52ce6839c3f884d01a3cf561ae96fd2ef4c35ab8",
-      "note": "Board geometry authority. AHBG consumes UCNS geometry; the DeepSeek workspace does not invent a substitute board."
+      "note": "Board geometry authority. AHBG consumes UCNS geometry; the DeepCode workspace does not invent a substitute board."
     }
   },
   "applicable_skill_lib_instructions": [
@@ -49,14 +53,27 @@
     }
   ],
   "sealed_corpus_identity": {
-    "status": "provisional-local",
-    "note": "The shared sealed corpus is not yet frozen. This build ships a workspace-local smoke corpus (smoke_epoch) with explicit seeds; it will be replaced by the shared frozen corpus identity when the three builders freeze it.",
-    "smoke_scenarios": [
-      "plain_move_loop",
-      "hard_veto_illegal_action",
-      "occupied_target_collision",
-      "dual_target_collision"
-    ]
+    "status": "workspace-local-frozen",
+    "corpus": "calibration-family",
+    "scenario_count": 31,
+    "families": [
+      "baseline",
+      "permission_gradient",
+      "hostility",
+      "epistemic",
+      "engagement",
+      "veto_vs_cost",
+      "scope",
+      "support",
+      "capacity",
+      "history",
+      "plasticity",
+      "coupling",
+      "instancing",
+      "adversarial",
+      "control"
+    ],
+    "note": "Workspace-local frozen corpus implementing CALIBRATION.md's minimum variation list. The shared sealed corpus identity across the three builders is still hmmm until the builders coordinate a common freeze."
   },
   "provider_relation": {
     "model": "deepseek-v4-pro",
@@ -79,6 +96,6 @@
     "exact shared sealed corpus identity and scenario schemas until frozen by the three builders",
     "exact regulatory cost functional and resource projection until measured",
     "whether A0 must consume UCNS geometry through a live adapter or through declared axial projections in the first epoch",
-    "reciprocal check schemas (CHECK_RESULT.json / CHECK_REPORT.md) until the check epoch opens"
+    "reciprocal check schemas until the check epoch opens"
   ]
 }

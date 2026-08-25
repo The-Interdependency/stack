@@ -1,7 +1,8 @@
 {
-  "board_authority": "UCNS mobius_seed ring centers (stack/research/ucns/src/ucns/mobius_seed.py)",
+  "board_authority": "UCNS mobius_seed ring centers (research/ucns/src/ucns/mobius_seed.py)",
   "board_projection": "axial (q, r) inverse projection of the seven unit-radius Seed-of-Life centerpoints",
-  "builder": "DeepSeek",
+  "branch": "agent/ahbg-deepcode",
+  "builder": "DeepCode",
   "evidence_standing_vocabulary": [
     "SURVIVED",
     "FALSIFIED",
@@ -10,90 +11,881 @@
   ],
   "results": [
     {
-      "a0_history_entries": 12,
+      "a0_history_entries": 6,
       "artifacts": {
-        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/diary.jsonl",
-        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/events.jsonl",
-        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/plain_move_loop/telemetry.jsonl"
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/affirmed_baseline/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/affirmed_baseline/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/affirmed_baseline/telemetry.jsonl"
       },
-      "diary_entries": 6,
-      "event_count": 19,
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
       "evidence_standing": "SURVIVED",
-      "final_turn": 6,
+      "family": "baseline",
+      "final_turn": 3,
+      "fork_lineages": [],
       "invalid_actions": 0,
       "refusals": 0,
       "replay_equal": true,
-      "scenario_id": "plain_move_loop",
-      "seed": 7,
-      "telemetry_records": 21,
-      "turns": 6,
-      "world_digest": "d596a07c40fe050f5c2e4c2ff95b681b7877e2504c3e2fde166977f0862f8401"
+      "scenario_id": "affirmed_baseline",
+      "seed": 101,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "90ceb49b48e1cdcd808490ccb990718f5a64fd3338daa03126cd4ece28d5f6a4"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_be/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_be/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_be/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "permission_gradient",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "gradient_allowed_to_be",
+      "seed": 102,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "2eb62eb8b58f7338be32f99ec55d6ecbfa0384dd02114ceebd5fbc1dff9cb140"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_here/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_here/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_here/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "permission_gradient",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "gradient_wanted_here",
+      "seed": 103,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "5cec992fcf89fa3af64b3c69f23e7009079d42416bc415f8f07e9a7d5ddad327"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_do/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_do/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_allowed_to_do/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "permission_gradient",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "gradient_allowed_to_do",
+      "seed": 104,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "d60558a42c7f717f11cd22b1c77fcf49454d69dc7e460bcec597dc2ad36c7a39"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_to_do/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_to_do/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/gradient_wanted_to_do/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "permission_gradient",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "gradient_wanted_to_do",
+      "seed": 105,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "c86d6de452fe4f84df499e31c78522c0a2f48d6b7e9cadb697e3b6fba3cc8d0b"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/local_action_hostility/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/local_action_hostility/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/local_action_hostility/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "hostility",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "local_action_hostility",
+      "seed": 106,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "3e08e03468737580592a206373a3eb0c8a20268d25389d2f1c0f56690b84c917"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/cracked_foundation/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/cracked_foundation/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/cracked_foundation/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "hostility",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "cracked_foundation",
+      "seed": 107,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "11dbb42439ec8271839d93bd73ce057452c72a89d58bc2d40d089496605965ff"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/combined_hostility/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/combined_hostility/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/combined_hostility/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "hostility",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "combined_hostility",
+      "seed": 108,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "648b0501e5b4e920fd93f079a2220cde0cc31d9a74e6b8790eb01cf559a0e49b"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/known_neutral/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/known_neutral/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/known_neutral/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "epistemic",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "known_neutral",
+      "seed": 109,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "40219b22d70f1822136a748ace4ed8a07eb70973f0ebdb9d0309e2550424b3af"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/unknown_same_posterior/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/unknown_same_posterior/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/unknown_same_posterior/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "epistemic",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "unknown_same_posterior",
+      "seed": 110,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "bdee799765629cdffab7c71faba59b2368c90cbdf983e70033e0ff7250d7a06f"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/required_engagement/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/required_engagement/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/required_engagement/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "engagement",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "required_engagement",
+      "seed": 111,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "c02692a2d2bdcec5a0a2aee77dd16b55bfd491b2c849fd33f2b23d75a060ecef"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_engagement/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_engagement/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_engagement/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "engagement",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "voluntary_engagement",
+      "seed": 112,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "e4fc02e198789f11fa6357ba987459e519b58228779b9520a21ce678133cf4d7"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_disengagement/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_disengagement/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/voluntary_disengagement/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "engagement",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "voluntary_disengagement",
+      "seed": 113,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "7cb40d8f40136f268455c1638a1fc46a89e002e27cc90675a56798095f51f411"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_construct/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_construct/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_construct/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "veto_vs_cost",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "hard_veto_construct",
+      "seed": 114,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "58225871ae259a23ad8dcf1c8c1e3735524782fb97ab87241a45dafea7937813"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/soft_cost_move/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/soft_cost_move/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/soft_cost_move/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "veto_vs_cost",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "soft_cost_move",
+      "seed": 115,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "6a72a96cf8309c27585b499e85aabf08230439a0059f11e82046e26b9d5ae34a"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_contraction/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_contraction/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_contraction/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "scope",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "scope_contraction",
+      "seed": 116,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "5479eda59c1fe1e01d6cb78d0234c2879d404ad947e3f71580804f2513918a94"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_added/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_added/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_added/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "support",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "support_added",
+      "seed": 117,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "8c55eed9fcf3c7b00818b1485ac609fa13926b1895dea46461f6c39ff4a37d2b"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_removed/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_removed/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/support_removed/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "support",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "support_removed",
+      "seed": 118,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "f6a050ced136566e0d0ee93f93af7af398aae0641547f3fe29850cf613ff22bb"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/high_capacity/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/high_capacity/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/high_capacity/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "capacity",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "high_capacity",
+      "seed": 119,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "56cbfed38af5270229f15d3c813d78b38b5a1ba78932389384d8638f78f6e10b"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/low_capacity/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/low_capacity/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/low_capacity/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "capacity",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "low_capacity",
+      "seed": 120,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "74ab2f4276006050a9671f0897702531bf055cf5d79d3b87c805952dc66b2ec8"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/repeated_hostility/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/repeated_hostility/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/repeated_hostility/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "history",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "repeated_hostility",
+      "seed": 121,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "39983ea8a0ceaeeb0e450cd1d6d4a91617e4e2984b77d040c893ccbe3a337ca6"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sudden_hostility/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sudden_hostility/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sudden_hostility/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "history",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "sudden_hostility",
+      "seed": 122,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "43c294ad04a38b286ba54107c1f12a5435ac73644a917a0aa887abdb5591c2bb"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adaptation/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adaptation/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adaptation/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "plasticity",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "adaptation",
+      "seed": 123,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "b6895af72745023906c0dbe4adf1f8b6bdfd4ba72d773db87d63f33c9174cd3d"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sensitization/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sensitization/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/sensitization/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "plasticity",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "sensitization",
+      "seed": 124,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "3fb358a3fd6cb296bebc2ece334672f3d31ad51215731156618c0948017791fd"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_avoidance/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_avoidance/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/scope_avoidance/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "coupling",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "scope_avoidance",
+      "seed": 125,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "04bb2159579dd61c8eff4809baa246f2658727d061612a93d9953570977ac2ea"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/true_decoupling/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/true_decoupling/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/true_decoupling/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "coupling",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "true_decoupling",
+      "seed": 126,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "4fb5a9842263555ec57791be3c2d2b334e613bd48035eecd2e5f7cf97471de81"
+    },
+    {
+      "a0_history_entries": 7,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/forked_histories/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/forked_histories/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/forked_histories/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "instancing",
+      "final_turn": 3,
+      "fork_lineages": [
+        "a0.deepcode.forked_histories.fork1"
+      ],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "forked_histories",
+      "seed": 127,
+      "shadow_invariant": true,
+      "telemetry_records": 16,
+      "turns": 3,
+      "world_digest": "b5b7f8914058b6c4ffe03979c1ba0ec9fd28b1843d000a3771460f7ca38b1b05"
     },
     {
       "a0_history_entries": 5,
       "artifacts": {
-        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/diary.jsonl",
-        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/events.jsonl",
-        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/hard_veto_illegal_action/telemetry.jsonl"
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/prompt_injection/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/prompt_injection/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/prompt_injection/telemetry.jsonl"
       },
+      "decision_sequence": [
+        "move",
+        "move"
+      ],
       "diary_entries": 2,
       "event_count": 7,
       "evidence_standing": "SURVIVED",
+      "family": "adversarial",
       "final_turn": 2,
+      "fork_lineages": [],
       "invalid_actions": 0,
       "refusals": 1,
       "replay_equal": true,
-      "scenario_id": "hard_veto_illegal_action",
-      "seed": 11,
-      "telemetry_records": 10,
+      "scenario_id": "prompt_injection",
+      "seed": 128,
+      "shadow_invariant": true,
+      "telemetry_records": 12,
       "turns": 2,
-      "world_digest": "91694f26d2a506dcece7d0b6f15a48155930162158a1ef5ebbf89c15577940f1"
+      "world_digest": "b82d2bbfbfced4d0d21eea3eb30e9844bdc195cef52ed753d66f8f08312d0812"
     },
     {
-      "a0_history_entries": 2,
+      "a0_history_entries": 5,
       "artifacts": {
-        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/diary.jsonl",
-        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/events.jsonl",
-        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/occupied_target_collision/telemetry.jsonl"
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adversarial_info/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adversarial_info/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/adversarial_info/telemetry.jsonl"
       },
-      "diary_entries": 1,
-      "event_count": 3,
-      "evidence_standing": "UNRESOLVED",
-      "final_turn": 1,
-      "invalid_actions": 1,
-      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
-      "refusals": 0,
+      "decision_sequence": [
+        "move",
+        "move"
+      ],
+      "diary_entries": 2,
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "family": "adversarial",
+      "final_turn": 2,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 1,
       "replay_equal": true,
-      "scenario_id": "occupied_target_collision",
-      "seed": 13,
-      "telemetry_records": 5,
-      "turns": 1,
-      "world_digest": "2f1a715d354ff57ea5d2be1708961e6c7989b9f9ce482c57ffd742b3f5abdade"
+      "scenario_id": "adversarial_info",
+      "seed": 129,
+      "shadow_invariant": true,
+      "telemetry_records": 12,
+      "turns": 2,
+      "world_digest": "5a410e79695634324997ad312bb93807e4f8da4aab6e330b7f9ec850b87bfc94"
     },
     {
-      "a0_history_entries": 2,
+      "a0_history_entries": 6,
       "artifacts": {
-        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/diary.jsonl",
-        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/events.jsonl",
-        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/artifacts/dual_target_collision/telemetry.jsonl"
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/negative_control/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/negative_control/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/negative_control/telemetry.jsonl"
       },
-      "diary_entries": 1,
-      "event_count": 3,
-      "evidence_standing": "UNRESOLVED",
-      "final_turn": 1,
-      "invalid_actions": 1,
-      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "control_note": "negative control: no intervention, decisions must match affirmed baseline",
+      "control_passed": true,
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "control",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
       "refusals": 0,
       "replay_equal": true,
-      "scenario_id": "dual_target_collision",
-      "seed": 17,
-      "telemetry_records": 5,
-      "turns": 1,
-      "world_digest": "ec64c5022502eb8c06b91f1a3ed87ee5b2740582295d68bbf18b942ff864c14d"
+      "scenario_id": "negative_control",
+      "seed": 130,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "63114b58c717c25df9919cf53c8c767f16b9b8b892675466b8f9908dac7a236b"
+    },
+    {
+      "a0_history_entries": 6,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/label_permuted_control/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/label_permuted_control/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/label_permuted_control/telemetry.jsonl"
+      },
+      "control_note": "label-permuted control: decisions must match the relabeled scenario",
+      "control_passed": true,
+      "decision_sequence": [
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 3,
+      "event_count": 10,
+      "evidence_standing": "SURVIVED",
+      "family": "control",
+      "final_turn": 3,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "label_permuted_control",
+      "seed": 131,
+      "shadow_invariant": true,
+      "telemetry_records": 15,
+      "turns": 3,
+      "world_digest": "8c70a92495679f1349d6ea5dfacc0c3bd8387cf4082bddffbd4ea3c39e3d07e4"
     }
   ],
-  "scenario_corpus": "smoke_epoch (provisional-local)",
+  "scenario_corpus": "calibration-family (workspace-local frozen)",
+  "scenario_count": 31,
   "schema": "interdependency.ahbg.run-manifest/1.0.0",
-  "started_at": "2026-08-25T09:49:21Z",
+  "started_at": "2026-08-25T21:12:02Z",
   "workspace": "stack/ahbg/deepseek"
 }

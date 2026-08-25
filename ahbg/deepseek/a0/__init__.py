@@ -9,6 +9,7 @@ from .instance import (
     ResourceVector,
 )
 from .planner import DecisionTree, LEGAL_ACTION_KIND, axial_neighbors
+from .regulatory import RegulatoryLayer
 from .telemetry import TelemetryRecorder
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     "LEGAL_ACTION_KIND",
     "Lineage",
     "PermissionField",
+    "RegulatoryLayer",
     "ResourceVector",
     "TelemetryRecorder",
     "axial_neighbors",

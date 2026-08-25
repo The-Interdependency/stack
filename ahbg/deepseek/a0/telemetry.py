@@ -56,6 +56,9 @@ class TelemetryRecorder:
     def belief_update(self, turn: int, update: dict[str, Any]) -> dict[str, Any]:
         return self._record("belief.update", {"turn": turn, "update": update})
 
+    def regulatory_shadow(self, turn: int, measurement: dict[str, Any]) -> dict[str, Any]:
+        return self._record("regulatory.shadow", {"turn": turn, "measurement": measurement})
+
     def action_selected(self, turn: int, action: dict[str, Any] | None) -> dict[str, Any]:
         return self._record("action.selected", {"turn": turn, "action": action})
 

@@ -1,5 +1,0 @@
-{"data":{"instance_id":"a0.deepseek.1","provider_relation":"deepseek-v4-pro","run_lineage":"run-dual_target_collision-17","scenario_id":"dual_target_collision","seed":17},"kind":"instance.identity","seq":0,"ts_monotonic_ms":1507837720.891,"ts_wall":"2026-08-25T09:49:21Z"}
-{"data":{"action":{"data":{"to_tile_id":"se","unit_id":"A0"},"kind":"move"},"turn":0},"kind":"action.selected","seq":1,"ts_monotonic_ms":1507837720.955,"ts_wall":"2026-08-25T09:49:21Z"}
-{"data":{"detail":"UnresolvedHmmm: War collision resolver is not yet canonical: two moves target the same tile 'se'","turn":0},"kind":"invalid_action","seq":2,"ts_monotonic_ms":1507837720.987,"ts_wall":"2026-08-25T09:49:21Z"}
-{"data":{"resource":{"context_retained":true,"latency_ms":0.256,"retries":0,"risk_headroom":"hmmm","tokens_used":0,"tool_calls":0,"tool_failures":0},"turn":0},"kind":"resource.telemetry","seq":3,"ts_monotonic_ms":1507837721.167,"ts_wall":"2026-08-25T09:49:21Z"}
-{"data":{"result":"smoke complete","turn":0},"kind":"task.result","seq":4,"ts_monotonic_ms":1507837721.174,"ts_wall":"2026-08-25T09:49:21Z"}

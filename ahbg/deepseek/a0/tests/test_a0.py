@@ -134,6 +134,47 @@ class InstanceTests(unittest.TestCase):
         self.assertEqual(instance.history[-1]["kind"], "hard_veto")
         self.assertEqual(instance.to_dict()["role"], "benchmark-subject")
 
+    def test_lifecycle_events_are_explicit(self) -> None:
+        instance = A0Instance(
+            lineage=Lineage("a0.deepseek.1", "run-1", None, "deepseek-v4-pro"),
+            boundary=Boundary(self_unit_id="A0"),
+            permissions=PermissionField(),
+        )
+        instance.suspend(0, "calibration")
+        instance.resume(1)
+        instance.reset(2, "calibration")
+        instance.terminate(3, "calibration")
+        events = [entry["event"] for entry in instance.history if entry["kind"] == "lifecycle"]
+        self.assertEqual(events, ["suspend", "resume", "reset", "terminate"])
+
+    def test_fork_is_explicit_and_divergent(self) -> None:
+        instance = A0Instance(
+            lineage=Lineage("a0.deepseek.1", "run-1", None, "deepseek-v4-pro"),
+            boundary=Boundary(self_unit_id="A0"),
+            permissions=PermissionField(),
+        )
+        child = instance.fork(run_id="run-2", provider="deepseek-v4-pro")
+        self.assertNotEqual(child.lineage.instance_id, instance.lineage.instance_id)
+        self.assertEqual(child.lineage.parent_id, "a0.deepseek.1")
+
+
+class RegulatoryTests(unittest.TestCase):
+    def test_shadow_measurement_is_observational(self) -> None:
+        from ahbg.deepseek.a0 import RegulatoryLayer
+
+        layer = RegulatoryLayer()
+        layer.hard_vetoes.add("construct")
+        layer.set_unknown("opponent_intent", 0.5)
+        measurement = layer.shadow_measure(0, "move", True)
+        self.assertEqual(measurement["turn"], 0)
+        self.assertIn("structural", measurement)
+        self.assertIn("epistemic", measurement)
+        self.assertIn("transition", measurement)
+        # Hard vetoes remove actions; soft costs price them. Both are measured,
+        # not enforced, during the shadow epoch.
+        self.assertTrue(layer.vetoed("construct"))
+        self.assertEqual(layer.soft_cost("move"), 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

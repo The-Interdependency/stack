@@ -6,7 +6,7 @@ directory during the calibration epoch; sibling workspaces are read-only
 check targets after all three builds freeze.
 """
 
-from .a0 import A0Instance, Boundary, DecisionTree, Diary, Lineage, PermissionField, TelemetryRecorder
+from .a0 import A0Instance, Boundary, DecisionTree, Diary, Lineage, PermissionField, RegulatoryLayer, TelemetryRecorder
 from .ahbg import (
     DeterministicRng,
     Event,
@@ -31,6 +31,7 @@ __all__ = [
     "EventLog",
     "Lineage",
     "PermissionField",
+    "RegulatoryLayer",
     "TelemetryRecorder",
     "TurnLoop",
     "UnresolvedHmmm",
