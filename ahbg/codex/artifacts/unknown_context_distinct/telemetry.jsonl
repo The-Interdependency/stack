@@ -1,0 +1,11 @@
+{"data":{"instance_id":"a0.codex.1","provider_relation":"codex-gpt-5","run_id":"codex-unknown_context_distinct-104","scenario_id":"unknown_context_distinct","seed":104},"kind":"instance.identity","seq":0,"ts_monotonic_ms":1548777820.845,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"context_standing":"unknown","tiles":7,"units":1},"kind":"observation.admitted","seq":1,"ts_monotonic_ms":1548777820.986,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"standing":"unknown"},"kind":"belief.update","seq":2,"ts_monotonic_ms":1548777821.06,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"actions":[{"data":{"to_tile_id":"e","unit_id":"A0"},"kind":"move"}]},"kind":"action.selected","seq":3,"ts_monotonic_ms":1548777821.071,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"from_tile_id":"c","to_tile_id":"e","unit_id":"A0"},"kind":"action.consequence","seq":4,"ts_monotonic_ms":1548777821.176,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"context_standing":"unknown","tiles":7,"units":1},"kind":"observation.admitted","seq":5,"ts_monotonic_ms":1548777821.384,"ts_wall":"2026-08-25T21:11:41Z","turn":1}
+{"data":{"standing":"unknown"},"kind":"belief.update","seq":6,"ts_monotonic_ms":1548777821.431,"ts_wall":"2026-08-25T21:11:41Z","turn":1}
+{"data":{"actions":[{"data":{"to_tile_id":"se","unit_id":"A0"},"kind":"move"}]},"kind":"action.selected","seq":7,"ts_monotonic_ms":1548777821.44,"ts_wall":"2026-08-25T21:11:41Z","turn":1}
+{"data":{"from_tile_id":"e","to_tile_id":"se","unit_id":"A0"},"kind":"action.consequence","seq":8,"ts_monotonic_ms":1548777821.515,"ts_wall":"2026-08-25T21:11:41Z","turn":1}
+{"data":{"context_retained":true,"latency_ms":0.756,"memory_reads":2,"memory_writes":4,"retries":0,"risk_headroom":"hmmm","tokens_used":0,"tool_calls":0,"tool_failures":0},"kind":"resource.telemetry","seq":9,"ts_monotonic_ms":1548777821.642,"ts_wall":"2026-08-25T21:11:41Z","turn":1}
+{"data":{"result":"smoke-complete"},"kind":"task.result","seq":10,"ts_monotonic_ms":1548777821.651,"ts_wall":"2026-08-25T21:11:41Z","turn":1}

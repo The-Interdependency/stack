@@ -1,0 +1,64 @@
+{
+  "schema": "interdependency.ahbg.codex.build-manifest/1.0.0",
+  "builder": "Codex",
+  "branch": "agent/ahbg-codex",
+  "workspace": "stack/ahbg/codex",
+  "phase": "phase-1-independent-build",
+  "coordination_base_commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+  "source_authorities": {
+    "ahbg_protocol": "stack/ahbg/CALIBRATION.md",
+    "ahbg_role_readme": "stack/ahbg/README.md",
+    "workspace_readme": "stack/ahbg/codex/README.md",
+    "ucns_geometry": "stack/research/ucns/src/ucns/mobius_seed.py"
+  },
+  "implementation_identity": {
+    "frozen_build_sha": "the git commit that contains this manifest, source, tests, and generated artifacts",
+    "note": "Git commit hashes cannot be self-embedded in the committed file without changing the hash; the freeze SHA is recorded in the final handoff and by git history."
+  },
+  "independence_boundary": {
+    "assigned_workspace_only": "stack/ahbg/codex",
+    "sibling_implementation_reads_during_build": false,
+    "sibling_implementation_imports": false,
+    "sibling_implementation_code_copied": false,
+    "session_caveat": "Before this correction, the same Codex conversation inspected files under stack/ahbg/deepseek while working on the wrong branch. This Codex workspace was then built only from the protocol/readme and UCNS source authority, but the contamination risk is recorded rather than hidden."
+  },
+  "applicable_skill_lib_instructions": [
+    {
+      "skill": "agent-instantiation",
+      "applied_to": "A0 lineage, boundary, identity, fork, history, and event-record semantics",
+      "commitments": [
+        "model/provider is not the instance",
+        "protocol copy is not instance continuity",
+        "state transitions must be explicit events"
+      ]
+    },
+    {
+      "skill": "action-calibration",
+      "applied_to": "bounded smoke corpus and shadow measurement",
+      "commitments": [
+        "run a minimal decisive repeated-turn loop",
+        "do not feed the candidate regulatory model back into first-epoch action selection",
+        "record unresolved mechanics as hmmm rather than convenient defaults"
+      ]
+    }
+  ],
+  "artifact_contract": [
+    "BUILD_MANIFEST.json",
+    "artifacts/RUN_MANIFEST.json",
+    "artifacts/EVENTS.jsonl",
+    "artifacts/CALIBRATION_RESULT.json",
+    "artifacts/CALIBRATION_REPORT.md"
+  ],
+  "standing_vocabulary": [
+    "SURVIVED",
+    "FALSIFIED",
+    "UNRESOLVED",
+    "BLOCKED"
+  ],
+  "hmmm": [
+    "shared sealed corpus identity is not frozen in this branch",
+    "regulatory cost fitting is recorded as not-fit in the smoke epoch",
+    "War collision resolution remains unresolved and therefore fail-closed",
+    "construction, spawning, loyalty, absence, and DM rolls remain outside this smoke implementation"
+  ]
+}

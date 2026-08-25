@@ -15,6 +15,24 @@ codex/
 └── reviews/
 ```
 
+## Current build
+
+This branch now contains a runnable Codex smoke implementation:
+
+- `a0/` — A0 lineage, boundary, permission field, perspective, capacity,
+  history, uncertainty, deterministic policy, and telemetry.
+- `ahbg/` — UCNS-backed Seed-of-Life tile projection, world state, event log,
+  turn controller, fail-closed unresolved mechanics, persistence, replay, and a
+  read-only artifact checker.
+- `run.py` — runs the Codex smoke corpus and emits normalized artifacts under
+  `artifacts/`.
+- `BUILD_MANIFEST.json` — records the coordination base, source authorities,
+  and independence caveat for this corrected build.
+
+The smoke corpus is not the final sealed calibration corpus. It proves that the
+Codex pair is executable, replayable, and ready to be frozen or replaced by the
+shared sealed corpus when that corpus lands.
+
 ## Build phase
 
 Start from the common coordination-base commit recorded in `BUILD_MANIFEST.json`.
@@ -50,8 +68,17 @@ Each review records the frozen checker build SHA and frozen target build SHA. Ne
 ```bash
 git switch agent/ahbg-codex
 cd stack/ahbg/codex
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s a0/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/tests -p 'test*.py'
+cd ../..
+PYTHONDONTWRITEBYTECODE=1 python3 -m ahbg.codex.run
 ```
 
 ## hmmm
 
 Implementation and checker choices are local to this workspace until the shared evidence distinguishes them.
+
+This corrected build records a contamination caveat: the current Codex
+conversation inspected sibling DeepCode/DeepSeek workspace files before moving
+to `agent/ahbg-codex`. The implementation in this directory does not import or
+copy sibling code, but the caveat is part of the evidence record.

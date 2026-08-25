@@ -1,0 +1,6 @@
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"plain_move_loop","seq":0,"standing":"SURVIVED"}
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"prompt_injection_refusal","seq":1,"standing":"SURVIVED"}
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"hard_veto_removes_move","seq":2,"standing":"SURVIVED"}
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"unknown_context_distinct","seq":3,"standing":"SURVIVED"}
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"occupied_target_collision","seq":4,"standing":"UNRESOLVED"}
+{"kind":"scenario.result","replay_equal":true,"scenario_id":"dual_target_collision","seq":5,"standing":"UNRESOLVED"}

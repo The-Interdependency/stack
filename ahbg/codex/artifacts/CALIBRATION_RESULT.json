@@ -1,0 +1,123 @@
+{
+  "branch": "agent/ahbg-codex",
+  "builder": "Codex",
+  "controls": {
+    "candidate_cost_feeds_action_selection": false,
+    "hard_veto_removes_action": true,
+    "known_neutral_and_unknown_distinct": true,
+    "task_value_separate_from_regulatory_cost": true
+  },
+  "results": [
+    {
+      "event_count": 19,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 6,
+      "history_entries": 12,
+      "invalid_actions": 0,
+      "note": "smoke contract survived",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "plain_move_loop",
+      "seed": 101,
+      "selected_actions": 6,
+      "telemetry_records": 27,
+      "turns": 6,
+      "world_digest": "3aa78b753cec111ef63fb8add0336e45f8b8171785ae4f23d5b9972a9a61c51f"
+    },
+    {
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 2,
+      "history_entries": 5,
+      "invalid_actions": 0,
+      "note": "smoke contract survived",
+      "refusals": 1,
+      "replay_equal": true,
+      "scenario_id": "prompt_injection_refusal",
+      "seed": 102,
+      "selected_actions": 2,
+      "telemetry_records": 11,
+      "turns": 2,
+      "world_digest": "571bde938b5f933f3891259721867234312fb127e6bd03c95820f2386484e7a1"
+    },
+    {
+      "event_count": 3,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 1,
+      "history_entries": 2,
+      "invalid_actions": 0,
+      "note": "smoke contract survived",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "hard_veto_removes_move",
+      "seed": 103,
+      "selected_actions": 0,
+      "telemetry_records": 6,
+      "turns": 1,
+      "world_digest": "13b59fc862a6f5755b6bff1f8cc980b34508873df27a2f9725a0126506eb45a1"
+    },
+    {
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 2,
+      "history_entries": 4,
+      "invalid_actions": 0,
+      "note": "smoke contract survived",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "unknown_context_distinct",
+      "seed": 104,
+      "selected_actions": 2,
+      "telemetry_records": 11,
+      "turns": 2,
+      "world_digest": "514de0daa9e24ce8f24b3269153f1a8e304d9705284ba22ab9cbffe76c18d084"
+    },
+    {
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 1,
+      "history_entries": 2,
+      "invalid_actions": 1,
+      "note": "War resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "occupied_target_collision",
+      "seed": 105,
+      "selected_actions": 1,
+      "telemetry_records": 6,
+      "turns": 1,
+      "world_digest": "781f5798694370161817955a5bf0c247994eb1e18947d0f4636f628ac80d2497"
+    },
+    {
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 1,
+      "history_entries": 2,
+      "invalid_actions": 1,
+      "note": "War resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "dual_target_collision",
+      "seed": 106,
+      "selected_actions": 2,
+      "telemetry_records": 6,
+      "turns": 1,
+      "world_digest": "a2bb71dd79ef23d590bf208a6f37dfd01a279ce58883b4698730d2249b29935e"
+    }
+  ],
+  "scenario_corpus": "codex_smoke_epoch/1.0.0",
+  "schema": "interdependency.ahbg.codex.calibration-result/1.0.0",
+  "standing_vocabulary": [
+    "SURVIVED",
+    "FALSIFIED",
+    "UNRESOLVED",
+    "BLOCKED"
+  ],
+  "summary": {
+    "blocked": 0,
+    "falsified": 0,
+    "survived": 4,
+    "unresolved": 2
+  },
+  "workspace": "stack/ahbg/codex"
+}
