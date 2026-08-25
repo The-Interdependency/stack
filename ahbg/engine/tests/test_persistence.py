@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT))
 
+from ahbg.engine.adapter import Action, Plan
 from ahbg.engine.errors import ReplayMismatch, ValidationError
 from ahbg.engine.events import EventLog
 from ahbg.engine.persistence import (
@@ -103,6 +104,25 @@ class PersistenceTests(unittest.TestCase):
         _, log = new_game(seed=7, tiles=TILES, units=UNITS)
         log.append("turn.end", turn=0, data={"turn": 0, "state_digest": "00" * 32})
         with self.assertRaisesRegex(ReplayMismatch, "awaiting_begin"):
+            replay(log)
+
+    def test_replay_rejects_unclosed_turn(self) -> None:
+        plane, log = new_game(seed=7, tiles=TILES, units=UNITS)
+        TurnEngine(plane=plane, log=log).begin_turn()
+
+        with self.assertRaisesRegex(ReplayMismatch, "before turn.end"):
+            replay(log)
+
+    def test_replay_rejects_unclosed_buffered_move(self) -> None:
+        plane, log = new_game(seed=7, tiles=TILES, units=UNITS)
+        engine = TurnEngine(plane=plane, log=log)
+        engine.begin_turn()
+        engine.resolve([Plan(turn=0, actions=(Action("move", {
+            "unit_id": "A0",
+            "to_tile_id": "e",
+        }),))])
+
+        with self.assertRaisesRegex(ReplayMismatch, "before turn.end"):
             replay(log)
 
 

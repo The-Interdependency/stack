@@ -27,6 +27,13 @@ from .events import (
 from .movement import MOVE_ACTION, MoveSpec, axial_neighbors
 from .persistence import load_plane, new_game, replay, save_plane
 from .plane import Plane, Tile, Unit
+from .presentation import (
+    PRESENTATION_KIND,
+    PRESENTATION_STANDING,
+    feed_from_log,
+    motion_traces_from_log,
+    snapshot_from_plane,
+)
 from .rng import (
     DM_DOMAIN,
     PROMPT_INJECTION_DOMAIN,
@@ -48,6 +55,8 @@ __all__ = [
     "MOVE_ACTION",
     "MoveSpec",
     "Observation",
+    "PRESENTATION_KIND",
+    "PRESENTATION_STANDING",
     "Plan",
     "Plane",
     "PROMPT_INJECTION_DOMAIN",
@@ -60,9 +69,12 @@ __all__ = [
     "ValidationError",
     "WAR_DOMAIN",
     "axial_neighbors",
+    "feed_from_log",
     "legal_observation",
     "load_plane",
+    "motion_traces_from_log",
     "new_game",
     "replay",
     "save_plane",
+    "snapshot_from_plane",
 ]

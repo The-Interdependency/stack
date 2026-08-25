@@ -9,7 +9,10 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 
-from snapshot import KIND, STANDING, PresentationSnapshotError, validate_snapshot
+try:
+    from .snapshot import KIND, STANDING, PresentationSnapshotError, validate_snapshot
+except ImportError:  # pragma: no cover - supports direct execution from this folder.
+    from snapshot import KIND, STANDING, PresentationSnapshotError, validate_snapshot
 
 
 def snapshot_from_observation(

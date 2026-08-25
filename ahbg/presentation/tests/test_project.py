@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import sys
 import unittest
 from pathlib import Path
@@ -27,6 +28,18 @@ UNITS = [{"unit_id": "A0", "tile_id": "c", "label": "A0"}]
 
 
 class ObservationProjectionTest(unittest.TestCase):
+    def test_package_import_path_projects_observation(self) -> None:
+        module = importlib.import_module("ahbg.presentation.project")
+        plane, _log = new_game(seed=7, tiles=SEED_TILES, units=UNITS)
+
+        snapshot = module.snapshot_from_observation(
+            legal_observation(plane).to_dict(),
+            plane_id="plane-0",
+        )
+
+        validate_snapshot(snapshot)
+        self.assertEqual(snapshot["units"][0]["tile"], "c")
+
     def test_new_game_observation_projects_without_seed_or_motions(self) -> None:
         plane, _log = new_game(seed=7, tiles=SEED_TILES, units=UNITS)
         snapshot = snapshot_from_observation(

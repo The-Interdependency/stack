@@ -120,6 +120,8 @@ def replay(log: EventLog) -> Plane:
             raise ReplayMismatch(
                 f"event kind {event.kind!r} is not canonical"
             )
+    if phase != "awaiting_begin":
+        raise ReplayMismatch("event log ended before turn.end")
     return plane
 
 

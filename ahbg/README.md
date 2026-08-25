@@ -78,6 +78,8 @@ Engine entry points are exported from `ahbg/engine/__init__.py`:
   agent; seed, RNG streams, event log, and DM state stay internal.
 - `save_plane()`, `load_plane()`, and `replay()` bind persistence to event-log
   replay equivalence and the event hash chain.
+- `snapshot_from_plane(plane, log)` emits `ahbg.presentation.snapshot` data
+  only after the supplied log replays exactly to the supplied plane.
 
 The only resolving action is:
 
@@ -92,8 +94,10 @@ unknown action kinds fail closed.
 Presentation consumes `ahbg.presentation.snapshot` only. `motions` are optional
 visual traces with `unit`, `from`, and `to`; they validate referenced ids but do
 not validate adjacency or legality. `presentation/project.py` maps a legal
-observation plus resolved `move` events into that snapshot and drops seed and
-schema. It is not a 1:1 identity with plane state.
+observation plus caller-supplied resolved `move` events for graphics-local use.
+For live engine planes, `snapshot_from_plane()` copies traces from canonical
+engine `move` events for the last completed turn and drops seed, RNG, schema,
+and event-log internals. It is not a 1:1 identity with plane state.
 
 ## Tool responsibilities
 

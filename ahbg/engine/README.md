@@ -59,7 +59,19 @@ kernel. Unknown kinds fail closed.
 
 A save directory holds `plane.json` (snapshot) and `events.jsonl` (log).
 `save_plane` refuses to write unless the snapshot equals `replay(log)`;
-`load_plane` re-verifies both before returning.
+`load_plane` re-verifies both before returning. Replay also rejects an event
+log that ends inside an open turn; a turn must close with `turn.end` before it
+can become a replayable boundary.
+
+## Presentation projection
+
+`snapshot_from_plane(plane, log)` is the engine-owned bridge into
+`ahbg.presentation.snapshot`. It verifies that the event log replays exactly to
+the supplied plane, then projects tiles, units, a compact feed, and visual
+motion traces copied from canonical `move` events for the last completed turn.
+
+The projection is display data. It does not decide adjacency, War, construction,
+DM effects, or any unresolved rule.
 
 ## Initial board
 

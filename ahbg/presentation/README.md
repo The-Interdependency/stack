@@ -14,7 +14,11 @@ is not identity.
 - Codex owns engine state. This snapshot is `ahbg.presentation.snapshot`, not plane state.
 - A tile is the centerpoint. The circle around it is geometry, not the tile.
 - Optional `motions` are graphics of engine-emitted `move` events. They do not decide adjacency or legality.
-- `project.py` maps a legal observation (and optional resolved `move` events) into this snapshot. It drops seed, schema, and other engine internals.
+- `project.py` maps sanitized legal observations for presentation-local tools
+  and tests.
+- Engine-owned live snapshots should come through
+  `ahbg.engine.snapshot_from_plane()`, which verifies replay equivalence before
+  emitting display data.
 
 ## Usage
 
@@ -34,7 +38,7 @@ python3 -m http.server 8765 --bind 127.0.0.1
 
 `board.html` also runs from a file URL by embedding the sample snapshot.
 
-Project a live engine observation (does not decide legality):
+Project a live engine plane (does not decide legality):
 
 ```bash
 cd ahbg/presentation
@@ -42,9 +46,7 @@ python3 - <<'PY'
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path("../..").resolve()))
-sys.path.insert(0, ".")
-from ahbg.engine import Action, Plan, TurnEngine, legal_observation, new_game
-from project import snapshot_from_observation
+from ahbg.engine import Action, Plan, TurnEngine, new_game, snapshot_from_plane
 
 tiles = [
     {"tile_id": "c", "q": 0, "r": 0},
@@ -58,13 +60,9 @@ tiles = [
 plane, log = new_game(seed=7, tiles=tiles, units=[{"unit_id": "A0", "tile_id": "c", "label": "A0"}])
 engine = TurnEngine(plane=plane, log=log)
 engine.begin_turn()
-events = engine.resolve([Plan(turn=0, actions=(Action("move", {"unit_id": "A0", "to_tile_id": "ne"}),))])
+engine.resolve([Plan(turn=0, actions=(Action("move", {"unit_id": "A0", "to_tile_id": "ne"}),))])
 engine.end_turn()
-print(snapshot_from_observation(
-    legal_observation(plane).to_dict(),
-    plane_id="plane-0",
-    move_events=[event.canonical_dict() for event in events],
-)["motions"])
+print(snapshot_from_plane(plane, log, plane_id="plane-0")["motions"])
 PY
 ```
 
@@ -84,5 +82,5 @@ Unknown mechanic fields are ignored. Missing required visual fields fail closed.
 ## hmmm
 
 - whether later Flower-of-Life rings are presentation-only extensions of this Seed
-- whether Codex plane state will map 1:1 onto this snapshot
+- whether later Codex plane state fields will map 1:1 onto this snapshot
 - animation of construction once the engine emits construction events
