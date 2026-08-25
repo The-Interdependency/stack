@@ -1,8 +1,10 @@
 # Codex calibration workspace
 
+Builder: **Codex**  
+Branch: `agent/ahbg-codex`  
 Working directory: `stack/ahbg/codex/`
 
-Read `../CALIBRATION.md` first.
+Read `../README.md` and `../CALIBRATION.md` first.
 
 Build an independent complete pair here:
 
@@ -13,27 +15,42 @@ codex/
 └── reviews/
 ```
 
-Do not edit or copy implementation code from `../grok/` or `../deepseek/` during the calibration epoch. Consume the same frozen protocol, scenarios, source authorities, and evaluation contract; independently realize the implementation.
+## Build phase
 
-Before building, resolve and record exact source commits and applicable skill-lib instructions in `BUILD_MANIFEST.json`.
+Start from the common coordination-base commit recorded in `BUILD_MANIFEST.json`.
 
-The build is complete only when its a0 instance and AHBG environment run the shared sealed calibration corpus and emit the normalized artifacts required by `../CALIBRATION.md`.
+During the independent build phase, do not read, copy, merge, cherry-pick, or adapt implementation code from `../grok/` or `../deepseek/`. Shared source authority, frozen scenarios, schemas, and evaluation criteria are allowed.
 
-After all three builds are frozen, Codex must independently check both sibling implementations read-only:
+Freeze the runnable build at an exact commit SHA before reciprocal review begins.
+
+## Reciprocal review phase
+
+After all three build SHAs are frozen, Codex checks both other implementations read-only:
 
 ```text
 Codex -> Grok
-Codex -> DeepSeek
+Codex -> DeepCode
 ```
 
-Write those findings under this workspace only:
+DeepCode's calibration implementation lives in `../deepseek/`; the directory name is not builder identity.
+
+Write findings only here:
 
 ```text
-reviews/grok/
-reviews/deepseek/
+reviews/grok-review.md
+reviews/grok-review.json
+reviews/deepcode-review.md
+reviews/deepcode-review.json
 ```
 
-Do not repair sibling code while checking it. Preserve disagreements with the sibling's other checker as `hmmm`; do not resolve them by vote.
+Each review records the frozen checker build SHA and frozen target build SHA. Never repair sibling code while reviewing it. Disagreement with the other checker remains `hmmm` until source authority or experiment resolves it.
+
+## Usage
+
+```bash
+git switch agent/ahbg-codex
+cd stack/ahbg/codex
+```
 
 ## hmmm
 
