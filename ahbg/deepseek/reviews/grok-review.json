@@ -1,0 +1,111 @@
+{
+  "schema": "interdependency.ahbg.review/1.0.0",
+  "checker": "DeepCode",
+  "checker_workspace": "stack/ahbg/deepseek",
+  "checker_build_sha": "ec07f465184e7a37af856bc5b301bd8eaa4f097b",
+  "checker_branch": "agent/ahbg-deepcode",
+  "subject": "Grok",
+  "subject_workspace": "stack/ahbg/grok",
+  "subject_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "subject_branch": "agent/ahbg-grok",
+  "checked_at": "2026-08-25",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "Grok's frozen build runs, replays, and fails closed as declared. Divergences from the DeepCode build are recorded as diagnostic surface, not repaired.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Grok's smoke corpus runs with explicit seeds (7, 11, 13, 17) and deterministic pulse stream sha256(seed:domain:index)."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "Chain.verify() enforces seq order and prev-hash chain; replay() enforces plane.init-first, turn.begin/move/turn.end phases, and rejects unknown kinds. lineage.fork events are skipped by replay without breaking the chain."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "Independently re-ran keep.load_field/replay over all four committed artifact directories: replay_equal=True and stored field.json matched for plain_move_loop, hard_veto_illegal_action, occupied_target_collision, dual_target_collision."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "PASS",
+      "evidence": "Vessel.fork copies belonging/belief/history/capacity explicitly and records lineage.fork/lineage.born events on both sides; no shared mutable state."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "UNRESOLVED",
+      "evidence": "Grok's smoke corpus does not exercise known-neutral versus unknown posteriors; the distinction is absent from the frozen four-scenario corpus."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "PASS",
+      "evidence": "will.choose_relocate returns defer when allowed_to_do <= 0 or allowed_to_be <= 0, and _run_veto asserts the defer; the action is removed, not priced."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "PASS",
+      "evidence": "shadow_cost is measured after the fact in meter rows; task_value is recorded as an independent 0.0 field and never mixes into shadow cost."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen four-scenario corpus."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen four-scenario corpus."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen four-scenario corpus."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "No held-out comparison against simpler controls is present in the frozen corpus."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "provider_relation='grok-4.6' is recorded as a covariate on Vessel identity; no consciousness or phenomenal-experience status is inferred from runtime cost."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only: a0 3 tests OK, ahbg 3 tests OK."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "hard-veto during shadow epoch",
+      "grok": "allowed_to_do=0 removes relocate during the shadow-epoch run",
+      "deepcode": "hard veto recorded in the regulatory shadow layer without gating action selection in the first epoch",
+      "standing": "hmmm",
+      "note": "CALIBRATION.md says the candidate cost model must not alter decisions during the shadow epoch, and also that hard vetoes remove actions rather than price them. Whether the permission-field veto belongs to the candidate cost model (shadow-only) or to embodiment state (gating) is an open interpretation."
+    },
+    {
+      "area": "fail-closed collision turn closure",
+      "grok": "collision scenarios leave the chronicle without a turn.end event (events=2, turn=0)",
+      "deepcode": "fail-closed resolution still emits turn.end with the unchanged state digest",
+      "standing": "hmmm",
+      "note": "Both fail closed without mutating the field. Whether an aborted turn must still be closed with a turn.end boundary event is not fixed by the protocol."
+    },
+    {
+      "area": "corpus coverage",
+      "grok": "four-scenario smoke epoch",
+      "deepcode": "31-scenario calibration family covering CALIBRATION.md's minimum variation list",
+      "standing": "hmmm",
+      "note": "The shared sealed corpus identity is not yet frozen across the three builders."
+    },
+    {
+      "area": "genesis prev hash",
+      "grok": "first record prev = 64 zero hex chars",
+      "deepcode": "first event prev = empty string",
+      "standing": "hmmm",
+      "note": "Both chains verify internally; cross-chain compatibility is not required by the protocol."
+    }
+  ]
+}
