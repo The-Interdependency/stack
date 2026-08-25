@@ -1,0 +1,80 @@
+{
+  "schema": "interdependency.ahbg.build-manifest/1.0.0",
+  "builder": "Grok",
+  "workspace": "stack/ahbg/grok",
+  "protocol": {
+    "name": "AHBG x a0 Embodiment Calibration Program",
+    "path": "stack/ahbg/CALIBRATION.md",
+    "role_readme": "stack/ahbg/README.md",
+    "workspace_readme": "stack/ahbg/grok/README.md"
+  },
+  "resolved_source_commits": {
+    "stack": {
+      "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+      "branch": "agent/ahbg-grok",
+      "note": "Host repository. Codex engine and DeepSeek workspace are read-only siblings, not copied."
+    },
+    "skill-lib-canonical": {
+      "commit": "7a621c290525b05805629a5186d2e0d7cc630f4f",
+      "branch": "agent/gonol-build-compliance-headings"
+    },
+    "ucns-in-stack": {
+      "commit": "96cc7ccc44f1412fa38fac481dd98139161dbd44",
+      "note": "Board consumed via ucns.mobius_seed.build_mobius_seed_of_life; tiles named by BandSlot."
+    }
+  },
+  "applicable_skill_lib_instructions": [
+    {
+      "skill": "agent-instantiation",
+      "applied_to": "a0 vessel lineage",
+      "commitments": [
+        "provider is a relation, not identity",
+        "instantiate then fork with explicit parent/root",
+        "state does not leak between lineages"
+      ]
+    },
+    {
+      "skill": "action-calibration",
+      "applied_to": "build sizing",
+      "commitments": [
+        "minimal decisive: smoke_epoch turn loop with hard veto and War fail-closed",
+        "maximal coherent: sealed triplicate corpus plus six reciprocal checks after freeze",
+        "shadow epoch: C_lambda does not select actions"
+      ]
+    }
+  ],
+  "sealed_corpus_identity": {
+    "status": "provisional-local",
+    "note": "Shared sealed corpus is not frozen. Smoke scenarios match the workspace-local family already named in the host folder so later comparison has a common id set.",
+    "smoke_scenarios": [
+      "plain_move_loop",
+      "hard_veto_illegal_action",
+      "occupied_target_collision",
+      "dual_target_collision"
+    ]
+  },
+  "provider_relation": {
+    "model": "grok-4.6",
+    "note": "Provider identity is a covariate, not agent identity. This a0 is deterministic."
+  },
+  "evidence_standing_vocabulary": ["SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED"],
+  "independence_attestation": {
+    "no_code_copied_from": [
+      "stack/ahbg/engine",
+      "stack/ahbg/presentation",
+      "stack/ahbg/deepseek",
+      "stack/ahbg/codex"
+    ],
+    "shared_surfaces_only": [
+      "CALIBRATION.md and host README",
+      "event-kind envelope plane.init / turn.begin / move / turn.end",
+      "normalized output names",
+      "UCNS geometry authority"
+    ]
+  },
+  "hmmm": [
+    "shared sealed corpus identity",
+    "War collision resolver",
+    "regulatory cost functional and resource projection"
+  ]
+}

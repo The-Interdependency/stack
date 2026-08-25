@@ -52,6 +52,21 @@ git switch agent/ahbg-grok
 cd stack/ahbg/grok
 ```
 
+## Usage
+
+```bash
+cd stack/ahbg/grok
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s a0/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 run.py
+python3 checker.py
+```
+
+Smoke epoch writes `CALIBRATION_RESULT.json`, `RUN_MANIFEST.json`, `EVENTS.jsonl`,
+and per-scenario files under `artifacts/`. Reciprocal reviews stay `BLOCKED`
+until all three builders freeze.
+
 ## hmmm
 
 Implementation and checker choices are local to this workspace until the shared evidence distinguishes them.
+The shared sealed corpus is not frozen. War remains fail-closed.
