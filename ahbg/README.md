@@ -65,6 +65,33 @@ ahbg/
   CALIBRATION.md  Frozen triplicate + reciprocal-check protocol.
 ```
 
+## Current executable contracts
+
+Engine entry points are exported from `ahbg/engine/__init__.py`:
+
+- `new_game(seed, tiles, units)` bootstraps a declared plane and writes the
+  first `plane.init` event.
+- `TurnEngine.begin_turn()`, `TurnEngine.resolve(plans)`, and
+  `TurnEngine.end_turn()` provide the current turn envelope.
+- `legal_observation(plane)` returns the tiles, units, and turn visible to an
+  agent; seed, RNG streams, event log, and DM state stay internal.
+- `save_plane()`, `load_plane()`, and `replay()` bind persistence to event-log
+  replay equivalence and the event hash chain.
+
+The only resolving action is:
+
+```json
+{"kind": "move", "data": {"unit_id": "A0", "to_tile_id": "ne"}}
+```
+
+It means one axial step onto an empty adjacent tile. Occupied targets,
+dual-target moves, construction, spawning, absence, loyalty, War, DM rolls, and
+unknown action kinds fail closed.
+
+Presentation consumes `ahbg.presentation.snapshot` only. `motions` are optional
+visual traces with `unit`, `from`, and `to`; they validate referenced ids but do
+not validate adjacency or legality.
+
 ## Tool responsibilities
 
 ### Grok — graphics / game presentation
@@ -176,6 +203,21 @@ single-player foundation. Today only the plane/event/replay kernel and v1
 empty-tile movement are executable. The rest of that loop remains `hmmm`.
 
 ## Usage
+
+Verify from the `stack` repository root:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/engine/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/presentation/tests -p 'test*.py'
+find ahbg -type d -name __pycache__ -print
+```
+
+The final command should print nothing. The AHBG workflow also rejects generated
+Python cache directories.
+
+CI lives at `.github/workflows/ahbg-ci.yml`. It runs for pull requests touching
+`ahbg/**` and for pushes to `main`; feature-branch pushes may not create a
+remote run, so the local checks above are the feature-branch gate.
 
 Presentation board (Grok):
 
