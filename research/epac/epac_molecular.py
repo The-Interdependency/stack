@@ -1,16 +1,32 @@
-"""Molecular EPAC Public Gonols from closed atoms and valence-electron arity.
+"""Molecular EPAC Public Gonols by matching closed-atom bonding surfaces.
 
-Two declared relations:
+A closed atom already paired occupancy-2 electrons. Leftover unpaired valence
+``(nucleus, electron_i)`` incidences are its bonding surfaces. This constructor
+matches those published surfaces; it does not reopen nucleons, core electrons,
+or paired electrons, and it does not re-query the table.
 
-- 3-structure: hub is the closed center atom; instances are ligand unpaired
-  valence electrons ``(center, ligand_e_i)``.
-- bond: those valence electrons couple as ``(center_e_i, ligand_e_i)``.
+Two declared molecular relations:
 
-Closed atoms remain molecular participants. Nucleons and core electrons stay
-inside them. The table is not re-queried.
+- 3-structure: hub is the closed center atom; instances are the ligand
+  electrons of matched surfaces ``(center, ligand_e_i)``.
+- bond: the electrons of two matched surfaces couple as
+  ``(center_e_i, ligand_e_i)``.
 
 Construction uses ``epac.public_gonol``, not ``edcm.gonol``. No sealed
 molecular-shape file is opened here.
+
+Usage guidance
+--------------
+    from epac_molecular import construct_molecule
+
+    water = construct_molecule("H2O")
+    assert water.invariants["matched_bonding_surfaces"][0]["ligand_electron"] == (
+        "epac.electron:H#0:0"
+    )
+    assert water.invariants["center_bonding_surface_couplings"] == [
+        ["epac.nucleus:O#2", "epac.electron:O#2:5"],
+        ["epac.nucleus:O#2", "epac.electron:O#2:6"],
+    ]
 """
 
 from __future__ import annotations
@@ -30,11 +46,13 @@ from epac_dimensional_arity import (
 )
 from epac_periodic import (
     ELECTRON_CHARGE,
+    bonding_surface_couplings,
+    bonding_surfaces,
     construct_element_gonol,
     electron_lm,
     nuclear_charge,
+    nucleus_of,
     symbol_of,
-    unpaired_valence_electrons,
 )
 from epac_public_gonol import ClosedPublicGonol, PublicGonolReceipt, construct_public_gonol, replay_public_gonol
 
@@ -47,7 +65,7 @@ MOLECULE_COMPOSITIONS: Mapping[str, tuple[tuple[str, int], ...]] = {
     "CO2": (("C", 1), ("O", 2)),
 }
 
-RELATION = "epac.affixiation.unpaired-valence"
+RELATION = "epac.affixiation.bonding-surface"
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,10 +110,10 @@ def _declared_molecular_space(
     center: ClosedPublicGonol | None,
     bonds: tuple[tuple[ClosedPublicGonol, ClosedPublicGonol], ...],
 ):
-    """Bond couplings plus, when a center exists, the molecular 3-structure.
+    """Matched-surface bonds plus, when a center exists, the molecular 3-structure.
 
-    Bonds: ``(center_electron, ligand_electron)``.
-    3-structure: ``(closed_center, ligand_electron_i)`` so one hub has every instance.
+    Bonds: electrons of two matched bonding surfaces ``(center_e, ligand_e)``.
+    3-structure: ``(closed_center, ligand_e_i)`` so one hub has every instance.
     """
 
     ambient: list[str] = []
@@ -150,7 +168,7 @@ def _mobius_coupling(
     )
     return {
         "law": "ucns.native-mobius-root-loop",
-        "binding": "declared-valence-electron-arity-couplings",
+        "binding": "matched-bonding-surface-couplings",
         "parameter": "turn-index-over-declared-attachment-evidence",
         "participant_axes": tuple(electron.source_id for bond in bonds for electron in bond),
         "attachment_slots": attachment_slots,
@@ -174,29 +192,49 @@ def _option(gonol: ClosedPublicGonol, key: str) -> str:
 
 
 def _sites_from_closed(gonol: ClosedPublicGonol) -> tuple[tuple[int, int], ...]:
-    return tuple(electron_lm(electron) for electron in unpaired_valence_electrons(gonol))
+    return tuple(electron_lm(electron) for electron in bonding_surfaces(gonol))
 
 
 def _attachment_electron_ids(gonol: ClosedPublicGonol, *, limit: int | None = None) -> tuple[str, ...]:
-    electrons = unpaired_valence_electrons(gonol)
+    electrons = bonding_surfaces(gonol)
     if limit is not None:
         electrons = electrons[:limit]
     return tuple(electron.source_id for electron in electrons)
 
 
+def _require_published_surface(atom: ClosedPublicGonol, electron: ClosedPublicGonol) -> None:
+    published = {item.source_id for item in bonding_surfaces(atom)}
+    if electron.source_id not in published:
+        raise ValueError(
+            f"{electron.source_id} is not a published bonding surface of {atom.source_id}"
+        )
+
+
+def _match_surfaces(
+    left_atom: ClosedPublicGonol,
+    right_atom: ClosedPublicGonol,
+    *,
+    left_electron: ClosedPublicGonol,
+    right_electron: ClosedPublicGonol,
+) -> tuple[ClosedPublicGonol, ClosedPublicGonol]:
+    _require_published_surface(left_atom, left_electron)
+    _require_published_surface(right_atom, right_electron)
+    return (left_electron, right_electron)
+
+
 def _consume_center(
     center: ClosedPublicGonol, needed: int
 ) -> tuple[ClosedPublicGonol, bool]:
-    ground = unpaired_valence_electrons(center)
+    ground = bonding_surfaces(center)
     if len(ground) >= needed:
         return center, False
     promoted = construct_element_gonol(
         symbol_of(center), occurrence=center.occurrence, promoted=True
     ).gonol
-    if len(unpaired_valence_electrons(promoted)) < needed:
+    if len(bonding_surfaces(promoted)) < needed:
         raise ValueError(
-            f"{symbol_of(center)} closed gonol has {len(ground)} unpaired valence electrons; "
-            f"{needed} attachment sites were requested"
+            f"{symbol_of(center)} closed gonol has {len(ground)} bonding surfaces; "
+            f"{needed} ligand surfaces were requested"
         )
     return promoted, True
 
@@ -210,22 +248,28 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         ligands = ()
         if len(participants) != 2:
             raise ValueError("symmetric affixiation is declared only for two equal atoms")
-        left_electrons = unpaired_valence_electrons(participants[0])
-        right_electrons = unpaired_valence_electrons(participants[1])
-        if len(left_electrons) != 1 or len(right_electrons) != 1:
-            raise ValueError("symmetric affixiation requires one unpaired valence electron on each atom")
-        bonds = ((left_electrons[0], right_electrons[0]),)
+        left_surfaces = bonding_surfaces(participants[0])
+        right_surfaces = bonding_surfaces(participants[1])
+        if len(left_surfaces) != 1 or len(right_surfaces) != 1:
+            raise ValueError("symmetric affixiation requires one bonding surface on each atom")
+        bonds = (
+            _match_surfaces(
+                participants[0],
+                participants[1],
+                left_electron=left_surfaces[0],
+                right_electron=right_surfaces[0],
+            ),
+        )
         ligand_sites = tuple(_sites_from_closed(item) for item in participants)
         center_sites = ()
         used_promotion = False
         center_attachment_ids = ()
         ligand_attachment_ids = tuple(_attachment_electron_ids(item) for item in participants)
+        center_surface_couplings = ()
+        ligand_surface_couplings = tuple(bonding_surface_couplings(item) for item in participants)
     else:
         ligands = tuple(item for item in participants if item is not center)
-        ligand_electrons = tuple(
-            electron for ligand in ligands for electron in unpaired_valence_electrons(ligand)
-        )
-        needed = len(ligand_electrons)
+        needed = sum(len(bonding_surfaces(ligand)) for ligand in ligands)
         center, used_promotion = _consume_center(center, needed)
         participants = tuple(
             center
@@ -234,22 +278,36 @@ def construct_molecule(formula: str) -> MolecularConstruction:
             for item in participants
         )
         ligands = tuple(item for item in participants if item is not center)
-        ligand_electrons = tuple(
-            electron for ligand in ligands for electron in unpaired_valence_electrons(ligand)
-        )
-        needed = len(ligand_electrons)
-        center_unpaired = unpaired_valence_electrons(center)
-        if len(center_unpaired) < needed:
+        center_remaining = list(bonding_surfaces(center))
+        needed = sum(len(bonding_surfaces(ligand)) for ligand in ligands)
+        if len(center_remaining) < needed:
             raise ValueError(
-                f"{symbol_of(center)} has {len(center_unpaired)} unpaired valence electrons; "
-                f"{needed} attachment sites were requested"
+                f"{symbol_of(center)} has {len(center_remaining)} bonding surfaces; "
+                f"{needed} ligand surfaces were requested"
             )
-        center_electrons = center_unpaired[:needed]
-        bonds = tuple(zip(center_electrons, ligand_electrons))
-        center_sites = tuple(electron_lm(electron) for electron in center_electrons)
+        matched: list[tuple[ClosedPublicGonol, ClosedPublicGonol]] = []
+        consumed_center: list[ClosedPublicGonol] = []
+        for ligand in ligands:
+            for ligand_electron in bonding_surfaces(ligand):
+                hub = center_remaining.pop(0)
+                matched.append(
+                    _match_surfaces(
+                        center,
+                        ligand,
+                        left_electron=hub,
+                        right_electron=ligand_electron,
+                    )
+                )
+                consumed_center.append(hub)
+        bonds = tuple(matched)
+        center_sites = tuple(electron_lm(electron) for electron in consumed_center)
         ligand_sites = tuple(_sites_from_closed(item) for item in ligands)
-        center_attachment_ids = tuple(electron.source_id for electron in center_electrons)
+        center_attachment_ids = tuple(electron.source_id for electron in consumed_center)
         ligand_attachment_ids = tuple(_attachment_electron_ids(item) for item in ligands)
+        center_surface_couplings = tuple(
+            (nucleus_of(center).source_id, electron.source_id) for electron in consumed_center
+        )
+        ligand_surface_couplings = tuple(bonding_surface_couplings(item) for item in ligands)
     mobius = _mobius_coupling(bonds=bonds)
     dimensional = _declared_molecular_space(center=center, bonds=bonds)
     valence_electron_bonds = tuple((hub.source_id, instance.source_id) for hub, instance in bonds)
@@ -315,6 +373,17 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         "topology_structure_readout": topology_structure_readout(geometry["structure"]),
         "oriented_instance_couplings": instance_couplings,
         "valence_electron_bonds": valence_electron_bonds,
+        "center_bonding_surface_couplings": [list(item) for item in center_surface_couplings],
+        "ligand_bonding_surface_couplings": [
+            [list(item) for item in surfaces] for surfaces in ligand_surface_couplings
+        ],
+        "matched_bonding_surfaces": [
+            {
+                "center_electron": hub.source_id,
+                "ligand_electron": instance.source_id,
+            }
+            for hub, instance in bonds
+        ],
     }
     return MolecularConstruction(formula=formula, receipt=receipt, invariants=invariants)
 

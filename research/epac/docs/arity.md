@@ -22,19 +22,26 @@ their affixiation. Neutrons couple to protons as `(proton_j, neutron_i)` with
 slot charges `(+1, 0)`. Proton-proton and neutron-neutron are not inferred.
 Hydrogen-1 is one proton and no neutrons.
 
-At atomic scale the hub is that closed nucleus and every electron instance has
-its own `(nucleus, electron_i)` with slot charges `(Z, -1)`.
+At atomic scale there are two declared relations:
 
-Molecular scale has two declared relations:
+- 3-structure: hub is the closed nucleus; every electron instance has
+  `(nucleus, electron_i)` with slot charges `(Z, -1)`.
+- pairing: occupancy-2 `(n, l, m_l)` electrons couple as
+  `(e_ms+1, e_ms-1)` with charges `(-1, -1)`.
 
-- 3-structure: hub is the closed center atom; every ligand unpaired valence
-  electron has `(center, ligand_e_i)`.
-- bond: unpaired valence electrons are arity-coupled as
+Leftover unpaired valence `(nucleus, electron_i)` incidences are the atom's
+bonding surfaces. Pairing is not a proof of `(nucleus, e_i, e_j)`.
+
+Molecular scale matches those published surfaces. Two declared relations:
+
+- 3-structure: hub is the closed center atom; every ligand electron of a
+  matched surface has `(center, ligand_e_i)`.
+- bond: the electrons of two matched surfaces couple as
   `(center_e_i, ligand_e_i)` with charges `(-1, -1)`.
 
-Nucleons and core electrons stay inside closed atoms. Water's 3 is
-`(O#2, H0_e)` and `(O#2, H1_e)`, degree 2 on oxygen. That is not `(O#2, H#0)`
-atom-atom and not a ternary `(x,y,z)`.
+Nucleons, core electrons, and paired electrons stay inside closed atoms.
+Water's 3 is `(O#2, H0_e)` and `(O#2, H1_e)`, degree 2 on oxygen. That is not
+`(O#2, H#0)` atom-atom and not a ternary `(x,y,z)`.
 
 See `constraints.md`.
 

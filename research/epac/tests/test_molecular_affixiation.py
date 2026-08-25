@@ -11,6 +11,7 @@ sys.path.insert(0, str(STACK_ROOT / "research" / "ucns" / "src"))
 
 from epac_dimensional_arity import quaternion_structure_readout
 from epac_molecular import construct_declared_molecules, replay_molecule
+from epac_periodic import bonding_surfaces, pairing_couplings
 
 
 class MolecularAffixiationTest(unittest.TestCase):
@@ -87,9 +88,19 @@ class MolecularAffixiationTest(unittest.TestCase):
             for item in water_receipt.gonol.participants
             if dict(item.carried_options).get("symbol") == "O"
         )
-        self.assertEqual(len(oxygen.structure["parts"]), 8)
-        self.assertTrue(
-            all(part["coupling"][0] == "epac.nucleus:O#2" for part in oxygen.structure["parts"])
+        self.assertEqual(len(oxygen.structure["parts"]), 11)
+        nucleus_electron = [
+            part for part in oxygen.structure["parts"] if part["coupling"][0] == "epac.nucleus:O#2"
+        ]
+        self.assertEqual(len(nucleus_electron), 8)
+        self.assertEqual(len(pairing_couplings(oxygen)), 3)
+        self.assertEqual(len(bonding_surfaces(oxygen)), 2)
+        self.assertEqual(
+            molecules["H2O"].invariants["center_bonding_surface_couplings"],
+            [
+                ["epac.nucleus:O#2", "epac.electron:O#2:5"],
+                ["epac.nucleus:O#2", "epac.electron:O#2:6"],
+            ],
         )
         o_nucleus = next(item for item in oxygen.participants if item.relation == "epac.atomic.nucleus")
         self.assertEqual(
@@ -108,6 +119,7 @@ class MolecularAffixiationTest(unittest.TestCase):
         source = (EPAC_ROOT / "epac_molecular.py").read_text(encoding="utf-8")
         self.assertNotIn("atomic_of", source)
         self.assertNotIn("from epac_atomic", source)
+        self.assertNotIn("unpaired_valence_electrons", source)
         self.assertEqual(water_receipt.structure["representation_dimension"], 4)
         self.assertEqual(water_receipt.structure["participating_dimension_count"], 5)
         water_quat = quaternion_structure_readout(water_receipt.structure)

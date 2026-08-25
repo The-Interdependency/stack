@@ -11,10 +11,11 @@ physical instance of ``y`` has its own declared ``(z, y_j)``. A second
 occurrence is a second instance, not a reuse of the first coupling.
 ``(x_i, z)`` does not satisfy ``(z, x_i)``. Letters and abbreviations are
 not this domain. At atomic scale the hub is the nucleus and the instances
-are electrons. At molecular scale the hub is the closed center atom and the
-instances are ligand unpaired valence electrons. Bond couplings between
-those valence electrons are a second declared relation, not a replacement
-hub.
+are electrons; occupancy-2 pairing is a second declared electron-electron
+relation. Leftover unpaired valence ``(nucleus, e_i)`` incidences are bonding
+surfaces. At molecular scale the hub is the closed center atom and the
+instances are ligand electrons of matched surfaces. Bond couplings between
+those electrons are a second declared relation, not a replacement hub.
 
 The three-dimensional structure is the combination of declared oriented
 couplings, their arity charge states, and degree. That span can involve three

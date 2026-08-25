@@ -18,11 +18,13 @@ now obeys the listed rule. Unresolved remains `hmmm`.
 | C9 | protons and neutrons are precursor gonols of the nucleus | resolved |
 | C10 | electrons couple to the closed nucleus; nucleons stay inside it | resolved |
 | C11 | closed gonols are atomic at the next scale; promotion is allowed | resolved |
-| C12 | molecular attachment consumes closed unpaired valence electrons, not `atomic_of` | resolved |
+| C12 | molecular attachment consumes published bonding surfaces, not `atomic_of` | resolved |
 | C13 | atomic s→p promotion is an atomic excited gonol, not VSEPR | resolved |
 | C14 | H₂ is a single binary and is not a 3 | resolved |
 | C15 | sealed chemistry shapes stay out of construction | resolved |
 | C16 | nothing bigger than atoms is an *input* to element construction | resolved |
+| C17 | occupancy-2 `(n,l,m_l)` electrons pair inside the atom as `(e_ms+1, e_ms-1)` | resolved |
+| C18 | bonding surfaces are leftover unpaired valence `(nucleus, e_i)` after pairing | resolved |
 
 ## Contradictions
 
@@ -33,8 +35,8 @@ now obeys the listed rule. Unresolved remains `hmmm`.
 
 **Resolution:** two declared relations, not one inferred from the other.
 
-1. **3-structure:** hub `z` is the closed center atom; instances are ligand unpaired valence electrons: `(center, ligand_e_i)`.
-2. **Bond:** unpaired valence electrons are arity-coupled to each other: `(center_e_i, ligand_e_i)`.
+1. **3-structure:** hub `z` is the closed center atom; instances are ligand electrons of matched bonding surfaces: `(center, ligand_e_i)`.
+2. **Bond:** matched bonding-surface electrons are arity-coupled: `(center_e_i, ligand_e_i)`.
 
 Water: `deg(O#2)=2` on `(O#2, H0_e)` and `(O#2, H1_e)`; quaternion `(ε, 8, −1, −1)`. Bonds remain the two electron–electron couplings. Not `(x,y,z)`.
 
@@ -44,7 +46,14 @@ Water: `deg(O#2)=2` on `(O#2, H0_e)` and `(O#2, H1_e)`; quaternion `(ε, 8, −1
 
 ### X3 — consume atomic 3-structure vs formula-count geometry
 
-**Resolution:** composition still names which atoms. Attachment sites and charges come from closed gonols. Molecular 3 uses the closed center as hub and ligand valence electrons as instances.
+**Resolution:** composition still names which atoms. Attachment sites are the leftover unpaired valence `(nucleus, e_i)` published as bonding surfaces. Molecular 3 uses the closed center as hub and the ligand electrons of matched surfaces as instances.
+
+### X5 — pairing vs nucleus–electron 3-structure
+
+- C5/C6 already make `(nucleus, e_i)` the atomic 3.
+- Occupancy-2 pairing is a second declared relation `(e_ms+1, e_ms-1)`, not a proof of `(nucleus, e_i, e_j)`.
+
+**Resolution:** two declared atomic relations, same shape as X1. Pairing does not install a ternary. Leftover unpaired valence incidences remain the bonding surfaces.
 
 ### X4 — internucleon `(every proton, every neutron)` vs no all-pairs authority
 

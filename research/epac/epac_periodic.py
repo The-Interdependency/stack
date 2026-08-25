@@ -1,21 +1,37 @@
 """Element gonols closed as EPAC Public Gonols from nucleon then electron structure.
 
 Precursors: each proton and each neutron is a closed gonol. The nucleus is
-their affixiation. Electrons then couple to that closed nucleus. Molecular
-construction must not reopen nucleons or electrons. Letters are not axes.
+their affixiation. Electrons then couple to that closed nucleus. Occupancy-2
+``(n, l, m_l)`` electrons pair inside the atom. Leftover unpaired valence
+``(nucleus, electron_i)`` incidences are the bonding surfaces. Molecular
+construction matches those surfaces and must not reopen nucleons or paired
+electrons. Letters are not axes.
 
 Usage guidance
 --------------
 Each nucleon, nucleus, electron, shell, and element is an EPAC Public Gonol
 on the UCNS carrier. This module does not use ``edcm.gonol``.
 
-    from epac_periodic import construct_element_gonol, construct_periodic_table
+    from epac_periodic import (
+        bonding_surfaces,
+        construct_element_gonol,
+        construct_periodic_table,
+        pairing_couplings,
+    )
 
     helium = construct_element_gonol("He")
     nucleus = helium.gonol.participants[0]
     assert [p.relation for p in nucleus.participants] == [
         "epac.atomic.proton", "epac.atomic.proton",
         "epac.atomic.neutron", "epac.atomic.neutron",
+    ]
+    assert pairing_couplings(helium.gonol) == (
+        ("epac.electron:He#0:0", "epac.electron:He#0:1"),
+    )
+    assert bonding_surfaces(helium.gonol) == ()
+    hydrogen = construct_element_gonol("H")
+    assert [e.source_id for e in bonding_surfaces(hydrogen.gonol)] == [
+        "epac.electron:H#0:0"
     ]
 """
 
@@ -215,10 +231,51 @@ def _electron_dimension_id(symbol: str, atom_occurrence: int, index: int) -> str
     return f"epac.electron:{symbol}#{atom_occurrence}:{index}"
 
 
-def _declared_atomic_space(record: AtomicRecord, *, atom_occurrence: int):
-    """One ``(nucleus, electron_i)`` coupling for every electron instance.
+def _orbital_key(electron: ElectronState) -> tuple[int, int, int]:
+    return (electron.n, electron.l, electron.m_l)
 
-    Closed shells still participate as instances. Letters do not.
+
+def _pairing_electron_ids(
+    record: AtomicRecord, *, atom_occurrence: int
+) -> tuple[tuple[str, str], ...]:
+    """Occupancy-2 ``(n, l, m_l)``: couple ``m_s=+1`` then ``m_s=-1``.
+
+    One declared pair per orbital. Occupancy 1 is leftover and is not paired.
+    Occupancy above 2 is Pauli-forbidden.
+    """
+
+    by_orbital: dict[tuple[int, int, int], list[ElectronState]] = {}
+    for electron in record.electrons:
+        by_orbital.setdefault(_orbital_key(electron), []).append(electron)
+    pairs: list[tuple[str, str]] = []
+    for key in sorted(by_orbital):
+        occupants = by_orbital[key]
+        if len(occupants) > 2:
+            raise ValueError(
+                f"{record.symbol}: orbital {key} has occupancy {len(occupants)}; Pauli limit is 2"
+            )
+        if len(occupants) != 2:
+            continue
+        first = next(item for item in occupants if item.m_s == 1)
+        second = next(item for item in occupants if item.m_s == -1)
+        pairs.append(
+            (
+                _electron_dimension_id(record.symbol, atom_occurrence, first.index),
+                _electron_dimension_id(record.symbol, atom_occurrence, second.index),
+            )
+        )
+    return tuple(pairs)
+
+
+def _declared_atomic_space(record: AtomicRecord, *, atom_occurrence: int):
+    """Two declared atomic relations.
+
+    1. 3-structure: hub nucleus; every electron instance has ``(nucleus, electron_i)``.
+    2. pairing: occupancy-2 electrons couple as ``(e_ms+1, e_ms-1)`` of the same
+       ``(n, l, m_l)``.
+
+    Leftover unpaired valence ``(nucleus, electron_i)`` are bonding surfaces.
+    Pairing is not a proof of ``(nucleus, e_i, e_j)``. Letters do not participate.
     """
 
     hub = _nucleus_dimension_id(record.symbol, atom_occurrence)
@@ -226,13 +283,16 @@ def _declared_atomic_space(record: AtomicRecord, *, atom_occurrence: int):
         _electron_dimension_id(record.symbol, atom_occurrence, electron.index)
         for electron in record.electrons
     ]
+    pairing_ids = _pairing_electron_ids(record, atom_occurrence=atom_occurrence)
     charges = {hub: record.Z, **{electron_id: ELECTRON_CHARGE for electron_id in electron_ids}}
-    declared = space(
-        [hub, *electron_ids],
-        [[hub, electron_id] for electron_id in electron_ids],
-        charges=charges,
-    )
+    declarations = [[hub, electron_id] for electron_id in electron_ids]
+    declarations.extend([list(pair) for pair in pairing_ids])
+    declared = space([hub, *electron_ids], declarations, charges=charges)
     oriented_instance_couplings(declared, hub_id=hub, instance_ids=electron_ids)
+    for hub_electron, instance_electron in pairing_ids:
+        oriented_instance_couplings(
+            declared, hub_id=hub_electron, instance_ids=(instance_electron,)
+        )
     return declared
 
 
@@ -258,7 +318,15 @@ def construct_element_gonol(
         shells.append(_construct_shell(n, by_n[n], symbol=symbol, atom_occurrence=occurrence))
     nucleus = _construct_nucleus(record, atom_occurrence=occurrence)
     unpaired = record.unpaired_valence
-    promoted = record.promoted_unpaired_valence
+    promoted_unpaired = record.promoted_unpaired_valence
+    pairing_ids = _pairing_electron_ids(record, atom_occurrence=occurrence)
+    paired_ids = {electron_id for pair in pairing_ids for electron_id in pair}
+    surface_ids = tuple(
+        _electron_dimension_id(record.symbol, occurrence, electron.index)
+        for electron in record.electrons
+        if electron.valence
+        and _electron_dimension_id(record.symbol, occurrence, electron.index) not in paired_ids
+    )
     carried = (
         ("symbol", record.symbol),
         ("Z", str(record.Z)),
@@ -268,10 +336,13 @@ def construct_element_gonol(
         ("electron-configuration", record.configuration),
         ("valence-n", str(record.valence_n)),
         ("valence-electrons", str(record.valence_electrons)),
+        ("pairing-count", str(len(pairing_ids))),
         ("unpaired-valence-count", str(len(unpaired))),
         ("unpaired-valence-lm", ",".join(f"{e.l}:{e.m_l}" for e in unpaired) or "none"),
-        ("promoted-unpaired-count", str(len(promoted))),
-        ("promoted-unpaired-lm", ",".join(f"{e.l}:{e.m_l}" for e in promoted) or "none"),
+        ("bonding-surface-count", str(len(surface_ids))),
+        ("bonding-surface-ids", ",".join(surface_ids) or "none"),
+        ("promoted-unpaired-count", str(len(promoted_unpaired))),
+        ("promoted-unpaired-lm", ",".join(f"{e.l}:{e.m_l}" for e in promoted_unpaired) or "none"),
         ("valence-angular-ids", ",".join(e.angular_id for e in record.electrons if e.valence)),
         ("promoted", "true" if promoted else "false"),
     )
@@ -338,15 +409,67 @@ def electrons_of(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
     )
 
 
-def unpaired_valence_electrons(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
-    """Unpaired valence electron gonols already closed inside the element."""
+def _is_electron_axis(axis_id: str) -> bool:
+    return axis_id.startswith("epac.electron:")
 
-    unpaired: list[ClosedPublicGonol] = []
+
+def pairing_couplings(gonol: ClosedPublicGonol) -> tuple[tuple[str, str], ...]:
+    """Declared occupancy-2 electron-electron pairings already closed inside the atom."""
+
+    pairs: list[tuple[str, str]] = []
+    for part in (gonol.structure or {}).get("parts", ()):
+        declared = tuple(part["coupling"])
+        if len(declared) == 2 and _is_electron_axis(declared[0]) and _is_electron_axis(declared[1]):
+            pairs.append((declared[0], declared[1]))
+    return tuple(pairs)
+
+
+def paired_electron_ids(gonol: ClosedPublicGonol) -> frozenset[str]:
+    return frozenset(electron_id for pair in pairing_couplings(gonol) for electron_id in pair)
+
+
+def bonding_surfaces(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
+    """Leftover unpaired valence electrons whose ``(nucleus, e_i)`` remain exposed.
+
+    Pairing is already closed inside the atom. These leftover incidences are
+    the bonding surfaces a later molecule may match. Core and paired electrons
+    stay inside.
+    """
+
+    paired = paired_electron_ids(gonol)
+    nucleus_id = nucleus_of(gonol).source_id
+    nucleus_electron_ids = {
+        tuple(part["coupling"])[1]
+        for part in (gonol.structure or {}).get("parts", ())
+        if len(part["coupling"]) == 2 and part["coupling"][0] == nucleus_id
+    }
+    surfaces: list[ClosedPublicGonol] = []
     for electron in electrons_of(gonol):
         options = dict(electron.carried_options)
-        if options.get("valence") == "true" and options.get("paired") == "false":
-            unpaired.append(electron)
-    return tuple(unpaired)
+        if options.get("valence") != "true":
+            continue
+        if electron.source_id in paired:
+            continue
+        if electron.source_id not in nucleus_electron_ids:
+            raise ValueError(
+                f"{electron.source_id} is valence and unpaired but has no leftover "
+                f"({nucleus_id}, electron) incidence"
+            )
+        surfaces.append(electron)
+    return tuple(surfaces)
+
+
+def bonding_surface_couplings(gonol: ClosedPublicGonol) -> tuple[tuple[str, str], ...]:
+    """Published leftover ``(nucleus, electron_i)`` bonding surfaces."""
+
+    nucleus_id = nucleus_of(gonol).source_id
+    return tuple((nucleus_id, electron.source_id) for electron in bonding_surfaces(gonol))
+
+
+def unpaired_valence_electrons(gonol: ClosedPublicGonol) -> tuple[ClosedPublicGonol, ...]:
+    """Unpaired valence electron gonols published as bonding surfaces."""
+
+    return bonding_surfaces(gonol)
 
 
 def nuclear_charge(gonol: ClosedPublicGonol) -> int:

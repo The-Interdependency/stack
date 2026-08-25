@@ -16,6 +16,8 @@
 | affixiation | `metapat.affixiation_harmonics.affixiation` | METAPAT | identity-preserving higher-order relation | UCNS topology selection |
 | UCNS coupling | `ucns.native-mobius-root-loop` | UCNS | established 360° frame flip / 720° restore | invented 3-space arrangement |
 | molecular gonol | `epac.molecular.affixiated_whole` | epac candidate | closed recursive gonol of element-gonol participants | known chemistry shape names |
+| electron pairing | `epac.atomic.occupancy_pair` | epac candidate | occupancy-2 `(n,l,m_l)` electron-electron coupling inside the closed atom | chemistry spin-pairing as a sealed shape rule; `(nucleus, e_i, e_j)` ternary |
+| bonding surface | `epac.atomic.bonding_surface` | epac candidate | leftover unpaired valence `(nucleus, e_i)` after pairing | VSEPR domain count; reopened core or paired electrons |
 | predicted geometry | `epac.molecular.construction_invariants` | epac candidate | atom count, center valence, slot occupancy, Möbius frame sequence | sealed comparison labels |
 
 Collision check: physics/chemistry own empirical molecular shapes. This candidate
@@ -28,9 +30,11 @@ scopes) until comparison.
 proton gonols (charge +1) and neutron gonols (charge 0)
   -> nucleus = affixiation of those nucleons; (proton_j, neutron_i)
   -> every electron instance: (nucleus, electron_i) with charges (Z, -1)
-  -> close that atomic 3-structure inside the element gonol
-  -> unpaired-valence electron gonols already closed inside each atom
+  -> occupancy-2 (n,l,m_l) pairing: (e_ms+1, e_ms-1) with charges (-1, -1)
+  -> leftover unpaired valence (nucleus, electron_i) published as bonding surfaces
+  -> close that atomic structure inside the element gonol
   -> if needed, a closed promoted atomic gonol (same n s→p); no table re-lookup
+  -> match published bonding surfaces only
   -> declared oriented (center_electron, ligand_electron) bond couplings with charges (-1, -1)
   -> declared oriented (closed_center, ligand_electron_i) 3-structure; one hub, every instance
   -> molecular three-dimensional structure = those atom-instance couplings + charge states + degree
@@ -47,8 +51,9 @@ proton gonols (charge +1) and neutron gonols (charge 0)
 - every electron: n, l, m_l, m_s, shell, subshell
 - hydrogenic angular identity Y_l^m, radial node count n-l-1
 - Slater atomic Z_eff and hydrogenic Rydberg energy -Z_eff²/n²
-- unpaired valence electrons from Hund filling
-- atomic s→p promotion in the same n when more unpaired sites are required
+- unpaired valence electrons leftover after occupancy-2 pairing
+- published leftover `(nucleus, electron_i)` bonding surfaces
+- atomic s→p promotion in the same n when more bonding surfaces are required
 - caller-supplied stoichiometric formula (element counts only)
 
 ## Inputs forbidden in construction

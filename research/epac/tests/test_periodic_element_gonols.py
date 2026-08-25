@@ -15,7 +15,15 @@ from epac_dimensional_arity import (
     quaternion_structure_readout,
     space,
 )
-from epac_periodic import construct_element_gonol, construct_periodic_table, replay_element_gonol
+from epac_periodic import (
+    bonding_surface_couplings,
+    bonding_surfaces,
+    construct_element_gonol,
+    construct_periodic_table,
+    pairing_couplings,
+    replay_element_gonol,
+    unpaired_valence_electrons,
+)
 
 
 class PeriodicElementGonolTest(unittest.TestCase):
@@ -32,6 +40,9 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(options["electron-configuration"], "1s2.2s2.2p2")
         self.assertEqual(options["valence-electrons"], "4")
         self.assertEqual(options["unpaired-valence-count"], "2")
+        self.assertEqual(options["pairing-count"], "2")
+        self.assertEqual(options["bonding-surface-count"], "2")
+        self.assertEqual(options["promoted"], "false")
         self.assertEqual(options["promoted-unpaired-count"], "4")
         self.assertEqual(carbon.constructor_id, "epac.public_gonol")
         self.assertEqual(len(carbon.gonol.participants), 3)
@@ -44,14 +55,53 @@ class PeriodicElementGonolTest(unittest.TestCase):
         self.assertEqual(dict(oxygen.gonol.carried_options)["unpaired-valence-lm"], "1:0,1:-1")
 
     def test_promoted_carbon_closes_four_unpaired_valence_electrons(self) -> None:
-        from epac_periodic import unpaired_valence_electrons
-
         ground = construct_element_gonol("C")
         promoted = construct_element_gonol("C", promoted=True)
         self.assertEqual(len(unpaired_valence_electrons(ground.gonol)), 2)
         self.assertEqual(len(unpaired_valence_electrons(promoted.gonol)), 4)
+        self.assertEqual(len(bonding_surfaces(promoted.gonol)), 4)
+        self.assertEqual(len(pairing_couplings(promoted.gonol)), 1)
         self.assertEqual(dict(promoted.gonol.carried_options)["promoted"], "true")
         self.assertNotEqual(ground.receipt_digest, promoted.receipt_digest)
+
+    def test_pairing_closes_inside_the_atom_and_leftover_surfaces_are_published(self) -> None:
+        hydrogen = construct_element_gonol("H")
+        helium = construct_element_gonol("He")
+        beryllium = construct_element_gonol("Be")
+        carbon = construct_element_gonol("C")
+        oxygen = construct_element_gonol("O")
+        neon = construct_element_gonol("Ne")
+        self.assertEqual(pairing_couplings(hydrogen.gonol), ())
+        self.assertEqual(
+            [electron.source_id for electron in bonding_surfaces(hydrogen.gonol)],
+            ["epac.electron:H#0:0"],
+        )
+        self.assertEqual(bonding_surface_couplings(hydrogen.gonol), (
+            ("epac.nucleus:H#0", "epac.electron:H#0:0"),
+        ))
+        self.assertEqual(
+            pairing_couplings(helium.gonol),
+            (("epac.electron:He#0:0", "epac.electron:He#0:1"),),
+        )
+        self.assertEqual(bonding_surfaces(helium.gonol), ())
+        self.assertEqual(bonding_surfaces(beryllium.gonol), ())
+        self.assertEqual(len(pairing_couplings(beryllium.gonol)), 2)
+        self.assertEqual(len(pairing_couplings(carbon.gonol)), 2)
+        self.assertEqual(len(bonding_surfaces(carbon.gonol)), 2)
+        self.assertEqual(len(pairing_couplings(oxygen.gonol)), 3)
+        self.assertEqual(
+            [electron.source_id for electron in bonding_surfaces(oxygen.gonol)],
+            ["epac.electron:O#0:5", "epac.electron:O#0:6"],
+        )
+        self.assertEqual(bonding_surfaces(neon.gonol), ())
+        self.assertEqual(len(pairing_couplings(neon.gonol)), 5)
+        oxygen_degree = {
+            item["dimension"]: item["degree"] for item in oxygen.structure["degree"]
+        }
+        self.assertEqual(oxygen_degree["epac.nucleus:O#0"], 8)
+        self.assertEqual(oxygen_degree["epac.electron:O#0:0"], 2)
+        self.assertEqual(oxygen_degree["epac.electron:O#0:5"], 1)
+        self.assertEqual(oxygen_degree["epac.electron:O#0:6"], 1)
 
     def test_replay_matches(self) -> None:
         first = construct_element_gonol("O")
@@ -80,25 +130,37 @@ class PeriodicElementGonolTest(unittest.TestCase):
         helium = construct_element_gonol("He")
         self.assertIsNotNone(oxygen.structure)
         oxygen_readout = charged_structure_readout(oxygen.structure)
+        oxygen_nucleus_electron = tuple(
+            part
+            for part in oxygen_readout[0]
+            if part[2][0] == "epac.nucleus:O#0"
+        )
         self.assertEqual(
-            oxygen_readout[0],
+            oxygen_nucleus_electron,
             tuple(
                 (2, ((8, -1), 1), ("epac.nucleus:O#0", f"epac.electron:O#0:{index}"))
                 for index in range(8)
             ),
         )
+        self.assertEqual(len(oxygen_readout[0]), 11)
         nucleus_degree = next(
             item for item in oxygen.structure["degree"] if item["dimension"] == "epac.nucleus:O#0"
         )
         self.assertEqual(nucleus_degree["degree"], 8)
         self.assertEqual(nucleus_degree["charge"], 8)
         helium_readout = charged_structure_readout(helium.structure)
+        helium_couplings = {part[2] for part in helium_readout[0]}
         self.assertEqual(
+            helium_couplings,
+            {
+                ("epac.nucleus:He#0", "epac.electron:He#0:0"),
+                ("epac.nucleus:He#0", "epac.electron:He#0:1"),
+                ("epac.electron:He#0:0", "epac.electron:He#0:1"),
+            },
+        )
+        self.assertIn(
+            (2, ((-1, -1), 1), ("epac.electron:He#0:0", "epac.electron:He#0:1")),
             helium_readout[0],
-            (
-                (2, ((2, -1), 1), ("epac.nucleus:He#0", "epac.electron:He#0:0")),
-                (2, ((2, -1), 1), ("epac.nucleus:He#0", "epac.electron:He#0:1")),
-            ),
         )
         ids = {name for part in helium_readout[0] for name in part[2]}
         self.assertNotIn("H", ids)
