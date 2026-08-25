@@ -113,3 +113,39 @@ The first success condition is intentionally small:
 `load UCNS-derived plane -> A0 observes -> plan phase -> subordinate decision trees -> simultaneous resolution -> movement/construction/tile effects/collision -> diary/event persistence -> next turn`
 
 If that loop repeats correctly from persisted state, AHBG has a functional single-player foundation.
+
+## Embodiment calibration program
+
+See [`CALIBRATION.md`](CALIBRATION.md).
+
+Calibration uses three **independent** a0 + AHBG implementations:
+
+| builder | working directory |
+|---|---|
+| Grok | `stack/ahbg/grok/` |
+| Codex | `stack/ahbg/codex/` |
+| DeepSeek | `stack/ahbg/deepseek/` |
+
+Each builder constructs both its own `a0/` and its own `ahbg/` inside that workspace and runs the same frozen calibration protocol. Implementations may share source authority, schemas, fixtures, and evaluation criteria, but not implementation code during the sealed calibration epoch.
+
+**DeepCode remains the independent harness/adversarial validator across all three builds.** This preserves the existing separation between building the benchmark subjects and evaluating them; DeepCode must not silently modify an implementation while claiming to validate it.
+
+The calibration program tests the Architecture of Belonging regulatory layer under instancing closure, including permission gradients, belief/uncertainty, engagement, scope/scale/role, path dependence, regulatory cost, capacity, replay, and lineage. Successful calibration is operational evidence only; it does not establish phenomenal consciousness.
+
+## Usage guidance
+
+Start a builder inside its assigned workspace:
+
+```bash
+cd stack/ahbg/grok
+# or
+cd stack/ahbg/codex
+# or
+cd stack/ahbg/deepseek
+```
+
+Read `../CALIBRATION.md`, resolve current source identities and applicable skill-lib instructions, write the workspace build manifest, then build only inside that workspace.
+
+## hmmm
+
+The exact regulatory cost function, calibration thresholds, coupling plasticity, and resource projection remain intentionally unresolved until the triplicate builds and DeepCode evaluation produce evidence.
