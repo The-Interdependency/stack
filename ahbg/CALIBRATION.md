@@ -4,7 +4,7 @@ This is the maximal coherent calibration program for the Architecture of Belongi
 
 AHBG is the controlled benchmark environment. `a0` is the first calibration subject. The candidate regulatory layer is measured and falsified here; it is not assumed true by construction.
 
-## Independent build rule
+## Independent build + reciprocal check rule
 
 Three independent builders must each construct their own complete, runnable pair:
 
@@ -24,18 +24,35 @@ stack/ahbg/deepseek/
 
 The builders are **Grok, Codex, and DeepSeek**.
 
-This preserves the current AHBG authority split: DeepSeek is already the A0 bootstrap builder, while **DeepCode remains the independent harness/adversarial validator**. DeepCode must not become one of the three implementations it evaluates.
+Each builder has two distinct obligations:
+
+1. **build** its own a0 + AHBG realization independently;
+2. **check both of the other realizations** after all three builds are frozen.
+
+No builder validates its own implementation for comparative evidence. The calibration therefore produces six directional peer checks:
+
+```text
+Grok     -> Codex
+Grok     -> DeepSeek
+Codex    -> Grok
+Codex    -> DeepSeek
+DeepSeek -> Grok
+DeepSeek -> Codex
+```
 
 Each builder works only inside its own directory. Do not patch a sibling implementation. Shared source doctrine, frozen scenarios, schemas, and evaluation criteria may be read from `stack/ahbg/`; implementation code may not be copied between the three builds during the calibration epoch.
 
-The purpose of triplicate construction is independent realization, not majority vote. Agreement is replication evidence. Disagreement is a diagnostic surface and remains `hmmm` until resolved by source authority or experiment.
+A checker may read a sibling's frozen source, manifests, events, replay artifacts, and normalized outputs, but may not modify them. Findings are written only inside the checker's own workspace.
+
+The purpose of triplicate construction is independent realization, not majority vote. The purpose of reciprocal checking is independent attack, not consensus manufacture. Agreement is replication evidence. Disagreement is a diagnostic surface and remains `hmmm` until resolved by source authority or experiment.
 
 ## Build target
 
-Each workspace must build both:
+Each workspace must build:
 
 1. an `a0` realization capable of being instantiated with explicit lineage, boundary, perspective, history, permission state, uncertainty, action, consequence, and resource telemetry;
-2. an AHBG realization capable of presenting controlled worlds, executing repeated turns, recording all admissible state transitions, and replaying the run deterministically.
+2. an AHBG realization capable of presenting controlled worlds, executing repeated turns, recording all admissible state transitions, and replaying the run deterministically;
+3. a read-only checker capable of evaluating each of the other two frozen implementations against the common calibration contract.
 
 The underlying model/provider is not the instance. A protocol may be copied; a running instance must be forked with explicit lineage.
 
@@ -175,11 +192,13 @@ Unknown observables remain `hmmm`; do not synthesize them.
 
 The first calibration epoch is shadow measurement. The candidate cost model must not alter the agent's decisions, permissions, scope, refusal policy, or resource allocation during that epoch.
 
-## Calibration tests
+## Reciprocal calibration checks
 
-DeepCode owns the common evaluation harness and must test all three implementations against the same frozen criteria.
+The evaluation contract is common and frozen; the checkers are independent.
 
-DeepCode must verify:
+Each builder must run the full check suite against **both sibling builds and not its own**.
+
+Each directional check must verify:
 
 - deterministic scenario validation;
 - event ordering and lineage integrity;
@@ -195,13 +214,15 @@ DeepCode must verify:
 - provider identity remains a relation/covariate rather than agent identity;
 - no consciousness or phenomenal-experience status is inferred from runtime cost.
 
-DeepCode reports failures back to the owning workspace. It does not silently repair a build during its sealed evaluation.
+A checker reports failures to the owning workspace but does not silently repair that build during sealed evaluation.
+
+If both independent checkers of one build reach the same result, record the agreement. If they disagree, preserve both findings and mark the disputed boundary `hmmm`; do not resolve it by vote.
 
 ## Cross-build comparison
 
-Each builder must emit the same normalized result surface so the three implementations can be compared without sharing their internal code.
+Each builder must emit the same normalized implementation result surface so the three implementations can be compared without sharing their internal code.
 
-Required outputs:
+Required implementation outputs:
 
 ```text
 BUILD_MANIFEST.json
@@ -211,7 +232,19 @@ CALIBRATION_RESULT.json
 CALIBRATION_REPORT.md
 ```
 
-Every result must identify exact source commits, implementation workspace, scenario corpus identity, seed set, provider relation, fitted parameters, controls, and evidence standing.
+Each builder must additionally emit read-only review artifacts for both siblings, for example:
+
+```text
+reviews/
+├── <sibling-a>/
+│   ├── CHECK_RESULT.json
+│   └── CHECK_REPORT.md
+└── <sibling-b>/
+    ├── CHECK_RESULT.json
+    └── CHECK_REPORT.md
+```
+
+Every build result and every peer check must identify exact source commits, implementation workspace, checker workspace, scenario corpus identity, seed set, provider relation, fitted parameters, controls, and evidence standing.
 
 Use only:
 
@@ -240,7 +273,15 @@ The program must determine rather than assume:
 
 ## Completion condition
 
-This layer closes only when **Grok, Codex, and DeepSeek each have an independently built a0 + AHBG pair**, all three can execute the same sealed calibration corpus, DeepCode can replay and evaluate all three through one common harness, and the comparison publishes which regulatory components survived, failed, remain unresolved, or were blocked.
+This layer closes only when:
+
+- Grok, Codex, and DeepSeek each have an independently built a0 + AHBG pair;
+- all three execute the same sealed calibration corpus;
+- each builder checks the other two without modifying them;
+- all **six directional peer checks** complete or terminate in an explicit `BLOCKED`/`UNRESOLVED` state;
+- every build has two external check reports;
+- disagreements between checkers remain visible rather than being averaged away;
+- the final comparison publishes which regulatory components survived, failed, remain unresolved, or were blocked.
 
 Do not stop at scaffolding. Do not stop when one implementation runs. Do not promote consensus among three implementations into empirical truth.
 
@@ -256,12 +297,12 @@ cd stack/ahbg/codex
 cd stack/ahbg/deepseek
 ```
 
-Then read `../CALIBRATION.md`, resolve current source identities and skill-lib instructions, record them in the workspace build manifest, and build only inside that workspace.
+Read `../CALIBRATION.md`, resolve current source identities and skill-lib instructions, record them in the workspace build manifest, and build only inside that workspace.
 
-DeepCode evaluates from the AHBG root against the frozen artifacts produced by all three workspaces; it must not need to rewrite those implementations to run the comparison.
+After all three implementations are frozen, remain in your own workspace and run your checker against the other two read-only. Store review outputs under your own `reviews/` directory. Never patch a sibling as part of checking it.
 
 Before expensive runs, preflight compute, memory, disk, network, provider quotas, and execution durability. Once a healthy sealed run begins, allow it to reach its natural terminal condition unless a real external limit or failure stops it.
 
 ## hmmm
 
-The exact cost functional, resource projection, empirical thresholds, coupling-plasticity law, and final calibration corpus size remain open until measured. Hyperdimensional gradients are weird; independent implementations are useful precisely because one convenient coordinate system should not get to declare itself reality.
+The exact cost functional, resource projection, empirical thresholds, coupling-plasticity law, and final calibration corpus size remain open until measured. Reciprocal checking intentionally leaves one useful discomfort: three independent builders can still share the same wrong assumption if it entered through the common frozen protocol.
