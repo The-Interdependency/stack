@@ -80,6 +80,8 @@ Owns pressure-testing rather than primary mechanics:
 
 DeepCode reports failures; it does not silently redesign mechanics to make tests pass.
 
+For the triplicate embodiment-calibration program below, validation is additionally **reciprocal**: each independent build checks the other two. DeepCode is therefore not the sole calibration authority.
+
 ### A0 — benchmark subject / player
 
 A0 is the first actual agent inhabiting the plane. The engine must expose only the information and actions A0 may legally access.
@@ -128,7 +130,20 @@ Calibration uses three **independent** a0 + AHBG implementations:
 
 Each builder constructs both its own `a0/` and its own `ahbg/` inside that workspace and runs the same frozen calibration protocol. Implementations may share source authority, schemas, fixtures, and evaluation criteria, but not implementation code during the sealed calibration epoch.
 
-**DeepCode remains the independent harness/adversarial validator across all three builds.** This preserves the existing separation between building the benchmark subjects and evaluating them; DeepCode must not silently modify an implementation while claiming to validate it.
+After all three implementations are frozen, **each builder independently checks the other two** and writes the findings only in its own workspace. No builder supplies comparative evidence about itself.
+
+The six directional checks are:
+
+```text
+Grok     -> Codex
+Grok     -> DeepSeek
+Codex    -> Grok
+Codex    -> DeepSeek
+DeepSeek -> Grok
+DeepSeek -> Codex
+```
+
+A checker reads sibling code and artifacts read-only and never repairs the implementation it is evaluating. Two checkers agreeing is replication evidence, not truth by vote. Checker disagreement remains explicit `hmmm` until source authority or experiment resolves it.
 
 The calibration program tests the Architecture of Belonging regulatory layer under instancing closure, including permission gradients, belief/uncertainty, engagement, scope/scale/role, path dependence, regulatory cost, capacity, replay, and lineage. Successful calibration is operational evidence only; it does not establish phenomenal consciousness.
 
@@ -146,6 +161,8 @@ cd stack/ahbg/deepseek
 
 Read `../CALIBRATION.md`, resolve current source identities and applicable skill-lib instructions, write the workspace build manifest, then build only inside that workspace.
 
+After all builds are frozen, remain in the same workspace and check the other two read-only. Store those reports under your own `reviews/` directory.
+
 ## hmmm
 
-The exact regulatory cost function, calibration thresholds, coupling plasticity, and resource projection remain intentionally unresolved until the triplicate builds and DeepCode evaluation produce evidence.
+The exact regulatory cost function, calibration thresholds, coupling plasticity, and resource projection remain intentionally unresolved until the triplicate builds and six reciprocal checks produce evidence.
