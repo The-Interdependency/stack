@@ -102,6 +102,17 @@
       "UCNS geometry authority (consumed, not reimplemented)"
     ]
   },
+  "energy_layer": {
+    "role": "interchangeable provider energy for A0; never identity",
+    "default_provider": "deepseek",
+    "default_api_key_env": "DEEPSEEK_API_KEY",
+    "default_env_path": "/home/wayseer_interdependentway_org/.env",
+    "registered_providers": ["deepseek", "openai", "xai"],
+    "transport": "OpenAI-compatible chat completions over HTTPS (stdlib only)",
+    "strict_validation": "energy replies must be exactly legal moves or pass; anything else falls back to the deterministic decision tree and is recorded as a refusal",
+    "replay_note": "the declared action is recorded in the world event log, so replay stays deterministic regardless of energy source",
+    "observables": "tokens, latency, tool calls/failures are recorded as real resource telemetry"
+  },
   "hmmm": [
     "exact shared sealed corpus identity and scenario schemas until frozen by the three builders",
     "exact regulatory cost functional and resource projection until measured",
