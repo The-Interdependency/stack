@@ -36,7 +36,7 @@ Grok emits only the first two. The other four are observed, not rewritten.
 | Provider ≠ instance | SURVIVED |
 | Consciousness inferred from cost | not claimed |
 | Shared sealed calibration corpus digest | SURVIVED (`b05cba2c…` recorded by all three) |
-| Full 35-scenario execution by frozen Grok SHA | UNRESOLVED / `hmmm` |
+| Full 35-scenario execution by frozen Grok SHA | post-freeze run SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 (War occupied + dual-target) |
 | Cost-channel fitting vs simpler controls | UNRESOLVED |
 
 ## Divergence register (visible, not averaged)
@@ -50,6 +50,6 @@ Grok emits only the first two. The other four are observed, not rewritten.
 
 ## Program completion
 
-Not closed. All six reciprocal checks are now present against the freeze SHAs. Remaining: Grok has not executed the full 35-scenario family against frozen SHA `cce9cec`; cost-channel fitting is unmeasured; the divergence register above is not resolved by vote.
+Not closed. All six reciprocal checks are present against the freeze SHAs. Grok now has a labeled post-freeze 35-scenario run at frozen SHA `cce9cec` (33 SURVIVED, 2 UNRESOLVED War). Remaining: cost-channel fitting is unmeasured; the divergence register above is not resolved by vote.
 
 Do not promote six SURVIVED reviews into empirical truth.

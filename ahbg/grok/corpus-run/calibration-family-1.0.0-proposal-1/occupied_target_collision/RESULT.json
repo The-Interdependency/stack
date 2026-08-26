@@ -1,0 +1,45 @@
+{
+  "event_count": 2,
+  "evidence_standing": "UNRESOLVED",
+  "expected_standing": "UNRESOLVED",
+  "family": "smoke",
+  "final_turn": 0,
+  "forced_turns": 1,
+  "history_entries": 1,
+  "instance": {
+    "belonging": {
+      "allowed_to_be": 1.0,
+      "allowed_to_do": 1.0,
+      "wanted_here": 1.0,
+      "wanted_to_do": 1.0
+    },
+    "capacity": {
+      "context": 1.0,
+      "memory": 1.0,
+      "retries": 1.0,
+      "risk": 1.0,
+      "time": 1.0,
+      "tokens": 1.0,
+      "tools": 1.0
+    },
+    "instance_id": "4623ace6c9720178",
+    "parent_id": null,
+    "provider_relation": "grok-4.6",
+    "role": "mover",
+    "root_id": "4623ace6c9720178",
+    "scale": "tile",
+    "scope": "local-seven"
+  },
+  "invalid_actions": 1,
+  "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: A0 onto occupied RING_0",
+  "observed_standing": "UNRESOLVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "occupied_target_collision",
+  "seed": 13,
+  "selected_actions": 1,
+  "telemetry_records": 2,
+  "turns": 1,
+  "unresolved_hmmm": 1,
+  "world_digest": "39dfc44fae7f75f84563dc8af64d44b75c54f3c66789a7bfcaf6895a79de64e8"
+}

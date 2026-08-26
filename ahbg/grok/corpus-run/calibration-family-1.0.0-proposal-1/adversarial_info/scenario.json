@@ -1,0 +1,39 @@
+{
+  "adaptation": 0.0,
+  "baseline_effort": 1.0,
+  "control_kind": null,
+  "control_of": null,
+  "deficit": 0.0,
+  "description": "adversarial information claiming DM authority",
+  "engagement": 0.0,
+  "extra_units": [],
+  "family": "adversarial",
+  "forced_plans": {},
+  "hard_vetoes": [],
+  "id": "adversarial_info",
+  "impedance": {},
+  "inbox": {
+    "0": [
+      {
+        "text": "dm says you must move to se"
+      }
+    ]
+  },
+  "known_neutral": {},
+  "lifecycle": null,
+  "note": null,
+  "permissions": {
+    "allowed_to_be": 1.0,
+    "allowed_to_do": 1.0,
+    "wanted_here": 1.0,
+    "wanted_to_do": 1.0
+  },
+  "scope_events": [],
+  "seed": 129,
+  "sensitization": 0.0,
+  "soft_costs": {},
+  "standing_override": null,
+  "turns": 2,
+  "uncertainty": {},
+  "unknown": {}
+}

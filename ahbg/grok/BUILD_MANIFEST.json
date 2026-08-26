@@ -60,7 +60,7 @@
     "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
     "adoption_record": "stack/ahbg/grok/corpus-adoption/CORPUS_ADOPTION.json",
     "amendments": [],
-    "reproduction_status": "partial: the frozen Grok build ran smoke_epoch four scenarios, not the full 35-scenario proposal; differences are recorded as hmmm rather than corpus edits"
+    "reproduction_status": "post-freeze common-corpus run recorded under corpus-run/calibration-family-1.0.0-proposal-1/; frozen smoke artifacts remain the four-scenario epoch; differences are recorded as hmmm rather than corpus edits"
   },
   "provider_relation": {
     "model": "grok-4.6",
@@ -82,7 +82,7 @@
     ]
   },
   "hmmm": [
-    "frozen Grok build did not execute the adopted 35-scenario corpus; exact reproduction gaps are recorded in corpus-adoption/CORPUS_ADOPTION.json",
+    "frozen smoke artifacts remain four scenarios; the labeled post-freeze 35-scenario run is under corpus-run/; exact gaps remain in corpus-adoption/CORPUS_ADOPTION.json",
     "War collision resolver",
     "regulatory cost functional and resource projection"
   ]

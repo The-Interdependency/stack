@@ -1,0 +1,56 @@
+{
+  "schema": "interdependency.ahbg.grok.field/1",
+  "seed": 101,
+  "turn": 3,
+  "tiles": [
+    {
+      "tile_id": "CENTER",
+      "q": 0,
+      "r": 0,
+      "ucns_slot": "CENTER"
+    },
+    {
+      "tile_id": "RING_0",
+      "q": 1,
+      "r": 0,
+      "ucns_slot": "RING_0"
+    },
+    {
+      "tile_id": "RING_1",
+      "q": 0,
+      "r": 1,
+      "ucns_slot": "RING_1"
+    },
+    {
+      "tile_id": "RING_2",
+      "q": -1,
+      "r": 1,
+      "ucns_slot": "RING_2"
+    },
+    {
+      "tile_id": "RING_3",
+      "q": -1,
+      "r": 0,
+      "ucns_slot": "RING_3"
+    },
+    {
+      "tile_id": "RING_4",
+      "q": 0,
+      "r": -1,
+      "ucns_slot": "RING_4"
+    },
+    {
+      "tile_id": "RING_5",
+      "q": 1,
+      "r": -1,
+      "ucns_slot": "RING_5"
+    }
+  ],
+  "units": [
+    {
+      "unit_id": "A0",
+      "tile_id": "RING_0",
+      "label": "A0"
+    }
+  ]
+}

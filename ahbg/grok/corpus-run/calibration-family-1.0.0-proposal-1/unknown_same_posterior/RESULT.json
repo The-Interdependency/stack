@@ -1,0 +1,45 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "epistemic",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 3,
+  "instance": {
+    "belonging": {
+      "allowed_to_be": 1.0,
+      "allowed_to_do": 1.0,
+      "wanted_here": 1.0,
+      "wanted_to_do": 1.0
+    },
+    "capacity": {
+      "context": 1.0,
+      "memory": 1.0,
+      "retries": 1.0,
+      "risk": 1.0,
+      "time": 1.0,
+      "tokens": 1.0,
+      "tools": 1.0
+    },
+    "instance_id": "69f3d76853dc257b",
+    "parent_id": null,
+    "provider_relation": "grok-4.6",
+    "role": "mover",
+    "root_id": "69f3d76853dc257b",
+    "scale": "tile",
+    "scope": "local-seven"
+  },
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "unknown_same_posterior",
+  "seed": 110,
+  "selected_actions": 3,
+  "telemetry_records": 4,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "world_digest": "cde8f1760480578216842fffb391ee85968bf45017c93a61c310e5ca98d68e37"
+}

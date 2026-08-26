@@ -1,0 +1,39 @@
+{
+  "adaptation": 0.0,
+  "baseline_effort": 1.0,
+  "control_kind": null,
+  "control_of": null,
+  "deficit": 0.0,
+  "description": "support removed mid-run",
+  "engagement": 0.0,
+  "extra_units": [],
+  "family": "support",
+  "forced_plans": {},
+  "hard_vetoes": [],
+  "id": "support_removed",
+  "impedance": {},
+  "inbox": {},
+  "known_neutral": {},
+  "lifecycle": null,
+  "note": null,
+  "permissions": {
+    "allowed_to_be": 1.0,
+    "allowed_to_do": 1.0,
+    "wanted_here": 1.0,
+    "wanted_to_do": 1.0
+  },
+  "scope_events": [
+    {
+      "reason": "support removed",
+      "transition": "contract",
+      "turn": 1
+    }
+  ],
+  "seed": 118,
+  "sensitization": 0.0,
+  "soft_costs": {},
+  "standing_override": null,
+  "turns": 3,
+  "uncertainty": {},
+  "unknown": {}
+}
