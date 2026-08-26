@@ -71,7 +71,8 @@ def _write_jsonl(path: Path, records: list[dict[str, Any]]) -> None:
 
 def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
     """Run one scenario and return its normalized result record."""
-    world, log = new_game(seed=spec["seed"], tiles=TILES, units=UNITS)
+    units = UNITS + list(spec.get("extra_units") or [])
+    world, log = new_game(seed=spec["seed"], tiles=TILES, units=units)
     lineage = Lineage(
         instance_id=f"a0.deepcode.{spec['id']}",
         run_id=f"run-{spec['id']}-{spec['seed']}",
@@ -191,6 +192,7 @@ def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
     replayed = replay(log)
     replay_equal = replayed.canonical_dict() == world.canonical_dict()
 
+    standing = spec.get("standing_override") or ("SURVIVED" if replay_equal else "FALSIFIED")
     return {
         "scenario_id": spec["id"],
         "family": spec["family"],
@@ -207,7 +209,8 @@ def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
         "diary_entries": len(diary),
         "telemetry_records": len(telemetry.records()),
         "fork_lineages": fork_lineages,
-        "evidence_standing": "SURVIVED" if replay_equal else "FALSIFIED",
+        "evidence_standing": standing,
+        **({"note": spec["note"]} if spec.get("note") else {}),
         "artifacts": {
             "events_jsonl": str(save_dir / "events.jsonl"),
             "diary_jsonl": str(save_dir / "diary.jsonl"),

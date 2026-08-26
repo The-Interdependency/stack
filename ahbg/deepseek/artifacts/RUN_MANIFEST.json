@@ -881,11 +881,123 @@
       "telemetry_records": 15,
       "turns": 3,
       "world_digest": "8c70a92495679f1349d6ea5dfacc0c3bd8387cf4082bddffbd4ea3c39e3d07e4"
+    },
+    {
+      "a0_history_entries": 12,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/plain_move_loop/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/plain_move_loop/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/plain_move_loop/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move",
+        "move",
+        "move",
+        "move",
+        "move"
+      ],
+      "diary_entries": 6,
+      "event_count": 19,
+      "evidence_standing": "SURVIVED",
+      "family": "smoke",
+      "final_turn": 6,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "plain_move_loop",
+      "seed": 7,
+      "shadow_invariant": true,
+      "telemetry_records": 27,
+      "turns": 6,
+      "world_digest": "d596a07c40fe050f5c2e4c2ff95b681b7877e2504c3e2fde166977f0862f8401"
+    },
+    {
+      "a0_history_entries": 5,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_illegal_action/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_illegal_action/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/hard_veto_illegal_action/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "move",
+        "move"
+      ],
+      "diary_entries": 2,
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "family": "smoke",
+      "final_turn": 2,
+      "fork_lineages": [],
+      "invalid_actions": 0,
+      "refusals": 1,
+      "replay_equal": true,
+      "scenario_id": "hard_veto_illegal_action",
+      "seed": 11,
+      "shadow_invariant": true,
+      "telemetry_records": 12,
+      "turns": 2,
+      "world_digest": "91694f26d2a506dcece7d0b6f15a48155930162158a1ef5ebbf89c15577940f1"
+    },
+    {
+      "a0_history_entries": 2,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/occupied_target_collision/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/occupied_target_collision/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/occupied_target_collision/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "diary_entries": 1,
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "family": "smoke",
+      "final_turn": 1,
+      "fork_lineages": [],
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "occupied_target_collision",
+      "seed": 13,
+      "shadow_invariant": true,
+      "telemetry_records": 6,
+      "turns": 1,
+      "world_digest": "2f1a715d354ff57ea5d2be1708961e6c7989b9f9ce482c57ffd742b3f5abdade"
+    },
+    {
+      "a0_history_entries": 2,
+      "artifacts": {
+        "diary_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/dual_target_collision/diary.jsonl",
+        "events_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/dual_target_collision/events.jsonl",
+        "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/dual_target_collision/telemetry.jsonl"
+      },
+      "decision_sequence": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "diary_entries": 1,
+      "event_count": 3,
+      "evidence_standing": "UNRESOLVED",
+      "family": "smoke",
+      "final_turn": 1,
+      "fork_lineages": [],
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "dual_target_collision",
+      "seed": 17,
+      "shadow_invariant": true,
+      "telemetry_records": 6,
+      "turns": 1,
+      "world_digest": "ec64c5022502eb8c06b91f1a3ed87ee5b2740582295d68bbf18b942ff864c14d"
     }
   ],
   "scenario_corpus": "calibration-family (workspace-local frozen)",
-  "scenario_count": 31,
+  "scenario_count": 35,
   "schema": "interdependency.ahbg.run-manifest/1.0.0",
-  "started_at": "2026-08-25T21:12:02Z",
+  "started_at": "2026-08-26T06:56:33Z",
   "workspace": "stack/ahbg/deepseek"
 }
