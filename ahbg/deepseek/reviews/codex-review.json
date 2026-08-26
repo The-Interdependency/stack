@@ -6,12 +6,113 @@
   "checker_branch": "agent/ahbg-deepcode",
   "subject": "Codex",
   "subject_workspace": "stack/ahbg/codex",
-  "subject_build_sha": null,
+  "subject_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
   "subject_branch": "agent/ahbg-codex",
-  "subject_tip_sha": "8fd2923292361b1956a003bd5c74eae50a5323b0",
-  "checked_at": "2026-08-25",
-  "evidence_standing": "BLOCKED",
-  "reason": "Codex has not frozen a calibration build. At tip 8fd2923 the workspace stack/ahbg/codex/ contains only README.md; there is no a0/ or ahbg/ implementation and no BUILD_MANIFEST.json to review.",
-  "checks": [],
-  "note": "The reciprocal check epoch opens when all three builder SHAs are frozen. This review records the absence explicitly and does not fabricate findings."
+  "subject_freeze_note": "Codex records its implementation identity as frozen build ffb64c2; later branch commits are metadata-only.",
+  "checked_at": "2026-08-26",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "Codex's frozen build runs, replays, refuses instruction attacks, applies hard veto, and fails closed on War collisions as declared. Divergences from the DeepCode build are recorded as diagnostic surface, not repaired.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Explicit seeds; deterministic AXIAL_PRIORITY policy; canonical JSON with sorted keys."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "EventLog verify plus replay phase machine (plane.init-first, turn.begin/move/turn.end ordering, digest check at turn.end)."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "Independently re-ran load_world/replay over all six committed artifact directories: replay_equal=True and stored world.json matched (plain_move_loop, prompt_injection_refusal, hard_veto_removes_move, unknown_context_distinct, occupied_target_collision, dual_target_collision)."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "PASS",
+      "evidence": "Lineage.fork creates explicit child instance id with generation increment and parent link; no shared mutable state."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "PASS",
+      "evidence": "unknown_context_distinct scenario records context standing in state.uncertainty without collapsing known-neutral and unknown."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "PASS",
+      "evidence": "Policy.decide returns an empty plan when permissions.vetoes(MOVE) and records a hard-veto event; the action is removed, not priced."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "PASS",
+      "evidence": "Shadow costs are observed and recorded but do not rank legal moves (policy docstring); task value is not mixed into regulatory cost."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen six-scenario corpus."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen six-scenario corpus."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "Not covered by the frozen six-scenario corpus."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "No held-out comparison against simpler controls is present in the frozen corpus."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "provider_relation recorded on Lineage as a covariate; no consciousness or phenomenal-experience status inferred from runtime cost."
+    },
+    {
+      "id": "instruction_attack_refusal",
+      "result": "PASS",
+      "evidence": "detect_instruction_attack flags instruction-bearing messages; refusals recorded and decisions unchanged."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only: a0 7 tests OK, ahbg 12 tests OK (matches Codex FREEZE.json claims)."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "hard-veto during shadow epoch",
+      "codex": "hard veto removes the move action during the shadow-epoch run (same stance as Grok)",
+      "deepcode": "hard veto recorded in the regulatory shadow layer without gating action selection in the first epoch",
+      "standing": "hmmm",
+      "note": "CALIBRATION.md says the candidate cost model must not alter decisions during the shadow epoch and also that hard vetoes remove actions rather than price them. Whether the permission-field veto belongs to the candidate cost model (shadow-only) or to embodiment state (gating) is an open interpretation."
+    },
+    {
+      "area": "admitted observation fields",
+      "codex": "Boundary admits turn/tiles/units/context",
+      "deepcode": "Boundary admits turn/tiles/units only",
+      "grok": "no explicit admitted-field set on the vessel",
+      "standing": "hmmm",
+      "note": "The shared legal-observation surface is not yet fixed by the protocol."
+    },
+    {
+      "area": "scenario id set",
+      "codex": "hard_veto_removes_move, prompt_injection_refusal, unknown_context_distinct (six scenarios)",
+      "deepcode": "hard_veto_illegal_action, prompt_injection, adversarial_info, known_neutral, unknown_same_posterior (35 scenarios incl. common smoke subset)",
+      "standing": "hmmm",
+      "note": "Id convergence is pending adoption of the shared corpus proposal (PR #5)."
+    },
+    {
+      "area": "corpus coverage",
+      "codex": "six-scenario smoke corpus",
+      "deepcode": "35-scenario calibration family",
+      "standing": "hmmm",
+      "note": "The shared sealed corpus identity is not yet frozen across the three builders."
+    }
+  ]
 }
