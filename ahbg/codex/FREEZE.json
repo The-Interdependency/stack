@@ -1,0 +1,28 @@
+{
+  "schema": "interdependency.ahbg.codex.freeze/1.0.0",
+  "builder": "Codex",
+  "branch": "agent/ahbg-codex",
+  "workspace": "stack/ahbg/codex",
+  "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+  "frozen_build_short_sha": "ffb64c2",
+  "frozen_commit_subject": "Build Codex AHBG calibration pair",
+  "post_freeze_commit_type": "metadata-only",
+  "post_freeze_policy": [
+    "Do not modify implementation source or generated run artifacts in post-freeze metadata commits.",
+    "Use frozen_build_sha, not moving branch head, as the Codex implementation identity for reciprocal review.",
+    "Write reciprocal review findings under stack/ahbg/codex/reviews only after all target build SHAs are frozen."
+  ],
+  "verified_before_freeze": {
+    "a0_tests": "7 OK",
+    "ahbg_tests": "12 OK",
+    "python_compile": "15 files OK",
+    "artifact_check": "SURVIVED",
+    "calibration_summary": {
+      "survived": 4,
+      "falsified": 0,
+      "unresolved": 2,
+      "blocked": 0
+    }
+  },
+  "evidence_caveat": "Before the Codex workspace correction, this conversation inspected sibling DeepCode/DeepSeek files. The Codex build records that caveat in BUILD_MANIFEST.json; the frozen implementation itself lives under stack/ahbg/codex and does not import sibling code."
+}
