@@ -12,30 +12,44 @@ Grok frozen implementation SHA: `cce9cec7dae61304118efcd47bc0d7461200d335`
 | Codex | `ffb64c274583d8539f8f4fe7e0aa77366689e910` | `stack/ahbg/codex` |
 | DeepCode | `ec07f465184e7a37af856bc5b301bd8eaa4f097b` | `stack/ahbg/deepseek` |
 
-## Grok-owned reciprocal checks
+## Six directional checks
 
-| direction | standing |
-|---|---|
-| Grok -> Codex | SURVIVED (not proved) |
-| Grok -> DeepCode | SURVIVED (not proved) |
+| direction | standing | artifact |
+|---|---|---|
+| Grok -> Codex | SURVIVED (not proved) | `ahbg/grok/reviews/codex-review.json` |
+| Grok -> DeepCode | SURVIVED (not proved) | `ahbg/grok/reviews/deepcode-review.json` |
+| Codex -> Grok | SURVIVED (not proved) | `ahbg/codex/reviews/grok-review.json` |
+| Codex -> DeepCode | SURVIVED (not proved) | `ahbg/codex/reviews/deepcode-review.json` |
+| DeepCode -> Grok | SURVIVED (not proved) | `ahbg/deepseek/reviews/grok-review.json` |
+| DeepCode -> Codex | SURVIVED (not proved) | `ahbg/deepseek/reviews/codex-review.json` |
 
-The other four directions are not Grok's to emit.
+Grok emits only the first two. The other four are observed, not rewritten.
 
-## Regulatory components (from Grok's two reviews plus Grok's own smoke)
+## Regulatory components
 
 | component | standing |
 |---|---|
 | Deterministic replay of declared smoke/local corpora | SURVIVED |
 | Hard veto removes relocate (Grok, Codex) | SURVIVED |
-| Hard veto removes construct (DeepCode artifacts) | UNRESOLVED |
+| Hard veto removes construct (DeepCode freeze artifacts) | UNRESOLVED |
 | War occupied/dual-target | UNRESOLVED |
 | Provider ≠ instance | SURVIVED |
 | Consciousness inferred from cost | not claimed |
-| Shared sealed calibration corpus | digest adopted (`b05cba2c…`); full 35-scenario execution by frozen Grok SHA remains UNRESOLVED / `hmmm` |
+| Shared sealed calibration corpus digest | SURVIVED (`b05cba2c…` recorded by all three) |
+| Full 35-scenario execution by frozen Grok SHA | UNRESOLVED / `hmmm` |
 | Cost-channel fitting vs simpler controls | UNRESOLVED |
+
+## Divergence register (visible, not averaged)
+
+1. Shadow-epoch hard veto: Grok and Codex gate relocate/move; DeepCode freeze `hard_veto_construct` still logs `move`.
+2. Admitted observation fields: Codex `turn/tiles/units/context`; DeepCode `turn/tiles/units`; Grok has no explicit admitted-field set.
+3. Fail-closed turn closure: Grok omits `turn.end` on War; Codex and DeepCode emit `turn.end`.
+4. Genesis prev hash: Grok `0*64`; DeepCode empty string; Codex its own. Each verifies internally.
+5. Artifact paths: Codex `check.py` wants `artifacts/EVENTS.jsonl` and siblings; Grok emits those names at workspace root; DeepCode stores events per scenario.
+6. Tile labels: Grok BandSlot (`CENTER`, `RING_0`, …) vs proposal `c/e/se/…`.
 
 ## Program completion
 
-Not closed. Common digest is now recorded by Grok, Codex, and DeepCode. Missing: Codex → Grok and Codex → DeepCode, and a full common-corpus execution by the Grok and Codex frozen builds.
+Not closed. All six reciprocal checks are now present against the freeze SHAs. Remaining: Grok has not executed the full 35-scenario family against frozen SHA `cce9cec`; cost-channel fitting is unmeasured; the divergence register above is not resolved by vote.
 
-Do not promote these two Grok reviews into empirical truth.
+Do not promote six SURVIVED reviews into empirical truth.
