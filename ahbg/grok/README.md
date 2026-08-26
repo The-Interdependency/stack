@@ -62,9 +62,12 @@ PYTHONDONTWRITEBYTECODE=1 python3 run.py
 python3 checker.py
 ```
 
+Frozen implementation SHA: `cce9cec7dae61304118efcd47bc0d7461200d335`
+(see `FREEZE.md`). Reciprocal reviews use that SHA, not later metadata commits.
+
 Smoke epoch writes `CALIBRATION_RESULT.json`, `RUN_MANIFEST.json`, `EVENTS.jsonl`,
-and per-scenario files under `artifacts/`. Reciprocal reviews stay `BLOCKED`
-until all three builders freeze.
+and per-scenario files under `artifacts/`. The shared sealed corpus is still
+`hmmm`.
 
 ## hmmm
 

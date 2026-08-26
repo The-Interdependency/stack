@@ -1,0 +1,27 @@
+{
+  "schema": "interdependency.ahbg.grok.freeze/1.0.0",
+  "builder": "Grok",
+  "branch": "agent/ahbg-grok",
+  "workspace": "stack/ahbg/grok",
+  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "frozen_build_short_sha": "cce9cec",
+  "frozen_commit_subject": "Add independent Grok a0 and AHBG smoke-epoch calibration pair",
+  "post_freeze_commit_type": "metadata-only",
+  "post_freeze_policy": [
+    "Do not modify implementation source or generated run artifacts in post-freeze metadata commits.",
+    "Use frozen_build_sha, not moving branch head, as the Grok implementation identity for reciprocal review.",
+    "Write reciprocal review findings under stack/ahbg/grok/reviews only after identifying checker and target frozen SHAs."
+  ],
+  "verified_before_freeze": {
+    "a0_tests": "3 OK",
+    "ahbg_tests": "3 OK",
+    "smoke_epoch": {
+      "plain_move_loop": "SURVIVED",
+      "hard_veto_illegal_action": "SURVIVED",
+      "occupied_target_collision": "UNRESOLVED",
+      "dual_target_collision": "UNRESOLVED"
+    }
+  },
+  "corpus": "smoke_epoch (provisional-local)",
+  "shadow_epoch": true
+}

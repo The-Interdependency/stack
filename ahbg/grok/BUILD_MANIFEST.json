@@ -1,7 +1,11 @@
 {
   "schema": "interdependency.ahbg.build-manifest/1.0.0",
   "builder": "Grok",
+  "branch": "agent/ahbg-grok",
   "workspace": "stack/ahbg/grok",
+  "phase": "phase-2-build-freeze",
+  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "coordination_base_commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
   "protocol": {
     "name": "AHBG x a0 Embodiment Calibration Program",
     "path": "stack/ahbg/CALIBRATION.md",
