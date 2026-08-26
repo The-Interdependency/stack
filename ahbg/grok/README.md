@@ -61,6 +61,7 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/tests -p 'test*.p
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test*.py'
 PYTHONDONTWRITEBYTECODE=1 python3 run.py
 PYTHONDONTWRITEBYTECODE=1 python3 run_common_corpus.py
+PYTHONDONTWRITEBYTECODE=1 python3 fit_cost_controls.py
 python3 checker.py
 ```
 

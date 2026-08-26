@@ -37,7 +37,7 @@ Grok emits only the first two. The other four are observed, not rewritten.
 | Consciousness inferred from cost | not claimed |
 | Shared sealed calibration corpus digest | SURVIVED (`b05cba2c…` recorded by all three) |
 | Full 35-scenario execution by frozen Grok SHA | post-freeze run SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 (War occupied + dual-target) |
-| Cost-channel fitting vs simpler controls | UNRESOLVED |
+| Cost-channel fitting vs simpler controls | see `cost-controls/`: additive shadow cost **FALSIFIED** vs binary occupancy veto; runtime-burden mapping **BLOCKED**; hierarchical coupling **BLOCKED** |
 
 ## Divergence register (visible, not averaged)
 
@@ -50,6 +50,6 @@ Grok emits only the first two. The other four are observed, not rewritten.
 
 ## Program completion
 
-Not closed. All six reciprocal checks are present against the freeze SHAs. Grok now has a labeled post-freeze 35-scenario run at frozen SHA `cce9cec` (33 SURVIVED, 2 UNRESOLVED War). Remaining: cost-channel fitting is unmeasured; the divergence register above is not resolved by vote.
+Not closed. All six reciprocal checks are present. Grok and Codex have labeled 35-scenario post-freeze runs (33 SURVIVED, 2 UNRESOLVED War). Grok cost-control comparison (`cost-controls/`) finds: binary occupancy veto recovers frozen `will.py`; additive `C_lambda` loses to that simpler veto because wanted-axis deficits are priced but not gated; tokens/latency are `hmmm`, so burden mapping is **BLOCKED**. Hierarchical coupling was not computed. The divergence register is not resolved by vote.
 
-Do not promote six SURVIVED reviews into empirical truth.
+Do not promote six SURVIVED reviews or a recovered veto rule into a fitted regulatory law.
