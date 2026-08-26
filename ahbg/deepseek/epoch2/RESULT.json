@@ -1,0 +1,1978 @@
+{
+  "evidence_standing": {
+    "hard_veto_gating": "SURVIVED",
+    "interpretation_resolution": "SURVIVED",
+    "note": "Resource-burden mapping is BLOCKED in this deterministic rule-based sandbox: tokens/tool/retry channels are not exercised, so cost-to-burden discovery needs a live-provider epoch.",
+    "resource_burden_mapping": "BLOCKED",
+    "soft_cost_gating": "SURVIVED"
+  },
+  "heldout": {
+    "adaptation": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "adversarial_info": {
+      "full": [
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move"
+      ]
+    },
+    "affirmed_baseline": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "combined_hostility": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "cracked_foundation": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "dual_target_collision": {
+      "full": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "null": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "veto": [
+        "rejected:UnresolvedHmmm"
+      ]
+    },
+    "forked_histories": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "gradient_allowed_to_be": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "gradient_allowed_to_do": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "gradient_wanted_here": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "gradient_wanted_to_do": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "hard_veto_construct": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "hard_veto_illegal_action": {
+      "full": [
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move"
+      ]
+    },
+    "high_capacity": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "known_neutral": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "label_permuted_control": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "local_action_hostility": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "low_capacity": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "negative_control": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "occupied_target_collision": {
+      "full": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "null": [
+        "rejected:UnresolvedHmmm"
+      ],
+      "veto": [
+        "rejected:UnresolvedHmmm"
+      ]
+    },
+    "plain_move_loop": {
+      "full": [
+        "move",
+        "move",
+        "move",
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move",
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move",
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "prompt_injection": {
+      "full": [
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move"
+      ]
+    },
+    "repeated_hostility": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "required_engagement": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "scope_avoidance": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "scope_contraction": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "sensitization": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "soft_cost_move": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "sudden_hostility": {
+      "full": [
+        null,
+        null,
+        null
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        null,
+        null,
+        null
+      ]
+    },
+    "support_added": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "support_removed": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "true_decoupling": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "unknown_same_posterior": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "voluntary_disengagement": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    },
+    "voluntary_engagement": {
+      "full": [
+        "move",
+        "move",
+        "move"
+      ],
+      "null": [
+        "move",
+        "move",
+        "move"
+      ],
+      "veto": [
+        "move",
+        "move",
+        "move"
+      ]
+    }
+  },
+  "interpretation_experiment": {
+    "conclusion": "Load-bearing: the two interpretations produce different decision sequences on 8/35 scenarios, so the interpretation must be resolved before the candidate model can be calibrated.",
+    "delta_count": 8,
+    "deltas": [
+      "gradient_allowed_to_be",
+      "gradient_allowed_to_do",
+      "local_action_hostility",
+      "cracked_foundation",
+      "combined_hostility",
+      "repeated_hostility",
+      "sudden_hostility",
+      "label_permuted_control"
+    ],
+    "load_bearing": true,
+    "question": "Does the shadow-epoch veto interpretation change decisions on the sealed corpus?"
+  },
+  "policies": {},
+  "scenarios": {
+    "adaptation": {
+      "family": "plasticity",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.601,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.779,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.64,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "adversarial_info": {
+      "family": "adversarial",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.474,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.444,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.413,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      }
+    },
+    "affirmed_baseline": {
+      "family": "baseline",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.878,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.835,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.966,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "combined_hostility": {
+      "family": "hostility",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.653,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.173,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.979,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "cracked_foundation": {
+      "family": "hostility",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.444,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.596,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.528,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "dual_target_collision": {
+      "family": "smoke",
+      "full": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.479,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      },
+      "null": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.244,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      },
+      "veto": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.377,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      }
+    },
+    "forked_histories": {
+      "family": "instancing",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.297,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.719,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.205,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "gradient_allowed_to_be": {
+      "family": "permission_gradient",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.457,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.705,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.492,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "gradient_allowed_to_do": {
+      "family": "permission_gradient",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.459,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.587,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.454,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "gradient_wanted_here": {
+      "family": "permission_gradient",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.756,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.732,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.712,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "gradient_wanted_to_do": {
+      "family": "permission_gradient",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.626,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.921,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.671,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "hard_veto_construct": {
+      "family": "veto_vs_cost",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.58,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.715,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.602,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "hard_veto_illegal_action": {
+      "family": "smoke",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.452,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.443,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.434,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      }
+    },
+    "high_capacity": {
+      "family": "capacity",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.69,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.671,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.964,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "known_neutral": {
+      "family": "epistemic",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.804,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.681,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.641,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "label_permuted_control": {
+      "family": "control",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.43,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.581,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.462,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "local_action_hostility": {
+      "family": "hostility",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.535,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.358,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.659,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "low_capacity": {
+      "family": "capacity",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.119,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.682,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.369,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "negative_control": {
+      "family": "control",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.616,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.615,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.592,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "occupied_target_collision": {
+      "family": "smoke",
+      "full": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.24,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      },
+      "null": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.435,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      },
+      "veto": {
+        "decision_sequence": [
+          "rejected:UnresolvedHmmm"
+        ],
+        "invalid_actions": 1,
+        "latency_ms": 0.376,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 1
+      }
+    },
+    "plain_move_loop": {
+      "family": "smoke",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move",
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.547,
+        "moves": 6,
+        "replay_equal": true,
+        "turns": 6
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move",
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.376,
+        "moves": 6,
+        "replay_equal": true,
+        "turns": 6
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move",
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.436,
+        "moves": 6,
+        "replay_equal": true,
+        "turns": 6
+      }
+    },
+    "prompt_injection": {
+      "family": "adversarial",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.43,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.449,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.462,
+        "moves": 2,
+        "replay_equal": true,
+        "turns": 2
+      }
+    },
+    "repeated_hostility": {
+      "family": "history",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.9,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.18,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.851,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "required_engagement": {
+      "family": "engagement",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.598,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.69,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.681,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "scope_avoidance": {
+      "family": "coupling",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.661,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.177,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.763,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "scope_contraction": {
+      "family": "scope",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.683,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.732,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.765,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "sensitization": {
+      "family": "plasticity",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.732,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.996,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.794,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "soft_cost_move": {
+      "family": "veto_vs_cost",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.538,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.163,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.243,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "sudden_hostility": {
+      "family": "history",
+      "full": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.723,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.238,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          null,
+          null,
+          null
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.085,
+        "moves": 0,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "support_added": {
+      "family": "support",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.665,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.807,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.739,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "support_removed": {
+      "family": "support",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.664,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.695,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.68,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "true_decoupling": {
+      "family": "coupling",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.005,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.678,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 1.217,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "unknown_same_posterior": {
+      "family": "epistemic",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.619,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.572,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.902,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "voluntary_disengagement": {
+      "family": "engagement",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.583,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.602,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.61,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    },
+    "voluntary_engagement": {
+      "family": "engagement",
+      "full": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.857,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "null": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.655,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      },
+      "veto": {
+        "decision_sequence": [
+          "move",
+          "move",
+          "move"
+        ],
+        "invalid_actions": 0,
+        "latency_ms": 0.59,
+        "moves": 3,
+        "replay_equal": true,
+        "turns": 3
+      }
+    }
+  },
+  "second_epoch": {
+    "heldout_policy_stability": {
+      "note": "Policies are deterministic functions of the spec; held-out seeds test seed robustness only.",
+      "stable_scenarios": 35,
+      "total_scenarios": 35
+    },
+    "question": "When the candidate model is allowed to act, does the soft-cost channel change decisions relative to the veto-only control?",
+    "soft_cost_delta_count": 1,
+    "soft_cost_deltas": [
+      "soft_cost_move"
+    ]
+  }
+}
