@@ -109,5 +109,28 @@ class EnergyRegistryTests(unittest.TestCase):
         self.assertEqual(client.spec.name, "a0-test")
 
 
+class NomenclatureTests(unittest.TestCase):
+    def test_energy_label_grammar(self) -> None:
+        from ahbg.deepseek.a0 import energy_label, instance_label, parse_energy_label
+
+        self.assertEqual(energy_label("deepseek"), "a0(deepseek)")
+        self.assertEqual(energy_label("openai"), "a0(openai)")
+        self.assertEqual(parse_energy_label("a0(deepseek)"), "deepseek")
+        self.assertIsNone(parse_energy_label("deepseek"))
+        self.assertEqual(instance_label("deepseek"), "a0(deepseek)")
+        self.assertEqual(
+            instance_label("deepseek", owner="wayseer", auditor="deepseek-v4-pro"),
+            "wayseer(a0(deepseek)deepseek-v4-pro)",
+        )
+
+    def test_resolve_energy_accepts_label(self) -> None:
+        import os
+
+        os.environ["A0_TEST_LABEL_KEY"] = "test-key"
+        register_provider(ProviderSpec(name="a0-label-test", base_url="http://fake", api_key_env="A0_TEST_LABEL_KEY", model="fake"))
+        client = resolve_energy("a0(a0-label-test)")
+        self.assertEqual(client.spec.name, "a0-label-test")
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -104,6 +104,7 @@
   },
   "energy_layer": {
     "role": "interchangeable provider energy for A0; never identity",
+    "nomenclature": "owner( a0( <energy> ) <auditor/teacher> ); bare default instance is a0(deepseek)",
     "default_provider": "deepseek",
     "default_api_key_env": "DEEPSEEK_API_KEY",
     "default_env_path": "/home/wayseer_interdependentway_org/.env",

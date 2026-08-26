@@ -23,6 +23,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
 
+from .naming import parse_energy_label
+
 DEFAULT_ENV_PATH = Path("/home/wayseer_interdependentway_org/.env")
 
 
@@ -182,13 +184,17 @@ def provider_names() -> tuple[str, ...]:
 def resolve_energy(name: str | None = None, env_path: Path | None = None) -> EnergyClient:
     """Resolve an energy client.
 
-    Defaults to DeepSeek. Loads ``.env`` first so keys are present without
-    polluting the environment or logging their values.
+    Defaults to DeepSeek. Accepts either a provider name (``deepseek``) or an
+    A0 energy label (``a0(deepseek)``). Loads ``.env`` first so keys are
+    present without polluting the environment or logging their values.
     """
     load_env(env_path)
-    spec = _REGISTRY.get(name or DEEPSEEK_SPEC.name)
+    requested = name or DEEPSEEK_SPEC.name
+    parsed = parse_energy_label(requested)
+    provider = parsed if parsed is not None else requested
+    spec = _REGISTRY.get(provider)
     if spec is None:
-        raise EnergyUnavailable(f"unknown energy provider {name!r}; registered: {provider_names()}")
+        raise EnergyUnavailable(f"unknown energy provider {requested!r}; registered: {provider_names()}")
     if not spec.api_key():
         raise EnergyUnavailable(
             f"energy provider {spec.name!r} has no {spec.api_key_env}; set it in .env"

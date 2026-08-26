@@ -23,6 +23,7 @@ from .instance import (
     PermissionField,
     ResourceVector,
 )
+from .naming import energy_label, instance_label, parse_energy_label
 from .planner import DecisionTree, LEGAL_ACTION_KIND, axial_neighbors
 from .regulatory import RegulatoryLayer
 from .telemetry import TelemetryRecorder
@@ -49,7 +50,10 @@ __all__ = [
     "TelemetryRecorder",
     "XAI_SPEC",
     "axial_neighbors",
+    "energy_label",
+    "instance_label",
     "load_env",
+    "parse_energy_label",
     "plan_with_energy",
     "provider_names",
     "register_provider",
