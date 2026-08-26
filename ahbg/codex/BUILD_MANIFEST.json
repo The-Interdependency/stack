@@ -12,8 +12,24 @@
     "ucns_geometry": "stack/research/ucns/src/ucns/mobius_seed.py"
   },
   "implementation_identity": {
-    "frozen_build_sha": "the git commit that contains this manifest, source, tests, and generated artifacts",
-    "note": "Git commit hashes cannot be self-embedded in the committed file without changing the hash; the freeze SHA is recorded in the final handoff and by git history."
+    "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+    "freeze_metadata_commit": "43fdbd6120416b54bb26c52fa34c384956534257",
+    "note": "The frozen implementation identity is ffb64c2; later commits on agent/ahbg-codex are metadata or reciprocal-review records."
+  },
+  "sealed_corpus_identity": {
+    "status": "digest-adopted-post-freeze",
+    "corpus_id": "calibration-family",
+    "proposal_version": "1.0.0-proposal-1",
+    "source_branch": "origin/agent/ahbg-deepcode",
+    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
+    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "scenario_count": 35,
+    "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+    "adoption_record": "stack/ahbg/codex/corpus-adoption/CORPUS_ADOPTION.json",
+    "amendments": [],
+    "reproduction_status": "partial: the frozen Codex build ran codex_smoke_epoch/1.0.0, not the full 35-scenario proposal; differences are recorded as hmmm rather than corpus edits"
   },
   "independence_boundary": {
     "assigned_workspace_only": "stack/ahbg/codex",
@@ -56,7 +72,7 @@
     "BLOCKED"
   ],
   "hmmm": [
-    "shared sealed corpus identity is not frozen in this branch",
+    "frozen Codex build did not execute the adopted 35-scenario corpus; exact reproduction gaps are recorded in corpus-adoption/CORPUS_ADOPTION.json",
     "regulatory cost fitting is recorded as not-fit in the smoke epoch",
     "War collision resolution remains unresolved and therefore fail-closed",
     "construction, spawning, loyalty, absence, and DM rolls remain outside this smoke implementation"

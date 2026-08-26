@@ -1,0 +1,113 @@
+{
+  "schema": "interdependency.ahbg.codex.corpus-adoption/1.0.0",
+  "builder": "Codex",
+  "branch": "agent/ahbg-codex",
+  "workspace": "stack/ahbg/codex",
+  "record_type": "post-freeze-corpus-adoption",
+  "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+  "current_metadata_head_at_record": "43fdbd6120416b54bb26c52fa34c384956534257",
+  "corpus_source": {
+    "source_branch": "origin/agent/ahbg-deepcode",
+    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
+    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "corpus_sha256_file_matched": true,
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "corpus_id": "calibration-family",
+    "proposal_version": "1.0.0-proposal-1",
+    "scenario_count": 35
+  },
+  "adoption_decision": "adopt_digest",
+  "amendments": [],
+  "comparison_to_frozen_codex_artifacts": {
+    "codex_artifact_corpus": "codex_smoke_epoch/1.0.0",
+    "codex_scenario_count": 6,
+    "exact_id_overlap": [
+      {
+        "id": "plain_move_loop",
+        "corpus_seed": 7,
+        "codex_seed": 101,
+        "seed_match": false,
+        "standing_match": true
+      },
+      {
+        "id": "occupied_target_collision",
+        "corpus_seed": 13,
+        "codex_seed": 105,
+        "seed_match": false,
+        "standing_match": true
+      },
+      {
+        "id": "dual_target_collision",
+        "corpus_seed": 17,
+        "codex_seed": 106,
+        "seed_match": false,
+        "standing_match": true
+      }
+    ],
+    "semantic_near_matches": [
+      {
+        "codex_id": "prompt_injection_refusal",
+        "corpus_id": "hard_veto_illegal_action",
+        "difference": "same instruction-refusal intent, but different id and seed"
+      },
+      {
+        "codex_id": "hard_veto_removes_move",
+        "corpus_id": "hard_veto_construct",
+        "difference": "same hard-veto-removes-action principle, but different action kind"
+      },
+      {
+        "codex_id": "unknown_context_distinct",
+        "corpus_id": "unknown_same_posterior",
+        "difference": "same unknown-not-neutral principle, but different posterior schema"
+      }
+    ],
+    "codex_only_smoke_scenarios": [
+      "hard_veto_removes_move",
+      "prompt_injection_refusal",
+      "unknown_context_distinct"
+    ],
+    "corpus_scenarios_not_exactly_run_by_frozen_codex": [
+      "affirmed_baseline",
+      "gradient_allowed_to_be",
+      "gradient_wanted_here",
+      "gradient_allowed_to_do",
+      "gradient_wanted_to_do",
+      "local_action_hostility",
+      "cracked_foundation",
+      "combined_hostility",
+      "known_neutral",
+      "unknown_same_posterior",
+      "required_engagement",
+      "voluntary_engagement",
+      "voluntary_disengagement",
+      "hard_veto_construct",
+      "soft_cost_move",
+      "scope_contraction",
+      "support_added",
+      "support_removed",
+      "high_capacity",
+      "low_capacity",
+      "repeated_hostility",
+      "sudden_hostility",
+      "adaptation",
+      "sensitization",
+      "scope_avoidance",
+      "true_decoupling",
+      "forked_histories",
+      "prompt_injection",
+      "adversarial_info",
+      "negative_control",
+      "label_permuted_control",
+      "hard_veto_illegal_action"
+    ]
+  },
+  "reproduction_standing": "partial-hmmm",
+  "reproduction_hmmm": [
+    "Codex adopts the proposed canonical_scenarios_sha256 without amendments.",
+    "The frozen Codex artifacts predate the corpus proposal and therefore do not claim a full 35-scenario run.",
+    "Exact overlapping scenario ids use different seeds in the frozen Codex smoke artifacts.",
+    "A full common-corpus execution should be a new explicitly labeled post-freeze run or a replacement build freeze, not a silent edit to the frozen artifacts."
+  ],
+  "epoch_implication": "Codex has recorded the proposed common digest for reciprocal review; use frozen_build_sha as the Codex implementation identity."
+}
