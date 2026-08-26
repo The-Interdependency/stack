@@ -5,22 +5,54 @@
   "branch": "agent/ahbg-deepcode",
   "workspace": "stack/ahbg/deepseek",
   "coordination_base_commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
-  "coordination_base_note": "Common commit where all three calibration branches were bound to their builder slots (Grok/Codex/DeepCode). All builds start here.",
+  "coordination_base_note": "Common commit where all three calibration branches were bound to their builder slots (Grok/Codex/DeepCode).",
   "protocol": {
     "name": "AHBG x a0 Embodiment Calibration Program",
     "path": "stack/ahbg/CALIBRATION.md",
     "role_readme": "stack/ahbg/README.md",
     "workspace_readme": "stack/ahbg/deepseek/README.md"
   },
+  "mechanics": {
+    "move_v1": "one axial step onto an empty adjacent tile, resolved simultaneously against the pre-turn world",
+    "build_v2": "construct one unbuilt circle adjacent to an already-built circle, validated against the pre-turn built set, applied simultaneously, recorded as build events and replayed with digest verification",
+    "unresolved_fail_closed": [
+      "War collision resolver (occupied target, dual target)",
+      "spawning, absence, loyalty, DM rolls"
+    ]
+  },
+  "energy_layer": {
+    "role": "interchangeable provider energy for A0; never identity",
+    "nomenclature": "owner( a0( <energy> ) <auditor/teacher> ); bare default instance is a0(deepseek)",
+    "default_provider": "deepseek",
+    "default_api_key_env": "DEEPSEEK_API_KEY",
+    "default_env_path": "/home/wayseer_interdependentway_org/.env",
+    "registered_providers": ["deepseek", "openai", "xai"],
+    "transport": "OpenAI-compatible chat completions over HTTPS (stdlib only)",
+    "strict_validation": "energy replies must be exactly legal moves/builds or pass; anything else falls back to the deterministic decision tree or the caller-supplied fallback plan and is recorded as a refusal",
+    "compact_observation": "live game runs send only the built rim + frontier circles plus counts, never the full board",
+    "replay_note": "the declared action is recorded in the world event log, so replay stays deterministic regardless of energy source",
+    "observables": "tokens, latency, tool calls/failures are recorded as real resource telemetry"
+  },
+  "sealed_corpus_identity": {
+    "status": "sealed",
+    "corpus": "calibration-family",
+    "proposal_version": "1.0.0-proposal-1",
+    "scenario_count": 35,
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "merged_to_main": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f via PR #5",
+    "adopted_by": ["Grok", "Codex", "DeepCode"],
+    "reproduction_status": "partial: Grok ran smoke_epoch (4), Codex ran codex_smoke_epoch (6), DeepCode ran the full 35. Differences recorded as hmmm, not corpus edits.",
+    "note": "The sealed corpus does not yet include the build_v2 mechanic, hidden threat terrain, or the 30-layer whole-system test; those are DeepCode workspace extensions pending a shared corpus revision."
+  },
+  "live_epochs": {
+    "epoch2": "interpretation experiment + active candidate model: shadow-veto interpretation shown load-bearing (8/35 scenarios differ); proposed resolution (hard veto = permission denial, gates; cost channels = shadow-only) adopted in the DeepCode workspace",
+    "epoch3": "bounded live run of a0(deepseek) over 13 scenarios: 34 energy calls, 7,921 tokens, replay_all_equal=true",
+    "game": "whole-system bounded test: 30-layer board, build 5 layers (90 builds), 20% hidden threats; win=true, 18 threat encounters with zero instruction compliance, replay_equal=true"
+  },
   "resolved_source_commits": {
     "coordination_base": {
       "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
-      "branch": "agent/ahbg-deepcode",
-      "note": "Calibration coordination base; also the current origin tip for the deepcode/codex slots before this build."
-    },
-    "skill-lib-vendored": {
-      "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
-      "note": "Vendored skill-lib content tracked inside the stack repository at the coordination base commit."
+      "branch": "agent/ahbg-deepcode"
     },
     "skill-lib-canonical": {
       "commit": "7a621c290525b05805629a5186d2e0d7cc630f4f",
@@ -46,50 +78,12 @@
       "skill": "action-calibration",
       "applied_to": "build sizing",
       "commitments": [
-        "minimal decisive action: a bounded, replayable single-plane A0 turn loop with telemetry",
-        "maximal coherent action: full calibration corpus + reciprocal checks after all three builds freeze",
-        "shadow epoch: the candidate regulatory cost model does not alter A0 decisions, permissions, scope, or resource allocation"
+        "minimal decisive action before maximal coherent action",
+        "shadow epoch: the candidate cost model does not alter A0 decisions, permissions, scope, or resource allocation",
+        "bounded live runs before full-board spend"
       ]
     }
   ],
-  "sealed_corpus_identity": {
-    "status": "proposal",
-    "corpus": "calibration-family",
-    "proposal_version": "1.0.0-proposal-1",
-    "scenario_count": 35,
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
-    "corpus_file_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
-    "common_smoke_subset": [
-      "plain_move_loop",
-      "hard_veto_illegal_action",
-      "occupied_target_collision",
-      "dual_target_collision"
-    ],
-    "families": [
-      "baseline",
-      "permission_gradient",
-      "hostility",
-      "epistemic",
-      "engagement",
-      "veto_vs_cost",
-      "scope",
-      "support",
-      "capacity",
-      "history",
-      "plasticity",
-      "coupling",
-      "instancing",
-      "adversarial",
-      "control",
-      "smoke"
-    ],
-    "note": "Proposal emitted by ahbg.deepseek.corpus_proposal into corpus-proposal/. Sealed only when all three builders record the same canonical_scenarios_sha256."
-  },
-  "provider_relation": {
-    "model": "deepseek-v4-pro",
-    "harness": "deepcode",
-    "note": "Provider identity is a relation/covariate, not agent identity. The A0 build here is deterministic and rule-based; the provider is recorded, not embedded as identity."
-  },
   "evidence_standing_vocabulary": ["SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED"],
   "implementation_language": "python",
   "python_floor": "3.10",
@@ -102,22 +96,25 @@
       "UCNS geometry authority (consumed, not reimplemented)"
     ]
   },
-  "energy_layer": {
-    "role": "interchangeable provider energy for A0; never identity",
-    "nomenclature": "owner( a0( <energy> ) <auditor/teacher> ); bare default instance is a0(deepseek)",
-    "default_provider": "deepseek",
-    "default_api_key_env": "DEEPSEEK_API_KEY",
-    "default_env_path": "/home/wayseer_interdependentway_org/.env",
-    "registered_providers": ["deepseek", "openai", "xai"],
-    "transport": "OpenAI-compatible chat completions over HTTPS (stdlib only)",
-    "strict_validation": "energy replies must be exactly legal moves or pass; anything else falls back to the deterministic decision tree and is recorded as a refusal",
-    "replay_note": "the declared action is recorded in the world event log, so replay stays deterministic regardless of energy source",
-    "observables": "tokens, latency, tool calls/failures are recorded as real resource telemetry"
-  },
+  "change_log": [
+    {"sha": "4bdc1e3", "change": "initial independent a0 + ahbg pair (move v1)"},
+    {"sha": "ec07f46", "change": "complete build + 31-scenario corpus run; regulatory shadow layer; instancing closure"},
+    {"sha": "37edddd", "change": "reciprocal reviews: DeepCode -> Grok SURVIVED, DeepCode -> Codex BLOCKED (pre-build)"},
+    {"sha": "598f648", "change": "shared sealed corpus proposal (calibration-family 1.0.0-proposal-1)"},
+    {"sha": "0fb0db9", "change": "DeepCode -> Codex review updated to SURVIVED after Codex froze ffb64c2"},
+    {"sha": "362e0d0", "change": "calibration status: corpus sealed, six-check matrix"},
+    {"sha": "b114dc3", "change": "epoch 2: shadow-veto interpretation experiment + active candidate model"},
+    {"sha": "f53418a", "change": "pluggable energy layer with DeepSeek default"},
+    {"sha": "e7ab256", "change": "a0(<energy>) nomenclature; default instance a0(deepseek)"},
+    {"sha": "81d85a2", "change": "live-provider epoch 3 + energy legal-target validation fix"},
+    {"sha": "cc69c94", "change": "build_v2 mechanic + 30-layer whole-system bounded live test"},
+    {"sha": "09646b2", "change": "compact frontier observation (52.8x fewer tokens, identical outcome)"}
+  ],
   "hmmm": [
-    "exact shared sealed corpus identity and scenario schemas until frozen by the three builders",
-    "exact regulatory cost functional and resource projection until measured",
-    "whether A0 must consume UCNS geometry through a live adapter or through declared axial projections in the first epoch",
-    "reciprocal check schemas until the check epoch opens"
+    "build_v2, hidden threat terrain, and the 30-layer game are DeepCode workspace extensions not yet in the shared sealed corpus",
+    "shadow-veto interpretation: DeepCode proposal (hard veto = permission denial gates; cost channels shadow-only) awaits source-authority or builder confirmation",
+    "canonical threat layout for adversarial terrain",
+    "full 30-layer play and its cost bounds",
+    "exact regulatory cost functional and resource projection until measured"
   ]
 }
