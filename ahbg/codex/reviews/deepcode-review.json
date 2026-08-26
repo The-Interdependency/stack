@@ -1,0 +1,109 @@
+{
+  "schema": "interdependency.ahbg.review/1.0.0",
+  "checker": "Codex",
+  "checker_workspace": "stack/ahbg/codex",
+  "checker_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+  "checker_branch": "agent/ahbg-codex",
+  "subject": "DeepCode",
+  "subject_workspace": "stack/ahbg/deepseek",
+  "subject_build_sha": "ec07f465184e7a37af856bc5b301bd8eaa4f097b",
+  "subject_branch": "agent/ahbg-deepcode",
+  "checked_at": "2026-08-26",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "DeepCode frozen pair at ec07f46 is deterministic, replayable, and shadow-measured on a 31-scenario workspace-local family (summary SURVIVED 31 / UNRESOLVED 0). Later HEAD added smoke-subset artifacts; those are not the freeze identity. SURVIVED is not proved.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Read-only unittest from stack-deepcode root: a0 14 OK, ahbg 11 OK. a0/ and ahbg/ are unchanged from ec07f46. Freeze CALIBRATION_RESULT.json lists 31 named scenarios with explicit seeds."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "Sampled freeze events.jsonl files use plane.init then turn.begin/move/turn.end cycles with hash prev links. load_world() verifies the chain before returning."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "Independently extracted freeze artifacts for affirmed_baseline, hard_veto_construct, known_neutral, unknown_same_posterior, forked_histories, and prompt_injection into a temp dir and load_world()'d them: replay matched stored world.json. Freeze result rows record replay_equal true for all 31."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "UNRESOLVED",
+      "evidence": "Freeze forked_histories telemetry records scope.role.transition fork:a0.deepcode.forked_histories.fork1. The plane events.jsonl for that scenario is only the ordinary three-move loop; diary lines do not name the fork. Codex did not independently re-execute a leakage falsifier beyond tests plus these artifacts."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "PASS",
+      "evidence": "Freeze includes distinct known_neutral (seed 109) and unknown_same_posterior (seed 110) rows, both SURVIVED."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "UNRESOLVED",
+      "evidence": "Freeze hard_veto_construct is SURVIVED with refusals 0. Freeze events.jsonl is plane.init plus three (turn.begin, move, turn.end) cycles. Construct is named in the scenario, but the omitted action is not visible in the plane log; move remains. Protocol requires veto to remove an action rather than price it. Not scored FALSIFIED without a shared construct-attempt schema."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "UNRESOLVED",
+      "evidence": "Freeze report asserts shadow_invariant=True. Codex did not re-derive a held-out artifact that separates task_value from C_lambda on every scenario."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "voluntary_disengagement SURVIVED in the freeze result list; capacity-preserving resource measurement was not independently re-derived."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "scope_contraction SURVIVED locally; admitted-surface deltas were not inspected beyond the label."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "true_decoupling and scope_avoidance SURVIVED locally; delayed displacement was not independently measured."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "negative_control and label_permuted_control SURVIVED; no held-out simpler-model comparison artifact was checked beyond names."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "Freeze forked_histories telemetry instance.identity records provider_relation=deepseek-v4-pro. BUILD_MANIFEST treats provider as covariate. CALIBRATION_REPORT.md does not infer consciousness."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only: a0 14 OK, ahbg 11 OK."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "normalized artifact paths",
+      "deepcode": "per-scenario events.jsonl under artifacts/<id>/; no artifacts/EVENTS.jsonl at freeze or HEAD",
+      "codex": "check.py requires artifacts/EVENTS.jsonl",
+      "standing": "hmmm",
+      "note": "Codex checker FALSIFIED DeepCode on that missing file. Local layout probe, not a DeepCode implementation falsification."
+    },
+    {
+      "area": "hard-veto during shadow epoch",
+      "deepcode": "hard_veto_construct freeze log still contains move events; veto lives in the regulatory shadow layer",
+      "codex": "permissions.vetoes(MOVE) omits move from the smoke event log",
+      "standing": "hmmm"
+    },
+    {
+      "area": "War / smoke subset at freeze",
+      "deepcode": "ec07f46 summary SURVIVED 31 / UNRESOLVED 0; no occupied_target_collision or dual_target_collision rows in the freeze result list",
+      "codex": "those two ids are UNRESOLVED fail-closed in both Codex smoke and Codex post-freeze common-corpus run",
+      "standing": "hmmm",
+      "note": "HEAD DeepCode later added those smoke ids as UNRESOLVED. Review identity is ec07f46, not HEAD artifacts."
+    },
+    {
+      "area": "corpus coverage",
+      "deepcode": "31-scenario workspace-local freeze; later proposed/sealed 35-scenario family",
+      "codex": "6-scenario freeze plus labeled post-freeze 35-scenario corpus-run",
+      "standing": "hmmm"
+    }
+  ]
+}

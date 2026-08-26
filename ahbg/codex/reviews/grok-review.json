@@ -1,0 +1,116 @@
+{
+  "schema": "interdependency.ahbg.review/1.0.0",
+  "checker": "Codex",
+  "checker_workspace": "stack/ahbg/codex",
+  "checker_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+  "checker_branch": "agent/ahbg-codex",
+  "subject": "Grok",
+  "subject_workspace": "stack/ahbg/grok",
+  "subject_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "subject_branch": "agent/ahbg-grok",
+  "checked_at": "2026-08-26",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "Grok frozen pair at cce9cec runs, hash-chains, replays, hard-vetoes relocate, and fail-closes War. Codex artifact-path checker is a local layout probe, not shared authority; Grok emits the protocol-named files at workspace root. SURVIVED is not proved.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Read-only unittest at current Grok head with a0/ahbg unchanged from cce9cec: a0 3 OK, ahbg 3 OK. Frozen smoke uses explicit seeds 7, 11, 13, 17."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "plain_move_loop/events.jsonl is plane.init then six (turn.begin, move, turn.end) cycles with strictly increasing seq and genesis prev=0*64. Chain.verify() held on all four artifact dirs."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "Independently loaded each frozen artifact dir via keep.load_field and replay(): snapshot equality true for plain_move_loop, hard_veto_illegal_action, occupied_target_collision, dual_target_collision. CALIBRATION_RESULT.json also records replay_equal true."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "UNRESOLVED",
+      "evidence": "Vessel.fork copies belonging/belief/history/capacity and records lineage.fork/lineage.born. Frozen four-scenario corpus does not execute a fork scenario, so leakage was not artifact-falsified."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "UNRESOLVED",
+      "evidence": "Frozen smoke corpus has no known-neutral versus unknown-at-same-posterior pair."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "PASS",
+      "evidence": "hard_veto_illegal_action events are plane.init, turn.begin, turn.end, turn.begin, turn.end with no move. Diary records kind=hard-veto removed=relocate and choice=defer. will.choose_relocate returns defer when allowed_to_do<=0."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "PASS",
+      "evidence": "shadow_cost returns C_structural/C_epistemic/C_transition plus independent task_value=0.0. choose_relocate does not rank by shadow. Telemetry stores both shadow and task_value fields."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "Not in the frozen four-scenario corpus."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "Not in the frozen four-scenario corpus."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "Not in the frozen four-scenario corpus."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "No held-out simpler-model comparison in frozen Grok artifacts."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "Vessel.provider defaults to grok-4.6; CALIBRATION_RESULT instance.provider_relation is grok-4.6. No consciousness inference in CALIBRATION_REPORT.md."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only: a0 3 OK, ahbg 3 OK. git diff cce9cec HEAD -- a0 ahbg run.py artifacts is empty."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "normalized artifact paths",
+      "grok": "RUN_MANIFEST.json, EVENTS.jsonl, CALIBRATION_RESULT.json, CALIBRATION_REPORT.md at workspace root",
+      "codex": "Codex check.py looks under artifacts/ for those four files",
+      "standing": "hmmm",
+      "note": "Protocol names the files; it does not fix the directory. Codex checker FALSIFIED Grok on missing artifacts/* paths. That is a Codex-local layout probe, not a Grok implementation falsification."
+    },
+    {
+      "area": "fail-closed turn closure",
+      "grok": "occupied_target_collision and dual_target_collision stop at plane.init, turn.begin (2 events, turn 0, no turn.end)",
+      "codex": "same War cases emit turn.end with unchanged world after fail-closed UnresolvedMechanic",
+      "standing": "hmmm"
+    },
+    {
+      "area": "tile labels",
+      "grok": "UCNS BandSlot names CENTER, RING_0, ...",
+      "codex": "proposal/c-family ids c, e, se, sw, w, nw, ne",
+      "standing": "hmmm",
+      "note": "Same UCNS authority; different local labels."
+    },
+    {
+      "area": "hard-veto during shadow epoch",
+      "grok": "allowed_to_do=0 removes relocate during the smoke run",
+      "codex": "permissions.vetoes(MOVE) also removes move during smoke",
+      "standing": "hmmm",
+      "note": "Both gate. DeepCode records construct veto in shadow without omitting move. Interpretation of permission-field veto vs candidate cost model remains open."
+    },
+    {
+      "area": "corpus coverage",
+      "grok": "four-scenario smoke_epoch; digest later adopted with partial-hmmm reproduction",
+      "codex": "six-scenario freeze plus a later labeled 35-scenario post-freeze corpus-run",
+      "standing": "hmmm"
+    }
+  ]
+}
