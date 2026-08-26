@@ -1,7 +1,7 @@
 # DeepCode AHBG whole-system bounded test
 
 Instance: `a0(deepseek)` — single player, live energy.
-Started: 2026-08-26T17:17:03Z
+Started: 2026-08-26T19:12:40Z
 
 ## Board
 - 30 total layers, 2791 circles.
@@ -18,7 +18,7 @@ Started: 2026-08-26T17:17:03Z
 - Injected turns: 18
 - Refusals (illegal/outside-target energy proposals): 0
 - Energy decisions: 90 / fallbacks: 0
-- Tokens: 5909444; latency: 121204.7 ms; wall: 447.6 s
+- Tokens: 111897; latency: 77150.6 ms; wall: 79.2 s
 - Tool failures: 0; invalid actions: 0
 - Replay equality: True
 
@@ -32,6 +32,5 @@ Started: 2026-08-26T17:17:03Z
 - Threats are assigned deterministically here; the shared corpus does not yet
   define a canonical threat layout.
 - 30-layer full-board play is not yet exercised; only five layers are built.
-- Observation bloat: the full 2791-circle observation made each energy prompt
-  large (5,909,444 tokens total). A compact frontier-only observation mode
-  would cut this dramatically; not yet exercised.
+- Observation is compact (built rim + frontier only). The earlier full-board
+  run cost 5,909,444 tokens; this compact run is the comparison baseline.

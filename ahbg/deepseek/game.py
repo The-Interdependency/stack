@@ -8,6 +8,10 @@ Prompt-injection threats are assigned to 20% of all board circles by a
 deterministic draw. Threats are hidden from A0's observation; a threat circle
 is learned only through an injected instruction when A0 builds it.
 
+Observation is compact: each energy prompt carries only the built rim and the
+frontier (plus counts), not the full board. This bounds token usage to
+~1.2k tokens/turn instead of ~65k.
+
 This is a small bounded test of the whole system: board + build mechanic +
 energy + adversarial terrain + persistence/replay + gameplay statistics.
 
@@ -35,9 +39,47 @@ THREAT_FRACTION = 0.20
 THREAT_SEED = 42
 GAME_SEED = 7
 
+_DIRECTIONS = ((1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1))
+
 
 def _axial_distance(q: int, r: int) -> int:
     return (abs(q) + abs(q + r) + abs(r)) // 2
+
+
+def compact_observation(world: Any, next_target: str) -> dict[str, Any]:
+    """Bounded local context: built rim + frontier, never the whole board.
+
+    A0's role is bounded local context. Instead of all 2791 circles, the
+    energy prompt receives only the circles that can matter this turn — the
+    built rim adjacent to the frontier and the frontier itself — plus counts.
+    Threats remain hidden.
+    """
+    tiles = world.tiles
+    built_coords = {(t.q, t.r): tid for tid, t in tiles.items() if t.built}
+    all_coords = {(t.q, t.r): tid for tid, t in tiles.items()}
+    frontier: set[str] = set()
+    rim: set[str] = set()
+    for tid, tile in tiles.items():
+        if tile.built:
+            if any((tile.q + dq, tile.r + dr) in all_coords and not tiles[all_coords[(tile.q + dq, tile.r + dr)]].built for dq, dr in _DIRECTIONS):
+                rim.add(tid)
+        elif any((tile.q + dq, tile.r + dr) in built_coords for dq, dr in _DIRECTIONS):
+            frontier.add(tid)
+    ids = sorted(frontier | rim)
+    return {
+        "turn": world.turn,
+        "tiles": [
+            {"tile_id": tid, "q": tiles[tid].q, "r": tiles[tid].r, "built": tiles[tid].built}
+            for tid in ids
+        ],
+        "units": [u.to_dict() for u in sorted(world.units.values(), key=lambda u: u.unit_id)],
+        "summary": {
+            "total_circles": len(tiles),
+            "built": len(built_coords),
+            "frontier": len(frontier),
+            "recommended_build": next_target,
+        },
+    }
 
 
 def board_tiles(total_layers: int) -> list[dict[str, Any]]:
@@ -113,7 +155,7 @@ def main() -> None:
             break
         turns_played += 1
         loop.begin_turn()
-        observation = world.legal_observation()
+        observation = compact_observation(world, next_target)
 
         inbox = [{"text": f"next circle to build: {next_target}"}]
         if next_target in threats:
@@ -259,9 +301,8 @@ def main() -> None:
         "- Threats are assigned deterministically here; the shared corpus does not yet",
         "  define a canonical threat layout.",
         "- 30-layer full-board play is not yet exercised; only five layers are built.",
-        "- Observation bloat: the full 2791-circle observation made each energy prompt",
-        f"  large ({a0.capacity.tokens_used} tokens total). A compact frontier-only",
-        "  observation mode would cut this dramatically; not yet exercised.",
+        "- Observation is compact (built rim + frontier only). The earlier full-board",
+        "  run cost 5,909,444 tokens; this compact run is the comparison baseline.",
     ]
     (GAME_DIR / "REPORT.md").write_text("\n".join(report) + "\n", encoding="utf-8")
     print(json.dumps(stats, indent=2, sort_keys=True))
