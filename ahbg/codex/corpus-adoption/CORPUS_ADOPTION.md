@@ -31,11 +31,21 @@ None. Codex does not propose edits to the shared corpus.
 
 ## Reproduction Standing
 
-Partial / `hmmm`.
+Complete as a post-freeze run.
 
-The frozen Codex artifacts were generated before the shared corpus proposal and
-ran `codex_smoke_epoch/1.0.0`, not the full 35-scenario corpus. This is not a
-corpus objection. It is a reproduction gap that must remain visible.
+The original frozen Codex artifacts were generated before the shared corpus
+proposal and ran `codex_smoke_epoch/1.0.0`. Codex later added an explicitly
+labeled common-corpus runner and executed all 35 scenarios against the frozen
+implementation identity.
+
+- Runner commit: `3b3e67adff14effaf0426a02004aa68a48753b9f`
+- Run record commit: `029f15005c655b9fea53253d0d1cd7f421d6af39`
+- Result path: `stack/ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json`
+- Summary: SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0
+- UNRESOLVED ids: `occupied_target_collision`, `dual_target_collision`
+
+This does not rewrite the frozen smoke artifacts or change the frozen Codex
+build SHA.
 
 Exact id overlap with frozen Codex artifacts:
 
@@ -55,5 +65,6 @@ Near matches:
 - `unknown_context_distinct` maps to the unknown-not-neutral principle, but not
   the proposed `unknown_same_posterior` schema.
 
-Codex therefore records the common digest while preserving the fact that the
-frozen build has not executed the full common corpus.
+Codex therefore records the common digest and the later full execution while
+preserving the fact that the initial frozen artifact set was a smaller smoke
+corpus.

@@ -10,7 +10,23 @@
   "subject_branch": "agent/ahbg-deepcode",
   "checked_at": "2026-08-26",
   "evidence_standing": "SURVIVED",
-  "overall_note": "DeepCode frozen pair at ec07f46 is deterministic, replayable, and shadow-measured on a 31-scenario workspace-local family (summary SURVIVED 31 / UNRESOLVED 0). Later HEAD added smoke-subset artifacts; those are not the freeze identity. SURVIVED is not proved.",
+  "overall_note": "DeepCode frozen pair at ec07f46 is deterministic, replayable, and shadow-measured on a 31-scenario workspace-local family (summary SURVIVED 31 / UNRESOLVED 0). Later artifacts record the full 35-scenario common-corpus surface with SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0; that update does not change the frozen review identity. SURVIVED is not proved.",
+  "post_review_evidence": {
+    "deepcode_common_corpus_artifacts": {
+      "path": "ahbg/deepseek/artifacts/CALIBRATION_RESULT.json",
+      "summary": {
+        "SURVIVED": 33,
+        "UNRESOLVED": 2,
+        "FALSIFIED": 0,
+        "BLOCKED": 0
+      }
+    },
+    "matching_grok_and_codex_unresolved_ids": [
+      "occupied_target_collision",
+      "dual_target_collision"
+    ],
+    "note": "Current DeepCode common-corpus artifacts match the observed Grok and Codex 35-scenario standing distribution."
+  },
   "checks": [
     {
       "id": "deterministic_scenario_validation",
@@ -94,14 +110,14 @@
     },
     {
       "area": "War / smoke subset at freeze",
-      "deepcode": "ec07f46 summary SURVIVED 31 / UNRESOLVED 0; no occupied_target_collision or dual_target_collision rows in the freeze result list",
+      "deepcode": "ec07f46 freeze summary SURVIVED 31 / UNRESOLVED 0; current artifacts add occupied_target_collision and dual_target_collision as UNRESOLVED",
       "codex": "those two ids are UNRESOLVED fail-closed in both Codex smoke and Codex post-freeze common-corpus run",
       "standing": "hmmm",
       "note": "HEAD DeepCode later added those smoke ids as UNRESOLVED. Review identity is ec07f46, not HEAD artifacts."
     },
     {
       "area": "corpus coverage",
-      "deepcode": "31-scenario workspace-local freeze; later proposed/sealed 35-scenario family",
+      "deepcode": "31-scenario workspace-local freeze plus current 35-scenario common-corpus artifact summary SURVIVED 33 / UNRESOLVED 2",
       "codex": "6-scenario freeze plus labeled post-freeze 35-scenario corpus-run",
       "standing": "hmmm"
     }

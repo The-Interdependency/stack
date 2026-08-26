@@ -10,7 +10,33 @@
   "subject_branch": "agent/ahbg-grok",
   "checked_at": "2026-08-26",
   "evidence_standing": "SURVIVED",
-  "overall_note": "Grok frozen pair at cce9cec runs, hash-chains, replays, hard-vetoes relocate, and fail-closes War. Codex artifact-path checker is a local layout probe, not shared authority; Grok emits the protocol-named files at workspace root. SURVIVED is not proved.",
+  "overall_note": "Grok frozen pair at cce9cec runs, hash-chains, replays, hard-vetoes relocate, and fail-closes War. Codex artifact-path checker is a local layout probe, not shared authority; Grok emits the protocol-named files at workspace root. SURVIVED is not proved. Post-review evidence: Grok and Codex both later recorded full 35-scenario common-corpus runs with SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0.",
+  "post_review_evidence": {
+    "grok_common_corpus_run": {
+      "path": "ahbg/grok/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
+      "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+      "summary": {
+        "SURVIVED": 33,
+        "UNRESOLVED": 2,
+        "FALSIFIED": 0,
+        "BLOCKED": 0
+      }
+    },
+    "codex_common_corpus_run": {
+      "path": "ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
+      "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+      "summary": {
+        "SURVIVED": 33,
+        "UNRESOLVED": 2,
+        "FALSIFIED": 0,
+        "BLOCKED": 0
+      }
+    },
+    "unresolved_scenario_ids": [
+      "occupied_target_collision",
+      "dual_target_collision"
+    ]
+  },
   "checks": [
     {
       "id": "deterministic_scenario_validation",
@@ -108,8 +134,8 @@
     },
     {
       "area": "corpus coverage",
-      "grok": "four-scenario smoke_epoch; digest later adopted with partial-hmmm reproduction",
-      "codex": "six-scenario freeze plus a later labeled 35-scenario post-freeze corpus-run",
+      "grok": "four-scenario smoke_epoch at freeze plus later labeled 35-scenario post-freeze corpus-run, summary SURVIVED 33 / UNRESOLVED 2",
+      "codex": "six-scenario freeze plus later labeled 35-scenario post-freeze corpus-run, summary SURVIVED 33 / UNRESOLVED 2",
       "standing": "hmmm"
     }
   ]

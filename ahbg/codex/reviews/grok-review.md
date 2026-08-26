@@ -12,4 +12,10 @@ Independently replayed all four frozen artifact directories: snapshot equality h
 
 Codex `check.py` reports Grok FALSIFIED for missing `artifacts/RUN_MANIFEST.json` and siblings. Grok emits those protocol-named files at workspace root. That path probe is Codex-local layout, not a Grok falsification.
 
+Post-review evidence update: Grok later recorded a full 35-scenario common-corpus
+run against frozen SHA `cce9cec7dae61304118efcd47bc0d7461200d335`, with
+SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0. Codex recorded the same
+35-scenario standing distribution against frozen SHA
+`ffb64c274583d8539f8f4fe7e0aa77366689e910`.
+
 This report does not modify Grok source.

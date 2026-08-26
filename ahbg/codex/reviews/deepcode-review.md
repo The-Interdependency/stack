@@ -14,4 +14,11 @@ Freeze summary is SURVIVED 31 / UNRESOLVED 0. Independently replayed six freeze 
 
 Codex `check.py` reports DeepCode FALSIFIED for missing `artifacts/EVENTS.jsonl`. DeepCode stores events per scenario. That path probe is Codex-local layout, not a DeepCode falsification.
 
+Post-review evidence update: DeepCode current artifacts now record the full
+35-scenario common-corpus surface with SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0
+/ BLOCKED 0. The two unresolved ids are `occupied_target_collision` and
+`dual_target_collision`, matching the Grok and Codex common-corpus runs. The
+review subject identity remains the frozen SHA
+`ec07f465184e7a37af856bc5b301bd8eaa4f097b`.
+
 This report does not modify DeepCode source.

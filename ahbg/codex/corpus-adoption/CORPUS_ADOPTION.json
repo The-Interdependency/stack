@@ -102,12 +102,34 @@
       "hard_veto_illegal_action"
     ]
   },
-  "reproduction_standing": "partial-hmmm",
+  "post_freeze_common_corpus_run": {
+    "runner_commit_sha": "3b3e67adff14effaf0426a02004aa68a48753b9f",
+    "run_record_commit_sha": "029f15005c655b9fea53253d0d1cd7f421d6af39",
+    "artifact_path": "stack/ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
+    "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+    "scenario_count": 35,
+    "summary": {
+      "SURVIVED": 33,
+      "UNRESOLVED": 2,
+      "FALSIFIED": 0,
+      "BLOCKED": 0
+    },
+    "unresolved_scenario_ids": [
+      "occupied_target_collision",
+      "dual_target_collision"
+    ],
+    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "standing": "SURVIVED_WITH_EXPECTED_UNRESOLVED_HMMM",
+    "note": "Post-freeze execution; does not rewrite original freeze artifacts or frozen build identity."
+  },
+  "reproduction_standing": "full-post-freeze-run-complete",
   "reproduction_hmmm": [
     "Codex adopts the proposed canonical_scenarios_sha256 without amendments.",
-    "The frozen Codex artifacts predate the corpus proposal and therefore do not claim a full 35-scenario run.",
+    "The frozen Codex smoke artifacts predate the corpus proposal and remain a smaller first artifact set.",
+    "A later explicitly labeled post-freeze run executed all 35 common-corpus scenarios against the frozen Codex build identity.",
     "Exact overlapping scenario ids use different seeds in the frozen Codex smoke artifacts.",
-    "A full common-corpus execution should be a new explicitly labeled post-freeze run or a replacement build freeze, not a silent edit to the frozen artifacts."
+    "The two unresolved War collision ids remain hmmm and fail closed."
   ],
-  "epoch_implication": "Codex has recorded the proposed common digest for reciprocal review; use frozen_build_sha as the Codex implementation identity."
+  "epoch_implication": "Codex has recorded the common digest and a complete post-freeze corpus run; use frozen_build_sha as the Codex implementation identity for reciprocal review."
 }
