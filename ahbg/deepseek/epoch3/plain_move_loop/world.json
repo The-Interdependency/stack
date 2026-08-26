@@ -1,0 +1,1 @@
+{"schema":"interdependency.ahbg.deepseek.world/1.0.0","seed":7,"tiles":[{"q":0,"r":0,"tile_id":"c"},{"q":1,"r":0,"tile_id":"e"},{"q":1,"r":-1,"tile_id":"ne"},{"q":0,"r":-1,"tile_id":"nw"},{"q":0,"r":1,"tile_id":"se"},{"q":-1,"r":1,"tile_id":"sw"},{"q":-1,"r":0,"tile_id":"w"}],"turn":6,"units":[{"tile_id":"e","unit_id":"A0"}]}

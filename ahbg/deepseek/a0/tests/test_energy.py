@@ -59,6 +59,13 @@ class EnergyPlannerTests(unittest.TestCase):
         self.assertEqual(instance.capacity.tokens_used, 14)
         self.assertEqual(instance.capacity.tool_calls, 1)
 
+    def test_accepts_any_legal_neighbor_not_just_tree_first_choice(self) -> None:
+        # The deterministic tree picks "e" first; "se" is equally legal and must be accepted.
+        energy = FakeEnergy(EnergyResult(ok=True, text='{"kind":"move","to_tile_id":"se"}'))
+        result = plan_with_energy(OBSERVATION, energy=energy)
+        self.assertEqual(result.source, "energy")
+        self.assertEqual(result.plan["actions"][0]["data"]["to_tile_id"], "se")
+
     def test_illegal_energy_move_falls_back(self) -> None:
         energy = FakeEnergy(EnergyResult(ok=True, text='{"kind":"move","to_tile_id":"far"}', prompt_tokens=5, completion_tokens=2))
         result = plan_with_energy(OBSERVATION, energy=energy)

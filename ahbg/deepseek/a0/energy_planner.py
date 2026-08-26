@@ -29,15 +29,27 @@ class EnergyPlan:
 
 
 def _legal_targets(observation: dict[str, Any], self_unit_id: str) -> set[str]:
-    """Compute the set of empty axial-neighbor tiles the energy may target."""
-    tree = DecisionTree(observation=observation, self_unit_id=self_unit_id)
-    plan = tree.plan()
-    if not plan.get("actions"):
+    """Compute ALL empty axial-neighbor tiles the energy may legally target.
+
+    The energy may choose any legal move, not only the deterministic tree's
+    first choice. The tree remains the fallback decision when the energy is
+    unavailable or proposes anything outside this set.
+    """
+    tiles = {t["tile_id"]: t for t in observation.get("tiles", [])}
+    units = observation.get("units", [])
+    occupied = {u["tile_id"] for u in units}
+    self_unit = next((u for u in units if u["unit_id"] == self_unit_id), None)
+    if self_unit is None:
         return set()
-    action = plan["actions"][0]
-    if action.get("kind") != LEGAL_ACTION_KIND:
+    from_tile = tiles.get(self_unit["tile_id"])
+    if from_tile is None:
         return set()
-    return {action["data"]["to_tile_id"]}
+    targets: set[str] = set()
+    for dq, dr in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, -1), (-1, 1)):
+        for tid, tile in tiles.items():
+            if (tile["q"], tile["r"]) == (from_tile["q"] + dq, from_tile["r"] + dr) and tid not in occupied:
+                targets.add(tid)
+    return targets
 
 
 def _prompt_messages(observation: dict[str, Any], inbox: list[dict[str, Any]], self_unit_id: str) -> list[dict[str, str]]:
