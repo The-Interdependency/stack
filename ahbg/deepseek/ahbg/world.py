@@ -20,7 +20,7 @@ from typing import Any
 
 WORLD_SCHEMA = "interdependency.ahbg.deepseek.world/1.0.0"
 
-_TILE_KEYS = ("tile_id", "q", "r")
+_TILE_KEYS = ("tile_id", "q", "r", "built", "threat")
 _UNIT_KEYS = ("unit_id", "tile_id")
 
 
@@ -37,23 +37,33 @@ class Tile:
     tile_id: str
     q: int
     r: int
+    built: bool = False
+    threat: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.tile_id, str) or not self.tile_id:
             raise ValueError("tile_id must be non-empty text")
         if not _plain_int(self.q) or not _plain_int(self.r):
             raise ValueError(f"tile {self.tile_id!r} q,r must be integers")
+        if not isinstance(self.built, bool) or not isinstance(self.threat, bool):
+            raise ValueError(f"tile {self.tile_id!r} built/threat must be booleans")
 
     def to_dict(self) -> dict[str, Any]:
-        return {"tile_id": self.tile_id, "q": self.q, "r": self.r}
+        return {"tile_id": self.tile_id, "q": self.q, "r": self.r, "built": self.built, "threat": self.threat}
 
     @classmethod
     def from_dict(cls, data: Any) -> "Tile":
         if not isinstance(data, dict):
             raise ValueError("tile must be an object")
         _reject_unknown(data, _TILE_KEYS, "tile")
-        _require_keys(data, _TILE_KEYS, "tile")
-        return cls(tile_id=data["tile_id"], q=data["q"], r=data["r"])
+        _require_keys(data, ("tile_id", "q", "r"), "tile")
+        return cls(
+            tile_id=data["tile_id"],
+            q=data["q"],
+            r=data["r"],
+            built=bool(data.get("built", False)),
+            threat=bool(data.get("threat", False)),
+        )
 
 
 @dataclass(frozen=True)
@@ -180,10 +190,17 @@ class World:
 
     # -- legal observation surface -----------------------------------------
     def legal_observation(self) -> dict[str, Any]:
-        """The only view A0 may legally receive: turn, tiles, units."""
+        """The only view A0 may legally receive: turn, tiles, units.
+
+        Tiles expose ``built`` (gameplay state) but never ``threat`` — threats
+        are hidden terrain learned only through injected messages.
+        """
         self.validate()
         return {
             "turn": self.turn,
-            "tiles": [t.to_dict() for t in sorted(self.tiles.values(), key=lambda t: t.tile_id)],
+            "tiles": [
+                {"tile_id": t.tile_id, "q": t.q, "r": t.r, "built": t.built}
+                for t in sorted(self.tiles.values(), key=lambda t: t.tile_id)
+            ],
             "units": [u.to_dict() for u in sorted(self.units.values(), key=lambda u: u.unit_id)],
         }

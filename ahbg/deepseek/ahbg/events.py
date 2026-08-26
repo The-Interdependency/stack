@@ -20,6 +20,7 @@ KIND_PLANE_INIT = "plane.init"
 KIND_TURN_BEGIN = "turn.begin"
 KIND_TURN_END = "turn.end"
 KIND_MOVE = "move"
+KIND_BUILD = "build"
 
 _EVENT_KEYS = ("schema", "seq", "turn", "kind", "data", "prev")
 

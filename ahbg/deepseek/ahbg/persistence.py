@@ -15,8 +15,18 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .events import KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, EventLog
-from .turns import MoveSpec, ReplayMismatch, UnresolvedHmmm, ValidationError, _apply_moves_simultaneously, move_spec_from_event_data
+from .events import KIND_BUILD, KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, EventLog
+from .turns import (
+    BuildSpec,
+    MoveSpec,
+    ReplayMismatch,
+    UnresolvedHmmm,
+    ValidationError,
+    _apply_builds_simultaneously,
+    _apply_moves_simultaneously,
+    build_spec_from_event_data,
+    move_spec_from_event_data,
+)
 from .world import World
 
 WORLD_FILE = "world.json"
@@ -55,7 +65,8 @@ def replay(log: EventLog) -> World:
         raise ReplayMismatch("initial world must have turn 0")
 
     phase = "awaiting_begin"
-    buffered: list[MoveSpec] = []
+    buffered_moves: list[MoveSpec] = []
+    buffered_builds: list[BuildSpec] = []
     for event in events[1:]:
         if event.kind == KIND_TURN_BEGIN:
             if phase != "awaiting_begin":
@@ -68,19 +79,27 @@ def replay(log: EventLog) -> World:
                 raise ReplayMismatch(f"move seq {event.seq} arrived outside an open turn")
             if event.turn != world.turn:
                 raise ReplayMismatch(f"move seq {event.seq} turn mismatch")
-            buffered.append(move_spec_from_event_data(event.data))
+            buffered_moves.append(move_spec_from_event_data(event.data))
+        elif event.kind == KIND_BUILD:
+            if phase != "awaiting_end":
+                raise ReplayMismatch(f"build seq {event.seq} arrived outside an open turn")
+            if event.turn != world.turn:
+                raise ReplayMismatch(f"build seq {event.seq} turn mismatch")
+            buffered_builds.append(build_spec_from_event_data(event.data))
         elif event.kind == KIND_TURN_END:
             if phase != "awaiting_end":
                 raise ReplayMismatch(f"turn.end seq {event.seq} arrived while {phase}")
             if event.turn != world.turn or event.data.get("turn") != world.turn:
                 raise ReplayMismatch(f"turn.end seq {event.seq} turn mismatch")
-            _apply_moves_simultaneously(world, buffered)
+            _apply_moves_simultaneously(world, buffered_moves)
+            _apply_builds_simultaneously(world, buffered_builds)
             expected = world.digest()
             if event.data.get("state_digest") != expected:
                 raise ReplayMismatch(f"turn.end seq {event.seq} state digest mismatch")
             world.turn += 1
             phase = "awaiting_begin"
-            buffered = []
+            buffered_moves = []
+            buffered_builds = []
         else:
             raise ReplayMismatch(f"event kind {event.kind!r} is not canonical")
     return world

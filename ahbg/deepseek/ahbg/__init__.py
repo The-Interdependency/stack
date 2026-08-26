@@ -2,6 +2,7 @@
 
 from .events import (
     EVENT_SCHEMA,
+    KIND_BUILD,
     KIND_MOVE,
     KIND_PLANE_INIT,
     KIND_TURN_BEGIN,
@@ -17,7 +18,9 @@ from .rng import (
     DeterministicRng,
 )
 from .turns import (
+    BUILD_ACTION,
     MOVE_ACTION,
+    BuildSpec,
     EngineError,
     MoveSpec,
     ReplayMismatch,
@@ -25,16 +28,20 @@ from .turns import (
     UnresolvedHmmm,
     ValidationError,
     axial_neighbors,
+    built_tile_ids,
 )
 from .world import WORLD_SCHEMA, Tile, Unit, World
 
 __all__ = [
+    "BUILD_ACTION",
     "DM_DOMAIN",
     "EVENT_SCHEMA",
     "EngineError",
+    "BuildSpec",
     "DeterministicRng",
     "Event",
     "EventLog",
+    "KIND_BUILD",
     "KIND_MOVE",
     "KIND_PLANE_INIT",
     "KIND_TURN_BEGIN",
@@ -52,6 +59,7 @@ __all__ = [
     "WORLD_SCHEMA",
     "World",
     "axial_neighbors",
+    "built_tile_ids",
     "load_world",
     "new_game",
     "replay",
