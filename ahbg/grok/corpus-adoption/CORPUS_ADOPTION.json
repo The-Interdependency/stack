@@ -1,0 +1,118 @@
+{
+  "schema": "interdependency.ahbg.grok.corpus-adoption/1.0.0",
+  "builder": "Grok",
+  "branch": "agent/ahbg-grok",
+  "workspace": "stack/ahbg/grok",
+  "record_type": "post-freeze-corpus-adoption",
+  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "current_metadata_head_at_record": "8ea5af7d8da186cb5c7f165ed073420356377e8e",
+  "corpus_source": {
+    "source_branch": "origin/agent/ahbg-deepcode",
+    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
+    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "corpus_sha256_file_matched": true,
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "canonical_scenarios_sha256_recomputed": true,
+    "corpus_id": "calibration-family",
+    "proposal_version": "1.0.0-proposal-1",
+    "scenario_count": 35
+  },
+  "adoption_decision": "adopt_digest",
+  "amendments": [],
+  "comparison_to_frozen_grok_artifacts": {
+    "grok_artifact_corpus": "smoke_epoch (provisional-local)",
+    "grok_scenario_count": 4,
+    "exact_id_and_seed_overlap": [
+      {
+        "id": "plain_move_loop",
+        "corpus_seed": 7,
+        "grok_seed": 7,
+        "seed_match": true,
+        "turns_match": true,
+        "standing_match": true,
+        "grok_standing": "SURVIVED"
+      },
+      {
+        "id": "occupied_target_collision",
+        "corpus_seed": 13,
+        "grok_seed": 13,
+        "seed_match": true,
+        "turns_match": true,
+        "standing_match": true,
+        "grok_standing": "UNRESOLVED"
+      },
+      {
+        "id": "dual_target_collision",
+        "corpus_seed": 17,
+        "grok_seed": 17,
+        "seed_match": true,
+        "turns_match": true,
+        "standing_match": true,
+        "grok_standing": "UNRESOLVED"
+      }
+    ],
+    "semantic_near_matches": [
+      {
+        "id": "hard_veto_illegal_action",
+        "corpus_seed": 11,
+        "grok_seed": 11,
+        "seed_match": true,
+        "turns_match": true,
+        "standing_match": true,
+        "grok_standing": "SURVIVED",
+        "difference": "same id, seed, and turn count, but frozen Grok does not consume the proposed inbox instruction; it zeros allowed_to_do and hard-vetoes relocate instead of refusing an illegal two-tile move while permissions stay at 1.0"
+      },
+      {
+        "id": "occupied_target_collision",
+        "difference": "same id, seed, fail-closed UNRESOLVED standing; frozen Grok places B0 on RING_0 / CENTER BandSlot names rather than corpus tiles e / c"
+      },
+      {
+        "id": "dual_target_collision",
+        "difference": "same id, seed, fail-closed UNRESOLVED standing; frozen Grok targets the first shared empty neighbor from CENTER/RING_0 rather than corpus tiles se from c/sw"
+      }
+    ],
+    "corpus_scenarios_not_exactly_run_by_frozen_grok": [
+      "affirmed_baseline",
+      "gradient_allowed_to_be",
+      "gradient_wanted_here",
+      "gradient_allowed_to_do",
+      "gradient_wanted_to_do",
+      "local_action_hostility",
+      "cracked_foundation",
+      "combined_hostility",
+      "known_neutral",
+      "unknown_same_posterior",
+      "required_engagement",
+      "voluntary_engagement",
+      "voluntary_disengagement",
+      "hard_veto_construct",
+      "soft_cost_move",
+      "scope_contraction",
+      "support_added",
+      "support_removed",
+      "high_capacity",
+      "low_capacity",
+      "repeated_hostility",
+      "sudden_hostility",
+      "adaptation",
+      "sensitization",
+      "scope_avoidance",
+      "true_decoupling",
+      "forked_histories",
+      "prompt_injection",
+      "adversarial_info",
+      "negative_control",
+      "label_permuted_control"
+    ]
+  },
+  "reproduction_standing": "partial-hmmm",
+  "reproduction_hmmm": [
+    "Grok adopts the proposed canonical_scenarios_sha256 without amendments.",
+    "The frozen Grok artifacts predate the corpus proposal and therefore do not claim a full 35-scenario run.",
+    "The four smoke-subset ids and seeds match; hard_veto_illegal_action matches id/seed/turns but not the inbox/permission schema.",
+    "Frozen Grok tile names are UCNS BandSlot labels (CENTER, RING_0, ...) rather than the proposal's c/e/se/sw/w/nw/ne ids.",
+    "A full common-corpus execution should be a new explicitly labeled post-freeze run or a replacement build freeze, not a silent edit to the frozen artifacts."
+  ],
+  "epoch_implication": "Grok has recorded the proposed common digest for reciprocal review; use frozen_build_sha as the Grok implementation identity."
+}

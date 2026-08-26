@@ -66,10 +66,12 @@ Frozen implementation SHA: `cce9cec7dae61304118efcd47bc0d7461200d335`
 (see `FREEZE.md`). Reciprocal reviews use that SHA, not later metadata commits.
 
 Smoke epoch writes `CALIBRATION_RESULT.json`, `RUN_MANIFEST.json`, `EVENTS.jsonl`,
-and per-scenario files under `artifacts/`. The shared sealed corpus is still
-`hmmm`.
+and per-scenario files under `artifacts/`. Grok adopts the shared corpus digest
+`b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0` with no
+amendments; frozen-build reproduction of the full 35-scenario family remains
+`hmmm` (see `corpus-adoption/`).
 
 ## hmmm
 
 Implementation and checker choices are local to this workspace until the shared evidence distinguishes them.
-The shared sealed corpus is not frozen. War remains fail-closed.
+The adopted digest is recorded; the frozen build did not run the full common corpus. War remains fail-closed.
