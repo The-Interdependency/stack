@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "coupling",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 8,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "true_decoupling",
+  "seed": 126,
+  "selected_actions": 3,
+  "telemetry_records": 17,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "a0b94b2c013506f34ae8b3ec2a428198cf9fe1dbdc8f7b033cb8fdbae26ed639"
+}

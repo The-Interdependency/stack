@@ -1,0 +1,22 @@
+{
+  "event_count": 3,
+  "evidence_standing": "UNRESOLVED",
+  "expected_standing": "UNRESOLVED",
+  "family": "smoke",
+  "final_turn": 1,
+  "forced_turns": 1,
+  "history_entries": 3,
+  "invalid_actions": 1,
+  "note": "War resolver remains hmmm; fail-closed behavior observed",
+  "observed_standing": "UNRESOLVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "occupied_target_collision",
+  "seed": 13,
+  "selected_actions": 1,
+  "telemetry_records": 8,
+  "turns": 1,
+  "unresolved_hmmm": 1,
+  "validation_errors": 0,
+  "world_digest": "81e4b953817def0b67a1816fc12781dddbf661652db7288a92e23b979ae5c697"
+}

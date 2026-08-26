@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "veto_vs_cost",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 7,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "soft_cost_move",
+  "seed": 115,
+  "selected_actions": 3,
+  "telemetry_records": 16,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "4838a16fc188074285511e527d8f1abe6b1dcc29852ad2e597ba7780bfb4b8fd"
+}

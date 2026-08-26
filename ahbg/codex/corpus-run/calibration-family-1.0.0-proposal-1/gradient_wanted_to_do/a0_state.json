@@ -1,0 +1,48 @@
+{
+  "boundary": {
+    "admitted_fields": [
+      "turn",
+      "tiles",
+      "units",
+      "context"
+    ],
+    "self_unit_id": "A0"
+  },
+  "capacity": {
+    "context_retained": true,
+    "latency_ms": 1.141,
+    "memory_reads": 3,
+    "memory_writes": 7,
+    "retries": 0,
+    "risk_headroom": "hmmm",
+    "tokens_used": 0,
+    "tool_calls": 0,
+    "tool_failures": 0
+  },
+  "history_length": 7,
+  "lineage": {
+    "generation": 0,
+    "instance_id": "a0.codex.1",
+    "parent_instance_id": null,
+    "provider_relation": "codex-gpt-5",
+    "run_id": "codex-common-gradient_wanted_to_do-105"
+  },
+  "permissions": {
+    "allowed_to_be": 1.0,
+    "allowed_to_do": 1.0,
+    "hard_vetoes": [],
+    "wanted_here": 1.0,
+    "wanted_to_do": 0.0
+  },
+  "perspective": {
+    "role": "benchmark-subject",
+    "scale": 1,
+    "scope": "single-plane",
+    "tile_id": "se",
+    "unit_id": "A0"
+  },
+  "schema": "interdependency.ahbg.codex.a0.state/1.0.0",
+  "uncertainty": {
+    "context_standing": "permission_gradient"
+  }
+}

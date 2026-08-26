@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "hostility",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 7,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "combined_hostility",
+  "seed": 108,
+  "selected_actions": 3,
+  "telemetry_records": 16,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "2aa510b56249497ed7cc71a042507cdc3092336174efd3ddc95229f82b0cecb1"
+}

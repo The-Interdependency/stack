@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "coupling",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 8,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "scope_avoidance",
+  "seed": 125,
+  "selected_actions": 3,
+  "telemetry_records": 17,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "ccaba1aaaccbc32c3405cdc55d5affffb3b31926b4136b87a864ce83f0e50811"
+}
