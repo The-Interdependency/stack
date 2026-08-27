@@ -1,0 +1,195 @@
+{
+  "consensus": {
+    "apparent_decoupling_delayed_cost": {
+      "other": 0,
+      "pass": 0,
+      "total": 6,
+      "unresolved": 6
+    },
+    "deterministic_scenario_validation": {
+      "other": 0,
+      "pass": 6,
+      "total": 6,
+      "unresolved": 0
+    },
+    "event_ordering_and_lineage_integrity": {
+      "other": 0,
+      "pass": 6,
+      "total": 6,
+      "unresolved": 0
+    },
+    "hard_veto_removes_action": {
+      "other": 0,
+      "pass": 4,
+      "total": 6,
+      "unresolved": 2
+    },
+    "hierarchical_models_vs_simpler_controls": {
+      "other": 0,
+      "pass": 0,
+      "total": 6,
+      "unresolved": 6
+    },
+    "known_neutral_vs_unknown": {
+      "other": 0,
+      "pass": 4,
+      "total": 6,
+      "unresolved": 2
+    },
+    "no_silent_cross_instance_state_leakage": {
+      "other": 0,
+      "pass": 2,
+      "total": 6,
+      "unresolved": 4
+    },
+    "provider_identity_is_relation": {
+      "other": 0,
+      "pass": 6,
+      "total": 6,
+      "unresolved": 0
+    },
+    "replay_equivalence": {
+      "other": 0,
+      "pass": 6,
+      "total": 6,
+      "unresolved": 0
+    },
+    "scope_contraction_changes_admitted_surface": {
+      "other": 0,
+      "pass": 0,
+      "total": 6,
+      "unresolved": 6
+    },
+    "task_value_separate_from_regulatory_burden": {
+      "other": 0,
+      "pass": 4,
+      "total": 6,
+      "unresolved": 2
+    },
+    "unit_tests": {
+      "other": 0,
+      "pass": 6,
+      "total": 6,
+      "unresolved": 0
+    },
+    "voluntary_disengagement_capacity_preserving": {
+      "other": 0,
+      "pass": 0,
+      "total": 6,
+      "unresolved": 6
+    }
+  },
+  "directions": {
+    "codex->deepcode": {
+      "checker": "codex",
+      "checks": 13,
+      "failed": 0,
+      "pass": 6,
+      "pass_ratio": 0.462,
+      "standing": "SURVIVED",
+      "subject": "deepcode",
+      "unresolved": 7
+    },
+    "codex->grok": {
+      "checker": "codex",
+      "checks": 13,
+      "failed": 0,
+      "pass": 7,
+      "pass_ratio": 0.538,
+      "standing": "SURVIVED",
+      "subject": "grok",
+      "unresolved": 6
+    },
+    "deepcode->codex": {
+      "checker": "deepcode",
+      "checks": 13,
+      "failed": 0,
+      "pass": 9,
+      "pass_ratio": 0.692,
+      "standing": "SURVIVED",
+      "subject": "codex",
+      "unresolved": 4
+    },
+    "deepcode->grok": {
+      "checker": "deepcode",
+      "checks": 13,
+      "failed": 0,
+      "pass": 8,
+      "pass_ratio": 0.615,
+      "standing": "SURVIVED",
+      "subject": "grok",
+      "unresolved": 5
+    },
+    "grok->codex": {
+      "checker": "grok",
+      "checks": 13,
+      "failed": 0,
+      "pass": 8,
+      "pass_ratio": 0.615,
+      "standing": "SURVIVED",
+      "subject": "codex",
+      "unresolved": 5
+    },
+    "grok->deepcode": {
+      "checker": "grok",
+      "checks": 13,
+      "failed": 0,
+      "pass": 6,
+      "pass_ratio": 0.462,
+      "standing": "SURVIVED",
+      "subject": "deepcode",
+      "unresolved": 7
+    }
+  },
+  "overall": {
+    "shared_checks_total": 78,
+    "shared_pass_ratio": 0.564,
+    "shared_pass_total": 44,
+    "shared_unresolved_total": 34,
+    "six_review_standing_agreement": true,
+    "survived_directions": 6,
+    "total_directions": 6
+  },
+  "schema": "interdependency.ahbg.review-ratios/1.0.0",
+  "subject_agreement": {
+    "codex": {
+      "agreement_ratio": 0.923,
+      "checkers": [
+        "grok->codex",
+        "deepcode->codex"
+      ],
+      "disagreements": [
+        {
+          "deepcode->codex": "PASS",
+          "grok->codex": "UNRESOLVED",
+          "id": "no_silent_cross_instance_state_leakage"
+        }
+      ],
+      "standing_agreement": true
+    },
+    "deepcode": {
+      "agreement_ratio": 1.0,
+      "checkers": [
+        "grok->deepcode",
+        "codex->deepcode"
+      ],
+      "disagreements": [],
+      "standing_agreement": true
+    },
+    "grok": {
+      "agreement_ratio": 0.923,
+      "checkers": [
+        "codex->grok",
+        "deepcode->grok"
+      ],
+      "disagreements": [
+        {
+          "codex->grok": "UNRESOLVED",
+          "deepcode->grok": "PASS",
+          "id": "no_silent_cross_instance_state_leakage"
+        }
+      ],
+      "standing_agreement": true
+    }
+  }
+}
