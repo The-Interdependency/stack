@@ -26,4 +26,7 @@ board's collision and replay semantics (War remains UnresolvedHmmm / ClosedUnkno
 from .codex import CodexBoardDriver
 from .deepcode import DeepCodeBoardDriver
 
-__all__ = ["CodexBoardDriver", "DeepCodeBoardDriver"]
+# Viewer support (pygame optional at import time)
+from .viewer import Viewer, make_driver
+
+__all__ = ["CodexBoardDriver", "DeepCodeBoardDriver", "Viewer", "make_driver"]

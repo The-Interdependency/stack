@@ -148,6 +148,22 @@ class CodexBoardDriver:
         except (UnresolvedHmmm, ValidationError):
             raise
 
+    def submit_build(self, unit_id: str, tile_id: str) -> list[dict[str, Any]]:
+        # Codex smoke build does not expose build; keep for API parity
+        return []
+
+    def submit_plan(self, plan: dict[str, Any]) -> list[dict[str, Any]]:
+        # Only moves are supported in the base Codex driver
+        for a in plan.get("actions", []):
+            if a.get("kind") == "move":
+                ch = {
+                    "kind": "relocate",
+                    "unit_id": a["data"]["unit_id"],
+                    "to_tile_id": a["data"]["to_tile_id"],
+                }
+                return self.submit_choice(ch)
+        return []
+
     def replay_check(self) -> bool:
         try:
             replayed = replay(self._log)

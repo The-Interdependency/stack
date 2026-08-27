@@ -81,10 +81,14 @@ class DeepCodeBoardDriver:
         unit_id: str = "A0",
         tiles: list[dict[str, Any]] | None = None,
         units: list[dict[str, Any]] | None = None,
+        layers: int | None = None,
     ) -> None:
         self._unit_id = unit_id
         self._from_naming = "deepcode"
         self._to_naming = "grok"
+
+        if layers is not None and tiles is None:
+            tiles = self._make_hex_board(layers)
 
         default_tiles = tiles or [
             {"tile_id": "c", "q": 0, "r": 0, "built": True},
@@ -95,13 +99,25 @@ class DeepCodeBoardDriver:
             {"tile_id": "nw", "q": 0, "r": -1},
             {"tile_id": "ne", "q": 1, "r": -1},
         ]
-        default_units = units or [{"unit_id": unit_id, "tile_id": "c"}]
+        # When we generated a hex board, the center tile uses "t0,0"
+        center_tile = "t0,0" if layers is not None else "c"
+        default_units = units or [{"unit_id": unit_id, "tile_id": center_tile}]
 
         world, log = new_game(seed, tiles=default_tiles, units=default_units)
         self._world = world
         self._log = log
         self._loop = TurnLoop(world, log)
         self._last_obs: dict[str, Any] | None = None
+
+    def _make_hex_board(self, layers: int) -> list[dict[str, Any]]:
+        """Centered hex board of given radius (layers). Center starts built."""
+        tiles: list[dict[str, Any]] = []
+        for q in range(-layers, layers + 1):
+            for r in range(-layers, layers + 1):
+                if abs(q) + abs(q + r) + abs(r) <= layers:
+                    built = (q == 0 and r == 0)
+                    tiles.append({"tile_id": f"t{q},{r}", "q": q, "r": r, "built": built})
+        return tiles
 
     @property
     def world(self):
@@ -125,17 +141,126 @@ class DeepCodeBoardDriver:
         return empty_neighbors_from_observation(obs, uid, naming=self._to_naming)
 
     def submit_choice(self, choice: dict[str, Any]) -> list[dict[str, Any]]:
-        from bridges.common import translate_choice
         if choice.get("kind") != "relocate":
             return []
-        foreign_choice = translate_choice(choice, from_naming=self._to_naming, to_naming=self._from_naming)
+        # Resolve using live world axial lookup so we emit the exact tile id the world uses
+        # (important for generated larger boards that use "t{q},{r}" even for ring axials).
+        to_wanted = choice.get("to_tile_id")
+        unit = choice.get("unit_id", self._unit_id)
+        foreign_to = self._resolve_tile_id(to_wanted)
         plan = {
             "turn": self._world.turn,
-            "actions": [{"kind": "move", "data": {"unit_id": foreign_choice["unit_id"], "to_tile_id": foreign_choice["to_tile_id"]}}],
+            "actions": [{"kind": "move", "data": {"unit_id": unit, "to_tile_id": foreign_to}}],
         }
         try:
             self._loop.begin_turn()
             events = self._loop.resolve([plan])
+            return [dict(e) if isinstance(e, dict) else getattr(e, "to_dict", lambda: dict(e))() for e in events]
+        except (UnresolvedHmmm, ValidationError):
+            raise
+
+    def _resolve_tile_id(self, wanted: str) -> str:
+        """Map a (possibly grok-naming) label to the concrete tile id present in this world's tiles."""
+        from bridges.common import label_to_axial
+        try:
+            ax = label_to_axial(str(wanted), naming="grok")
+        except Exception:
+            s = str(wanted).lower().lstrip("t")
+            try:
+                if "," in s:
+                    q, r = s.split(",", 1)
+                    ax = (int(q), int(r))
+                else:
+                    return wanted
+            except Exception:
+                return wanted
+        for tid, tile in self._world.tiles.items():
+            if (tile.q, tile.r) == ax:
+                return tid
+        return wanted
+
+    def submit_build(self, unit_id: str, tile_id: str) -> list[dict[str, Any]]:
+        """Submit a construction action on larger boards.
+
+        Accepts either the tile id as exposed by this driver (preferred) or a
+        human-friendly name. We resolve by axial coordinate against the live world.
+        """
+        # Resolve the requested tile by axial in the actual world (most reliable for large boards)
+        target_ax = None
+        try:
+            from bridges.common import label_to_axial
+            target_ax = label_to_axial(str(tile_id), naming="grok")
+        except Exception:
+            # Try to parse as tq,r directly
+            s = str(tile_id).lower().lstrip("t")
+            try:
+                if "," in s:
+                    q, r = s.split(",", 1)
+                    target_ax = (int(q), int(r))
+            except Exception:
+                pass
+
+        if target_ax is None:
+            # last resort: use as-is (may fail in world, which is correct)
+            foreign_tile = tile_id
+        else:
+            # Find a tile in the current world with that axial
+            for tid, tile in self._world.tiles.items():
+                if (tile.q, tile.r) == target_ax:
+                    foreign_tile = tid
+                    break
+            else:
+                foreign_tile = tile_id
+
+        plan = {
+            "turn": self._world.turn,
+            "actions": [{"kind": "build", "data": {"unit_id": unit_id, "tile_id": foreign_tile}}],
+        }
+        try:
+            self._loop.begin_turn()
+            events = self._loop.resolve([plan])
+            return [dict(e) if isinstance(e, dict) else getattr(e, "to_dict", lambda: dict(e))() for e in events]
+        except (UnresolvedHmmm, ValidationError):
+            raise
+
+    def submit_plan(self, plan: dict[str, Any]) -> list[dict[str, Any]]:
+        """Submit a general plan (moves and/or builds).
+
+        Best effort translation of tile ids using axial lookup in the live world.
+        """
+        from bridges.common import label_to_axial
+
+        def resolve_tile(wanted: str) -> str:
+            try:
+                ax = label_to_axial(str(wanted), naming="grok")
+            except Exception:
+                s = str(wanted).lower().lstrip("t")
+                try:
+                    if "," in s:
+                        q, r = s.split(",", 1)
+                        ax = (int(q), int(r))
+                    else:
+                        return wanted
+                except Exception:
+                    return wanted
+            for tid, tile in self._world.tiles.items():
+                if (tile.q, tile.r) == ax:
+                    return tid
+            return wanted
+
+        foreign_plan = {"turn": plan.get("turn", self._world.turn), "actions": []}
+        for action in plan.get("actions", []):
+            a = dict(action)
+            data = dict(a.get("data", {}))
+            for k in ("tile_id", "to_tile_id", "from_tile_id"):
+                if k in data:
+                    data[k] = resolve_tile(data[k])
+            a["data"] = data
+            foreign_plan["actions"].append(a)
+
+        try:
+            self._loop.begin_turn()
+            events = self._loop.resolve([foreign_plan])
             return [dict(e) if isinstance(e, dict) else getattr(e, "to_dict", lambda: dict(e))() for e in events]
         except (UnresolvedHmmm, ValidationError):
             raise
