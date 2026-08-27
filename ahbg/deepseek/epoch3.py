@@ -1,3 +1,4 @@
+# ratios: loc_comments=160:13 imports_exports=8:2 calls_definitions=38:2
 """DeepCode AHBG calibration — live-provider epoch (epoch 3).
 
 Runs a bounded subset of the sealed corpus with ``a0(deepseek)`` energy and
@@ -192,3 +193,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+# ratios: loc_comments=160:13 imports_exports=8:2 calls_definitions=38:2

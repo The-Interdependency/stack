@@ -1,3 +1,4 @@
+# ratios: loc_comments=137:25 imports_exports=10:9 calls_definitions=44:13
 """A0 energy layer — pluggable provider abstraction.
 
 A0 treats an LLM as interchangeable *energy*, never as identity. This module:
@@ -200,3 +201,4 @@ def resolve_energy(name: str | None = None, env_path: Path | None = None) -> Ene
             f"energy provider {spec.name!r} has no {spec.api_key_env}; set it in .env"
         )
     return HttpEnergyClient(spec)
+# ratios: loc_comments=137:25 imports_exports=10:9 calls_definitions=44:13

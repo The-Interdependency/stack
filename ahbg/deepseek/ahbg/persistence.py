@@ -1,3 +1,4 @@
+# ratios: loc_comments=115:15 imports_exports=7:4 calls_definitions=53:4
 """DeepSeek AHBG realization — persistence and deterministic replay.
 
 A persisted world is two files in one directory:
@@ -148,3 +149,4 @@ def load_world(directory: str | os.PathLike) -> tuple[World, EventLog]:
     if replayed.canonical_dict() != world.canonical_dict():
         raise ReplayMismatch("persisted world does not match the replay of its event log")
     return world, log
+# ratios: loc_comments=115:15 imports_exports=7:4 calls_definitions=53:4

@@ -1,3 +1,4 @@
+# ratios: loc_comments=35:6 imports_exports=2:1 calls_definitions=0:0
 """DeepSeek AHBG calibration workspace.
 
 Independent a0 + ahbg pair. Read ``../CALIBRATION.md`` and this workspace's
@@ -42,3 +43,4 @@ __all__ = [
     "replay",
     "save_world",
 ]
+# ratios: loc_comments=35:6 imports_exports=2:1 calls_definitions=0:0

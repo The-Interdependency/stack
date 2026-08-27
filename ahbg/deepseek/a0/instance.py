@@ -1,3 +1,4 @@
+# ratios: loc_comments=182:39 imports_exports=5:5 calls_definitions=44:27
 """DeepSeek A0 realization — instance, lineage, boundary, and telemetry.
 
 This is the DeepSeek-owned bootstrap of the AHBG benchmark subject. It is an
@@ -266,3 +267,4 @@ class A0Instance:
 
     def measure_latency(self, started_monotonic: float) -> float:
         return max(0.0, (time.monotonic() - started_monotonic) * 1000.0)
+# ratios: loc_comments=182:39 imports_exports=5:5 calls_definitions=44:27

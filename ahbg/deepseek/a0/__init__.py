@@ -1,3 +1,4 @@
+# ratios: loc_comments=58:1 imports_exports=8:1 calls_definitions=0:0
 """DeepSeek A0 realization package."""
 
 from .diary import Diary, DiaryEntry
@@ -59,3 +60,4 @@ __all__ = [
     "register_provider",
     "resolve_energy",
 ]
+# ratios: loc_comments=58:1 imports_exports=8:1 calls_definitions=0:0

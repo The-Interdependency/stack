@@ -1,3 +1,4 @@
+# ratios: loc_comments=159:23 imports_exports=7:2 calls_definitions=51:6
 """A0 energy planning — strict validation with deterministic fallback.
 
 Energy is interchangeable: A0 asks a provider for a legal action, validates
@@ -207,3 +208,4 @@ def plan_with_energy(
         source="energy",
         result=result,
     )
+# ratios: loc_comments=159:23 imports_exports=7:2 calls_definitions=51:6

@@ -1,3 +1,4 @@
+# ratios: loc_comments=157:11 imports_exports=5:4 calls_definitions=33:4
 """DeepCode AHBG calibration — ratio comparisons across all six reviews.
 
 All six directional reviews share the same 13 check ids from the frozen
@@ -192,3 +193,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+# ratios: loc_comments=157:11 imports_exports=5:4 calls_definitions=33:4

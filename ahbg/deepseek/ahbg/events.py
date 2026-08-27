@@ -1,3 +1,4 @@
+# ratios: loc_comments=108:6 imports_exports=6:2 calls_definitions=42:15
 """DeepSeek AHBG realization — append-only event log with hash chain.
 
 Independent implementation. The event-kind envelope is shared protocol:
@@ -136,3 +137,4 @@ class EventLog:
             log._head = event.digest()
         log.verify()
         return log
+# ratios: loc_comments=108:6 imports_exports=6:2 calls_definitions=42:15

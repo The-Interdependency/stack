@@ -1,3 +1,4 @@
+# ratios: loc_comments=44:6 imports_exports=2:1 calls_definitions=15:9
 """DeepSeek AHBG realization — deterministic randomness.
 
 Independent implementation: a counter-mode SHA-256 stream. For a given
@@ -62,3 +63,4 @@ class DeterministicRng:
             raise ValueError("substream domain must be non-empty text")
         child_domain = f"{self._domain}/{domain}" if self._domain else domain
         return DeterministicRng(seed=self._seed, domain=child_domain)
+# ratios: loc_comments=44:6 imports_exports=2:1 calls_definitions=15:9

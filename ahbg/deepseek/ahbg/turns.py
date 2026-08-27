@@ -1,3 +1,4 @@
+# ratios: loc_comments=215:26 imports_exports=5:11 calls_definitions=92:21
 """DeepSeek AHBG realization — turn loop and simultaneous resolution.
 
 The success loop from the AHBG README:
@@ -290,3 +291,4 @@ def build_spec_from_event_data(data: dict[str, Any]) -> BuildSpec:
     if missing:
         raise ValidationError(f"build event is missing fields: {missing}")
     return BuildSpec(unit_id=data["unit_id"], tile_id=data["tile_id"])
+# ratios: loc_comments=215:26 imports_exports=5:11 calls_definitions=92:21

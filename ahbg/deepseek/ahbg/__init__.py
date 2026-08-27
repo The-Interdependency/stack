@@ -1,3 +1,4 @@
+# ratios: loc_comments=64:1 imports_exports=5:1 calls_definitions=0:0
 """DeepSeek AHBG realization package."""
 
 from .events import (
@@ -65,3 +66,4 @@ __all__ = [
     "replay",
     "save_world",
 ]
+# ratios: loc_comments=64:1 imports_exports=5:1 calls_definitions=0:0

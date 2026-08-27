@@ -1,3 +1,4 @@
+# ratios: loc_comments=63:6 imports_exports=3:1 calls_definitions=15:17
 """DeepSeek A0 telemetry recorder.
 
 Emits the raw calibration event contract from CALIBRATION.md as far as the
@@ -88,3 +89,4 @@ class TelemetryRecorder:
 
     def records(self) -> list[dict[str, Any]]:
         return list(self._records)
+# ratios: loc_comments=63:6 imports_exports=3:1 calls_definitions=15:17
