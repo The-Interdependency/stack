@@ -1,0 +1,27 @@
+{
+  "schema": "interdependency.ahbg.corpus-adoption/1.0.0",
+  "role": "proposer",
+  "corpus_id": "calibration-family",
+  "proposal_version": "1.0.0-proposal-1",
+  "proposal_path": "ahbg/deepseek/corpus-proposal/corpus.json",
+  "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+  "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+  "scenario_count": 35,
+  "common_smoke_subset": [
+    "plain_move_loop",
+    "hard_veto_illegal_action",
+    "occupied_target_collision",
+    "dual_target_collision"
+  ],
+  "adopted_without_amendments_by": ["Grok", "Codex"],
+  "merged_to_main": {
+    "pr": 5,
+    "commit": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f"
+  },
+  "reproduction": {
+    "DeepCode": "full 35 (33 SURVIVED, 2 UNRESOLVED)",
+    "Grok": "post-freeze full 35 (33 SURVIVED, 2 UNRESOLVED)",
+    "Codex": "post-freeze full 35 (33 SURVIVED, 2 UNRESOLVED)"
+  },
+  "amendments_proposed": "none after sealing"
+}

@@ -25,6 +25,33 @@ During the independent build phase, do not read, copy, merge, cherry-pick, or ad
 
 Freeze the runnable build at an exact commit SHA before reciprocal review begins.
 
+## Current build
+
+This workspace now contains a runnable independent pair plus post-freeze
+extension evidence:
+
+- `a0/` — A0 lineage, boundary, permission field, capacity, uncertainty,
+  regulatory shadow layer, telemetry, diary, deterministic decision tree,
+  naming (`a0(<energy>)`), and a pluggable energy layer with DeepSeek
+  default (`DEEPSEEK_API_KEY` from `.env`; openai and xai registered).
+- `ahbg/` — UCNS-backed Seed-of-Life tile projection, world state (tiles
+  carry `built`/`threat`), event log, turn loop with simultaneous `move`
+  (v1) and `build` (v2) resolution, fail-closed unresolved mechanics,
+  persistence, replay, and artifact checker.
+- `run.py` — runs the sealed 35-scenario corpus, emits normalized artifacts
+  under `artifacts/`, and enforces controls.
+- `scenarios.py` — the `calibration-family` scenario source (digest
+  `b05cba2c…e5e0`, merged to `main` via PR #5).
+- `epoch2.py` — shadow-veto interpretation experiment + active candidate
+  model.
+- `epoch3.py` — bounded live-provider run of `a0(deepseek)`.
+- `game.py` — whole-system bounded test: 30-layer board, 5-layer build,
+  20% hidden threats, compact frontier observation, gameplay statistics.
+- `reviews/` — both read-only reciprocal reviews plus the six-review ratio
+  comparison.
+- `CALIBRATION_STATUS.md` — frozen SHAs, six-check matrix, divergence
+  register. `BUILD_MANIFEST.json` — provenance and change log.
+
 ## Reciprocal review phase
 
 After all three build SHAs are frozen, DeepCode checks both other implementations read-only:
