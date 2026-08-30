@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AHBG Web Viewer — hex is still hex</title>
+<style>
+  body { margin:0; background:#121216; color:#ddd; font-family: monospace; }
+  #wrap { display:flex; flex-direction:column; height:100vh; }
+  #topbar { padding:6px 10px; background:#1a1a20; border-bottom:1px solid #333; display:flex; gap:12px; align-items:center; }
+  #topbar button { background:#333; color:#ddd; border:1px solid #555; padding:4px 10px; cursor:pointer; font-family:inherit; }
+  #topbar button:hover { background:#444; }
+  #canvas { flex:1; display:block; background:#121216; cursor: crosshair; }
+  #hud { padding:4px 10px; background:#1a1a20; border-top:1px solid #333; font-size:13px; white-space:pre; }
+  .note { color:#888; font-size:12px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="topbar">
+    <strong>AHBG Web Viewer</strong>
+    <span id="driver-info" class="note"></span>
+    <button id="btn-step">Step (prefer build)</button>
+    <button id="btn-reset">Reset</button>
+    <label style="margin-left:12px">
+      <input type="checkbox" id="build-mode"> Build mode (right-click or this)
+    </label>
+    <span class="note" style="margin-left:auto">LMB=move, RMB or check=build • drag=pan • wheel=zoom • hex is still hex</span>
+  </div>
+  <canvas id="canvas" width="1024" height="768"></canvas>
+  <div id="hud">turn: 0 | tiles: 0 | zoom: 1.0 | click empty adjacent to move, buildable to construct</div>
+</div>
+
+<script>
+// Exact port of bridges/common.py hex layout (flat-top axial)
+function hexCenter(q, r, size) {
+  const x = size * (3.0 / 2.0 * q);
+  const y = size * (Math.sqrt(3) / 2.0 * q + Math.sqrt(3) * r);
+  return [x, y];
+}
+
+function hexCorners(cx, cy, size) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.PI / 180 * (60 * i);
+    const x = cx + size * Math.cos(angle);
+    const y = cy + size * Math.sin(angle);
+    pts.push([x, y]);
+  }
+  return pts;
+}
+
+function axialToPixel(q, r, size, offsetX, offsetY) {
+  const [cx, cy] = hexCenter(q, r, size);
+  return [cx + offsetX, cy + offsetY];
+}
+
+// Approximate inverse like the Python _screen_to_axial
+function screenToAxial(sx, sy, size, offsetX, offsetY, tiles) {
+  let best = null;
+  let bestD = Infinity;
+  for (const t of tiles) {
+    const [cx, cy] = axialToPixel(t.q, t.r, size, offsetX, offsetY);
+    const d = (cx - sx) ** 2 + (cy - sy) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = {q: t.q, r: t.r, tile_id: t.tile_id};
+    }
+  }
+  return best;
+}
+
+let state = {
+  turn: 0,
+  tiles: [],
+  units: [],
+  offsetX: 400,
+  offsetY: 320,
+  zoom: 1.0,
+  size: 18,
+};
+
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+let hud = document.getElementById('hud');
+let buildMode = document.getElementById('build-mode');
+
+let dragging = false;
+let lastX = 0, lastY = 0;
+
+function getSize() {
+  return state.size * state.zoom;
+}
+
+function draw() {
+  ctx.fillStyle = '#121216';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const sz = getSize();
+  const ox = state.offsetX;
+  const oy = state.offsetY;
+
+  // Tiles (exact same colors and polygon style as pygame viewer)
+  for (const t of state.tiles) {
+    const [cx, cy] = axialToPixel(t.q, t.r, sz, ox, oy);
+    const corners = hexCorners(cx, cy, sz);
+
+    const built = !!t.built;
+    ctx.fillStyle = built ? '#468c5a' : '#373741';
+    ctx.beginPath();
+    ctx.moveTo(corners[0][0], corners[0][1]);
+    for (let i=1; i<corners.length; i++) ctx.lineTo(corners[i][0], corners[i][1]);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = '#1e1e23';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // label
+    ctx.fillStyle = '#c8c8d2';
+    ctx.font = '12px monospace';
+    ctx.fillText(t.tile_id || '', cx - 12, cy + 4);
+  }
+
+  // Units (gold circles, same as pygame)
+  for (const u of state.units) {
+    const t = state.tiles.find(tt => tt.tile_id === u.tile_id);
+    let cx, cy;
+    if (t) {
+      [cx, cy] = axialToPixel(t.q, t.r, sz, ox, oy);
+    } else {
+      // fallback
+      [cx, cy] = axialToPixel(0, 0, sz, ox, oy);
+    }
+    ctx.fillStyle = '#dcb43c';
+    ctx.beginPath();
+    ctx.arc(cx, cy, sz * 0.55, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#141419';
+    ctx.font = 'bold 12px monospace';
+    ctx.fillText(u.unit_id || '?', cx - 5, cy + 4);
+  }
+
+  // HUD
+  hud.textContent = `turn: ${state.turn} | tiles: ${state.tiles.length} | zoom: ${state.zoom.toFixed(1)} | LMB move • RMB/build-mode build • drag pan • wheel zoom`;
+}
+
+function updateInfo(driverName, layers) {
+  const el = document.getElementById('driver-info');
+  el.textContent = driverName ? `${driverName} (layers=${layers || 1})` : '';
+}
+
+// Mouse handlers (same spirit as pygame viewer)
+canvas.addEventListener('mousedown', (e) => {
+  if (e.button === 0) { // left
+    if (buildMode.checked) {
+      tryBuildAt(e.offsetX, e.offsetY);
+    } else {
+      tryMoveAt(e.offsetX, e.offsetY);
+    }
+  } else if (e.button === 2) {
+    e.preventDefault();
+    tryBuildAt(e.offsetX, e.offsetY);
+  }
+  dragging = true;
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+canvas.addEventListener('mousemove', (e) => {
+  if (dragging) {
+    state.offsetX += e.offsetX - lastX;
+    state.offsetY += e.offsetY - lastY;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+    draw();
+  }
+});
+
+window.addEventListener('mouseup', () => { dragging = false; });
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const factor = e.deltaY < 0 ? 1.1 : 1/1.1;
+  state.zoom = Math.max(0.3, Math.min(4.0, state.zoom * factor));
+  draw();
+}, {passive: false});
+
+function tryMoveAt(sx, sy) {
+  const sz = getSize();
+  const ax = screenToAxial(sx, sy, sz, state.offsetX, state.offsetY, state.tiles);
+  if (!ax) return;
+
+  const unit = state.units[0];
+  if (!unit) return;
+
+  // Find current empties from the tiles (client-side approximation for demo)
+  // In live server mode this will be overridden by server response.
+  const occupied = new Set(state.units.map(u => u.tile_id));
+  const empties = [];
+  const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  for (const [dq,dr] of dirs) {
+    const nq = ax.q + dq, nr = ax.r + dr;  // note: we use the clicked tile as origin for neighbors? No — from the UNIT's position
+  }
+  // Correct: neighbors of the UNIT
+  const uTile = state.tiles.find(t => t.tile_id === unit.tile_id);
+  if (!uTile) return;
+  for (const [dq,dr] of dirs) {
+    const nq = uTile.q + dq, nr = uTile.r + dr;
+    const nt = state.tiles.find(t => t.q === nq && t.r === nr);
+    if (nt && !occupied.has(nt.tile_id)) {
+      empties.push(nt.tile_id);
+    }
+  }
+
+  if (empties.includes(ax.tile_id)) {
+    // Perform local move for immediate feedback
+    unit.tile_id = ax.tile_id;
+    draw();
+    // If live backend is present, send the action
+    if (window.__live) {
+      fetch('/action', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({kind:'relocate', unit_id: unit.unit_id, to_tile_id: ax.tile_id})
+      }).then(r=>r.json()).then(newState => { state = newState; draw(); });
+    }
+  }
+}
+
+function tryBuildAt(sx, sy) {
+  const sz = getSize();
+  const ax = screenToAxial(sx, sy, sz, state.offsetX, state.offsetY, state.tiles);
+  if (!ax) return;
+
+  const unit = state.units[0];
+  if (!unit) return;
+
+  const uTile = state.tiles.find(t => t.tile_id === unit.tile_id);
+  if (!uTile) return;
+
+  const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  let isAdjUnbuilt = false;
+  for (const [dq,dr] of dirs) {
+    if (ax.q === uTile.q + dq && ax.r === uTile.r + dr) {
+      const tile = state.tiles.find(t => t.tile_id === ax.tile_id);
+      if (tile && !tile.built) isAdjUnbuilt = true;
+    }
+  }
+  if (isAdjUnbuilt) {
+    const tile = state.tiles.find(t => t.tile_id === ax.tile_id);
+    if (tile) tile.built = true;
+    draw();
+
+    if (window.__live) {
+      fetch('/action', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({kind:'build', unit_id: unit.unit_id, tile_id: ax.tile_id})
+      }).then(r=>r.json()).then(newState => { state = newState; draw(); });
+    }
+  }
+}
+
+document.getElementById('btn-step').addEventListener('click', () => {
+  // Prefer build if any unbuilt adjacent, else move
+  const unit = state.units[0];
+  if (!unit) return;
+
+  const uTile = state.tiles.find(t => t.tile_id === unit.tile_id);
+  if (!uTile) return;
+
+  const dirs = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+  const occupied = new Set(state.units.map(u=>u.tile_id));
+
+  let buildTarget = null;
+  for (const [dq,dr] of dirs) {
+    const nq = uTile.q + dq, nr = uTile.r + dr;
+    const nt = state.tiles.find(t => t.q===nq && t.r===nr);
+    if (nt && !nt.built) { buildTarget = nt.tile_id; break; }
+  }
+
+  if (buildTarget) {
+    const t = state.tiles.find(tt => tt.tile_id === buildTarget);
+    if (t) t.built = true;
+    draw();
+    if (window.__live) {
+      fetch('/action', {method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({kind:'build', unit_id:unit.unit_id, tile_id:buildTarget})})
+        .then(r=>r.json()).then(s => {state=s; draw();});
+    }
+  } else {
+    // simple move to first empty
+    for (const [dq,dr] of dirs) {
+      const nq = uTile.q + dq, nr = uTile.r + dr;
+      const nt = state.tiles.find(t => t.q===nq && t.r===nr);
+      if (nt && !occupied.has(nt.tile_id)) {
+        unit.tile_id = nt.tile_id;
+        draw();
+        if (window.__live) {
+          fetch('/action', {method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({kind:'relocate', unit_id:unit.unit_id, to_tile_id:nt.tile_id})})
+            .then(r=>r.json()).then(s => {state=s; draw();});
+        }
+        break;
+      }
+    }
+  }
+});
+
+document.getElementById('btn-reset').addEventListener('click', () => {
+  if (window.__live) {
+    fetch('/reset').then(r=>r.json()).then(s => { state = s; draw(); });
+  } else {
+    // reload original snapshot if present
+    if (window.__initialState) {
+      state = JSON.parse(JSON.stringify(window.__initialState));
+      draw();
+    }
+  }
+});
+
+buildMode.addEventListener('change', () => {});
+
+// Boot: either live mode (window.__live) or static snapshot
+function boot(initial) {
+  if (initial) {
+    state = initial;
+    // remember for reset in static mode
+    window.__initialState = JSON.parse(JSON.stringify(initial));
+  }
+  // center roughly
+  if (state.tiles.length) {
+    const minQ = Math.min(...state.tiles.map(t=>t.q));
+    const maxQ = Math.max(...state.tiles.map(t=>t.q));
+    state.offsetX = 400 - ((minQ + maxQ) / 2) * 27 * state.zoom;
+  }
+  draw();
+  updateInfo(window.__driver || '', window.__layers);
+}
+
+window.addEventListener('load', () => {
+  if (window.__initialObs) {
+    boot(window.__initialObs);
+  } else {
+    // demo fallback: small hex
+    const demoTiles = [];
+    for (let q=-2; q<=2; q++) for (let r=-2; r<=2; r++) {
+      if (Math.abs(q) + Math.abs(q+r) + Math.abs(r) <= 2) {
+        demoTiles.push({tile_id:`t${q},${r}`, q, r, built: (q===0 && r===0)});
+      }
+    }
+    boot({turn:0, tiles: demoTiles, units: [{unit_id:'A0', tile_id:'t0,0'}]});
+  }
+});
+
+// Allow external injection for Python-generated pages
+window.AHBGWebViewer = { setState: boot, draw };
+
+// If Python embeds a snapshot as JSON in this script tag, use it.
+document.addEventListener('DOMContentLoaded', () => {
+  const snap = document.getElementById('ahbg-snapshot');
+  if (snap && snap.textContent.trim()) {
+    try {
+      const data = JSON.parse(snap.textContent);
+      if (data.tiles && data.units) {
+        boot(data);
+        if (data.driver) window.__driver = data.driver;
+        if (data.layers != null) window.__layers = data.layers;
+        updateInfo(window.__driver, window.__layers);
+      }
+    } catch(e){}
+  }
+});
+</script>
+</body>
+</html>

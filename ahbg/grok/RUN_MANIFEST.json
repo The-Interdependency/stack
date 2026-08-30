@@ -1,0 +1,20 @@
+{
+  "board_authority": "UCNS build_mobius_seed_of_life band centers",
+  "board_projection": "axial (q, r) from UCNS exact centers; tiles named by BandSlot",
+  "builder": "Grok",
+  "corpus": "smoke_epoch (provisional-local)",
+  "hmmm": [
+    "shared sealed corpus identity not yet frozen by three builders",
+    "War collision resolver",
+    "regulatory cost functional"
+  ],
+  "provider_relation": "grok-4.6 (relation, not identity)",
+  "scenarios": [
+    "plain_move_loop",
+    "hard_veto_illegal_action",
+    "occupied_target_collision",
+    "dual_target_collision"
+  ],
+  "shadow_epoch": true,
+  "workspace": "stack/ahbg/grok"
+}

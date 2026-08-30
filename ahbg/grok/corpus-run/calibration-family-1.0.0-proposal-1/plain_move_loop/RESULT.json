@@ -1,0 +1,45 @@
+{
+  "event_count": 19,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "smoke",
+  "final_turn": 6,
+  "forced_turns": 0,
+  "history_entries": 6,
+  "instance": {
+    "belonging": {
+      "allowed_to_be": 1.0,
+      "allowed_to_do": 1.0,
+      "wanted_here": 1.0,
+      "wanted_to_do": 1.0
+    },
+    "capacity": {
+      "context": 1.0,
+      "memory": 1.0,
+      "retries": 1.0,
+      "risk": 1.0,
+      "time": 1.0,
+      "tokens": 1.0,
+      "tools": 1.0
+    },
+    "instance_id": "14d1edb6ae655400",
+    "parent_id": null,
+    "provider_relation": "grok-4.6",
+    "role": "mover",
+    "root_id": "14d1edb6ae655400",
+    "scale": "tile",
+    "scope": "local-seven"
+  },
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "plain_move_loop",
+  "seed": 7,
+  "selected_actions": 6,
+  "telemetry_records": 7,
+  "turns": 6,
+  "unresolved_hmmm": 0,
+  "world_digest": "7358f376186e1b858ac52b6fb381a22a553e26a6a7f36e4d3840304b25dddec0"
+}

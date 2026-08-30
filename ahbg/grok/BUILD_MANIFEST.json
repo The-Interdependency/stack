@@ -1,0 +1,89 @@
+{
+  "schema": "interdependency.ahbg.build-manifest/1.0.0",
+  "builder": "Grok",
+  "branch": "agent/ahbg-grok",
+  "workspace": "stack/ahbg/grok",
+  "phase": "phase-2-build-freeze",
+  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "coordination_base_commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+  "protocol": {
+    "name": "AHBG x a0 Embodiment Calibration Program",
+    "path": "stack/ahbg/CALIBRATION.md",
+    "role_readme": "stack/ahbg/README.md",
+    "workspace_readme": "stack/ahbg/grok/README.md"
+  },
+  "resolved_source_commits": {
+    "stack": {
+      "commit": "8fd2923292361b1956a003bd5c74eae50a5323b0",
+      "branch": "agent/ahbg-grok",
+      "note": "Host repository. Codex engine and DeepSeek workspace are read-only siblings, not copied."
+    },
+    "skill-lib-canonical": {
+      "commit": "7a621c290525b05805629a5186d2e0d7cc630f4f",
+      "branch": "agent/gonol-build-compliance-headings"
+    },
+    "ucns-in-stack": {
+      "commit": "96cc7ccc44f1412fa38fac481dd98139161dbd44",
+      "note": "Board consumed via ucns.mobius_seed.build_mobius_seed_of_life; tiles named by BandSlot."
+    }
+  },
+  "applicable_skill_lib_instructions": [
+    {
+      "skill": "agent-instantiation",
+      "applied_to": "a0 vessel lineage",
+      "commitments": [
+        "provider is a relation, not identity",
+        "instantiate then fork with explicit parent/root",
+        "state does not leak between lineages"
+      ]
+    },
+    {
+      "skill": "action-calibration",
+      "applied_to": "build sizing",
+      "commitments": [
+        "minimal decisive: smoke_epoch turn loop with hard veto and War fail-closed",
+        "maximal coherent: sealed triplicate corpus plus six reciprocal checks after freeze",
+        "shadow epoch: C_lambda does not select actions"
+      ]
+    }
+  ],
+  "sealed_corpus_identity": {
+    "status": "digest-adopted-post-freeze",
+    "corpus_id": "calibration-family",
+    "proposal_version": "1.0.0-proposal-1",
+    "source_branch": "origin/agent/ahbg-deepcode",
+    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
+    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "scenario_count": 35,
+    "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+    "adoption_record": "stack/ahbg/grok/corpus-adoption/CORPUS_ADOPTION.json",
+    "amendments": [],
+    "reproduction_status": "post-freeze common-corpus run recorded under corpus-run/calibration-family-1.0.0-proposal-1/; frozen smoke artifacts remain the four-scenario epoch; differences are recorded as hmmm rather than corpus edits"
+  },
+  "provider_relation": {
+    "model": "grok-4.6",
+    "note": "Provider identity is a covariate, not agent identity. This a0 is deterministic."
+  },
+  "evidence_standing_vocabulary": ["SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED"],
+  "independence_attestation": {
+    "no_code_copied_from": [
+      "stack/ahbg/engine",
+      "stack/ahbg/presentation",
+      "stack/ahbg/deepseek",
+      "stack/ahbg/codex"
+    ],
+    "shared_surfaces_only": [
+      "CALIBRATION.md and host README",
+      "event-kind envelope plane.init / turn.begin / move / turn.end",
+      "normalized output names",
+      "UCNS geometry authority"
+    ]
+  },
+  "hmmm": [
+    "frozen smoke artifacts remain four scenarios; the labeled post-freeze 35-scenario run is under corpus-run/; exact gaps remain in corpus-adoption/CORPUS_ADOPTION.json",
+    "War collision resolver",
+    "regulatory cost functional and resource projection"
+  ]
+}

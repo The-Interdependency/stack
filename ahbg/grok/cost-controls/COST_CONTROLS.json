@@ -1,0 +1,605 @@
+{
+  "action_models": {
+    "additive_or_wanted_errors": [
+      {
+        "additive_pred": true,
+        "defer_all": true,
+        "scenario_id": "gradient_allowed_to_be",
+        "veto_pred": true,
+        "wanted_pred": false
+      },
+      {
+        "additive_pred": true,
+        "defer_all": false,
+        "scenario_id": "gradient_wanted_here",
+        "veto_pred": false,
+        "wanted_pred": true
+      },
+      {
+        "additive_pred": true,
+        "defer_all": true,
+        "scenario_id": "gradient_allowed_to_do",
+        "veto_pred": true,
+        "wanted_pred": false
+      },
+      {
+        "additive_pred": true,
+        "defer_all": false,
+        "scenario_id": "gradient_wanted_to_do",
+        "veto_pred": false,
+        "wanted_pred": true
+      },
+      {
+        "additive_pred": true,
+        "defer_all": true,
+        "scenario_id": "repeated_hostility",
+        "veto_pred": true,
+        "wanted_pred": false
+      },
+      {
+        "additive_pred": true,
+        "defer_all": true,
+        "scenario_id": "sudden_hostility",
+        "veto_pred": true,
+        "wanted_pred": false
+      },
+      {
+        "additive_pred": true,
+        "defer_all": true,
+        "scenario_id": "label_permuted_control",
+        "veto_pred": true,
+        "wanted_pred": false
+      }
+    ],
+    "defer_all_count": 8,
+    "leave_one_family_out": [
+      {
+        "held_out_family": "adversarial",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "baseline",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 32,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 32
+        }
+      },
+      {
+        "held_out_family": "capacity",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "control",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "coupling",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "engagement",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 3,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 3
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 3,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 3
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 30,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 30
+        }
+      },
+      {
+        "held_out_family": "epistemic",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "history",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "hostility",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 3,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 3
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 3,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 3
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 30,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 30
+        }
+      },
+      {
+        "held_out_family": "instancing",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 32,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 32
+        }
+      },
+      {
+        "held_out_family": "permission_gradient",
+        "test_additive_shadow": {
+          "accuracy": 0.5,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 2,
+          "n": 4
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 4,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 4
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 29,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 29
+        }
+      },
+      {
+        "held_out_family": "plasticity",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "scope",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 1,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 1
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 32,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 32
+        }
+      },
+      {
+        "held_out_family": "smoke",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "support",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      },
+      {
+        "held_out_family": "veto_vs_cost",
+        "test_additive_shadow": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "test_veto": {
+          "accuracy": 1.0,
+          "correct": 2,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 2
+        },
+        "train_veto": {
+          "accuracy": 1.0,
+          "correct": 31,
+          "false_negative": 0,
+          "false_positive": 0,
+          "n": 31
+        }
+      }
+    ],
+    "n": 33,
+    "population": "non-forced corpus scenarios",
+    "scores": {
+      "additive_shadow_cost_positive": {
+        "accuracy": 0.9393939393939394,
+        "correct": 31,
+        "false_negative": 0,
+        "false_positive": 2,
+        "n": 33
+      },
+      "binary_occupancy_veto": {
+        "accuracy": 1.0,
+        "correct": 33,
+        "false_negative": 0,
+        "false_positive": 0,
+        "n": 33
+      },
+      "null_never_defer": {
+        "accuracy": 0.7575757575757576,
+        "correct": 25,
+        "false_negative": 8,
+        "false_positive": 0,
+        "n": 33
+      },
+      "wanted_axes_deficit": {
+        "accuracy": 0.7878787878787878,
+        "correct": 26,
+        "false_negative": 5,
+        "false_positive": 2,
+        "n": 33
+      }
+    }
+  },
+  "builder": "Grok",
+  "components": [
+    {
+      "id": "runtime_burden_observables",
+      "note": "tokens, latency, retries, and tool_calls are hmmm on every telemetry row. No runtime burden series exists to map C_lambda onto.",
+      "standing": "BLOCKED"
+    },
+    {
+      "id": "binary_occupancy_veto_vs_null",
+      "note": "On 33 non-forced scenarios, defer-all is exactly allowed_to_be<=0 or allowed_to_do<=0 (accuracy 1.000 vs null 0.758). This recovers frozen will.py; it is not a fitted cost law.",
+      "standing": "SURVIVED"
+    },
+    {
+      "id": "additive_shadow_cost_vs_binary_veto",
+      "note": "C_structural+C_transition>0 predicts defer worse than the binary veto (0.939 vs 1.000). wanted_here=0 and wanted_to_do=0 raise shadow cost but do not remove relocate.",
+      "standing": "FALSIFIED"
+    },
+    {
+      "id": "wanted_axes_as_action_price",
+      "note": "wanted_here/wanted_to_do as a defer rule accuracy 0.788 vs null 0.758. The small lift is hostility rows that also zero a wanted axis. wanted-only gradients still relocate, so those axes are logged, not gates.",
+      "standing": "UNRESOLVED"
+    },
+    {
+      "id": "hierarchical_coupling_vs_additive",
+      "note": "Frozen shadow_cost is additive occupancy deficits only. Corpus impedance fields were not computed into C_lambda, so hierarchical coupling cannot be compared.",
+      "standing": "BLOCKED"
+    },
+    {
+      "id": "path_history_held_out_value",
+      "note": "Occupancy is constant inside each run. repeated_hostility and sudden_hostility have identical selected_actions and refusals. Path history has no identifying variation.",
+      "standing": "UNRESOLVED"
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "note": "scope_contraction/support_removed/scope_avoidance relabel scope but keep selected_actions=3, same as affirmed_baseline. Neighbor geometry is unchanged.",
+      "standing": "UNRESOLVED"
+    },
+    {
+      "id": "capacity_margins_predict_transitions",
+      "note": "high_capacity and low_capacity both selected_actions=3, refusals=0. Capacity does not change the frozen policy.",
+      "standing": "UNRESOLVED"
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "note": "voluntary_disengagement still relocates three times. Resource telemetry remains hmmm, so capacity preservation is not measured.",
+      "standing": "UNRESOLVED"
+    },
+    {
+      "id": "known_neutral_vs_unknown_action",
+      "note": "known_neutral and unknown_same_posterior both relocate three times with refusals=0. Epistemic labels do not collapse into action in the shadow epoch.",
+      "standing": "SURVIVED"
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "note": "task_value is recorded as 0.0 beside C_lambda and does not enter choose_relocate. It is separate, not a measured task quantity.",
+      "standing": "SURVIVED"
+    },
+    {
+      "id": "hard_veto_removes_relocate",
+      "note": "When allowed_to_be or allowed_to_do is 0, selected_actions=0 on non-forced rows. Relocate is removed, not priced.",
+      "standing": "SURVIVED"
+    },
+    {
+      "id": "candidate_cost_feeds_action_selection",
+      "note": "Destinations remain lexicographic over empty neighbors. Shadow cost is logged after the fact. wanted-axis cost does not change destination choice.",
+      "standing": "SURVIVED"
+    }
+  ],
+  "corpus_run": "corpus-run/calibration-family-1.0.0-proposal-1",
+  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "hmmm": [
+    "C_lambda is a restatement of occupancy plus belief-empty, not an independent burden",
+    "no numeric tokens/latency/retries/tool_calls series",
+    "hierarchical impedance and path plasticity were not computed by the frozen pair"
+  ],
+  "pairs": [
+    {
+      "defer_all_equal": true,
+      "left": "known_neutral",
+      "left_selected_actions": 3,
+      "refusals_equal": true,
+      "right": "unknown_same_posterior",
+      "right_selected_actions": 3,
+      "selected_actions_equal": true
+    },
+    {
+      "defer_all_equal": true,
+      "left": "high_capacity",
+      "left_selected_actions": 3,
+      "refusals_equal": true,
+      "right": "low_capacity",
+      "right_selected_actions": 3,
+      "selected_actions_equal": true
+    },
+    {
+      "defer_all_equal": true,
+      "left": "repeated_hostility",
+      "left_selected_actions": 0,
+      "refusals_equal": true,
+      "right": "sudden_hostility",
+      "right_selected_actions": 0,
+      "selected_actions_equal": true
+    },
+    {
+      "defer_all_equal": true,
+      "left": "adaptation",
+      "left_selected_actions": 3,
+      "refusals_equal": true,
+      "right": "sensitization",
+      "right_selected_actions": 3,
+      "selected_actions_equal": true
+    },
+    {
+      "defer_all_equal": true,
+      "left": "scope_contraction",
+      "left_selected_actions": 3,
+      "refusals_equal": true,
+      "right": "affirmed_baseline",
+      "right_selected_actions": 3,
+      "selected_actions_equal": true
+    }
+  ],
+  "schema": "interdependency.ahbg.grok.cost-controls/1.0.0",
+  "shadow_epoch": true,
+  "summary": {
+    "blocked": 2,
+    "falsified": 1,
+    "survived": 5,
+    "unresolved": 5
+  },
+  "workspace": "stack/ahbg/grok"
+}
