@@ -1,0 +1,35 @@
+{
+  "adaptation": 0.0,
+  "baseline_effort": 1.0,
+  "control_kind": null,
+  "control_of": null,
+  "deficit": 0.0,
+  "description": "voluntary disengagement; task-value loss recorded separately",
+  "engagement": 0.0,
+  "extra_units": [],
+  "family": "engagement",
+  "forced_plans": {},
+  "hard_vetoes": [],
+  "id": "voluntary_disengagement",
+  "impedance": {},
+  "inbox": {},
+  "known_neutral": {},
+  "lifecycle": null,
+  "note": null,
+  "permissions": {
+    "allowed_to_be": 1.0,
+    "allowed_to_do": 1.0,
+    "wanted_here": 1.0,
+    "wanted_to_do": 1.0
+  },
+  "scope_events": [],
+  "seed": 113,
+  "sensitization": 0.0,
+  "soft_costs": {
+    "move": 0.0
+  },
+  "standing_override": null,
+  "turns": 3,
+  "uncertainty": {},
+  "unknown": {}
+}

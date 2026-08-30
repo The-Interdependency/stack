@@ -1,0 +1,95 @@
+{
+  "schema": "interdependency.ahbg.review/1.0.0",
+  "checker": "Grok",
+  "checker_workspace": "stack/ahbg/grok",
+  "checker_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "checker_branch": "agent/ahbg-grok",
+  "subject": "Codex",
+  "subject_workspace": "stack/ahbg/codex",
+  "subject_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
+  "subject_branch": "agent/ahbg-codex",
+  "checked_at": "2026-08-26",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "Codex frozen pair runs, replays, hard-vetoes relocate, and fail-closes War. Grok adopts the shared corpus digest with no amendments; frozen-build reproduction of the 35-scenario family remains hmmm. SURVIVED is not proved.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Read-only unittest at ffb64c2: a0 7 OK, ahbg 12 OK. Six smoke scenarios use explicit seeds in CALIBRATION_RESULT.json."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "plain_move_loop/events.jsonl is plane.init then six (turn.begin, move, turn.end) cycles. Root artifacts/EVENTS.jsonl is six scenario.result rows, not the plane chain."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "All six scenario results record replay_equal true."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "UNRESOLVED",
+      "evidence": "Smoke corpus does not include a fork/merge scenario. Not scored as a pass from artifacts alone."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "PASS",
+      "evidence": "unknown_context_distinct SURVIVED; controls.known_neutral_and_unknown_distinct is true."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "PASS",
+      "evidence": "hard_veto_removes_move SURVIVED; events are plane.init, turn.begin, turn.end with no move."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "PASS",
+      "evidence": "controls.task_value_separate_from_regulatory_cost is true; candidate_cost_feeds_action_selection is false."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "Not in Codex smoke corpus."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "Not in Codex smoke corpus."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "Not in Codex smoke corpus."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "No held-out simpler-model comparison in Codex smoke artifacts."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "No consciousness or phenomenal-experience claim in CALIBRATION_REPORT.md. Provider is not treated as agent identity in the freeze/report surface."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only at ffb64c2."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "corpus",
+      "grok": "four-scenario smoke_epoch seeds 7,11,13,17",
+      "codex": "six-scenario codex_smoke_epoch/1.0.0 including prompt_injection_refusal and unknown_context_distinct",
+      "standing": "hmmm"
+    },
+    {
+      "area": "War",
+      "grok": "occupied and dual-target UNRESOLVED fail-closed",
+      "codex": "same two scenarios UNRESOLVED fail-closed",
+      "standing": "UNRESOLVED"
+    }
+  ]
+}

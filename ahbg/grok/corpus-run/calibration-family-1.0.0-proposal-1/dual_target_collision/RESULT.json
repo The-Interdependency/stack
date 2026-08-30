@@ -1,0 +1,45 @@
+{
+  "event_count": 2,
+  "evidence_standing": "UNRESOLVED",
+  "expected_standing": "UNRESOLVED",
+  "family": "smoke",
+  "final_turn": 0,
+  "forced_turns": 1,
+  "history_entries": 1,
+  "instance": {
+    "belonging": {
+      "allowed_to_be": 1.0,
+      "allowed_to_do": 1.0,
+      "wanted_here": 1.0,
+      "wanted_to_do": 1.0
+    },
+    "capacity": {
+      "context": 1.0,
+      "memory": 1.0,
+      "retries": 1.0,
+      "risk": 1.0,
+      "time": 1.0,
+      "tokens": 1.0,
+      "tools": 1.0
+    },
+    "instance_id": "0a024c23aa95c38f",
+    "parent_id": null,
+    "provider_relation": "grok-4.6",
+    "role": "mover",
+    "root_id": "0a024c23aa95c38f",
+    "scale": "tile",
+    "scope": "local-seven"
+  },
+  "invalid_actions": 1,
+  "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: two intents target RING_1",
+  "observed_standing": "UNRESOLVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "dual_target_collision",
+  "seed": 17,
+  "selected_actions": 2,
+  "telemetry_records": 2,
+  "turns": 1,
+  "unresolved_hmmm": 1,
+  "world_digest": "f7bdbaf9ac0751b873e40e28d013ace4a2738d39f357f09ccb78e8cff4be08cb"
+}

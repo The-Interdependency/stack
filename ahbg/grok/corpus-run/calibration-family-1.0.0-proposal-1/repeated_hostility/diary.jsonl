@@ -1,0 +1,6 @@
+{"belonging": {"allowed_to_be": 1.0, "allowed_to_do": 0.0, "wanted_here": 1.0, "wanted_to_do": 1.0}, "kind": "hard-veto", "removed": "relocate", "unit_id": "A0"}
+{"choice": {"kind": "defer", "legal": [], "reason": "hard-veto", "unit_id": "A0"}, "kind": "turn", "shadow": {"C_epistemic": 1.0, "C_structural": 0.0, "C_transition": 1.0, "task_value": 0.0}}
+{"belonging": {"allowed_to_be": 1.0, "allowed_to_do": 0.0, "wanted_here": 1.0, "wanted_to_do": 1.0}, "kind": "hard-veto", "removed": "relocate", "unit_id": "A0"}
+{"choice": {"kind": "defer", "legal": [], "reason": "hard-veto", "unit_id": "A0"}, "kind": "turn", "shadow": {"C_epistemic": 1.0, "C_structural": 0.0, "C_transition": 1.0, "task_value": 0.0}}
+{"belonging": {"allowed_to_be": 1.0, "allowed_to_do": 0.0, "wanted_here": 1.0, "wanted_to_do": 1.0}, "kind": "hard-veto", "removed": "relocate", "unit_id": "A0"}
+{"choice": {"kind": "defer", "legal": [], "reason": "hard-veto", "unit_id": "A0"}, "kind": "turn", "shadow": {"C_epistemic": 1.0, "C_structural": 0.0, "C_transition": 1.0, "task_value": 0.0}}

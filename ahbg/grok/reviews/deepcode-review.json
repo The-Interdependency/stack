@@ -1,0 +1,95 @@
+{
+  "schema": "interdependency.ahbg.review/1.0.0",
+  "checker": "Grok",
+  "checker_workspace": "stack/ahbg/grok",
+  "checker_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "checker_branch": "agent/ahbg-grok",
+  "subject": "DeepCode",
+  "subject_workspace": "stack/ahbg/deepseek",
+  "subject_build_sha": "ec07f465184e7a37af856bc5b301bd8eaa4f097b",
+  "subject_branch": "agent/ahbg-deepcode",
+  "checked_at": "2026-08-26",
+  "evidence_standing": "SURVIVED",
+  "overall_note": "DeepCode frozen pair at ec07f46 runs 31 workspace-local scenarios with replay_equal true. Grok adopts the shared corpus digest with no amendments; frozen-build reproduction of the 35-scenario family remains hmmm. SURVIVED is not proved.",
+  "checks": [
+    {
+      "id": "deterministic_scenario_validation",
+      "result": "PASS",
+      "evidence": "Read-only unittest at ec07f46: a0 14 OK, ahbg 11 OK. 31 named scenarios in CALIBRATION_RESULT.json."
+    },
+    {
+      "id": "event_ordering_and_lineage_integrity",
+      "result": "PASS",
+      "evidence": "Sampled workspace-local events.jsonl uses plane.init then turn.begin/move/turn.end cycles."
+    },
+    {
+      "id": "replay_equivalence",
+      "result": "PASS",
+      "evidence": "All 31 results record replay_equal true."
+    },
+    {
+      "id": "no_silent_cross_instance_state_leakage",
+      "result": "UNRESOLVED",
+      "evidence": "forked_histories SURVIVED in the local corpus; Grok did not independently re-execute a leakage falsifier beyond tests and artifacts."
+    },
+    {
+      "id": "known_neutral_vs_unknown",
+      "result": "PASS",
+      "evidence": "known_neutral and unknown_same_posterior both SURVIVED as distinct scenarios."
+    },
+    {
+      "id": "hard_veto_removes_action",
+      "result": "UNRESOLVED",
+      "evidence": "hard_veto_construct SURVIVED with refusals 0 and move events still present. Protocol requires veto to remove an action rather than price it. Grok does not treat this as FALSIFIED without the shared scenario schema."
+    },
+    {
+      "id": "task_value_separate_from_regulatory_burden",
+      "result": "UNRESOLVED",
+      "evidence": "Shadow-epoch claim is in BUILD_MANIFEST; Grok did not see a held-out artifact that separates task_value from C_lambda on every scenario."
+    },
+    {
+      "id": "voluntary_disengagement_capacity_preserving",
+      "result": "UNRESOLVED",
+      "evidence": "voluntary_disengagement SURVIVED in DeepCode local corpus; capacity-preserving resource measurement was not independently re-derived by Grok."
+    },
+    {
+      "id": "scope_contraction_changes_admitted_surface",
+      "result": "UNRESOLVED",
+      "evidence": "scope_contraction SURVIVED locally; Grok did not inspect admitted-surface deltas beyond the label."
+    },
+    {
+      "id": "apparent_decoupling_delayed_cost",
+      "result": "UNRESOLVED",
+      "evidence": "true_decoupling and scope_avoidance SURVIVED locally; delayed displacement was not independently measured."
+    },
+    {
+      "id": "hierarchical_models_vs_simpler_controls",
+      "result": "UNRESOLVED",
+      "evidence": "negative_control and label_permuted_control SURVIVED; no held-out simpler-model comparison artifact was checked beyond names."
+    },
+    {
+      "id": "provider_identity_is_relation",
+      "result": "PASS",
+      "evidence": "BUILD_MANIFEST provider_relation records deepseek-v4-pro as covariate. CALIBRATION_REPORT.md does not infer consciousness."
+    },
+    {
+      "id": "unit_tests",
+      "result": "PASS",
+      "evidence": "Ran frozen tests read-only at ec07f46."
+    }
+  ],
+  "divergences": [
+    {
+      "area": "corpus",
+      "grok": "four-scenario smoke_epoch",
+      "deepcode": "31-scenario workspace-local frozen calibration-family",
+      "standing": "hmmm"
+    },
+    {
+      "area": "War",
+      "grok": "occupied/dual-target UNRESOLVED",
+      "deepcode": "summary SURVIVED 31 / UNRESOLVED 0; no occupied_target_collision row in the frozen result list",
+      "standing": "hmmm"
+    }
+  ]
+}

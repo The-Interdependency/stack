@@ -52,6 +52,29 @@ git switch agent/ahbg-grok
 cd stack/ahbg/grok
 ```
 
+## Usage
+
+```bash
+cd stack/ahbg/grok
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s a0/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 python3 run.py
+PYTHONDONTWRITEBYTECODE=1 python3 run_common_corpus.py
+PYTHONDONTWRITEBYTECODE=1 python3 fit_cost_controls.py
+python3 checker.py
+```
+
+Frozen implementation SHA: `cce9cec7dae61304118efcd47bc0d7461200d335`
+(see `FREEZE.md`). Reciprocal reviews use that SHA, not later metadata commits.
+
+Smoke epoch writes `CALIBRATION_RESULT.json`, `RUN_MANIFEST.json`, `EVENTS.jsonl`,
+and per-scenario files under `artifacts/`. Grok adopts the shared corpus digest
+`b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0` with no
+amendments. A labeled post-freeze run of the 35-scenario family lives under
+`corpus-run/calibration-family-1.0.0-proposal-1/` (see `run_common_corpus.py`).
+
 ## hmmm
 
 Implementation and checker choices are local to this workspace until the shared evidence distinguishes them.
+The adopted digest is recorded. War remains fail-closed. Permission-field occupancy still gates relocate.

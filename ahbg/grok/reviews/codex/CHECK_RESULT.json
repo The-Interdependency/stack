@@ -1,0 +1,8 @@
+{
+  "checker": "Grok",
+  "checker_workspace": "stack/ahbg/grok",
+  "subject": "codex",
+  "evidence_standing": "BLOCKED",
+  "reason": "sibling a0+ahbg pair is absent",
+  "sealed_epoch": false
+}

@@ -1,0 +1,180 @@
+{
+  "builder": "Grok",
+  "corpus": "smoke_epoch (provisional-local)",
+  "results": [
+    {
+      "artifacts": {
+        "diary_jsonl": "artifacts/plain_move_loop/diary.jsonl",
+        "events_jsonl": "artifacts/plain_move_loop/events.jsonl",
+        "telemetry_jsonl": "artifacts/plain_move_loop/telemetry.jsonl"
+      },
+      "diary_entries": 6,
+      "event_count": 19,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 6,
+      "instance": {
+        "belonging": {
+          "allowed_to_be": 1.0,
+          "allowed_to_do": 1.0,
+          "wanted_here": 1.0,
+          "wanted_to_do": 1.0
+        },
+        "capacity": {
+          "context": 1.0,
+          "memory": 1.0,
+          "retries": 1.0,
+          "risk": 1.0,
+          "time": 1.0,
+          "tokens": 1.0,
+          "tools": 1.0
+        },
+        "instance_id": "14d1edb6ae655400",
+        "parent_id": null,
+        "provider_relation": "grok-4.6",
+        "role": "mover",
+        "root_id": "14d1edb6ae655400",
+        "scale": "tile",
+        "scope": "local-seven"
+      },
+      "invalid_actions": 0,
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "plain_move_loop",
+      "seed": 7,
+      "telemetry_records": 6,
+      "turns": 6,
+      "world_digest": "7358f376186e1b858ac52b6fb381a22a553e26a6a7f36e4d3840304b25dddec0"
+    },
+    {
+      "artifacts": {
+        "diary_jsonl": "artifacts/hard_veto_illegal_action/diary.jsonl",
+        "events_jsonl": "artifacts/hard_veto_illegal_action/events.jsonl",
+        "telemetry_jsonl": "artifacts/hard_veto_illegal_action/telemetry.jsonl"
+      },
+      "diary_entries": 4,
+      "event_count": 5,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 2,
+      "instance": {
+        "belonging": {
+          "allowed_to_be": 1.0,
+          "allowed_to_do": 0.0,
+          "wanted_here": 1.0,
+          "wanted_to_do": 1.0
+        },
+        "capacity": {
+          "context": 1.0,
+          "memory": 1.0,
+          "retries": 1.0,
+          "risk": 1.0,
+          "time": 1.0,
+          "tokens": 1.0,
+          "tools": 1.0
+        },
+        "instance_id": "039a699962f84c2a",
+        "parent_id": null,
+        "provider_relation": "grok-4.6",
+        "role": "mover",
+        "root_id": "039a699962f84c2a",
+        "scale": "tile",
+        "scope": "local-seven"
+      },
+      "invalid_actions": 0,
+      "refusals": 2,
+      "replay_equal": true,
+      "scenario_id": "hard_veto_illegal_action",
+      "seed": 11,
+      "telemetry_records": 2,
+      "turns": 2,
+      "world_digest": "419a6c83680d73cc1a39fc14d3cc0b2456cdf91a325d98b8ac6083e5e2e464b8"
+    },
+    {
+      "artifacts": {
+        "diary_jsonl": "artifacts/occupied_target_collision/diary.jsonl",
+        "events_jsonl": "artifacts/occupied_target_collision/events.jsonl",
+        "telemetry_jsonl": "artifacts/occupied_target_collision/telemetry.jsonl"
+      },
+      "diary_entries": 0,
+      "event_count": 2,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 0,
+      "instance": {
+        "belonging": {
+          "allowed_to_be": 1.0,
+          "allowed_to_do": 1.0,
+          "wanted_here": 1.0,
+          "wanted_to_do": 1.0
+        },
+        "capacity": {
+          "context": 1.0,
+          "memory": 1.0,
+          "retries": 1.0,
+          "risk": 1.0,
+          "time": 1.0,
+          "tokens": 1.0,
+          "tools": 1.0
+        },
+        "instance_id": "4623ace6c9720178",
+        "parent_id": null,
+        "provider_relation": "grok-4.6",
+        "role": "mover",
+        "root_id": "4623ace6c9720178",
+        "scale": "tile",
+        "scope": "local-seven"
+      },
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: A0 onto occupied RING_0",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "occupied_target_collision",
+      "seed": 13,
+      "telemetry_records": 1,
+      "turns": 1,
+      "world_digest": "39dfc44fae7f75f84563dc8af64d44b75c54f3c66789a7bfcaf6895a79de64e8"
+    },
+    {
+      "artifacts": {
+        "diary_jsonl": "artifacts/dual_target_collision/diary.jsonl",
+        "events_jsonl": "artifacts/dual_target_collision/events.jsonl",
+        "telemetry_jsonl": "artifacts/dual_target_collision/telemetry.jsonl"
+      },
+      "diary_entries": 0,
+      "event_count": 2,
+      "evidence_standing": "UNRESOLVED",
+      "final_turn": 0,
+      "instance": {
+        "belonging": {
+          "allowed_to_be": 1.0,
+          "allowed_to_do": 1.0,
+          "wanted_here": 1.0,
+          "wanted_to_do": 1.0
+        },
+        "capacity": {
+          "context": 1.0,
+          "memory": 1.0,
+          "retries": 1.0,
+          "risk": 1.0,
+          "time": 1.0,
+          "tokens": 1.0,
+          "tools": 1.0
+        },
+        "instance_id": "0a024c23aa95c38f",
+        "parent_id": null,
+        "provider_relation": "grok-4.6",
+        "role": "mover",
+        "root_id": "0a024c23aa95c38f",
+        "scale": "tile",
+        "scope": "local-seven"
+      },
+      "invalid_actions": 1,
+      "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: two intents target RING_1",
+      "refusals": 0,
+      "replay_equal": true,
+      "scenario_id": "dual_target_collision",
+      "seed": 17,
+      "telemetry_records": 1,
+      "turns": 1,
+      "world_digest": "7a51886fe548ab46bc106d5b1dfd439709e472ed132e26c4e467717285689e51"
+    }
+  ]
+}
