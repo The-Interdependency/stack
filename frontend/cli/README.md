@@ -1,8 +1,8 @@
-# frontend/cli — stack operator surface
+# frontend/cli — fresh-making operator surface
 
 This directory is the deliberately thin human control surface for `backend/`.
-Durable state lives in PostgreSQL; execution and verification live in the
-backend.
+Durable state and acceptance live in PostgreSQL; execution and verification live in
+backend adapters; repository authority remains outside both.
 
 ## Usage guidance
 
@@ -10,26 +10,47 @@ With `STACK_DATABASE_URL` configured:
 
 ```bash
 python -m frontend.cli.stackctl db migrate
-python -m frontend.cli.stackctl msdmd refresh ucns --root /srv/stack-repos/ucns
-python -m frontend.cli.stackctl msdmd status
-python -m frontend.cli.stackctl msdmd explain <job-id>
-python -m frontend.cli.stackctl msdmd retry <job-id>
-python -m frontend.cli.stackctl worker once
+
+python -m frontend.cli.stackctl fresh make-msdmd ucns \
+  --root /srv/stack-repos/ucns \
+  --source-sha <40-hex-commit>
+
+python -m frontend.cli.stackctl fresh status msdmd:ucns
+python -m frontend.cli.stackctl fresh explain msdmd:ucns
+python -m frontend.cli.stackctl fresh make msdmd:ucns
+python -m frontend.cli.stackctl fresh jobs --target msdmd:ucns
+python -m frontend.cli.stackctl fresh recover
+python -m frontend.cli.stackctl fresh affected msdmd:ucns
 ```
 
-The systemd service invokes:
+Queue for the VM worker:
 
 ```bash
+python -m frontend.cli.stackctl fresh make-msdmd ucns \
+  --root /srv/stack-repos/ucns \
+  --source-sha <40-hex-commit> \
+  --queue-only
+
+python -m frontend.cli.stackctl worker once
 python -m frontend.cli.stackctl worker run
 ```
 
-Do not add orchestration state, repository authority, generated metadata, or
-database schema logic here. This surface should remain replaceable.
+The old `stackctl msdmd ...` namespace is removed. MSDMD is one derivation adapter
+under `fresh`, not a parallel orchestration surface.
 
 ## Boundaries
 
 - `--database-url` / `STACK_DATABASE_URL` must name PostgreSQL; SQLite is not a
-  fallback.
-- production target roots are constrained by `STACK_REPO_ROOT` and
-  `STACK_ALLOWED_REPOS`.
+  production fallback.
+- production roots are constrained by `STACK_REPO_ROOT` and `STACK_ALLOWED_REPOS`.
+- executor selection is attempt metadata, not logical job identity.
+- `fresh status` verifies current identities, accepted receipt, output digest, and the
+  derivation-specific verifier; it does not equate “recent” with fresh.
 - the CLI does not commit, push, merge, or acquire repository authority.
+- JSON receipt files are inspection projections; PostgreSQL `target_acceptance` is the
+  acceptance authority.
+
+## hmmm
+
+The GitHub-hosted executor adapter is not implemented. VM-local execution is the
+independent resilience baseline.
