@@ -76,18 +76,24 @@ stack-local implementation.
 
 EPAC is currently in this pre-graduation state.
 
-### Regenerate MSDMD without depending on hosted CI
+### Make derived artifacts fresh without depending on hosted CI
 
-The first backend/CLI vertical slice keeps MSDMD regeneration state outside GitHub
-Actions. It queues an exact source+generator identity in SQLite, executes locally,
-verifies the output digest, and writes a receipt.
+`backend/` implements the first `fresh-making` runtime. It persists derivation specs and
+executor-independent jobs in SQLite, derives freshness from exact identities rather than
+time, leases attempts for crash recovery, independently rerenders MSDMD output before
+publication, and records accepted receipts.
 
 ```bash
-python -m frontend.cli.stackctl msdmd refresh ucns --root ../ucns
-python -m frontend.cli.stackctl msdmd status
+python -m frontend.cli.stackctl fresh make-msdmd ucns --root ../ucns
+python -m frontend.cli.stackctl fresh status msdmd:ucns
+python -m frontend.cli.stackctl fresh explain msdmd:ucns
+python -m frontend.cli.stackctl fresh recover
 ```
 
-See [`backend/README.md`](backend/README.md) for the orchestration contract and
+The old `stackctl msdmd ...` path has been removed: MSDMD is an adapter under the
+fresh-making control plane rather than a second orchestration architecture.
+
+See [`backend/README.md`](backend/README.md) for the durability/freshness contract and
 [`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
 
 ## Refreshing a canonical view
@@ -113,8 +119,8 @@ source commit in the message.
   composed in stack.
 - `backend/` may coordinate an owning repository but does not acquire that repository's
   authority.
-- hosted CI may execute work, but durable stack orchestration state must not depend on
-  hosted CI remaining available.
+- hosted CI may execute work, but durable stack orchestration state and freshness
+  acceptance must not depend on hosted CI remaining available.
 
 ## hmmm
 
@@ -122,5 +128,7 @@ source commit in the message.
   `libs/` + `research/` pair.
 - The exact graduation automation from stack-local project to independent repo + package
   is not yet implemented.
-- VM and GitHub-hosted MSDMD executors remain unimplemented; the durable local executor
-  is the first vertical slice.
+- VM and GitHub-hosted fresh-making executors remain unimplemented; `local` is the first
+  executor adapter.
+- The root `skill-lib/` snapshot is still pinned before the newly merged `fresh-making`
+  skill; refresh the complete snapshot before changing the manifest's skill-lib commit.
