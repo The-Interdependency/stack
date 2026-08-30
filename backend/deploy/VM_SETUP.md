@@ -15,6 +15,18 @@ independent backup mount/device: hmmm
 human SSH/OS Login recovery path: hmmm
 ```
 
+## Bounded agent contact
+
+Before replacing repeated human SSH with model-side operations, establish the separate
+read-only `vm-mcp` contact described in [`VM_CONTACT.md`](VM_CONTACT.md). The runtime
+comes from an exact canonical `The-Interdependency/skill-lib` commit and must not take
+ownership of `/srv/stack`, expose a public listener, inherit SSH keys, or start with a
+writable shell.
+
+Initial contact is observation-only. Keep human SSH/OS Login/IAP as bootstrap and
+break-glass access. A later write surface must be a named, reviewed stack operation,
+not a generic privileged shell.
+
 ## Intended privilege boundary
 
 ```text
@@ -156,6 +168,8 @@ systemctl list-timers stack-orchestrator-backup.timer
 Deployment is not complete until all of these are observed on the VM:
 
 ```text
+[ ] human bootstrap/recovery path remains available
+[ ] read-only vm-mcp contact is loopback/private-tunnel only, non-root, shell disabled
 [ ] PostgreSQL version/state and local auth boundary observed
 [ ] stackctl db migrate succeeds
 [ ] worker runs as non-root stackorchestrator
@@ -170,7 +184,6 @@ Deployment is not complete until all of these are observed on the VM:
 [ ] backup creates validated local + independent copies
 [ ] backup mirror is a distinct mounted filesystem/device
 [ ] restore drill succeeds against disposable database
-[ ] human bootstrap/recovery path remains available
 ```
 
 ## hmmm
@@ -178,4 +191,5 @@ Deployment is not complete until all of these are observed on the VM:
 The concrete VM distribution, PostgreSQL installation/auth state, storage mount, service
 account state, and end-to-end deployment results remain unobserved here. PostgreSQL
 integration tests and backup/restore acceptance therefore remain live VM gates rather
-than being represented as passed.
+than being represented as passed. `VM_CONTACT.md` defines the bounded path for turning
+those unknowns into observable evidence without exporting SSH credentials to the model.
