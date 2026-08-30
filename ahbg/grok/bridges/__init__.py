@@ -29,4 +29,14 @@ from .deepcode import DeepCodeBoardDriver
 # Viewer support (pygame optional at import time)
 from .viewer import Viewer, make_driver
 
-__all__ = ["CodexBoardDriver", "DeepCodeBoardDriver", "Viewer", "make_driver"]
+# Web (HTML5 Canvas) viewer — hex geometry is preserved exactly ("hex is still hex")
+from .web import generate_html, observation_to_web_snapshot
+
+__all__ = [
+    "CodexBoardDriver",
+    "DeepCodeBoardDriver",
+    "Viewer",
+    "make_driver",
+    "generate_html",
+    "observation_to_web_snapshot",
+]
