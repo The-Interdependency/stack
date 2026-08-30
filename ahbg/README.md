@@ -18,7 +18,7 @@ The AHBG board is a **game projection of UCNS geometry**, not an independently i
 - AHBG may add game semantics to UCNS-derived geometry, but it must not add semantic machinery back into UCNS.
 - Unresolved UCNS geometry remains `hmmm`; AHBG does not fill geometric gaps merely to make gameplay convenient.
 
-For implementation, depend on the canonical `ucns` package/source. The stack copies under `research/ucns/` and `libs/ucns/` are integration/versioning surfaces, not permission to fork the geometry silently.
+For implementation, depend on the canonical `ucns` package/source. In stack, `libs/ucns/` is the pinned canonical repository view and `research/ucns/` is noncanonical stack-local research; neither permits silently forking the geometry.
 
 ## Two coordination modes — do not mix them
 
