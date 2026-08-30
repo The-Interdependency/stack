@@ -12,7 +12,7 @@ Provenance record for the consolidated snapshots in `The-Interdependency/stack`.
 
 | Repository | Exact source commit | Source branch | Authority | Snapshot path |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | `skill-lib/` |
+| `The-Interdependency/skill-lib` | `7a10c6af08bdc23cb745a7f2384ac641d68db30c` | main | organization-wide build and evidence doctrine | `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | `research/metapat/` |
 | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | main | geometry and mathematical representation | `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and text-gonol construction | `research/edcm/` |

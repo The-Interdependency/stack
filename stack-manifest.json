@@ -5,7 +5,7 @@
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
-      "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "commit": "7a10c6af08bdc23cb745a7f2384ac641d68db30c",
       "authority": "organization-wide build and evidence doctrine",
       "relation": "full snapshot at stack root skill-lib/"
     },
