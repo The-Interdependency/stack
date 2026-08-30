@@ -1,73 +1,59 @@
-"""PostgreSQL-backed durable job ledger for stack-level orchestration.
+"""PostgreSQL durable state for stack fresh-making.
 
-Production usage:
-    ledger = JobLedger(os.environ["STACK_DATABASE_URL"])
-    ledger.migrate()
-    job = ledger.enqueue(
-        kind="msdmd.refresh",
-        target="ucns",
-        source_sha="<40-hex>",
-        generator_identity="<sha256>",
-        executor="local",
-        payload={"root": "/srv/stack-repos/ucns", "out": "...", "generator_root": "..."},
-    )
-
-`JobLedger` is intentionally PostgreSQL-only. The retired SQLite prototype is
-not a production fallback: one durable VM service should own orchestration
-state, leases, attempts, receipts, dependencies, and visible hmmm.
+PostgreSQL is the single production orchestration boundary. Repository canon and
+artifacts remain owned by their repositories; the database owns derivation specs,
+logical jobs, attempts/leases, receipts, dependency edges, accepted freshness, and
+visible hmmm.
 """
 from __future__ import annotations
 
 # === MODULE_BUILD ===
-# id: stack_durable_job_ledger
-#   module_name: durable_job_ledger
+# id: stack_fresh_postgres_ledger
+#   module_name: fresh_postgres_ledger
 #   module_kind: engine
-#   summary: persists idempotent stack orchestration jobs, leases, attempts, receipts, dependencies, and hmmm in PostgreSQL
+#   summary: stores derivation specs, executor-independent logical jobs, attempts, leases, receipts, acceptance, dependencies, and hmmm in one PostgreSQL authority
 #   owner: stack
-#   public_surface: Job, JobLedger
-#   internal_surface: PostgreSQL migration, transactional state transitions, SKIP LOCKED claims
+#   public_surface: Job, Attempt, Acceptance, Receipt, JobLedger
 #   auth_boundary: write
 #   storage_boundary: migration
 #   network_boundary: internal
-#   user_data_boundary: none
-#   admin_only: true
-#   tests: backend.tests.test_orchestrator
-#   rollout: PostgreSQL on the stack VM; frontend.cli.stackctl is the operator surface
-#   rollback: stop worker; PostgreSQL records remain inspectable
+#   tests: backend.tests.test_orchestrator, backend.tests.test_worker_postgres
+#   rollout: PostgreSQL on the stack VM
+#   rollback: stop workers; database state remains inspectable and repository canon remains external
 # === END MODULE_BUILD ===
 
 # === BOUNDARIES ===
-# id: stack_durable_job_ledger_storage
-#   summary: PostgreSQL owns orchestration state only; repositories retain artifact and canon authority
+# id: stack_fresh_postgres_storage_boundary
+#   summary: PostgreSQL owns orchestration and freshness evidence only; repositories retain source, canon, and artifact authority
 #   auth_boundary: write
 #   storage_boundary: write
 #   network_boundary: internal
 #   user_data_boundary: none
 #   admin_only: true
-#   side_effects: job, database
+#   side_effects: database, job
 #   owner: stack
 # === END BOUNDARIES ===
 
 # === CONTRACTS ===
-# id: stack_job_enqueue_idempotent
-#   given: the same kind, target, source identity, generator identity, executor, and payload are enqueued repeatedly
-#   then: the ledger returns one stable job instead of creating duplicate work
+# id: stack_fresh_job_identity_executor_independent
+#   given: the same kind, target, and desired freshness key are requested through different executors
+#   then: one logical job identity is retained while executor choice remains attempt metadata
 #   class: idempotency
 #
-# id: stack_job_transition_fail_closed
-#   given: a caller requests a state transition that is not allowed from the current job state
-#   then: the ledger raises ValueError and leaves persisted state unchanged
-#   class: correctness
-#
-# id: stack_job_claim_skip_locked
-#   given: multiple VM workers claim queued jobs concurrently
-#   then: PostgreSQL row locking permits only one worker to own each claimed attempt
+# id: stack_fresh_job_claim_skip_locked
+#   given: multiple workers claim queued fresh-making jobs concurrently
+#   then: PostgreSQL FOR UPDATE SKIP LOCKED leases each logical job to at most one worker attempt
 #   class: concurrency
 #
-# id: stack_job_stale_lease_visible
-#   given: a VM worker dies before recording a terminal result
-#   then: the expired attempt is recorded as hmmm and the job is requeued
+# id: stack_fresh_job_stale_lease_visible
+#   given: a worker dies before completing an attempt and its lease expires
+#   then: the attempt is preserved as hmmm and the logical job returns to queued
 #   class: resilience
+#
+# id: stack_fresh_attempt_history_preserved
+#   given: a terminal logical job is retried for the same freshness key
+#   then: prior attempts and receipts remain evidence and a new ordinal attempt is created
+#   class: evidence
 # === END CONTRACTS ===
 
 from dataclasses import dataclass
@@ -78,21 +64,20 @@ from pathlib import Path
 import uuid
 from typing import Any
 
-JOB_STATES = ("queued", "running", "succeeded", "failed", "hmmm", "cancelled")
-_ALLOWED_TRANSITIONS = {
-    "queued": {"running", "cancelled"},
-    "running": {"succeeded", "failed", "hmmm"},
-    "succeeded": set(),
-    "failed": {"queued", "cancelled"},
-    "hmmm": {"queued", "cancelled"},
-    "cancelled": {"queued"},
-}
+JOB_STATES = ("queued", "leased", "running", "verifying", "succeeded", "failed", "hmmm", "cancelled")
+ACTIVE_STATES = ("queued", "leased", "running", "verifying")
+TERMINAL_STATES = ("succeeded", "failed", "hmmm", "cancelled")
+
 
 def _canonical_json(value: Any) -> str:
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
 
-def _iso(value: Any) -> str:
+
+def _iso(value: Any) -> str | None:
+    if value is None:
+        return None
     return value.isoformat() if isinstance(value, datetime) else str(value)
+
 
 @dataclass(frozen=True)
 class Job:
@@ -100,27 +85,64 @@ class Job:
     dedupe_key: str
     kind: str
     target: str
-    source_sha: str
-    generator_identity: str
-    executor: str
+    freshness_key: str
+    preferred_executor: str
     state: str
     attempts: int
     payload: dict[str, Any]
     created_at: str
     updated_at: str
-    artifact_path: str | None
-    artifact_sha256: str | None
+    lease_owner: str | None
+    lease_until: str | None
+    active_attempt_id: str | None
+    receipt_id: str | None
     error: str | None
     hmmm: str | None
 
+
+@dataclass(frozen=True)
+class Attempt:
+    id: str
+    job_id: str
+    ordinal: int
+    executor: str
+    worker_id: str
+    state: str
+    created_at: str
+    started_at: str | None
+    finished_at: str | None
+    error: str | None
+    hmmm: str | None
+
+
+@dataclass(frozen=True)
+class Acceptance:
+    target: str
+    freshness_key: str
+    receipt_id: str
+    accepted_at: str
+
+
+@dataclass(frozen=True)
+class Receipt:
+    id: str
+    job_id: str
+    target: str
+    freshness_key: str
+    output_path: str
+    output_sha256: str
+    receipt: dict[str, Any]
+    verified_at: str
+
+
 class JobLedger:
-    """PostgreSQL orchestration ledger with explicit migration and leases."""
+    """PostgreSQL-only fresh-making state and transactional worker claims."""
 
     def __init__(self, database_url: str, *, receipt_dir: str | Path | None = None):
         if not database_url.startswith(("postgresql://", "postgres://")):
             raise ValueError("JobLedger requires a PostgreSQL database URL")
         self.database_url = database_url
-        self.receipt_dir = Path(receipt_dir or ".stack/state/receipts").resolve()
+        self.receipt_dir = Path(receipt_dir or "/var/lib/stack-orchestrator/receipts").resolve()
 
     @staticmethod
     def _psycopg():
@@ -143,17 +165,8 @@ class JobLedger:
             conn.commit()
 
     @staticmethod
-    def _dedupe_key(*, kind: str, target: str, source_sha: str,
-                    generator_identity: str, executor: str,
-                    payload: dict[str, Any]) -> str:
-        material = {
-            "kind": kind,
-            "target": target,
-            "source_sha": source_sha,
-            "generator_identity": generator_identity,
-            "executor": executor,
-            "payload": payload,
-        }
+    def _dedupe_key(*, kind: str, target: str, freshness_key: str) -> str:
+        material = {"kind": kind, "target": target, "freshness_key": freshness_key}
         return hashlib.sha256(_canonical_json(material).encode("utf-8")).hexdigest()
 
     @staticmethod
@@ -162,38 +175,88 @@ class JobLedger:
         if isinstance(payload, str):
             payload = json.loads(payload)
         return Job(
-            id=row["id"], dedupe_key=row["dedupe_key"], kind=row["kind"],
-            target=row["target"], source_sha=row["source_sha"],
-            generator_identity=row["generator_identity"], executor=row["executor"],
+            id=row["id"], dedupe_key=row["dedupe_key"], kind=row["kind"], target=row["target"],
+            freshness_key=row["freshness_key"], preferred_executor=row["preferred_executor"],
             state=row["state"], attempts=int(row["attempts"]), payload=dict(payload),
-            created_at=_iso(row["created_at"]), updated_at=_iso(row["updated_at"]),
-            artifact_path=row["artifact_path"], artifact_sha256=row["artifact_sha256"],
+            created_at=str(_iso(row["created_at"])), updated_at=str(_iso(row["updated_at"])),
+            lease_owner=row["lease_owner"], lease_until=_iso(row["lease_until"]),
+            active_attempt_id=row["active_attempt_id"], receipt_id=row["receipt_id"],
             error=row["error"], hmmm=row["hmmm"],
         )
 
-    def enqueue(self, *, kind: str, target: str, source_sha: str,
-                generator_identity: str, executor: str, payload: dict[str, Any],
-                hmmm: str | None = None) -> Job:
-        dedupe_key = self._dedupe_key(
-            kind=kind, target=target, source_sha=source_sha,
-            generator_identity=generator_identity, executor=executor, payload=payload,
+    @staticmethod
+    def _row_to_attempt(row: dict[str, Any]) -> Attempt:
+        return Attempt(
+            id=row["id"], job_id=row["job_id"], ordinal=int(row["ordinal"]),
+            executor=row["executor"], worker_id=row["worker_id"], state=row["state"],
+            created_at=str(_iso(row["created_at"])), started_at=_iso(row["started_at"]),
+            finished_at=_iso(row["finished_at"]), error=row["error"], hmmm=row["hmmm"],
         )
+
+    def upsert_derivation(self, spec: dict[str, Any], freshness_key: str) -> None:
+        target = str(spec["target"])
+        dependencies = [str(item) for item in spec.get("depends_on", [])]
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    INSERT INTO derivations(target, kind, freshness_key, spec_json)
+                    VALUES (%s, %s, %s, %s::jsonb)
+                    ON CONFLICT(target) DO UPDATE SET
+                      kind=EXCLUDED.kind, freshness_key=EXCLUDED.freshness_key,
+                      spec_json=EXCLUDED.spec_json, updated_at=CURRENT_TIMESTAMP
+                    """,
+                    (target, spec["kind"], freshness_key, _canonical_json(spec)),
+                )
+                cur.execute("DELETE FROM derivation_dependencies WHERE target=%s", (target,))
+                for dependency in dependencies:
+                    cur.execute(
+                        """INSERT INTO derivation_dependencies(target, depends_on_target)
+                           VALUES (%s, %s) ON CONFLICT DO NOTHING""",
+                        (target, dependency),
+                    )
+            conn.commit()
+
+    def get_derivation(self, target: str) -> dict[str, Any]:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT spec_json FROM derivations WHERE target=%s", (target,))
+                row = cur.fetchone()
+        if row is None:
+            raise KeyError(target)
+        value = row["spec_json"]
+        return json.loads(value) if isinstance(value, str) else dict(value)
+
+    def list_derivations(self) -> list[dict[str, Any]]:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT spec_json FROM derivations ORDER BY target")
+                rows = cur.fetchall()
+        out: list[dict[str, Any]] = []
+        for row in rows:
+            value = row["spec_json"]
+            out.append(json.loads(value) if isinstance(value, str) else dict(value))
+        return out
+
+    def enqueue(self, *, kind: str, target: str, freshness_key: str,
+                payload: dict[str, Any], executor: str = "local") -> Job:
+        if len(freshness_key) != 64:
+            raise ValueError("freshness_key must be a SHA-256 hex digest")
+        dedupe_key = self._dedupe_key(kind=kind, target=target, freshness_key=freshness_key)
         job_id = f"job_{dedupe_key[:24]}"
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO jobs (
-                        id, dedupe_key, kind, target, source_sha, generator_identity,
-                        executor, state, attempts, payload_json, hmmm
-                    )
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'queued', 0, %s::jsonb, %s)
-                    ON CONFLICT (dedupe_key) DO NOTHING
+                    INSERT INTO jobs(id, dedupe_key, kind, target, freshness_key,
+                                     preferred_executor, state, payload_json)
+                    VALUES (%s,%s,%s,%s,%s,%s,'queued',%s::jsonb)
+                    ON CONFLICT(dedupe_key) DO NOTHING
                     """,
-                    (job_id, dedupe_key, kind, target, source_sha, generator_identity,
-                     executor, _canonical_json(payload), hmmm),
+                    (job_id, dedupe_key, kind, target, freshness_key, executor,
+                     _canonical_json(payload)),
                 )
-                cur.execute("SELECT * FROM jobs WHERE dedupe_key = %s", (dedupe_key,))
+                cur.execute("SELECT * FROM jobs WHERE dedupe_key=%s", (dedupe_key,))
                 row = cur.fetchone()
             conn.commit()
         assert row is not None
@@ -202,146 +265,232 @@ class JobLedger:
     def get(self, job_id: str) -> Job:
         with self._connect() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
                 row = cur.fetchone()
         if row is None:
             raise KeyError(job_id)
         return self._row_to_job(row)
 
-    def list(self, *, limit: int = 100) -> list[Job]:
+    def list(self, *, limit: int = 100, target: str | None = None) -> list[Job]:
         with self._connect() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT * FROM jobs ORDER BY created_at DESC LIMIT %s", (limit,))
+                if target:
+                    cur.execute("SELECT * FROM jobs WHERE target=%s ORDER BY created_at DESC LIMIT %s", (target, limit))
+                else:
+                    cur.execute("SELECT * FROM jobs ORDER BY created_at DESC LIMIT %s", (limit,))
                 rows = cur.fetchall()
         return [self._row_to_job(row) for row in rows]
 
-    @staticmethod
-    def _close_attempt(cur, job_id: str, state: str, *, error: str | None = None) -> None:
+    def attempts_for(self, job_id: str) -> list[Attempt]:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM attempts WHERE job_id=%s ORDER BY ordinal", (job_id,))
+                rows = cur.fetchall()
+        return [self._row_to_attempt(row) for row in rows]
+
+    def active_job_for_target(self, target: str) -> Job | None:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """SELECT * FROM jobs WHERE target=%s
+                       AND state IN ('queued','leased','running','verifying')
+                       ORDER BY created_at DESC LIMIT 1""",
+                    (target,),
+                )
+                row = cur.fetchone()
+        return self._row_to_job(row) if row else None
+
+    def _lease_row(self, cur, row: dict[str, Any], *, executor: str,
+                   worker_id: str, lease_seconds: int) -> dict[str, Any]:
+        ordinal = int(row["attempts"]) + 1
+        attempt_id = f"attempt_{uuid.uuid4().hex}"
         cur.execute(
             """
-            UPDATE attempts
-            SET state = %s, finished_at = CURRENT_TIMESTAMP, error = %s
-            WHERE job_id = %s AND state = 'running'
+            INSERT INTO attempts(id, job_id, ordinal, executor, worker_id, state)
+            VALUES (%s,%s,%s,%s,%s,'leased')
             """,
-            (state, error, job_id),
+            (attempt_id, row["id"], ordinal, executor, worker_id),
         )
-
-    def _transition(self, job_id: str, to_state: str, *,
-                    artifact_path: str | None = None,
-                    artifact_sha256: str | None = None,
-                    error: str | None = None, hmmm: str | None = None) -> Job:
-        if to_state not in JOB_STATES:
-            raise ValueError(f"unknown job state: {to_state}")
-        with self._connect() as conn:
-            with conn.cursor() as cur:
-                cur.execute("SELECT * FROM jobs WHERE id = %s FOR UPDATE", (job_id,))
-                row = cur.fetchone()
-                if row is None:
-                    raise KeyError(job_id)
-                current = str(row["state"])
-                if to_state not in _ALLOWED_TRANSITIONS[current]:
-                    raise ValueError(f"invalid job transition: {current} -> {to_state}")
-                cur.execute(
-                    """
-                    UPDATE jobs
-                    SET state = %s,
-                        updated_at = CURRENT_TIMESTAMP,
-                        artifact_path = COALESCE(%s, artifact_path),
-                        artifact_sha256 = COALESCE(%s, artifact_sha256),
-                        error = %s,
-                        hmmm = %s,
-                        lease_owner = CASE WHEN %s IN ('running') THEN lease_owner ELSE NULL END,
-                        lease_until = CASE WHEN %s IN ('running') THEN lease_until ELSE NULL END
-                    WHERE id = %s
-                    """,
-                    (to_state, artifact_path, artifact_sha256, error, hmmm,
-                     to_state, to_state, job_id),
-                )
-                if to_state in {"succeeded", "failed", "hmmm", "cancelled"}:
-                    self._close_attempt(cur, job_id, to_state, error=error or hmmm)
-                if to_state == "hmmm" and hmmm:
-                    cur.execute(
-                        "INSERT INTO hmmm (id, job_id, constraint) VALUES (%s, %s, %s)",
-                        (f"hmmm_{uuid.uuid4().hex}", job_id, hmmm),
-                    )
-                if to_state == "succeeded":
-                    cur.execute(
-                        """
-                        UPDATE hmmm SET resolved_at = CURRENT_TIMESTAMP,
-                            resolution = 'job later succeeded'
-                        WHERE job_id = %s AND resolved_at IS NULL
-                        """,
-                        (job_id,),
-                    )
-                cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
-                updated = cur.fetchone()
-            conn.commit()
+        cur.execute(
+            """
+            UPDATE jobs SET state='leased', attempts=%s, preferred_executor=%s,
+                lease_owner=%s,
+                lease_until=CURRENT_TIMESTAMP + (%s * INTERVAL '1 second'),
+                active_attempt_id=%s, error=NULL, hmmm=NULL,
+                updated_at=CURRENT_TIMESTAMP
+            WHERE id=%s
+            """,
+            (ordinal, executor, worker_id, lease_seconds, attempt_id, row["id"]),
+        )
+        cur.execute("SELECT * FROM jobs WHERE id=%s", (row["id"],))
+        updated = cur.fetchone()
         assert updated is not None
-        return self._row_to_job(updated)
+        return updated
 
-    def start(self, job_id: str, *, worker_id: str = "operator") -> Job:
+    def acquire_lease(self, job_id: str, *, worker_id: str, executor: str = "local",
+                      lease_seconds: int = 1800) -> Job:
+        if lease_seconds <= 0:
+            raise ValueError("lease_seconds must be positive")
+        self.requeue_stale()
         with self._connect() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT * FROM jobs WHERE id = %s FOR UPDATE", (job_id,))
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
                 row = cur.fetchone()
                 if row is None:
                     raise KeyError(job_id)
                 if row["state"] != "queued":
-                    raise ValueError(f"invalid job transition: {row['state']} -> running")
-                cur.execute(
-                    """
-                    UPDATE jobs SET state = 'running', attempts = attempts + 1,
-                        updated_at = CURRENT_TIMESTAMP WHERE id = %s
-                    """,
-                    (job_id,),
+                    raise ValueError(f"job must be queued before lease: {row['state']}")
+                updated = self._lease_row(
+                    cur, row, executor=executor, worker_id=worker_id,
+                    lease_seconds=lease_seconds,
                 )
-                cur.execute(
-                    "INSERT INTO attempts (id, job_id, executor, worker_id, state) VALUES (%s, %s, %s, %s, 'running')",
-                    (f"attempt_{uuid.uuid4().hex}", job_id, row["executor"], worker_id),
-                )
-                cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
-                updated = cur.fetchone()
             conn.commit()
-        assert updated is not None
         return self._row_to_job(updated)
 
-    def claim_next(self, *, executor: str, worker_id: str,
-                   lease_seconds: int) -> Job | None:
+    def claim_next(self, *, executor: str, worker_id: str, lease_seconds: int) -> Job | None:
+        self.requeue_stale()
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    SELECT j.* FROM jobs AS j
-                    WHERE j.state = 'queued' AND j.executor = %s
-                      AND NOT EXISTS (
-                          SELECT 1 FROM job_dependencies AS d
-                          JOIN jobs AS upstream ON upstream.id = d.depends_on_job_id
-                          WHERE d.job_id = j.id AND upstream.state <> d.required_state
-                      )
-                    ORDER BY j.created_at, j.id
-                    FOR UPDATE SKIP LOCKED
-                    LIMIT 1
-                    """,
-                    (executor,),
+                    SELECT * FROM jobs
+                    WHERE state='queued' AND kind='fresh.make'
+                    ORDER BY created_at, id
+                    FOR UPDATE SKIP LOCKED LIMIT 1
+                    """
                 )
                 row = cur.fetchone()
                 if row is None:
                     conn.commit()
                     return None
+                updated = self._lease_row(
+                    cur, row, executor=executor, worker_id=worker_id,
+                    lease_seconds=lease_seconds,
+                )
+            conn.commit()
+        return self._row_to_job(updated)
+
+    def start(self, job_id: str, *, worker_id: str) -> Job:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
+                row = cur.fetchone()
+                if row is None:
+                    raise KeyError(job_id)
+                if row["state"] != "leased" or row["lease_owner"] != worker_id:
+                    raise ValueError("start requires the caller's active lease")
                 cur.execute(
-                    """
-                    UPDATE jobs SET state = 'running', attempts = attempts + 1,
-                        lease_owner = %s,
-                        lease_until = CURRENT_TIMESTAMP + (%s * INTERVAL '1 second'),
-                        updated_at = CURRENT_TIMESTAMP WHERE id = %s
-                    """,
-                    (worker_id, lease_seconds, row["id"]),
+                    "UPDATE jobs SET state='running', updated_at=CURRENT_TIMESTAMP WHERE id=%s",
+                    (job_id,),
                 )
                 cur.execute(
-                    "INSERT INTO attempts (id, job_id, executor, worker_id, state) VALUES (%s, %s, %s, %s, 'running')",
-                    (f"attempt_{uuid.uuid4().hex}", row["id"], row["executor"], worker_id),
+                    "UPDATE attempts SET state='running', started_at=CURRENT_TIMESTAMP WHERE id=%s",
+                    (row["active_attempt_id"],),
                 )
-                cur.execute("SELECT * FROM jobs WHERE id = %s", (row["id"],))
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
+                updated = cur.fetchone()
+            conn.commit()
+        assert updated is not None
+        return self._row_to_job(updated)
+
+    def heartbeat(self, job_id: str, *, worker_id: str, lease_seconds: int) -> Job:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
+                row = cur.fetchone()
+                if row is None:
+                    raise KeyError(job_id)
+                if row["state"] not in {"leased", "running", "verifying"} or row["lease_owner"] != worker_id:
+                    raise ValueError("heartbeat requires the caller's active lease")
+                cur.execute(
+                    """UPDATE jobs SET lease_until=CURRENT_TIMESTAMP + (%s * INTERVAL '1 second'),
+                       updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
+                    (lease_seconds, job_id),
+                )
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
+                updated = cur.fetchone()
+            conn.commit()
+        assert updated is not None
+        return self._row_to_job(updated)
+
+    def mark_verifying(self, job_id: str, *, worker_id: str) -> Job:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
+                row = cur.fetchone()
+                if row is None:
+                    raise KeyError(job_id)
+                if row["state"] != "running" or row["lease_owner"] != worker_id:
+                    raise ValueError("verification requires the caller's running lease")
+                cur.execute("UPDATE jobs SET state='verifying', updated_at=CURRENT_TIMESTAMP WHERE id=%s", (job_id,))
+                cur.execute("UPDATE attempts SET state='verifying' WHERE id=%s", (row["active_attempt_id"],))
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
+                updated = cur.fetchone()
+            conn.commit()
+        assert updated is not None
+        return self._row_to_job(updated)
+
+    def _finish(self, job_id: str, state: str, *, error: str | None = None,
+                hmmm: str | None = None) -> Job:
+        if state not in {"failed", "hmmm", "cancelled"}:
+            raise ValueError("_finish handles only non-success terminal states")
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
+                row = cur.fetchone()
+                if row is None:
+                    raise KeyError(job_id)
+                if row["state"] not in {"leased", "running", "verifying", "queued", "failed", "hmmm"}:
+                    raise ValueError(f"cannot finish from {row['state']}")
+                attempt_id = row["active_attempt_id"]
+                cur.execute(
+                    """UPDATE jobs SET state=%s, error=%s, hmmm=%s, lease_owner=NULL,
+                       lease_until=NULL, active_attempt_id=NULL, updated_at=CURRENT_TIMESTAMP
+                       WHERE id=%s""",
+                    (state, error, hmmm, job_id),
+                )
+                if attempt_id:
+                    cur.execute(
+                        """UPDATE attempts SET state=%s, finished_at=CURRENT_TIMESTAMP,
+                           error=%s, hmmm=%s WHERE id=%s""",
+                        (state, error, hmmm, attempt_id),
+                    )
+                if hmmm:
+                    cur.execute(
+                        "INSERT INTO hmmm(id, target, job_id, constraint) VALUES (%s,%s,%s,%s)",
+                        (f"hmmm_{uuid.uuid4().hex}", row["target"], job_id, hmmm),
+                    )
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
+                updated = cur.fetchone()
+            conn.commit()
+        assert updated is not None
+        return self._row_to_job(updated)
+
+    def fail(self, job_id: str, *, error: str, hmmm: str | None = None) -> Job:
+        return self._finish(job_id, "failed", error=error, hmmm=hmmm)
+
+    def hold(self, job_id: str, *, constraint: str, error: str | None = None) -> Job:
+        return self._finish(job_id, "hmmm", error=error or constraint, hmmm=constraint)
+
+    def cancel(self, job_id: str) -> Job:
+        return self._finish(job_id, "cancelled")
+
+    def retry(self, job_id: str, *, executor: str | None = None) -> Job:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
+                row = cur.fetchone()
+                if row is None:
+                    raise KeyError(job_id)
+                if row["state"] not in TERMINAL_STATES:
+                    raise ValueError(f"only terminal jobs can be requeued: {row['state']}")
+                cur.execute(
+                    """UPDATE jobs SET state='queued', preferred_executor=%s,
+                       lease_owner=NULL, lease_until=NULL, active_attempt_id=NULL,
+                       error=NULL, hmmm=NULL, updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
+                    (executor or row["preferred_executor"], job_id),
+                )
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
                 updated = cur.fetchone()
             conn.commit()
         assert updated is not None
@@ -351,104 +500,108 @@ class JobLedger:
         with self._connect() as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                    """
-                    SELECT id FROM jobs
-                    WHERE state = 'running' AND lease_until IS NOT NULL
-                      AND lease_until < CURRENT_TIMESTAMP
-                    FOR UPDATE
-                    """
+                    """SELECT * FROM jobs WHERE state IN ('leased','running','verifying')
+                       AND lease_until < CURRENT_TIMESTAMP FOR UPDATE"""
                 )
-                stale_ids = [row["id"] for row in cur.fetchall()]
-                for job_id in stale_ids:
-                    constraint = "worker lease expired before a terminal receipt was recorded"
-                    self._close_attempt(cur, job_id, "hmmm", error=constraint)
+                rows = cur.fetchall()
+                for row in rows:
+                    constraint = "worker lease expired before a terminal fresh-making receipt was accepted"
+                    if row["active_attempt_id"]:
+                        cur.execute(
+                            """UPDATE attempts SET state='hmmm', finished_at=CURRENT_TIMESTAMP,
+                               hmmm=%s WHERE id=%s""",
+                            (constraint, row["active_attempt_id"]),
+                        )
                     cur.execute(
-                        "INSERT INTO hmmm (id, job_id, constraint) VALUES (%s, %s, %s)",
-                        (f"hmmm_{uuid.uuid4().hex}", job_id, constraint),
+                        "INSERT INTO hmmm(id,target,job_id,constraint) VALUES (%s,%s,%s,%s)",
+                        (f"hmmm_{uuid.uuid4().hex}", row["target"], row["id"], constraint),
                     )
                     cur.execute(
-                        """
-                        UPDATE jobs SET state = 'queued', lease_owner = NULL,
-                            lease_until = NULL, error = NULL, hmmm = %s,
-                            updated_at = CURRENT_TIMESTAMP WHERE id = %s
-                        """,
-                        (constraint, job_id),
+                        """UPDATE jobs SET state='queued', lease_owner=NULL, lease_until=NULL,
+                           active_attempt_id=NULL, hmmm=%s, error=NULL,
+                           updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
+                        (constraint, row["id"]),
                     )
             conn.commit()
-        return len(stale_ids)
+        return len(rows)
 
-    def succeed(self, job_id: str, *, artifact_path: str,
-                artifact_sha256: str) -> Job:
-        """Atomically close a running job and persist its SQL receipt."""
+    def accept_success(self, job_id: str, *, receipt: dict[str, Any],
+                       output_path: str, output_sha256: str) -> Job:
+        """Atomically accept receipt, target freshness, attempt, and job success."""
         with self._connect() as conn:
             with conn.cursor() as cur:
-                cur.execute("SELECT * FROM jobs WHERE id = %s FOR UPDATE", (job_id,))
+                cur.execute("SELECT * FROM jobs WHERE id=%s FOR UPDATE", (job_id,))
                 row = cur.fetchone()
                 if row is None:
                     raise KeyError(job_id)
-                current = str(row["state"])
-                if "succeeded" not in _ALLOWED_TRANSITIONS[current]:
-                    raise ValueError(f"invalid job transition: {current} -> succeeded")
+                if row["state"] != "verifying":
+                    raise ValueError(f"success requires verifying state, got {row['state']}")
+                if receipt.get("freshness_key_sha256") != row["freshness_key"]:
+                    raise ValueError("receipt freshness key differs from job")
+                attempt_id = row["active_attempt_id"]
+                if not attempt_id:
+                    raise ValueError("success requires an active attempt")
+                receipt_id = f"receipt_{uuid.uuid4().hex}"
                 cur.execute(
-                    """
-                    UPDATE jobs SET state = 'succeeded', updated_at = CURRENT_TIMESTAMP,
-                        artifact_path = %s, artifact_sha256 = %s, error = NULL,
-                        hmmm = NULL, lease_owner = NULL, lease_until = NULL
-                    WHERE id = %s
-                    """,
-                    (artifact_path, artifact_sha256, job_id),
-                )
-                self._close_attempt(cur, job_id, "succeeded")
-                cur.execute(
-                    """
-                    INSERT INTO receipts (
-                        job_id, source_sha, generator_identity,
-                        artifact_path, artifact_sha256, verified_at
-                    ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
-                    ON CONFLICT (job_id) DO UPDATE
-                    SET source_sha = EXCLUDED.source_sha,
-                        generator_identity = EXCLUDED.generator_identity,
-                        artifact_path = EXCLUDED.artifact_path,
-                        artifact_sha256 = EXCLUDED.artifact_sha256,
-                        verified_at = EXCLUDED.verified_at
-                    """,
-                    (job_id, row["source_sha"], row["generator_identity"],
-                     artifact_path, artifact_sha256),
+                    """INSERT INTO receipts(id,job_id,target,freshness_key,attempt_id,
+                           output_path,output_sha256,receipt_json)
+                       VALUES (%s,%s,%s,%s,%s,%s,%s,%s::jsonb)""",
+                    (receipt_id, job_id, row["target"], row["freshness_key"], attempt_id,
+                     output_path, output_sha256, _canonical_json(receipt)),
                 )
                 cur.execute(
-                    """
-                    UPDATE hmmm SET resolved_at = CURRENT_TIMESTAMP,
-                        resolution = 'job later succeeded'
-                    WHERE job_id = %s AND resolved_at IS NULL
-                    """,
-                    (job_id,),
+                    """INSERT INTO target_acceptance(target,freshness_key,receipt_id)
+                       VALUES (%s,%s,%s)
+                       ON CONFLICT(target) DO UPDATE SET freshness_key=EXCLUDED.freshness_key,
+                         receipt_id=EXCLUDED.receipt_id, accepted_at=CURRENT_TIMESTAMP""",
+                    (row["target"], row["freshness_key"], receipt_id),
                 )
-                cur.execute("SELECT * FROM jobs WHERE id = %s", (job_id,))
+                cur.execute(
+                    """UPDATE jobs SET state='succeeded', receipt_id=%s, error=NULL, hmmm=NULL,
+                       lease_owner=NULL, lease_until=NULL, active_attempt_id=NULL,
+                       updated_at=CURRENT_TIMESTAMP WHERE id=%s""",
+                    (receipt_id, job_id),
+                )
+                cur.execute(
+                    "UPDATE attempts SET state='succeeded', finished_at=CURRENT_TIMESTAMP WHERE id=%s",
+                    (attempt_id,),
+                )
+                cur.execute(
+                    """UPDATE hmmm SET resolved_at=CURRENT_TIMESTAMP,
+                       resolution='fresh-making target later accepted' WHERE target=%s AND resolved_at IS NULL""",
+                    (row["target"],),
+                )
+                cur.execute("SELECT * FROM jobs WHERE id=%s", (job_id,))
                 updated = cur.fetchone()
             conn.commit()
         assert updated is not None
         return self._row_to_job(updated)
 
-    def fail(self, job_id: str, *, error: str) -> Job:
-        return self._transition(job_id, "failed", error=error, hmmm=None)
-
-    def hold(self, job_id: str, *, constraint: str, error: str | None = None) -> Job:
-        return self._transition(job_id, "hmmm", error=error or constraint, hmmm=constraint)
-
-    def retry(self, job_id: str) -> Job:
-        return self._transition(job_id, "queued", error=None, hmmm=None)
-
-    def cancel(self, job_id: str) -> Job:
-        return self._transition(job_id, "cancelled")
-
-    def add_dependency(self, job_id: str, depends_on_job_id: str) -> None:
+    def get_acceptance(self, target: str) -> Acceptance | None:
         with self._connect() as conn:
             with conn.cursor() as cur:
-                cur.execute(
-                    """
-                    INSERT INTO job_dependencies (job_id, depends_on_job_id)
-                    VALUES (%s, %s) ON CONFLICT DO NOTHING
-                    """,
-                    (job_id, depends_on_job_id),
-                )
-            conn.commit()
+                cur.execute("SELECT * FROM target_acceptance WHERE target=%s", (target,))
+                row = cur.fetchone()
+        if row is None:
+            return None
+        return Acceptance(
+            target=row["target"], freshness_key=row["freshness_key"],
+            receipt_id=row["receipt_id"], accepted_at=str(_iso(row["accepted_at"])),
+        )
+
+    def get_receipt(self, receipt_id: str) -> Receipt:
+        with self._connect() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT * FROM receipts WHERE id=%s", (receipt_id,))
+                row = cur.fetchone()
+        if row is None:
+            raise KeyError(receipt_id)
+        payload = row["receipt_json"]
+        if isinstance(payload, str):
+            payload = json.loads(payload)
+        return Receipt(
+            id=row["id"], job_id=row["job_id"], target=row["target"],
+            freshness_key=row["freshness_key"], output_path=row["output_path"],
+            output_sha256=row["output_sha256"], receipt=dict(payload),
+            verified_at=str(_iso(row["verified_at"])),
+        )
