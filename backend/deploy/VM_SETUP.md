@@ -1,8 +1,8 @@
 # VM deployment checklist
 
-This checklist begins with observation of the actual VM. Do not infer its
-Linux distribution, PostgreSQL state, mount layout, service accounts, or
-recovery path from this repository.
+This checklist begins with observation of the actual VM. Do not infer its Linux
+distribution, PostgreSQL state, mount layout, service accounts, or recovery path from
+this repository.
 
 ## Required observed facts
 
@@ -18,15 +18,15 @@ human SSH/OS Login recovery path: hmmm
 ## Intended privilege boundary
 
 ```text
-Unix service account: stackorchestrator
-PostgreSQL role:      stackorchestrator
-production database:  stack_orchestrator
+Unix service account:  stackorchestrator
+PostgreSQL role:       stackorchestrator
+production database:   stack_orchestrator
 restore-test database: stack_orchestrator_restore_test
 ```
 
-Prefer local PostgreSQL Unix-socket/peer authentication. The worker does not
-need a database password, root privileges, Docker socket access, cloud metadata
-credentials, or a generic administrative shell.
+Prefer local PostgreSQL Unix-socket/peer authentication. The worker does not need a
+database password, root privileges, Docker socket access, cloud metadata credentials,
+or a generic administrative shell.
 
 The worker needs only:
 
@@ -34,44 +34,36 @@ The worker needs only:
 read:  /srv/stack
 write: /srv/stack-repos/<allowed-repo>/<repo>_msdmd.ts
 write: /var/lib/stack-orchestrator/receipts
-write: PostgreSQL orchestration tables through the local socket
+write: PostgreSQL fresh-making tables through the local socket
 ```
 
-The repository allow-list is declared by `STACK_ALLOWED_REPOS`; production
-execution requires a target to be the direct path
-`$STACK_REPO_ROOT/<repo>`.
+The repository allow-list is declared by `STACK_ALLOWED_REPOS`; production execution
+requires a target to be the direct path `$STACK_REPO_ROOT/<repo>`.
 
 ## Install application dependencies
-
-After the VM and checkout paths have been observed:
 
 ```bash
 cd /srv/stack
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r backend/requirements.txt
-```
 
-Install and edit the environment file:
-
-```bash
 sudo install -m 0600 backend/deploy/stack-orchestrator.env.example \
   /etc/stack-orchestrator.env
 sudo editor /etc/stack-orchestrator.env
 ```
 
 Create `/var/lib/stack-orchestrator/receipts` and
-`/var/backups/stack-orchestrator/postgres` owned by the service account after
-that account is created using the VM's native administration path.
+`/var/backups/stack-orchestrator/postgres` owned by the service account after that
+account is created using the VM's native administration path.
 
 ## PostgreSQL
 
-Provision the role and two databases using the VM's installed PostgreSQL
-administration mechanism. Do not blindly paste distro-specific package/service
-commands before confirming the VM.
+Provision the role and two databases using the VM's installed PostgreSQL administration
+mechanism. Do not blindly paste distro-specific package/service commands before
+confirming the VM.
 
-Then, as the service account or another identity that exercises the same local
-PostgreSQL authorization path:
+Then exercise the same local authorization path the worker will use:
 
 ```bash
 set -a
@@ -79,6 +71,10 @@ set -a
 set +a
 /srv/stack/.venv/bin/python -m frontend.cli.stackctl db migrate
 ```
+
+PostgreSQL is the single production authority for derivation specs, freshness keys,
+logical jobs, attempts/leases, receipts, target acceptance, dependencies, and `hmmm`.
+There is no SQLite production fallback.
 
 ## Worker
 
@@ -90,8 +86,27 @@ sudo systemctl enable --now stack-orchestrator-worker.service
 sudo systemctl --no-pager --full status stack-orchestrator-worker.service
 ```
 
-The service is non-root and `RestrictAddressFamilies=AF_UNIX`; its production
-path does not require hosted CI or outbound network access.
+The service is non-root and `RestrictAddressFamilies=AF_UNIX`; its production path does
+not require hosted CI or outbound network access.
+
+## First fresh-making vertical slice
+
+Register and queue an exact MSDMD derivation:
+
+```bash
+/srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh make-msdmd ucns \
+  --root /srv/stack-repos/ucns \
+  --source-sha <40-hex-commit> \
+  --queue-only
+```
+
+Then observe the worker and verify accepted freshness:
+
+```bash
+/srv/stack/.venv/bin/python -m frontend.cli.stackctl worker once
+/srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh status msdmd:ucns
+/srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh explain msdmd:ucns
+```
 
 ## Independent backup
 
@@ -101,24 +116,17 @@ Mount independent storage at:
 /mnt/stack-orchestrator-backups
 ```
 
-"Independent" means loss of the VM's primary/root/data filesystem does not also
-lose this copy. `backup_postgres.sh` verifies that the mirror root is a real
-mountpoint and that it has a different filesystem device id from the local
-backup directory. A second directory on the same filesystem is rejected as
-`hmmm`.
-
-After the mount exists:
+"Independent" means loss of the VM's primary/root/data filesystem does not also lose
+this copy. `backup_postgres.sh` verifies that the mirror root is a real mountpoint and
+has a different filesystem device id from the local backup directory. A second
+directory on the same filesystem is rejected as `hmmm`.
 
 ```bash
 sudo mkdir -p /mnt/stack-orchestrator-backups/postgres
 sudo chown -R stackorchestrator:stackorchestrator \
   /mnt/stack-orchestrator-backups/postgres
 sudo chmod 0700 /mnt/stack-orchestrator-backups/postgres
-```
 
-Install and run one backup manually before enabling the timer:
-
-```bash
 sudo install -m 0644 backend/deploy/stack-orchestrator-backup.service \
   /etc/systemd/system/
 sudo install -m 0644 backend/deploy/stack-orchestrator-backup.timer \
@@ -127,7 +135,7 @@ sudo systemctl daemon-reload
 sudo systemctl start stack-orchestrator-backup.service
 ```
 
-Then run a restore drill against the disposable restore-test database:
+Run a restore drill against the disposable restore-test database:
 
 ```bash
 set -a
@@ -136,7 +144,7 @@ set +a
 backend/ops/restore_test.sh
 ```
 
-Only after both succeed:
+Only after backup and restore both succeed:
 
 ```bash
 sudo systemctl enable --now stack-orchestrator-backup.timer
@@ -151,10 +159,14 @@ Deployment is not complete until all of these are observed on the VM:
 [ ] PostgreSQL version/state and local auth boundary observed
 [ ] stackctl db migrate succeeds
 [ ] worker runs as non-root stackorchestrator
-[ ] one exact-SHA MSDMD job reaches succeeded with SQL + JSON receipt
-[ ] wrong-SHA job reaches hmmm without replacing the artifact
-[ ] dirty-worktree job reaches hmmm without replacing the artifact
-[ ] expired lease is surfaced as hmmm and requeued
+[ ] exact-SHA msdmd:ucns reaches fresh with SQL target_acceptance + JSON projection
+[ ] a second make with unchanged identities schedules no new attempt
+[ ] wrong/moved source identity cannot produce target acceptance
+[ ] changed generator identity invalidates the desired freshness key
+[ ] dirty worktree becomes hmmm without claiming repository authority
+[ ] false-green/nondeterministic executor output is rejected by independent rerender
+[ ] expired lease is preserved as hmmm and the logical job is requeued
+[ ] same-key tamper repair creates a later attempt without deleting prior evidence
 [ ] backup creates validated local + independent copies
 [ ] backup mirror is a distinct mounted filesystem/device
 [ ] restore drill succeeds against disposable database
@@ -163,7 +175,7 @@ Deployment is not complete until all of these are observed on the VM:
 
 ## hmmm
 
-The VM is not directly reachable from this chat through a bounded VM control
-connector, so its concrete distribution, PostgreSQL installation, storage
-mount, service account state, and end-to-end deployment results remain
-unobserved rather than guessed.
+The concrete VM distribution, PostgreSQL installation/auth state, storage mount, service
+account state, and end-to-end deployment results remain unobserved here. PostgreSQL
+integration tests and backup/restore acceptance therefore remain live VM gates rather
+than being represented as passed.
