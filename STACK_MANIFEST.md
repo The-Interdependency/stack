@@ -3,7 +3,7 @@
 Provenance and authority-boundary record for `The-Interdependency/stack`.
 
 - Source snapshot UTC: `2026-08-22T10:19:43Z` (source commits unchanged by this layout migration)
-- Layout migration UTC: `2026-08-30T02:52Z`
+- Layout migration UTC: `2026-08-30T02:58:49Z`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.0.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `boundaries` JSON):
   `0760abd60f089266405aa589063a7533f485761e2bd25faa44f2eac64fb89f7d`
