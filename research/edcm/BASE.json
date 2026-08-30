@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "edcm",
+  "source_repository": "The-Interdependency/edcm",
+  "source_commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
+  "canon_path": "../../libs/edcm",
+  "authority": "The-Interdependency/edcm",
+  "standing": "stack-local-research"
+}

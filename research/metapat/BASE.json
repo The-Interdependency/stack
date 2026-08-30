@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "metapat",
+  "source_repository": "The-Interdependency/metapat",
+  "source_commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
+  "canon_path": "../../libs/metapat",
+  "authority": "The-Interdependency/metapat",
+  "standing": "stack-local-research"
+}

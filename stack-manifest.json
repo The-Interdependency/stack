@@ -1,49 +1,49 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "f7a56ead99174598fd37e044f25c88b5dd47f53f9e4836c41620781bc3e6494a",
+  "work_graph_sha256": "0760abd60f089266405aa589063a7533f485761e2bd25faa44f2eac64fb89f7d",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
       "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
       "authority": "organization-wide build and evidence doctrine",
-      "relation": "full snapshot at stack root skill-lib/"
+      "relation": "full operational snapshot at stack root skill-lib/"
     },
     {
       "repository": "The-Interdependency/metapat",
       "commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
       "authority": "semantic authority (Meta Energy Theory)",
-      "relation": "full snapshot at research/metapat/"
+      "relation": "pinned canonical repository view at libs/metapat/; stack-local work at research/metapat/"
     },
     {
       "repository": "The-Interdependency/ucns",
       "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
       "authority": "geometry and mathematical representation",
-      "relation": "full snapshot at research/ucns/"
+      "relation": "pinned canonical repository view at libs/ucns/; stack-local work at research/ucns/"
     },
     {
       "repository": "The-Interdependency/edcm",
       "commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
       "authority": "measurement and text-gonol construction",
-      "relation": "full snapshot at research/edcm/"
+      "relation": "pinned canonical repository view at libs/edcm/; stack-local work at research/edcm/"
     },
     {
       "repository": "The-Interdependency/pcea",
       "commit": "4d2c581448b97bfb71da92b35487e74e6e3bcedc",
       "authority": "prime circle encryption algorithm",
-      "relation": "full snapshot at research/pcea/"
+      "relation": "pinned canonical repository view at libs/pcea/; stack-local work at research/pcea/"
     },
     {
       "repository": "The-Interdependency/ptcna",
       "commit": "97abdd1bbda61a68e0aac8595a32a3cb0ce73487",
       "authority": "prime tensor circled neural architecture",
-      "relation": "full snapshot at research/ptcna/"
+      "relation": "pinned canonical repository view at libs/ptcna/; stack-local work at research/ptcna/"
     },
     {
       "repository": "The-Interdependency/epac",
       "commit": "hmmm",
-      "authority": "placeholder scaffold for energy particle affixiation coupling; no source repository exists yet",
-      "relation": "placeholder at research/epac/"
+      "authority": "stack-local emerging research; no independent source repository exists yet",
+      "relation": "active research candidate at research/epac/; libs/epac/ remains unpopulated until graduation"
     }
   ],
   "boundaries": {
@@ -54,8 +54,8 @@
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 1975fe7",
-      "epac is a placeholder with no source repository",
-      "research/ snapshots are not source of truth; canonical sources remain The-Interdependency/<repo>"
+      "epac has no independent source repository or populated canonical libs/ slot yet",
+      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   }
 }
