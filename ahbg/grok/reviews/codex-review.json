@@ -87,9 +87,9 @@
     },
     {
       "area": "War",
-      "grok": "occupied and dual-target UNRESOLVED fail-closed",
-      "codex": "same two scenarios UNRESOLVED fail-closed",
-      "standing": "UNRESOLVED"
+      "grok": "war_v3 current runs: occupied/dual-target have standing_override=null; resolve deterministically (defender-holds + priority), evidence_standing=SURVIVED, explicit war events, replay_equal",
+      "codex": "at Codex freeze time: same two scenarios UNRESOLVED fail-closed",
+      "standing": "hmmm (historical at freeze; Grok current runs adopt war_v3)"
     }
   ]
 }

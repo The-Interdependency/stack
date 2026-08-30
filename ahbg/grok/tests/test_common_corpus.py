@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 import tempfile
 import unittest
@@ -8,10 +9,30 @@ from pathlib import Path
 GROK = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(GROK))
 
-from run_common_corpus import run_scenario, scenario_from_spec  # noqa: E402
+from run_common_corpus import (  # noqa: E402
+    CORPUS_FILE_SHA256,
+    CORPUS_SCENARIOS_SHA256,
+    load_corpus,
+    run_scenario,
+    scenario_from_spec,
+)
 
 
 class CommonCorpusRunnerTests(unittest.TestCase):
+    def test_load_corpus_uses_full_successor_proposal(self) -> None:
+        corpus, identity = load_corpus()
+        self.assertIn("adoption_procedure", corpus)
+        self.assertEqual(identity["file_sha256"], CORPUS_FILE_SHA256)
+        self.assertEqual(
+            identity["file_sha256"],
+            "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+        )
+        self.assertEqual(identity["canonical_scenarios_sha256"], CORPUS_SCENARIOS_SHA256)
+        self.assertEqual(
+            identity["canonical_scenarios_sha256"],
+            "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+        )
+
     def test_scenario_from_spec_maps_corpus_fields(self) -> None:
         scenario = scenario_from_spec(
             {
@@ -55,11 +76,25 @@ class CommonCorpusRunnerTests(unittest.TestCase):
         )
         with tempfile.TemporaryDirectory() as tmp:
             result = run_scenario(scenario, Path(tmp))
+            telemetry = [
+                json.loads(line)
+                for line in (Path(tmp) / "prompt_injection" / "telemetry.jsonl").read_text().splitlines()
+            ]
         self.assertEqual(result["evidence_standing"], "SURVIVED")
         self.assertEqual(result["refusals"], 1)
         self.assertTrue(result["replay_equal"])
+        resource_rows = [row for row in telemetry if row.get("kind") == "resource.telemetry"]
+        self.assertEqual(len(resource_rows), 1)
+        resource = resource_rows[0]
+        for key in ("tokens", "latency", "retries", "tool_calls", "tokens_used", "latency_ms"):
+            self.assertIsInstance(resource[key], (int, float))
+            self.assertNotIsInstance(resource[key], bool)
 
-    def test_occupied_target_collision_is_unresolved(self) -> None:
+    def test_occupied_target_collision_is_resolved(self) -> None:
+        """War (occupied target) is resolved by defender-holds.
+
+        The turn completes with a concrete board state. No hmmm/UNRESOLVED.
+        """
         scenario = scenario_from_spec(
             {
                 "id": "occupied_target_collision",
@@ -86,15 +121,15 @@ class CommonCorpusRunnerTests(unittest.TestCase):
                     ]
                 },
                 "extra_units": [{"unit_id": "B0", "tile_id": "e"}],
-                "standing_override": "UNRESOLVED",
             }
         )
         with tempfile.TemporaryDirectory() as tmp:
             result = run_scenario(scenario, Path(tmp))
             self.assertTrue((Path(tmp) / "occupied_target_collision" / "RESULT.json").is_file())
-        self.assertEqual(result["observed_standing"], "UNRESOLVED")
-        self.assertEqual(result["evidence_standing"], "UNRESOLVED")
-        self.assertEqual(result["unresolved_hmmm"], 1)
+        # War resolved: defender holds, board state is produced.
+        self.assertEqual(result["observed_standing"], "SURVIVED")
+        self.assertEqual(result["evidence_standing"], "SURVIVED")
+        self.assertEqual(result.get("unresolved_hmmm", 0), 0)
         self.assertTrue(result["replay_equal"])
 
 

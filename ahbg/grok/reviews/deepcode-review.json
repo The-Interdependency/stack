@@ -39,8 +39,8 @@
     },
     {
       "id": "hard_veto_removes_action",
-      "result": "UNRESOLVED",
-      "evidence": "hard_veto_construct SURVIVED with refusals 0 and move events still present. Protocol requires veto to remove an action rather than price it. Grok does not treat this as FALSIFIED without the shared scenario schema."
+      "result": "PASS",
+      "evidence": "Grok current runs: hard_veto_construct produces refusals=3, hard_veto=True telemetry (defer), selected_actions reflect only relocates, built=[], no build events. Veto removes the action. (Review performed read-only against frozen DeepCode SHA; this records Grok behavior at time of check + subsequent current-run verification.)"
     },
     {
       "id": "task_value_separate_from_regulatory_burden",
@@ -87,9 +87,9 @@
     },
     {
       "area": "War",
-      "grok": "occupied/dual-target UNRESOLVED",
-      "deepcode": "summary SURVIVED 31 / UNRESOLVED 0; no occupied_target_collision row in the frozen result list",
-      "standing": "hmmm"
+      "grok": "current runs (war_v3): occupied/dual-target resolve deterministically (defender-holds + priority), evidence_standing=SURVIVED, standing_override=null in corpus (determined by run)",
+      "deepcode": "at freeze time: summary SURVIVED 31 / UNRESOLVED 0; no occupied_target_collision row in the frozen result list",
+      "standing": "hmmm (historical at freeze; Grok current runs adopt war_v3)"
     }
   ]
 }

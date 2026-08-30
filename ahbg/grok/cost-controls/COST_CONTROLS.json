@@ -475,8 +475,8 @@
   "components": [
     {
       "id": "runtime_burden_observables",
-      "note": "tokens, latency, retries, and tool_calls are hmmm on every telemetry row. No runtime burden series exists to map C_lambda onto.",
-      "standing": "BLOCKED"
+      "note": "Scenario-level numeric resource telemetry is present. Mapping C_lambda onto runtime burden still needs a fitted comparator.",
+      "standing": "UNRESOLVED"
     },
     {
       "id": "binary_occupancy_veto_vs_null",
@@ -515,7 +515,7 @@
     },
     {
       "id": "voluntary_disengagement_capacity_preserving",
-      "note": "voluntary_disengagement still relocates three times. Resource telemetry remains hmmm, so capacity preservation is not measured.",
+      "note": "voluntary_disengagement still relocates three times. Resource telemetry is numeric, but capacity preservation is not linked to transitions.",
       "standing": "UNRESOLVED"
     },
     {
@@ -539,11 +539,11 @@
       "standing": "SURVIVED"
     }
   ],
-  "corpus_run": "corpus-run/calibration-family-1.0.0-proposal-1",
+  "corpus_run": "corpus-run/calibration-family-1.0.1-proposal-1",
   "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
   "hmmm": [
     "C_lambda is a restatement of occupancy plus belief-empty, not an independent burden",
-    "no numeric tokens/latency/retries/tool_calls series",
+    "runtime burden series exists; cost-to-burden model is not fit",
     "hierarchical impedance and path plasticity were not computed by the frozen pair"
   ],
   "pairs": [
@@ -593,13 +593,16 @@
       "selected_actions_equal": true
     }
   ],
-  "schema": "interdependency.ahbg.grok.cost-controls/1.0.0",
+  "report_notes": {
+    "final_note": "Runtime-burden mapping is unresolved; hierarchical coupling remains blocked until comparable coupling observables exist."
+  },
+  "schema": "interdependency.ahbg.grok.cost-controls/1.1.0",
   "shadow_epoch": true,
   "summary": {
-    "blocked": 2,
+    "blocked": 1,
     "falsified": 1,
     "survived": 5,
-    "unresolved": 5
+    "unresolved": 6
   },
   "workspace": "stack/ahbg/grok"
 }

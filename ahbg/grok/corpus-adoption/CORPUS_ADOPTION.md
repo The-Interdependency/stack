@@ -1,22 +1,21 @@
 # Grok Corpus Adoption
 
-Grok adopts the proposed shared calibration corpus digest without corpus
+Grok adopts the successor proposed shared calibration corpus digest without corpus
 amendments.
 
 ## Adopted Digest
 
 - Corpus id: `calibration-family`
-- Version: `1.0.0-proposal-1`
-- Source branch: `origin/agent/ahbg-deepcode`
-- Source commit: `598f64864b8d17faf85a0af0649b2c4f3c0d55b1`
-- Source path: `ahbg/deepseek/corpus-proposal/corpus.json`
-- `corpus.json` SHA-256: `07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891`
-- `canonical_scenarios_sha256`: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
+- Version: `1.0.1-proposal-1` (war_v3)
+- Source: `origin/agent/ahbg-deepcode:ahbg/deepseek/corpus-proposal/corpus.json`
+- `corpus.json` SHA-256: `ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab`
+- `canonical_scenarios_sha256`: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
+- Predecessor: `1.0.0-proposal-1` / `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
 - Scenario count: 35
+- Key change (war_v3): `occupied_target_collision` and `dual_target_collision` have `standing_override: null`; their evidence standing is determined by deterministic run outcome (defender-holds + priority). All other scenarios unchanged.
 
-The file digest matches `CORPUS.sha256`. The scenarios digest was recomputed
-from the `scenarios` array and matches the declared
-`canonical_scenarios_sha256`.
+The file digest matches the git-ref used by the runner. The scenarios digest was recomputed
+from the `scenarios` array and matches the declared `canonical_scenarios_sha256`.
 
 ## Frozen Build
 
@@ -35,18 +34,24 @@ None. Grok does not propose edits to the shared corpus.
 
 ## Reproduction Standing
 
-Partial / `hmmm`.
+Complete as a post-freeze successor run.
 
 The frozen Grok artifacts were generated before the shared corpus proposal and
 ran the four-scenario `smoke_epoch`, not the full 35-scenario proposed corpus.
 This is not a corpus objection. It is a reproduction gap that must remain
 visible.
 
+The later successor common-corpus run executed all 35 scenarios:
+
+- Result path: `stack/ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json`
+- Summary: SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 / BLOCKED 0
+- UNRESOLVED ids: none
+
 Exact id and seed overlap with frozen Grok artifacts:
 
 - `plain_move_loop` — seed `7`, turns `6`, standing `SURVIVED`.
-- `occupied_target_collision` — seed `13`, turns `1`, standing `UNRESOLVED`.
-- `dual_target_collision` — seed `17`, turns `1`, standing `UNRESOLVED`.
+- `occupied_target_collision` — seed `13`, turns `1`, successor standing `SURVIVED`.
+- `dual_target_collision` — seed `17`, turns `1`, successor standing `SURVIVED`.
 
 Near match:
 
@@ -61,5 +66,5 @@ Board-label gap:
   proposal uses `c`, `e`, `se`, `sw`, `w`, `nw`, `ne`. Same UCNS authority;
   different local labels.
 
-Grok therefore records the common digest while preserving the fact that the
-frozen build has not executed the full common corpus.
+Grok therefore records the successor common digest while preserving the fact
+that the initial frozen artifact set was a smaller smoke corpus.

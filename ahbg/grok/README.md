@@ -69,12 +69,14 @@ Frozen implementation SHA: `cce9cec7dae61304118efcd47bc0d7461200d335`
 (see `FREEZE.md`). Reciprocal reviews use that SHA, not later metadata commits.
 
 Smoke epoch writes `CALIBRATION_RESULT.json`, `RUN_MANIFEST.json`, `EVENTS.jsonl`,
-and per-scenario files under `artifacts/`. Grok adopts the shared corpus digest
-`b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0` with no
-amendments. A labeled post-freeze run of the 35-scenario family lives under
-`corpus-run/calibration-family-1.0.0-proposal-1/` (see `run_common_corpus.py`).
+and per-scenario files under `artifacts/`. Grok adopts the war_v3 successor shared
+corpus (1.0.1-proposal-1, canonical 371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835)
+with no amendments. A labeled post-freeze run of the 35-scenario family lives
+under `corpus-run/calibration-family-1.0.1-proposal-1/` (see
+`run_common_corpus.py`). War scenarios use standing_override=null and are
+graded by deterministic run outcome (defender-holds + priority).
 
 ## hmmm
 
 Implementation and checker choices are local to this workspace until the shared evidence distinguishes them.
-The adopted digest is recorded. War remains fail-closed. Permission-field occupancy still gates relocate.
+The adopted digest is recorded. War now resolves deterministically. Permission-field occupancy still gates relocate.

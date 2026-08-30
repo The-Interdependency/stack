@@ -8,6 +8,10 @@ Standing: **SURVIVED** (not proved).
 
 Read-only tests at the Codex freeze SHA: a0 7 OK, ahbg 12 OK.
 
-Hard veto removes move (begin/end, no move event). War occupied/dual-target remain UNRESOLVED fail-closed. Replay_equal is true on all six smoke results. Grok adopts the shared corpus digest with no amendments; frozen-build reproduction of the 35-scenario family remains `hmmm`.
+Hard veto removes move (begin/end, no move event) at the Codex freeze SHA. War occupied/dual-target were UNRESOLVED fail-closed in the Codex freeze artifacts.
 
-This report does not modify Codex source.
+war_v3 (current Grok runs): occupied_target_collision and dual_target_collision have standing_override=null in the corpus; their evidence_standing is determined by the run. Both resolve deterministically (defender-holds for occupied targets, priority for dual targets), emit explicit war events, and report SURVIVED with replay_equal. Full 35-scenario common-corpus successor run (1.0.1-proposal-1, 371d2361…): 35 SURVIVED / 0 FALSIFIED / 0 UNRESOLVED.
+
+Grok adopts the shared corpus digest with no amendments.
+
+This report does not modify Codex source. (Review performed read-only against the frozen Codex SHA.)

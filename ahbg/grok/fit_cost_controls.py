@@ -12,7 +12,7 @@ from typing import Any, Mapping, Sequence
 
 
 WORKSPACE = Path(__file__).resolve().parent
-RUN_DIR = WORKSPACE / "corpus-run" / "calibration-family-1.0.0-proposal-1"
+RUN_DIR = WORKSPACE / "corpus-run" / "calibration-family-1.0.1-proposal-1"
 OUTPUT_DIR = WORKSPACE / "cost-controls"
 FROZEN_BUILD_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"
 STANDING = ("SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED")
@@ -178,11 +178,22 @@ def evaluate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     burden_measured = any(row["numeric_burden"] for row in rows)
     task_values = {row["task_value"] for row in rows if row["task_value"] is not None}
 
+    if burden_measured:
+        runtime_note = "Scenario-level numeric resource telemetry is present. Mapping C_lambda onto runtime burden still needs a fitted comparator."
+        voluntary_note = "voluntary_disengagement still relocates three times. Resource telemetry is numeric, but capacity preservation is not linked to transitions."
+        runtime_hmmm = "runtime burden series exists; cost-to-burden model is not fit"
+        final_note = "Runtime-burden mapping is unresolved; hierarchical coupling remains blocked until comparable coupling observables exist."
+    else:
+        runtime_note = "tokens, latency, retries, and tool_calls are hmmm on every telemetry row. No runtime burden series exists to map C_lambda onto."
+        voluntary_note = "voluntary_disengagement still relocates three times. Resource telemetry remains hmmm, so capacity preservation is not measured."
+        runtime_hmmm = "no numeric tokens/latency/retries/tool_calls series"
+        final_note = "Hierarchical coupling and runtime-burden mapping are blocked until those observables exist."
+
     components = [
         {
             "id": "runtime_burden_observables",
-            "standing": "BLOCKED",
-            "note": "tokens, latency, retries, and tool_calls are hmmm on every telemetry row. No runtime burden series exists to map C_lambda onto.",
+            "standing": "UNRESOLVED" if burden_measured else "BLOCKED",
+            "note": runtime_note,
         },
         {
             "id": "binary_occupancy_veto_vs_null",
@@ -233,7 +244,7 @@ def evaluate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         {
             "id": "voluntary_disengagement_capacity_preserving",
             "standing": "UNRESOLVED",
-            "note": "voluntary_disengagement still relocates three times. Resource telemetry remains hmmm, so capacity preservation is not measured.",
+            "note": voluntary_note,
         },
         {
             "id": "known_neutral_vs_unknown_action",
@@ -256,13 +267,8 @@ def evaluate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
             "note": "Destinations remain lexicographic over empty neighbors. Shadow cost is logged after the fact. wanted-axis cost does not change destination choice.",
         },
     ]
-    if burden_measured:
-        for item in components:
-            if item["id"] == "runtime_burden_observables":
-                item["standing"] = "UNRESOLVED"
-                item["note"] = "Some numeric burden fields were present; mapping still not fitted."
     return {
-        "schema": "interdependency.ahbg.grok.cost-controls/1.0.0",
+        "schema": "interdependency.ahbg.grok.cost-controls/1.1.0",
         "builder": "Grok",
         "workspace": "stack/ahbg/grok",
         "frozen_build_sha": FROZEN_BUILD_SHA,
@@ -285,9 +291,12 @@ def evaluate(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
         },
         "hmmm": [
             "C_lambda is a restatement of occupancy plus belief-empty, not an independent burden",
-            "no numeric tokens/latency/retries/tool_calls series",
+            runtime_hmmm,
             "hierarchical impedance and path plasticity were not computed by the frozen pair",
         ],
+        "report_notes": {
+            "final_note": final_note,
+        },
     }
 
 
@@ -325,7 +334,7 @@ def render_report(payload: Mapping[str, Any]) -> str:
             "## Notes",
             "- Do not treat binary occupancy veto as a discovered cost functional. It is the frozen policy.",
             "- Additive shadow cost is a restatement of occupancy; it loses to the veto rule because wanted-axis deficits are priced but not gated.",
-            "- Hierarchical coupling and runtime-burden mapping are blocked until those observables exist.",
+            f"- {payload['report_notes']['final_note']}",
             "",
         ]
     )

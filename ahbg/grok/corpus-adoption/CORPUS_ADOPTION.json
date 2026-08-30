@@ -7,15 +7,19 @@
   "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
   "current_metadata_head_at_record": "8ea5af7d8da186cb5c7f165ed073420356377e8e",
   "corpus_source": {
-    "source_branch": "origin/agent/ahbg-deepcode",
-    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
-    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
-    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "source_branch": "local stack-deepcode worktree",
+    "source_commit": "90b66e39d8527cd1adc8c69391f64253e5a0ab94",
+    "source_path": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
     "corpus_sha256_file_matched": true,
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
     "canonical_scenarios_sha256_recomputed": true,
+    "predecessor": {
+      "proposal_version": "1.0.0-proposal-1",
+      "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0"
+    },
     "corpus_id": "calibration-family",
-    "proposal_version": "1.0.0-proposal-1",
+    "proposal_version": "1.0.1-proposal-1",
     "scenario_count": 35
   },
   "adoption_decision": "adopt_digest",
@@ -40,7 +44,7 @@
         "seed_match": true,
         "turns_match": true,
         "standing_match": true,
-        "grok_standing": "UNRESOLVED"
+        "grok_standing": "SURVIVED"
       },
       {
         "id": "dual_target_collision",
@@ -49,7 +53,7 @@
         "seed_match": true,
         "turns_match": true,
         "standing_match": true,
-        "grok_standing": "UNRESOLVED"
+        "grok_standing": "SURVIVED"
       }
     ],
     "semantic_near_matches": [
@@ -65,11 +69,11 @@
       },
       {
         "id": "occupied_target_collision",
-        "difference": "same id, seed, fail-closed UNRESOLVED standing; frozen Grok places B0 on RING_0 / CENTER BandSlot names rather than corpus tiles e / c"
+        "difference": "same id and seed; current successor run maps B0 on RING_0 / CENTER BandSlot names to corpus tiles e / c"
       },
       {
         "id": "dual_target_collision",
-        "difference": "same id, seed, fail-closed UNRESOLVED standing; frozen Grok targets the first shared empty neighbor from CENTER/RING_0 rather than corpus tiles se from c/sw"
+        "difference": "same id and seed; current successor run maps the shared empty neighbor from CENTER/RING_0 to corpus tile se from c/sw"
       }
     ],
     "corpus_scenarios_not_exactly_run_by_frozen_grok": [
@@ -106,13 +110,29 @@
       "label_permuted_control"
     ]
   },
-  "reproduction_standing": "partial-hmmm",
+  "post_freeze_common_corpus_run": {
+    "artifact_path": "stack/ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json",
+    "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+    "scenario_count": 35,
+    "summary": {
+      "SURVIVED": 35,
+      "UNRESOLVED": 0,
+      "FALSIFIED": 0,
+      "BLOCKED": 0
+    },
+    "unresolved_scenario_ids": [],
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+    "standing": "SURVIVED",
+    "note": "Post-freeze execution; does not rewrite original freeze identity."
+  },
+  "reproduction_standing": "full-post-freeze-successor-run-complete",
   "reproduction_hmmm": [
-    "Grok adopts the proposed canonical_scenarios_sha256 without amendments.",
+    "Grok adopts the successor proposed canonical_scenarios_sha256 without amendments.",
     "The frozen Grok artifacts predate the corpus proposal and therefore do not claim a full 35-scenario run.",
     "The four smoke-subset ids and seeds match; hard_veto_illegal_action matches id/seed/turns but not the inbox/permission schema.",
     "Frozen Grok tile names are UCNS BandSlot labels (CENTER, RING_0, ...) rather than the proposal's c/e/se/sw/w/nw/ne ids.",
-    "A full common-corpus execution should be a new explicitly labeled post-freeze run or a replacement build freeze, not a silent edit to the frozen artifacts."
+    "Local three-worktree adoption is recorded in ahbg/CORPUS_ADOPTION.json; remote/branch merge remains hmmm."
   ],
   "epoch_implication": "Grok has recorded the proposed common digest for reciprocal review; use frozen_build_sha as the Grok implementation identity."
 }

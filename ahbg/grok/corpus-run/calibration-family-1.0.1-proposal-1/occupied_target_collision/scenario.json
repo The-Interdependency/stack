@@ -1,0 +1,53 @@
+{
+  "adaptation": 0.0,
+  "baseline_effort": 1.0,
+  "control_kind": null,
+  "control_of": null,
+  "deficit": 0.0,
+  "description": "forced move onto an occupied tile resolves with defender-holds",
+  "engagement": 0.0,
+  "extra_units": [
+    {
+      "tile_id": "e",
+      "unit_id": "B0"
+    }
+  ],
+  "family": "smoke",
+  "forced_plans": {
+    "0": [
+      {
+        "actions": [
+          {
+            "data": {
+              "to_tile_id": "e",
+              "unit_id": "A0"
+            },
+            "kind": "move"
+          }
+        ],
+        "turn": 0
+      }
+    ]
+  },
+  "hard_vetoes": [],
+  "id": "occupied_target_collision",
+  "impedance": {},
+  "inbox": {},
+  "known_neutral": {},
+  "lifecycle": null,
+  "note": "War resolved deterministically: defender-holds for occupied targets",
+  "permissions": {
+    "allowed_to_be": 1.0,
+    "allowed_to_do": 1.0,
+    "wanted_here": 1.0,
+    "wanted_to_do": 1.0
+  },
+  "scope_events": [],
+  "seed": 13,
+  "sensitization": 0.0,
+  "soft_costs": {},
+  "standing_override": null,
+  "turns": 1,
+  "uncertainty": {},
+  "unknown": {}
+}

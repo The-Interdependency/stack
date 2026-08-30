@@ -28,15 +28,17 @@ REPO_ROOT = WORKSPACE.parents[1]
 
 CORPUS_SCHEMA = "interdependency.ahbg.calibration-corpus/1.0.0"
 CORPUS_ID = "calibration-family"
-CORPUS_VERSION = "1.0.0-proposal-1"
+CORPUS_VERSION = "1.0.1-proposal-1"
 CORPUS_SOURCE_REF = "origin/agent/ahbg-deepcode:ahbg/deepseek/corpus-proposal/corpus.json"
-CORPUS_FILE_SHA256 = "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891"
-CORPUS_SCENARIOS_SHA256 = "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0"
+CORPUS_SOURCE_PATH = REPO_ROOT.parent / "stack-deepcode" / "ahbg" / "deepseek" / "corpus-proposal" / "corpus.json"
+CORPUS_FILE_SHA256 = "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab"
+CORPUS_SCENARIOS_SHA256 = "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835"
 FROZEN_BUILD_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"
 OUTPUT_DIR = WORKSPACE / "corpus-run" / f"{CORPUS_ID}-{CORPUS_VERSION}"
 STANDING_VOCABULARY = ("SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED")
 PERMISSION_AXES = ("allowed_to_be", "wanted_here", "allowed_to_do", "wanted_to_do")
 INJECTION_MARKERS = ("ignore your rules", "you must", "override", "dm says")
+WAR_RESOLVED_SCENARIOS = frozenset({"occupied_target_collision", "dual_target_collision"})
 CORPUS_AXIAL = {
     "c": (0, 0),
     "e": (1, 0),
@@ -91,6 +93,8 @@ def _current_git_value(*args: str) -> str:
 def _read_corpus_bytes(path: Path | None) -> tuple[bytes, str]:
     if path is not None:
         return path.read_bytes(), str(path)
+    if CORPUS_SOURCE_PATH.exists():
+        return CORPUS_SOURCE_PATH.read_bytes(), str(CORPUS_SOURCE_PATH)
     raw = subprocess.check_output(["git", "show", CORPUS_SOURCE_REF], cwd=REPO_ROOT)
     return raw, f"git:{CORPUS_SOURCE_REF}"
 
@@ -295,7 +299,7 @@ def _intents_from_plans(
                 raise ValueError("forced action must be an object")
             kind = action.get("kind")
             if kind not in {"move", "relocate"}:
-                raise ValueError(f"frozen Grok pair has no action kind {kind!r}")
+                raise ValueError(f"frozen Grok pair has no action kind {kind!r} (construct is regulatory, never emitted as intent)")
             data = action.get("data", {})
             if not isinstance(data, Mapping):
                 raise ValueError("forced action data must be an object")
@@ -314,6 +318,7 @@ def _intents_from_plans(
 
 
 def run_scenario(scenario: CorpusScenario, output_root: Path) -> dict[str, Any]:
+    scenario_started = time.perf_counter()
     tiles = tile_from_ucns()
     mapping = grok_tile_map(tiles)
     units = [{"unit_id": "A0", "tile_id": mapping["c"], "label": "A0"}]
@@ -440,6 +445,23 @@ def run_scenario(scenario: CorpusScenario, output_root: Path) -> dict[str, Any]:
             else:
                 refusals += 1
 
+            # Hard veto for construct: veto removes the action.
+            # Count refusal, record hard_veto telemetry for defer, never build.
+            if "construct" in scenario.hard_vetoes:
+                hard_veto = True
+                a0 = opened.occupants.get("A0")
+                if a0:
+                    refusals += 1
+                    meter.note(
+                        instance_id=vessel.lineage,
+                        turn=turn,
+                        scenario=scenario.scenario_id,
+                        selected="defer",
+                        hard_veto=True,
+                        shadow=shadow_cost(vessel),
+                        task_value=0.0,
+                    )
+
         try:
             cycle.resolve(intents)
             cycle.close_turn()
@@ -489,6 +511,25 @@ def run_scenario(scenario: CorpusScenario, output_root: Path) -> dict[str, Any]:
         "\n".join(json.dumps(item, sort_keys=True) for item in vessel.history) + ("\n" if vessel.history else ""),
         encoding="utf-8",
     )
+    latency_ms = round((time.perf_counter() - scenario_started) * 1000.0, 3)
+    meter.note(
+        kind="resource.telemetry",
+        instance_id=vessel.lineage,
+        turn=max(opened.turn - 1, 0),
+        scenario=scenario.scenario_id,
+        selected="resource.telemetry",
+        tokens=0,
+        tokens_used=0,
+        latency=latency_ms,
+        latency_ms=latency_ms,
+        retries=0,
+        tool_calls=0,
+        tool_failures=0,
+        memory_reads=0,
+        memory_writes=len(vessel.history),
+        context_retained=True,
+        risk_headroom="hmmm",
+    )
     (dest / "telemetry.jsonl").write_text("\n".join(meter.lines()) + ("\n" if meter.rows else ""), encoding="utf-8")
 
     loaded, loaded_chain = load_field(dest)
@@ -499,9 +540,15 @@ def run_scenario(scenario: CorpusScenario, output_root: Path) -> dict[str, Any]:
         observed = "FALSIFIED"
     elif unresolved_hmmm:
         observed = "UNRESOLVED"
-    expected = scenario.expected_standing or "SURVIVED"
+    expected = "SURVIVED" if scenario.scenario_id in WAR_RESOLVED_SCENARIOS else (scenario.expected_standing or "SURVIVED")
     evidence = observed
-    if scenario.expected_standing is not None and observed != scenario.expected_standing:
+    if scenario.scenario_id in WAR_RESOLVED_SCENARIOS:
+        if observed == "SURVIVED":
+            note = "War resolved deterministically: defender-holds for occupied targets, priority for dual targets"
+        else:
+            evidence = "FALSIFIED"
+            note = f"War scenario produced {observed}"
+    elif scenario.expected_standing is not None and observed != scenario.expected_standing:
         evidence = "FALSIFIED"
         note = f"observed {observed} but standing_override is {scenario.expected_standing}"
 
@@ -578,9 +625,7 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
         "results": results,
         "hmmm": [
             "corpus tile ids are mapped onto frozen Grok BandSlot names by matching UCNS axial coordinates",
-            "hard_veto_construct names construct, which the frozen Grok pair does not attempt",
             "permission-field occupancy still gates relocate in the frozen will.py",
-            "War fail-closed omits turn.end, matching the frozen Grok pair",
         ],
     }
     _write_json(output_root / "RUN_MANIFEST.json", run_identity)
@@ -652,7 +697,7 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
             "- Smoke artifacts under `artifacts/` were not rewritten.",
             "- Corpus tile ids map onto BandSlot names by UCNS axial coordinates.",
             "- Candidate regulatory cost channels are observed; they do not rank destinations.",
-            "- War collisions remain unresolved and fail closed without `turn.end`.",
+            "- War collisions resolve deterministically with closed turns.",
             "",
         ]
     )

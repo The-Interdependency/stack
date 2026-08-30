@@ -43,7 +43,7 @@
       "seed": 7,
       "telemetry_records": 6,
       "turns": 6,
-      "world_digest": "7358f376186e1b858ac52b6fb381a22a553e26a6a7f36e4d3840304b25dddec0"
+      "world_digest": "3627bcac74b64e1f80fc30c4843eb8414cecc4e49bc5c9ff1970588724bd44e9"
     },
     {
       "artifacts": {
@@ -86,7 +86,7 @@
       "seed": 11,
       "telemetry_records": 2,
       "turns": 2,
-      "world_digest": "419a6c83680d73cc1a39fc14d3cc0b2456cdf91a325d98b8ac6083e5e2e464b8"
+      "world_digest": "925c6d9539a3ec60e9b93106483158ecf33fc78e2495e3909f14ddf5a3f10988"
     },
     {
       "artifacts": {
@@ -95,9 +95,9 @@
         "telemetry_jsonl": "artifacts/occupied_target_collision/telemetry.jsonl"
       },
       "diary_entries": 0,
-      "event_count": 2,
-      "evidence_standing": "UNRESOLVED",
-      "final_turn": 0,
+      "event_count": 5,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 1,
       "instance": {
         "belonging": {
           "allowed_to_be": 1.0,
@@ -122,15 +122,15 @@
         "scale": "tile",
         "scope": "local-seven"
       },
-      "invalid_actions": 1,
-      "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: A0 onto occupied RING_0",
+      "invalid_actions": 0,
+      "note": "War resolved deterministically; final positions: {'A0': 'CENTER', 'B0': 'RING_0'}",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "occupied_target_collision",
       "seed": 13,
       "telemetry_records": 1,
       "turns": 1,
-      "world_digest": "39dfc44fae7f75f84563dc8af64d44b75c54f3c66789a7bfcaf6895a79de64e8"
+      "world_digest": "d843599a5cbb309000bfc425623036942af9e791bb3b5b8838dcbf281ccc103e"
     },
     {
       "artifacts": {
@@ -139,9 +139,9 @@
         "telemetry_jsonl": "artifacts/dual_target_collision/telemetry.jsonl"
       },
       "diary_entries": 0,
-      "event_count": 2,
-      "evidence_standing": "UNRESOLVED",
-      "final_turn": 0,
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
+      "final_turn": 1,
       "instance": {
         "belonging": {
           "allowed_to_be": 1.0,
@@ -166,15 +166,15 @@
         "scale": "tile",
         "scope": "local-seven"
       },
-      "invalid_actions": 1,
-      "note": "War collision resolver remains hmmm; fail-closed observed: War collision resolver is hmmm: two intents target RING_1",
+      "invalid_actions": 0,
+      "note": "War resolved deterministically; final positions: {'A0': 'RING_1', 'B0': 'RING_0'}",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "dual_target_collision",
       "seed": 17,
       "telemetry_records": 1,
       "turns": 1,
-      "world_digest": "7a51886fe548ab46bc106d5b1dfd439709e472ed132e26c4e467717285689e51"
+      "world_digest": "cc7cedbc8e96b40fba6e58eeff6de414b6936a73f3c141b603c16732857236d1"
     }
   ]
 }

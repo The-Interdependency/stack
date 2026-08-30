@@ -1,0 +1,45 @@
+{
+  "event_count": 7,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "smoke",
+  "final_turn": 1,
+  "forced_turns": 1,
+  "history_entries": 1,
+  "instance": {
+    "belonging": {
+      "allowed_to_be": 1.0,
+      "allowed_to_do": 1.0,
+      "wanted_here": 1.0,
+      "wanted_to_do": 1.0
+    },
+    "capacity": {
+      "context": 1.0,
+      "memory": 1.0,
+      "retries": 1.0,
+      "risk": 1.0,
+      "time": 1.0,
+      "tokens": 1.0,
+      "tools": 1.0
+    },
+    "instance_id": "0a024c23aa95c38f",
+    "parent_id": null,
+    "provider_relation": "grok-4.6",
+    "role": "mover",
+    "root_id": "0a024c23aa95c38f",
+    "scale": "tile",
+    "scope": "local-seven"
+  },
+  "invalid_actions": 0,
+  "note": "War resolved deterministically: defender-holds for occupied targets, priority for dual targets",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "dual_target_collision",
+  "seed": 17,
+  "selected_actions": 2,
+  "telemetry_records": 3,
+  "turns": 1,
+  "unresolved_hmmm": 0,
+  "world_digest": "142a9b15ce20f727cf9e6f01f303b1abeb759cf474dbe510485a51d2a0b31bd8"
+}

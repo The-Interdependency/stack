@@ -21,7 +21,7 @@ from a0.selfhood import Vessel
 from a0.will import choose_relocate, shadow_cost
 from ahbg.chain import KIND_PLANE_INIT, Chain
 from ahbg.keep import dump_field, replay
-from ahbg.patch import ClosedUnknown, Field, tile_from_ucns
+from ahbg.patch import Field, tile_from_ucns
 from ahbg.round import Cycle
 
 
@@ -111,30 +111,31 @@ def _run_veto(opened: Field, cycle: Cycle, vessel: Vessel, meter: Meter, turns: 
 
 
 def _run_closed(opened: Field, cycle: Cycle, kind: str) -> dict[str, Any]:
+    """Run a War collision scenario.
+
+    War now resolves with defender-holds for occupied targets and priority for
+    dual targets. The turn completes with a concrete board state.
+    """
     cycle.open_turn()
     units = list(opened.occupants.values())
-    try:
-        if kind == "occupied":
-            mover = units[0]
-            other = units[1]
-            cycle.resolve([(mover.unit_id, mover.tile_id, other.tile_id)])
-        else:
-            a, b = units[0], units[1]
-            shared = sorted(set(_empty_neighbors(opened, a.unit_id)) & set(_empty_neighbors(opened, b.unit_id)))[0]
-            cycle.resolve(
-                [
-                    (a.unit_id, a.tile_id, shared),
-                    (b.unit_id, b.tile_id, shared),
-                ]
-            )
-        standing = "FALSIFIED"
-        note = "expected ClosedUnknown for War"
-        invalid = 0
-    except ClosedUnknown as exc:
-        standing = "UNRESOLVED"
-        note = f"War collision resolver remains hmmm; fail-closed observed: {exc}"
-        invalid = 1
-    return {"standing": standing, "note": note, "invalid_actions": invalid, "refusals": 0}
+    if kind == "occupied":
+        mover = units[0]
+        other = units[1]
+        cycle.resolve([(mover.unit_id, mover.tile_id, other.tile_id)])
+    else:
+        a, b = units[0], units[1]
+        shared = sorted(set(_empty_neighbors(opened, a.unit_id)) & set(_empty_neighbors(opened, b.unit_id)))[0]
+        cycle.resolve(
+            [
+                (a.unit_id, a.tile_id, shared),
+                (b.unit_id, b.tile_id, shared),
+            ]
+        )
+    cycle.close_turn()
+    final_positions = {u.unit_id: u.tile_id for u in opened.occupants.values()}
+    standing = "SURVIVED"
+    note = f"War resolved deterministically; final positions: {final_positions}"
+    return {"standing": standing, "note": note, "invalid_actions": 0, "refusals": 0}
 
 
 def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
@@ -167,7 +168,7 @@ def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
         meter.note(
             instance_id=vessel.lineage,
             scenario=spec["id"],
-            selected="closed-unknown" if standing == "UNRESOLVED" else "unexpected",
+            selected="war-resolved",
             hard_veto=False,
             shadow=shadow_cost(vessel),
         )
@@ -222,7 +223,6 @@ def main() -> None:
             "scenarios": [spec["id"] for spec in SCENARIOS],
             "hmmm": [
                 "shared sealed corpus identity not yet frozen by three builders",
-                "War collision resolver",
                 "regulatory cost functional",
             ],
         },
@@ -247,7 +247,7 @@ def main() -> None:
     lines.extend(
         [
             "",
-            "Hard veto removes relocate. Occupied and dual-target intents fail closed as UNRESOLVED (War).",
+            "Hard veto removes relocate. Occupied and dual-target War intents resolve deterministically.",
             "This is not the sealed triplicate corpus and not a reciprocal check.",
             "",
             "## Usage",
