@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "ucns",
+  "source_repository": "The-Interdependency/ucns",
+  "source_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+  "canon_path": "../../libs/ucns",
+  "authority": "The-Interdependency/ucns",
+  "standing": "stack-local-research"
+}

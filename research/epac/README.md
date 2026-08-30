@@ -28,14 +28,14 @@ until a canonical `The-Interdependency/epac` source is created and pinned in
 From this directory:
 
 ```bash
-PYTHONPATH=".:../ucns/src" python3 -m unittest discover -s tests -q
+PYTHONPATH=".:../../libs/ucns/src" python3 -m unittest discover -s tests -q
 ```
 
 Do not open `data/sealed_known_molecular_geometry.json` during construction.
 After construction:
 
 ```bash
-PYTHONPATH=".:../ucns/src" python3 - <<'PY'
+PYTHONPATH=".:../../libs/ucns/src" python3 - <<'PY'
 from epac_comparison import compare_after_construction
 print(compare_after_construction()["standings"])
 PY

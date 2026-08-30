@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "pcea",
+  "source_repository": "The-Interdependency/pcea",
+  "source_commit": "4d2c581448b97bfb71da92b35487e74e6e3bcedc",
+  "canon_path": "../../libs/pcea",
+  "authority": "The-Interdependency/pcea",
+  "standing": "stack-local-research"
+}

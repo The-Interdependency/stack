@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "ptcna",
+  "source_repository": "The-Interdependency/ptcna",
+  "source_commit": "97abdd1bbda61a68e0aac8595a32a3cb0ce73487",
+  "canon_path": "../../libs/ptcna",
+  "authority": "The-Interdependency/ptcna",
+  "standing": "stack-local-research"
+}

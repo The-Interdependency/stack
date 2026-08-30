@@ -1,7 +1,13 @@
-# libs/skill-lib — empty scaffold
+# libs/skill-lib — reserved canonical slot
 
-Reserved for the consolidated library surface of `skill-lib`.
+The current operational pinned `skill-lib` snapshot remains at [`../../skill-lib/`](../../skill-lib/) as a declared stack special case so agents can resolve org build/evidence doctrine from the established root path.
 
-Status: intentionally empty. Canonical content lives in the pinned snapshot
-(see `STACK_MANIFEST.md`) and remains the source of truth. Fill this surface
-only through an explicit stack-integration decision.
+Do not populate a second copy here merely for symmetry.
+
+## Usage guidance
+
+Use `skill-lib/` at stack root for the pinned operational snapshot. If stack later adopts the ordinary `libs/` + `research/` lifecycle for skill-lib, migrate it explicitly and update the stack manifest in the same change.
+
+## hmmm
+
+Whether skill-lib should eventually follow the ordinary paired layout remains unresolved.
