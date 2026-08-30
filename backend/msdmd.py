@@ -394,9 +394,7 @@ def make(ledger: JobLedger, store: SpecStore, target: str, *,
     job, before = queue_make(ledger, store, target, executor=executor)
     if job is None:
         return None, before
-    if job.state == "succeeded":
-        return job, evaluate(ledger, store, target)
-    if job.state in {"failed", "cancelled", "hmmm"}:
+    if job.state in {"succeeded", "failed", "cancelled", "hmmm"}:
         job = ledger.retry(job.id, executor=executor)
     if job.state in {"leased", "running", "verifying"}:
         return job, evaluate(ledger, store, target)
