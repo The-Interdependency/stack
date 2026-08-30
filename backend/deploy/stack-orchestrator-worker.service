@@ -1,0 +1,26 @@
+[Unit]
+Description=The Interdependency stack orchestration worker
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=stackorchestrator
+Group=stackorchestrator
+WorkingDirectory=/srv/stack
+EnvironmentFile=/etc/stack-orchestrator.env
+ExecStart=/srv/stack/.venv/bin/python -m frontend.cli.stackctl worker run
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/stack-repos /var/lib/stack-orchestrator
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+[Install]
+WantedBy=multi-user.target

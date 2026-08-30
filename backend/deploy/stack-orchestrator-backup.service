@@ -1,0 +1,23 @@
+[Unit]
+Description=Backup The Interdependency stack orchestration PostgreSQL database
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=oneshot
+User=stackorchestrator
+Group=stackorchestrator
+WorkingDirectory=/srv/stack
+EnvironmentFile=/etc/stack-orchestrator.env
+ExecStart=/srv/stack/backend/ops/backup_postgres.sh
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/var/backups/stack-orchestrator -/mnt/stack-orchestrator-backups
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

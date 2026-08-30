@@ -36,7 +36,7 @@ stack/
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   └── epac/                # emerging composed project; no independent repo yet
 ├── ahbg/                    # emerging composed benchmark/game workspace
-├── backend/                 # durable cross-repository orchestration + receipts
+├── backend/                 # PostgreSQL-backed durable fresh-making control plane
 ├── frontend/
 │   └── cli/                 # human control/status surface for backend
 ├── STACK_MANIFEST.md        # human-readable provenance and boundary record
@@ -76,19 +76,34 @@ stack-local implementation.
 
 EPAC is currently in this pre-graduation state.
 
-### Regenerate MSDMD without depending on hosted CI
+### Make derived artifacts fresh without depending on hosted CI
 
-The first backend/CLI vertical slice keeps MSDMD regeneration state outside GitHub
-Actions. It queues an exact source+generator identity in SQLite, executes locally,
-verifies the output digest, and writes a receipt.
+`backend/` implements the durable `fresh-making` control plane. PostgreSQL on the VM is
+the single production state authority for derivation specs, desired freshness keys,
+logical jobs, attempts/leases, receipts, acceptance, dependency edges, and `hmmm`.
+Repositories retain source/canon/artifact authority.
+
+Freshness is identity-based, not time-based. MSDMD regeneration is the first adapter:
 
 ```bash
-python -m frontend.cli.stackctl msdmd refresh ucns --root ../ucns
-python -m frontend.cli.stackctl msdmd status
+python -m frontend.cli.stackctl fresh make-msdmd ucns \
+  --root /srv/stack-repos/ucns \
+  --source-sha <40-hex-commit>
+
+python -m frontend.cli.stackctl fresh status msdmd:ucns
+python -m frontend.cli.stackctl fresh explain msdmd:ucns
+python -m frontend.cli.stackctl fresh recover
 ```
 
-See [`backend/README.md`](backend/README.md) for the orchestration contract and
-[`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
+The VM worker uses leases and `FOR UPDATE SKIP LOCKED`; the MSDMD adapter independently
+rerenders output before publication. GitHub Actions may later become an executor, but it
+cannot become durable state or acceptance authority.
+
+The old `stackctl msdmd ...` namespace is removed rather than maintained as a second
+orchestration architecture.
+
+See [`backend/README.md`](backend/README.md) for the state/verification/backup contract
+and [`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
 
 ## Refreshing a canonical view
 
@@ -109,12 +124,16 @@ source commit in the message.
 - `research/` is mutable stack-local work, not doctrine by location.
 - moving work from `research/` to `libs/` is not a promotion mechanism; `libs/` is
   populated only from an owning canonical repository at an exact commit.
-- proof, measurement, and semantic standing do not transfer merely because projects are
-  composed in stack.
+- proof, measurement, semantic, empirical, and certification standing do not transfer
+  merely because projects are composed in stack.
 - `backend/` may coordinate an owning repository but does not acquire that repository's
   authority.
-- hosted CI may execute work, but durable stack orchestration state must not depend on
-  hosted CI remaining available.
+- PostgreSQL owns orchestration/freshness evidence, not repository artifacts or canon.
+- executor success alone cannot establish freshness; the declared verifier and accepted
+  receipt must agree with exact current identities.
+- hosted CI may execute work, but durable state and acceptance must survive its absence.
+- a database backup is complete only when its independently mounted mirror is verified;
+  a second same-disk directory is not redundancy.
 
 ## hmmm
 
@@ -122,5 +141,11 @@ source commit in the message.
   `libs/` + `research/` pair.
 - The exact graduation automation from stack-local project to independent repo + package
   is not yet implemented.
-- VM and GitHub-hosted MSDMD executors remain unimplemented; the durable local executor
-  is the first vertical slice.
+- Actual VM PostgreSQL/service-account/storage state and the independent backup device
+  remain deployment observations until inspected on the VM.
+- A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the
+  resilience baseline.
+- Organization aggregate and website-projection derivation specs are not yet registered.
+- The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
+  pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
+  snapshot refresh would also import unrelated doctrine changes.
