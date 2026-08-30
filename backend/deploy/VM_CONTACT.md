@@ -1,211 +1,222 @@
-# VM agent contact bootstrap
+# VM personal-console bootstrap
 
-This is the one-time bridge from human SSH/OS Login bootstrap to bounded agent contact.
-The VM control plane remains owned by canonical `The-Interdependency/skill-lib`; `stack`
-only records how this deployment consumes it.
+This is the one-time bridge from the existing human SSH/OS Login/IAP recovery path to a
+broad private MCP console for the VM owner. The control-plane runtime remains owned by
+canonical `The-Interdependency/skill-lib`; `stack` records only how this deployment
+consumes it.
 
-## Source pin
-
-Use canonical `skill-lib` at:
+## Work-graph identity
 
 ```text
-5c46d0534fa0726a9078f0a242c66a217fbaa501
+skill-lib producer: The-Interdependency/skill-lib@222ba4d4348022d81950c3fad054bae7e528b6a0
+stack consumer:     this stack checkout
+relation:           canonical vm-mcp runtime -> stack VM operations
+runtime authority:  skill-lib owns vm-mcp implementation; stack owns its deployment/use
 ```
 
-Do not copy `vm-mcp` runtime files into this repository.
+No semantic, scientific, repository, or package authority transfers through this
+control-plane relation.
 
 ## Boundary
 
 ```text
-human/bootstrap: SSH / Google OS Login / IAP
-agent path:      ChatGPT MCP -> Secure MCP Tunnel -> 127.0.0.1:8765 on VM
-runtime user:    vmmcp (non-root)
-workspace:       /srv/vm-mcp/stack-observer
-initial tools:   vm_info, list_directory, read_text
-shell_exec:      disabled
-public port:     none
+human/bootstrap: SSH / Google OS Login / IAP (retain as break-glass access)
+agent path:      private MCP transport -> 127.0.0.1:8765 on VM
+MCP service:     vmmcp, non-root
+profile:         personal-console
+workspace:       /srv/vm-mcp/workspace
+workspace tools: read/write/stat/move/remove + shell_exec
+host user tool:  user_exec(user, command, cwd)
+root tool:       admin_exec(command, cwd)
+root boundary:   separate vm-mcp-admin.service over AF_UNIX
+public 8765:     forbidden
 ```
 
-The MCP workspace is deliberately separate from `/srv/stack`. Canonical `vm-mcp`
-installation takes ownership of `VM_MCP_ROOT`; therefore `/srv/stack` itself must never
-be used as that root. The stack checkout keeps its existing ownership and authority.
+`admin_exec` is intentionally broad root authority for this single-owner VM. It is kept
+visibly separate from `shell_exec` and `user_exec`; named stack/git/PostgreSQL/systemd
+conveniences may be added for ergonomics but are not permission cages.
 
-The initial MCP surface is observation-only. Do not enable `shell_exec`. If later write
-capability is required, add named, reviewed administrative tools for specific
-stack-orchestrator operations rather than exposing a generic writable shell.
+The MCP HTTP service itself remains non-root and hardened. Root execution occurs only
+inside the separate root broker after Unix peer-credential verification.
 
 ## Human preflight
 
-From the existing human recovery path, establish the minimum facts before installing
-anything:
+From the already-working human recovery route (for example `ai.sh`), establish that the
+VM and recovery path are the intended ones before installing anything:
 
 ```bash
 set -Eeuo pipefail
 
 test -r /etc/os-release
 command -v python3 >/dev/null
+command -v git >/dev/null
 command -v systemctl >/dev/null
-test -d /srv/stack/.git
+command -v sudo >/dev/null
+sudo -n true
 
-git -C /srv/stack rev-parse HEAD
+if [[ -d /srv/stack/.git ]]; then
+  STACK_ROOT=/srv/stack
+elif [[ -d "$HOME/src/stack/.git" ]]; then
+  STACK_ROOT="$HOME/src/stack"
+else
+  printf 'hmmm: stack checkout not found\n' >&2
+  exit 22
+fi
+
+git -C "$STACK_ROOT" rev-parse HEAD
 python3 --version
 systemctl is-system-running || true
 ```
 
-If `/srv/stack` is not the intended checkout, systemd is absent, or the human
-SSH/OS-Login recovery path is not known-good, stop as `hmmm`.
+If the human recovery path is not known-good, systemd is absent, or the stack checkout
+is ambiguous, stop as `hmmm`.
 
-## Bootstrap from the human-controlled VM session
+## Install the exact canonical personal console
 
-Fetch the exact canonical source in a temporary checkout and run its shipped tests
-before host installation:
+Fetch the exact merged skill-lib source, run its shipped tests, then install
+`personal-console`:
 
 ```bash
 set -Eeuo pipefail
 umask 077
 
-SKILL_LIB_SHA=5c46d0534fa0726a9078f0a242c66a217fbaa501
+SKILL_LIB_SHA=222ba4d4348022d81950c3fad054bae7e528b6a0
 BOOTSTRAP_DIR="$(mktemp -d)"
 trap 'rm -rf "$BOOTSTRAP_DIR"' EXIT
 
-git clone --filter=blob:none https://github.com/The-Interdependency/skill-lib.git \
+git clone --quiet --filter=blob:none \
+  https://github.com/The-Interdependency/skill-lib.git \
   "$BOOTSTRAP_DIR/skill-lib"
-git -C "$BOOTSTRAP_DIR/skill-lib" checkout --detach "$SKILL_LIB_SHA"
+git -C "$BOOTSTRAP_DIR/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
 
 test "$(git -C "$BOOTSTRAP_DIR/skill-lib" rev-parse HEAD)" = "$SKILL_LIB_SHA"
 
 cd "$BOOTSTRAP_DIR/skill-lib"
-PYTHONPATH=vm-mcp python -m unittest discover -s vm-mcp/tests -p 'test_*.py'
+PYTHONPATH=vm-mcp \
+  python3 -W error::ResourceWarning -m unittest discover \
+  -s vm-mcp/tests -p 'test_*.py'
 
-sudo VM_MCP_ROOT=/srv/vm-mcp/stack-observer bash vm-mcp/install.sh
+sudo -n \
+  VM_MCP_PROFILE=personal-console \
+  VM_MCP_ROOT=/srv/vm-mcp/workspace \
+  bash vm-mcp/install.sh
+
+test "$(sudo -n cat /opt/vm-mcp/SOURCE_COMMIT)" = "$SKILL_LIB_SHA"
 ```
 
-The tests must pass before host installation. The installer records its source commit at
-`/opt/vm-mcp/SOURCE_COMMIT`; verify it after installation:
+The installer must not change ownership of an already-existing application checkout.
+Do not use `/srv/stack` as an excuse to transfer repository ownership to `vmmcp`.
+
+## Verify the authority split before connecting a client
 
 ```bash
-test "$(cat /opt/vm-mcp/SOURCE_COMMIT)" = \
-  5c46d0534fa0726a9078f0a242c66a217fbaa501
-```
+sudo -n systemctl --no-pager --full status vm-mcp.service
+sudo -n systemctl --no-pager --full status vm-mcp-admin.service
 
-## Publish a non-secret observation snapshot
-
-The read-only MCP workspace does not need direct filesystem access to the stack checkout.
-GitHub remains the repository source; the VM contact only needs host facts that GitHub
-cannot observe. Create one bounded snapshot for the agent to read:
-
-```bash
-bash <<'LOCAL'
-set -Eeuo pipefail
-umask 077
-
-tmp="$(mktemp)"
-trap 'rm -f "$tmp"' EXIT
-
-{
-  printf 'observed_at_utc=%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  printf '\n[os-release]\n'
-  cat /etc/os-release
-  printf '\n[kernel]\n'
-  uname -srmo
-  printf '\n[python]\n'
-  python3 --version 2>&1
-  printf '\n[postgres-client]\n'
-  psql --version 2>&1 || true
-  printf '\n[postgres-ready]\n'
-  pg_isready 2>&1 || true
-  printf '\n[stack-checkout]\n'
-  git -C /srv/stack rev-parse HEAD
-  stat -c 'owner=%U group=%G mode=%a path=%n' /srv/stack
-  printf '\n[stack-filesystem]\n'
-  findmnt -T /srv/stack -o TARGET,SOURCE,FSTYPE,OPTIONS
-  printf '\n[orchestrator-account]\n'
-  id stackorchestrator 2>&1 || true
-  printf '\n[worker-service]\n'
-  systemctl is-enabled stack-orchestrator-worker.service 2>&1 || true
-  systemctl is-active stack-orchestrator-worker.service 2>&1 || true
-  printf '\n[backup-mount]\n'
-  if [[ -e /mnt/stack-orchestrator-backups ]]; then
-    findmnt -T /mnt/stack-orchestrator-backups -o TARGET,SOURCE,FSTYPE,OPTIONS || true
-  else
-    printf 'absent\n'
-  fi
-} >"$tmp"
-
-sudo install -o root -g vmmcp -m 0640 "$tmp" \
-  /srv/vm-mcp/stack-observer/vm-observation.txt
-LOCAL
-```
-
-Do not add environment dumps, database URLs, credential files, cloud metadata, private
-keys, or token-bearing command output to this snapshot.
-
-## Verify the local service before any tunnel
-
-```bash
-sudo systemctl --no-pager --full status vm-mcp.service
 ss -ltnp | grep ':8765'
-sudo systemctl show vm-mcp.service -p Environment
+sudo -n stat -c '%U %G %a %n' /run/vm-mcp /run/vm-mcp/admin.sock
+sudo -n systemctl show vm-mcp.service -p User -p Group -p Environment --no-pager
 ```
 
 Acceptance requires:
 
 ```text
-listener: 127.0.0.1:8765
-VM_MCP_ROOT: /srv/vm-mcp/stack-observer
-VM_MCP_SHELL_ENABLED: 0
-service user: vmmcp
+MCP listener:       127.0.0.1:8765 only
+vm-mcp.service:     User=vmmcp; non-root hardening retained
+profile:            personal-console
+vm-mcp-admin:       root process; AF_UNIX only
+/run/vm-mcp:        root:vmmcp mode 750
+admin.sock:         root:vmmcp mode 660
+human recovery:     still independently usable
 ```
 
-A listener on `0.0.0.0`, the VM's private address, or a public address is a stop
-condition. `VM_MCP_SHELL_ENABLED=1` is also a stop condition during initial contact.
+A listener on `0.0.0.0:8765` or a VM public/private interface is a stop condition.
 
-## Connect ChatGPT privately
+## Connect the MCP client privately
 
-ChatGPT does not connect directly to local/private MCP servers. Use OpenAI Secure MCP
-Tunnel rather than opening port `8765` to the public internet. Follow the current OpenAI
-product UI/documentation for tunnel provisioning; do not invent tunnel commands in
-this repository.
+Use the client's current authenticated private-network/tunnel mechanism. Do not publish
+port `8765` to the internet and do not put SSH private keys, service-account keys,
+refresh tokens, or sudo passwords into MCP arguments or prompts.
 
-Current product capability must be checked at connection time. As of this runbook's
-creation, full MCP write/modify is available to Business and Enterprise/Edu workspaces;
-Pro custom MCP is read/fetch only. Read-only bootstrap does not depend on write support.
+Connection/product behavior changes over time; resolve it from the actual current client
+surface rather than freezing product-plan claims in this repository.
 
 ## First end-to-end calls
 
-After the private tunnel is connected, call only:
+Exercise authority progressively:
 
 ```text
-vm_info
-list_directory(path=".")
-read_text(path="vm-observation.txt")
+vm_info()
+write_text(path="contact-test.txt", text="vm-mcp personal console\n")
+read_text(path="contact-test.txt")
+shell_exec(command="id -u", cwd=".")
+user_exec(user="stackorchestrator", command="id -u && pwd", cwd="/srv/stack")
+admin_exec(command="id -u", cwd="/")
 ```
 
-Verify the reported MCP root resolves to `/srv/vm-mcp/stack-observer`, the service
-identity is non-root `vmmcp`, and the observation snapshot matches the intended VM.
+Expected distinctions:
 
-Do not enable generic shell execution after this succeeds. The next design step is a
-narrow stack deployment/acceptance capability based on the actual VM facts observed
-through this contact plus the human bootstrap path.
+```text
+shell_exec: vmmcp / non-root
+user_exec:  requested non-root account
+admin_exec: uid 0
+```
 
-## Removal / rollback
-
-If the service or tunnel boundary is wrong, disconnect the ChatGPT app/tunnel first,
-then stop the VM service:
+Then inspect the root broker audit trail:
 
 ```bash
-sudo systemctl disable --now vm-mcp.service
+sudo -n journalctl -u vm-mcp-admin.service --no-pager -n 50
 ```
 
-Use the canonical `vm-mcp` uninstall/update guidance from the pinned `skill-lib` source
-for any further cleanup. Do not delete SSH/OS Login recovery access as part of MCP
-rollout.
+The journal should make root/user mode, run-as identity, cwd, command digest, and terminal
+status visible without relying on hidden MCP scheduler state.
+
+## Stack operations after contact
+
+Once the authority split is proven, the console may operate the stack directly. Typical
+examples are:
+
+```text
+user_exec(
+  user="stackorchestrator",
+  cwd="/srv/stack",
+  command="python -m frontend.cli.stackctl fresh status"
+)
+
+admin_exec(
+  cwd="/",
+  command="systemctl --no-pager --full status stack-orchestrator-worker.service"
+)
+```
+
+Use ordinary authority when it is sufficient; use `admin_exec` when host/root authority
+is actually required. This is an observability preference, not an artificial capability
+restriction.
+
+## Rollback
+
+Return the MCP layer to read-only without removing human recovery:
+
+```bash
+sudo -n sed -i 's/^VM_MCP_PROFILE=.*/VM_MCP_PROFILE=read-only/' /etc/vm-mcp.env
+sudo -n systemctl disable --now vm-mcp-admin.service
+sudo -n systemctl restart vm-mcp.service
+```
+
+Full MCP stop:
+
+```bash
+sudo -n systemctl disable --now vm-mcp.service vm-mcp-admin.service
+```
+
+Disconnect the MCP client/private tunnel as a separate action. Do not delete SSH/OS
+Login/IAP recovery as part of MCP rollback.
 
 ## hmmm
 
-- Concrete VM OS, PostgreSQL, mount, and service-account facts remain unobserved until
-  the snapshot is produced and read through the private MCP contact.
-- Secure MCP Tunnel provisioning is intentionally delegated to current OpenAI product
-  infrastructure and documentation.
-- A write-capable stack administrative broker is not designed until actual VM state and
-  current client write capability are observed.
+- Concrete VM OS, PostgreSQL, mount, account, and deployment state remain unobserved
+  until the commands above are executed on the actual VM.
+- Client/private-tunnel provisioning remains product infrastructure and must be resolved
+  from the current connected client.
+- The broad `personal-console` profile is intentional for this single-owner deployment;
+  it should not be silently generalized to shared or multi-owner hosts.

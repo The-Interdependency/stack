@@ -15,19 +15,27 @@ independent backup mount/device: hmmm
 human SSH/OS Login recovery path: hmmm
 ```
 
-## Bounded agent contact
+## Personal agent contact
 
-Before replacing repeated human SSH with model-side operations, establish the separate
-read-only `vm-mcp` contact described in [`VM_CONTACT.md`](VM_CONTACT.md). The runtime
-comes from an exact canonical `The-Interdependency/skill-lib` commit and must not take
-ownership of `/srv/stack`, expose a public listener, inherit SSH keys, or start with a
-writable shell.
+Before replacing repeated human SSH with model-side operations, establish the private
+single-owner `vm-mcp` personal console described in [`VM_CONTACT.md`](VM_CONTACT.md).
+The runtime comes from an exact canonical `The-Interdependency/skill-lib` commit and
+keeps credentials outside model context.
 
-Initial contact is observation-only. Keep human SSH/OS Login/IAP as bootstrap and
-break-glass access. A later write surface must be a named, reviewed stack operation,
-not a generic privileged shell.
+The authority split is deliberate:
 
-## Intended privilege boundary
+```text
+shell_exec -> confined non-root vmmcp
+user_exec  -> explicit requested non-root account
+admin_exec -> explicit root through separate AF_UNIX broker
+```
+
+The MCP HTTP service remains loopback-only and non-root even when the personal-console
+root broker is enabled. Keep human SSH/OS Login/IAP as independent bootstrap and
+break-glass access. Do not publish port `8765` or hide root execution behind an
+apparently non-privileged tool.
+
+## Intended stack-orchestrator privilege boundary
 
 ```text
 Unix service account:  stackorchestrator
@@ -36,9 +44,10 @@ production database:   stack_orchestrator
 restore-test database: stack_orchestrator_restore_test
 ```
 
-Prefer local PostgreSQL Unix-socket/peer authentication. The worker does not need a
-database password, root privileges, Docker socket access, cloud metadata credentials,
-or a generic administrative shell.
+Prefer local PostgreSQL Unix-socket/peer authentication. The worker itself does not need
+a database password, root privileges, Docker socket access, or cloud metadata
+credentials. Host administration remains a separate personal-console operation rather
+than being granted to the worker service.
 
 The worker needs only:
 
@@ -168,8 +177,13 @@ systemctl list-timers stack-orchestrator-backup.timer
 Deployment is not complete until all of these are observed on the VM:
 
 ```text
-[ ] human bootstrap/recovery path remains available
-[ ] read-only vm-mcp contact is loopback/private-tunnel only, non-root, shell disabled
+[ ] human bootstrap/recovery path remains independently available
+[ ] vm-mcp service is non-root and listens only on 127.0.0.1:8765
+[ ] vm-mcp personal-console profile is active
+[ ] root broker is AF_UNIX-only with root:vmmcp 0660 socket
+[ ] shell_exec proves non-root vmmcp identity
+[ ] user_exec proves requested non-root identity (including stackorchestrator)
+[ ] admin_exec proves uid 0 and journald audit evidence
 [ ] PostgreSQL version/state and local auth boundary observed
 [ ] stackctl db migrate succeeds
 [ ] worker runs as non-root stackorchestrator
@@ -189,7 +203,8 @@ Deployment is not complete until all of these are observed on the VM:
 ## hmmm
 
 The concrete VM distribution, PostgreSQL installation/auth state, storage mount, service
-account state, and end-to-end deployment results remain unobserved here. PostgreSQL
-integration tests and backup/restore acceptance therefore remain live VM gates rather
-than being represented as passed. `VM_CONTACT.md` defines the bounded path for turning
-those unknowns into observable evidence without exporting SSH credentials to the model.
+account state, MCP private transport, and end-to-end deployment results remain
+unobserved here. PostgreSQL integration tests, personal-console host acceptance, and
+backup/restore acceptance therefore remain live VM gates rather than being represented
+as passed. `VM_CONTACT.md` defines the path for turning those unknowns into observable
+evidence without exporting SSH credentials to the model.
