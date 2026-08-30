@@ -1,4 +1,6 @@
-# ratios: loc_comments=115:15 imports_exports=7:4 calls_definitions=53:4
+# ratios: loc_comments=131:15 imports_exports=7:4 calls_definitions=60:4
+
+
 """DeepSeek AHBG realization — persistence and deterministic replay.
 
 A persisted world is two files in one directory:
@@ -16,17 +18,20 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .events import KIND_BUILD, KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, EventLog
+from .events import KIND_BUILD, KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, KIND_WAR, EventLog
 from .turns import (
     BuildSpec,
     MoveSpec,
     ReplayMismatch,
     UnresolvedHmmm,
     ValidationError,
+    WarSpec,
     _apply_builds_simultaneously,
     _apply_moves_simultaneously,
+    _resolve_war,
     build_spec_from_event_data,
     move_spec_from_event_data,
+    war_spec_from_event_data,
 )
 from .world import World
 
@@ -68,6 +73,7 @@ def replay(log: EventLog) -> World:
     phase = "awaiting_begin"
     buffered_moves: list[MoveSpec] = []
     buffered_builds: list[BuildSpec] = []
+    buffered_wars: list[WarSpec] = []
     for event in events[1:]:
         if event.kind == KIND_TURN_BEGIN:
             if phase != "awaiting_begin":
@@ -87,11 +93,22 @@ def replay(log: EventLog) -> World:
             if event.turn != world.turn:
                 raise ReplayMismatch(f"build seq {event.seq} turn mismatch")
             buffered_builds.append(build_spec_from_event_data(event.data))
+        elif event.kind == KIND_WAR:
+            if phase != "awaiting_end":
+                raise ReplayMismatch(f"war seq {event.seq} arrived outside an open turn")
+            if event.turn != world.turn:
+                raise ReplayMismatch(f"war seq {event.seq} turn mismatch")
+            buffered_wars.append(war_spec_from_event_data(event.data))
         elif event.kind == KIND_TURN_END:
             if phase != "awaiting_end":
                 raise ReplayMismatch(f"turn.end seq {event.seq} arrived while {phase}")
             if event.turn != world.turn or event.data.get("turn") != world.turn:
                 raise ReplayMismatch(f"turn.end seq {event.seq} turn mismatch")
+            _survivors, expected_wars = _resolve_war(buffered_moves, world)
+            expected_order = sorted(expected_wars, key=lambda w: (w.unit_id, w.to_tile_id))
+            buffered_order = sorted(buffered_wars, key=lambda w: (w.unit_id, w.to_tile_id))
+            if [(w.unit_id, w.to_tile_id, w.reason, w.outcome) for w in expected_order] != [(w.unit_id, w.to_tile_id, w.reason, w.outcome) for w in buffered_order]:
+                raise ReplayMismatch(f"turn.end seq {event.seq} war events do not match recomputation")
             _apply_moves_simultaneously(world, buffered_moves)
             _apply_builds_simultaneously(world, buffered_builds)
             expected = world.digest()
@@ -101,6 +118,7 @@ def replay(log: EventLog) -> World:
             phase = "awaiting_begin"
             buffered_moves = []
             buffered_builds = []
+            buffered_wars = []
         else:
             raise ReplayMismatch(f"event kind {event.kind!r} is not canonical")
     return world
@@ -149,4 +167,4 @@ def load_world(directory: str | os.PathLike) -> tuple[World, EventLog]:
     if replayed.canonical_dict() != world.canonical_dict():
         raise ReplayMismatch("persisted world does not match the replay of its event log")
     return world, log
-# ratios: loc_comments=115:15 imports_exports=7:4 calls_definitions=53:4
+# ratios: loc_comments=131:15 imports_exports=7:4 calls_definitions=60:4

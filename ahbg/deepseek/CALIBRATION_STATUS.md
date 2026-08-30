@@ -73,6 +73,10 @@ replication evidence, not proof.
    Codex its own convention. All verify internally. `hmmm`.
 6. **Build mechanic.** Only the DeepCode workspace implements build_v2;
    siblings fail closed on build. `hmmm` until the shared corpus adds it.
+8. **War resolver.** DeepCode post-calibration war_v3 resolves occupied
+   targets (defender holds) and dual targets (smallest unit_id wins) with
+   explicit `war` events; sibling frozen builds still fail closed. The sealed
+   corpus standings (33 SURVIVED / 2 UNRESOLVED) remain frozen.
 7. **Threat layout.** DeepCode assigns 20% hidden threats deterministically;
    no canonical threat layout exists yet. `hmmm`.
 

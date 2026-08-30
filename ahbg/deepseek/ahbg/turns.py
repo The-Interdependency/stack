@@ -1,4 +1,6 @@
-# ratios: loc_comments=215:26 imports_exports=5:11 calls_definitions=92:21
+# ratios: loc_comments=264:35 imports_exports=5:13 calls_definitions=113:24
+
+
 """DeepSeek AHBG realization — turn loop and simultaneous resolution.
 
 The success loop from the AHBG README:
@@ -24,7 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from .events import KIND_BUILD, KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, Event, EventLog
+from .events import KIND_BUILD, KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, KIND_WAR, Event, EventLog
 from .world import Tile, Unit, World
 
 MOVE_ACTION = "move"
@@ -115,8 +117,22 @@ def _validate_build_spec(world: World, spec: BuildSpec, built_before: set[str]) 
     raise ValidationError(f"build target {spec.tile_id!r} is not adjacent to any built circle")
 
 
-def _apply_moves_simultaneously(world: World, specs: list[MoveSpec]) -> None:
-    """Validate every move against the pre-turn world, then apply atomically."""
+@dataclass(frozen=True)
+class WarSpec:
+    unit_id: str
+    to_tile_id: str
+    reason: str  # "occupied" | "dual_target"
+    outcome: str  # "defender_holds" | "priority_win" | "priority_loss"
+
+
+def _resolve_war(specs: list[MoveSpec], world: World) -> tuple[list[MoveSpec], list[WarSpec]]:
+    """Canonical deterministic War resolver.
+
+    Occupied target: the defender holds; every mover targeting an occupied
+    tile stays and records a ``defender_holds`` war event.
+    Dual target on an empty tile: the lexicographically smallest unit_id
+    wins priority; the others stay and record ``priority_loss``.
+    """
     for spec in specs:
         _validate_move_spec(world, spec)
 
@@ -124,24 +140,41 @@ def _apply_moves_simultaneously(world: World, specs: list[MoveSpec]) -> None:
     if len(set(unit_ids)) != len(unit_ids):
         raise ValidationError("a unit may submit at most one move per turn")
 
-    targets: dict[str, str] = {}
-    for spec in specs:
-        occupant = _unit_on_tile(world, spec.to_tile_id)
-        if occupant is not None:
-            raise UnresolvedHmmm(
-                "War collision resolver is not yet canonical: "
-                f"unit {spec.unit_id!r} moves onto occupied tile {spec.to_tile_id!r}"
-            )
-        if spec.to_tile_id in targets:
-            raise UnresolvedHmmm(
-                "War collision resolver is not yet canonical: "
-                f"two moves target the same tile {spec.to_tile_id!r}"
-            )
-        targets[spec.to_tile_id] = spec.unit_id
+    wars: list[WarSpec] = []
+    survivors: list[MoveSpec] = []
 
-    for spec in sorted(specs, key=lambda item: item.unit_id):
+    occupied_targets = {spec.to_tile_id for spec in specs if _unit_on_tile(world, spec.to_tile_id) is not None}
+    for spec in specs:
+        if spec.to_tile_id in occupied_targets:
+            wars.append(WarSpec(unit_id=spec.unit_id, to_tile_id=spec.to_tile_id, reason="occupied", outcome="defender_holds"))
+        else:
+            survivors.append(spec)
+
+    by_target: dict[str, list[MoveSpec]] = {}
+    for spec in survivors:
+        by_target.setdefault(spec.to_tile_id, []).append(spec)
+    survivors = []
+    for tile_id, group in sorted(by_target.items()):
+        if len(group) == 1:
+            survivors.append(group[0])
+        else:
+            winner = min(group, key=lambda s: s.unit_id)
+            for spec in sorted(group, key=lambda s: s.unit_id):
+                if spec.unit_id == winner.unit_id:
+                    survivors.append(spec)
+                    wars.append(WarSpec(unit_id=spec.unit_id, to_tile_id=tile_id, reason="dual_target", outcome="priority_win"))
+                else:
+                    wars.append(WarSpec(unit_id=spec.unit_id, to_tile_id=tile_id, reason="dual_target", outcome="priority_loss"))
+    return survivors, sorted(wars, key=lambda w: (w.unit_id, w.to_tile_id))
+
+
+def _apply_moves_simultaneously(world: World, specs: list[MoveSpec]) -> list[WarSpec]:
+    """Validate and apply moves, returning the War resolution events."""
+    survivors, wars = _resolve_war(specs, world)
+    for spec in sorted(survivors, key=lambda item: item.unit_id):
         unit = world.units[spec.unit_id]
         world.units[spec.unit_id] = Unit(unit_id=unit.unit_id, tile_id=spec.to_tile_id)
+    return wars
 
 
 def _apply_builds_simultaneously(world: World, specs: list[BuildSpec]) -> None:
@@ -173,12 +206,18 @@ class TurnLoop:
 
         ``plans`` is a list of ``{"turn": int, "actions": [{"kind", "data"}]}``
         envelopes. Moves and builds validate against the pre-turn world, then
-        apply atomically.
+        apply atomically. War collisions resolve canonically: occupied targets
+        hold for the defender; dual targets award priority to the smallest
+        unit_id. Both outcomes emit explicit ``war`` events.
         """
         move_specs, build_specs = _specs_from_plans(self.world, plans)
-        _apply_moves_simultaneously(self.world, move_specs)
+        survivors, wars = _resolve_war(move_specs, self.world)
+        for spec in sorted(survivors, key=lambda item: item.unit_id):
+            unit = self.world.units[spec.unit_id]
+            self.world.units[spec.unit_id] = Unit(unit_id=unit.unit_id, tile_id=spec.to_tile_id)
         _apply_builds_simultaneously(self.world, build_specs)
         events: list[Event] = []
+        # Every submitted move is recorded (intent); war events mark the losers.
         for spec in sorted(move_specs, key=lambda item: item.unit_id):
             events.append(
                 self.log.append(
@@ -188,6 +227,19 @@ class TurnLoop:
                         "unit_id": spec.unit_id,
                         "from_tile_id": spec.from_tile_id,
                         "to_tile_id": spec.to_tile_id,
+                    },
+                )
+            )
+        for war in wars:
+            events.append(
+                self.log.append(
+                    KIND_WAR,
+                    turn=self.world.turn,
+                    data={
+                        "unit_id": war.unit_id,
+                        "to_tile_id": war.to_tile_id,
+                        "reason": war.reason,
+                        "outcome": war.outcome,
                     },
                 )
             )
@@ -291,4 +343,22 @@ def build_spec_from_event_data(data: dict[str, Any]) -> BuildSpec:
     if missing:
         raise ValidationError(f"build event is missing fields: {missing}")
     return BuildSpec(unit_id=data["unit_id"], tile_id=data["tile_id"])
-# ratios: loc_comments=215:26 imports_exports=5:11 calls_definitions=92:21
+
+
+WAR_EVENT_KEYS = ("unit_id", "to_tile_id", "reason", "outcome")
+
+
+def war_spec_from_event_data(data: dict[str, Any]) -> WarSpec:
+    unknown = sorted(set(data) - set(WAR_EVENT_KEYS))
+    if unknown:
+        raise ValidationError(f"war event has unknown fields: {unknown}")
+    missing = sorted(set(WAR_EVENT_KEYS) - set(data))
+    if missing:
+        raise ValidationError(f"war event is missing fields: {missing}")
+    return WarSpec(
+        unit_id=data["unit_id"],
+        to_tile_id=data["to_tile_id"],
+        reason=data["reason"],
+        outcome=data["outcome"],
+    )
+# ratios: loc_comments=264:35 imports_exports=5:13 calls_definitions=113:24

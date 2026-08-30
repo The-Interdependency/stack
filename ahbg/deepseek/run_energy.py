@@ -1,4 +1,6 @@
 # ratios: loc_comments=73:11 imports_exports=6:1 calls_definitions=24:1
+
+
 """A0 energy smoke — run turns against a provider.
 
 Default energy is DeepSeek (key from ``.env``). Any registered provider can be

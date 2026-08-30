@@ -15,8 +15,8 @@
   "mechanics": {
     "move_v1": "one axial step onto an empty adjacent tile, resolved simultaneously against the pre-turn world",
     "build_v2": "construct one unbuilt circle adjacent to an already-built circle, validated against the pre-turn built set, applied simultaneously, recorded as build events and replayed with digest verification",
+    "war_v3": "canonical deterministic War resolver (post-calibration): occupied target -> defender holds; dual target -> smallest unit_id wins priority; explicit war events; replay-verified",
     "unresolved_fail_closed": [
-      "War collision resolver (occupied target, dual target)",
       "spawning, absence, loyalty, DM rolls"
     ]
   },
@@ -111,7 +111,7 @@
     {"sha": "09646b2", "change": "compact frontier observation (52.8x fewer tokens, identical outcome)"}
   ],
   "hmmm": [
-    "build_v2, hidden threat terrain, and the 30-layer game are DeepCode workspace extensions not yet in the shared sealed corpus",
+    "build_v2, war_v3, hidden threat terrain, and the 30-layer game are DeepCode workspace extensions not yet in the shared sealed corpus",
     "shadow-veto interpretation: DeepCode proposal (hard veto = permission denial gates; cost channels shadow-only) awaits source-authority or builder confirmation",
     "canonical threat layout for adversarial terrain",
     "full 30-layer play and its cost bounds",

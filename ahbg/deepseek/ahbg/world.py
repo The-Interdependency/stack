@@ -1,4 +1,6 @@
 # ratios: loc_comments=151:16 imports_exports=5:4 calls_definitions=69:24
+
+
 """DeepSeek AHBG realization — controlled world state.
 
 Independent implementation of the AHBG environment. It consumes the same

@@ -35,7 +35,7 @@ rewritten. Ratio comparison across all six: `reviews/RATIO_COMPARISON.md`.
 | Full 35-scenario execution | SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 in all three post-freeze runs (War occupied + dual-target) |
 | Hard veto removes relocate/move | SURVIVED (Grok, Codex); DeepCode epoch-1 recorded-only, epoch-2 adopted permission-denial reading |
 | Hard veto removes construct | UNRESOLVED (DeepCode build v2 only; siblings fail closed on build) |
-| War occupied/dual-target resolver | UNRESOLVED (fail-closed everywhere) |
+| War occupied/dual-target resolver | UNRESOLVED in frozen builds; DeepCode post-calibration war_v3 resolves deterministically (defender_holds / smallest-unit_id priority); siblings still fail closed |
 | Provider ≠ instance | SURVIVED (all three) |
 | Consciousness inferred from cost | not claimed |
 | Additive shadow cost vs simpler control | **FALSIFIED** by Grok `cost-controls/` (binary occupancy veto recovers frozen behavior; additive `C_lambda` priced but did not gate) |
@@ -60,6 +60,8 @@ rewritten. Ratio comparison across all six: `reviews/RATIO_COMPARISON.md`.
 5. Genesis prev hash: Grok `0*64`; DeepCode empty string; Codex its own.
    Each verifies internally.
 6. Build mechanic: DeepCode build v2 only; siblings fail closed on build.
+8. War resolver: DeepCode war_v3 deterministic resolution; siblings fail
+   closed on War.
 7. Threat layout: DeepCode 20% hidden deterministic threats; no canonical
    threat layout yet.
 

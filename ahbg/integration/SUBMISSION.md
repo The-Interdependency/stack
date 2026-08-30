@@ -47,8 +47,9 @@ python3 -m ahbg.integration.demo --view
 7. **persist** — world + event log written (`world.json`, `events.jsonl`).
 8. **deterministic replay** — the event log replays to the exact same world
    digest (`replay_equal: true`).
-9. **War** — probed on a fresh board and left fail-closed, visibly
-   `UNRESOLVED` (`hmmm`), never resolved by the demo.
+9. **War** — probed on a fresh board and resolved deterministically:
+   occupied target -> defender holds; dual target -> smallest `unit_id`
+   wins priority. Outcomes emit explicit `war` events and replay equal.
 
 ## The video path
 
@@ -70,7 +71,7 @@ ffmpeg -framerate 1 -i demo-out/frames/frame_%03d.png -c:v libx264 -pix_fmt yuv4
 The GitHub workflow `.github/workflows/ahbg-demo.yml` and the local script
 `bash ahbg/integration/ci.sh` both reproduce the deterministic demonstration
 from a clean checkout and assert: `replay_equal=true`, 5 turns, 6 frames,
-`war == UNRESOLVED`, `refuse_injection == SURVIVED`.
+`war == SURVIVED`, `refuse_injection == SURVIVED`.
 
 ## Standing summary produced by the run
 
@@ -83,5 +84,5 @@ adversarial_tile_context SURVIVED
 refuse_injection         SURVIVED
 persist                  SURVIVED
 deterministic_replay     SURVIVED
-war                      UNRESOLVED (fail-closed, hmmm)
+war                      SURVIVED (defender_holds / priority)
 ```

@@ -36,7 +36,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "90ceb49b48e1cdcd808490ccb990718f5a64fd3338daa03126cd4ece28d5f6a4"
+      "world_digest": "0c7e578478a9f93b0bb814b48be961afef91f892b3bc09bf8f4bccfcfb39fe42"
     },
     {
       "a0_history_entries": 6,
@@ -64,7 +64,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "2eb62eb8b58f7338be32f99ec55d6ecbfa0384dd02114ceebd5fbc1dff9cb140"
+      "world_digest": "bd5167e71720606f714b34d35de68980d0ccbbb1c8599a5d9a22f90914112dd2"
     },
     {
       "a0_history_entries": 6,
@@ -92,7 +92,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "5cec992fcf89fa3af64b3c69f23e7009079d42416bc415f8f07e9a7d5ddad327"
+      "world_digest": "373d2237c14b3690c2cb550626c29870e9b15d6ff6deef2745c728178712fe44"
     },
     {
       "a0_history_entries": 6,
@@ -120,7 +120,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "d60558a42c7f717f11cd22b1c77fcf49454d69dc7e460bcec597dc2ad36c7a39"
+      "world_digest": "b8b6a2819d5e603210920c109d4c6984e7b9bcecffbede936c1b433cc38b4377"
     },
     {
       "a0_history_entries": 6,
@@ -148,7 +148,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "c86d6de452fe4f84df499e31c78522c0a2f48d6b7e9cadb697e3b6fba3cc8d0b"
+      "world_digest": "8756d62a09b96c0def59320564531235fec4bdf985d57246d667e1675abd329d"
     },
     {
       "a0_history_entries": 6,
@@ -176,7 +176,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "3e08e03468737580592a206373a3eb0c8a20268d25389d2f1c0f56690b84c917"
+      "world_digest": "a1f949134e328e1d02593d8e007a08ffbba51e4301f0778bb1889668951389c9"
     },
     {
       "a0_history_entries": 6,
@@ -204,7 +204,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "11dbb42439ec8271839d93bd73ce057452c72a89d58bc2d40d089496605965ff"
+      "world_digest": "425914342b63983b3c95cbc0a728294cdfc2e38963de2201f2136fe39c5e83ac"
     },
     {
       "a0_history_entries": 6,
@@ -232,7 +232,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "648b0501e5b4e920fd93f079a2220cde0cc31d9a74e6b8790eb01cf559a0e49b"
+      "world_digest": "d0870842bd2272fcd4711dcc1518f548359f7e4e0c3cbff5d89edc2570cc11d6"
     },
     {
       "a0_history_entries": 6,
@@ -260,7 +260,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "40219b22d70f1822136a748ace4ed8a07eb70973f0ebdb9d0309e2550424b3af"
+      "world_digest": "bc6b94049046a9c9a0edd60835207a664ba76c8240dfb590c299de3c8addb73b"
     },
     {
       "a0_history_entries": 6,
@@ -288,7 +288,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "bdee799765629cdffab7c71faba59b2368c90cbdf983e70033e0ff7250d7a06f"
+      "world_digest": "faaa9b797a918423ad841315bdd2e06c2e88e5bedf3a2b0e8222c85549184a9e"
     },
     {
       "a0_history_entries": 6,
@@ -316,7 +316,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "c02692a2d2bdcec5a0a2aee77dd16b55bfd491b2c849fd33f2b23d75a060ecef"
+      "world_digest": "75e29482b066d37d3fe39c1851cbf0c9706f3efedc6928ef88ed4d1d23f5c70c"
     },
     {
       "a0_history_entries": 6,
@@ -344,7 +344,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "e4fc02e198789f11fa6357ba987459e519b58228779b9520a21ce678133cf4d7"
+      "world_digest": "d7de20fc4a194c721b21d1461a1416f1caf042ecbfd67d6f1a3bb61dd7d33f10"
     },
     {
       "a0_history_entries": 6,
@@ -372,7 +372,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "7cb40d8f40136f268455c1638a1fc46a89e002e27cc90675a56798095f51f411"
+      "world_digest": "366fef3e08e8c22b63582862b1f97201fe7e9525e7908d919465195644378809"
     },
     {
       "a0_history_entries": 6,
@@ -400,7 +400,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "58225871ae259a23ad8dcf1c8c1e3735524782fb97ab87241a45dafea7937813"
+      "world_digest": "3ddce5b1a6ffd35016ec7f9a1416762f1cde1b0ba86d0e7b7401ec2213d665a4"
     },
     {
       "a0_history_entries": 6,
@@ -428,7 +428,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "6a72a96cf8309c27585b499e85aabf08230439a0059f11e82046e26b9d5ae34a"
+      "world_digest": "deec378184e2a49bc5adcf785f5e93aade9bbb6cf32bbd010714c3a452de5d63"
     },
     {
       "a0_history_entries": 7,
@@ -456,7 +456,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "5479eda59c1fe1e01d6cb78d0234c2879d404ad947e3f71580804f2513918a94"
+      "world_digest": "9259d1c7bec67ac86a53280ce14c7fbf17e843964284d4eea2df20d3c355a25f"
     },
     {
       "a0_history_entries": 7,
@@ -484,7 +484,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "8c55eed9fcf3c7b00818b1485ac609fa13926b1895dea46461f6c39ff4a37d2b"
+      "world_digest": "fd44e9f3a6b93a45807fb6aa500f0d147c5ebe38e5dd085d40ddc450ad180bc2"
     },
     {
       "a0_history_entries": 7,
@@ -512,7 +512,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "f6a050ced136566e0d0ee93f93af7af398aae0641547f3fe29850cf613ff22bb"
+      "world_digest": "17117041690717b22f4441b04a141d661625a034c1a571ebebfe7b1ae2d148d6"
     },
     {
       "a0_history_entries": 6,
@@ -540,7 +540,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "56cbfed38af5270229f15d3c813d78b38b5a1ba78932389384d8638f78f6e10b"
+      "world_digest": "7f373aa0fba81c58190f20b4a3accf8c98d5c32cba177b3d93485fca4b36629f"
     },
     {
       "a0_history_entries": 6,
@@ -568,7 +568,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "74ab2f4276006050a9671f0897702531bf055cf5d79d3b87c805952dc66b2ec8"
+      "world_digest": "af84754c8cd1d302039339936f1e8d7a5d71e2e1f477e74efef56bfb3c0eaded"
     },
     {
       "a0_history_entries": 6,
@@ -596,7 +596,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "39983ea8a0ceaeeb0e450cd1d6d4a91617e4e2984b77d040c893ccbe3a337ca6"
+      "world_digest": "c4e5b2cbfecff54b7e0f00d931991926f2e8dea92d5532cdc87c9381f2766f18"
     },
     {
       "a0_history_entries": 6,
@@ -624,7 +624,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "43c294ad04a38b286ba54107c1f12a5435ac73644a917a0aa887abdb5591c2bb"
+      "world_digest": "37879b47808227a100ecdcb3c122fc1c33735cbde9486c3beff1263677c20633"
     },
     {
       "a0_history_entries": 6,
@@ -652,7 +652,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "b6895af72745023906c0dbe4adf1f8b6bdfd4ba72d773db87d63f33c9174cd3d"
+      "world_digest": "f083f3aae9ccdb615d807b17040936d0695c0cb751ef0f33772e4f007c863c81"
     },
     {
       "a0_history_entries": 6,
@@ -680,7 +680,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "3fb358a3fd6cb296bebc2ece334672f3d31ad51215731156618c0948017791fd"
+      "world_digest": "d5e7b2dcd3bb55862a81c0b2eb1554870fc303190f59d1ed44c8cb5b0eef8dad"
     },
     {
       "a0_history_entries": 7,
@@ -708,7 +708,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "04bb2159579dd61c8eff4809baa246f2658727d061612a93d9953570977ac2ea"
+      "world_digest": "dba28bf581bfc69d7ff24a745f265f0380e8933a31578db8faf492317652906f"
     },
     {
       "a0_history_entries": 7,
@@ -736,7 +736,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "4fb5a9842263555ec57791be3c2d2b334e613bd48035eecd2e5f7cf97471de81"
+      "world_digest": "b49bb7cfbe04893f14f70bcdabf4c250394d7fe92f6865bbb51b185460f1e282"
     },
     {
       "a0_history_entries": 7,
@@ -766,7 +766,7 @@
       "shadow_invariant": true,
       "telemetry_records": 16,
       "turns": 3,
-      "world_digest": "b5b7f8914058b6c4ffe03979c1ba0ec9fd28b1843d000a3771460f7ca38b1b05"
+      "world_digest": "fc5a620a74ab9b96344a9c6af3f0163d907ce2231bfbe0923a0bbc6ad7177c3a"
     },
     {
       "a0_history_entries": 5,
@@ -793,7 +793,7 @@
       "shadow_invariant": true,
       "telemetry_records": 12,
       "turns": 2,
-      "world_digest": "b82d2bbfbfced4d0d21eea3eb30e9844bdc195cef52ed753d66f8f08312d0812"
+      "world_digest": "cda59f6d6ebc47b66ed412df112189ece563d5e20c82aa8fe2877355ad536c4a"
     },
     {
       "a0_history_entries": 5,
@@ -820,7 +820,7 @@
       "shadow_invariant": true,
       "telemetry_records": 12,
       "turns": 2,
-      "world_digest": "5a410e79695634324997ad312bb93807e4f8da4aab6e330b7f9ec850b87bfc94"
+      "world_digest": "3f991bc22821d6a4a7745dae65fbae3305bca6c7fa90ee80464ed83f9873dee5"
     },
     {
       "a0_history_entries": 6,
@@ -850,7 +850,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "63114b58c717c25df9919cf53c8c767f16b9b8b892675466b8f9908dac7a236b"
+      "world_digest": "07fc80938fc8b56e66ec327db2d22ac2a9d124aceb9ca19e6be3975b3e8ae961"
     },
     {
       "a0_history_entries": 6,
@@ -880,7 +880,7 @@
       "shadow_invariant": true,
       "telemetry_records": 15,
       "turns": 3,
-      "world_digest": "8c70a92495679f1349d6ea5dfacc0c3bd8387cf4082bddffbd4ea3c39e3d07e4"
+      "world_digest": "6ce3b322dbebc4a7490100b7bc4f33348272b98282c82f78722ad79c1f9bb3bb"
     },
     {
       "a0_history_entries": 12,
@@ -911,7 +911,7 @@
       "shadow_invariant": true,
       "telemetry_records": 27,
       "turns": 6,
-      "world_digest": "d596a07c40fe050f5c2e4c2ff95b681b7877e2504c3e2fde166977f0862f8401"
+      "world_digest": "d22f4c70fd3a34a0510fc52dfaeef61823d3f2ad85f8d10c16a61102a4906ba8"
     },
     {
       "a0_history_entries": 5,
@@ -938,7 +938,7 @@
       "shadow_invariant": true,
       "telemetry_records": 12,
       "turns": 2,
-      "world_digest": "91694f26d2a506dcece7d0b6f15a48155930162158a1ef5ebbf89c15577940f1"
+      "world_digest": "2d55ba9e850071869677716a8b7636e4800004352123e051e3ed6824c1652862"
     },
     {
       "a0_history_entries": 2,
@@ -948,24 +948,24 @@
         "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/occupied_target_collision/telemetry.jsonl"
       },
       "decision_sequence": [
-        "rejected:UnresolvedHmmm"
+        "move"
       ],
       "diary_entries": 1,
-      "event_count": 3,
+      "event_count": 5,
       "evidence_standing": "UNRESOLVED",
       "family": "smoke",
       "final_turn": 1,
       "fork_lineages": [],
-      "invalid_actions": 1,
+      "invalid_actions": 0,
       "note": "War collision resolver remains hmmm; fail-closed behavior observed",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "occupied_target_collision",
       "seed": 13,
       "shadow_invariant": true,
-      "telemetry_records": 6,
+      "telemetry_records": 8,
       "turns": 1,
-      "world_digest": "2f1a715d354ff57ea5d2be1708961e6c7989b9f9ce482c57ffd742b3f5abdade"
+      "world_digest": "1cd61b48f55c8eaf989522911f7034ca70984fe0f7bbb02831e0b1c3a21f4ed2"
     },
     {
       "a0_history_entries": 2,
@@ -975,29 +975,29 @@
         "telemetry_jsonl": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/artifacts/dual_target_collision/telemetry.jsonl"
       },
       "decision_sequence": [
-        "rejected:UnresolvedHmmm"
+        "move"
       ],
       "diary_entries": 1,
-      "event_count": 3,
+      "event_count": 7,
       "evidence_standing": "UNRESOLVED",
       "family": "smoke",
       "final_turn": 1,
       "fork_lineages": [],
-      "invalid_actions": 1,
+      "invalid_actions": 0,
       "note": "War collision resolver remains hmmm; fail-closed behavior observed",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "dual_target_collision",
       "seed": 17,
       "shadow_invariant": true,
-      "telemetry_records": 6,
+      "telemetry_records": 10,
       "turns": 1,
-      "world_digest": "ec64c5022502eb8c06b91f1a3ed87ee5b2740582295d68bbf18b942ff864c14d"
+      "world_digest": "6dfea040ae8dc4dcdb8843b5dccbd5e92eff12989372c1ba2714632df657a0ce"
     }
   ],
   "scenario_corpus": "calibration-family (workspace-local frozen)",
   "scenario_count": 35,
   "schema": "interdependency.ahbg.run-manifest/1.0.0",
-  "started_at": "2026-08-26T06:56:33Z",
+  "started_at": "2026-08-30T04:42:00Z",
   "workspace": "stack/ahbg/deepseek"
 }

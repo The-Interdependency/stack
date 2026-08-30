@@ -1,3 +1,5 @@
+# ratios: loc_comments=55:10 imports_exports=9:1 calls_definitions=19:1
+
 """Post-calibration demo — one command, deterministic by default.
 
     python3 -m ahbg.integration.demo                  # deterministic, no key
@@ -7,7 +9,7 @@
 
 Demonstrated mechanics (earned standing only): observe -> choose ->
 move/build -> adversarial tile context -> refuse injection -> persist ->
-deterministic replay. War is probed and stays fail-closed, visibly ``hmmm``.
+deterministic replay. War is probed and resolves deterministically (defender holds; priority by unit_id).
 """
 
 from __future__ import annotations
@@ -53,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
             banners.append(f"{kind} {target}  [ADVERSARIAL] injected, refused -> legal {kind}")
         else:
             banners.append(f"{kind} {target}  source={r['source']}")
-    banners.append("war probe: fail-closed (hmmm)")
+    banners.append("war probe: occupied -> defender_holds; dual -> priority (deterministic)")
     paths = render_all(driver, frames_dir, banners, summary["records"])
     player = write_player(frames_dir, banners)
 
@@ -80,3 +82,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+# ratios: loc_comments=55:10 imports_exports=9:1 calls_definitions=19:1

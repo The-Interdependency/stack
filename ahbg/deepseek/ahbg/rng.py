@@ -1,4 +1,6 @@
 # ratios: loc_comments=44:6 imports_exports=2:1 calls_definitions=15:9
+
+
 """DeepSeek AHBG realization — deterministic randomness.
 
 Independent implementation: a counter-mode SHA-256 stream. For a given

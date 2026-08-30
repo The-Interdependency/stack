@@ -1,4 +1,6 @@
 # ratios: loc_comments=287:25 imports_exports=2:3 calls_definitions=43:3
+
+
 """DeepSeek AHBG calibration — frozen workspace-local scenario family.
 
 Every scenario in CALIBRATION.md's minimum variation list is represented.

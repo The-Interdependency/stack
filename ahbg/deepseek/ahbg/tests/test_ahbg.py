@@ -67,7 +67,7 @@ class TurnLoopTests(unittest.TestCase):
         self.assertEqual(world.units["B0"].tile_id, "se")
         self.assertEqual(replay(log).canonical_dict(), world.canonical_dict())
 
-    def test_occupied_target_fails_closed(self) -> None:
+    def test_occupied_target_resolves_defender_holds(self) -> None:
         world, log = new_game(
             seed=7,
             tiles=SEED_TILES,
@@ -75,12 +75,18 @@ class TurnLoopTests(unittest.TestCase):
         )
         loop = TurnLoop(world=world, log=log)
         loop.begin_turn()
-        with self.assertRaises(UnresolvedHmmm):
-            loop.resolve([_plan(0, {"unit_id": "A0", "to_tile_id": "e"})])
-        # World unchanged after fail-closed resolution.
+        events = loop.resolve([_plan(0, {"unit_id": "A0", "to_tile_id": "e"})])
+        loop.end_turn()
+        # Canonical War: defender holds; mover stays; explicit war event.
+        war_events = [e for e in events if e.kind == "war"]
+        self.assertEqual(len(war_events), 1)
+        self.assertEqual(war_events[0].data["outcome"], "defender_holds")
+        self.assertEqual(war_events[0].data["reason"], "occupied")
         self.assertEqual(world.units["A0"].tile_id, "c")
+        self.assertEqual(world.units["B0"].tile_id, "e")
+        self.assertEqual(replay(log).canonical_dict(), world.canonical_dict())
 
-    def test_dual_target_fails_closed(self) -> None:
+    def test_dual_target_resolves_priority(self) -> None:
         world, log = new_game(
             seed=7,
             tiles=SEED_TILES,
@@ -88,13 +94,21 @@ class TurnLoopTests(unittest.TestCase):
         )
         loop = TurnLoop(world=world, log=log)
         loop.begin_turn()
-        with self.assertRaises(UnresolvedHmmm):
-            loop.resolve(
-                [
-                    _plan(0, {"unit_id": "A0", "to_tile_id": "se"}),
-                    _plan(0, {"unit_id": "B0", "to_tile_id": "se"}),
-                ]
-            )
+        events = loop.resolve(
+            [
+                _plan(0, {"unit_id": "A0", "to_tile_id": "se"}),
+                _plan(0, {"unit_id": "B0", "to_tile_id": "se"}),
+            ]
+        )
+        loop.end_turn()
+        # Canonical War: smallest unit_id wins priority.
+        war_events = [e for e in events if e.kind == "war"]
+        outcomes = {(e.data["unit_id"], e.data["outcome"]) for e in war_events}
+        self.assertIn(("A0", "priority_win"), outcomes)
+        self.assertIn(("B0", "priority_loss"), outcomes)
+        self.assertEqual(world.units["A0"].tile_id, "se")
+        self.assertEqual(world.units["B0"].tile_id, "sw")
+        self.assertEqual(replay(log).canonical_dict(), world.canonical_dict())
 
     def test_unknown_action_kind_fails_closed(self) -> None:
         world, log = new_game(seed=7, tiles=SEED_TILES, units=SEED_UNITS)

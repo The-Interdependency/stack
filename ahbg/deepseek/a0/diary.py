@@ -1,4 +1,6 @@
 # ratios: loc_comments=79:7 imports_exports=5:3 calls_definitions=29:13
+
+
 """DeepSeek A0 diary.
 
 The diary is A0's append-only memory surface. Entries are hash-chained so a

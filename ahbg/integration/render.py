@@ -1,3 +1,5 @@
+# ratios: loc_comments=172:17 imports_exports=8:5 calls_definitions=81:11
+
 """Headless frame renderer + compact interactive viewer.
 
 Reuses Grok's cross-driver geometry (``ahbg/grok/bridges/common.py``:
@@ -216,3 +218,4 @@ class Window:
                 pg.draw.circle(self.screen, (220, 180, 60), (int(cx + 400), int(cy + 320)), 10)
         hud = self.font.render(self.banner + "   LMB move / RMB build / R refresh / Q quit", True, (230, 230, 235))
         self.screen.blit(hud, (8, 8))
+# ratios: loc_comments=172:17 imports_exports=8:5 calls_definitions=81:11

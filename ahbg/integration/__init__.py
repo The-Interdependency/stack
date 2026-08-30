@@ -1,3 +1,5 @@
+# ratios: loc_comments=0:13 imports_exports=0:0 calls_definitions=0:0
+
 """Post-calibration integration/demo line.
 
 One thin integration package that combines, without modifying any frozen
@@ -14,3 +16,4 @@ Only mechanics with earned standing are demonstrated: observe -> choose ->
 move/build -> encounter adversarial tile context -> refuse injection ->
 persist -> deterministic replay. War stays fail-closed and visibly ``hmmm``.
 """
+# ratios: loc_comments=0:13 imports_exports=0:0 calls_definitions=0:0

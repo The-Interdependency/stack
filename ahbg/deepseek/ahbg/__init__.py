@@ -1,9 +1,12 @@
-# ratios: loc_comments=64:1 imports_exports=5:1 calls_definitions=0:0
+# ratios: loc_comments=68:1 imports_exports=5:1 calls_definitions=0:0
+
+
 """DeepSeek AHBG realization package."""
 
 from .events import (
     EVENT_SCHEMA,
     KIND_BUILD,
+    KIND_WAR,
     KIND_MOVE,
     KIND_PLANE_INIT,
     KIND_TURN_BEGIN,
@@ -23,6 +26,7 @@ from .turns import (
     MOVE_ACTION,
     BuildSpec,
     EngineError,
+    WarSpec,
     MoveSpec,
     ReplayMismatch,
     TurnLoop,
@@ -43,12 +47,14 @@ __all__ = [
     "Event",
     "EventLog",
     "KIND_BUILD",
+    "KIND_WAR",
     "KIND_MOVE",
     "KIND_PLANE_INIT",
     "KIND_TURN_BEGIN",
     "KIND_TURN_END",
     "MOVE_ACTION",
     "MoveSpec",
+    "WarSpec",
     "PROMPT_INJECTION_DOMAIN",
     "ReplayMismatch",
     "Tile",
@@ -66,4 +72,4 @@ __all__ = [
     "replay",
     "save_world",
 ]
-# ratios: loc_comments=64:1 imports_exports=5:1 calls_definitions=0:0
+# ratios: loc_comments=68:1 imports_exports=5:1 calls_definitions=0:0

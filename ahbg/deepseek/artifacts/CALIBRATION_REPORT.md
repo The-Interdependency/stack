@@ -1,6 +1,6 @@
 # DeepCode AHBG calibration report
 
-Started: 2026-08-26T06:56:33Z
+Started: 2026-08-30T04:42:00Z
 Builder: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode`)
 
 ## Board
@@ -47,8 +47,8 @@ Builder: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode
 - label_permuted_control [control]: SURVIVED (replay=True, decisions=['move', 'move', 'move'], invalid=0, refusals=0) (control_passed=True, shadow_invariant=True)
 - plain_move_loop [smoke]: SURVIVED (replay=True, decisions=['move', 'move', 'move', 'move', 'move', 'move'], invalid=0, refusals=0) (shadow_invariant=True)
 - hard_veto_illegal_action [smoke]: SURVIVED (replay=True, decisions=['move', 'move'], invalid=0, refusals=1) (shadow_invariant=True)
-- occupied_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['rejected:UnresolvedHmmm'], invalid=1, refusals=0) (shadow_invariant=True)
-- dual_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['rejected:UnresolvedHmmm'], invalid=1, refusals=0) (shadow_invariant=True)
+- occupied_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
+- dual_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
 
 ## Summary: survived=33 falsified=0 unresolved=2 blocked=0
 

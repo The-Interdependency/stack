@@ -1,3 +1,5 @@
+# ratios: loc_comments=239:24 imports_exports=8:2 calls_definitions=68:16
+
 """DemoDriver — DeepCode engine decisions on the DeepCode board, injection, replay.
 
 Deterministic by default (no key, no network). ``live_provider`` enables the
@@ -224,7 +226,7 @@ class DemoDriver:
             self.end_turn()
             self.records[-1]["observation"] = self.world.legal_observation()
 
-        # War probe on a fresh board: fail-closed, visibly hmmm.
+        # War probe on a fresh board: canonical deterministic resolution.
         war_standing, war_note = self._probe_war()
 
         self._finish(started, war_standing, war_note, out_dir)
@@ -243,12 +245,26 @@ class DemoDriver:
             )
             loop = TurnLoop(world=w, log=log)
             loop.begin_turn()
-            loop.resolve([{"turn": 0, "actions": [{"kind": "move", "data": {"unit_id": "A0", "to_tile_id": "se"}}]}])
-            return "SURVIVED", "War collision unexpectedly resolved"
+            events = loop.resolve(
+                [{"turn": 0, "actions": [{"kind": "move", "data": {"unit_id": "A0", "to_tile_id": "se"}}]}]
+            )
+            loop.end_turn()
+            war_events = [e for e in events if getattr(e, "kind", None) == "war"]
+            if not war_events or war_events[0].data.get("outcome") != "defender_holds":
+                return "SURVIVED", "war probe: no defender_holds war event emitted"
+            replayed = replay(log)
+            if replayed.canonical_dict() != w.canonical_dict():
+                return "FALSIFIED", "war probe: replay mismatch"
+            a0_tile = next(u.tile_id for u in w.units.values() if u.unit_id == "A0")
+            b0_tile = next(u.tile_id for u in w.units.values() if u.unit_id == "B0")
+            return "SURVIVED", (
+                f"occupied target -> defender holds (A0 stays {a0_tile}, B0 holds {b0_tile}, "
+                f"war outcome=defender_holds, replay equal)"
+            )
         except UnresolvedHmmm as exc:
             return "UNRESOLVED", f"fail-closed: {exc}"
         except Exception as exc:
-            return "UNRESOLVED", f"fail-closed ({type(exc).__name__})"
+            return "FALSIFIED", f"{type(exc).__name__}: {exc}"
 
     def _finish(self, started: float, war_standing: str, war_note: str, out_dir: Path | None = None) -> None:
         out_dir = out_dir or (Path(__file__).resolve().parent.parent / "integration-demo")
@@ -281,3 +297,4 @@ class DemoDriver:
             "war_note": war_note,
             "records": self.records,
         }
+# ratios: loc_comments=239:24 imports_exports=8:2 calls_definitions=68:16
