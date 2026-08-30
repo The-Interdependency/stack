@@ -36,9 +36,9 @@ stack/
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   └── epac/                # emerging composed project; no independent repo yet
 ├── ahbg/                    # emerging composed benchmark/game workspace
-├── backend/                 # stack-level application scaffold
+├── backend/                 # durable cross-repository orchestration + receipts
 ├── frontend/
-│   └── cli/                 # stack-level application scaffold
+│   └── cli/                 # human control/status surface for backend
 ├── STACK_MANIFEST.md        # human-readable provenance and boundary record
 └── stack-manifest.json      # machine-readable work graph
 ```
@@ -76,6 +76,20 @@ stack-local implementation.
 
 EPAC is currently in this pre-graduation state.
 
+### Regenerate MSDMD without depending on hosted CI
+
+The first backend/CLI vertical slice keeps MSDMD regeneration state outside GitHub
+Actions. It queues an exact source+generator identity in SQLite, executes locally,
+verifies the output digest, and writes a receipt.
+
+```bash
+python -m frontend.cli.stackctl msdmd refresh ucns --root ../ucns
+python -m frontend.cli.stackctl msdmd status
+```
+
+See [`backend/README.md`](backend/README.md) for the orchestration contract and
+[`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
+
 ## Refreshing a canonical view
 
 From a clean checkout of the owning repository at the desired commit:
@@ -97,6 +111,10 @@ source commit in the message.
   populated only from an owning canonical repository at an exact commit.
 - proof, measurement, and semantic standing do not transfer merely because projects are
   composed in stack.
+- `backend/` may coordinate an owning repository but does not acquire that repository's
+  authority.
+- hosted CI may execute work, but durable stack orchestration state must not depend on
+  hosted CI remaining available.
 
 ## hmmm
 
@@ -104,4 +122,5 @@ source commit in the message.
   `libs/` + `research/` pair.
 - The exact graduation automation from stack-local project to independent repo + package
   is not yet implemented.
-- The exact long-term shape of `backend/` and `frontend/cli/` remains undeclared.
+- VM and GitHub-hosted MSDMD executors remain unimplemented; the durable local executor
+  is the first vertical slice.
