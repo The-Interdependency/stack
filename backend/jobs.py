@@ -61,7 +61,7 @@ _ALLOWED_TRANSITIONS = {
     "leased": {"running", "queued", "failed", "cancelled", "hmmm"},
     "running": {"verifying", "failed", "cancelled", "hmmm"},
     "verifying": {"succeeded", "failed", "cancelled", "hmmm"},
-    "succeeded": set(),
+    "succeeded": {"queued"},
     "failed": {"queued", "cancelled"},
     "cancelled": {"queued"},
     "hmmm": {"queued", "cancelled"},
@@ -443,8 +443,8 @@ class JobLedger:
             row = conn.execute("SELECT * FROM fresh_jobs WHERE id = ?", (job_id,)).fetchone()
             if row is None:
                 raise KeyError(job_id)
-            if row["state"] not in {"failed", "cancelled", "hmmm"}:
-                raise ValueError(f"only failed/cancelled/hmmm jobs can be retried: {row['state']}")
+            if row["state"] not in {"failed", "cancelled", "hmmm", "succeeded"}:
+                raise ValueError(f"only terminal jobs can be requeued: {row['state']}")
             selected = executor or row["preferred_executor"]
             conn.execute(
                 """UPDATE fresh_jobs SET state='queued', preferred_executor=?, updated_at=?,
