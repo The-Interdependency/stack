@@ -1,3 +1,5 @@
 __pycache__/
 .skill-lib/
 .stack/
+.venv/
+*.py[cod]

@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily stack orchestration PostgreSQL backup
+
+[Timer]
+OnCalendar=*-*-* 03:17:00
+RandomizedDelaySec=20m
+Persistent=true
+Unit=stack-orchestrator-backup.service
+
+[Install]
+WantedBy=timers.target

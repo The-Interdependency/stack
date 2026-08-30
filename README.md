@@ -78,17 +78,19 @@ EPAC is currently in this pre-graduation state.
 
 ### Regenerate MSDMD without depending on hosted CI
 
-The first backend/CLI vertical slice keeps MSDMD regeneration state outside GitHub
-Actions. It queues an exact source+generator identity in SQLite, executes locally,
-verifies the output digest, and writes a receipt.
+The backend/CLI keeps MSDMD regeneration state outside GitHub Actions. PostgreSQL on
+the VM stores exact source+generator identities, worker leases, attempts, receipts,
+dependency ordering, and visible `hmmm`. A non-root VM worker executes the pinned
+collector locally, re-verifies identities, and atomically replaces the repository's
+collection artifact.
 
 ```bash
-python -m frontend.cli.stackctl msdmd refresh ucns --root ../ucns
+python -m frontend.cli.stackctl msdmd refresh ucns --root /srv/stack-repos/ucns
 python -m frontend.cli.stackctl msdmd status
 ```
 
-See [`backend/README.md`](backend/README.md) for the orchestration contract and
-[`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
+See [`backend/README.md`](backend/README.md) for the orchestration and backup contract
+and [`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
 
 ## Refreshing a canonical view
 
@@ -115,6 +117,9 @@ source commit in the message.
   authority.
 - hosted CI may execute work, but durable stack orchestration state must not depend on
   hosted CI remaining available.
+- PostgreSQL owns orchestration state, not repository artifacts or canon.
+- a database backup is complete only when its independently mounted mirror is verified;
+  a second same-disk directory is not redundancy.
 
 ## hmmm
 
@@ -122,5 +127,7 @@ source commit in the message.
   `libs/` + `research/` pair.
 - The exact graduation automation from stack-local project to independent repo + package
   is not yet implemented.
-- VM and GitHub-hosted MSDMD executors remain unimplemented; the durable local executor
-  is the first vertical slice.
+- The actual VM PostgreSQL/service-account/storage state and independent backup device
+  remain deployment observations until inspected on the VM.
+- A GitHub-hosted MSDMD executor remains optional and unimplemented; VM-local execution
+  is the resilience baseline.
