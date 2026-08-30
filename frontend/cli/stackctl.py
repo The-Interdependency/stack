@@ -1,40 +1,30 @@
-"""Operator CLI for PostgreSQL-backed stack orchestration.
-
-Usage:
-    python -m frontend.cli.stackctl db migrate
-    python -m frontend.cli.stackctl msdmd refresh ucns --root /srv/stack-repos/ucns
-    python -m frontend.cli.stackctl msdmd status
-    python -m frontend.cli.stackctl worker run
-"""
+"""Operator CLI for PostgreSQL-backed stack fresh-making."""
 from __future__ import annotations
 
 # === MODULE_BUILD ===
-# id: stack_operator_cli
+# id: stack_fresh_operator_cli
 #   module_name: stackctl
 #   module_kind: adapter
-#   summary: exposes PostgreSQL migrations, durable MSDMD controls, status, and the VM worker loop to a human operator
+#   summary: exposes PostgreSQL migration, fresh-making status/make/retry/recover/affected operations, and VM worker control
 #   owner: stack
 #   public_surface: python -m frontend.cli.stackctl
-#   internal_surface: argparse command dispatch, JobLedger, backend.msdmd, backend.worker
 #   auth_boundary: write
 #   storage_boundary: write
 #   network_boundary: internal
-#   user_data_boundary: none
-#   admin_only: true
-#   tests: backend.tests.test_orchestrator
-#   rollout: explicit operator invocation and systemd worker ExecStart
-#   rollback: stop worker and stop invoking the module
+#   tests: backend.tests.test_orchestrator, backend.tests.test_worker_postgres
+#   rollout: explicit operator invocation and systemd worker entrypoint
+#   rollback: stop invoking the CLI; PostgreSQL records remain inspectable
 # === END MODULE_BUILD ===
 
 # === BOUNDARIES ===
-# id: stack_operator_cli_orchestration
-#   summary: permits an authorized VM operator to migrate, create, execute, inspect, cancel, and retry orchestration jobs
+# id: stack_fresh_operator_cli_boundary
+#   summary: operator commands may mutate orchestration state and, for make operations, bounded generated artifacts through backend adapters
 #   auth_boundary: write
 #   storage_boundary: write
 #   network_boundary: internal
 #   user_data_boundary: none
 #   admin_only: true
-#   side_effects: job, database, filesystem, subprocess
+#   side_effects: database, filesystem, subprocess, job
 #   owner: stack
 # === END BOUNDARIES ===
 
@@ -45,9 +35,11 @@ import os
 from pathlib import Path
 import sys
 
-from backend.jobs import Job, JobLedger
-from backend.msdmd import queue_refresh, retry_job, run_job
+from backend.freshness import base_report
+from backend.jobs import JobLedger
+from backend import msdmd
 from backend.worker import run_forever, run_once
+
 
 def _database_url(args: argparse.Namespace) -> str:
     value = args.database_url or os.environ.get("STACK_DATABASE_URL", "")
@@ -55,166 +47,234 @@ def _database_url(args: argparse.Namespace) -> str:
         raise ValueError("STACK_DATABASE_URL or --database-url is required")
     return value
 
+
 def _ledger(args: argparse.Namespace) -> JobLedger:
-    receipt_dir = args.receipt_dir or os.environ.get("STACK_RECEIPT_DIR", ".stack/state/receipts")
+    receipt_dir = args.receipt_dir or os.environ.get("STACK_RECEIPT_DIR")
     return JobLedger(_database_url(args), receipt_dir=receipt_dir)
 
-def _print_job(job: Job) -> None:
-    print(json.dumps(asdict(job), indent=2, sort_keys=True))
 
-def _target_root(args: argparse.Namespace) -> Path:
-    if args.root is not None:
-        return args.root
-    configured = os.environ.get("STACK_REPO_ROOT", "").strip()
-    if not configured:
-        raise ValueError("--root is required when STACK_REPO_ROOT is not configured")
-    return Path(configured) / args.repo
+def _print(value) -> None:
+    print(json.dumps(value, indent=2, sort_keys=True, default=str))
 
-def _generator_root(args: argparse.Namespace) -> Path:
-    if args.generator_root is not None:
-        return args.generator_root
-    configured = os.environ.get("STACK_SKILL_LIB_ROOT", "").strip()
-    if configured:
-        return Path(configured)
-    return Path(__file__).resolve().parents[2] / "skill-lib"
 
-def _cmd_db_migrate(args: argparse.Namespace) -> int:
-    ledger = _ledger(args)
-    ledger.migrate()
-    print("database schema ready")
+def _evaluate(ledger: JobLedger, target: str):
+    spec = ledger.get_derivation(target)
+    if spec.get("kind") == "msdmd.collection":
+        return msdmd.evaluate(ledger, target)
+    return base_report(ledger, spec)
+
+
+def _make(ledger: JobLedger, target: str, *, executor: str, worker_id: str):
+    spec = ledger.get_derivation(target)
+    if spec.get("kind") == "msdmd.collection":
+        return msdmd.make(ledger, target, executor=executor, worker_id=worker_id)
+    raise ValueError(f"no make adapter registered for derivation kind: {spec.get('kind')}")
+
+
+def cmd_db_migrate(args):
+    _ledger(args).migrate()
+    print("PostgreSQL fresh-making schema: migrated")
     return 0
 
-def _cmd_refresh(args: argparse.Namespace) -> int:
+
+def cmd_make_msdmd(args):
     ledger = _ledger(args)
-    job = queue_refresh(
-        ledger, repo=args.repo, root=_target_root(args), out=args.out,
-        source_sha=args.source_sha, generator_root=_generator_root(args),
-        executor=args.executor,
+    stack_root = Path(__file__).resolve().parents[2]
+    spec = msdmd.build_spec(
+        repo=args.repo, root=args.root, out=args.out, source_sha=args.source_sha,
+        generator_root=args.generator_root or (stack_root / "skill-lib"),
     )
+    msdmd.register_spec(ledger, spec)
     if args.queue_only:
-        _print_job(job)
-        return 0
-    if job.state == "succeeded":
-        _print_job(job)
-        return 0
-    if job.state in {"failed", "hmmm", "cancelled"}:
-        job = ledger.retry(job.id)
-    if job.state == "running":
-        _print_job(job)
-        return 0
-    result = run_job(ledger, job.id)
-    _print_job(result)
-    return 0 if result.state == "succeeded" else 1
+        job, report = msdmd.queue_make(ledger, spec["target"], executor=args.executor)
+    else:
+        job, report = msdmd.make(
+            ledger, spec["target"], executor=args.executor, worker_id=args.worker_id,
+        )
+    _print({"target": spec["target"], "job": asdict(job) if job else None, "freshness": report.to_dict()})
+    return 0 if report.state in {"fresh", "making-fresh"} else 1
 
-def _cmd_run(args: argparse.Namespace) -> int:
-    result = run_job(_ledger(args), args.job_id)
-    _print_job(result)
-    return 0 if result.state == "succeeded" else 1
 
-def _cmd_retry(args: argparse.Namespace) -> int:
-    result = retry_job(_ledger(args), args.job_id)
-    _print_job(result)
-    return 0 if result.state == "succeeded" else 1
-
-def _cmd_cancel(args: argparse.Namespace) -> int:
-    result = _ledger(args).cancel(args.job_id)
-    _print_job(result)
-    return 0
-
-def _cmd_status(args: argparse.Namespace) -> int:
+def cmd_make(args):
     ledger = _ledger(args)
-    if args.job_id:
-        _print_job(ledger.get(args.job_id))
+    job, report = _make(ledger, args.target, executor=args.executor, worker_id=args.worker_id)
+    _print({"target": args.target, "job": asdict(job) if job else None, "freshness": report.to_dict()})
+    return 0 if report.state == "fresh" else 1
+
+
+def cmd_status(args):
+    ledger = _ledger(args)
+    if args.target:
+        _print(_evaluate(ledger, args.target).to_dict())
         return 0
-    print(json.dumps([asdict(job) for job in ledger.list(limit=args.limit)], indent=2, sort_keys=True))
+    reports = [_evaluate(ledger, spec["target"]).to_dict() for spec in ledger.list_derivations()]
+    _print(reports)
     return 0
 
-def _cmd_explain(args: argparse.Namespace) -> int:
-    job = _ledger(args).get(args.job_id)
-    explanation = {
-        "id": job.id, "state": job.state, "target": job.target,
-        "source_sha": job.source_sha, "generator_identity": job.generator_identity,
-        "attempts": job.attempts, "error": job.error, "hmmm": job.hmmm,
-        "artifact_path": job.artifact_path, "artifact_sha256": job.artifact_sha256,
-    }
-    print(json.dumps(explanation, indent=2, sort_keys=True))
+
+def cmd_explain(args):
+    ledger = _ledger(args)
+    jobs = ledger.list(limit=10, target=args.target)
+    active = ledger.active_job_for_target(args.target)
+    _print({
+        "spec": ledger.get_derivation(args.target),
+        "freshness": _evaluate(ledger, args.target).to_dict(),
+        "active_job": asdict(active) if active else None,
+        "recent_jobs": [asdict(job) for job in jobs],
+        "active_attempts": [asdict(a) for a in ledger.attempts_for(active.id)] if active else [],
+    })
     return 0
 
-def _cmd_worker_once(args: argparse.Namespace) -> int:
-    did_work = run_once(_ledger(args), executor=args.executor, worker_id=args.worker_id)
-    return 0 if did_work else 3
 
-def _cmd_worker_run(args: argparse.Namespace) -> int:
-    try:
-        run_forever(_ledger(args), executor=args.executor, worker_id=args.worker_id)
-    except KeyboardInterrupt:
-        return 130
+def cmd_run(args):
+    ledger = _ledger(args)
+    job = ledger.get(args.job_id)
+    if job.kind != "fresh.make":
+        raise ValueError(f"unsupported job kind: {job.kind}")
+    spec = ledger.get_derivation(job.target)
+    if spec.get("kind") != "msdmd.collection":
+        raise ValueError(f"no executor adapter for {spec.get('kind')}")
+    result = msdmd.run_job(
+        ledger, job.id, worker_id=args.worker_id, executor=args.executor,
+        lease_seconds=args.lease_seconds,
+    )
+    _print(asdict(result))
+    return 0 if result.state == "succeeded" else 1
+
+
+def cmd_retry(args):
+    ledger = _ledger(args)
+    job = ledger.get(args.job_id)
+    spec = ledger.get_derivation(job.target)
+    if spec.get("kind") != "msdmd.collection":
+        raise ValueError(f"no retry adapter for {spec.get('kind')}")
+    result = msdmd.retry_job(ledger, job.id, executor=args.executor, worker_id=args.worker_id)
+    _print(asdict(result))
+    return 0 if result.state == "succeeded" else 1
+
+
+def cmd_cancel(args):
+    _print(asdict(_ledger(args).cancel(args.job_id)))
     return 0
+
+
+def cmd_jobs(args):
+    ledger = _ledger(args)
+    _print([asdict(j) for j in ledger.list(limit=args.limit, target=args.target)])
+    return 0
+
+
+def cmd_recover(args):
+    count = _ledger(args).requeue_stale()
+    _print({"recovered": count})
+    return 0
+
+
+def cmd_affected(args):
+    ledger = _ledger(args)
+    _print(msdmd.registered_affected_closure(ledger, args.changed_target))
+    return 0
+
+
+def cmd_worker_once(args):
+    worked = run_once(
+        _ledger(args), executor=args.executor, worker_id=args.worker_id,
+        lease_seconds=args.lease_seconds,
+    )
+    return 0 if worked else 3
+
+
+def cmd_worker_run(args):
+    run_forever(_ledger(args), executor=args.executor, worker_id=args.worker_id)
+    return 0
+
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="stackctl")
     parser.add_argument("--database-url", help="PostgreSQL DSN; defaults to STACK_DATABASE_URL")
-    parser.add_argument(
-        "--receipt-dir", type=Path,
-        help="JSON receipt directory; defaults to STACK_RECEIPT_DIR or .stack/state/receipts",
-    )
+    parser.add_argument("--receipt-dir", type=Path, help="JSON receipt projection directory")
     top = parser.add_subparsers(dest="domain", required=True)
-    db = top.add_parser("db", help="PostgreSQL schema operations")
+
+    db = top.add_parser("db")
     db_actions = db.add_subparsers(dest="action", required=True)
-    migrate = db_actions.add_parser("migrate", help="apply idempotent PostgreSQL schema")
-    migrate.set_defaults(func=_cmd_db_migrate)
+    migrate = db_actions.add_parser("migrate")
+    migrate.set_defaults(func=cmd_db_migrate)
 
-    msdmd = top.add_parser("msdmd", help="durable MSDMD regeneration")
-    actions = msdmd.add_subparsers(dest="action", required=True)
-    refresh = actions.add_parser("refresh", help="queue and run one repository refresh")
-    refresh.add_argument("repo")
-    refresh.add_argument("--root", type=Path, help="repository checkout; defaults to STACK_REPO_ROOT/<repo>")
-    refresh.add_argument("--out", type=Path, help="artifact path; must remain at target repository root")
-    refresh.add_argument("--source-sha", help="full source commit; resolved from git when omitted")
-    refresh.add_argument(
-        "--generator-root", type=Path,
-        help="skill-lib root; defaults to STACK_SKILL_LIB_ROOT or stack/skill-lib",
-    )
-    refresh.add_argument("--executor", default="local", choices=("local",))
-    refresh.add_argument("--queue-only", action="store_true")
-    refresh.set_defaults(func=_cmd_refresh)
-    run = actions.add_parser("run", help="execute one queued job")
+    fresh = top.add_parser("fresh", help="deterministic derived-artifact restoration")
+    actions = fresh.add_subparsers(dest="action", required=True)
+
+    mm = actions.add_parser("make-msdmd", help="register and make a repo MSDMD collection fresh")
+    mm.add_argument("repo")
+    mm.add_argument("--root", type=Path, required=True)
+    mm.add_argument("--out", type=Path)
+    mm.add_argument("--source-sha")
+    mm.add_argument("--generator-root", type=Path)
+    mm.add_argument("--executor", default="local", choices=("local",))
+    mm.add_argument("--worker-id", default="stackctl")
+    mm.add_argument("--queue-only", action="store_true")
+    mm.set_defaults(func=cmd_make_msdmd)
+
+    make = actions.add_parser("make")
+    make.add_argument("target")
+    make.add_argument("--executor", default="local", choices=("local",))
+    make.add_argument("--worker-id", default="stackctl")
+    make.set_defaults(func=cmd_make)
+
+    status = actions.add_parser("status")
+    status.add_argument("target", nargs="?")
+    status.set_defaults(func=cmd_status)
+    explain = actions.add_parser("explain")
+    explain.add_argument("target")
+    explain.set_defaults(func=cmd_explain)
+
+    run = actions.add_parser("run")
     run.add_argument("job_id")
-    run.set_defaults(func=_cmd_run)
-    retry = actions.add_parser("retry", help="requeue and execute one failed/hmmm/cancelled job")
-    retry.add_argument("job_id")
-    retry.set_defaults(func=_cmd_retry)
-    cancel = actions.add_parser("cancel", help="cancel a queued/failed/hmmm job")
-    cancel.add_argument("job_id")
-    cancel.set_defaults(func=_cmd_cancel)
-    status = actions.add_parser("status", help="show durable job state")
-    status.add_argument("job_id", nargs="?")
-    status.add_argument("--limit", type=int, default=100)
-    status.set_defaults(func=_cmd_status)
-    explain = actions.add_parser("explain", help="show one job's evidence and unresolved boundary")
-    explain.add_argument("job_id")
-    explain.set_defaults(func=_cmd_explain)
+    run.add_argument("--executor", default="local", choices=("local",))
+    run.add_argument("--worker-id", default="stackctl")
+    run.add_argument("--lease-seconds", type=int)
+    run.set_defaults(func=cmd_run)
 
-    worker = top.add_parser("worker", help="VM worker loop")
-    worker_actions = worker.add_subparsers(dest="action", required=True)
-    once = worker_actions.add_parser("once", help="recover stale leases and execute at most one job")
-    once.add_argument("--worker-id")
+    retry = actions.add_parser("retry")
+    retry.add_argument("job_id")
+    retry.add_argument("--executor", default="local", choices=("local",))
+    retry.add_argument("--worker-id", default="stackctl")
+    retry.set_defaults(func=cmd_retry)
+    cancel = actions.add_parser("cancel")
+    cancel.add_argument("job_id")
+    cancel.set_defaults(func=cmd_cancel)
+
+    jobs = actions.add_parser("jobs")
+    jobs.add_argument("--target")
+    jobs.add_argument("--limit", type=int, default=100)
+    jobs.set_defaults(func=cmd_jobs)
+    recover = actions.add_parser("recover")
+    recover.set_defaults(func=cmd_recover)
+    affected = actions.add_parser("affected")
+    affected.add_argument("changed_target", nargs="+")
+    affected.set_defaults(func=cmd_affected)
+
+    worker = top.add_parser("worker")
+    wa = worker.add_subparsers(dest="action", required=True)
+    once = wa.add_parser("once")
     once.add_argument("--executor", default="local", choices=("local",))
-    once.set_defaults(func=_cmd_worker_once)
-    forever = worker_actions.add_parser("run", help="poll PostgreSQL and execute queued jobs")
-    forever.add_argument("--worker-id")
+    once.add_argument("--worker-id")
+    once.add_argument("--lease-seconds", type=int)
+    once.set_defaults(func=cmd_worker_once)
+    forever = wa.add_parser("run")
     forever.add_argument("--executor", default="local", choices=("local",))
-    forever.set_defaults(func=_cmd_worker_run)
+    forever.add_argument("--worker-id")
+    forever.set_defaults(func=cmd_worker_run)
     return parser
 
+
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
+    args = build_parser().parse_args(argv)
     try:
         return int(args.func(args))
-    except (KeyError, ValueError, FileNotFoundError, PermissionError, RuntimeError) as exc:
+    except (KeyError, ValueError, FileNotFoundError, RuntimeError, json.JSONDecodeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+
 
 if __name__ == "__main__":
     raise SystemExit(main())
