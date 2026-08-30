@@ -5,7 +5,7 @@ from __future__ import annotations
 # id: stack_msdmd_fresh_adapter
 #   module_name: msdmd_fresh_adapter
 #   module_kind: adapter
-#   summary: applies fresh-making to repo-owned MSDMD collections with exact identities, independent rerender verification, atomic publication, and PostgreSQL acceptance
+#   summary: applies fresh-making to repo-owned MSDMD collections with exact identities, independent rerender verification, rollback-safe publication, and PostgreSQL acceptance
 #   owner: stack
 #   public_surface: build_spec, register_spec, evaluate, queue_make, run_job, make, retry_job
 #   auth_boundary: write
@@ -41,7 +41,7 @@ from __future__ import annotations
 #
 # id: stack_msdmd_publish_after_verify
 #   given: executor candidate and independent verifier output match under unchanged exact identities
-#   then: output is atomically published and PostgreSQL accepts one receipt for that target freshness key
+#   then: output is published and PostgreSQL accepts one receipt; acceptance failure restores the previous artifact
 #   class: evidence
 # === END CONTRACTS ===
 
@@ -81,12 +81,12 @@ def tree_sha256(root: str | Path, *, suffixes: tuple[str, ...] = (".py",)) -> st
     base = Path(root).resolve()
     if not base.is_dir():
         raise FileNotFoundError(base)
-    digest = hashlib.sha256()
-    files = sorted(path for path in base.rglob("*") if path.is_file() and (not suffixes or path.suffix in suffixes))
+    files = sorted(p for p in base.rglob("*") if p.is_file() and (not suffixes or p.suffix in suffixes))
     if not files:
         raise ValueError(f"no generator files found under {base}")
+    digest = hashlib.sha256()
     for path in files:
-        digest.update(path.relative_to(base).as_posix().encode("utf-8"))
+        digest.update(path.relative_to(base).as_posix().encode())
         digest.update(b"\0")
         digest.update(path.read_bytes())
         digest.update(b"\0")
@@ -98,9 +98,7 @@ def resolve_git_head(root: str | Path) -> str | None:
         ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
         text=True, capture_output=True, check=False,
     )
-    if proc.returncode != 0:
-        return None
-    value = proc.stdout.strip()
+    value = proc.stdout.strip() if proc.returncode == 0 else ""
     return value if _SHA40.fullmatch(value) else None
 
 
@@ -108,105 +106,84 @@ def generator_identity(generator_root: str | Path) -> str:
     package = Path(generator_root).resolve() / "msdmd"
     if not (package / "collect.py").is_file():
         raise FileNotFoundError(f"MSDMD collector not found: {package / 'collect.py'}")
-    return tree_sha256(package, suffixes=(".py",))
+    return tree_sha256(package)
 
 
-def _parse_allowed_repos(raw: str) -> set[str]:
-    return {part.strip() for part in raw.split(",") if part.strip()}
-
-
-def _validate_runtime_boundaries(*, repo: str, root: Path, generator_root: Path, out: Path) -> None:
-    repo_root_raw = os.environ.get("STACK_REPO_ROOT", "").strip()
-    if repo_root_raw:
-        repo_root = Path(repo_root_raw).expanduser().resolve()
-        allowed = _parse_allowed_repos(os.environ.get("STACK_ALLOWED_REPOS", ""))
+def _validate_runtime(repo: str, root: Path, generator_root: Path, out: Path) -> None:
+    configured_root = os.environ.get("STACK_REPO_ROOT", "").strip()
+    if configured_root:
+        repo_root = Path(configured_root).expanduser().resolve()
+        allowed = {x.strip() for x in os.environ.get("STACK_ALLOWED_REPOS", "").split(",") if x.strip()}
         if not allowed:
             raise ConstraintError("STACK_ALLOWED_REPOS is required with STACK_REPO_ROOT")
         if repo not in allowed:
-            raise ConstraintError(f"repository is not allowed by STACK_ALLOWED_REPOS: {repo}")
-        if root.parent != repo_root or root.name != repo:
-            raise ConstraintError(f"target must be the direct configured checkout {repo_root / repo}: {root}")
-        if not (root / ".git").exists():
-            raise ConstraintError(f"configured production target is not a git checkout: {root}")
-
-    skill_root_raw = os.environ.get("STACK_SKILL_LIB_ROOT", "").strip()
-    if skill_root_raw:
-        expected = Path(skill_root_raw).expanduser().resolve()
-        if generator_root != expected:
-            raise ConstraintError(f"generator root differs from STACK_SKILL_LIB_ROOT: {generator_root} != {expected}")
+            raise ConstraintError(f"repository is not allowed: {repo}")
+        if root != repo_root / repo or not (root / ".git").exists():
+            raise ConstraintError(f"target must be the configured git checkout {repo_root / repo}: {root}")
+    configured_skill = os.environ.get("STACK_SKILL_LIB_ROOT", "").strip()
+    if configured_skill and generator_root != Path(configured_skill).expanduser().resolve():
+        raise ConstraintError("generator root differs from STACK_SKILL_LIB_ROOT")
     if out.parent != root:
         raise ConstraintError(f"MSDMD artifact must remain at repository root: {out}")
 
 
-def _git_status(root: Path) -> list[str]:
+def _dirty_path(line: str) -> str:
+    path = line[3:]
+    return (path.split(" -> ", 1)[-1]).strip('"')
+
+
+def _unrelated_dirty(root: Path, ignored: set[str]) -> list[str]:
     proc = subprocess.run(
         ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"],
         text=True, capture_output=True, check=False,
     )
-    return proc.stdout.splitlines() if proc.returncode == 0 else []
+    if proc.returncode != 0:
+        return []
+    return [line for line in proc.stdout.splitlines() if _dirty_path(line) not in ignored]
 
 
-def _dirty_path(line: str) -> str:
-    path = line[3:]
-    if " -> " in path:
-        path = path.split(" -> ", 1)[1]
-    return path.strip('"')
-
-
-def _unrelated_dirty(root: Path, ignored_names: set[str]) -> list[str]:
-    return [line for line in _git_status(root) if _dirty_path(line) not in ignored_names]
-
-
-def _source_identity(source_sha: str) -> str:
-    if not _SHA40.fullmatch(source_sha):
+def _source_identity(sha: str) -> str:
+    if not _SHA40.fullmatch(sha):
         raise ValueError("source SHA must be an exact 40-character lowercase commit identity")
-    return f"git:{source_sha}"
+    return f"git:{sha}"
 
 
 def _source_sha(spec: dict[str, Any]) -> str:
     for item in spec["inputs"]:
-        if item.get("name") == "repository":
-            identity = str(item.get("identity", ""))
-            if identity.startswith("git:") and _SHA40.fullmatch(identity[4:]):
-                return identity[4:]
+        identity = str(item.get("identity", ""))
+        if item.get("name") == "repository" and identity.startswith("git:") and _SHA40.fullmatch(identity[4:]):
+            return identity[4:]
     raise ValueError("MSDMD spec has no exact repository git identity")
 
 
 def build_spec(*, repo: str, root: str | Path, generator_root: str | Path,
                out: str | Path | None = None, source_sha: str | None = None) -> dict[str, Any]:
     root_path = Path(root).expanduser().resolve()
+    generator_path = Path(generator_root).expanduser().resolve()
     if not root_path.is_dir():
         raise FileNotFoundError(root_path)
-    generator_path = Path(generator_root).expanduser().resolve()
     resolved = source_sha or resolve_git_head(root_path)
     if not resolved:
         raise ValueError("exact source SHA is required when target root has no resolvable git HEAD")
     output = Path(out) if out is not None else Path(f"{repo}_msdmd.ts")
-    if not output.is_absolute():
-        output = root_path / output
-    output = output.resolve()
-    _validate_runtime_boundaries(repo=repo, root=root_path, generator_root=generator_path, out=output)
+    output = (output if output.is_absolute() else root_path / output).resolve()
+    _validate_runtime(repo, root_path, generator_path, output)
     gen = generator_identity(generator_path)
-    source_mode = "git" if resolve_git_head(root_path) is not None else "explicit"
     return {
-        "schema": SPEC_SCHEMA,
-        "version": SPEC_VERSION,
-        "target": f"msdmd:{repo}",
-        "kind": "msdmd.collection",
+        "schema": SPEC_SCHEMA, "version": SPEC_VERSION,
+        "target": f"msdmd:{repo}", "kind": "msdmd.collection",
         "inputs": [{"name": "repository", "identity": _source_identity(resolved)}],
         "generator": {
             "identity": f"sha256:{gen}",
             "command": "python -m msdmd.collect --root <root> --repo <repo> --out <candidate> --source-commit <sha>",
         },
         "outputs": [{"path": output.name}],
-        "verifier": {
-            "identity": f"sha256:{gen}",
-            "command": "independent-rerender-byte-compare@1",
-        },
+        "verifier": {"identity": f"sha256:{gen}", "command": "independent-rerender-byte-compare@1"},
         "depends_on": [],
         "runtime": {
             "repo": repo, "root": str(root_path), "out": str(output),
-            "generator_root": str(generator_path), "source_identity_mode": source_mode,
+            "generator_root": str(generator_path),
+            "source_identity_mode": "git" if resolve_git_head(root_path) else "explicit",
         },
     }
 
@@ -216,70 +193,51 @@ def refresh_identities(spec: dict[str, Any]) -> dict[str, Any]:
         raise ValueError(f"unsupported derivation kind: {spec.get('kind')}")
     current = json.loads(json.dumps(spec))
     runtime = current["runtime"]
-    root = Path(runtime["root"])
     if runtime.get("source_identity_mode") == "git":
-        head = resolve_git_head(root)
+        head = resolve_git_head(runtime["root"])
         current["inputs"][0]["identity"] = _source_identity(head) if head else "hmmm"
     try:
         gen = generator_identity(runtime["generator_root"])
     except (FileNotFoundError, ValueError):
-        current["generator"]["identity"] = "hmmm"
-        current["verifier"]["identity"] = "hmmm"
+        current["generator"]["identity"] = current["verifier"]["identity"] = "hmmm"
     else:
-        identity = f"sha256:{gen}"
-        current["generator"]["identity"] = identity
-        current["verifier"]["identity"] = identity
+        current["generator"]["identity"] = current["verifier"]["identity"] = f"sha256:{gen}"
     return current
 
 
 def register_spec(ledger: JobLedger, spec: dict[str, Any]) -> dict[str, Any]:
-    key = freshness_key(spec)
-    ledger.upsert_derivation(spec, key)
+    ledger.upsert_derivation(spec, freshness_key(spec))
     return spec
 
 
-def _collector_command(spec: dict[str, Any], output: Path) -> list[str]:
+def _run_collector(spec: dict[str, Any], output: Path, timeout: int) -> subprocess.CompletedProcess[str]:
     runtime = spec["runtime"]
-    return [
-        sys.executable, "-m", "msdmd.collect",
-        "--root", runtime["root"], "--repo", runtime["repo"],
-        "--out", str(output), "--source-commit", _source_sha(spec),
-    ]
-
-
-def _run_collector(spec: dict[str, Any], output: Path, *, timeout_seconds: int) -> subprocess.CompletedProcess[str]:
-    runtime = spec["runtime"]
-    generator_root = Path(runtime["generator_root"])
     env = os.environ.copy()
-    existing = env.get("PYTHONPATH")
-    env["PYTHONPATH"] = str(generator_root) if not existing else os.pathsep.join((str(generator_root), existing))
+    generator_root = str(Path(runtime["generator_root"]))
+    env["PYTHONPATH"] = generator_root if not env.get("PYTHONPATH") else os.pathsep.join((generator_root, env["PYTHONPATH"]))
     return subprocess.run(
-        _collector_command(spec, output), cwd=runtime["root"], env=env,
-        text=True, capture_output=True, check=False, timeout=timeout_seconds,
+        [sys.executable, "-m", "msdmd.collect", "--root", runtime["root"],
+         "--repo", runtime["repo"], "--out", str(output), "--source-commit", _source_sha(spec)],
+        cwd=runtime["root"], env=env, text=True, capture_output=True,
+        check=False, timeout=timeout,
     )
 
 
-def _verify_runtime(spec: dict[str, Any], *, ignore_names: set[str] | None = None) -> None:
+def _verify_runtime(spec: dict[str, Any], ignored: set[str] | None = None) -> None:
     runtime = spec["runtime"]
-    root = Path(runtime["root"]).resolve()
-    output = Path(runtime["out"]).resolve()
+    root, out = Path(runtime["root"]).resolve(), Path(runtime["out"]).resolve()
     generator_root = Path(runtime["generator_root"]).resolve()
-    _validate_runtime_boundaries(repo=runtime["repo"], root=root, generator_root=generator_root, out=output)
+    _validate_runtime(runtime["repo"], root, generator_root, out)
     head = resolve_git_head(root)
-    if head is None:
-        raise ConstraintError(f"target has no resolvable git HEAD: {root}")
-    if head != _source_sha(spec):
-        raise ConstraintError(f"source checkout moved: expected={_source_sha(spec)} current={head}")
-    current_generator = f"sha256:{generator_identity(generator_root)}"
-    if current_generator != spec["generator"]["identity"]:
+    if head is None or head != _source_sha(spec):
+        raise ConstraintError(f"source checkout differs from desired commit: expected={_source_sha(spec)} current={head}")
+    if f"sha256:{generator_identity(generator_root)}" != spec["generator"]["identity"]:
         raise ConstraintError("generator identity differs from derivation spec")
-    ignored = {output.name}
-    if ignore_names:
-        ignored.update(ignore_names)
-    dirty = _unrelated_dirty(root, ignored)
+    ignored_names = {out.name} | (ignored or set())
+    dirty = _unrelated_dirty(root, ignored_names)
     if dirty:
-        rendered = "; ".join(dirty[:10]) + (f"; +{len(dirty)-10} more" if len(dirty) > 10 else "")
-        raise ConstraintError(f"unrelated target worktree changes are present: {rendered}")
+        detail = "; ".join(dirty[:10]) + (f"; +{len(dirty)-10} more" if len(dirty) > 10 else "")
+        raise ConstraintError(f"unrelated target worktree changes are present: {detail}")
 
 
 def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
@@ -293,72 +251,42 @@ def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
     try:
         receipt = ledger.get_receipt(acceptance.receipt_id)
     except KeyError:
-        return FreshnessReport(
-            target=target, state="hmmm", diagnosis="receipt-missing",
-            desired_freshness_key=report.desired_freshness_key,
-            accepted_freshness_key=report.accepted_freshness_key,
-            receipt_id=acceptance.receipt_id, active_job_id=None,
-            reason="accepted SQL receipt cannot be resolved", hmmm=["accepted receipt missing"],
-        )
+        return FreshnessReport(target, "hmmm", "receipt-missing", report.desired_freshness_key,
+                               report.accepted_freshness_key, acceptance.receipt_id, None,
+                               "accepted SQL receipt cannot be resolved", ["accepted receipt missing"])
     output = Path(spec["runtime"]["out"])
     if not output.is_file():
-        return FreshnessReport(
-            target=target, state="making-fresh", diagnosis="output-missing",
-            desired_freshness_key=report.desired_freshness_key,
-            accepted_freshness_key=report.accepted_freshness_key,
-            receipt_id=receipt.id, active_job_id=None,
-            reason=f"accepted output is missing: {output}", hmmm=[],
-        )
+        return FreshnessReport(target, "making-fresh", "output-missing", report.desired_freshness_key,
+                               report.accepted_freshness_key, receipt.id, None,
+                               f"accepted output is missing: {output}", [])
     actual = sha256_file(output)
     if actual != receipt.output_sha256:
-        return FreshnessReport(
-            target=target, state="making-fresh", diagnosis="output-tampered",
-            desired_freshness_key=report.desired_freshness_key,
-            accepted_freshness_key=report.accepted_freshness_key,
-            receipt_id=receipt.id, active_job_id=None,
-            reason="output digest differs from accepted receipt", hmmm=[],
-        )
-    timeout = int(os.environ.get("STACK_VERIFY_TIMEOUT_SECONDS", "900"))
+        return FreshnessReport(target, "making-fresh", "output-tampered", report.desired_freshness_key,
+                               report.accepted_freshness_key, receipt.id, None,
+                               "output digest differs from accepted receipt", [])
     verify_path = output.with_name(f".{output.name}.fresh-status-verify")
     try:
         try:
-            _verify_runtime(spec, ignore_names={verify_path.name})
-            proc = _run_collector(spec, verify_path, timeout_seconds=timeout)
+            _verify_runtime(spec, {verify_path.name})
+            proc = _run_collector(spec, verify_path, int(os.environ.get("STACK_VERIFY_TIMEOUT_SECONDS", "900")))
         except (ConstraintError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
-            return FreshnessReport(
-                target=target, state="hmmm", diagnosis="verifier-unavailable",
-                desired_freshness_key=report.desired_freshness_key,
-                accepted_freshness_key=report.accepted_freshness_key,
-                receipt_id=receipt.id, active_job_id=None,
-                reason="current verifier cannot establish freshness", hmmm=[str(exc)],
-            )
+            return FreshnessReport(target, "hmmm", "verifier-unavailable", report.desired_freshness_key,
+                                   report.accepted_freshness_key, receipt.id, None,
+                                   "current verifier cannot establish freshness", [str(exc)])
         if proc.returncode != 0:
-            detail = (proc.stderr or proc.stdout or "verifier render exited non-zero").strip()
-            return FreshnessReport(
-                target=target, state="hmmm", diagnosis="verifier-failed",
-                desired_freshness_key=report.desired_freshness_key,
-                accepted_freshness_key=report.accepted_freshness_key,
-                receipt_id=receipt.id, active_job_id=None,
-                reason="current verifier failed", hmmm=[detail],
-            )
+            detail = (proc.stderr or proc.stdout or "verifier failed").strip()
+            return FreshnessReport(target, "hmmm", "verifier-failed", report.desired_freshness_key,
+                                   report.accepted_freshness_key, receipt.id, None,
+                                   "current verifier failed", [detail])
         if not verify_path.is_file() or sha256_file(verify_path) != actual:
-            return FreshnessReport(
-                target=target, state="making-fresh", diagnosis="verifier-mismatch",
-                desired_freshness_key=report.desired_freshness_key,
-                accepted_freshness_key=report.accepted_freshness_key,
-                receipt_id=receipt.id, active_job_id=None,
-                reason="current deterministic verifier does not reproduce accepted bytes", hmmm=[],
-            )
+            return FreshnessReport(target, "making-fresh", "verifier-mismatch", report.desired_freshness_key,
+                                   report.accepted_freshness_key, receipt.id, None,
+                                   "current verifier does not reproduce accepted bytes", [])
     finally:
         verify_path.unlink(missing_ok=True)
-    return FreshnessReport(
-        target=target, state="fresh", diagnosis="verified",
-        desired_freshness_key=report.desired_freshness_key,
-        accepted_freshness_key=report.accepted_freshness_key,
-        receipt_id=receipt.id, active_job_id=None,
-        reason="identities, accepted SQL receipt, output digest, and independent rerender agree",
-        hmmm=[],
-    )
+    return FreshnessReport(target, "fresh", "verified", report.desired_freshness_key,
+                           report.accepted_freshness_key, receipt.id, None,
+                           "identities, SQL receipt, output digest, and independent rerender agree", [])
 
 
 def queue_make(ledger: JobLedger, target: str, *, executor: str = "local") -> tuple[Job | None, FreshnessReport]:
@@ -367,32 +295,22 @@ def queue_make(ledger: JobLedger, target: str, *, executor: str = "local") -> tu
     report = evaluate(ledger, target)
     if report.state == "fresh" or report.state in {"blocked", "hmmm"}:
         return None, report
-    spec = ledger.get_derivation(target)
-    key = freshness_key(spec)
+    key = freshness_key(ledger.get_derivation(target))
     active = ledger.active_job_for_target(target)
     if active and active.freshness_key != key:
         if active.state == "queued":
             ledger.cancel(active.id)
         else:
-            return None, FreshnessReport(
-                target=target, state="making-fresh", diagnosis="obsolete-attempt-finishing",
-                desired_freshness_key=key,
-                accepted_freshness_key=report.accepted_freshness_key,
-                receipt_id=report.receipt_id, active_job_id=active.id,
-                reason="an older-key attempt must terminate before replacement work can start",
-                hmmm=[],
-            )
-    job = ledger.enqueue(
-        kind="fresh.make", target=target, freshness_key=key,
-        payload={"target": target}, executor=executor,
-    )
-    return job, report
+            return None, FreshnessReport(target, "making-fresh", "obsolete-attempt-finishing", key,
+                                         report.accepted_freshness_key, report.receipt_id, active.id,
+                                         "older-key attempt must terminate before replacement work", [])
+    return ledger.enqueue(kind="fresh.make", target=target, freshness_key=key,
+                          payload={"target": target}, executor=executor), report
 
 
 def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) -> Path:
     ledger.receipt_dir.mkdir(parents=True, exist_ok=True)
-    attempt = job.active_attempt_id or "unknown"
-    path = ledger.receipt_dir / f"{job.id}.{attempt}.json"
+    path = ledger.receipt_dir / f"{job.id}.{job.active_attempt_id or 'unknown'}.json"
     tmp = path.with_suffix(".json.tmp")
     projected = dict(payload)
     projected["authority"] = "projection-only; PostgreSQL target_acceptance is authoritative"
@@ -401,33 +319,38 @@ def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) ->
     return path
 
 
+def _temp_output(output: Path, suffix: str) -> Path:
+    fd, name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=suffix, dir=output.parent)
+    os.close(fd)
+    path = Path(name)
+    path.unlink(missing_ok=True)
+    return path
+
+
 def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             executor: str | None = None, lease_seconds: int | None = None) -> Job:
     job = ledger.get(job_id)
     if job.kind != "fresh.make":
         raise ValueError(f"unsupported job kind: {job.kind}")
-    selected_executor = executor or job.preferred_executor
-    if selected_executor != "local":
-        raise ValueError(f"executor not implemented: {selected_executor}")
+    executor = executor or job.preferred_executor
+    if executor != "local":
+        raise ValueError(f"executor not implemented: {executor}")
     timeout = int(os.environ.get("STACK_COMMAND_TIMEOUT_SECONDS", "900"))
     lease_seconds = lease_seconds or int(os.environ.get("STACK_LEASE_SECONDS", "1800"))
     if lease_seconds < timeout + 60:
-        raise ValueError("lease must exceed one bounded subprocess timeout by at least 60 seconds")
+        raise ValueError("lease must exceed one command timeout by at least 60 seconds")
     if job.state == "queued":
-        job = ledger.acquire_lease(job.id, worker_id=worker_id, executor=selected_executor, lease_seconds=lease_seconds)
+        job = ledger.acquire_lease(job.id, worker_id=worker_id, executor=executor, lease_seconds=lease_seconds)
     if job.state != "leased":
         raise ValueError(f"job must be queued/leased before execution: {job.state}")
     job = ledger.start(job.id, worker_id=worker_id)
 
     spec = refresh_identities(ledger.get_derivation(job.target))
     register_spec(ledger, spec)
-    current_key = freshness_key(spec)
-    if current_key != job.freshness_key:
-        return ledger.fail(
-            job.id,
-            error=f"desired freshness key moved: queued={job.freshness_key} current={current_key}",
-            hmmm="enqueue current identities after this obsolete attempt terminates",
-        )
+    key = freshness_key(spec)
+    if key != job.freshness_key:
+        return ledger.fail(job.id, error=f"desired freshness key moved: queued={job.freshness_key} current={key}",
+                           hmmm="enqueue current identities after obsolete attempt terminates")
     try:
         _verify_runtime(spec)
     except (ConstraintError, FileNotFoundError) as exc:
@@ -435,18 +358,14 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
 
     output = Path(spec["runtime"]["out"])
     output.parent.mkdir(parents=True, exist_ok=True)
-    fd1, candidate_name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=".candidate", dir=output.parent)
-    fd2, verify_name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=".verify", dir=output.parent)
-    os.close(fd1)
-    os.close(fd2)
-    candidate = Path(candidate_name)
-    verifier = Path(verify_name)
-    candidate.unlink(missing_ok=True)
-    verifier.unlink(missing_ok=True)
+    candidate, verifier = _temp_output(output, ".candidate"), _temp_output(output, ".verify")
+    rollback = output.with_name(f".{output.name}.{job.id}.accepted-backup")
+    rollback.unlink(missing_ok=True)
+    projection: Path | None = None
     try:
         ledger.heartbeat(job.id, worker_id=worker_id, lease_seconds=lease_seconds)
         try:
-            proc = _run_collector(spec, candidate, timeout_seconds=timeout)
+            proc = _run_collector(spec, candidate, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"executor exceeded {timeout}s: {exc}")
         if proc.returncode != 0:
@@ -455,45 +374,52 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             return ledger.fail(job.id, error="executor reported success without candidate output")
 
         try:
-            _verify_runtime(spec, ignore_names={candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
         ledger.heartbeat(job.id, worker_id=worker_id, lease_seconds=lease_seconds)
         ledger.mark_verifying(job.id, worker_id=worker_id)
         try:
-            verify_proc = _run_collector(spec, verifier, timeout_seconds=timeout)
+            verify_proc = _run_collector(spec, verifier, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"verifier exceeded {timeout}s: {exc}")
         if verify_proc.returncode != 0:
             return ledger.fail(job.id, error=(verify_proc.stderr or verify_proc.stdout or "verifier failed").strip())
         if not verifier.is_file():
             return ledger.fail(job.id, error="verifier reported success without output")
-        candidate_digest = sha256_file(candidate)
-        if candidate_digest != sha256_file(verifier):
-            return ledger.fail(
-                job.id, error="executor candidate and independent verifier output differ",
-                hmmm="generation is nondeterministic or executor/verifier environments diverge",
-            )
+        digest = sha256_file(candidate)
+        if digest != sha256_file(verifier):
+            return ledger.fail(job.id, error="executor candidate and independent verifier output differ",
+                               hmmm="generation is nondeterministic or executor/verifier environments diverge")
         try:
-            _verify_runtime(spec, ignore_names={candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
 
+        had_previous = output.is_file()
+        if had_previous:
+            rollback.write_bytes(output.read_bytes())
         os.replace(candidate, output)
-        made_at = datetime.now(timezone.utc).isoformat()
         attempt_id = ledger.get(job.id).active_attempt_id
         assert attempt_id is not None
         payload = receipt_payload(
-            spec=spec, key=current_key,
-            outputs=[{"path": str(output), "sha256": candidate_digest}],
-            verifier_identity=spec["verifier"]["identity"],
-            executor=selected_executor, attempt_id=attempt_id, made_fresh_at=made_at,
+            spec=spec, key=key, outputs=[{"path": str(output), "sha256": digest}],
+            verifier_identity=spec["verifier"]["identity"], executor=executor,
+            attempt_id=attempt_id, made_fresh_at=datetime.now(timezone.utc).isoformat(),
         )
-        current_job = ledger.get(job.id)
-        _receipt_projection(ledger, payload, current_job)
-        return ledger.accept_success(
-            job.id, receipt=payload, output_path=str(output), output_sha256=candidate_digest,
-        )
+        try:
+            projection = _receipt_projection(ledger, payload, ledger.get(job.id))
+            accepted = ledger.accept_success(job.id, receipt=payload, output_path=str(output), output_sha256=digest)
+        except Exception:
+            if had_previous and rollback.is_file():
+                os.replace(rollback, output)
+            elif not had_previous:
+                output.unlink(missing_ok=True)
+            if projection:
+                projection.unlink(missing_ok=True)
+            raise
+        rollback.unlink(missing_ok=True)
+        return accepted
     finally:
         candidate.unlink(missing_ok=True)
         verifier.unlink(missing_ok=True)
