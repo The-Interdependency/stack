@@ -76,7 +76,10 @@ Each review records the frozen checker build SHA and frozen target build SHA. Ne
 
 ```bash
 git switch agent/ahbg-deepcode
-cd stack/ahbg/deepseek
+cd stack
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. python3 -m unittest discover -s ahbg/deepseek/a0/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. python3 -m unittest discover -s ahbg/deepseek/ahbg/tests -p 'test*.py'
+PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. python3 -m ahbg.deepseek.run
 ```
 
 ## hmmm
