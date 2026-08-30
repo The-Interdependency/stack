@@ -131,6 +131,11 @@ class OrchestratorTests(unittest.TestCase):
             report = evaluate(ledger, store, spec["target"])
             self.assertEqual(report.state, "making-fresh")
             self.assertEqual(report.diagnosis, "output-tampered")
+            repaired_job, repaired = make(ledger, store, spec["target"])
+            self.assertIsNotNone(repaired_job)
+            self.assertEqual(repaired.state, "fresh")
+            self.assertEqual(len(ledger.list()), 1)
+            self.assertEqual(ledger.list()[0].attempts, 2)
 
     def test_false_green_nondeterminism_fails_before_publish(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
