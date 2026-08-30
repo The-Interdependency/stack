@@ -1,0 +1,37 @@
+name: ahbg-integration-demo
+
+on:
+  push:
+    branches: [main, "agent/ahbg-*"]
+    paths:
+      - "ahbg/integration/**"
+      - "ahbg/deepseek/**"
+  pull_request:
+
+jobs:
+  deterministic-demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pygame (headless frames)
+        run: pip install pygame
+      - name: Run deterministic demo (no key)
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 -m ahbg.integration.demo --out-dir demo-out
+      - name: Verify replay and standings
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          s = json.loads((Path("demo-out") / "SUMMARY.json").read_text())
+          assert s["replay_equal"] is True
+          assert s["turns"] == 5
+          assert s["mechanics"]["war"] == "UNRESOLVED"
+          assert s["mechanics"]["deterministic_replay"] == "SURVIVED"
+          assert s["mechanics"]["refuse_injection"] == "SURVIVED"
+          assert len(list(Path("demo-out/frames").glob("frame_*.png"))) == 6
+          print("CI OK: deterministic demo reproduced from clean checkout")
+          PY
