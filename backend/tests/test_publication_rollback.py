@@ -17,13 +17,13 @@ import unittest
 from unittest.mock import patch
 
 from backend.msdmd import make
-from backend.tests.test_orchestrator import FreshMakingTests, _unbound_env
+import backend.tests.test_orchestrator as fixtures
 
 
 class PublicationRollbackTests(unittest.TestCase):
     def test_acceptance_failure_restores_previous_artifact(self):
-        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
-            target, _, ledger, spec = FreshMakingTests()._runtime(Path(tmp))
+        with tempfile.TemporaryDirectory() as tmp, fixtures._unbound_env():
+            target, _, ledger, spec = fixtures.FreshMakingTests()._runtime(Path(tmp))
             _, first = make(ledger, spec["target"])
             self.assertEqual(first.state, "fresh")
             output = target / "ucns_msdmd.ts"
