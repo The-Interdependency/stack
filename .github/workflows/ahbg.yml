@@ -12,12 +12,15 @@ on:
       - "libs/ucns/**"
       - ".github/workflows/ahbg.yml"
 
+permissions:
+  contents: read
+
 jobs:
   grok-gates:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -39,4 +42,28 @@ jobs:
 
       - name: Grok common corpus run (35 scenarios, temp output)
         working-directory: ahbg/grok
-        run: python run_common_corpus.py --output /tmp/ahbg-grok-corpus-run
+        shell: bash
+        run: |
+          set -euo pipefail
+          python run_common_corpus.py --output /tmp/ahbg-grok-corpus-run
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          result = json.loads(
+              Path("/tmp/ahbg-grok-corpus-run/CALIBRATION_RESULT.json").read_text(encoding="utf-8")
+          )
+          summary = result.get("summary", {})
+          expected = {
+              "survived": 35,
+              "falsified": 0,
+              "unresolved": 0,
+              "blocked": 0,
+          }
+          if summary != expected or len(result.get("results", [])) != 35:
+              raise SystemExit(
+                  f"common corpus is not clean: summary={summary!r}, results={len(result.get('results', []))}"
+              )
+          if not all(row.get("replay_equal") is True for row in result["results"]):
+              raise SystemExit("common corpus contains a non-replay-equal scenario")
+          PY
