@@ -1,6 +1,6 @@
 {
   "schema": "the-interdependency.pcea-research-migration",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "source": {
     "repository": "The-Interdependency/pcea",
     "commit": "ecf2ca0dec38bef29382e02121b0edde66763aa9",
@@ -11,6 +11,12 @@
     "path": "research/pcea",
     "standing": "stack-local-research",
     "authority_transfer": false
+  },
+  "canonical_refresh": {
+    "repository": "The-Interdependency/pcea",
+    "commit": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
+    "canon_path": "libs/pcea",
+    "standing": "resolved"
   },
   "deprecated_at_source": {
     "directories": ["pcea-ucns/"],
@@ -44,7 +50,6 @@
     "measurement_status_transfer": false,
     "runtime_contract_changed": false,
     "hmmm": [
-      "stack/libs/pcea refresh to the post-cleanup canonical commit is a separate fresh-making operation",
       "current gonol recursive-scale transition law remains unresolved until independently replayed"
     ]
   }

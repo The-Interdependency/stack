@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "0760abd60f089266405aa589063a7533f485761e2bd25faa44f2eac64fb89f7d",
+  "work_graph_sha256": "105212ad8e8eaee13fda632d67a61eb162f2d730034408ec790c3fab5e002067",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -29,7 +29,7 @@
     },
     {
       "repository": "The-Interdependency/pcea",
-      "commit": "4d2c581448b97bfb71da92b35487e74e6e3bcedc",
+      "commit": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
       "authority": "prime circle encryption algorithm",
       "relation": "pinned canonical repository view at libs/pcea/; stack-local work at research/pcea/"
     },
