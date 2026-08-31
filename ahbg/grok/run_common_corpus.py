@@ -31,9 +31,9 @@ CORPUS_ID = "calibration-family"
 CORPUS_VERSION = "1.0.1-proposal-1"
 CORPUS_SOURCE_REF = "HEAD:ahbg/deepseek/corpus-proposal/corpus.json"
 CORPUS_SOURCE_PATH = REPO_ROOT / "ahbg" / "deepseek" / "corpus-proposal" / "corpus.json"
-CORPUS_FILE_SHA256 = "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab"
+CORPUS_FILE_SHA256 = "bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed"
 CORPUS_SCENARIOS_SHA256 = "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835"
-FROZEN_BUILD_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"
+BASELINE_FREEZE_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"
 OUTPUT_DIR = WORKSPACE / "corpus-run" / f"{CORPUS_ID}-{CORPUS_VERSION}"
 STANDING_VOCABULARY = ("SURVIVED", "FALSIFIED", "UNRESOLVED", "BLOCKED")
 PERMISSION_AXES = ("allowed_to_be", "wanted_here", "allowed_to_do", "wanted_to_do")
@@ -595,11 +595,12 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
     summary = _summary(results)
     ended_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     run_identity = {
-        "schema": "interdependency.ahbg.grok.common-corpus-run/1.0.0",
+        "schema": "interdependency.ahbg.grok.common-corpus-run/1.1.0",
         "builder": "Grok",
         "branch": _current_git_value("rev-parse", "--abbrev-ref", "HEAD"),
         "runner_commit_sha": _current_git_value("rev-parse", "HEAD"),
-        "frozen_build_sha": FROZEN_BUILD_SHA,
+        "executed_build_sha": _current_git_value("rev-parse", "HEAD"),
+        "baseline_freeze_sha": BASELINE_FREEZE_SHA,
         "workspace": "stack/ahbg/grok",
         "started_at": started_at,
         "ended_at": ended_at,
@@ -650,11 +651,12 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
     _write_json(
         output_root / "CALIBRATION_RESULT.json",
         {
-            "schema": "interdependency.ahbg.grok.common-corpus-result/1.0.0",
+            "schema": "interdependency.ahbg.grok.common-corpus-result/1.1.0",
             "builder": "Grok",
             "branch": run_identity["branch"],
             "runner_commit_sha": run_identity["runner_commit_sha"],
-            "frozen_build_sha": FROZEN_BUILD_SHA,
+            "executed_build_sha": _current_git_value("rev-parse", "HEAD"),
+        "baseline_freeze_sha": BASELINE_FREEZE_SHA,
             "workspace": "stack/ahbg/grok",
             "standing_vocabulary": list(STANDING_VOCABULARY),
             "scenario_corpus": f"{CORPUS_ID}/{CORPUS_VERSION}",
@@ -669,7 +671,8 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
         "",
         f"Started: {started_at}",
         f"Ended: {ended_at}",
-        f"Frozen build SHA: {FROZEN_BUILD_SHA}",
+        f"Executed build SHA: {run_identity['runner_commit_sha']}",
+        f"Baseline reciprocal-review freeze SHA: {BASELINE_FREEZE_SHA}",
         f"Runner commit SHA: {run_identity['runner_commit_sha']}",
         f"Corpus file SHA256: {corpus_identity['file_sha256']}",
         f"Canonical scenarios SHA256: {corpus_identity['canonical_scenarios_sha256']}",
@@ -693,7 +696,8 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
         [
             "",
             "## Notes",
-            "- This is a post-freeze common-corpus execution against frozen Grok SHA `cce9cec`.",
+            "- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.
+            - Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.",
             "- Smoke artifacts under `artifacts/` were not rewritten.",
             "- Corpus tile ids map onto BandSlot names by UCNS axial coordinates.",
             "- Candidate regulatory cost channels are observed; they do not rank destinations.",
