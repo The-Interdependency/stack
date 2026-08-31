@@ -1,5 +1,5 @@
 {
-  "event_count": 5,
+  "event_count": 4,
   "evidence_standing": "SURVIVED",
   "expected_standing": "SURVIVED",
   "family": "smoke",
@@ -41,5 +41,5 @@
   "telemetry_records": 3,
   "turns": 1,
   "unresolved_hmmm": 0,
-  "world_digest": "d843599a5cbb309000bfc425623036942af9e791bb3b5b8838dcbf281ccc103e"
+  "world_digest": "cbbfe2daaf633c16524801039fad44c89807df9e4a23f65c7a981836d428fc20"
 }

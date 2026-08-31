@@ -1,1 +1,1 @@
-{"hard_veto":false,"instance_id":"4623ace6c9720178","latency":"hmmm","retries":"hmmm","scenario":"occupied_target_collision","selected":"closed-unknown","shadow":{"C_epistemic":1.0,"C_structural":0.0,"C_transition":0.0,"task_value":0.0},"tokens":"hmmm","tool_calls":"hmmm"}
+{"hard_veto":false,"instance_id":"4623ace6c9720178","latency":"hmmm","retries":"hmmm","scenario":"occupied_target_collision","selected":"war-resolved","shadow":{"C_epistemic":1.0,"C_structural":0.0,"C_transition":0.0,"task_value":0.0},"tokens":"hmmm","tool_calls":"hmmm"}

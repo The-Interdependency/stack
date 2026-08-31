@@ -2,7 +2,8 @@
 
 Tiles are named by UCNS band slots. Axial (q, r) is a game projection of those
 centers, not a substitute board. Movement adjacency uses that projection.
-War collisions remain ClosedUnknown.
+War collisions resolve deterministically (war_v3): occupied target -> defender
+holds; dual target -> smallest unit_id wins priority.
 """
 
 from __future__ import annotations
@@ -13,7 +14,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Mapping
 
-_UCNS = Path(__file__).resolve().parents[3] / "research" / "ucns" / "src"
+_UCNS = Path(__file__).resolve().parents[3] / "libs" / "ucns" / "src"
 if str(_UCNS) not in sys.path:
     sys.path.insert(0, str(_UCNS))
 
@@ -120,12 +121,16 @@ class Field:
             "units": sorted((u.as_dict() for u in self.occupants.values()), key=lambda item: item["unit_id"]),
         }
 
-    def apply_moves(self, intents: list[tuple[str, str, str]]) -> None:
-        """Simultaneous relocate. Occupied or shared destinations stay ClosedUnknown."""
+    def apply_moves(self, intents: list[tuple[str, str, str]]) -> tuple[list[tuple[str, str, str]], list[dict[str, Any]]]:
+        """Simultaneous relocate with deterministic War resolution (war_v3).
+
+        Occupied target -> defender holds (mover stays). Dual target ->
+        smallest unit_id wins priority (other movers stay). Returns
+        ``(applied_moves, war_events)``; only applied moves change the field.
+        """
 
         if len({unit for unit, _src, _dst in intents}) != len(intents):
             raise ValueError("one intent per unit per turn")
-        destinations: dict[str, str] = {}
         for unit_id, source, dest in intents:
             unit = self.occupants.get(unit_id)
             if unit is None or unit.tile_id != source:
@@ -134,16 +139,37 @@ class Field:
                 raise ValueError(f"unknown destination {dest}")
             if dest not in self.neighbors(source):
                 raise ValueError(f"{source} is not adjacent to {dest}")
+
+        contenders: dict[str, list[str]] = {}
+        for unit_id, _source, dest in intents:
+            contenders.setdefault(dest, []).append(unit_id)
+        winners: dict[str, str] = {}
+        loser_resolutions: dict[str, str] = {}
+        for dest, units in contenders.items():
             sitting = self.occupant_on(dest)
             if sitting is not None:
-                raise ClosedUnknown(
-                    f"War collision resolver is hmmm: {unit_id} onto occupied {dest}"
+                winners[dest] = sitting  # defender holds
+                loser_resolutions[dest] = "defender_holds"
+            else:
+                winners[dest] = min(units)  # smallest unit_id priority
+                loser_resolutions[dest] = "priority_loser"
+
+        applied: list[tuple[str, str, str]] = []
+        war_events: list[dict[str, Any]] = []
+        for unit_id, source, dest in sorted(intents, key=lambda item: item[0]):
+            winner = winners[dest]
+            if winner == unit_id:
+                current = self.occupants[unit_id]
+                self.occupants[unit_id] = Occupant(current.unit_id, dest, current.label)
+                applied.append((unit_id, source, dest))
+            else:
+                war_events.append(
+                    {
+                        "unit_id": unit_id,
+                        "from_tile_id": source,
+                        "to_tile_id": dest,
+                        "resolution": loser_resolutions[dest],
+                        "winner_unit_id": winner,
+                    }
                 )
-            if dest in destinations:
-                raise ClosedUnknown(
-                    f"War collision resolver is hmmm: two intents target {dest}"
-                )
-            destinations[dest] = unit_id
-        for unit_id, _source, dest in sorted(intents, key=lambda item: item[0]):
-            current = self.occupants[unit_id]
-            self.occupants[unit_id] = Occupant(current.unit_id, dest, current.label)
+        return applied, war_events

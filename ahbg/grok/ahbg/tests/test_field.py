@@ -9,7 +9,7 @@ sys.path.insert(0, str(ROOT))
 
 from ahbg.chain import KIND_PLANE_INIT, Chain
 from ahbg.keep import replay
-from ahbg.patch import ClosedUnknown, Field, tile_from_ucns
+from ahbg.patch import Field, tile_from_ucns
 from ahbg.round import Cycle
 
 
@@ -34,7 +34,7 @@ class FieldTests(unittest.TestCase):
         self.assertEqual(opened.occupants["A0"].tile_id, dest)
         self.assertEqual(replay(chain).snapshot(), opened.snapshot())
 
-    def test_occupied_is_closed_unknown(self) -> None:
+    def test_occupied_target_defender_holds(self) -> None:
         tiles = tile_from_ucns()
         opened = Field.open(
             13,
@@ -44,8 +44,36 @@ class FieldTests(unittest.TestCase):
                 {"unit_id": "B0", "tile_id": "RING_0"},
             ],
         )
-        with self.assertRaises(ClosedUnknown):
-            opened.apply_moves([("A0", "CENTER", "RING_0")])
+        applied, war_events = opened.apply_moves([("A0", "CENTER", "RING_0")])
+        self.assertEqual(applied, [])
+        self.assertEqual(len(war_events), 1)
+        self.assertEqual(war_events[0]["resolution"], "defender_holds")
+        self.assertEqual(opened.occupants["A0"].tile_id, "CENTER")
+        self.assertEqual(opened.occupants["B0"].tile_id, "RING_0")
+
+    def test_dual_target_smallest_unit_wins_priority(self) -> None:
+        tiles = tile_from_ucns()
+        opened = Field.open(
+            17,
+            tiles,
+            [
+                {"unit_id": "A0", "tile_id": "CENTER"},
+                {"unit_id": "B0", "tile_id": "RING_0"},
+            ],
+        )
+        shared = sorted(set(opened.neighbors("CENTER")) & set(opened.neighbors("RING_0")))[0]
+        applied, war_events = opened.apply_moves(
+            [
+                ("B0", "RING_0", shared),
+                ("A0", "CENTER", shared),
+            ]
+        )
+        self.assertEqual(applied, [("A0", "CENTER", shared)])
+        self.assertEqual(len(war_events), 1)
+        self.assertEqual(war_events[0]["unit_id"], "B0")
+        self.assertEqual(war_events[0]["resolution"], "priority_loser")
+        self.assertEqual(opened.occupants["A0"].tile_id, shared)
+        self.assertEqual(opened.occupants["B0"].tile_id, "RING_0")
 
 
 def _empty(opened: Field, unit_id: str) -> list[str]:

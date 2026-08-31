@@ -12,6 +12,7 @@ SCHEMA = "interdependency.ahbg.grok.event/1"
 KIND_PLANE_INIT = "plane.init"
 KIND_TURN_BEGIN = "turn.begin"
 KIND_MOVE = "move"
+KIND_WAR = "war"
 KIND_TURN_END = "turn.end"
 KIND_FORK = "lineage.fork"
 

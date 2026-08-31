@@ -9,8 +9,9 @@ This drives both Codex and DeepCode boards using the exact same Grok
 regulatory code (Vessel + choose_relocate) through the bridges.
 
 The bridges handle label translation (Grok BandSlot <-> short axial labels)
-and observation shaping while preserving each board's collision semantics
-(War remains UnresolvedHmmm / ClosedUnknown and fails closed).
+and observation shaping while preserving each foreign board's collision
+semantics (Codex/DeepCode War remains UnresolvedHmmm; Grok's own board
+resolves war_v3 deterministically).
 """
 
 from __future__ import annotations

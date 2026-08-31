@@ -1,7 +1,7 @@
 {
   "schema": "interdependency.ahbg.grok.field/1",
   "seed": 17,
-  "turn": 0,
+  "turn": 1,
   "tiles": [
     {
       "tile_id": "CENTER",
@@ -49,7 +49,7 @@
   "units": [
     {
       "unit_id": "A0",
-      "tile_id": "CENTER",
+      "tile_id": "RING_1",
       "label": "A0"
     },
     {

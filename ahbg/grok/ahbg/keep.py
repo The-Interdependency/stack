@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .chain import KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, Chain, Record, SCHEMA
+from .chain import KIND_MOVE, KIND_PLANE_INIT, KIND_TURN_BEGIN, KIND_TURN_END, KIND_WAR, Chain, Record, SCHEMA
 from .patch import ClosedUnknown, Field
 
 
@@ -68,6 +68,10 @@ def replay(chain: Chain) -> Field:
             opened.turn += 1
             phase = "await_begin"
             pending = []
+        elif record.kind == KIND_WAR:
+            # War resolution is recomputed by apply_moves from the pending
+            # move intents; the war record is preserved evidence only.
+            continue
         elif record.kind == "lineage.fork":
             continue
         else:
