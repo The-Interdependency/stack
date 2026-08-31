@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Verify corpus identity
+      - name: Verify corpus identity and runner syntax
         shell: bash
         run: |
           set -euo pipefail
@@ -42,65 +42,26 @@ jobs:
           assert f'CORPUS_FILE_SHA256 = "{digest}"' in runner
           print(f"corpus_sha256={digest}")
           PY
+          python -m py_compile ahbg/grok/run_common_corpus.py
 
-      - name: Repair generated runner source
-        shell: bash
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          path = Path("ahbg/grok/run_common_corpus.py")
-          lines = path.read_text(encoding="utf-8").splitlines()
-          first = '- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.'
-          second = '- Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.'
-          found = False
-          for index, line in enumerate(lines[:-1]):
-              if line.strip() == f'"{first}' and lines[index + 1].strip() == f'{second}",':
-                  indent = line[: len(line) - len(line.lstrip())]
-                  lines[index] = f'{indent}"{first}",'
-                  lines[index + 1] = f'{indent}"{second}",'
-                  found = True
-                  break
-          if not found:
-              joined = "\n".join(lines)
-              if f'"{first}",' not in joined or f'"{second}",' not in joined:
-                  raise SystemExit("malformed note pair not found in expected old or repaired form")
-          # Cosmetic indentation only; semantics were already transformed.
-          lines = [
-              ('            "baseline_freeze_sha": BASELINE_FREEZE_SHA,' if line == '        "baseline_freeze_sha": BASELINE_FREEZE_SHA,' else line)
-              for line in lines
-          ]
-          path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-          PY
+      - name: Grok a0 tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s a0/tests -p 'test*.py'
 
-      - name: Compile repaired runner
-        run: python -m py_compile ahbg/grok/run_common_corpus.py
+      - name: Grok AHBG field tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s ahbg/tests -p 'test*.py'
 
-      - name: Commit repaired runner
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ahbg/grok/run_common_corpus.py
-          if ! git diff --cached --quiet; then
-            git commit -m "fix(ahbg): repair corpus runner regeneration syntax"
-            git push origin HEAD:fix/ahbg-war-v3-canonical
-          fi
-
-      - name: Run Grok test suites
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd ahbg/grok
-          python -m unittest discover -s a0/tests -p 'test*.py'
-          python -m unittest discover -s ahbg/tests -p 'test*.py'
-          python -m unittest discover -s tests -p 'test*.py'
+      - name: Grok common-corpus tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s tests -p 'test*.py'
 
       - name: Regenerate committed evidence
         shell: bash
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           cd ahbg/grok
           python run.py
           python run_common_corpus.py
