@@ -1,0 +1,42 @@
+name: ahbg
+
+on:
+  push:
+    paths:
+      - "ahbg/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg.yml"
+  pull_request:
+    paths:
+      - "ahbg/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg.yml"
+
+jobs:
+  grok-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Grok a0 tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s a0/tests -p 'test*.py'
+
+      - name: Grok ahbg tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s ahbg/tests -p 'test*.py'
+
+      - name: Grok common-corpus tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s tests -p 'test*.py'
+
+      - name: Grok smoke epoch run
+        working-directory: ahbg/grok
+        run: python run.py
+
+      - name: Grok common corpus run (35 scenarios, temp output)
+        working-directory: ahbg/grok
+        run: python run_common_corpus.py --output /tmp/ahbg-grok-corpus-run

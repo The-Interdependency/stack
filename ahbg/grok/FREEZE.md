@@ -31,3 +31,11 @@ PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s ahbg/tests -p 'test*.p
 
 Implementation source and smoke artifacts under `a0/`, `ahbg/`, and
 `artifacts/` must not change in post-freeze commits.
+
+## war_v3 engine divergence (recorded post-freeze)
+
+The canonical `main` line adopted war_v3 after the frozen build. The engine
+now resolves War deterministically (`patch.py` defender-holds + smallest-unit
+priority, `KIND_WAR` events) and imports UCNS from the pinned canonical
+`libs/ucns/src` view. This diverges from frozen SHA `cce9cec`; reciprocal
+review identity remains `cce9cec` for historical comparison.
