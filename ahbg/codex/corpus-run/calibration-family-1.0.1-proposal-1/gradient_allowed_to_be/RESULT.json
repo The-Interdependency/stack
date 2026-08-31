@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "permission_gradient",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 7,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "gradient_allowed_to_be",
+  "seed": 102,
+  "selected_actions": 3,
+  "telemetry_records": 16,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "76b16b8ee03f48b8bae6e909cba53b4df620d5f6e1b537b9fb62946a6bc88d21"
+}

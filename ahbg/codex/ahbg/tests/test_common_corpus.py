@@ -63,7 +63,7 @@ class CommonCorpusRunnerTests(unittest.TestCase):
         self.assertEqual(result["refusals"], 1)
         self.assertTrue(result["replay_equal"])
 
-    def test_occupied_target_collision_is_unresolved(self) -> None:
+    def test_occupied_target_collision_survives_after_war_resolution(self) -> None:
         scenario = scenario_from_spec(
             {
                 "id": "occupied_target_collision",
@@ -96,9 +96,9 @@ class CommonCorpusRunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             result = run_scenario(scenario, Path(tmp))
             self.assertTrue((Path(tmp) / "occupied_target_collision" / "RESULT.json").is_file())
-        self.assertEqual(result["observed_standing"], "UNRESOLVED")
-        self.assertEqual(result["evidence_standing"], "UNRESOLVED")
-        self.assertEqual(result["unresolved_hmmm"], 1)
+        self.assertEqual(result["observed_standing"], "SURVIVED")
+        self.assertEqual(result["evidence_standing"], "SURVIVED")
+        self.assertEqual(result["unresolved_hmmm"], 0)
         self.assertTrue(result["replay_equal"])
 
 

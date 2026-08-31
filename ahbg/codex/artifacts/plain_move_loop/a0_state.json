@@ -10,7 +10,7 @@
   },
   "capacity": {
     "context_retained": true,
-    "latency_ms": 2.379,
+    "latency_ms": 9.536,
     "memory_reads": 6,
     "memory_writes": 12,
     "retries": 0,

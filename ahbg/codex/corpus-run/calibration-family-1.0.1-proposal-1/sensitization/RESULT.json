@@ -1,0 +1,22 @@
+{
+  "event_count": 10,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "plasticity",
+  "final_turn": 3,
+  "forced_turns": 0,
+  "history_entries": 7,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 0,
+  "replay_equal": true,
+  "scenario_id": "sensitization",
+  "seed": 124,
+  "selected_actions": 3,
+  "telemetry_records": 16,
+  "turns": 3,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "baf4be93611ee1921864b1816ff3c8e04cf43ce186f72d29f4a6260fdf631f55"
+}

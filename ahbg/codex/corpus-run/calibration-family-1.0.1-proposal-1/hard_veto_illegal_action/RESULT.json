@@ -1,0 +1,22 @@
+{
+  "event_count": 7,
+  "evidence_standing": "SURVIVED",
+  "expected_standing": "SURVIVED",
+  "family": "smoke",
+  "final_turn": 2,
+  "forced_turns": 0,
+  "history_entries": 7,
+  "invalid_actions": 0,
+  "note": "common corpus contract survived",
+  "observed_standing": "SURVIVED",
+  "refusals": 1,
+  "replay_equal": true,
+  "scenario_id": "hard_veto_illegal_action",
+  "seed": 11,
+  "selected_actions": 2,
+  "telemetry_records": 13,
+  "turns": 2,
+  "unresolved_hmmm": 0,
+  "validation_errors": 0,
+  "world_digest": "8a0dd75b9d658ef98dc499d8f7d84df2e68f230bd4b0fe8a7986ae206f1bedd7"
+}

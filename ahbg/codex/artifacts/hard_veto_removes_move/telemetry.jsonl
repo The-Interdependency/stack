@@ -1,6 +1,6 @@
-{"data":{"instance_id":"a0.codex.1","provider_relation":"codex-gpt-5","run_id":"codex-hard_veto_removes_move-103","scenario_id":"hard_veto_removes_move","seed":103},"kind":"instance.identity","seq":0,"ts_monotonic_ms":1548777802.812,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
-{"data":{"context_standing":"hard-veto","tiles":7,"units":1},"kind":"observation.admitted","seq":1,"ts_monotonic_ms":1548777802.97,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
-{"data":{"standing":"hard-veto"},"kind":"belief.update","seq":2,"ts_monotonic_ms":1548777803.019,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
-{"data":{"actions":[]},"kind":"action.selected","seq":3,"ts_monotonic_ms":1548777803.031,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
-{"data":{"context_retained":true,"latency_ms":0.359,"memory_reads":1,"memory_writes":2,"retries":0,"risk_headroom":"hmmm","tokens_used":0,"tool_calls":0,"tool_failures":0},"kind":"resource.telemetry","seq":4,"ts_monotonic_ms":1548777803.213,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
-{"data":{"result":"smoke-complete"},"kind":"task.result","seq":5,"ts_monotonic_ms":1548777803.223,"ts_wall":"2026-08-25T21:11:41Z","turn":0}
+{"data":{"instance_id":"a0.codex.1","provider_relation":"codex-gpt-5","run_id":"codex-hard_veto_removes_move-103","scenario_id":"hard_veto_removes_move","seed":103},"kind":"instance.identity","seq":0,"ts_monotonic_ms":1923178087.52,"ts_wall":"2026-08-30T05:11:41Z","turn":0}
+{"data":{"context_standing":"hard-veto","tiles":7,"units":1},"kind":"observation.admitted","seq":1,"ts_monotonic_ms":1923178087.686,"ts_wall":"2026-08-30T05:11:41Z","turn":0}
+{"data":{"standing":"hard-veto"},"kind":"belief.update","seq":2,"ts_monotonic_ms":1923178087.722,"ts_wall":"2026-08-30T05:11:41Z","turn":0}
+{"data":{"actions":[]},"kind":"action.selected","seq":3,"ts_monotonic_ms":1923178087.732,"ts_wall":"2026-08-30T05:11:41Z","turn":0}
+{"data":{"context_retained":true,"latency_ms":0.352,"memory_reads":1,"memory_writes":2,"retries":0,"risk_headroom":"hmmm","tokens_used":0,"tool_calls":0,"tool_failures":0},"kind":"resource.telemetry","seq":4,"ts_monotonic_ms":1923178087.915,"ts_wall":"2026-08-30T05:11:41Z","turn":0}
+{"data":{"result":"smoke-complete"},"kind":"task.result","seq":5,"ts_monotonic_ms":1923178087.927,"ts_wall":"2026-08-30T05:11:41Z","turn":0}

@@ -10,13 +10,19 @@
     "deepcode_branch_head": "b114dc3fe195cb29a464f9dfcc9e65a327372d2f",
     "main_sealed_corpus_merge": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f"
   },
-  "sealed_corpus": {
+  "successor_corpus": {
     "corpus_id": "calibration-family",
-    "proposal_version": "1.0.0-proposal-1",
+    "proposal_version": "1.0.1-proposal-1",
     "scenario_count": 35,
-    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
-    "recorded_by_all_three_build_manifests": true
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+    "predecessor": {
+      "proposal_version": "1.0.0-proposal-1",
+      "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0"
+    },
+    "recorded_by_current_successor_runs": true,
+    "local_adoption_packet": "ahbg/CORPUS_ADOPTION.json",
+    "formal_merge_adoption": "local-three-worktree-adoption-recorded; remote-or-branch-merge-hmmm"
   },
   "frozen_builds": {
     "Grok": {
@@ -34,21 +40,19 @@
   },
   "common_corpus_executions": {
     "Grok": {
-      "path": "ahbg/grok/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
+      "path": "ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json",
       "summary": {
-        "SURVIVED": 33,
-        "UNRESOLVED": 2,
+        "SURVIVED": 35,
+        "UNRESOLVED": 0,
         "FALSIFIED": 0,
         "BLOCKED": 0
       }
     },
     "Codex": {
-      "path": "ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
-      "runner_commit_sha": "3b3e67adff14effaf0426a02004aa68a48753b9f",
-      "run_record_commit_sha": "029f15005c655b9fea53253d0d1cd7f421d6af39",
+      "path": "ahbg/codex/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json",
       "summary": {
-        "SURVIVED": 33,
-        "UNRESOLVED": 2,
+        "SURVIVED": 35,
+        "UNRESOLVED": 0,
         "FALSIFIED": 0,
         "BLOCKED": 0
       }
@@ -56,17 +60,14 @@
     "DeepCode": {
       "path": "ahbg/deepseek/artifacts/CALIBRATION_RESULT.json",
       "summary": {
-        "SURVIVED": 33,
-        "UNRESOLVED": 2,
+        "SURVIVED": 35,
+        "UNRESOLVED": 0,
         "FALSIFIED": 0,
         "BLOCKED": 0
       }
     }
   },
-  "common_unresolved_scenario_ids": [
-    "occupied_target_collision",
-    "dual_target_collision"
-  ],
+  "common_unresolved_scenario_ids": [],
   "directional_checks": [
     {
       "direction": "Grok -> Codex",
@@ -105,7 +106,7 @@
     "note": "All six directional checks survive in the narrow checker sense; unresolved divergences remain hmmm."
   },
   "remaining_hmmm": [
-    "War occupied/dual-target behavior remains unresolved and fail-closed.",
+    "Remote/branch merge of the successor corpus remains open; local adoption is recorded.",
     "Hard-veto interpretation differs across first-epoch builds.",
     "Observation-surface and event-log layout conventions differ.",
     "Regulatory cost fitting and resource-burden measurement remain unresolved.",

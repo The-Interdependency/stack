@@ -26,12 +26,19 @@ This branch now contains a runnable Codex smoke implementation:
   read-only artifact checker.
 - `run.py` — runs the Codex smoke corpus and emits normalized artifacts under
   `artifacts/`.
+- `run_common_corpus.py` — runs the adopted successor corpus and emits a
+  checkable aggregate artifact root under `corpus-run/<corpus-id>/`.
 - `BUILD_MANIFEST.json` — records the coordination base, source authorities,
   and independence caveat for this corrected build.
 
 The smoke corpus is not the final sealed calibration corpus. It proves that the
 Codex pair is executable, replayable, and ready to be frozen or replaced by the
 shared sealed corpus when that corpus lands.
+
+The read-only artifact checker accepts the live AHBG evidence layouts now in
+use: aggregate run files under `corpus-run/<corpus-id>/`, aggregate run files
+under `artifacts/`, aggregate run files at workspace root, and DeepCode-style
+per-scenario `*/events.jsonl` under `artifacts/`.
 
 ## Build phase
 

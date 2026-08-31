@@ -13,6 +13,7 @@ EVENT_SCHEMA = "interdependency.ahbg.codex.event/1.0.0"
 KIND_PLANE_INIT = "plane.init"
 KIND_TURN_BEGIN = "turn.begin"
 KIND_MOVE = "move"
+KIND_WAR = "war"
 KIND_TURN_END = "turn.end"
 
 

@@ -70,47 +70,47 @@
       "world_digest": "514de0daa9e24ce8f24b3269153f1a8e304d9705284ba22ab9cbffe76c18d084"
     },
     {
-      "event_count": 3,
-      "evidence_standing": "UNRESOLVED",
+      "event_count": 5,
+      "evidence_standing": "SURVIVED",
       "final_turn": 1,
-      "history_entries": 2,
-      "invalid_actions": 1,
-      "note": "War resolver remains hmmm; fail-closed behavior observed",
+      "history_entries": 1,
+      "invalid_actions": 0,
+      "note": "War resolved deterministically: defender-holds for occupied targets, priority for dual targets",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "occupied_target_collision",
       "seed": 105,
       "selected_actions": 1,
-      "telemetry_records": 6,
+      "telemetry_records": 7,
       "turns": 1,
       "world_digest": "781f5798694370161817955a5bf0c247994eb1e18947d0f4636f628ac80d2497"
     },
     {
-      "event_count": 3,
-      "evidence_standing": "UNRESOLVED",
+      "event_count": 7,
+      "evidence_standing": "SURVIVED",
       "final_turn": 1,
-      "history_entries": 2,
-      "invalid_actions": 1,
-      "note": "War resolver remains hmmm; fail-closed behavior observed",
+      "history_entries": 1,
+      "invalid_actions": 0,
+      "note": "War resolved deterministically: defender-holds for occupied targets, priority for dual targets",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "dual_target_collision",
       "seed": 106,
       "selected_actions": 2,
-      "telemetry_records": 6,
+      "telemetry_records": 9,
       "turns": 1,
-      "world_digest": "a2bb71dd79ef23d590bf208a6f37dfd01a279ce58883b4698730d2249b29935e"
+      "world_digest": "1451bc6c96150bb7e9b7ef69fb4e7333239f1ab85dde3a0e2a88ded89f9c4a0d"
     }
   ],
   "scenario_corpus": "codex_smoke_epoch/1.0.0",
   "schema": "interdependency.ahbg.codex.run-manifest/1.0.0",
   "shadow_measurement": true,
-  "started_at": "2026-08-25T21:11:41Z",
+  "started_at": "2026-08-30T05:11:41Z",
   "summary": {
     "blocked": 0,
     "falsified": 0,
-    "survived": 4,
-    "unresolved": 2
+    "survived": 6,
+    "unresolved": 0
   },
   "workspace": "stack/ahbg/codex"
 }

@@ -255,14 +255,17 @@ A checker reports failures; it does not silently repair the target while claimin
 
 ## Normalized artifacts
 
-Each build emits:
+Each build exposes a checkable artifact root. The workspace owner/root carries
+`BUILD_MANIFEST.json`. The selected artifact root carries `RUN_MANIFEST.json`,
+`CALIBRATION_RESULT.json`, `CALIBRATION_REPORT.md`, and either aggregate
+`EVENTS.jsonl` or per-scenario `*/events.jsonl`.
+
+Accepted artifact roots:
 
 ```text
-BUILD_MANIFEST.json
-RUN_MANIFEST.json
-EVENTS.jsonl
-CALIBRATION_RESULT.json
-CALIBRATION_REPORT.md
+corpus-run/<corpus-id>/
+artifacts/
+workspace root
 ```
 
 Every result identifies exact source commits, builder identity, branch, workspace, frozen build SHA, scenario corpus identity, seed set, provider relation, fitted parameters, controls, and evidence standing.

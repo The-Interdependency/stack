@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
-from .events import KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, Event, EventLog
+from .events import KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, KIND_WAR, Event, EventLog
 from .geometry import axial_neighbors
 from .world import Unit, World
 
@@ -54,6 +54,22 @@ class Motion:
         }
 
 
+@dataclass(frozen=True)
+class WarSpec:
+    unit_id: str
+    to_tile_id: str
+    reason: str
+    outcome: str
+
+    def event_data(self) -> dict[str, str]:
+        return {
+            "unit_id": self.unit_id,
+            "to_tile_id": self.to_tile_id,
+            "reason": self.reason,
+            "outcome": self.outcome,
+        }
+
+
 def plan_from_mapping(data: Mapping[str, Any]) -> Plan:
     if not isinstance(data, Mapping):
         raise ValidationError("plan must be an object")
@@ -93,6 +109,27 @@ def motion_from_event_data(data: Mapping[str, Any]) -> Motion:
     return Motion(unit_id, from_tile_id, to_tile_id)
 
 
+def war_spec_from_event_data(data: Mapping[str, Any]) -> WarSpec:
+    allowed = {"unit_id", "to_tile_id", "reason", "outcome"}
+    unknown = sorted(set(data) - allowed)
+    if unknown:
+        raise ReplayError(f"war event has unknown fields: {unknown}")
+    missing = sorted(allowed - set(data))
+    if missing:
+        raise ReplayError(f"war event is missing fields: {missing}")
+    unit_id = data["unit_id"]
+    to_tile_id = data["to_tile_id"]
+    reason = data["reason"]
+    outcome = data["outcome"]
+    if not all(isinstance(value, str) and value for value in (unit_id, to_tile_id, reason, outcome)):
+        raise ReplayError("war event fields must be non-empty text")
+    if reason not in {"occupied", "dual_target"}:
+        raise ReplayError(f"unknown war reason: {reason}")
+    if outcome not in {"defender_holds", "priority_win", "priority_loss"}:
+        raise ReplayError(f"unknown war outcome: {outcome}")
+    return WarSpec(unit_id, to_tile_id, reason, outcome)
+
+
 def motions_from_plans(world: World, plans: Sequence[Plan]) -> list[Motion]:
     motions: list[Motion] = []
     for plan in plans:
@@ -118,10 +155,17 @@ def motions_from_plans(world: World, plans: Sequence[Plan]) -> list[Motion]:
     return motions
 
 
-def apply_motions(world: World, motions: Sequence[Motion]) -> None:
-    """Validate against the pre-turn world, then mutate atomically."""
+def _unit_on_tile(world: World, tile_id: str) -> str | None:
+    for unit in world.units.values():
+        if unit.tile_id == tile_id:
+            return unit.unit_id
+    return None
+
+
+def _resolve_war(world: World, motions: Sequence[Motion]) -> tuple[list[Motion], list[WarSpec]]:
+    """Resolve simultaneous move collisions against the pre-turn world."""
     seen_units: set[str] = set()
-    targets: dict[str, str] = {}
+    targets: dict[str, list[Motion]] = {}
     for motion in motions:
         if motion.unit_id in seen_units:
             raise ValidationError(f"unit {motion.unit_id} moved more than once")
@@ -139,27 +183,51 @@ def apply_motions(world: World, motions: Sequence[Motion]) -> None:
         to_tile = world.tiles[motion.to_tile_id]
         if (to_tile.q, to_tile.r) not in axial_neighbors(from_tile.q, from_tile.r):
             raise ValidationError(f"non-adjacent move: {motion.from_tile_id}->{motion.to_tile_id}")
-        occupied_by = next(
-            (
-                other.unit_id
-                for other in world.units.values()
-                if other.tile_id == motion.to_tile_id
-            ),
-            None,
-        )
-        if occupied_by is not None:
-            raise UnresolvedHmmm(f"War unresolved: {motion.to_tile_id} occupied by {occupied_by}")
-        if motion.to_tile_id in targets:
-            raise UnresolvedHmmm(f"War unresolved: dual target {motion.to_tile_id}")
-        targets[motion.to_tile_id] = motion.unit_id
+        targets.setdefault(motion.to_tile_id, []).append(motion)
 
+    wars: list[WarSpec] = []
+    candidates: list[Motion] = []
+    occupied_targets = {
+        motion.to_tile_id
+        for motion in motions
+        if _unit_on_tile(world, motion.to_tile_id) is not None
+    }
     for motion in sorted(motions, key=lambda item: item.unit_id):
+        if motion.to_tile_id in occupied_targets:
+            wars.append(WarSpec(motion.unit_id, motion.to_tile_id, "occupied", "defender_holds"))
+        else:
+            candidates.append(motion)
+
+    survivors: list[Motion] = []
+    by_target: dict[str, list[Motion]] = {}
+    for motion in candidates:
+        by_target.setdefault(motion.to_tile_id, []).append(motion)
+    for target, group in sorted(by_target.items()):
+        if len(group) == 1:
+            survivors.append(group[0])
+            continue
+        winner = min(group, key=lambda item: item.unit_id)
+        for motion in sorted(group, key=lambda item: item.unit_id):
+            outcome = "priority_win" if motion.unit_id == winner.unit_id else "priority_loss"
+            wars.append(WarSpec(motion.unit_id, target, "dual_target", outcome))
+        survivors.append(winner)
+    return (
+        sorted(survivors, key=lambda item: item.unit_id),
+        sorted(wars, key=lambda item: (item.unit_id, item.to_tile_id)),
+    )
+
+
+def apply_motions(world: World, motions: Sequence[Motion]) -> list[WarSpec]:
+    """Validate against the pre-turn world, resolve War, then mutate atomically."""
+    survivors, wars = _resolve_war(world, motions)
+    for motion in survivors:
         current = world.units[motion.unit_id]
         world.units[motion.unit_id] = Unit(
             unit_id=current.unit_id,
             tile_id=motion.to_tile_id,
             label=current.label,
         )
+    return wars
 
 
 class TurnController:
@@ -185,11 +253,13 @@ class TurnController:
             for plan in plans
         ]
         motions = motions_from_plans(self.world, normalized)
-        apply_motions(self.world, motions)
-        return [
+        wars = apply_motions(self.world, motions)
+        events = [
             self.log.append(KIND_MOVE, self.world.turn, motion.event_data())
             for motion in sorted(motions, key=lambda item: item.unit_id)
         ]
+        events.extend(self.log.append(KIND_WAR, self.world.turn, war.event_data()) for war in wars)
+        return events
 
     def end_turn(self) -> Event:
         if not self._open:

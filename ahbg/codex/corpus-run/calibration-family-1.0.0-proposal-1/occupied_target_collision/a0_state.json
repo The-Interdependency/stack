@@ -10,16 +10,16 @@
   },
   "capacity": {
     "context_retained": true,
-    "latency_ms": 0.214,
+    "latency_ms": 0.506,
     "memory_reads": 1,
-    "memory_writes": 3,
+    "memory_writes": 2,
     "retries": 0,
     "risk_headroom": "hmmm",
     "tokens_used": 0,
     "tool_calls": 0,
     "tool_failures": 0
   },
-  "history_length": 3,
+  "history_length": 2,
   "lineage": {
     "generation": 0,
     "instance_id": "a0.codex.1",

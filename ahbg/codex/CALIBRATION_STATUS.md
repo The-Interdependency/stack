@@ -10,13 +10,15 @@ Frozen build SHA: `ffb64c274583d8539f8f4fe7e0aa77366689e910`.
 - DeepCode branch head: `b114dc3fe195cb29a464f9dfcc9e65a327372d2f`
 - Main sealed-corpus merge: `3a92c7b0f8568e6fc2600b45bca760030ea2ba3f`
 
-## Sealed corpus
+## Current successor corpus
 
-- Corpus: `calibration-family`, version `1.0.0-proposal-1`
-- Corpus file SHA256: `07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891`
-- Canonical scenarios SHA256: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
+- Corpus: `calibration-family`, version `1.0.1-proposal-1`
+- Corpus file SHA256: `ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab`
+- Canonical scenarios SHA256: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
+- Predecessor: `1.0.0-proposal-1`, digest `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
 - Scenario count: 35
-- All three `BUILD_MANIFEST.json` files record this canonical scenario digest.
+- Current successor runs in all three worktrees record this canonical scenario digest.
+- Local three-worktree adoption packet: `ahbg/CORPUS_ADOPTION.json`.
 
 ## Frozen build SHAs
 
@@ -30,12 +32,12 @@ Frozen build SHA: `ffb64c274583d8539f8f4fe7e0aa77366689e910`.
 
 | Builder | Evidence path | Standing |
 |---|---|---|
-| Grok | `ahbg/grok/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json` | SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0 |
-| Codex | `ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json` | SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0 |
-| DeepCode | `ahbg/deepseek/artifacts/CALIBRATION_RESULT.json` | SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0 |
+| Grok | `ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json` | SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 / BLOCKED 0 |
+| Codex | `ahbg/codex/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json` | SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 / BLOCKED 0 |
+| DeepCode | `ahbg/deepseek/artifacts/CALIBRATION_RESULT.json` | SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 / BLOCKED 0 |
 
-The unresolved ids are the same across the observed common-corpus surfaces:
-`occupied_target_collision` and `dual_target_collision`.
+War is resolved at source in the successor corpus: `occupied_target_collision`
+and `dual_target_collision` now have no unresolved standing override.
 
 ## Six directional checks
 
@@ -56,7 +58,7 @@ promote the model into truth.
 
 Remaining `hmmm`:
 
-- War occupied/dual-target behavior remains unresolved and fail-closed.
+- Remote/branch merge of the successor corpus remains open; local adoption is recorded.
 - Hard-veto interpretation differs across first-epoch builds.
 - Observation-surface and event-log layout conventions differ.
 - Regulatory cost fitting and resource-burden measurement remain unresolved.

@@ -30,6 +30,7 @@ from .ahbg import (
 
 WORKSPACE = Path(__file__).resolve().parent
 ARTIFACTS_DIR = WORKSPACE / "artifacts"
+WAR_RESOLVED_SCENARIOS = frozenset({"occupied_target_collision", "dual_target_collision"})
 
 
 @dataclass(frozen=True)
@@ -75,7 +76,7 @@ SCENARIOS = (
                 }
             ]
         },
-        expected_standing="UNRESOLVED",
+        expected_standing="SURVIVED",
     ),
     Scenario(
         "dual_target_collision",
@@ -93,7 +94,7 @@ SCENARIOS = (
                 }
             ]
         },
-        expected_standing="UNRESOLVED",
+        expected_standing="SURVIVED",
     ),
 )
 
@@ -240,7 +241,10 @@ def run_scenario(scenario: Scenario) -> dict[str, Any]:
         "telemetry_records": len(telemetry.records()),
         "evidence_standing": standing,
         "note": (
-            "War resolver remains hmmm; fail-closed behavior observed"
+            "War resolved deterministically: defender-holds for occupied targets, priority for dual targets"
+            if scenario.scenario_id in WAR_RESOLVED_SCENARIOS
+            else
+            "Unresolved mechanic remains hmmm; fail-closed behavior observed"
             if standing == "UNRESOLVED"
             else "smoke contract survived"
         ),
@@ -329,7 +333,7 @@ def main() -> None:
             "## Notes",
             "- Board geometry is projected from the canonical UCNS Mobius Seed of Life candidate.",
             "- Candidate regulatory cost channels are observed only; they do not drive the policy in this smoke epoch.",
-            "- War collisions remain unresolved and fail closed.",
+            "- War collisions resolve deterministically: defender-holds for occupied targets, priority for dual targets.",
             "- This is a runnable smoke corpus, not the final sealed comparative corpus.",
         ]
     )

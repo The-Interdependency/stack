@@ -11,10 +11,11 @@ from .events import (
     KIND_PLANE_INIT,
     KIND_TURN_BEGIN,
     KIND_TURN_END,
+    KIND_WAR,
     EventLog,
 )
 from .geometry import seed_of_life_tiles
-from .sim import ReplayError, apply_motions, motion_from_event_data
+from .sim import ReplayError, WarSpec, _resolve_war, apply_motions, motion_from_event_data, war_spec_from_event_data
 from .world import World
 
 WORLD_FILE = "world.json"
@@ -58,6 +59,7 @@ def replay(log: EventLog) -> World:
 
     phase = "awaiting-begin"
     buffered = []
+    buffered_wars: list[WarSpec] = []
     for event in events[1:]:
         if event.kind == KIND_TURN_BEGIN:
             if phase != "awaiting-begin":
@@ -71,16 +73,31 @@ def replay(log: EventLog) -> World:
             if event.turn != world.turn:
                 raise ReplayError("move turn mismatch")
             buffered.append(motion_from_event_data(event.data))
+        elif event.kind == KIND_WAR:
+            if phase != "awaiting-end":
+                raise ReplayError("war outside open turn")
+            if event.turn != world.turn:
+                raise ReplayError("war turn mismatch")
+            buffered_wars.append(war_spec_from_event_data(event.data))
         elif event.kind == KIND_TURN_END:
             if phase != "awaiting-end":
                 raise ReplayError(f"turn.end while {phase}")
             if event.turn != world.turn or event.data.get("turn") != world.turn:
                 raise ReplayError("turn.end turn mismatch")
+            _survivors, expected_wars = _resolve_war(world, buffered)
+            expected = [(war.unit_id, war.to_tile_id, war.reason, war.outcome) for war in expected_wars]
+            observed = [
+                (war.unit_id, war.to_tile_id, war.reason, war.outcome)
+                for war in sorted(buffered_wars, key=lambda item: (item.unit_id, item.to_tile_id))
+            ]
+            if expected != observed:
+                raise ReplayError("war events do not match replay recomputation")
             apply_motions(world, buffered)
             if event.data.get("state_digest") != world.digest():
                 raise ReplayError("turn.end state digest mismatch")
             world.turn += 1
             buffered = []
+            buffered_wars = []
             phase = "awaiting-begin"
         else:
             raise ReplayError(f"unknown canonical event kind: {event.kind}")

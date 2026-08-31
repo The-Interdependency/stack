@@ -1,17 +1,18 @@
 # Codex Corpus Adoption
 
-Codex adopts the proposed shared calibration corpus digest without corpus
+Codex adopts the successor proposed shared calibration corpus digest without corpus
 amendments.
 
 ## Adopted Digest
 
 - Corpus id: `calibration-family`
-- Version: `1.0.0-proposal-1`
-- Source branch: `origin/agent/ahbg-deepcode`
-- Source commit: `598f64864b8d17faf85a0af0649b2c4f3c0d55b1`
-- Source path: `ahbg/deepseek/corpus-proposal/corpus.json`
-- `corpus.json` SHA-256: `07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891`
-- `canonical_scenarios_sha256`: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
+- Version: `1.0.1-proposal-1`
+- Source branch: local `stack-deepcode` worktree
+- Source commit: `90b66e39d8527cd1adc8c69391f64253e5a0ab94`
+- Source path: `/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/corpus-proposal/corpus.json`
+- `corpus.json` SHA-256: `ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab`
+- `canonical_scenarios_sha256`: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
+- Predecessor: `1.0.0-proposal-1` / `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
 - Scenario count: 35
 
 ## Frozen Build
@@ -40,9 +41,9 @@ implementation identity.
 
 - Runner commit: `3b3e67adff14effaf0426a02004aa68a48753b9f`
 - Run record commit: `029f15005c655b9fea53253d0d1cd7f421d6af39`
-- Result path: `stack/ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json`
-- Summary: SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 / BLOCKED 0
-- UNRESOLVED ids: `occupied_target_collision`, `dual_target_collision`
+- Result path: `stack/ahbg/codex/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json`
+- Summary: SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 / BLOCKED 0
+- UNRESOLVED ids: none
 
 This does not rewrite the frozen smoke artifacts or change the frozen Codex
 build SHA.
@@ -51,10 +52,10 @@ Exact id overlap with frozen Codex artifacts:
 
 - `plain_move_loop` — standing matches; seed differs (`7` proposed, `101`
   frozen Codex smoke).
-- `occupied_target_collision` — standing matches; seed differs (`13`
-  proposed, `105` frozen Codex smoke).
-- `dual_target_collision` — standing matches; seed differs (`17` proposed,
-  `106` frozen Codex smoke).
+- `occupied_target_collision` — successor corpus resolves War with
+  defender-holds; seed differs (`13` proposed, `105` frozen Codex smoke).
+- `dual_target_collision` — successor corpus resolves War by smallest
+  `unit_id` priority; seed differs (`17` proposed, `106` frozen Codex smoke).
 
 Near matches:
 
@@ -65,6 +66,6 @@ Near matches:
 - `unknown_context_distinct` maps to the unknown-not-neutral principle, but not
   the proposed `unknown_same_posterior` schema.
 
-Codex therefore records the common digest and the later full execution while
+Codex therefore records the successor common digest and the later full execution while
 preserving the fact that the initial frozen artifact set was a smaller smoke
 corpus.

@@ -7,14 +7,18 @@
   "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
   "current_metadata_head_at_record": "43fdbd6120416b54bb26c52fa34c384956534257",
   "corpus_source": {
-    "source_branch": "origin/agent/ahbg-deepcode",
-    "source_commit": "598f64864b8d17faf85a0af0649b2c4f3c0d55b1",
-    "source_path": "ahbg/deepseek/corpus-proposal/corpus.json",
-    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
+    "source_branch": "local stack-deepcode worktree",
+    "source_commit": "90b66e39d8527cd1adc8c69391f64253e5a0ab94",
+    "source_path": "/home/wayseer_interdependentway_org/src/stack-deepcode/ahbg/deepseek/corpus-proposal/corpus.json",
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
     "corpus_sha256_file_matched": true,
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+    "predecessor": {
+      "proposal_version": "1.0.0-proposal-1",
+      "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0"
+    },
     "corpus_id": "calibration-family",
-    "proposal_version": "1.0.0-proposal-1",
+    "proposal_version": "1.0.1-proposal-1",
     "scenario_count": 35
   },
   "adoption_decision": "adopt_digest",
@@ -103,33 +107,28 @@
     ]
   },
   "post_freeze_common_corpus_run": {
-    "runner_commit_sha": "3b3e67adff14effaf0426a02004aa68a48753b9f",
-    "run_record_commit_sha": "029f15005c655b9fea53253d0d1cd7f421d6af39",
-    "artifact_path": "stack/ahbg/codex/corpus-run/calibration-family-1.0.0-proposal-1/CALIBRATION_RESULT.json",
+    "artifact_path": "stack/ahbg/codex/corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json",
     "frozen_build_sha": "ffb64c274583d8539f8f4fe7e0aa77366689e910",
     "scenario_count": 35,
     "summary": {
-      "SURVIVED": 33,
-      "UNRESOLVED": 2,
+      "SURVIVED": 35,
+      "UNRESOLVED": 0,
       "FALSIFIED": 0,
       "BLOCKED": 0
     },
-    "unresolved_scenario_ids": [
-      "occupied_target_collision",
-      "dual_target_collision"
-    ],
-    "corpus_json_sha256": "07034b01f9311b0a82a498a91742c588e27494e8e0d729974432608bfa8c0891",
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
-    "standing": "SURVIVED_WITH_EXPECTED_UNRESOLVED_HMMM",
+    "unresolved_scenario_ids": [],
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+    "standing": "SURVIVED",
     "note": "Post-freeze execution; does not rewrite original freeze artifacts or frozen build identity."
   },
   "reproduction_standing": "full-post-freeze-run-complete",
   "reproduction_hmmm": [
-    "Codex adopts the proposed canonical_scenarios_sha256 without amendments.",
+    "Codex adopts the successor proposed canonical_scenarios_sha256 without amendments.",
     "The frozen Codex smoke artifacts predate the corpus proposal and remain a smaller first artifact set.",
     "A later explicitly labeled post-freeze run executed all 35 common-corpus scenarios against the frozen Codex build identity.",
     "Exact overlapping scenario ids use different seeds in the frozen Codex smoke artifacts.",
-    "The two unresolved War collision ids remain hmmm and fail closed."
+    "Local three-worktree adoption is recorded in ahbg/CORPUS_ADOPTION.json; remote/branch merge remains hmmm."
   ],
   "epoch_implication": "Codex has recorded the common digest and a complete post-freeze corpus run; use frozen_build_sha as the Codex implementation identity for reciprocal review."
 }
