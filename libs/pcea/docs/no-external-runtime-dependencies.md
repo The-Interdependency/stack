@@ -1,39 +1,34 @@
 # No External Runtime Dependencies
 
-**Status:** Policy (PLAN.md Phase 0). Binding for all PCEA runtime
-modules.
+**Status:** PCEA runtime policy.
 
 ## Rule
 
-PCEA's runtime — the modules listed in `pcea.contract.RUNTIME_MODULES` —
-depends on nothing outside the Python standard library and other
-repositories owned by The Interdependency.
+PCEA runtime modules listed in `pcea.contract.RUNTIME_MODULES` depend on nothing outside the Python standard library and other explicitly approved The Interdependency runtime components.
 
 **Allowed at runtime:**
-- The Python standard library, including `hashlib`, `hmac`, `secrets`,
-  and `os.urandom` (entropy and hashing are required for real key
-  generation; without OS entropy, secure keygen cannot be claimed).
-- Other Interdependency repositories (e.g. `ucns`), where used.
-- Static test vectors copied into this repository.
+- Python standard library, including `hashlib`, `hmac`, `secrets`, and `os.urandom` where required.
+- Other The Interdependency repositories only when the PCEA runtime contract explicitly admits them.
+- Static test vectors shipped as repository data.
 
-**Not allowed at runtime:**
-- `cryptography`, PyNaCl, libsodium, OpenSSL wrappers, Signal-protocol
-  libraries, or any external service required to encrypt or decrypt.
+**Not allowed at runtime without an explicit contract change:**
+- `cryptography`, PyNaCl, libsodium, OpenSSL wrapper packages, Signal-protocol packages, or external services required to encrypt/decrypt.
 
-**Build/test-only tooling** (e.g. `pytest`) is separate from runtime
-dependencies and does not count against this rule.
+Build/test tooling such as `pytest` is not a runtime dependency.
 
-## Boundary with ucns
+## UCNS and research boundary
 
-The ucns dependency is design/attack-time, not cipher-time. The attack
-harness (`pcea-ucns/attack_harness.py`) imports ucns to measure domain
-weakness; it is **not** in `RUNTIME_MODULES` and is never imported by the
-cipher. PCEA's symmetric core remains importable and testable with no
-ucns present (the harness tests skip cleanly in that case).
+PCEA's current runtime does not rely on UCNS inversion, catalogue, factor-search, or research APIs. UCNS-assisted cryptographic and gonol/state experiments are mutating research and live in `The-Interdependency/stack/research/pcea/`.
 
-## Exit gate (Phase 0)
+The historical source-tree proving ground was removed from PCEA after migration. `pcea-ucns/README.md` remains only to redirect old links; it is not runtime code or an active research location.
 
-- Repository metadata shows no runtime pip dependencies
-  (`pyproject.toml`: only a `dev` optional group).
-- README states the dependency boundary accurately.
-- Verified by inspection at the date of this file.
+## Exit gate
+
+- `pyproject.toml` declares no runtime package dependencies.
+- The runtime package remains importable without UCNS or external cryptography packages.
+- `tests/test_contract_spec.py` verifies that the runtime does not import or call forbidden UCNS inverse/catalogue symbols.
+- README states the dependency and research boundaries accurately.
+
+## hmmm
+
+Zero external dependencies is an implementation constraint, not evidence that a cryptographic construction is safe. Independent cryptographic review remains a separate requirement.

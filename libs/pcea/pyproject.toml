@@ -1,15 +1,16 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pcea"
-version = "0.1.0"
+version = "0.2.0"
 description = "Prime Circular Encryption Algorithm — neural architecture state encryption"
+readme = "README.md"
 authors = [
   { name = "Erin Patrick Spencer", email = "wayseer@interdependentway.org" },
 ]
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 dependencies = []
 
@@ -24,7 +25,7 @@ Repository = "https://github.com/The-Interdependency/PCEA"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pcea*"]
+include = ["pcea", "pcea.*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

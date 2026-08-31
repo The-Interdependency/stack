@@ -6,7 +6,7 @@ This file gives AI assistants context needed to work effectively in this reposit
 
 ## What This Repo Is
 
-`pcea` (pip package: **`pcea`**, v0.1.0) is a zero-dependency pure-Python library
+`pcea` (pip package: **`pcea`**, v0.2.0) is a zero-dependency pure-Python library
 implementing the **Prime Circular Encryption Algorithm** — a bijective base-`p`
 additive cipher built on a Möbius-disk codec, a prime circle, and a SHA-256 key
 stream keyed by the previous state.
@@ -23,7 +23,7 @@ published under The Interdependency.
 | Field | Value |
 |---|---|
 | Package | `pcea` |
-| Version | `0.1.0` |
+| Version | `0.2.0` |
 | Description | Prime Circular Encryption Algorithm — neural architecture state encryption |
 | Status | hmmm |
 | Python | >=3.9 |
@@ -63,7 +63,9 @@ map over a list of seeds.
 
 `word_bits` (default 64, `DEFAULT_WORD_BITS`) sets the Möbius disk size and
 **must match** between sender and receiver. Larger values support wider integer
-ranges.
+ranges. Plaintext values must fit the signed range
+`[-2^(word_bits-1), 2^(word_bits-1)-1]`; out-of-range values raise `ValueError`
+instead of silently wrapping to a different plaintext.
 
 ---
 

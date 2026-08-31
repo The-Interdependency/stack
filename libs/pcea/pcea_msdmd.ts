@@ -1,7 +1,28 @@
+// ratios: loc_comments=428:0 imports_exports=1:0 calls_definitions=1:0
 import { defineMsdmdCollection } from "./.agents/skills/msdmd/collection";
 
 export default defineMsdmdCollection({
   "declarations": [
+    {
+      "block": "CONTRACTS",
+      "fields": {
+        "class": "correctness",
+        "given": "encrypt_seed receives any plaintext element outside the signed word_bits range",
+        "then": "raises ValueError before emitting ciphertext"
+      },
+      "file": "pcea/cipher.py",
+      "id": "cipher_rejects_plaintext_outside_word_range"
+    },
+    {
+      "block": "CONTRACTS",
+      "fields": {
+        "class": "correctness",
+        "given": "decrypt_seed receives valid fixed-width ciphertext but a mismatched last_seed",
+        "then": "returns deterministic signed word_bits values instead of surfacing unused code-point overflow"
+      },
+      "file": "pcea/cipher.py",
+      "id": "cipher_wrong_key_decrypt_returns_signed_words"
+    },
     {
       "block": "MODULE_BUILD",
       "fields": {
@@ -27,6 +48,26 @@ export default defineMsdmdCollection({
       "id": "pcea_cipher"
     },
     {
+      "block": "CONTRACTS",
+      "fields": {
+        "class": "correctness",
+        "given": "mobius_encode receives a value outside the signed word_bits range",
+        "then": "raises ValueError instead of wrapping to a different plaintext"
+      },
+      "file": "pcea/codec.py",
+      "id": "codec_rejects_out_of_range_signed_words"
+    },
+    {
+      "block": "CONTRACTS",
+      "fields": {
+        "class": "correctness",
+        "given": "to_fixed receives an unsigned value that cannot fit in k base-p digits",
+        "then": "raises ValueError instead of truncating high-order digits"
+      },
+      "file": "pcea/codec.py",
+      "id": "fixed_width_codec_rejects_overflow"
+    },
+    {
       "block": "MODULE_BUILD",
       "fields": {
         "admin_only": "false",
@@ -42,7 +83,7 @@ export default defineMsdmdCollection({
         "rollout": "default_enabled",
         "since": "2026-06-02",
         "storage_boundary": "none",
-        "summary": "Mobius disk codec: signed<->unsigned position mapping and fixed-width base-p digit encoding",
+        "summary": "Mobius disk codec: signed<->unsigned position mapping and fixed-width base-p digit encoding with explicit word-range guards",
         "tests": "tests.test_codec",
         "unresolved": "none",
         "user_data_boundary": "none"
@@ -145,9 +186,145 @@ export default defineMsdmdCollection({
       },
       "file": "pcea/primes.py",
       "id": "pcea_primes"
+    },
+    {
+      "block": "CHECKS",
+      "fields": {
+        "call": "self::test_encrypt_seed_rejects_plaintext_outside_word_range",
+        "cleanup": "none",
+        "mutates": "none",
+        "proves": "cipher_rejects_plaintext_outside_word_range",
+        "requires": "python3",
+        "timeout": "5"
+      },
+      "file": "tests/test_cipher.py",
+      "id": "check_cipher_rejects_plaintext_outside_word_range"
+    },
+    {
+      "block": "CHECKS",
+      "fields": {
+        "call": "self::test_decrypt_seed_with_wrong_key_returns_signed_words",
+        "cleanup": "none",
+        "mutates": "none",
+        "proves": "cipher_wrong_key_decrypt_returns_signed_words",
+        "requires": "python3",
+        "timeout": "5"
+      },
+      "file": "tests/test_cipher.py",
+      "id": "check_cipher_wrong_key_decrypt_returns_signed_words"
+    },
+    {
+      "block": "CHECKS",
+      "fields": {
+        "call": "self::test_encode_rejects_values_outside_signed_word_range",
+        "cleanup": "none",
+        "mutates": "none",
+        "proves": "codec_rejects_out_of_range_signed_words",
+        "requires": "python3",
+        "timeout": "5"
+      },
+      "file": "tests/test_codec.py",
+      "id": "check_codec_rejects_out_of_range_signed_words"
+    },
+    {
+      "block": "CHECKS",
+      "fields": {
+        "call": "self::test_to_fixed_rejects_overflow",
+        "cleanup": "none",
+        "mutates": "none",
+        "proves": "fixed_width_codec_rejects_overflow",
+        "requires": "python3",
+        "timeout": "5"
+      },
+      "file": "tests/test_codec.py",
+      "id": "check_fixed_width_codec_rejects_overflow"
     }
   ],
   "edges": [
+    {
+      "from": "check_cipher_rejects_plaintext_outside_word_range",
+      "kind": "calls",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_rejects_plaintext_outside_word_range",
+      "to": "self::test_encrypt_seed_rejects_plaintext_outside_word_range"
+    },
+    {
+      "from": "check_cipher_rejects_plaintext_outside_word_range",
+      "kind": "claims_proves",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_rejects_plaintext_outside_word_range",
+      "to": "cipher_rejects_plaintext_outside_word_range"
+    },
+    {
+      "from": "check_cipher_rejects_plaintext_outside_word_range",
+      "kind": "requires",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_rejects_plaintext_outside_word_range",
+      "to": "python3"
+    },
+    {
+      "from": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "kind": "calls",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "to": "self::test_decrypt_seed_with_wrong_key_returns_signed_words"
+    },
+    {
+      "from": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "kind": "claims_proves",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "to": "cipher_wrong_key_decrypt_returns_signed_words"
+    },
+    {
+      "from": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "kind": "requires",
+      "source_block": "CHECKS",
+      "source_id": "check_cipher_wrong_key_decrypt_returns_signed_words",
+      "to": "python3"
+    },
+    {
+      "from": "check_codec_rejects_out_of_range_signed_words",
+      "kind": "calls",
+      "source_block": "CHECKS",
+      "source_id": "check_codec_rejects_out_of_range_signed_words",
+      "to": "self::test_encode_rejects_values_outside_signed_word_range"
+    },
+    {
+      "from": "check_codec_rejects_out_of_range_signed_words",
+      "kind": "claims_proves",
+      "source_block": "CHECKS",
+      "source_id": "check_codec_rejects_out_of_range_signed_words",
+      "to": "codec_rejects_out_of_range_signed_words"
+    },
+    {
+      "from": "check_codec_rejects_out_of_range_signed_words",
+      "kind": "requires",
+      "source_block": "CHECKS",
+      "source_id": "check_codec_rejects_out_of_range_signed_words",
+      "to": "python3"
+    },
+    {
+      "from": "check_fixed_width_codec_rejects_overflow",
+      "kind": "calls",
+      "source_block": "CHECKS",
+      "source_id": "check_fixed_width_codec_rejects_overflow",
+      "to": "self::test_to_fixed_rejects_overflow"
+    },
+    {
+      "from": "check_fixed_width_codec_rejects_overflow",
+      "kind": "claims_proves",
+      "source_block": "CHECKS",
+      "source_id": "check_fixed_width_codec_rejects_overflow",
+      "to": "fixed_width_codec_rejects_overflow"
+    },
+    {
+      "from": "check_fixed_width_codec_rejects_overflow",
+      "kind": "requires",
+      "source_block": "CHECKS",
+      "source_id": "check_fixed_width_codec_rejects_overflow",
+      "to": "python3"
+    },
     {
       "from": "pcea_cipher",
       "kind": "owns",
@@ -249,5 +426,6 @@ export default defineMsdmdCollection({
   ],
   "gaps": [],
   "repo": "pcea",
-  "source_commit": "fea83bb"
+  "source_commit": "7a5cda8354859db21c01645d792589e650dd62f6"
 });
+// ratios: loc_comments=428:0 imports_exports=1:0 calls_definitions=1:0

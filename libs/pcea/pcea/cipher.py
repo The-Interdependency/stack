@@ -1,4 +1,4 @@
-# ratios: loc_comments=96:57 imports_exports=4:4 calls_definitions=35:8
+# ratios: loc_comments=98:70 imports_exports=4:4 calls_definitions=36:9
 # GPT/Claude generated; context, prompt Erin Spencer
 """
 Prime-circular Möbius disk cipher.
@@ -37,6 +37,18 @@ Key: SHA-256(own + heptagram neighbors ±3, seed_idx, circle_idx, tensor_idx)
 #   since: 2026-06-02
 #   unresolved: security-critical module; changes require independent crypto review
 # === END MODULE_BUILD ===
+
+# === CONTRACTS ===
+# id: cipher_rejects_plaintext_outside_word_range
+#   given: encrypt_seed receives any plaintext element outside the signed word_bits range
+#   then:  raises ValueError before emitting ciphertext
+#   class: correctness
+#
+# id: cipher_wrong_key_decrypt_returns_signed_words
+#   given: decrypt_seed receives valid fixed-width ciphertext but a mismatched last_seed
+#   then:  returns deterministic signed word_bits values instead of surfacing unused code-point overflow
+#   class: correctness
+# === END CONTRACTS ===
 
 from __future__ import annotations
 
@@ -94,7 +106,13 @@ def _decrypt_element(
     ks = key_stream(_contributors(last_seed, circle_idx, tensor_idx), seed_idx, circle_idx, tensor_idx, k, p)
     v_digits = [(ed - kd) % p for ed, kd in zip(e_digits, ks)]
     u = from_fixed(v_digits, p)
-    return mobius_decode(u, word_bits)
+    return _decode_cipher_position(u, word_bits)
+
+
+def _decode_cipher_position(u: int, word_bits: int) -> int:
+    # Base-p fixed width has spare code points above the Mobius disk. A wrong
+    # key can land there; normalize only after key removal, not on plaintext.
+    return mobius_decode(u % (1 << word_bits), word_bits)
 
 
 def encrypt_seed(
@@ -179,4 +197,4 @@ def decrypt_state(
     if len(encrypted) != len(last_state):
         raise ValueError("encrypted and last_state must contain the same number of seeds")
     return [decrypt_seed(encrypted[i], last_state[i], i, word_bits) for i in range(len(encrypted))]
-# ratios: loc_comments=96:57 imports_exports=4:4 calls_definitions=35:8
+# ratios: loc_comments=98:70 imports_exports=4:4 calls_definitions=36:9

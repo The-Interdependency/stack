@@ -1,8 +1,26 @@
-# ratios: loc_comments=88:7 imports_exports=4:15 calls_definitions=57:17
+# ratios: loc_comments=100:24 imports_exports=4:17 calls_definitions=65:19
 # GPT/Claude generated; context, prompt Erin Spencer
 import pytest
 
 from pcea.cipher import decrypt_seed, decrypt_state, encrypt_seed, encrypt_state
+
+# === CHECKS ===
+# id: check_cipher_rejects_plaintext_outside_word_range
+#   proves: cipher_rejects_plaintext_outside_word_range
+#   call: self::test_encrypt_seed_rejects_plaintext_outside_word_range
+#   requires: python3
+#   timeout: 5
+#   mutates: none
+#   cleanup: none
+#
+# id: check_cipher_wrong_key_decrypt_returns_signed_words
+#   proves: cipher_wrong_key_decrypt_returns_signed_words
+#   call: self::test_decrypt_seed_with_wrong_key_returns_signed_words
+#   requires: python3
+#   timeout: 5
+#   mutates: none
+#   cleanup: none
+# === END CHECKS ===
 
 CIRCLES = 7
 TENSORS = 7
@@ -90,6 +108,22 @@ def test_roundtrip_large_values():
     assert decrypt_seed(encrypt_seed(seed, last), last) == seed
 
 
+def test_encrypt_seed_rejects_plaintext_outside_word_range():
+    seed = _zero_seed()
+    last = _zero_seed()
+    seed[0][0] = 128
+    with pytest.raises(ValueError):
+        encrypt_seed(seed, last, word_bits=8)
+
+
+def test_decrypt_seed_with_wrong_key_returns_signed_words():
+    seed = _seed(10)
+    encrypted = encrypt_seed(seed, _seed(1), word_bits=8)
+    recovered = decrypt_seed(encrypted, _seed(3), word_bits=8)
+    assert recovered != seed
+    assert all(-128 <= value <= 127 for row in recovered for value in row)
+
+
 def test_zero_last_seed_still_encrypts():
     seed = _seed(5)
     last = _zero_seed()
@@ -130,4 +164,4 @@ def test_encrypt_state_seed_idx_varies():
     encrypted = encrypt_state(state, last)
     # Same seed values at different positions should encrypt differently
     assert encrypted[0] != encrypted[1]
-# ratios: loc_comments=88:7 imports_exports=4:15 calls_definitions=57:17
+# ratios: loc_comments=100:24 imports_exports=4:17 calls_definitions=65:19
