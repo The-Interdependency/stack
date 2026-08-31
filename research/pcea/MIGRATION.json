@@ -1,0 +1,51 @@
+{
+  "schema": "the-interdependency.pcea-research-migration",
+  "version": "1.0.0",
+  "source": {
+    "repository": "The-Interdependency/pcea",
+    "commit": "ecf2ca0dec38bef29382e02121b0edde66763aa9",
+    "standing": "last-pre-cleanup-research-snapshot"
+  },
+  "destination": {
+    "repository": "The-Interdependency/stack",
+    "path": "research/pcea",
+    "standing": "stack-local-research",
+    "authority_transfer": false
+  },
+  "deprecated_at_source": {
+    "directories": ["pcea-ucns/"],
+    "files": ["rec.md"],
+    "research_tests": [
+      "tests/test_attack1_minkowski_break.py",
+      "tests/test_attack_harness.py",
+      "tests/test_factor_count_sweep.py",
+      "tests/test_gonal_architecture.py",
+      "tests/test_one_way_map_gate.py",
+      "tests/test_option_d_ucns_map.py",
+      "tests/test_option_family_specs.py",
+      "tests/test_positional_attack.py",
+      "tests/test_prefix_read_break.py",
+      "tests/test_projection_action_candidate.py",
+      "tests/test_pruning_scaling.py",
+      "tests/test_quotient_attack.py",
+      "tests/test_three_factor_attack.py",
+      "tests/test_ucns_candidate_ledger.py"
+    ]
+  },
+  "replacement": {
+    "materializer": "research/pcea/materialize_legacy.py",
+    "materialized_root": "research/pcea/migrated",
+    "source_files": 36,
+    "rule": "mutating PCEA research occurs in stack; stable PCEA source receives only completed bounded behavior"
+  },
+  "boundaries": {
+    "proof_status_transfer": false,
+    "security_status_transfer": false,
+    "measurement_status_transfer": false,
+    "runtime_contract_changed": false,
+    "hmmm": [
+      "stack/libs/pcea refresh to the post-cleanup canonical commit is a separate fresh-making operation",
+      "current gonol recursive-scale transition law remains unresolved until independently replayed"
+    ]
+  }
+}
