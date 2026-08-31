@@ -1,0 +1,109 @@
+name: ahbg-corpus-regenerate-once
+
+on:
+  push:
+    branches:
+      - fix/ahbg-war-v3-canonical
+    paths:
+      - .github/workflows/ahbg-corpus-regenerate.yml
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Canonicalize corpus authority and runner identity contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          import re
+          from pathlib import Path
+
+          corpus_path = Path("ahbg/deepseek/corpus-proposal/corpus.json")
+          corpus = json.loads(corpus_path.read_text(encoding="utf-8"))
+          corpus["board"]["authority"] = "UCNS mobius_seed band centers (libs/ucns/src/ucns/mobius_seed.py)"
+          raw = (json.dumps(corpus, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n").encode("utf-8")
+          corpus_path.write_bytes(raw)
+          digest = hashlib.sha256(raw).hexdigest()
+          Path("ahbg/deepseek/corpus-proposal/CORPUS.sha256").write_text(digest + "\n", encoding="utf-8")
+
+          runner_path = Path("ahbg/grok/run_common_corpus.py")
+          runner = runner_path.read_text(encoding="utf-8")
+          runner, count = re.subn(
+              r'CORPUS_FILE_SHA256 = "[0-9a-f]{64}"',
+              f'CORPUS_FILE_SHA256 = "{digest}"',
+              runner,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("did not replace CORPUS_FILE_SHA256 exactly once")
+          runner = runner.replace(
+              'FROZEN_BUILD_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"',
+              'BASELINE_FREEZE_SHA = "cce9cec7dae61304118efcd47bc0d7461200d335"',
+          )
+          runner = runner.replace(
+              '"frozen_build_sha": FROZEN_BUILD_SHA,',
+              '"executed_build_sha": _current_git_value("rev-parse", "HEAD"),\n        "baseline_freeze_sha": BASELINE_FREEZE_SHA,',
+          )
+          runner = runner.replace(
+              'f"Frozen build SHA: {FROZEN_BUILD_SHA}",',
+              'f"Executed build SHA: {run_identity[\'runner_commit_sha\']}",\n        f"Baseline reciprocal-review freeze SHA: {BASELINE_FREEZE_SHA}",',
+          )
+          runner = runner.replace(
+              '"interdependency.ahbg.grok.common-corpus-run/1.0.0"',
+              '"interdependency.ahbg.grok.common-corpus-run/1.1.0"',
+          )
+          runner = runner.replace(
+              '"interdependency.ahbg.grok.common-corpus-result/1.0.0"',
+              '"interdependency.ahbg.grok.common-corpus-result/1.1.0"',
+          )
+          runner = runner.replace(
+              '- This is a post-freeze common-corpus execution against frozen Grok SHA `cce9cec`.',
+              '- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.\n            - Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.',
+          )
+          if "FROZEN_BUILD_SHA" in runner:
+              raise SystemExit("stale FROZEN_BUILD_SHA reference remains")
+          runner_path.write_text(runner, encoding="utf-8")
+          print(digest)
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ahbg/deepseek/corpus-proposal/corpus.json \
+                  ahbg/deepseek/corpus-proposal/CORPUS.sha256 \
+                  ahbg/grok/run_common_corpus.py
+          git commit -m "fix(ahbg): bind corpus to canonical UCNS and exact run identity"
+          git push origin HEAD:fix/ahbg-war-v3-canonical
+
+      - name: Verify and regenerate evidence from committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain)"
+          cd ahbg/grok
+          python -m unittest discover -s a0/tests -p 'test*.py'
+          python -m unittest discover -s ahbg/tests -p 'test*.py'
+          python -m unittest discover -s tests -p 'test*.py'
+          python run.py
+          python run_common_corpus.py
+          cd ../..
+          git add ahbg/grok/CALIBRATION_RESULT.json \
+                  ahbg/grok/EVENTS.jsonl \
+                  ahbg/grok/artifacts \
+                  ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(ahbg): regenerate evidence from committed war_v3 source"
+            git push origin HEAD:fix/ahbg-war-v3-canonical
+          fi
