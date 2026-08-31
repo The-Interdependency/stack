@@ -12,7 +12,7 @@ stack/research/pcea/              = mutable PCEA research
 
 Research results do not become PCEA runtime claims merely by surviving here. Promotion requires an owning-repository change with its own review and release evidence.
 
-`BASE.json` intentionally continues to identify the exact `libs/pcea` view currently pinned by the stack manifest. The research migration has a separate source identity because it captures the former PCEA proving ground immediately before source cleanup: `The-Interdependency/pcea@ecf2ca0dec38bef29382e02121b0edde66763aa9`. See `MIGRATION.json`.
+`BASE.json` now pins the refreshed stable PCEA view at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`. The legacy research migration has a separate source identity because it captures the former PCEA proving ground immediately before source cleanup: `The-Interdependency/pcea@ecf2ca0dec38bef29382e02121b0edde66763aa9`. See `MIGRATION.json`.
 
 ## Legacy research migration
 
@@ -43,10 +43,9 @@ PCEA keys must still derive from real secret entropy; gonol state may organize, 
 3. Materialize only legacy lanes you actually need.
 4. Put new or mutating research here, never back into the stable PCEA repo.
 5. Preserve negative results and attack harnesses; a passing harness grants permission for a harder attack, not a security claim.
-6. Graduate only completed, bounded behavior back to `The-Interdependency/pcea` through an explicit source-repo change.
+6. Graduate only completed, bounded behavior back to `The-Interdependency/pcea` through an explicit owning-repository change.
 
 ## hmmm
 
-- `libs/pcea` remains pinned to the stack manifest's older canonical source until a separate fresh-making refresh imports the post-cleanup PCEA commit; `BASE.json` therefore remains unchanged rather than lying about the local imported view.
 - The exact UCNS recursive transition operator producing `157 -> 2881 -> 54837698421` is not yet independently replayed here.
-- No independent cryptographic/security review is implied by this migration.
+- No independent cryptographic/security review is implied by this migration or by the PCEA runtime tests.

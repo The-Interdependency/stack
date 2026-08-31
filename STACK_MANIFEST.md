@@ -2,11 +2,12 @@
 
 Provenance and authority-boundary record for `The-Interdependency/stack`.
 
-- Source snapshot UTC: `2026-08-22T10:19:43Z` (source commits unchanged by this layout migration)
+- Source snapshot UTC: `2026-08-22T10:19:43Z` (initial participant snapshot)
 - Layout migration UTC: `2026-08-30T02:58:49Z`
+- PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.0.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `boundaries` JSON):
-  `0760abd60f089266405aa589063a7533f485761e2bd25faa44f2eac64fb89f7d`
+  `105212ad8e8eaee13fda632d67a61eb162f2d730034408ec790c3fab5e002067`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -32,7 +33,7 @@ meaning used by that repository.
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and text-gonol construction | canon view `libs/edcm/`; research `research/edcm/` |
-| `The-Interdependency/pcea` | `4d2c581448b97bfb71da92b35487e74e6e3bcedc` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
+| `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
 | `The-Interdependency/epac` | `hmmm` | — | stack-local emerging research; no independent source repository exists yet | active candidate `research/epac/`; `libs/epac/` unpopulated |
 

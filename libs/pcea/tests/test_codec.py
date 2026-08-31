@@ -1,8 +1,26 @@
-# ratios: loc_comments=67:7 imports_exports=2:16 calls_definitions=28:16
+# ratios: loc_comments=84:24 imports_exports=2:20 calls_definitions=38:20
 # GPT/Claude generated; context, prompt Erin Spencer
 import pytest
 
 from pcea.codec import digit_count, from_fixed, mobius_decode, mobius_encode, to_fixed
+
+# === CHECKS ===
+# id: check_codec_rejects_out_of_range_signed_words
+#   proves: codec_rejects_out_of_range_signed_words
+#   call: self::test_encode_rejects_values_outside_signed_word_range
+#   requires: python3
+#   timeout: 5
+#   mutates: none
+#   cleanup: none
+#
+# id: check_fixed_width_codec_rejects_overflow
+#   proves: fixed_width_codec_rejects_overflow
+#   call: self::test_to_fixed_rejects_overflow
+#   requires: python3
+#   timeout: 5
+#   mutates: none
+#   cleanup: none
+# === END CHECKS ===
 
 
 # --- mobius_encode / mobius_decode ---
@@ -19,6 +37,21 @@ def test_encode_negative():
     assert mobius_encode(-128, 8) == 128
 
 
+def test_encode_rejects_values_outside_signed_word_range():
+    for value in (128, 255, 256, -129):
+        with pytest.raises(ValueError):
+            mobius_encode(value, 8)
+    for value in (2**63, -(2**63) - 1):
+        with pytest.raises(ValueError):
+            mobius_encode(value, 64)
+
+
+def test_decode_rejects_values_outside_unsigned_word_range():
+    for value in (-1, 256):
+        with pytest.raises(ValueError):
+            mobius_decode(value, 8)
+
+
 def test_roundtrip_signed():
     for W in [8, 16, 32, 64]:
         for v in [0, 1, -1, 127, -128, 2**(W-1) - 1, -(2**(W-1))]:
@@ -32,7 +65,7 @@ def test_roundtrip_large_word_bits():
 
 
 def test_encode_output_always_non_negative():
-    for v in range(-200, 200):
+    for v in range(-128, 128):
         assert mobius_encode(v, 8) >= 0
 
 
@@ -77,7 +110,17 @@ def test_digit_count_minimal():
 def test_to_fixed_correct_length():
     for p in [2, 3, 7, 241]:
         assert len(to_fixed(0, p, 8)) == 8
-        assert len(to_fixed(1000, p, 8)) == 8
+        assert len(to_fixed(min(1000, p**8 - 1), p, 8)) == 8
+
+
+def test_to_fixed_rejects_overflow():
+    with pytest.raises(ValueError):
+        to_fixed(256, 2, 8)
+
+
+def test_from_fixed_rejects_digits_outside_base():
+    with pytest.raises(ValueError):
+        from_fixed([0, 1, 2], 2)
 
 
 def test_to_fixed_digits_in_range():
@@ -109,4 +152,4 @@ def test_roundtrip_small_word_bits():
         k = digit_count(p, W)
         for u in range(0, 256, 13):
             assert from_fixed(to_fixed(u, p, k), p) == u
-# ratios: loc_comments=67:7 imports_exports=2:16 calls_definitions=28:16
+# ratios: loc_comments=84:24 imports_exports=2:20 calls_definitions=38:20
