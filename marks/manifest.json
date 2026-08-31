@@ -1,0 +1,13 @@
+{
+  "palette": {
+    "bg": "#070b16",
+    "ink": "#d7deef",
+    "muted": "#7d89a8",
+    "cyan": "#6ec8d4",
+    "violet": "#9aa4d6",
+    "warm": "#c4b08a"
+  },
+  "home": "The-Interdependency/stack/marks",
+  "per_repo": "docs/icon.svg",
+  "note": "Identity only. Transfers no proof, measurement, or semantic status."
+}
