@@ -6,6 +6,7 @@ on:
       - fix/ahbg-war-v3-canonical
     paths:
       - .github/workflows/ahbg-corpus-regenerate.yml
+      - ahbg/grok/tests/test_common_corpus.py
 
 permissions:
   contents: write
