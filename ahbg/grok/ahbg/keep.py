@@ -34,13 +34,25 @@ def load_field(directory: Path) -> tuple[Field, Chain]:
     return replay(chain), chain
 
 
+def _war_intent(data: dict[str, Any]) -> tuple[str, str, str]:
+    required = ("unit_id", "from_tile_id", "to_tile_id", "resolution", "winner_unit_id")
+    for key in required:
+        if not isinstance(data.get(key), str) or not data[key]:
+            raise ValueError(f"war evidence needs non-empty string {key}")
+    return data["unit_id"], data["from_tile_id"], data["to_tile_id"]
+
+
 def replay(chain: Chain) -> Field:
+    """Replay field state and verify both move and War evidence exactly."""
+
     chain.verify()
     if not chain.records or chain.records[0].kind != KIND_PLANE_INIT:
         raise ValueError("replay needs plane.init first")
     body = chain.records[0].data["field"]
     opened = Field.open(seed=body["seed"], tiles=body["tiles"], units=body["units"])
     pending: list[tuple[str, str, str]] = []
+    recorded_moves: list[tuple[str, str, str]] = []
+    recorded_wars: list[dict[str, Any]] = []
     phase = "await_begin"
     for record in chain.records[1:]:
         if record.kind == KIND_TURN_BEGIN:
@@ -48,18 +60,31 @@ def replay(chain: Chain) -> Field:
                 raise ValueError("turn.begin out of order")
             phase = "open"
             pending = []
+            recorded_moves = []
+            recorded_wars = []
         elif record.kind == KIND_MOVE:
             if phase != "open":
                 raise ValueError("move outside an open turn")
             data = record.data
-            pending.append((data["unit_id"], data["from_tile_id"], data["to_tile_id"]))
+            intent = (data["unit_id"], data["from_tile_id"], data["to_tile_id"])
+            pending.append(intent)
+            recorded_moves.append(intent)
+        elif record.kind == KIND_WAR:
+            if phase != "open":
+                raise ValueError("war outside an open turn")
+            pending.append(_war_intent(record.data))
+            recorded_wars.append(dict(record.data))
         elif record.kind == KIND_TURN_END:
             if phase != "open":
                 raise ValueError("turn.end out of order")
             try:
-                opened.apply_moves(pending)
+                applied, war_events = opened.apply_moves(pending)
             except ClosedUnknown as exc:
                 raise ValueError(f"replay hit closed unknown: {exc}") from exc
+            if applied != recorded_moves:
+                raise ValueError("replay move evidence mismatch")
+            if war_events != recorded_wars:
+                raise ValueError("replay war evidence mismatch")
             digest = record.data.get("state_digest")
             from .chain import _digest, _dump
 
@@ -68,10 +93,8 @@ def replay(chain: Chain) -> Field:
             opened.turn += 1
             phase = "await_begin"
             pending = []
-        elif record.kind == KIND_WAR:
-            # War resolution is recomputed by apply_moves from the pending
-            # move intents; the war record is preserved evidence only.
-            continue
+            recorded_moves = []
+            recorded_wars = []
         elif record.kind == "lineage.fork":
             continue
         else:
