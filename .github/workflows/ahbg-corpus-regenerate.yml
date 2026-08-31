@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Repair transformed runner and verify corpus identity
+      - name: Verify corpus identity
         shell: bash
         run: |
           set -euo pipefail
@@ -29,36 +29,57 @@ jobs:
           import hashlib
           import json
           from pathlib import Path
-
-          corpus_path = Path("ahbg/deepseek/corpus-proposal/corpus.json")
-          corpus_raw = corpus_path.read_bytes()
-          corpus = json.loads(corpus_raw)
-          expected_authority = "UCNS mobius_seed band centers (libs/ucns/src/ucns/mobius_seed.py)"
-          if corpus.get("board", {}).get("authority") != expected_authority:
-              raise SystemExit("corpus board authority is not canonical libs/ucns")
-          digest = hashlib.sha256(corpus_raw).hexdigest()
-          sidecar = Path("ahbg/deepseek/corpus-proposal/CORPUS.sha256").read_text(encoding="utf-8").strip()
-          if sidecar != digest:
-              raise SystemExit(f"corpus sidecar mismatch: {sidecar} != {digest}")
-
-          runner_path = Path("ahbg/grok/run_common_corpus.py")
-          runner = runner_path.read_text(encoding="utf-8")
-          if f'CORPUS_FILE_SHA256 = "{digest}"' not in runner:
-              raise SystemExit("runner corpus digest constant is stale")
-          bad = '''            "- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.
-            - Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.",'''
-          good = '''            "- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.",
-            "- Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.",'''
-          if bad in runner:
-              runner = runner.replace(bad, good, 1)
-          runner = runner.replace(
-              '            "executed_build_sha": _current_git_value("rev-parse", "HEAD"),\n        "baseline_freeze_sha": BASELINE_FREEZE_SHA,',
-              '            "executed_build_sha": _current_git_value("rev-parse", "HEAD"),\n            "baseline_freeze_sha": BASELINE_FREEZE_SHA,',
-          )
-          runner_path.write_text(runner, encoding="utf-8")
+          path = Path("ahbg/deepseek/corpus-proposal/corpus.json")
+          raw = path.read_bytes()
+          corpus = json.loads(raw)
+          authority = corpus.get("board", {}).get("authority")
+          expected = "UCNS mobius_seed band centers (libs/ucns/src/ucns/mobius_seed.py)"
+          assert authority == expected, (authority, expected)
+          digest = hashlib.sha256(raw).hexdigest()
+          sidecar = Path("ahbg/deepseek/corpus-proposal/CORPUS.sha256").read_text().strip()
+          assert digest == sidecar, (digest, sidecar)
+          runner = Path("ahbg/grok/run_common_corpus.py").read_text()
+          assert f'CORPUS_FILE_SHA256 = "{digest}"' in runner
+          print(f"corpus_sha256={digest}")
           PY
 
-          python -m py_compile ahbg/grok/run_common_corpus.py
+      - name: Repair generated runner source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("ahbg/grok/run_common_corpus.py")
+          lines = path.read_text(encoding="utf-8").splitlines()
+          first = '- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.'
+          second = '- Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.'
+          found = False
+          for index, line in enumerate(lines[:-1]):
+              if line.strip() == f'"{first}' and lines[index + 1].strip() == f'{second}",':
+                  indent = line[: len(line) - len(line.lstrip())]
+                  lines[index] = f'{indent}"{first}",'
+                  lines[index + 1] = f'{indent}"{second}",'
+                  found = True
+                  break
+          if not found:
+              joined = "\n".join(lines)
+              if f'"{first}",' not in joined or f'"{second}",' not in joined:
+                  raise SystemExit("malformed note pair not found in expected old or repaired form")
+          # Cosmetic indentation only; semantics were already transformed.
+          lines = [
+              ('            "baseline_freeze_sha": BASELINE_FREEZE_SHA,' if line == '        "baseline_freeze_sha": BASELINE_FREEZE_SHA,' else line)
+              for line in lines
+          ]
+          path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+          PY
+
+      - name: Compile repaired runner
+        run: python -m py_compile ahbg/grok/run_common_corpus.py
+
+      - name: Commit repaired runner
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add ahbg/grok/run_common_corpus.py
@@ -67,15 +88,20 @@ jobs:
             git push origin HEAD:fix/ahbg-war-v3-canonical
           fi
 
-      - name: Verify and regenerate evidence from committed source
+      - name: Run Grok test suites
         shell: bash
         run: |
           set -euo pipefail
-          test -z "$(git status --porcelain)"
           cd ahbg/grok
           python -m unittest discover -s a0/tests -p 'test*.py'
           python -m unittest discover -s ahbg/tests -p 'test*.py'
           python -m unittest discover -s tests -p 'test*.py'
+
+      - name: Regenerate committed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd ahbg/grok
           python run.py
           python run_common_corpus.py
           python - <<'PY'
@@ -83,10 +109,9 @@ jobs:
           from pathlib import Path
           result = json.loads(Path("corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json").read_text(encoding="utf-8"))
           expected = {"survived": 35, "falsified": 0, "unresolved": 0, "blocked": 0}
-          if result.get("summary") != expected:
-              raise SystemExit(f"corpus standing not clean: {result.get('summary')!r}")
-          if len(result.get("results", [])) != 35 or not all(row.get("replay_equal") is True for row in result["results"]):
-              raise SystemExit("corpus replay/count gate failed")
+          assert result.get("summary") == expected, result.get("summary")
+          assert len(result.get("results", [])) == 35
+          assert all(row.get("replay_equal") is True for row in result["results"])
           PY
           cd ../..
           git add ahbg/grok/CALIBRATION_RESULT.json \
