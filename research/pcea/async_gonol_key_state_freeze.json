@@ -1,0 +1,108 @@
+{
+  "comparison": {
+    "comparison_scope": "topology/control comparison with equal root entropy",
+    "nonclaims": [
+      "not PCEA runtime behavior",
+      "not stack/libs/pcea mutation",
+      "not UCNS recursive-scale canon",
+      "not a public-key construction",
+      "not entropy from gonol size, geometry, or address space",
+      "not cryptographic hardness evidence"
+    ],
+    "ordinary_linear_ratchet": {
+      "compromise_containment": "strong only when old chain keys are deleted and forward ratcheting continues",
+      "recovery": "loss of current state can block future messages unless a higher-level resync path exists",
+      "replay_resistance": "requires nonce/message-number cache or AEAD nonce discipline",
+      "synchronization": "ordered delivery is natural; out-of-order delivery needs skipped-key storage or auxiliary headers"
+    },
+    "ordinary_tree_kdf": {
+      "compromise_containment": "can isolate branches when independent subkeys are derived and erased",
+      "recovery": "path disclosure can help resync but may expose metadata",
+      "replay_resistance": "requires used-leaf tracking or nonce discipline",
+      "synchronization": "addressable branches support sparse derivation and out-of-order delivery"
+    },
+    "pcea_gonol_addressed_candidate": {
+      "compromise_containment": "no advantage is credited from gonol geometry; containment depends on secret separation, deletion, and ratcheting policy",
+      "recovery": "address/path/state receipts can support resync, but public metadata leakage must be attacked",
+      "replay_resistance": "coordinate reuse is rejected only when the receiver tracks accepted coordinates",
+      "synchronization": "public gonol path/position/epoch/message coordinates allow lazy out-of-order derivation"
+    },
+    "standing": {
+      "compromise_containment": "unresolved; no better than tree KDF without additional evidence",
+      "recovery": "partial candidate; needs loss and metadata-leakage tests",
+      "replay_resistance": "survives only with explicit replay cache or nonce discipline",
+      "security_basis": "external secret entropy plus approved KDF only",
+      "synchronization": "survives as an addressability candidate"
+    }
+  },
+  "derived_next_gonol": {
+    "standing": "candidate value under OPERATOR_ID, not UCNS canon",
+    "value": 164513086777
+  },
+  "hmmm": [
+    "exact UCNS recursive-scale transition law remains unresolved",
+    "the observed sequence has no source-level transition operator in the current stack refresh or migrated PCEA research lane",
+    "candidate key schedule needs attack review before any promotion"
+  ],
+  "key_derivation": {
+    "address_bound_fields": [
+      "protocol_label",
+      "operator_id",
+      "gonol_size",
+      "recursive_path",
+      "position",
+      "epoch",
+      "message_counter",
+      "state_digest",
+      "transcript_digest"
+    ],
+    "entropy_basis": "root_secret only",
+    "kdf_shape": "HMAC-SHA256 expansion over canonical address payload",
+    "materialization": "lazy single-coordinate derivation",
+    "replay_control": "receiver-side coordinate cache or equivalent nonce discipline required"
+  },
+  "nonclaims": [
+    "not PCEA runtime behavior",
+    "not stack/libs/pcea mutation",
+    "not UCNS recursive-scale canon",
+    "not a public-key construction",
+    "not entropy from gonol size, geometry, or address space",
+    "not cryptographic hardness evidence"
+  ],
+  "observed_sequence": [
+    157,
+    2881,
+    54837698421
+  ],
+  "operator": {
+    "basis": "minimal constant-second-difference interpolation over observation index",
+    "first_difference": 2724,
+    "formula": "y_i = y_0 + i*d_1 + (i*(i-1)//2)*d_2",
+    "operator_id": "pcea.async_gonol.observation_second_difference.v1",
+    "operator_standing": "candidate observation replay, not UCNS recursive-scale canon",
+    "second_difference": 54837692816,
+    "source_values": [
+      157,
+      2881,
+      54837698421
+    ],
+    "y_0": 157
+  },
+  "receipt_digest": "cbc1343a69bc3b72a93351348ab0cba4962b25d06cd27bc9450f722a4f11814f",
+  "replay": {
+    "matches_observation": true,
+    "values": [
+      157,
+      2881,
+      54837698421
+    ]
+  },
+  "schema": "pcea.async-gonol-key-state.freeze.v1",
+  "source_identities": {
+    "legacy_gonal_architecture_blob": "a24e31110521b30ca941bf151b99458a06c910af",
+    "legacy_research_source_commit": "ecf2ca0dec38bef29382e02121b0edde66763aa9",
+    "pcea_cleanup_commit": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
+    "pinned_public_gonol_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+    "stack_refresh_commit": "eaec7fd6ee4e829b6fae10a2c6d520b35857137d"
+  }
+}
