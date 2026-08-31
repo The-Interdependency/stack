@@ -1,9 +1,10 @@
 {
-  "branch": "main",
+  "baseline_freeze_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "branch": "fix/ahbg-war-v3-canonical",
   "builder": "Grok",
   "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
-  "corpus_file_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
-  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "corpus_file_sha256": "bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed",
+  "executed_build_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
   "results": [
     {
       "event_count": 10,
@@ -48,7 +49,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "2acbb5be00c2d041422320509975998c41048d46b14c628b48ccca854d4f7f39"
+      "world_digest": "01295292f5e0f76610c035bee5ecdc053a52d05ccfbbbaed55de30087fc515a3"
     },
     {
       "event_count": 7,
@@ -93,7 +94,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "8773ea04991e19ccdad7c1fcb5fc061d05dea7621396ec49a735d4c10dc3c14a"
+      "world_digest": "1eae743104268ca8a12e663302b28a9f73760a04a5688d64d9154c99eb83617c"
     },
     {
       "event_count": 10,
@@ -138,7 +139,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "b40665c0125cdc0bd05ce1bf58605558f6780461897234318084bee1e70c0236"
+      "world_digest": "043151c3ee6d7cb832f1fb86e614189abecacf9b39c441f9c0e57579f57dc301"
     },
     {
       "event_count": 7,
@@ -183,7 +184,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "62d10f4de751157423e5f41777621f27d5354b7189a3fa67ad8f07098f80afd1"
+      "world_digest": "189d222590693b583b0e7e87a80abbd548440ae65aa67eea3d464015850ac589"
     },
     {
       "event_count": 10,
@@ -228,7 +229,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "459759e1c6ca6bee6962e8bb77aad98f454f323b5aab61b86879cc735dd827ca"
+      "world_digest": "b0119bee323b6af2933ee2bd1f9e84bed6df5ce64ca64f1439fe2efa0cc4797d"
     },
     {
       "event_count": 7,
@@ -273,7 +274,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "9816252c042a63effa6c4376c364c7cbd90e2b767d01d7940cf776b3e066639f"
+      "world_digest": "15185dfb926c1fcf8168317aabc98a3cb70e466a984e61d765a1ea4510a9744e"
     },
     {
       "event_count": 7,
@@ -318,7 +319,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "e57e6dab4c6b8fb0e3f097568774075233d72cf1a5cef6184469781335856dba"
+      "world_digest": "7f4827d3bada4b264a0cb37d0faa192f6768589c4260f755711f4f969b60bd68"
     },
     {
       "event_count": 7,
@@ -363,7 +364,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "c275cc072c5a89e1ba05a99256424910f806bbb398f88dbd511e3b0ddf8a0be7"
+      "world_digest": "d3e73a519c9cebfded225448b9e1031a5f30151c57b45af9baa519c41fabffd4"
     },
     {
       "event_count": 10,
@@ -408,7 +409,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "d37bedb0578bcb1ea3e71096190aeff410c15c756ce0a00bbfad9829f14fb93b"
+      "world_digest": "071255ded62112962f59337249b47078881e8b9876cd790dd8edfd27f43b883b"
     },
     {
       "event_count": 10,
@@ -453,7 +454,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "d7e30d06e5bedc5704a763191de9018313ea51d1853fccc2008d824847332bde"
+      "world_digest": "cde8f1760480578216842fffb391ee85968bf45017c93a61c310e5ca98d68e37"
     },
     {
       "event_count": 10,
@@ -498,7 +499,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "396c3ffe24fc66a0209eb13c8bf81785e1b5cd6fe143eaa900b7ee5fec73163f"
+      "world_digest": "6c8bb6d687a37229950a820307b803ec81512d8dafec1470e4fe13470e35e2bb"
     },
     {
       "event_count": 10,
@@ -543,7 +544,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "65eb1fd5e0bee449c5614e469b169c02004c6c183bb3fdba32b6f7df244368c8"
+      "world_digest": "1f53a3012830960ffd0b10118fa6422762570db087893d49b5bf13c6953b675a"
     },
     {
       "event_count": 10,
@@ -588,7 +589,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "540c692936bafa9cc3e1dde26ece1eae8fd4ee4bafc8d4fa8b44ba0044560c45"
+      "world_digest": "69c8ae81549e3e6cd2c0627c0550c1839b0a6f024d636cfad420b1413e5cca41"
     },
     {
       "event_count": 10,
@@ -633,7 +634,7 @@
       "telemetry_records": 8,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "363af2ab133851efb8dd27cce8f131612efbfa9b0499343cd6a75788fe6e8113"
+      "world_digest": "8239dd30a1dcc61fe1212cb8093ba4a5a8d42547d58c4d146d693550cacfefca"
     },
     {
       "event_count": 10,
@@ -678,7 +679,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "9c284e168bc6f162dfbdb3a2464a555a379e564ced9f5ae3859904a539f3748b"
+      "world_digest": "3bdcf3447d5c6dbd36fc2191fd4c776e2e06d3c35c232402e7e0d99f1ae7cbb2"
     },
     {
       "event_count": 10,
@@ -723,7 +724,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "93de8a50c7645eec565a17e50ddb974f2e9ad479fd96d52fcc7e130d6844dd66"
+      "world_digest": "b4d3155f9ad1b54b110aa18d009e4817b33d42b028bab8dddc3f8ae7d9ebdce0"
     },
     {
       "event_count": 10,
@@ -768,7 +769,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "5da826678fdbaca6f34816c5a4c8d2db154f9976882d482b376efb24b5f5a882"
+      "world_digest": "5680457045e762760b88e4f98743523e1e61cf3a48515f52a27883b5a8c580f1"
     },
     {
       "event_count": 10,
@@ -813,7 +814,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "4b010b7edb205ae9253cbbcad0696fb4c796ba840af41eb608d347a6136b21e5"
+      "world_digest": "ef760df39057fb39d5a4e00698ace2667d4db4cf99c71310a76bbe9115d9eaf6"
     },
     {
       "event_count": 10,
@@ -858,7 +859,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "bcc6baadf84f56c1c78a8f7db2c759e0039a46cc8c6bb0df845ca24b57144859"
+      "world_digest": "83548915339a5c673bc0838a75dde2a8f37172c6234504632dc2fc28c0a537ac"
     },
     {
       "event_count": 10,
@@ -903,7 +904,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "64f42b8678fd1a35049a8f460a6284630c879042fb3a23e91e088047e1de5d30"
+      "world_digest": "315204361d4df194411b83aaa203ec4c09fe39ed945fff38e68ce1e8645e8ae3"
     },
     {
       "event_count": 7,
@@ -948,7 +949,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "54c4dd858041f27afa3b6244cb0f9bcdc821ed4286addaccbff969e861ab92dc"
+      "world_digest": "0ff78bb23046e9e3d03e324e3ba53505527eb984ee6a0ca4fb767267a69a61ba"
     },
     {
       "event_count": 7,
@@ -993,7 +994,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "273d489072b7416a6b6f8ada8512054c2171afe1753d7a0a39e9b5c6e41c6369"
+      "world_digest": "f313c5c8771072d0dc5031398188cf0d3272de45658974323e008299c6d95fa6"
     },
     {
       "event_count": 10,
@@ -1038,7 +1039,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "7b75e78197b0149c19883f4998e5fb7535fae28f626d6b19975446a28e82db9e"
+      "world_digest": "102a80f7f0381157fa95536a6960b80e52d8ce0f8d8970f7749966f9a3527163"
     },
     {
       "event_count": 10,
@@ -1083,7 +1084,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "416304a39c79227f48b2ab7cd6b545206dca43f2aa84a3ec4da7af99aca4e0a9"
+      "world_digest": "db132406c8d7ac01c6717e74242b8507e2dd274034f250d2c1813e1405af38f5"
     },
     {
       "event_count": 10,
@@ -1128,7 +1129,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "af3a0c4edc6f9bbb1882ac6b746ac2b866b87a0f67b67634288cd880e6b0999f"
+      "world_digest": "9d5a6e00a9cd5d69e5c0effbe7bfb8db940538d66f6a938a132d282106e50037"
     },
     {
       "event_count": 10,
@@ -1173,7 +1174,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "603af2b90b7b833e4740154cf18ca2b36cfcc5e87994bc9e2919bf131fa807be"
+      "world_digest": "44037a85fa62b0a295342e329a9512f37b7013c5796dcd730ef186c56090c118"
     },
     {
       "event_count": 11,
@@ -1218,7 +1219,7 @@
       "telemetry_records": 6,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "0b2e0c2e74f4adddde521daf2d73310dbf1d67bda5310cd994285c3f7112e4d5"
+      "world_digest": "e9dec44497670b83ad9cd585d03eddb1b67446c692488bcb74e5a685aa30d3f8"
     },
     {
       "event_count": 7,
@@ -1263,7 +1264,7 @@
       "telemetry_records": 5,
       "turns": 2,
       "unresolved_hmmm": 0,
-      "world_digest": "0f8df7b89f01189489c4ba1f1b6727da94d1d7923684e3012a6980b69ac31078"
+      "world_digest": "2f738a9b7e7047d8e7109d3ebd3156805350b7ba840da0a4c937755387ce9827"
     },
     {
       "event_count": 7,
@@ -1308,7 +1309,7 @@
       "telemetry_records": 5,
       "turns": 2,
       "unresolved_hmmm": 0,
-      "world_digest": "1767d36df8c6ed4097237f048aa320715b194bf2c361fcd83654ac713f4e0085"
+      "world_digest": "a99ed95bd19f6c95eae7e509fbec2f331892e71742a0fda86d957bbff62cfe67"
     },
     {
       "event_count": 10,
@@ -1353,7 +1354,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "538d25ada086b10c7a1b8f1d5599ead64fc13a51aec94be65ceca91f73b96333"
+      "world_digest": "dbd8ba3ce7c5dcc1c465967d7bdc06e43657c9e9f035d0889840462c1943f957"
     },
     {
       "event_count": 7,
@@ -1398,7 +1399,7 @@
       "telemetry_records": 5,
       "turns": 3,
       "unresolved_hmmm": 0,
-      "world_digest": "dcdf43028f1a04504a4d2adcf4010a07bcf344d3d790cef2ab347dd38d4a7c7b"
+      "world_digest": "c6e82183753b7871af3473226a1e3e74ddbff8d66ac5cfb0d25fb4a1dde45e3a"
     },
     {
       "event_count": 19,
@@ -1443,7 +1444,7 @@
       "telemetry_records": 8,
       "turns": 6,
       "unresolved_hmmm": 0,
-      "world_digest": "3627bcac74b64e1f80fc30c4843eb8414cecc4e49bc5c9ff1970588724bd44e9"
+      "world_digest": "7358f376186e1b858ac52b6fb381a22a553e26a6a7f36e4d3840304b25dddec0"
     },
     {
       "event_count": 7,
@@ -1488,10 +1489,10 @@
       "telemetry_records": 5,
       "turns": 2,
       "unresolved_hmmm": 0,
-      "world_digest": "925c6d9539a3ec60e9b93106483158ecf33fc78e2495e3909f14ddf5a3f10988"
+      "world_digest": "419a6c83680d73cc1a39fc14d3cc0b2456cdf91a325d98b8ac6083e5e2e464b8"
     },
     {
-      "event_count": 5,
+      "event_count": 4,
       "evidence_standing": "SURVIVED",
       "expected_standing": "SURVIVED",
       "family": "smoke",
@@ -1533,10 +1534,10 @@
       "telemetry_records": 3,
       "turns": 1,
       "unresolved_hmmm": 0,
-      "world_digest": "d843599a5cbb309000bfc425623036942af9e791bb3b5b8838dcbf281ccc103e"
+      "world_digest": "cbbfe2daaf633c16524801039fad44c89807df9e4a23f65c7a981836d428fc20"
     },
     {
-      "event_count": 7,
+      "event_count": 5,
       "evidence_standing": "SURVIVED",
       "expected_standing": "SURVIVED",
       "family": "smoke",
@@ -1578,12 +1579,12 @@
       "telemetry_records": 3,
       "turns": 1,
       "unresolved_hmmm": 0,
-      "world_digest": "142a9b15ce20f727cf9e6f01f303b1abeb759cf474dbe510485a51d2a0b31bd8"
+      "world_digest": "ea80eff54fc5fb0c8589716195b3b1b586fac396a320b0e14694a04c96a5c1a2"
     }
   ],
-  "runner_commit_sha": "5e4c8fa1e2212a40721f56e5fac6d52af3e3d5cc",
+  "runner_commit_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
   "scenario_corpus": "calibration-family/1.0.1-proposal-1",
-  "schema": "interdependency.ahbg.grok.common-corpus-result/1.0.0",
+  "schema": "interdependency.ahbg.grok.common-corpus-result/1.1.0",
   "standing_vocabulary": [
     "SURVIVED",
     "FALSIFIED",

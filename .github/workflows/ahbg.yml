@@ -1,0 +1,69 @@
+name: ahbg
+
+on:
+  push:
+    paths:
+      - "ahbg/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg.yml"
+  pull_request:
+    paths:
+      - "ahbg/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  grok-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Grok a0 tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s a0/tests -p 'test*.py'
+
+      - name: Grok ahbg tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s ahbg/tests -p 'test*.py'
+
+      - name: Grok common-corpus tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s tests -p 'test*.py'
+
+      - name: Grok smoke epoch run
+        working-directory: ahbg/grok
+        run: python run.py
+
+      - name: Grok common corpus run (35 scenarios, temp output)
+        working-directory: ahbg/grok
+        shell: bash
+        run: |
+          set -euo pipefail
+          python run_common_corpus.py --output /tmp/ahbg-grok-corpus-run
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          result = json.loads(
+              Path("/tmp/ahbg-grok-corpus-run/CALIBRATION_RESULT.json").read_text(encoding="utf-8")
+          )
+          summary = result.get("summary", {})
+          expected = {
+              "survived": 35,
+              "falsified": 0,
+              "unresolved": 0,
+              "blocked": 0,
+          }
+          if summary != expected or len(result.get("results", [])) != 35:
+              raise SystemExit(
+                  f"common corpus is not clean: summary={summary!r}, results={len(result.get('results', []))}"
+              )
+          if not all(row.get("replay_equal") is True for row in result["results"]):
+              raise SystemExit("common corpus contains a non-replay-equal scenario")
+          PY

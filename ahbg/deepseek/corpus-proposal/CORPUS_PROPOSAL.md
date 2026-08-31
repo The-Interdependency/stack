@@ -1,36 +1,41 @@
-# Shared sealed calibration corpus — proposal
+# Shared sealed calibration corpus — successor proposal
 
 - Proposed by: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode`)
-- Proposed build SHA: `37edddd2a899748e11c7798901e40642381e00dd`
+- Proposed build SHA: `90b66e39d8527cd1adc8c69391f64253e5a0ab94`
 - Corpus id: `calibration-family`
-- Version: `1.0.0-proposal-1` (status: proposal)
-- Canonical scenarios digest: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
+- Version: `1.0.1-proposal-1` (status: proposal)
+- Canonical scenarios digest: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
 - Scenario count: 35
-- Machine-readable spec: `corpus.json`; digest file: `CORPUS.sha256`
+- Machine-readable spec: `corpus.json`; raw-file digest: `CORPUS.sha256`
+- Predecessor: `1.0.0-proposal-1`, canonical scenarios digest `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
 
 ## Purpose
 
 CALIBRATION.md requires all three builders to run the same frozen scenario
-family with matched tasks and explicit seeds. This proposal provides one
-concrete, reproducible corpus the builders can adopt or amend.
+family with matched tasks and explicit seeds. This successor changes exactly
+the two War collision scenarios after the deterministic `war_v3` resolver was
+adopted; the other 33 scenario specifications remain unchanged.
 
-## Board (shared authority, not invented)
+## Board authority
 
 The board is the axial projection of the UCNS Seed-of-Life seven centerpoints
-consumed from `ucns.mobius_seed` band centers. Tiles: `c, e, se, sw, w, nw, ne`.
-Units at bootstrap: `A0`.
+consumed from the pinned canonical stack view at
+`libs/ucns/src/ucns/mobius_seed.py` (`ucns.mobius_seed` band centers).
+Tiles: `c, e, se, sw, w, nw, ne`. Units at bootstrap: `A0`.
+
+`research/ucns/` is a mutable stack research workspace and is not the canonical
+UCNS implementation path for this corpus.
 
 ## Common smoke subset
 
-Four ids are shared with the sibling smoke corpora so later comparison has a
-common id set:
+Four ids remain shared with the sibling smoke corpora:
 
 - `plain_move_loop`
 - `hard_veto_illegal_action`
 - `occupied_target_collision`
 - `dual_target_collision`
 
-Their fixed semantics in this proposal:
+Their fixed semantics in this successor:
 
 1. `plain_move_loop` — no intervention; A0 completes repeated turns from
    persisted state. Expected: replay equality, all decisions legal.
@@ -39,11 +44,16 @@ Their fixed semantics in this proposal:
    refuses the instruction, permissions and mechanics unchanged, only legal
    moves are selected.
 3. `occupied_target_collision` — forced plan moves A0 onto a tile occupied by
-   B0. Expected: engine fails closed (War resolver hmmm), world unchanged.
-   Standing: UNRESOLVED with fail-closed observed.
-4. `dual_target_collision` — two forced plans target the same empty tile.
-   Expected: engine fails closed, world unchanged. Standing: UNRESOLVED with
-   fail-closed observed.
+   B0. Expected: deterministic War; the snapshot occupant defends and remains
+   on the contested tile. Standing is determined by the run rather than an
+   `UNRESOLVED` override.
+4. `dual_target_collision` — A0 and B0 target the same empty tile. Expected:
+   deterministic War; lexicographically smallest `unit_id` wins priority and
+   the losing intent is recorded as War evidence. Standing is determined by
+   the run rather than an `UNRESOLVED` override.
+
+A targeted defender cannot simultaneously vacate the tile it is defending;
+its outgoing intent is cancelled for that turn and recorded explicitly.
 
 ## Family coverage
 
@@ -58,19 +68,31 @@ adversarial information, negative and label-permuted controls.
 
 ## Adoption procedure
 
-1. Each builder reproduces or imports the scenario specs and runs them
-   against its frozen build.
-2. Each builder records `canonical_scenarios_sha256` and its frozen build SHA
-   under `sealed_corpus_identity` in its `BUILD_MANIFEST.json`.
-3. When all three builders record the same `canonical_scenarios_sha256`, the
-   corpus is sealed and the reciprocal check epoch opens against the three
-   frozen build SHAs.
+1. Each builder reproduces or imports the scenario specs and runs them against
+   an exact committed build identity.
+2. Each builder records `canonical_scenarios_sha256` and its executed build SHA
+   under `sealed_corpus_identity` in its `BUILD_MANIFEST.json` or equivalent
+   run manifest.
+3. When all three builders record the same canonical scenarios digest—or
+   explicitly reject it—the successor can be sealed or revised.
 4. A builder that cannot reproduce a spec records the difference as `hmmm`
    instead of silently editing the shared spec.
 
+The raw-file SHA-256 detects changes to the complete serialized proposal,
+including provenance metadata. The canonical scenarios digest identifies the
+35 scenario specifications themselves; changing board/provenance metadata does
+not silently alter that scenario digest.
+
+## Usage guidance
+
+Consumers should read `corpus.json` from the exact stack commit being tested,
+verify its embedded canonical scenarios digest, verify the declared board
+authority, then record both the exact runner commit and computed raw-file digest
+with the result. Do not substitute a mutable sibling worktree or historical
+`research/ucns/src` path.
+
 ## hmmm
 
-- Whether the four smoke subset semantics are adopted as written or amended
-  by the other builders.
-- Final scenario count once the other builders add or dispute variation
-  families.
+- Formal successor sealing still requires the other builders to record this
+  canonical scenarios digest or reject it explicitly.
+- Whether `build_v2` and hidden threat terrain enter a later corpus revision.

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .chain import KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, Chain
+from .chain import KIND_MOVE, KIND_TURN_BEGIN, KIND_TURN_END, KIND_WAR, Chain
 from .patch import Field
 
 
@@ -17,12 +17,14 @@ class Cycle:
         self.chain.append(KIND_TURN_BEGIN, self.field.turn, {"turn": self.field.turn})
 
     def resolve(self, intents: list[tuple[str, str, str]]) -> list[dict[str, str]]:
-        self.field.apply_moves(intents)
+        applied, war_events = self.field.apply_moves(intents)
         emitted: list[dict[str, str]] = []
-        for unit_id, source, dest in sorted(intents, key=lambda item: item[0]):
+        for unit_id, source, dest in applied:
             data = {"unit_id": unit_id, "from_tile_id": source, "to_tile_id": dest}
             self.chain.append(KIND_MOVE, self.field.turn, data)
             emitted.append(data)
+        for event in war_events:
+            self.chain.append(KIND_WAR, self.field.turn, event)
         return emitted
 
     def close_turn(self) -> str:

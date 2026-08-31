@@ -1,3 +1,13 @@
+"""Regression tests for the Grok AHBG shared-corpus runner.
+
+Usage guidance:
+    Focused: ``cd ahbg/grok && python -m unittest tests.test_common_corpus``
+    Full Grok tests: ``cd ahbg/grok && python -m unittest discover -s tests -p 'test*.py'``
+
+The raw corpus SHA guards the exact serialized successor proposal; the canonical
+scenario SHA separately guards the unchanged 35-scenario specification set.
+"""
+
 from __future__ import annotations
 
 import json
@@ -25,7 +35,7 @@ class CommonCorpusRunnerTests(unittest.TestCase):
         self.assertEqual(identity["file_sha256"], CORPUS_FILE_SHA256)
         self.assertEqual(
             identity["file_sha256"],
-            "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+            "bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed",
         )
         self.assertEqual(identity["canonical_scenarios_sha256"], CORPUS_SCENARIOS_SHA256)
         self.assertEqual(
@@ -126,7 +136,6 @@ class CommonCorpusRunnerTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             result = run_scenario(scenario, Path(tmp))
             self.assertTrue((Path(tmp) / "occupied_target_collision" / "RESULT.json").is_file())
-        # War resolved: defender holds, board state is produced.
         self.assertEqual(result["observed_standing"], "SURVIVED")
         self.assertEqual(result["evidence_standing"], "SURVIVED")
         self.assertEqual(result.get("unresolved_hmmm", 0), 0)

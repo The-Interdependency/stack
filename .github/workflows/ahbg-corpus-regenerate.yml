@@ -1,0 +1,86 @@
+name: ahbg-corpus-regenerate-once
+
+on:
+  push:
+    branches:
+      - fix/ahbg-war-v3-canonical
+    paths:
+      - .github/workflows/ahbg-corpus-regenerate.yml
+      - ahbg/grok/tests/test_common_corpus.py
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify corpus identity and runner syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          path = Path("ahbg/deepseek/corpus-proposal/corpus.json")
+          raw = path.read_bytes()
+          corpus = json.loads(raw)
+          authority = corpus.get("board", {}).get("authority")
+          expected = "UCNS mobius_seed band centers (libs/ucns/src/ucns/mobius_seed.py)"
+          assert authority == expected, (authority, expected)
+          digest = hashlib.sha256(raw).hexdigest()
+          sidecar = Path("ahbg/deepseek/corpus-proposal/CORPUS.sha256").read_text().strip()
+          assert digest == sidecar, (digest, sidecar)
+          runner = Path("ahbg/grok/run_common_corpus.py").read_text()
+          assert f'CORPUS_FILE_SHA256 = "{digest}"' in runner
+          print(f"corpus_sha256={digest}")
+          PY
+          python -m py_compile ahbg/grok/run_common_corpus.py
+
+      - name: Grok a0 tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s a0/tests -p 'test*.py'
+
+      - name: Grok AHBG field tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s ahbg/tests -p 'test*.py'
+
+      - name: Grok common-corpus tests
+        working-directory: ahbg/grok
+        run: python -m unittest discover -s tests -p 'test*.py'
+
+      - name: Regenerate committed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cd ahbg/grok
+          python run.py
+          python run_common_corpus.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          result = json.loads(Path("corpus-run/calibration-family-1.0.1-proposal-1/CALIBRATION_RESULT.json").read_text(encoding="utf-8"))
+          expected = {"survived": 35, "falsified": 0, "unresolved": 0, "blocked": 0}
+          assert result.get("summary") == expected, result.get("summary")
+          assert len(result.get("results", [])) == 35
+          assert all(row.get("replay_equal") is True for row in result["results"])
+          PY
+          cd ../..
+          git add ahbg/grok/CALIBRATION_RESULT.json \
+                  ahbg/grok/EVENTS.jsonl \
+                  ahbg/grok/artifacts \
+                  ahbg/grok/corpus-run/calibration-family-1.0.1-proposal-1
+          if ! git diff --cached --quiet; then
+            git commit -m "chore(ahbg): regenerate evidence from committed war_v3 source"
+            git push origin HEAD:fix/ahbg-war-v3-canonical
+          fi

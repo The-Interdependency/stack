@@ -20,7 +20,8 @@ Usage pattern (from stack/ahbg/grok):
     # ... drive turns using driver.empty_neighbors(unit), driver.submit_choice(...)
 
 The adapters normalize tile ids and observation shape while preserving each
-board's collision and replay semantics (War remains UnresolvedHmmm / ClosedUnknown).
+foreign board's collision and replay semantics (Codex/DeepCode War stays
+UnresolvedHmmm; Grok's own board resolves war_v3 deterministically).
 """
 
 from .codex import CodexBoardDriver
