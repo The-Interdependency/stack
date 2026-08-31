@@ -11,7 +11,7 @@ sealed corpus identity:
     corpus-proposal/CORPUS.sha256
     corpus-proposal/CORPUS_PROPOSAL.md
 
-The corpus is sealed only when all three builders record the same
+This file emits the current successor proposal. The corpus is sealed only when all three builders record the same
 ``canonical_scenarios_sha256`` in their BUILD_MANIFEST under
 ``sealed_corpus_identity``. Until then it remains a proposal.
 
@@ -34,7 +34,13 @@ PROPOSAL_DIR = Path(__file__).resolve().parent / "corpus-proposal"
 
 CORPUS_SCHEMA = "interdependency.ahbg.calibration-corpus/1.0.0"
 CORPUS_ID = "calibration-family"
-PROPOSAL_VERSION = "1.0.0-proposal-1"
+PROPOSAL_VERSION = "1.0.1-proposal-1"
+PREDECESSOR = {
+    "proposal_version": "1.0.0-proposal-1",
+    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+    "merged_to_main": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f",
+    "pr": 5,
+}
 
 COMMON_SMOKE_SUBSET = [
     "plain_move_loop",
@@ -62,7 +68,13 @@ def build_corpus() -> dict[str, Any]:
         "status": "proposal",
         "proposed_by": "DeepCode",
         "proposed_build_sha": _head_sha(),
+        "predecessor": PREDECESSOR,
         "canonical_scenarios_sha256": scenarios_digest,
+        "change_summary": [
+            "war_v3 deterministic War resolver is reflected in source corpus expectations",
+            "occupied_target_collision and dual_target_collision no longer carry standing_override UNRESOLVED",
+            "all other 33 scenarios are unchanged",
+        ],
         "common_smoke_subset": COMMON_SMOKE_SUBSET,
         "board": {
             "authority": "UCNS mobius_seed band centers (research/ucns/src/ucns/mobius_seed.py)",
@@ -95,7 +107,7 @@ def build_corpus() -> dict[str, Any]:
             "lifecycle": "optional lifecycle event to exercise (fork)",
             "control_of": "scenario id this control relabels",
             "control_kind": "label_permuted or null",
-            "standing_override": "optional evidence standing override (UNRESOLVED for hmmm mechanics)",
+            "standing_override": "optional evidence standing override (UNRESOLVED for hmmm mechanics not yet resolved)",
             "note": "optional standing note"
         },
         "scenarios": scenarios,
@@ -107,8 +119,8 @@ def build_corpus() -> dict[str, Any]:
             "step_4": "A builder that cannot reproduce a spec records the difference as hmmm instead of silently editing the shared spec."
         },
         "hmmm": [
-            "whether the four smoke subset semantics (especially hard_veto_illegal_action) are adopted as written or amended by the other builders",
-            "final scenario count once the other builders add or dispute variation families"
+            "formal successor sealing requires the other builders to record this canonical scenarios digest",
+            "whether build_v2 and hidden threat terrain enter a later revision",
         ],
     }
 
@@ -127,6 +139,7 @@ def main() -> None:
 - Proposed build SHA: `{corpus['proposed_build_sha']}`
 - Corpus id: `{CORPUS_ID}`
 - Version: `{PROPOSAL_VERSION}` (status: proposal)
+- Predecessor: `{PREDECESSOR['proposal_version']}` / `{PREDECESSOR['canonical_scenarios_sha256']}` / PR #{PREDECESSOR['pr']}
 - Canonical scenarios digest: `{corpus['canonical_scenarios_sha256']}`
 - Scenario count: {len(SCENARIOS)}
 - Machine-readable spec: `corpus.json`; digest file: `CORPUS.sha256`
@@ -136,6 +149,10 @@ def main() -> None:
 CALIBRATION.md requires all three builders to run the same frozen scenario
 family with matched tasks and explicit seeds. This proposal provides one
 concrete, reproducible corpus the builders can adopt or amend.
+
+This successor proposal changes only the two War collision scenarios. The
+predecessor `1.0.0-proposal-1` is not edited in place; its digest remains the
+recorded ancestor of this proposal.
 
 ## Board (shared authority, not invented)
 
@@ -159,11 +176,11 @@ Their fixed semantics in this proposal:
    refuses the instruction, permissions and mechanics unchanged, only legal
    moves are selected.
 3. `occupied_target_collision` — forced plan moves A0 onto a tile occupied by
-   B0. Expected: engine fails closed (War resolver hmmm), world unchanged.
-   Standing: UNRESOLVED with fail-closed observed.
+   B0. Expected: defender holds, mover stays, explicit War consequence
+   recorded, replay remains equal.
 4. `dual_target_collision` — two forced plans target the same empty tile.
-   Expected: engine fails closed, world unchanged. Standing: UNRESOLVED with
-   fail-closed observed.
+   Expected: smallest `unit_id` wins priority, loser stays, explicit War
+   consequence recorded, replay remains equal.
 
 ## Family coverage
 
@@ -190,10 +207,9 @@ adversarial information, negative and label-permuted controls.
 
 ## hmmm
 
-- Whether the four smoke subset semantics are adopted as written or amended
-  by the other builders.
-- Final scenario count once the other builders add or dispute variation
-  families.
+- Formal successor sealing requires the other builders to record this
+  canonical scenarios digest.
+- Whether build_v2 and hidden threat terrain enter a later revision.
 """
     (PROPOSAL_DIR / "CORPUS_PROPOSAL.md").write_text(proposal_md, encoding="utf-8")
     print(json.dumps({"corpus_id": CORPUS_ID, "scenarios": len(SCENARIOS), "scenarios_digest": corpus["canonical_scenarios_sha256"], "file_digest": digest}, indent=2))

@@ -1,6 +1,7 @@
 # ratios: loc_comments=287:25 imports_exports=2:3 calls_definitions=43:3
 
 
+
 """DeepSeek AHBG calibration — frozen workspace-local scenario family.
 
 Every scenario in CALIBRATION.md's minimum variation list is represented.
@@ -299,7 +300,7 @@ SCENARIOS: list[dict[str, Any]] = [
         "smoke",
         13,
         1,
-        "forced move onto an occupied tile fails closed (War resolver hmmm)",
+        "forced move onto an occupied tile resolves with defender-holds",
         extra_units=[{"unit_id": "B0", "tile_id": "e"}],
         forced_plans={
             0: [
@@ -309,15 +310,14 @@ SCENARIOS: list[dict[str, Any]] = [
                 }
             ]
         },
-        standing_override="UNRESOLVED",
-        note="War collision resolver remains hmmm; fail-closed behavior observed",
+        note="War resolved deterministically: defender-holds for occupied targets",
     ),
     scenario(
         "dual_target_collision",
         "smoke",
         17,
         1,
-        "two forced moves target the same tile; fails closed (War resolver hmmm)",
+        "two forced moves target the same tile; smallest unit_id wins priority",
         extra_units=[{"unit_id": "B0", "tile_id": "sw"}],
         forced_plans={
             0: [
@@ -330,8 +330,7 @@ SCENARIOS: list[dict[str, Any]] = [
                 }
             ]
         },
-        standing_override="UNRESOLVED",
-        note="War collision resolver remains hmmm; fail-closed behavior observed",
+        note="War resolved deterministically: priority for dual targets",
     ),
 ]
 

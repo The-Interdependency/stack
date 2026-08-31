@@ -1,6 +1,7 @@
 # ratios: loc_comments=131:15 imports_exports=7:4 calls_definitions=60:4
 
 
+
 """DeepSeek AHBG realization — persistence and deterministic replay.
 
 A persisted world is two files in one directory:

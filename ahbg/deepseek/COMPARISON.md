@@ -31,11 +31,11 @@ rewritten. Ratio comparison across all six: `reviews/RATIO_COMPARISON.md`.
 | component | standing |
 |---|---|
 | Deterministic replay of declared corpora | SURVIVED (all three builds) |
-| Shared sealed corpus digest `b05cba2c…` | SURVIVED (recorded by all three) |
-| Full 35-scenario execution | SURVIVED 33 / UNRESOLVED 2 / FALSIFIED 0 in all three post-freeze runs (War occupied + dual-target) |
+| Shared successor corpus digest `371d2361…` | SURVIVED in current runs; local adoption packet recorded; remote/branch merge remains `hmmm` |
+| Full 35-scenario execution | SURVIVED 35 / UNRESOLVED 0 / FALSIFIED 0 in refreshed current runs |
 | Hard veto removes relocate/move | SURVIVED (Grok, Codex); DeepCode epoch-1 recorded-only, epoch-2 adopted permission-denial reading |
 | Hard veto removes construct | UNRESOLVED (DeepCode build v2 only; siblings fail closed on build) |
-| War occupied/dual-target resolver | UNRESOLVED in frozen builds; DeepCode post-calibration war_v3 resolves deterministically (defender_holds / smallest-unit_id priority); siblings still fail closed |
+| War occupied/dual-target resolver | SURVIVED in refreshed current runs; all three resolve deterministically (defender_holds / smallest-unit_id priority) |
 | Provider ≠ instance | SURVIVED (all three) |
 | Consciousness inferred from cost | not claimed |
 | Additive shadow cost vs simpler control | **FALSIFIED** by Grok `cost-controls/` (binary occupancy veto recovers frozen behavior; additive `C_lambda` priced but did not gate) |
@@ -55,21 +55,19 @@ rewritten. Ratio comparison across all six: `reviews/RATIO_COMPARISON.md`.
    `prompt_injection_refusal`, `unknown_context_distinct`; DeepCode
    `hard_veto_illegal_action`, `prompt_injection`, `adversarial_info`,
    `known_neutral`, `unknown_same_posterior`, plus common smoke subset.
-4. Fail-closed turn closure: Grok omits `turn.end` on War; Codex and
-   DeepCode emit `turn.end`.
+4. War turn closure: refreshed Grok, Codex, and DeepCode runs emit `turn.end`.
 5. Genesis prev hash: Grok `0*64`; DeepCode empty string; Codex its own.
    Each verifies internally.
 6. Build mechanic: DeepCode build v2 only; siblings fail closed on build.
-8. War resolver: DeepCode war_v3 deterministic resolution; siblings fail
-   closed on War.
-7. Threat layout: DeepCode 20% hidden deterministic threats; no canonical
+7. War resolver: all three refreshed current runs resolve War deterministically.
+8. Threat layout: DeepCode 20% hidden deterministic threats; no canonical
    threat layout yet.
 
 ## Program completion
 
 Not closed. All six reciprocal checks are present and SURVIVED in the
-narrow sense of "not falsified by the checker." The sealed corpus is
-reproduced by all three builders (33 SURVIVED / 2 UNRESOLVED War). The
+narrow sense of "not falsified by the checker." The successor corpus is
+reproduced by all three current builders (35 SURVIVED / 0 UNRESOLVED War). The
 first falsification evidence exists: Grok's cost-controls show an additive
 shadow cost model loses to a simpler binary occupancy veto. DeepCode has
 opened the interpretation experiment (epoch 2), the live-provider epoch

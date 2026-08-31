@@ -40,8 +40,9 @@ extension evidence:
   persistence, replay, and artifact checker.
 - `run.py` — runs the sealed 35-scenario corpus, emits normalized artifacts
   under `artifacts/`, and enforces controls.
-- `scenarios.py` — the `calibration-family` scenario source (digest
-  `b05cba2c…e5e0`, merged to `main` via PR #5).
+- `scenarios.py` — the current `calibration-family/1.0.1-proposal-1`
+  scenario source (digest `371d2361…c835`; predecessor `1.0.0-proposal-1`
+  was merged to `main` via PR #5).
 - `epoch2.py` — shadow-veto interpretation experiment + active candidate
   model.
 - `epoch3.py` — bounded live-provider run of `a0(deepseek)`.

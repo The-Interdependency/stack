@@ -34,15 +34,20 @@
     "observables": "tokens, latency, tool calls/failures are recorded as real resource telemetry"
   },
   "sealed_corpus_identity": {
-    "status": "sealed",
+    "status": "successor-proposed-current-run-complete",
     "corpus": "calibration-family",
-    "proposal_version": "1.0.0-proposal-1",
+    "proposal_version": "1.0.1-proposal-1",
     "scenario_count": 35,
-    "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
-    "merged_to_main": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f via PR #5",
+    "corpus_json_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+    "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+    "predecessor": {
+      "proposal_version": "1.0.0-proposal-1",
+      "canonical_scenarios_sha256": "b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0",
+      "merged_to_main": "3a92c7b0f8568e6fc2600b45bca760030ea2ba3f via PR #5"
+    },
     "adopted_by": ["Grok", "Codex", "DeepCode"],
-    "reproduction_status": "partial: Grok ran smoke_epoch (4), Codex ran codex_smoke_epoch (6), DeepCode ran the full 35. Differences recorded as hmmm, not corpus edits.",
-    "note": "The sealed corpus does not yet include the build_v2 mechanic, hidden threat terrain, or the 30-layer whole-system test; those are DeepCode workspace extensions pending a shared corpus revision."
+    "reproduction_status": "current successor runs: Grok 35 SURVIVED / 0 UNRESOLVED; Codex 35 SURVIVED / 0 UNRESOLVED; DeepCode 35 SURVIVED / 0 UNRESOLVED.",
+    "note": "The successor corpus resolves war_v3 at source. It still does not include build_v2, hidden threat terrain, or the 30-layer whole-system test; those remain pending a later shared revision."
   },
   "live_epochs": {
     "epoch2": "interpretation experiment + active candidate model: shadow-veto interpretation shown load-bearing (8/35 scenarios differ); proposed resolution (hard veto = permission denial, gates; cost channels = shadow-only) adopted in the DeepCode workspace",
@@ -111,7 +116,7 @@
     {"sha": "09646b2", "change": "compact frontier observation (52.8x fewer tokens, identical outcome)"}
   ],
   "hmmm": [
-    "build_v2, war_v3, hidden threat terrain, and the 30-layer game are DeepCode workspace extensions not yet in the shared sealed corpus",
+    "build_v2, hidden threat terrain, and the 30-layer game are DeepCode workspace extensions not yet in the shared sealed corpus",
     "shadow-veto interpretation: DeepCode proposal (hard veto = permission denial gates; cost channels shadow-only) awaits source-authority or builder confirmation",
     "canonical threat layout for adversarial terrain",
     "full 30-layer play and its cost bounds",

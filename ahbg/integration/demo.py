@@ -1,5 +1,6 @@
 # ratios: loc_comments=55:10 imports_exports=9:1 calls_definitions=19:1
 
+
 """Post-calibration demo — one command, deterministic by default.
 
     python3 -m ahbg.integration.demo                  # deterministic, no key

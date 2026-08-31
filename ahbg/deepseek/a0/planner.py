@@ -1,6 +1,7 @@
 # ratios: loc_comments=80:23 imports_exports=2:2 calls_definitions=31:11
 
 
+
 """DeepSeek A0 decision-tree planner.
 
 The planner is bounded and canonical-only: it consumes the legal observation,

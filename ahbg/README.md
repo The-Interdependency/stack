@@ -66,7 +66,8 @@ DeepCode -> Codex
 
 Agreement is replication evidence, not truth by vote. Disagreement remains `hmmm` until source authority or experiment resolves it.
 
-See [`CALIBRATION.md`](CALIBRATION.md) for the complete protocol.
+See [`CALIBRATION.md`](CALIBRATION.md) for the complete protocol. The current
+local successor-corpus adoption packet is [`CORPUS_ADOPTION.md`](CORPUS_ADOPTION.md).
 
 ## Shared-line specialist responsibilities
 

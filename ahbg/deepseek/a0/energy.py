@@ -1,6 +1,7 @@
 # ratios: loc_comments=137:25 imports_exports=10:9 calls_definitions=44:13
 
 
+
 """A0 energy layer — pluggable provider abstraction.
 
 A0 treats an LLM as interchangeable *energy*, never as identity. This module:

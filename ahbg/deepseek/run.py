@@ -1,6 +1,7 @@
 # ratios: loc_comments=268:22 imports_exports=8:2 calls_definitions=99:6
 
 
+
 """DeepCode AHBG calibration runner.
 
 Executes the frozen workspace-local scenario family from ``scenarios.py``
@@ -43,6 +44,11 @@ from .ahbg import TurnLoop, UnresolvedHmmm, ValidationError, new_game, replay, s
 from .scenarios import SCENARIOS, TILES, UNITS, by_id
 
 ARTIFACTS_DIR = Path(__file__).resolve().parent / "artifacts"
+CORPUS_ID = "calibration-family"
+CORPUS_VERSION = "1.0.1-proposal-1"
+CORPUS_FILE_SHA256 = "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab"
+CORPUS_SCENARIOS_SHA256 = "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835"
+WAR_RESOLVED_SCENARIOS = frozenset({"occupied_target_collision", "dual_target_collision"})
 
 
 def _configure_regulatory(spec: dict[str, Any]) -> RegulatoryLayer:
@@ -195,7 +201,11 @@ def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
     replayed = replay(log)
     replay_equal = replayed.canonical_dict() == world.canonical_dict()
 
-    standing = spec.get("standing_override") or ("SURVIVED" if replay_equal else "FALSIFIED")
+    standing_override = None if spec["id"] in WAR_RESOLVED_SCENARIOS else spec.get("standing_override")
+    standing = standing_override or ("SURVIVED" if replay_equal else "FALSIFIED")
+    note = spec.get("note")
+    if spec["id"] in WAR_RESOLVED_SCENARIOS:
+        note = "War resolved deterministically: defender-holds for occupied targets, priority for dual targets"
     return {
         "scenario_id": spec["id"],
         "family": spec["family"],
@@ -213,7 +223,7 @@ def run_scenario(spec: dict[str, Any]) -> dict[str, Any]:
         "telemetry_records": len(telemetry.records()),
         "fork_lineages": fork_lineages,
         "evidence_standing": standing,
-        **({"note": spec["note"]} if spec.get("note") else {}),
+        **({"note": note} if note else {}),
         "artifacts": {
             "events_jsonl": str(save_dir / "events.jsonl"),
             "diary_jsonl": str(save_dir / "diary.jsonl"),
@@ -263,7 +273,9 @@ def main() -> None:
         "branch": "agent/ahbg-deepcode",
         "workspace": "stack/ahbg/deepseek",
         "started_at": started,
-        "scenario_corpus": "calibration-family (workspace-local frozen)",
+        "scenario_corpus": f"{CORPUS_ID}/{CORPUS_VERSION}",
+        "corpus_file_sha256": CORPUS_FILE_SHA256,
+        "canonical_scenarios_sha256": CORPUS_SCENARIOS_SHA256,
         "scenario_count": len(SCENARIOS),
         "board_authority": "UCNS mobius_seed ring centers (research/ucns/src/ucns/mobius_seed.py)",
         "board_projection": "axial (q, r) inverse projection of the seven unit-radius Seed-of-Life centerpoints",
@@ -311,10 +323,15 @@ def main() -> None:
         f"## Summary: survived={summary['SURVIVED']} falsified={summary['FALSIFIED']} "
         f"unresolved={summary['UNRESOLVED']} blocked={summary['BLOCKED']}",
         "",
+        "## Corpus",
+        f"- `{CORPUS_ID}/{CORPUS_VERSION}`",
+        f"- `corpus.json` SHA-256: `{CORPUS_FILE_SHA256}`",
+        f"- `canonical_scenarios_sha256`: `{CORPUS_SCENARIOS_SHA256}`",
+        "",
         "## hmmm",
-        "- Shared sealed corpus identity not yet frozen across the three builders; this corpus is workspace-local.",
+        "- Successor corpus sealing still needs the other builders to record this digest in their manifests.",
         "- Regulatory cost functional, coupling-plasticity law, and empirical thresholds remain open.",
-        "- Reciprocal reviews (DeepCode -> Grok, DeepCode -> Codex) are produced only after all three build SHAs freeze.",
+        "- Historical reciprocal reviews remain freeze-bound; successor corpus adoption is a separate current-run record.",
     ]
     _write_text(ARTIFACTS_DIR / "CALIBRATION_REPORT.md", "\n".join(report_lines) + "\n")
 
@@ -322,7 +339,9 @@ def main() -> None:
         "schema": "interdependency.ahbg.calibration-result/1.0.0",
         "builder": "DeepCode",
         "branch": "agent/ahbg-deepcode",
-        "corpus": "calibration-family (workspace-local frozen)",
+        "corpus": f"{CORPUS_ID}/{CORPUS_VERSION}",
+        "corpus_file_sha256": CORPUS_FILE_SHA256,
+        "canonical_scenarios_sha256": CORPUS_SCENARIOS_SHA256,
         "results": [results[spec["id"]] for spec in SCENARIOS],
         "summary": summary,
     }

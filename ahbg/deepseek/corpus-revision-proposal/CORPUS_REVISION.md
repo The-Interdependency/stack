@@ -3,8 +3,8 @@
 - Corpus id: `calibration-family`
 - Revision: `1.0.1-proposal-1` (successor to `1.0.0-proposal-1`)
 - Predecessor canonical scenarios digest: `b05cba2c…e5e0` (sealed, merged to main via PR #5)
-- Proposed canonical scenarios digest: `f83c96d0b0ec941fd2bfd6dff3e267a1ce4ea92098cbaeda3df573c7a3d87f2c`
-- Corpus file SHA-256: `28028d51fd0c0ed6af69f25b50c3be7580ca38c0a1c79ec933fc1e88c439f161`
+- Proposed canonical scenarios digest: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
+- Corpus file SHA-256: `15dff076460ccd297b96843dcfa30c38de6d39f6ca725d65a7b1af6a8e54ea24`
 
 ## Change
 
@@ -12,7 +12,7 @@
   occupied target -> defender holds; dual target -> smallest `unit_id`
   wins priority; outcomes emit explicit `war` events and replay equal.
 - Re-grades exactly two scenarios: `occupied_target_collision` and
-  `dual_target_collision` lose their `standing_override: UNRESOLVED`;
+  `dual_target_collision` set `standing_override` to null;
   their standing is now determined by the run.
 - All other 33 scenarios are unchanged.
 
@@ -25,5 +25,6 @@
 
 ## hmmm
 
-- Whether the other two builders adopt war_v3 or keep fail-closed War.
+- Refreshed Grok/Codex current runs adopt war_v3; local successor adoption is recorded.
+- Remote/branch merge of the successor corpus remains open.
 - Whether build_v2 and hidden threat terrain enter a later revision.

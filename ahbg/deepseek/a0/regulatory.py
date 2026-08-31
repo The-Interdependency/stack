@@ -1,6 +1,7 @@
 # ratios: loc_comments=96:21 imports_exports=3:1 calls_definitions=16:10
 
 
+
 """DeepSeek A0 realization — candidate regulatory layer (shadow measurement).
 
 CALIBRATION.md defines the candidate regulatory layer as a vector:

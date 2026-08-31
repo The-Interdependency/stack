@@ -1,11 +1,12 @@
 # ratios: loc_comments=109:6 imports_exports=6:2 calls_definitions=42:15
 
 
+
 """DeepSeek AHBG realization — append-only event log with hash chain.
 
 Independent implementation. The event-kind envelope is shared protocol:
-``plane.init``, ``turn.begin``, ``move``, ``turn.end``. The serialization and
-chain layout below are DeepSeek's own.
+``plane.init``, ``turn.begin``, ``move``, ``war``, ``build``, ``turn.end``.
+The serialization and chain layout below are DeepSeek's own.
 """
 
 from __future__ import annotations

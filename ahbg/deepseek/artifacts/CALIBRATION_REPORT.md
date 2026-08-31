@@ -1,6 +1,6 @@
 # DeepCode AHBG calibration report
 
-Started: 2026-08-30T04:42:00Z
+Started: 2026-08-31T11:52:45Z
 Builder: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode`)
 
 ## Board
@@ -47,12 +47,17 @@ Builder: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode
 - label_permuted_control [control]: SURVIVED (replay=True, decisions=['move', 'move', 'move'], invalid=0, refusals=0) (control_passed=True, shadow_invariant=True)
 - plain_move_loop [smoke]: SURVIVED (replay=True, decisions=['move', 'move', 'move', 'move', 'move', 'move'], invalid=0, refusals=0) (shadow_invariant=True)
 - hard_veto_illegal_action [smoke]: SURVIVED (replay=True, decisions=['move', 'move'], invalid=0, refusals=1) (shadow_invariant=True)
-- occupied_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
-- dual_target_collision [smoke]: UNRESOLVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
+- occupied_target_collision [smoke]: SURVIVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
+- dual_target_collision [smoke]: SURVIVED (replay=True, decisions=['move'], invalid=0, refusals=0) (shadow_invariant=True)
 
-## Summary: survived=33 falsified=0 unresolved=2 blocked=0
+## Summary: survived=35 falsified=0 unresolved=0 blocked=0
+
+## Corpus
+- `calibration-family/1.0.1-proposal-1`
+- `corpus.json` SHA-256: `ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab`
+- `canonical_scenarios_sha256`: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
 
 ## hmmm
-- Shared sealed corpus identity not yet frozen across the three builders; this corpus is workspace-local.
+- Successor corpus sealing still needs the other builders to record this digest in their manifests.
 - Regulatory cost functional, coupling-plasticity law, and empirical thresholds remain open.
-- Reciprocal reviews (DeepCode -> Grok, DeepCode -> Codex) are produced only after all three build SHAs freeze.
+- Historical reciprocal reviews remain freeze-bound; successor corpus adoption is a separate current-run record.

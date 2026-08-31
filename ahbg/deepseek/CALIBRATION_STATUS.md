@@ -3,12 +3,14 @@
 Builder: DeepCode — workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode`.
 Frozen build SHA: `ec07f465184e7a37af856bc5b301bd8eaa4f097b`.
 
-## Sealed corpus
+## Current successor corpus
 
-- Corpus: `calibration-family`, version `1.0.0-proposal-1`.
-- Canonical scenarios digest: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`.
-- Adopted by all three builders; merged to `main` as `3a92c7b0` via PR #5.
-- Reproduction is partial (Grok 4, Codex 6, DeepCode 35 scenarios); differences are recorded as `hmmm`, not corpus edits.
+- Corpus: `calibration-family`, version `1.0.1-proposal-1`.
+- Corpus file SHA256: `ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab`.
+- Canonical scenarios digest: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`.
+- Predecessor: `1.0.0-proposal-1`, digest `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`, merged to `main` as `3a92c7b0` via PR #5.
+- Current successor runs: Grok 35 SURVIVED / 0 UNRESOLVED; Codex 35 SURVIVED / 0 UNRESOLVED; DeepCode 35 SURVIVED / 0 UNRESOLVED.
+- Formal successor sealing still requires the proposal to be recorded and merged by the participating builders.
 
 ## Frozen build SHAs
 
@@ -73,17 +75,18 @@ replication evidence, not proof.
    Codex its own convention. All verify internally. `hmmm`.
 6. **Build mechanic.** Only the DeepCode workspace implements build_v2;
    siblings fail closed on build. `hmmm` until the shared corpus adds it.
-8. **War resolver.** DeepCode post-calibration war_v3 resolves occupied
-   targets (defender holds) and dual targets (smallest unit_id wins) with
-   explicit `war` events; sibling frozen builds still fail closed. The sealed
-   corpus standings (33 SURVIVED / 2 UNRESOLVED) remain frozen.
+8. **War resolver.** The `1.0.1-proposal-1` source corpus encodes the resolved
+   war_v3 expectation. Refreshed Grok, Codex, and DeepCode current runs resolve
+   occupied targets (defender holds) and dual targets (smallest unit_id wins)
+   with explicit `war` events where supported by the branch event log.
 7. **Threat layout.** DeepCode assigns 20% hidden threats deterministically;
    no canonical threat layout exists yet. `hmmm`.
 
 ## Remaining to close the program
 
 - Source-authority or builder confirmation of the shadow-veto disambiguation.
-- A shared corpus revision that adds build_v2 and a canonical threat layout.
+- Formal sealing of `calibration-family/1.0.1-proposal-1`.
+- A later shared corpus revision that adds build_v2 and a canonical threat layout.
 - The final cross-build comparison publishing which regulatory components
   SURVIVED / FALSIFIED / UNRESOLVED / BLOCKED, with this register kept
   visible.

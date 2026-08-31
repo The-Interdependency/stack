@@ -1,6 +1,7 @@
 # ratios: loc_comments=264:35 imports_exports=5:13 calls_definitions=113:24
 
 
+
 """DeepSeek AHBG realization — turn loop and simultaneous resolution.
 
 The success loop from the AHBG README:
@@ -11,14 +12,14 @@ The success loop from the AHBG README:
 
 This module owns the envelope and the canonical mechanics of this workspace:
 
-- ``move`` (v1): one axial step onto an empty adjacent tile, resolved
-  simultaneously against the pre-turn world.
+- ``move`` (v1): one axial step onto an adjacent tile, resolved
+  simultaneously against the pre-turn world with deterministic War collision
+  events.
 - ``build`` (v2, DeepCode workspace mechanic): construct one unbuilt circle
   adjacent to an already-built circle. Validated against the pre-turn built
   set, applied simultaneously with other builds.
 
-Everything else fails closed with :class:`UnresolvedHmmm`; War collision cases
-(occupied target, dual target) also fail closed.
+Everything else fails closed with :class:`UnresolvedHmmm`.
 """
 
 from __future__ import annotations

@@ -1,6 +1,7 @@
 # ratios: loc_comments=26:16 imports_exports=2:3 calls_definitions=18:3
 
 
+
 """A0 instance nomenclature.
 
 The canonical naming grammar is ``owner( a0( <energy> ) <auditor/teacher> )``:

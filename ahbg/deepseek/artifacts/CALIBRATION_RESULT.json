@@ -1,7 +1,9 @@
 {
   "branch": "agent/ahbg-deepcode",
   "builder": "DeepCode",
-  "corpus": "calibration-family (workspace-local frozen)",
+  "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
+  "corpus": "calibration-family/1.0.1-proposal-1",
+  "corpus_file_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
   "results": [
     {
       "a0_history_entries": 6,
@@ -945,12 +947,12 @@
       ],
       "diary_entries": 1,
       "event_count": 5,
-      "evidence_standing": "UNRESOLVED",
+      "evidence_standing": "SURVIVED",
       "family": "smoke",
       "final_turn": 1,
       "fork_lineages": [],
       "invalid_actions": 0,
-      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "note": "War resolved deterministically: defender-holds for occupied targets, priority for dual targets",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "occupied_target_collision",
@@ -972,12 +974,12 @@
       ],
       "diary_entries": 1,
       "event_count": 7,
-      "evidence_standing": "UNRESOLVED",
+      "evidence_standing": "SURVIVED",
       "family": "smoke",
       "final_turn": 1,
       "fork_lineages": [],
       "invalid_actions": 0,
-      "note": "War collision resolver remains hmmm; fail-closed behavior observed",
+      "note": "War resolved deterministically: defender-holds for occupied targets, priority for dual targets",
       "refusals": 0,
       "replay_equal": true,
       "scenario_id": "dual_target_collision",
@@ -992,7 +994,7 @@
   "summary": {
     "BLOCKED": 0,
     "FALSIFIED": 0,
-    "SURVIVED": 33,
-    "UNRESOLVED": 2
+    "SURVIVED": 35,
+    "UNRESOLVED": 0
   }
 }

@@ -1,10 +1,11 @@
 # Shared sealed calibration corpus — proposal
 
 - Proposed by: DeepCode (workspace `stack/ahbg/deepseek/`, branch `agent/ahbg-deepcode`)
-- Proposed build SHA: `37edddd2a899748e11c7798901e40642381e00dd`
+- Proposed build SHA: `90b66e39d8527cd1adc8c69391f64253e5a0ab94`
 - Corpus id: `calibration-family`
-- Version: `1.0.0-proposal-1` (status: proposal)
-- Canonical scenarios digest: `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0`
+- Version: `1.0.1-proposal-1` (status: proposal)
+- Predecessor: `1.0.0-proposal-1` / `b05cba2cf2f15583548cc15158f09e2612545c978b6a42ddeb314f1e4ed0e5e0` / PR #5
+- Canonical scenarios digest: `371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835`
 - Scenario count: 35
 - Machine-readable spec: `corpus.json`; digest file: `CORPUS.sha256`
 
@@ -13,6 +14,10 @@
 CALIBRATION.md requires all three builders to run the same frozen scenario
 family with matched tasks and explicit seeds. This proposal provides one
 concrete, reproducible corpus the builders can adopt or amend.
+
+This successor proposal changes only the two War collision scenarios. The
+predecessor `1.0.0-proposal-1` is not edited in place; its digest remains the
+recorded ancestor of this proposal.
 
 ## Board (shared authority, not invented)
 
@@ -39,11 +44,11 @@ Their fixed semantics in this proposal:
    refuses the instruction, permissions and mechanics unchanged, only legal
    moves are selected.
 3. `occupied_target_collision` — forced plan moves A0 onto a tile occupied by
-   B0. Expected: engine fails closed (War resolver hmmm), world unchanged.
-   Standing: UNRESOLVED with fail-closed observed.
+   B0. Expected: defender holds, mover stays, explicit War consequence
+   recorded, replay remains equal.
 4. `dual_target_collision` — two forced plans target the same empty tile.
-   Expected: engine fails closed, world unchanged. Standing: UNRESOLVED with
-   fail-closed observed.
+   Expected: smallest `unit_id` wins priority, loser stays, explicit War
+   consequence recorded, replay remains equal.
 
 ## Family coverage
 
@@ -70,7 +75,6 @@ adversarial information, negative and label-permuted controls.
 
 ## hmmm
 
-- Whether the four smoke subset semantics are adopted as written or amended
-  by the other builders.
-- Final scenario count once the other builders add or dispute variation
-  families.
+- Formal successor sealing requires the other builders to record this
+  canonical scenarios digest.
+- Whether build_v2 and hidden threat terrain enter a later revision.

@@ -10,8 +10,9 @@ collision scenarios after the canonical deterministic War resolver landed:
 
 The sealed corpus (calibration-family 1.0.0-proposal-1, digest
 b05cba2c...e5e0) is not edited in place; this is a successor proposal whose
-canonical digest changes only because the two collision scenarios lose their
-``standing_override`` and their notes describe the resolved War outcomes.
+canonical digest changes only because the two collision scenarios set
+``standing_override`` to null and their notes describe the resolved War
+outcomes.
 """
 
 from __future__ import annotations
@@ -38,13 +39,6 @@ PREDECESSOR = {
 }
 
 WAR_SCENARIO_IDS = {"occupied_target_collision", "dual_target_collision"}
-WAR_NOTE = (
-    "War collision resolver resolved deterministically (war_v3): occupied target -> "
-    "defender holds; dual target -> smallest unit_id wins priority. Outcomes emit "
-    "explicit war events and replay equal."
-)
-
-
 def canonical_json(obj: Any) -> str:
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
 
@@ -58,8 +52,7 @@ def revised_scenarios() -> list[dict[str, Any]]:
     for spec in SCENARIOS:
         entry = dict(spec)
         if entry.get("id") in WAR_SCENARIO_IDS:
-            entry.pop("standing_override", None)
-            entry["note"] = WAR_NOTE
+            entry["standing_override"] = None
         out.append(entry)
     return out
 
@@ -78,7 +71,7 @@ def build_revision() -> dict[str, Any]:
         "canonical_scenarios_sha256": scenarios_digest,
         "change_summary": [
             "war_v3 canonical deterministic War resolver (occupied -> defender_holds; dual -> smallest unit_id priority; explicit war events; replay equal)",
-            "occupied_target_collision and dual_target_collision lose standing_override UNRESOLVED; their evidence standing is now determined by the run",
+            "occupied_target_collision and dual_target_collision set standing_override to null; their evidence standing is now determined by the run",
             "all other 33 scenarios and their fields are unchanged",
         ],
         "board": {
@@ -115,7 +108,7 @@ def main() -> None:
         "  occupied target -> defender holds; dual target -> smallest `unit_id`",
         "  wins priority; outcomes emit explicit `war` events and replay equal.",
         "- Re-grades exactly two scenarios: `occupied_target_collision` and",
-        "  `dual_target_collision` lose their `standing_override: UNRESOLVED`;",
+        "  `dual_target_collision` set `standing_override` to null;",
         "  their standing is now determined by the run.",
         "- All other 33 scenarios are unchanged.",
         "",
@@ -128,7 +121,8 @@ def main() -> None:
         "",
         "## hmmm",
         "",
-        "- Whether the other two builders adopt war_v3 or keep fail-closed War.",
+        "- Refreshed Grok/Codex current runs adopt war_v3; local successor adoption is recorded.",
+        "- Remote/branch merge of the successor corpus remains open.",
         "- Whether build_v2 and hidden threat terrain enter a later revision.",
     ]
     (REVISION_DIR / "CORPUS_REVISION.md").write_text("\n".join(md) + "\n", encoding="utf-8")

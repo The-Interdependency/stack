@@ -1,5 +1,6 @@
 # ratios: loc_comments=172:17 imports_exports=8:5 calls_definitions=81:11
 
+
 """Headless frame renderer + compact interactive viewer.
 
 Reuses Grok's cross-driver geometry (``ahbg/grok/bridges/common.py``:
