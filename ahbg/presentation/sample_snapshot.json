@@ -3,24 +3,33 @@
   "standing": "not-mechanics",
   "plane_id": "plane-0",
   "turn": 1,
+  "geometry_source": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "module": "src/ucns/mobius_seed.py",
+    "schema_id": "ucns.mobius-seed-of-life",
+    "schema_version": "0.1.0",
+    "projection_id": "seed-of-life-seven-equal-circles",
+    "selection_effect": "none"
+  },
   "tiles": [
-    {"id": "c", "q": 0, "r": 0, "label": "origin"},
-    {"id": "ne", "q": 1, "r": -1, "label": "ne"},
-    {"id": "e", "q": 1, "r": 0, "label": "e"},
-    {"id": "se", "q": 0, "r": 1, "label": "se"},
-    {"id": "sw", "q": -1, "r": 1, "label": "sw"},
-    {"id": "w", "q": -1, "r": 0, "label": "w"},
-    {"id": "nw", "q": 0, "r": -1, "label": "nw"}
+    {"id": "CENTER", "source_slot": "CENTER", "x": 0.0, "y": 0.0, "label": "origin"},
+    {"id": "RING_0", "source_slot": "RING_0", "x": 1.0, "y": 0.0, "label": "ring 0"},
+    {"id": "RING_1", "source_slot": "RING_1", "x": 0.5, "y": 0.8660254037844386, "label": "ring 1"},
+    {"id": "RING_2", "source_slot": "RING_2", "x": -0.5, "y": 0.8660254037844386, "label": "ring 2"},
+    {"id": "RING_3", "source_slot": "RING_3", "x": -1.0, "y": 0.0, "label": "ring 3"},
+    {"id": "RING_4", "source_slot": "RING_4", "x": -0.5, "y": -0.8660254037844386, "label": "ring 4"},
+    {"id": "RING_5", "source_slot": "RING_5", "x": 0.5, "y": -0.8660254037844386, "label": "ring 5"}
   ],
   "units": [
-    {"id": "A0", "tile": "ne", "label": "A0"}
+    {"id": "A0", "tile": "RING_0", "label": "A0"}
   ],
-  "selected_tile": "ne",
+  "selected_tile": "RING_0",
   "motions": [
-    {"unit": "A0", "from": "c", "to": "ne"}
+    {"unit": "A0", "from": "CENTER", "to": "RING_0"}
   ],
   "feed": [
     {"turn": 0, "text": "plane loaded; A0 at origin"},
-    {"turn": 1, "text": "A0 trace origin to ne"}
+    {"turn": 1, "text": "A0 trace CENTER to RING_0"}
   ]
 }
