@@ -1,0 +1,26 @@
+{
+  "kind": "ahbg.presentation.snapshot",
+  "standing": "not-mechanics",
+  "plane_id": "plane-0",
+  "turn": 1,
+  "tiles": [
+    {"id": "c", "q": 0, "r": 0, "label": "origin"},
+    {"id": "ne", "q": 1, "r": -1, "label": "ne"},
+    {"id": "e", "q": 1, "r": 0, "label": "e"},
+    {"id": "se", "q": 0, "r": 1, "label": "se"},
+    {"id": "sw", "q": -1, "r": 1, "label": "sw"},
+    {"id": "w", "q": -1, "r": 0, "label": "w"},
+    {"id": "nw", "q": 0, "r": -1, "label": "nw"}
+  ],
+  "units": [
+    {"id": "A0", "tile": "ne", "label": "A0"}
+  ],
+  "selected_tile": "ne",
+  "motions": [
+    {"unit": "A0", "from": "c", "to": "ne"}
+  ],
+  "feed": [
+    {"turn": 0, "text": "plane loaded; A0 at origin"},
+    {"turn": 1, "text": "A0 trace origin to ne"}
+  ]
+}
