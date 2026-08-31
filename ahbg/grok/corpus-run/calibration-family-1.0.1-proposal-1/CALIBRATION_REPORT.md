@@ -1,10 +1,11 @@
 # Grok AHBG common corpus report
 
-Started: 2026-08-31T08:27:57Z
-Ended: 2026-08-31T08:27:58Z
-Frozen build SHA: cce9cec7dae61304118efcd47bc0d7461200d335
-Runner commit SHA: 19d12171cb826bd475a4d4bfc51d260e23d33668
-Corpus file SHA256: ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab
+Started: 2026-08-31T13:37:51Z
+Ended: 2026-08-31T13:37:52Z
+Executed build SHA: 6e954eb7f7314dd87abaab447c28a5e0c46454c7
+Baseline reciprocal-review freeze SHA: cce9cec7dae61304118efcd47bc0d7461200d335
+Runner commit SHA: 6e954eb7f7314dd87abaab447c28a5e0c46454c7
+Corpus file SHA256: bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed
 Canonical scenarios SHA256: 371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835
 
 ## Standing
@@ -51,7 +52,8 @@ Canonical scenarios SHA256: 371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8
 - dual_target_collision: SURVIVED (family=smoke, turns=1, events=5, replay_equal=True, invalid_actions=0, refusals=0) - War resolved deterministically: defender-holds for occupied targets, priority for dual targets
 
 ## Notes
-- This is a post-freeze common-corpus execution against frozen Grok SHA `cce9cec`.
+- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.
+- Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.
 - Smoke artifacts under `artifacts/` were not rewritten.
 - Corpus tile ids map onto BandSlot names by UCNS axial coordinates.
 - Candidate regulatory cost channels are observed; they do not rank destinations.

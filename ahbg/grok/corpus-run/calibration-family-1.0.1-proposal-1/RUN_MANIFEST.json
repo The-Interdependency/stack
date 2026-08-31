@@ -1,7 +1,8 @@
 {
+  "baseline_freeze_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
   "board_authority": "ucns.mobius_seed.build_mobius_seed_of_life",
   "board_projection": "axial (q, r) from UCNS exact centers; corpus ids mapped by axial onto BandSlot names",
-  "branch": "main",
+  "branch": "fix/ahbg-war-v3-canonical",
   "builder": "Grok",
   "candidate_cost_fit": "not-fit-post-freeze-common-corpus-run",
   "corpus": {
@@ -13,7 +14,7 @@
       "dual_target_collision"
     ],
     "corpus_id": "calibration-family",
-    "file_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
+    "file_sha256": "bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed",
     "proposal_version": "1.0.1-proposal-1",
     "scenario_count": 35,
     "scenario_ids": [
@@ -54,11 +55,11 @@
       "dual_target_collision"
     ],
     "schema": "interdependency.ahbg.calibration-corpus/1.0.0",
-    "source": "/home/wayseer_interdependentway_org/src/stack/ahbg/deepseek/corpus-proposal/corpus.json",
+    "source": "/home/runner/work/stack/stack/ahbg/deepseek/corpus-proposal/corpus.json",
     "status": "proposal"
   },
-  "ended_at": "2026-08-31T08:27:58Z",
-  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "ended_at": "2026-08-31T13:37:52Z",
+  "executed_build_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
   "hmmm": [
     "corpus tile ids are mapped onto frozen Grok BandSlot names by matching UCNS axial coordinates",
     "permission-field occupancy still gates relocate in the frozen will.py"
@@ -1641,8 +1642,8 @@
       "world_digest": "ea80eff54fc5fb0c8589716195b3b1b586fac396a320b0e14694a04c96a5c1a2"
     }
   ],
-  "runner_commit_sha": "19d12171cb826bd475a4d4bfc51d260e23d33668",
-  "schema": "interdependency.ahbg.grok.common-corpus-run/1.0.0",
+  "runner_commit_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
+  "schema": "interdependency.ahbg.grok.common-corpus-run/1.1.0",
   "shadow_measurement": true,
   "standing_vocabulary": [
     "SURVIVED",
@@ -1650,7 +1651,7 @@
     "UNRESOLVED",
     "BLOCKED"
   ],
-  "started_at": "2026-08-31T08:27:57Z",
+  "started_at": "2026-08-31T13:37:51Z",
   "summary": {
     "blocked": 0,
     "falsified": 0,

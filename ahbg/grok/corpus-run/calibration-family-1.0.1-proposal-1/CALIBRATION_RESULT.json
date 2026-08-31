@@ -1,9 +1,10 @@
 {
-  "branch": "main",
+  "baseline_freeze_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "branch": "fix/ahbg-war-v3-canonical",
   "builder": "Grok",
   "canonical_scenarios_sha256": "371d2361f57b56d73544f58b247704617d550a7a0685a133c4f8b1ff3b36c835",
-  "corpus_file_sha256": "ea172cb68a1a31be843f45c9886590f95f60daad4f10b9e42732bfd416ef73ab",
-  "frozen_build_sha": "cce9cec7dae61304118efcd47bc0d7461200d335",
+  "corpus_file_sha256": "bc521113ffa7bd6d5094c71f3ad66547d5f00260f380258e43c2086533a5d7ed",
+  "executed_build_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
   "results": [
     {
       "event_count": 10,
@@ -1581,9 +1582,9 @@
       "world_digest": "ea80eff54fc5fb0c8589716195b3b1b586fac396a320b0e14694a04c96a5c1a2"
     }
   ],
-  "runner_commit_sha": "19d12171cb826bd475a4d4bfc51d260e23d33668",
+  "runner_commit_sha": "6e954eb7f7314dd87abaab447c28a5e0c46454c7",
   "scenario_corpus": "calibration-family/1.0.1-proposal-1",
-  "schema": "interdependency.ahbg.grok.common-corpus-result/1.0.0",
+  "schema": "interdependency.ahbg.grok.common-corpus-result/1.1.0",
   "standing_vocabulary": [
     "SURVIVED",
     "FALSIFIED",
