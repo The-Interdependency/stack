@@ -600,7 +600,7 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
         "branch": _current_git_value("rev-parse", "--abbrev-ref", "HEAD"),
         "runner_commit_sha": _current_git_value("rev-parse", "HEAD"),
         "executed_build_sha": _current_git_value("rev-parse", "HEAD"),
-        "baseline_freeze_sha": BASELINE_FREEZE_SHA,
+            "baseline_freeze_sha": BASELINE_FREEZE_SHA,
         "workspace": "stack/ahbg/grok",
         "started_at": started_at,
         "ended_at": ended_at,
@@ -656,7 +656,7 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
             "branch": run_identity["branch"],
             "runner_commit_sha": run_identity["runner_commit_sha"],
             "executed_build_sha": _current_git_value("rev-parse", "HEAD"),
-        "baseline_freeze_sha": BASELINE_FREEZE_SHA,
+            "baseline_freeze_sha": BASELINE_FREEZE_SHA,
             "workspace": "stack/ahbg/grok",
             "standing_vocabulary": list(STANDING_VOCABULARY),
             "scenario_corpus": f"{CORPUS_ID}/{CORPUS_VERSION}",
@@ -696,8 +696,8 @@ def run_corpus(corpus: Mapping[str, Any], corpus_identity: Mapping[str, Any], ou
         [
             "",
             "## Notes",
-            "- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.
-            - Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.",
+            "- This is a post-freeze common-corpus execution against the exact committed runner identity recorded above.",
+            "- Baseline reciprocal-review freeze remains `cce9cec`; current war_v3 code intentionally diverges from it.",
             "- Smoke artifacts under `artifacts/` were not rewritten.",
             "- Corpus tile ids map onto BandSlot names by UCNS axial coordinates.",
             "- Candidate regulatory cost channels are observed; they do not rank destinations.",
