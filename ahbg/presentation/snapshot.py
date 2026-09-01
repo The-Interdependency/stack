@@ -5,7 +5,7 @@
 #   summary: validates the presentation-only AHBG snapshot envelope, including UCNS-derived display positions and exact geometry source identity
 #   owner: AHBG presentation
 #   public_surface: KIND, STANDING, PresentationSnapshotError, load_snapshot, validate_snapshot
-#   internal_surface: _plain_int, _reject_unknown
+#   internal_surface: _plain_int, _finite_number, _reject_unknown
 #   auth_boundary: none
 #   storage_boundary: read
 #   network_boundary: none
@@ -33,9 +33,9 @@ Usage guidance:
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any, Mapping
-
 
 KIND = "ahbg.presentation.snapshot"
 STANDING = "not-mechanics"
@@ -54,8 +54,6 @@ class PresentationSnapshotError(ValueError):
 
 
 def load_snapshot(path: Path | None = None) -> Mapping[str, Any]:
-    """Load and validate a snapshot JSON document."""
-
     target = SAMPLE_PATH if path is None else path
     try:
         payload = json.loads(target.read_text(encoding="utf-8"))
@@ -68,6 +66,15 @@ def _plain_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
+def _finite_number(value: object) -> bool:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    try:
+        return math.isfinite(float(value))
+    except (OverflowError, ValueError):
+        return False
+
+
 def _reject_unknown(mapping: Mapping[str, Any], allowed: set[str], surface: str) -> None:
     unknown = sorted(set(mapping) - allowed)
     if unknown:
@@ -75,8 +82,6 @@ def _reject_unknown(mapping: Mapping[str, Any], allowed: set[str], surface: str)
 
 
 def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
-    """Validate the presentation-only snapshot envelope and visual relations."""
-
     if not isinstance(payload, Mapping):
         raise PresentationSnapshotError("snapshot must be an object")
     _reject_unknown(payload, _ROOT_FIELDS, "snapshot")
@@ -122,15 +127,12 @@ def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
             raise PresentationSnapshotError(f"tile {tile_id} source_slot must be exact non-empty text")
         if source_slot in source_slots:
             raise PresentationSnapshotError(f"UCNS source slot repeats: {source_slot}")
-        if isinstance(x, bool) or not isinstance(x, (int, float)):
-            raise PresentationSnapshotError(f"tile {tile_id} x must be numeric and nonboolean")
-        if isinstance(y, bool) or not isinstance(y, (int, float)):
-            raise PresentationSnapshotError(f"tile {tile_id} y must be numeric and nonboolean")
+        if not _finite_number(x) or not _finite_number(y):
+            raise PresentationSnapshotError(f"tile {tile_id} x,y must be finite numeric and nonboolean")
         position = (float(x), float(y))
         if position in positions:
             raise PresentationSnapshotError(f"tile source position repeats: {position}")
-        label = tile.get("label")
-        if label is not None and (not isinstance(label, str) or not label):
+        if "label" in tile and (not isinstance(tile["label"], str) or not tile["label"]):
             raise PresentationSnapshotError(f"tile {tile_id} label must be exact non-empty text when present")
         ids.add(tile_id)
         source_slots.add(source_slot)
@@ -147,7 +149,6 @@ def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
         _reject_unknown(unit, _UNIT_FIELDS, "unit")
         unit_id = unit.get("id")
         tile_id = unit.get("tile")
-        label = unit.get("label")
         if not isinstance(unit_id, str) or not unit_id:
             raise PresentationSnapshotError("unit id must be exact non-empty text")
         if unit_id in unit_ids:
@@ -156,7 +157,7 @@ def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
             raise PresentationSnapshotError(f"unit {unit_id} tile must be exact non-empty text")
         if tile_id not in ids:
             raise PresentationSnapshotError(f"unit {unit_id} tile {tile_id!r} is not a presented tile")
-        if label is not None and (not isinstance(label, str) or not label):
+        if "label" in unit and (not isinstance(unit["label"], str) or not unit["label"]):
             raise PresentationSnapshotError(f"unit {unit_id} label must be exact non-empty text when present")
         unit_ids.add(unit_id)
         unit_tiles[unit_id] = tile_id
@@ -177,13 +178,12 @@ def validate_snapshot(payload: Mapping[str, Any]) -> Mapping[str, Any]:
         _reject_unknown(item, _FEED_FIELDS, "feed item")
         if not isinstance(item.get("text"), str) or not item["text"]:
             raise PresentationSnapshotError("each feed item must have exact non-empty text")
-        item_turn = item.get("turn")
-        if item_turn is not None and (not _plain_int(item_turn) or item_turn < 0):
+        if "turn" in item and (not _plain_int(item["turn"]) or item["turn"] < 0):
             raise PresentationSnapshotError("feed turn must be a non-negative int when present")
 
-    motions = payload.get("motions")
-    if motions is None:
+    if "motions" not in payload:
         return payload
+    motions = payload["motions"]
     if not isinstance(motions, list):
         raise PresentationSnapshotError("motions must be a list when present")
     seen_motion_units: set[str] = set()
