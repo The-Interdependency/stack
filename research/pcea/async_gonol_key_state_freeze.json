@@ -1,49 +1,63 @@
 {
-  "comparison": {
-    "comparison_scope": "topology/control comparison with equal root entropy",
+  "actual_ucns_constructor": {
+    "actual_next_gonol": null,
+    "constructor_available": false,
+    "constructor_id": null,
+    "hmmm": "actual recursive UCNS gonol constructor must supply the next value before out-of-sample comparison",
+    "reason": "UCNS CANON.md at live main still marks the recursive-scale transition law as hmmm",
+    "searched_authorities": [
+      {
+        "commit": "cff04c85df5a56fd3f9d3b178e7c49160d749652",
+        "repository": "The-Interdependency/ucns",
+        "standing": "live origin/main"
+      },
+      {
+        "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+        "repository": "The-Interdependency/ucns",
+        "standing": "stack/libs pinned snapshot"
+      },
+      {
+        "commit": "ecf2ca0dec38bef29382e02121b0edde66763aa9",
+        "repository": "The-Interdependency/pcea",
+        "standing": "materialized legacy PCEA research lane"
+      }
+    ],
+    "status": "UNRESOLVED_ACTUAL_CONSTRUCTOR_MISSING"
+  },
+  "hmmm": [
+    "exact UCNS recursive-scale transition law remains unresolved",
+    "live UCNS main has no actual recursive gonol constructor value for the next step",
+    "the observed sequence has no source-level transition operator in the current stack refresh, live UCNS, or migrated PCEA research lane",
+    "candidate key schedule comparison is gated until the interpolation baseline is tested against an actual UCNS value"
+  ],
+  "interpolation_prediction_test": {
+    "actual_next_gonol": null,
+    "baseline_outcome": "UNRESOLVED",
+    "comparison_rule": "actual missing -> no mismatch/match classification",
+    "prediction": 164513086777,
+    "status": "UNRESOLVED_ACTUAL_CONSTRUCTOR_MISSING"
+  },
+  "key_addressing_comparison": {
+    "comparison_scope": "deferred until actual UCNS constructor supplies an out-of-sample next value",
+    "gate": {
+      "actual_next_gonol": null,
+      "baseline_outcome": "UNRESOLVED",
+      "comparison_rule": "actual missing -> no mismatch/match classification",
+      "prediction": 164513086777,
+      "status": "UNRESOLVED_ACTUAL_CONSTRUCTOR_MISSING"
+    },
     "nonclaims": [
       "not PCEA runtime behavior",
       "not stack/libs/pcea mutation",
       "not UCNS recursive-scale canon",
       "not a public-key construction",
       "not entropy from gonol size, geometry, or address space",
-      "not cryptographic hardness evidence"
+      "not cryptographic hardness evidence",
+      "not a linear/tree/gonol key-addressing comparison until an actual UCNS out-of-sample result exists"
     ],
-    "ordinary_linear_ratchet": {
-      "compromise_containment": "strong only when old chain keys are deleted and forward ratcheting continues",
-      "recovery": "loss of current state can block future messages unless a higher-level resync path exists",
-      "replay_resistance": "requires nonce/message-number cache or AEAD nonce discipline",
-      "synchronization": "ordered delivery is natural; out-of-order delivery needs skipped-key storage or auxiliary headers"
-    },
-    "ordinary_tree_kdf": {
-      "compromise_containment": "can isolate branches when independent subkeys are derived and erased",
-      "recovery": "path disclosure can help resync but may expose metadata",
-      "replay_resistance": "requires used-leaf tracking or nonce discipline",
-      "synchronization": "addressable branches support sparse derivation and out-of-order delivery"
-    },
-    "pcea_gonol_addressed_candidate": {
-      "compromise_containment": "no advantage is credited from gonol geometry; containment depends on secret separation, deletion, and ratcheting policy",
-      "recovery": "address/path/state receipts can support resync, but public metadata leakage must be attacked",
-      "replay_resistance": "coordinate reuse is rejected only when the receiver tracks accepted coordinates",
-      "synchronization": "public gonol path/position/epoch/message coordinates allow lazy out-of-order derivation"
-    },
-    "standing": {
-      "compromise_containment": "unresolved; no better than tree KDF without additional evidence",
-      "recovery": "partial candidate; needs loss and metadata-leakage tests",
-      "replay_resistance": "survives only with explicit replay cache or nonce discipline",
-      "security_basis": "external secret entropy plus approved KDF only",
-      "synchronization": "survives as an addressability candidate"
-    }
+    "security_basis": "external secret entropy plus standard KDF only",
+    "status": "DEFERRED"
   },
-  "derived_next_gonol": {
-    "standing": "candidate value under OPERATOR_ID, not UCNS canon",
-    "value": 164513086777
-  },
-  "hmmm": [
-    "exact UCNS recursive-scale transition law remains unresolved",
-    "the observed sequence has no source-level transition operator in the current stack refresh or migrated PCEA research lane",
-    "candidate key schedule needs attack review before any promotion"
-  ],
   "key_derivation": {
     "address_bound_fields": [
       "protocol_label",
@@ -59,7 +73,8 @@
     "entropy_basis": "root_secret only",
     "kdf_shape": "HMAC-SHA256 expansion over canonical address payload",
     "materialization": "lazy single-coordinate derivation",
-    "replay_control": "receiver-side coordinate cache or equivalent nonce discipline required"
+    "replay_control": "receiver-side coordinate cache or equivalent nonce discipline required",
+    "standing": "shape test only; linear/tree/gonol comparison is deferred until actual UCNS out-of-sample result"
   },
   "nonclaims": [
     "not PCEA runtime behavior",
@@ -67,7 +82,8 @@
     "not UCNS recursive-scale canon",
     "not a public-key construction",
     "not entropy from gonol size, geometry, or address space",
-    "not cryptographic hardness evidence"
+    "not cryptographic hardness evidence",
+    "not a linear/tree/gonol key-addressing comparison until an actual UCNS out-of-sample result exists"
   ],
   "observed_sequence": [
     157,
@@ -79,7 +95,7 @@
     "first_difference": 2724,
     "formula": "y_i = y_0 + i*d_1 + (i*(i-1)//2)*d_2",
     "operator_id": "pcea.async_gonol.observation_second_difference.v1",
-    "operator_standing": "candidate observation replay, not UCNS recursive-scale canon",
+    "operator_standing": "three-point interpolation baseline, not UCNS recursive-scale canon",
     "second_difference": 54837692816,
     "source_values": [
       157,
@@ -88,7 +104,11 @@
     ],
     "y_0": 157
   },
-  "receipt_digest": "cbc1343a69bc3b72a93351348ab0cba4962b25d06cd27bc9450f722a4f11814f",
+  "predicted_next_gonol": {
+    "standing": "prediction under OPERATOR_ID, not derived law and not UCNS canon",
+    "value": 164513086777
+  },
+  "receipt_digest": "e15e34b8dde02088ca74502ae2d583d6f0b273c298e5e690fe4030668bffdcee",
   "replay": {
     "matches_observation": true,
     "values": [
@@ -97,12 +117,20 @@
       54837698421
     ]
   },
-  "schema": "pcea.async-gonol-key-state.freeze.v1",
+  "schema": "pcea.async-gonol-key-state.freeze.v2",
   "source_identities": {
     "legacy_gonal_architecture_blob": "a24e31110521b30ca941bf151b99458a06c910af",
     "legacy_research_source_commit": "ecf2ca0dec38bef29382e02121b0edde66763aa9",
-    "pcea_cleanup_commit": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
+    "live_pcea_main_commit": "834987cb0c1fea5f62d6ea08e5c5bb878c312646",
+    "live_ucns_main_commit": "cff04c85df5a56fd3f9d3b178e7c49160d749652",
+    "pcea_pyproject_blob": "a4c2d9449c77765c0698afb869ecfd08bc1c5483",
+    "pcea_stack_pinned_commit": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
     "pinned_public_gonol_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
-    "stack_refresh_commit": "eaec7fd6ee4e829b6fae10a2c6d520b35857137d"
+    "prior_actor_a_commit": "ce41ceb86b0e4819bfbb976f3ce187567391af48",
+    "stack_branch_parent_at_refresh": "675836eef7bbcdaaa2edc4f8246591617e161955",
+    "stack_origin_main_at_refresh": "04253ab5bed7e913ab3df7bbb00939340bca291e",
+    "stack_pcea_refresh_commit": "eaec7fd6ee4e829b6fae10a2c6d520b35857137d",
+    "ucns_public_gonol_blob": "c1955e46e2dc918fb657cb346e42106d71937e91",
+    "ucns_stack_pinned_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
   }
 }

@@ -34,7 +34,9 @@ Do not edit `migrated/` as though it were current canon. Materialize a lane, the
 
 The current candidate line is asynchronous PCEA key orchestration over gonol state. The observed `157 -> 2881 -> 54837698421` progression is research evidence, not yet a cryptographic hardness claim or UCNS recursive-scale law.
 
-Actor A froze the observation-level replay in `async_gonol_keys.py`, generated `async_gonol_key_state_freeze.json`, and recorded the narrative in `ACTOR_A_ASYNC_GONOL_RESULT.md`. The independently replayed observation derives `164513086777` as the next candidate value under `pcea.async_gonol.observation_second_difference.v1`. That operator is a falsifiable observation candidate, not the unresolved UCNS recursive-scale law.
+Actor A froze the observation-level replay in `async_gonol_keys.py`, generated `async_gonol_key_state_freeze.json`, and recorded the narrative in `ACTOR_A_ASYNC_GONOL_RESULT.md`. The independently replayed observation predicts `164513086777` as the next candidate value under `pcea.async_gonol.observation_second_difference.v1`. That operator is a three-point interpolation baseline, not the unresolved UCNS recursive-scale law.
+
+The 2026-09-01 refresh found live PCEA at `834987cb0c1fea5f62d6ea08e5c5bb878c312646` and live UCNS at `cff04c85df5a56fd3f9d3b178e7c49160d749652`; the actual recursive UCNS gonol constructor is still unresolved, so the prediction's out-of-sample status is `UNRESOLVED` and linear/tree/gonol key-addressing comparison is deferred.
 
 PCEA keys must still derive from real secret entropy; gonol state may organize, address, ratchet, or synchronize that entropy but must not be credited with entropy merely because the address space is large.
 
@@ -49,5 +51,5 @@ PCEA keys must still derive from real secret entropy; gonol state may organize, 
 
 ## hmmm
 
-- The exact UCNS recursive transition operator producing `157 -> 2881 -> 54837698421` is still not recovered; only a named observation-level replay candidate exists here.
+- The exact UCNS recursive transition operator producing `157 -> 2881 -> 54837698421` is still not recovered; only a named interpolation baseline exists here.
 - No independent cryptographic/security review is implied by this migration or by the PCEA runtime tests.

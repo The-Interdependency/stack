@@ -2,18 +2,18 @@
 
 This module freezes the exact observation replay currently available for the
 PCEA gonol-recursion handoff. It does not recover or claim the unresolved UCNS
-recursive-scale geometry. The next value is derived by the named candidate
-operator so it can be attacked and replaced when a stronger constructor is
-found.
+recursive-scale geometry. The next value is frozen as a prediction from the
+named interpolation baseline so it can be tested against the actual UCNS
+constructor once that constructor exists.
 """
 
 # === MODULE_BUILD ===
 # id: pcea_async_gonol_key_state
 #   module_name: async_gonol_keys
-#   module_kind: research
-#   summary: observation-level gonol transition replay and lazy gonol-addressed key derivation candidate for asynchronous PCEA state
+#   module_kind: experiment
+#   summary: observation-level gonol transition replay, interpolation-baseline prediction, and gated lazy gonol-addressed key derivation candidate for asynchronous PCEA state
 #   owner: The Interdependency
-#   public_surface: OBSERVED_GONOL_SEQUENCE, OPERATOR_ID, GonolAddress, ReplayCache, recover_transition_operator, transition_at, replay_transition, derive_next_gonol, derive_state_digest, derive_lazy_key, comparison_matrix, freeze_document, write_freeze_document
+#   public_surface: OBSERVED_GONOL_SEQUENCE, OPERATOR_ID, PREDICTED_NEXT_GONOL, GonolAddress, ReplayCache, interpolation_baseline_operator, transition_at, replay_transition, predict_next_gonol, actual_ucns_constructor_status, compare_prediction_to_actual_ucns, derive_state_digest, derive_lazy_key, key_addressing_comparison, freeze_document, write_freeze_document
 #   internal_surface: _require_positive_int, _require_nonnegative_int, _require_digest, _normalize, _payload_digest
 #   auth_boundary: stack/research/pcea owns this candidate; PCEA runtime, stack/libs/pcea, and UCNS canon are not changed
 #   storage_boundary: in-memory receipts and optional research freeze JSON only
@@ -35,9 +35,9 @@ found.
 #   class: correctness
 #   since: 2026-08-31
 #
-# id: candidate_next_gonol_is_derived_not_canon
+# id: interpolation_prediction_is_not_derived_law
 #   given: the replayed observation and no recovered UCNS recursive-scale law
-#   then: derive_next_gonol returns the next value under the named candidate operator and marks it as non-canonical research
+#   then: predict_next_gonol returns a frozen prediction under the named interpolation baseline and marks it as non-canonical research
 #   class: doctrine
 #   since: 2026-08-31
 #
@@ -53,9 +53,9 @@ found.
 #   class: security-control
 #   since: 2026-08-31
 #
-# id: comparison_keeps_security_basis_external
-#   given: the candidate is compared with ordinary ratchet and tree KDF schemes
-#   then: no gonol size, geometry, or address-space property is counted as entropy or cryptographic hardness
+# id: key_addressing_comparison_waits_for_actual_ucns_result
+#   given: no actual UCNS recursive gonol constructor value is available
+#   then: linear/tree/gonol key-addressing comparison is deferred instead of reported as survived
 #   class: doctrine
 #   since: 2026-08-31
 # === END CONTRACTS ===
@@ -74,13 +74,21 @@ from typing import Any
 
 OPERATOR_ID = "pcea.async_gonol.observation_second_difference.v1"
 KDF_PROTOCOL_LABEL = "pcea.async-gonol-key-state.v1"
-FREEZE_SCHEMA = "pcea.async-gonol-key-state.freeze.v1"
+FREEZE_SCHEMA = "pcea.async-gonol-key-state.freeze.v2"
 
 OBSERVED_GONOL_SEQUENCE: tuple[int, ...] = (157, 2881, 54837698421)
-DERIVED_NEXT_GONOL = 164513086777
+PREDICTED_NEXT_GONOL = 164513086777
 
-PCEA_CLEANUP_COMMIT = "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9"
-STACK_REFRESH_COMMIT = "eaec7fd6ee4e829b6fae10a2c6d520b35857137d"
+PCEA_STACK_PINNED_COMMIT = "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9"
+PCEA_LIVE_MAIN_COMMIT = "834987cb0c1fea5f62d6ea08e5c5bb878c312646"
+PCEA_PYPROJECT_BLOB = "a4c2d9449c77765c0698afb869ecfd08bc1c5483"
+UCNS_STACK_PINNED_COMMIT = "1975fe70cf4e0826a8020c2da3047569e277af64"
+UCNS_LIVE_MAIN_COMMIT = "cff04c85df5a56fd3f9d3b178e7c49160d749652"
+UCNS_PUBLIC_GONOL_BLOB = "c1955e46e2dc918fb657cb346e42106d71937e91"
+STACK_ORIGIN_MAIN_AT_REFRESH = "04253ab5bed7e913ab3df7bbb00939340bca291e"
+STACK_BRANCH_PARENT_AT_REFRESH = "675836eef7bbcdaaa2edc4f8246591617e161955"
+STACK_PCEA_REFRESH_COMMIT = "eaec7fd6ee4e829b6fae10a2c6d520b35857137d"
+PRIOR_ACTOR_A_COMMIT = "ce41ceb86b0e4819bfbb976f3ce187567391af48"
 LEGACY_RESEARCH_SOURCE_COMMIT = "ecf2ca0dec38bef29382e02121b0edde66763aa9"
 LEGACY_GONAL_ARCHITECTURE_BLOB = "a24e31110521b30ca941bf151b99458a06c910af"
 PINNED_PUBLIC_GONOL_SHA256 = "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
@@ -92,12 +100,14 @@ NONCLAIMS: tuple[str, ...] = (
     "not a public-key construction",
     "not entropy from gonol size, geometry, or address space",
     "not cryptographic hardness evidence",
+    "not a linear/tree/gonol key-addressing comparison until an actual UCNS out-of-sample result exists",
 )
 
 HMMM: tuple[str, ...] = (
     "exact UCNS recursive-scale transition law remains unresolved",
-    "the observed sequence has no source-level transition operator in the current stack refresh or migrated PCEA research lane",
-    "candidate key schedule needs attack review before any promotion",
+    "live UCNS main has no actual recursive gonol constructor value for the next step",
+    "the observed sequence has no source-level transition operator in the current stack refresh, live UCNS, or migrated PCEA research lane",
+    "candidate key schedule comparison is gated until the interpolation baseline is tested against an actual UCNS value",
 )
 
 
@@ -235,15 +245,15 @@ def derive_state_digest(state: Any) -> str:
     return _payload_digest({"state": state})
 
 
-def recover_transition_operator(
+def interpolation_baseline_operator(
     observed: Sequence[int] = OBSERVED_GONOL_SEQUENCE,
 ) -> dict[str, Any]:
-    """Recover the exact transition operator available from current evidence.
+    """Return the exact interpolation baseline available from current evidence.
 
-    Current source evidence exposes only three observed values. The recovered
-    operator is therefore the minimal constant-second-difference operator over
-    observation index. It is sufficient to replay and falsify the handoff, but
-    it is explicitly not the unresolved UCNS recursive-scale law.
+    Current source evidence exposes only three observed values. The baseline is
+    therefore the minimal constant-second-difference interpolation over
+    observation index. It is sufficient to replay and make a prediction, but it
+    is explicitly not the unresolved UCNS recursive-scale law.
     """
 
     values = tuple(observed)
@@ -264,7 +274,7 @@ def recover_transition_operator(
         "first_difference": first_difference,
         "formula": "y_i = y_0 + i*d_1 + (i*(i-1)//2)*d_2",
         "operator_id": OPERATOR_ID,
-        "operator_standing": "candidate observation replay, not UCNS recursive-scale canon",
+        "operator_standing": "three-point interpolation baseline, not UCNS recursive-scale canon",
         "second_difference": second_difference,
         "source_values": list(values),
         "y_0": values[0],
@@ -275,7 +285,7 @@ def transition_at(index: int, operator: Mapping[str, Any] | None = None) -> int:
     """Return the gonol value at one observation index under the candidate."""
 
     _require_nonnegative_int(index, "index")
-    op = recover_transition_operator() if operator is None else operator
+    op = interpolation_baseline_operator() if operator is None else operator
     y0 = int(op["y_0"])
     d1 = int(op["first_difference"])
     d2 = int(op["second_difference"])
@@ -286,14 +296,74 @@ def replay_transition(count: int = len(OBSERVED_GONOL_SEQUENCE)) -> tuple[int, .
     """Replay the observed candidate transition sequence."""
 
     _require_positive_int(count, "count")
-    operator = recover_transition_operator()
+    operator = interpolation_baseline_operator()
     return tuple(transition_at(index, operator) for index in range(count))
 
 
-def derive_next_gonol() -> int:
-    """Derive the next candidate gonol after the observed handoff sequence."""
+def predict_next_gonol() -> int:
+    """Predict the next gonol under the interpolation baseline."""
 
-    return transition_at(len(OBSERVED_GONOL_SEQUENCE), recover_transition_operator())
+    return transition_at(len(OBSERVED_GONOL_SEQUENCE), interpolation_baseline_operator())
+
+
+def actual_ucns_constructor_status() -> dict[str, Any]:
+    """Report whether current UCNS authority exposes the actual next constructor."""
+
+    return {
+        "actual_next_gonol": None,
+        "constructor_available": False,
+        "constructor_id": None,
+        "status": "UNRESOLVED_ACTUAL_CONSTRUCTOR_MISSING",
+        "reason": "UCNS CANON.md at live main still marks the recursive-scale transition law as hmmm",
+        "searched_authorities": [
+            {
+                "repository": "The-Interdependency/ucns",
+                "commit": UCNS_LIVE_MAIN_COMMIT,
+                "standing": "live origin/main",
+            },
+            {
+                "repository": "The-Interdependency/ucns",
+                "commit": UCNS_STACK_PINNED_COMMIT,
+                "standing": "stack/libs pinned snapshot",
+            },
+            {
+                "repository": "The-Interdependency/pcea",
+                "commit": LEGACY_RESEARCH_SOURCE_COMMIT,
+                "standing": "materialized legacy PCEA research lane",
+            },
+        ],
+        "hmmm": "actual recursive UCNS gonol constructor must supply the next value before out-of-sample comparison",
+    }
+
+
+def compare_prediction_to_actual_ucns(actual_next_gonol: int | None = None) -> dict[str, Any]:
+    """Compare the interpolation prediction with an actual UCNS next value."""
+
+    prediction = predict_next_gonol()
+    if actual_next_gonol is None:
+        return {
+            "actual_next_gonol": None,
+            "baseline_outcome": "UNRESOLVED",
+            "comparison_rule": "actual missing -> no mismatch/match classification",
+            "prediction": prediction,
+            "status": "UNRESOLVED_ACTUAL_CONSTRUCTOR_MISSING",
+        }
+    _require_positive_int(actual_next_gonol, "actual_next_gonol")
+    if actual_next_gonol == prediction:
+        return {
+            "actual_next_gonol": actual_next_gonol,
+            "baseline_outcome": "SURVIVED_ONE_OUT_OF_SAMPLE_TEST",
+            "comparison_rule": "actual == prediction -> survived one out-of-sample test",
+            "prediction": prediction,
+            "status": "SURVIVED_ONE_OUT_OF_SAMPLE_TEST",
+        }
+    return {
+        "actual_next_gonol": actual_next_gonol,
+        "baseline_outcome": "FALSIFIED",
+        "comparison_rule": "actual != prediction -> quadratic interpolation candidate falsified",
+        "prediction": prediction,
+        "status": "FALSIFIED",
+    }
 
 
 def coordinate_id(address: GonolAddress) -> str:
@@ -341,11 +411,21 @@ def derive_fresh_lazy_key(
     return derive_lazy_key(root_secret, address, length=length)
 
 
-def comparison_matrix() -> dict[str, Any]:
-    """Compare the candidate with ordinary linear ratchet and tree KDF controls."""
+def key_addressing_comparison(actual_next_gonol: int | None = None) -> dict[str, Any]:
+    """Compare key addressing only after the interpolation baseline is tested."""
 
+    out_of_sample = compare_prediction_to_actual_ucns(actual_next_gonol)
+    if out_of_sample["baseline_outcome"] != "SURVIVED_ONE_OUT_OF_SAMPLE_TEST":
+        return {
+            "comparison_scope": "deferred until actual UCNS constructor supplies an out-of-sample next value",
+            "gate": out_of_sample,
+            "nonclaims": list(NONCLAIMS),
+            "security_basis": "external secret entropy plus standard KDF only",
+            "status": "DEFERRED",
+        }
     return {
-        "comparison_scope": "topology/control comparison with equal root entropy",
+        "comparison_scope": "topology/control comparison with equal root entropy and standard KDF",
+        "gate": out_of_sample,
         "ordinary_linear_ratchet": {
             "synchronization": "ordered delivery is natural; out-of-order delivery needs skipped-key storage or auxiliary headers",
             "replay_resistance": "requires nonce/message-number cache or AEAD nonce discipline",
@@ -369,23 +449,28 @@ def comparison_matrix() -> dict[str, Any]:
             "replay_resistance": "survives only with explicit replay cache or nonce discipline",
             "compromise_containment": "unresolved; no better than tree KDF without additional evidence",
             "recovery": "partial candidate; needs loss and metadata-leakage tests",
-            "security_basis": "external secret entropy plus approved KDF only",
+            "security_basis": "external secret entropy plus standard KDF only",
         },
         "nonclaims": list(NONCLAIMS),
+        "status": "AVAILABLE_AFTER_BASELINE_SURVIVAL",
     }
 
 
 def freeze_document() -> dict[str, Any]:
     """Return the frozen research receipt for this candidate."""
 
-    operator = recover_transition_operator()
+    operator = interpolation_baseline_operator()
     replayed = replay_transition()
-    next_gonol = derive_next_gonol()
+    prediction = predict_next_gonol()
+    actual_status = actual_ucns_constructor_status()
+    out_of_sample = compare_prediction_to_actual_ucns(actual_status["actual_next_gonol"])
     document: dict[str, Any] = {
-        "comparison": comparison_matrix(),
-        "derived_next_gonol": {
-            "standing": "candidate value under OPERATOR_ID, not UCNS canon",
-            "value": next_gonol,
+        "actual_ucns_constructor": actual_status,
+        "interpolation_prediction_test": out_of_sample,
+        "key_addressing_comparison": key_addressing_comparison(actual_status["actual_next_gonol"]),
+        "predicted_next_gonol": {
+            "standing": "prediction under OPERATOR_ID, not derived law and not UCNS canon",
+            "value": prediction,
         },
         "hmmm": list(HMMM),
         "key_derivation": {
@@ -404,6 +489,7 @@ def freeze_document() -> dict[str, Any]:
             "kdf_shape": "HMAC-SHA256 expansion over canonical address payload",
             "materialization": "lazy single-coordinate derivation",
             "replay_control": "receiver-side coordinate cache or equivalent nonce discipline required",
+            "standing": "shape test only; linear/tree/gonol comparison is deferred until actual UCNS out-of-sample result",
         },
         "nonclaims": list(NONCLAIMS),
         "observed_sequence": list(OBSERVED_GONOL_SEQUENCE),
@@ -414,11 +500,19 @@ def freeze_document() -> dict[str, Any]:
         },
         "schema": FREEZE_SCHEMA,
         "source_identities": {
+            "live_pcea_main_commit": PCEA_LIVE_MAIN_COMMIT,
+            "live_ucns_main_commit": UCNS_LIVE_MAIN_COMMIT,
             "legacy_gonal_architecture_blob": LEGACY_GONAL_ARCHITECTURE_BLOB,
             "legacy_research_source_commit": LEGACY_RESEARCH_SOURCE_COMMIT,
-            "pcea_cleanup_commit": PCEA_CLEANUP_COMMIT,
+            "pcea_pyproject_blob": PCEA_PYPROJECT_BLOB,
+            "pcea_stack_pinned_commit": PCEA_STACK_PINNED_COMMIT,
             "pinned_public_gonol_sha256": PINNED_PUBLIC_GONOL_SHA256,
-            "stack_refresh_commit": STACK_REFRESH_COMMIT,
+            "prior_actor_a_commit": PRIOR_ACTOR_A_COMMIT,
+            "stack_branch_parent_at_refresh": STACK_BRANCH_PARENT_AT_REFRESH,
+            "stack_origin_main_at_refresh": STACK_ORIGIN_MAIN_AT_REFRESH,
+            "stack_pcea_refresh_commit": STACK_PCEA_REFRESH_COMMIT,
+            "ucns_public_gonol_blob": UCNS_PUBLIC_GONOL_BLOB,
+            "ucns_stack_pinned_commit": UCNS_STACK_PINNED_COMMIT,
         },
     }
     document["receipt_digest"] = _payload_digest(document)
@@ -455,7 +549,6 @@ if __name__ == "__main__":
 
 __all__ = [
     "AsyncGonolError",
-    "DERIVED_NEXT_GONOL",
     "FREEZE_SCHEMA",
     "GonolAddress",
     "HMMM",
@@ -463,17 +556,20 @@ __all__ = [
     "NONCLAIMS",
     "OBSERVED_GONOL_SEQUENCE",
     "OPERATOR_ID",
+    "PREDICTED_NEXT_GONOL",
     "ReplayCache",
     "ReplayError",
+    "actual_ucns_constructor_status",
     "canonical_json_bytes",
-    "comparison_matrix",
+    "compare_prediction_to_actual_ucns",
     "coordinate_id",
     "derive_fresh_lazy_key",
     "derive_lazy_key",
-    "derive_next_gonol",
     "derive_state_digest",
     "freeze_document",
-    "recover_transition_operator",
+    "interpolation_baseline_operator",
+    "key_addressing_comparison",
+    "predict_next_gonol",
     "replay_transition",
     "transition_at",
     "write_freeze_document",
