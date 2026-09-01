@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AHBG presentation board</title>
+    <link rel="stylesheet" href="board.css" />
+  </head>
+  <body>
+    <main>
+      <section class="board-wrap">
+        <h1>AHBG plane</h1>
+        <p class="note">Presentation only. Not mechanics. Tile centers are supplied by the declared UCNS source; the browser only scales them for display. Dashed traces show already-resolved motion. Click a center, or focus it and press Enter/Space, to inspect.</p>
+        <svg id="board" role="group" aria-label="Interactive Seed of Life presentation with inspectable tile centers and resolved unit motion traces"></svg>
+      </section>
+      <aside class="feed">
+        <h2>Feed</h2>
+        <ol id="feed-list"></ol>
+        <p class="inspect" id="inspect" aria-live="polite"></p>
+      </aside>
+    </main>
+    <script src="board.js"></script>
+  </body>
+</html>
