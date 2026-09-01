@@ -19,7 +19,6 @@ from typing import Any, Mapping
 
 from ucns.direct_mobius import native_mobius_state
 
-from epac_atomic import AtomicRecord
 from epac_dimensional_arity import (
     charged_structure_readout,
     geometry_from_declared_couplings,
@@ -27,7 +26,7 @@ from epac_dimensional_arity import (
     space,
     topology_structure_readout,
 )
-from epac_periodic import atomic_of, carried, construct_element_gonol, symbol_of
+from epac_periodic import carried, construct_element_gonol, symbol_of
 from epac_public_gonol import ClosedPublicGonol, PublicGonolReceipt, construct_public_gonol, replay_public_gonol
 
 
@@ -59,8 +58,23 @@ def _instantiate(composition: tuple[tuple[str, int], ...]) -> tuple[ClosedPublic
     return tuple(instances)
 
 
-def _record_for(gonol: ClosedPublicGonol) -> AtomicRecord:
-    return atomic_of(symbol_of(gonol))
+def _parse_lm(text: str) -> tuple[tuple[int, int], ...]:
+    """Parse a carried ``*-lm`` option into ``(l, m_l)`` pairs, preserving order."""
+    if text in ("", "none"):
+        return ()
+    pairs: list[tuple[int, int]] = []
+    for part in text.split(","):
+        l_text, m_text = part.split(":")
+        pairs.append((int(l_text), int(m_text)))
+    return tuple(pairs)
+
+
+def _unpaired_lm(gonol: ClosedPublicGonol) -> tuple[tuple[int, int], ...]:
+    return _parse_lm(carried(gonol, "unpaired-valence-lm"))
+
+
+def _promoted_lm(gonol: ClosedPublicGonol) -> tuple[tuple[int, int], ...]:
+    return _parse_lm(carried(gonol, "promoted-unpaired-lm"))
 
 
 def _choose_center(participants: tuple[ClosedPublicGonol, ...]) -> ClosedPublicGonol | None:
@@ -79,15 +93,21 @@ def _choose_center(participants: tuple[ClosedPublicGonol, ...]) -> ClosedPublicG
     return None
 
 
-def _attachment_set(record: AtomicRecord, needed: int) -> tuple[tuple[int, int], ...]:
-    ground = tuple((e.l, e.m_l) for e in record.unpaired_valence)
+def _attachment_set(gonol: ClosedPublicGonol, needed: int) -> tuple[tuple[int, int], ...]:
+    """Attachment sites derive from the already-closed element gonol.
+
+    No periodic-table relookup: the element gonol's carried promotion evidence
+    is the only promotion source for molecular construction.
+    """
+
+    ground = _unpaired_lm(gonol)
     if len(ground) >= needed:
         return ground[:needed]
-    promoted = tuple((e.l, e.m_l) for e in record.promoted_unpaired_valence)
+    promoted = _promoted_lm(gonol)
     if len(promoted) >= needed:
         return promoted[:needed]
     raise ValueError(
-        f"{record.symbol} has {len(ground)} unpaired valence electrons; "
+        f"{symbol_of(gonol)} has {len(ground)} unpaired valence electrons; "
         f"{needed} attachment sites were requested"
     )
 
@@ -182,22 +202,18 @@ def construct_molecule(formula: str) -> MolecularConstruction:
         center_sites: tuple[tuple[int, int], ...] = ()
         if len(participants) != 2:
             raise ValueError("symmetric affixiation is declared only for two equal atoms")
-        left, right = (_record_for(participants[0]), _record_for(participants[1]))
         ligand_sites = (
-            tuple((e.l, e.m_l) for e in left.unpaired_valence),
-            tuple((e.l, e.m_l) for e in right.unpaired_valence),
+            _unpaired_lm(participants[0]),
+            _unpaired_lm(participants[1]),
         )
         used_promotion = False
     else:
         ligands = tuple(item for item in participants if item is not center)
-        center_record = _record_for(center)
-        ground = tuple((e.l, e.m_l) for e in center_record.unpaired_valence)
-        ligand_sites = tuple(
-            tuple((e.l, e.m_l) for e in _record_for(item).unpaired_valence) for item in ligands
-        )
+        ground = _unpaired_lm(center)
+        ligand_sites = tuple(_unpaired_lm(item) for item in ligands)
         needed = sum(len(sites) for sites in ligand_sites)
         used_promotion = needed > len(ground)
-        center_sites = _attachment_set(center_record, needed)
+        center_sites = _attachment_set(center, needed)
     mobius = _mobius_coupling(
         participants=participants,
         center=center,

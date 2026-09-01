@@ -214,16 +214,18 @@ def _promoted_unpaired(electrons: tuple[ElectronState, ...]) -> tuple[ElectronSt
     s_pair = next((pair for pair in s_pairs_by_orbital.values() if len(pair) == 2), None)
     if s_pair is None or not empty_p_m:
         return tuple(unpaired)
-    # Promote one valence s electron into the first empty p m while preserving
-    # the distinct electron that remains in the s orbital.
-    promoted_from_s = next((item for item in s_pair if item.m_s == 1), s_pair[0])
+    # Promote the spin-down valence s electron into the first empty valence p
+    # and flip it to spin-up. The spin-up s electron stays behind, so every
+    # promoted unpaired electron carries m_s = +1, matching the ground-state
+    # unpaired convention used by _unpaired_valence.
+    promoted_from_s = next((item for item in s_pair if item.m_s == -1), s_pair[0])
     remaining_s = next(item for item in s_pair if item.index != promoted_from_s.index)
     new_p = ElectronState(
         index=promoted_from_s.index,
         n=valence_n,
         l=1,
         m_l=empty_p_m[0],
-        m_s=promoted_from_s.m_s,
+        m_s=1,
         shell=f"n{valence_n}",
         subshell=_subshell_name(valence_n, 1),
         angular_id=_angular_id(1, empty_p_m[0]),
@@ -248,7 +250,10 @@ def _promoted_unpaired(electrons: tuple[ElectronState, ...]) -> tuple[ElectronSt
         valence=True,
         paired=False,
     )
-    return tuple([unpaired_s, new_p, *[e for e in unpaired if not (e.l == 0)]])
+    promoted = [unpaired_s, new_p, *[e for e in unpaired if e.l != 0]]
+    # Canonical subshell ordering: s before p, p orbitals by ascending m_l.
+    promoted.sort(key=lambda electron: (electron.l, electron.m_l))
+    return tuple(promoted)
 
 
 def atomic_record(Z: int) -> AtomicRecord:

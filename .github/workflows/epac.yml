@@ -1,0 +1,30 @@
+name: epac
+
+on:
+  pull_request:
+    paths:
+      - "research/epac/**"
+      - "libs/ucns/**"
+      - ".github/workflows/epac.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/epac/**"
+      - "libs/ucns/**"
+      - ".github/workflows/epac.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  epac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: EPAC contract tests
+        env:
+          PYTHONPATH: research/epac:libs/ucns/src
+        run: python -m unittest discover -s research/epac/tests -q

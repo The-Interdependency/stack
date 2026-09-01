@@ -32,9 +32,9 @@ class MolecularAffixiationTest(unittest.TestCase):
         self.assertFalse(water["ligand_has_p"])
         self.assertEqual(water["center_used_atomic_promotion"], False)
         self.assertEqual(methane["center_used_atomic_promotion"], True)
-        self.assertEqual(methane["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertEqual(methane["center_unpaired_lm"], ["0:0", "1:-1", "1:0", "1:1"])
         self.assertTrue(carbon_dioxide["ligand_has_p"])
-        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["0:0", "1:-1", "1:1", "1:0"])
+        self.assertEqual(carbon_dioxide["center_unpaired_lm"], ["0:0", "1:-1", "1:0", "1:1"])
         self.assertEqual(carbon_dioxide["center_attachment_site_count"], 4)
         self.assertEqual(carbon_dioxide["ligand_attachment_site_count"], 4)
 
