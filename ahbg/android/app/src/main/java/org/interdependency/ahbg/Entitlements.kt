@@ -4,6 +4,7 @@ import android.content.Context
 import com.revenuecat.purchases.CustomerInfo
 import com.revenuecat.purchases.Purchases
 import com.revenuecat.purchases.PurchasesError
+import com.revenuecat.purchases.PurchasesConfiguration
 import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
 
 /**
@@ -47,7 +48,7 @@ class RevenueCatPremiumStore(
 
     init {
         Purchases.configure(
-            Purchases.Configuration.Builder(context.applicationContext, apiKey).build()
+            PurchasesConfiguration.Builder(context.applicationContext, apiKey).build()
         )
         Purchases.sharedInstance.getCustomerInfo(object : ReceiveCustomerInfoCallback {
             override fun onReceived(customerInfo: CustomerInfo) {
