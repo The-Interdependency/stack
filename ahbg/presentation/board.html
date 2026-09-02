@@ -38,9 +38,74 @@
           <h3>Benchmark Lab</h3>
           <p>Advanced scenarios, saved/replayed run comparison, and adversarial benchmark packs.</p>
           <button id="premium-status" disabled>Benchmark Lab: checking…</button>
+          <button id="premium-purchase" type="button">Unlock Benchmark Lab</button>
+          <button id="premium-restore" type="button">Restore purchase</button>
+          <p id="premium-message" class="inspect" aria-live="polite"></p>
         </section>
       </aside>
     </main>
     <script src="board.js"></script>
+    <script>
+      (() => {
+        const purchase = document.getElementById("premium-purchase");
+        const restore = document.getElementById("premium-restore");
+        const status = document.getElementById("premium-status");
+        const message = document.getElementById("premium-message");
+        const nativeBridge = typeof window.ahbg !== "undefined" ? window.ahbg : null;
+        if (!purchase || !restore || !status || !message) return;
+
+        const pending = new Map();
+        window.ahbgPremiumResult = (callbackId, payload) => {
+          const resolver = pending.get(callbackId);
+          if (!resolver) return;
+          pending.delete(callbackId);
+          try { resolver.resolve(JSON.parse(payload)); }
+          catch (error) { resolver.reject(error); }
+        };
+
+        function invoke(method) {
+          if (!nativeBridge || typeof nativeBridge[method] !== "function") {
+            return Promise.reject(new Error("Purchases are available in the Android app"));
+          }
+          return new Promise((resolve, reject) => {
+            const callbackId = `premium_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
+            const timer = setTimeout(() => {
+              pending.delete(callbackId);
+              reject(new Error("purchase bridge timeout"));
+            }, 30000);
+            pending.set(callbackId, {
+              resolve: (result) => { clearTimeout(timer); resolve(result); },
+              reject: (error) => { clearTimeout(timer); reject(error); },
+            });
+            nativeBridge[method](callbackId);
+          });
+        }
+
+        function applyResult(result) {
+          status.textContent = result.unlocked
+            ? "Benchmark Lab: unlocked"
+            : "Benchmark Lab: locked (basic play free)";
+          message.textContent = result.message || "Purchase state updated";
+        }
+
+        function run(button, method) {
+          button.disabled = true;
+          message.textContent = method === "purchaseBenchmarkLab" ? "Opening Google Play…" : "Restoring purchases…";
+          invoke(method)
+            .then(applyResult)
+            .catch((error) => { message.textContent = String(error.message || error); })
+            .finally(() => { button.disabled = false; });
+        }
+
+        purchase.addEventListener("click", () => run(purchase, "purchaseBenchmarkLab"));
+        restore.addEventListener("click", () => run(restore, "restoreBenchmarkLab"));
+
+        if (!nativeBridge) {
+          purchase.disabled = true;
+          restore.disabled = true;
+          message.textContent = "Purchases are available in the Android app.";
+        }
+      })();
+    </script>
   </body>
 </html>
