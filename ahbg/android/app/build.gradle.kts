@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "org.interdependency.ahbg"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.interdependency.ahbg"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 2
-        versionName = "0.2.0"
+        targetSdk = 36
+        versionCode = 3
+        versionName = "0.3.0"
         // Production runtime endpoint. Release builds must use HTTPS; debug
         // builds may point at a local emulator host through
         // -PruntimeUrl=http://10.0.2.2:8765. The mobile layer never embeds
@@ -61,9 +61,7 @@ android {
 
 dependencies {
     implementation("androidx.webkit:webkit:1.12.1")
-    // RevenueCat 10.x core plus the Samsung Galaxy Store billing backend.
-    // Native Galaxy IAP support requires the purchases-store-galaxy module
-    // (RevenueCat >= 10.7.0). Store selection is auto-detected at runtime.
+    // RevenueCat 10.x core. Google Play billing is supported by the core
+    // `purchases` artifact by default; no store module is required for Play.
     implementation("com.revenuecat.purchases:purchases:10.19.1")
-    implementation("com.revenuecat.purchases:purchases-store-galaxy:10.19.1")
 }
