@@ -17,7 +17,7 @@
     },
     {
       "repository": "The-Interdependency/ucns",
-      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
       "authority": "geometry and mathematical representation",
       "relation": "pinned canonical repository view at libs/ucns/; stack-local work at research/ucns/"
     },

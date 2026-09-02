@@ -54,6 +54,7 @@ class LiveSession:
     # so an HTTP client can always reload the exact canonical state.
 
     def start_observation(self) -> dict[str, Any]:
+        from .construction import ConstructionLedger
         from .engine import load_engine
         from .runtime import _observation
 
@@ -61,8 +62,9 @@ class LiveSession:
         field, chain = _keep.load_field(self.out_dir / "state") if (self.out_dir / "state" / "events.jsonl").exists() else self._fresh_field()
         self._field = field
         self._chain = chain
+        self._ledger = ConstructionLedger.load(field, self.out_dir)
         manifest = self.agent.manifest()
-        capabilities = tuple(manifest.get("capabilities") or ("observe", "plan", "relocate"))
+        capabilities = tuple(manifest.get("capabilities") or ("observe", "plan", "relocate", "construct"))
         return _observation(
             session_id=self.session_id,
             opened=field,
@@ -70,6 +72,7 @@ class LiveSession:
             config=self.config,
             turn_messages=(),
             capabilities=capabilities,
+            ledger=self._ledger,
         ).as_dict()
 
     def _fresh_field(self):
@@ -98,26 +101,43 @@ class LiveSession:
         chain = self._chain
         cycle = _round.Cycle(field, chain)
 
-        manifest = self.agent.manifest()
-        capabilities = tuple(manifest.get("capabilities") or ("observe", "plan", "relocate"))
         observation = self.start_observation()
         plan = parse_plan_payload(raw_plan, Observation(
             session_id=self.session_id,
             turn=field.turn,
             field=field.snapshot(),
-            capabilities=capabilities,
+            capabilities=tuple(observation["capabilities"]),
             legal=build_legal_actions(field),
         ))
 
         cycle.open_turn()
         before = len(chain.records)
-        moves = [intent.as_move() for intent in plan.intents]
+        moves = [intent.as_move() for intent in plan.intents if intent.action == "relocate"]
+        builds = [intent for intent in plan.intents if intent.action == "construct"]
         cycle.resolve(moves)
         cycle.close_turn()
+
+        from .construction import ConstructionLedger
+
+        ledger: ConstructionLedger = getattr(self, "_ledger", None) or ConstructionLedger.load(field, self.out_dir)
+        build_events = []
+        for build in builds:
+            ledger, event = ledger.apply_build(
+                field,
+                unit_id=build.unit_id,
+                from_tile_id=build.from_tile_id,
+                to_tile_id=build.to_tile_id,
+            )
+            build_events.append(event)
+        ledger.dump(self.out_dir)
+        self._ledger = ledger
+
         effect = Effect(
             session_id=self.session_id,
             turn=field.turn - 1,
-            events=tuple(record.payload() for record in chain.records[before:]),
+            events=tuple(
+                [record.payload() for record in chain.records[before:]] + build_events
+            ),
         )
 
         _keep.dump_field(field, chain, self.out_dir / "state")
@@ -192,6 +212,7 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
                 if session is None:
                     self._json({"error": "unknown session"}, 404)
                     return
+                from .construction import ConstructionLedger
                 from .engine import load_engine
 
                 _patch, _chain, _keep, _round = load_engine()
@@ -201,6 +222,7 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
                         "session_id": session.session_id,
                         "field": field.snapshot(),
                         "presentation": field_to_presentation(field),
+                        "construction": ConstructionLedger.load(field, session.out_dir).as_dict(),
                         "turn": field.turn,
                         "config": session.config.as_dict(),
                     }

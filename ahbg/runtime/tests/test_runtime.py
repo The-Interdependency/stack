@@ -160,3 +160,99 @@ class RuntimeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ConstructingHarness:
+    """Conforming external harness that builds the first UCNS-buildable tile."""
+
+    def manifest(self):
+        return {"agent": "external-builder", "capabilities": ["observe", "plan", "construct"]}
+
+    def plan(self, observation):
+        legal = observation.get("legal") or []
+        construct = [item for item in legal if item.get("action") == "construct"]
+        intents = []
+        if construct:
+            first = construct[0]
+            intents.append(
+                {
+                    "unit_id": first["unit_id"],
+                    "action": "construct",
+                    "from_tile_id": first["from_tile_id"],
+                    "to_tile_id": first["to_tile_id"],
+                }
+            )
+        return {
+            "schema": "interdependency.ahbg.harness.plan/1",
+            "session_id": observation["session_id"],
+            "turn": observation["turn"],
+            "intents": intents,
+            "note": "external-construct",
+        }
+
+
+class ConstructionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.out_dir = Path(self._tmp.name)
+
+    def tearDown(self) -> None:
+        self._tmp.cleanup()
+
+    def test_a0_constructs_through_the_same_contract(self) -> None:
+        result = run_plane(
+            agent=A0Harness(salt="test-a0-build"),
+            config=RuntimeConfig(seed=2, turns=10),
+            out_dir=self.out_dir,
+        )
+        self.assertEqual(result.final_turn, 10)
+        construct_effects = [
+            event
+            for record in result.turn_records
+            for event in record["effect"]["events"]
+            if event.get("kind") == "construct"
+        ]
+        self.assertGreaterEqual(len(construct_effects), 6)
+        self.assertEqual(sum(1 for s in result.construction["built"] if s.startswith("RING_")), 6)
+
+    def test_external_harness_constructs_through_same_contract_as_a0(self) -> None:
+        result = run_plane(
+            agent=ConstructingHarness(),
+            config=RuntimeConfig(seed=3, turns=7),
+            out_dir=self.out_dir,
+        )
+        self.assertEqual(result.final_turn, 7)
+        self.assertEqual(sum(1 for s in result.construction["built"] if s.startswith("RING_")), 6)
+        # Persisted ledger replays to the same built set.
+        from ahbg.runtime.construction import ConstructionLedger
+
+        loaded, _chain = _keep.load_field(self.out_dir / "state")
+        ledger = ConstructionLedger.load(loaded, self.out_dir)
+        self.assertEqual(
+            set(ledger.as_dict()["built"]),
+            set(result.construction["built"]),
+        )
+
+    def test_construct_outside_ucns_buildable_set_fails_closed(self) -> None:
+        from ahbg.runtime.construction import ConstructionError
+
+        result = run_plane(
+            agent=ConstructingHarness(),
+            config=RuntimeConfig(seed=4, turns=6),
+            out_dir=self.out_dir,
+        )
+        self.assertEqual(sum(1 for s in result.construction["built"] if s.startswith("RING_")), 6)
+        # All seven slots are built; constructing again must fail closed.
+        from ahbg.runtime.construction import ConstructionLedger
+
+        loaded, _chain = _keep.load_field(self.out_dir / "state")
+        ledger = ConstructionLedger.load(loaded, self.out_dir)
+        with self.assertRaises(ConstructionError):
+            # any unbuilt target no longer exists; reuse first ring tile id
+            target = loaded.snapshot()["tiles"][0]["tile_id"]
+            ledger.apply_build(
+                loaded,
+                unit_id="A0",
+                from_tile_id=loaded.occupants["A0"].tile_id,
+                to_tile_id=target,
+            )

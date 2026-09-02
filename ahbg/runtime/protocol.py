@@ -15,11 +15,9 @@ Capability vocabulary (frozen with the canonical engine):
 
 * ``observe``  — receive field snapshots and resolved-effect feed;
 * ``plan``     — submit a plan payload;
-* ``relocate`` — emit move intents between adjacent tiles.
-
-``construct``/build remains regulatory in the frozen engine: it is recorded as
-a deferred effect, never emitted as an executable intent, and therefore is not
-an advertised capability. UCNS construction authority stays ``hmmm``.
+* ``relocate`` — emit move intents between adjacent tiles;
+* ``construct`` — emit build intents for UCNS-buildable tiles. Buildable-next
+  is read from the authoritative UCNS construction state, never re-derived.
 """
 
 from __future__ import annotations
@@ -31,9 +29,9 @@ OBSERVATION_SCHEMA = "interdependency.ahbg.harness.observation/1"
 PLAN_SCHEMA = "interdependency.ahbg.harness.plan/1"
 EFFECT_SCHEMA = "interdependency.ahbg.harness.effect/1"
 
-CAPABILITIES = ("observe", "plan", "relocate")
-EXECUTABLE_ACTIONS = ("relocate",)
-REGULATORY_ACTIONS = ("construct",)
+CAPABILITIES = ("observe", "plan", "relocate", "construct")
+EXECUTABLE_ACTIONS = ("relocate", "construct")
+REGULATORY_ACTIONS = ()
 
 # Inbox injection markers, shared with the frozen corpus runner. Injected
 # instructions are refused, never executed.

@@ -73,24 +73,47 @@ class A0Harness:
             and item.get("action") == "relocate"
             and item.get("from_tile_id") == at
         ]
+        buildable = [
+            str(item["to_tile_id"])
+            for item in legal
+            if isinstance(item, Mapping)
+            and item.get("unit_id") == unit_id
+            and item.get("action") == "construct"
+            and item.get("from_tile_id") == at
+        ]
 
-        choice = self._will.choose_relocate(
-            self._vessel,
-            unit_id=unit_id,
-            at=at,
-            empty_neighbors=empty_neighbors,
-            world=field,
-        )
         intents = []
-        if choice.get("kind") == "relocate":
+        choice = None
+        # A0 reference policy: build the first UCNS-buildable tile when one is
+        # advertised, otherwise relocate through the canonical will. Both
+        # actions travel the same capability-bounded plan contract.
+        if buildable:
             intents.append(
                 {
-                    "unit_id": choice["unit_id"],
-                    "action": "relocate",
-                    "from_tile_id": choice["from_tile_id"],
-                    "to_tile_id": choice["to_tile_id"],
+                    "unit_id": unit_id,
+                    "action": "construct",
+                    "from_tile_id": at,
+                    "to_tile_id": sorted(buildable)[0],
                 }
             )
+            choice = {"kind": "construct"}
+        else:
+            choice = self._will.choose_relocate(
+                self._vessel,
+                unit_id=unit_id,
+                at=at,
+                empty_neighbors=empty_neighbors,
+                world=field,
+            )
+            if choice.get("kind") == "relocate":
+                intents.append(
+                    {
+                        "unit_id": choice["unit_id"],
+                        "action": "relocate",
+                        "from_tile_id": choice["from_tile_id"],
+                        "to_tile_id": choice["to_tile_id"],
+                    }
+                )
         return {
             "schema": "interdependency.ahbg.harness.plan/1",
             "session_id": session_id,
