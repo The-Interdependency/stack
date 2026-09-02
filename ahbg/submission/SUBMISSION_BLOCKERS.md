@@ -11,28 +11,33 @@ external accounts or hardware and cannot be completed from this repository.
   regression coverage proves external harness + A0 both build.
 - No remaining core-mechanics blocker.
 
-## 2. Android release signing and store upload — EXTERNAL
+## 2. Galaxy Store publication — EXTERNAL (now the primary path)
 
-- Signing config and versioning are in `ahbg/android/app/build.gradle.kts`
-  (keystore supplied via gradle properties; never committed).
-- Production HTTPS endpoint and network security config are in place.
-- **Blocker**: a Play Console account, a release keystore, the store listing
-  review, and the actual upload/publish step happen outside this repository.
+- RevenueCat upgraded to `10.19.1` + `purchases-store-galaxy` (this line);
+  signing config, versioning, HTTPS endpoint, network security config, and
+  submission assets are all in-repo.
+- **Blocker**: Samsung Seller Portal registration and **Commercial Seller
+  Status approval** (schedule risk — start first; PayPal is the documented
+  easiest payout path; D-U-N-S/international-bank verification can take up to
+  10 business days). Then app registration, Samsung IAP item, Galaxy review,
+  and publish. See `GALAXY_STORE_RUNBOOK.md`.
 
 ## 3. RevenueCat production provisioning — EXTERNAL
 
-- Client + runtime entitlement boundary complete.
-- **Blocker**: the live RevenueCat project, product, `benchmark_lab`
-  entitlement, offering, and public SDK key must be created in the dashboard.
+- Client + runtime entitlement boundary complete; Galaxy billing backend is
+  part of this line.
+- **Blocker**: the live RevenueCat project, Galaxy Store app, Seller Portal
+  service-account credentials, product, `benchmark_lab` entitlement, offering,
+  and public SDK key must be created in the dashboard.
   See `REVENUECAT_PROVISIONING.md`.
 
 ## 4. Publish + submission assets — EXTERNAL
 
-- Store listing, privacy policy, demo storyboard, and Devpost material are in
-  `ahbg/submission/`.
+- Store listing, privacy policy, demo storyboard, Galaxy runbook, and Devpost
+  material are in `ahbg/submission/`.
 - **Blocker**: recording the ≤2-minute device demo, capturing screenshots,
-  creating promo/trial codes, uploading assets, and obtaining the public store
-  URL require the published store listing.
+  creating promo/trial codes, uploading assets, obtaining the public Galaxy
+  Store URL, and submitting that URL to Devpost require the published listing.
 
 ## Gate status
 
