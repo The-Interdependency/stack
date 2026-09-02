@@ -1,0 +1,44 @@
+name: ahbg-runtime
+
+on:
+  pull_request:
+    paths:
+      - "ahbg/runtime/**"
+      - "ahbg/grok/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg-runtime.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ahbg/runtime/**"
+      - "ahbg/grok/**"
+      - "libs/ucns/**"
+      - ".github/workflows/ahbg-runtime.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Runtime harness contract tests
+        env:
+          PYTHONPATH: libs/ucns/src
+        run: python -m unittest discover -s ahbg/runtime/tests -q
+      - name: Runtime CLI smoke
+        env:
+          PYTHONPATH: ".:libs/ucns/src"
+        run: |
+          python -m ahbg.runtime play --agent a0 --turns 3 --out /tmp/ahbg-runtime-ci
+          python - <<'PY'
+          import json
+          result = json.load(open("/tmp/ahbg-runtime-ci/result.json"))
+          assert result["final_turn"] == 3, result["final_turn"]
+          assert len(result["final_snapshot"]["tiles"]) == 7
+          print("runtime CLI smoke ok")
+          PY
