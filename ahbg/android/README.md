@@ -27,10 +27,19 @@ canonical runtime (ahbg/runtime + frozen Grok engine + UCNS geometry)
 
 ```bash
 cd ahbg/android
-gradle assembleDebug -PruntimeUrl=http://10.0.2.2:8765 -PrevenueCatApiKey=rc_public_key
+gradle assembleDebug -PruntimeUrl=http://10.0.2.2:8765
+
+# signed release against the production HTTPS endpoint
+gradle assembleRelease \
+  -PruntimeUrl=https://ahbg.interdependentway.org \
+  -PrevenueCatApiKey=rc_public_key \
+  -PahbgStoreFile=/secure/ahbg-release.jks -PahbgStorePassword=... \
+  -PahbgKeyAlias=... -PahbgKeyPassword=...
 ```
 
-- `runtimeUrl` defaults to `http://10.0.2.2:8765` (host machine from emulator).
+- `runtimeUrl` defaults to `https://ahbg.interdependentway.org` for release
+  builds; debug may point at a local emulator host. Cleartext is allowed only
+  for `10.0.2.2`/`localhost` in debug via `network_security_config.xml`.
 - `revenueCatApiKey` is a RevenueCat **public** API key provisioned at build
   time and never committed. Without a key the app builds and runs on the free
   tier (`NoopPremiumStore`).

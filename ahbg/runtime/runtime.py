@@ -24,10 +24,12 @@ from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 from . import protocol
+from .construction import ConstructionError, ConstructionLedger
 from .engine import load_engine
 from .protocol import (
     Effect,
     Intent,
+    LegalAction,
     Observation,
     Plan,
     ProtocolError,
@@ -75,6 +77,7 @@ class RunResult:
     state_digest: str
     turn_records: tuple[Mapping[str, Any], ...]
     effects: tuple[Mapping[str, Any], ...]
+    construction: Mapping[str, Any]
     out_dir: Path
 
     def as_dict(self) -> dict[str, Any]:
@@ -86,6 +89,7 @@ class RunResult:
             "state_digest": self.state_digest,
             "turn_records": [dict(item) for item in self.turn_records],
             "effects": [dict(item) for item in self.effects],
+            "construction": dict(self.construction),
         }
 
 
@@ -154,13 +158,26 @@ def _observation(
     config: RuntimeConfig,
     turn_messages: Sequence[Mapping[str, Any]],
     capabilities: Sequence[str],
+    ledger: ConstructionLedger,
 ) -> Observation:
+    legal = list(build_legal_actions(opened))
+    if "construct" in capabilities:
+        for unit in opened.occupants.values():
+            for tile_id in ledger.legal_build_tiles(opened):
+                legal.append(
+                    LegalAction(
+                        unit_id=unit.unit_id,
+                        action="construct",
+                        from_tile_id=unit.tile_id,
+                        to_tile_id=tile_id,
+                    )
+                )
     return Observation(
         session_id=session_id,
         turn=opened.turn,
         field=opened.snapshot(),
         capabilities=tuple(capabilities),
-        legal=build_legal_actions(opened),
+        legal=tuple(legal),
         feed=tuple(record.payload() for record in chain.records),
         inbox=tuple(dict(item) for item in turn_messages),
         entitlements=config.entitlements,
@@ -206,6 +223,7 @@ def run_plane(
     chain = Chain()
     chain.append(KIND_PLANE_INIT, 0, {"field": opened.snapshot()})
     cycle = Cycle(opened, chain)
+    ledger = ConstructionLedger.load(opened, output_root) if (output_root / "construction.json").exists() else ConstructionLedger.open(opened)
 
     session_id = hashlib.sha256(
         json.dumps({"seed": cfg.seed, "units": mapped_units}, sort_keys=True).encode("utf-8")
@@ -226,6 +244,7 @@ def run_plane(
             config=cfg,
             turn_messages=messages,
             capabilities=capabilities,
+            ledger=ledger,
         )
 
         forced = cfg.forced_plans.get(turn)
@@ -243,16 +262,34 @@ def run_plane(
             plan = Plan(session_id=session_id, turn=turn, intents=(), note="refused-injection")
             intents = []
 
-        moves = [intent.as_move() for intent in intents]
+        # Simultaneous resolution: moves through the war_v3 engine, constructs
+        # against the pre-turn UCNS construction ledger.
+        moves = [intent.as_move() for intent in intents if intent.action == "relocate"]
+        builds = [intent for intent in intents if intent.action == "construct"]
+        if len({build.to_tile_id for build in builds}) != len(builds):
+            raise ProtocolError("one construct intent per target tile per turn")
         before = len(chain.records)
         cycle.resolve(moves)
         digest = cycle.close_turn()
         new_records = chain.records[before:]
 
+        build_events: list[dict[str, Any]] = []
+        for build in builds:
+            ledger, event = ledger.apply_build(
+                opened,
+                unit_id=build.unit_id,
+                from_tile_id=build.from_tile_id,
+                to_tile_id=build.to_tile_id,
+            )
+            build_events.append(event)
+        ledger.dump(output_root)
+
         effect = Effect(
             session_id=session_id,
             turn=turn,
-            events=tuple(record.payload() for record in new_records),
+            events=tuple(
+                [record.payload() for record in new_records] + build_events
+            ),
         )
         effects.append(effect.as_dict())
         turn_records.append(
@@ -260,6 +297,7 @@ def run_plane(
                 "turn": turn,
                 "plan": plan.as_dict(),
                 "effect": effect.as_dict(),
+                "construction": ledger.as_dict(),
                 "injected_refused": bool(injected),
                 "state_digest": digest,
             }
@@ -281,6 +319,7 @@ def run_plane(
         state_digest=turn_records[-1]["state_digest"] if turn_records else _initial_digest(opened),
         turn_records=tuple(turn_records),
         effects=tuple(effects),
+        construction=dict(ledger.as_dict()),
         out_dir=output_root,
     )
     (output_root / "result.json").write_text(
