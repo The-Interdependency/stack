@@ -15,9 +15,9 @@ import com.revenuecat.purchases.interfaces.ReceiveCustomerInfoCallback
  * unlocks only when RevenueCat reports the `benchmark_lab` entitlement as
  * active for the current app user.
  *
- * RevenueCat 10.x with the `purchases-store-galaxy` billing backend: the
- * store (Galaxy, or a later Play build with its module added) is auto-detected
- * at runtime, so this file never hard-codes a store.
+ * RevenueCat 10.x core supports Google Play billing by default through the
+ * ordinary `PurchasesConfiguration`; no store module is required. The same
+ * entitlement boundary would apply unchanged to any later store module.
  *
  * When the RevenueCat key is not provisioned (free/dev builds), the store
  * degrades to the free tier rather than crashing or faking premium.
