@@ -7,14 +7,16 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import org.json.JSONObject
 
 /**
  * Thinnest Android-first shell around the canonical AHBG runtime.
  *
  * This activity hosts the canonical presentation board in a WebView and
  * exposes one small JS bridge (`window.ahbg`) that forwards observe/plan/act
- * calls to the runtime HTTP bridge. The mobile layer presents and controls
- * AHBG; it is not a second game engine and never reimplements UCNS geometry.
+ * calls to the runtime HTTP bridge plus the Android-owned RevenueCat purchase
+ * and restore operations. The mobile layer presents and controls AHBG; it is
+ * not a second game engine and never reimplements UCNS geometry.
  */
 class MainActivity : Activity() {
 
@@ -40,6 +42,20 @@ class MainActivity : Activity() {
 
     private fun toast(message: String) {
         runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
+    }
+
+    private fun returnPremiumResult(callbackId: String, result: PremiumActionResult) {
+        val payload = JSONObject()
+            .put("ok", result.ok)
+            .put("unlocked", result.unlocked)
+            .put("message", result.message)
+            .toString()
+        runOnUiThread {
+            webView.evaluateJavascript(
+                "window.ahbgPremiumResult(${JSONObject.quote(callbackId)}, ${JSONObject.quote(payload)});",
+                null,
+            )
+        }
     }
 
     inner class Bridge {
@@ -76,11 +92,27 @@ class MainActivity : Activity() {
         @JavascriptInterface
         fun isBenchmarkLabUnlocked(): Boolean = premiumStore.isBenchmarkLabUnlocked()
 
+        @JavascriptInterface
+        fun purchaseBenchmarkLab(callbackId: String) {
+            runOnUiThread {
+                premiumStore.purchaseBenchmarkLab(this@MainActivity) { result ->
+                    returnPremiumResult(callbackId, result)
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun restoreBenchmarkLab(callbackId: String) {
+            premiumStore.restoreBenchmarkLab { result ->
+                returnPremiumResult(callbackId, result)
+            }
+        }
+
         private fun extractSessionId(planJson: String): String? {
             return Regex("\"session_id\"\\s*:\\s*\"([^\"]+)\"").find(planJson)?.groupValues?.get(1)
         }
 
-        private fun json(value: String): String = org.json.JSONObject.quote(value)
+        private fun json(value: String): String = JSONObject.quote(value)
     }
 
     override fun onDestroy() {
