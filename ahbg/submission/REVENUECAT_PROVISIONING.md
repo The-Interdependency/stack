@@ -8,10 +8,15 @@ store consoles; the following steps are the exact remaining external work.
 
 1. Create the production project in RevenueCat.
    - Record the **project id** here once created: `rc_<TO_FILL>`.
-2. Add the Android app (`org.interdependency.ahbg`) with the Play public key.
+2. Add the Android app (`org.interdependency.ahbg`). For the Galaxy-first
+   path add a **Galaxy Store** app; add the Play app later if shipping Play.
+   - Galaxy: create a Galaxy Seller Portal **service account** and give those
+     credentials to RevenueCat so it can validate Samsung purchases.
+   - Play (later): attach the Play public key.
 3. Create the entitlement `benchmark_lab` (non-consumable).
 4. Create the product `ahbg_benchmark_lab` (one-time purchase, "Benchmark
-   Lab"), attach it to the entitlement.
+   Lab"), attach it to the entitlement, and mirror it as a Samsung IAP item
+   with the same id in Seller Portal.
 5. Create an offering (default) containing that product; optionally add a
    trial offering `ahbg_benchmark_lab_trial` if a trial is desired.
 6. Copy the **public SDK API key** (`appl_...` or `goog_...` public key) into
@@ -23,6 +28,8 @@ store consoles; the following steps are the exact remaining external work.
      -PahbgStoreFile=/secure/ahbg-release.jks \
      -PahbgStorePassword=... -PahbgKeyAlias=... -PahbgKeyPassword=...
    ```
+7. SDK: RevenueCat `10.19.1` + `purchases-store-galaxy` (this PR); Galaxy
+   IAP requires RevenueCat >= 10.7.0 and the store module.
 
 ## Verify (gate items)
 

@@ -61,5 +61,9 @@ android {
 
 dependencies {
     implementation("androidx.webkit:webkit:1.12.1")
-    implementation("com.revenuecat.purchases:purchases:8.10.1")
+    // RevenueCat 10.x core plus the Samsung Galaxy Store billing backend.
+    // Native Galaxy IAP support requires the purchases-store-galaxy module
+    // (RevenueCat >= 10.7.0). Store selection is auto-detected at runtime.
+    implementation("com.revenuecat.purchases:purchases:10.19.1")
+    implementation("com.revenuecat.purchases:purchases-store-galaxy:10.19.1")
 }
