@@ -1,7 +1,9 @@
 # AHBG submission blockers — Google Play (primary)
 
-Everything source-backed is complete and merged. The following require live
-external accounts or hardware and cannot be completed from this repository.
+Source-backed Android purchase/restore wiring, Play artifact generation, and
+submission documentation are complete in the repository. The remaining items
+below require live external accounts, Play state, credentials, or hardware and
+must not be reported as repository-complete evidence.
 
 ## 1. Construction (core mechanics) — CLOSED
 
@@ -14,43 +16,57 @@ external accounts or hardware and cannot be completed from this repository.
 ## 2. Google Play publication — EXTERNAL (primary path)
 
 - Code compliance is done: `compileSdk`/`targetSdk` 36, AGP 8.9.1, Gradle
-  8.11.1, Play-native `bundleRelease` in CI, RevenueCat 10.19.1 core (Play
-  default), production HTTPS endpoint, signing config outside Git.
-- **Blocker**: a Play developer account, app registration, listing review,
-  first internal/closed test release upload, and production promotion.
-- **hmmm**: if the developer account is a newly created personal account,
-  Google currently requires 12 continuously opted-in testers for at least 14
-  days before production access — start the closed test immediately.
+  8.11.1, Play-native `bundleRelease` in CI, RevenueCat 10.19.1 core, production
+  HTTPS endpoint, signing config outside Git, explicit purchase + restore UI.
+- **Blocker**: Play developer account, app registration, listing, signed test
+  release upload, review, and production promotion.
+- **Blocker**: complete every required Play **App content** declaration,
+  including Data safety, privacy-policy URL, Ads, App access, Target audience
+  and content, Content rating, plus any additional requirement shown by the
+  live console.
+- **hmmm**: developer-account production-access testing requirements are live
+  account state; start any required closed test immediately and record the
+  console's exact current requirement rather than assuming publication access.
 
-## 3. RevenueCat production provisioning — EXTERNAL
+## 3. One-time product + sandbox — EXTERNAL
 
-- Client + runtime entitlement boundary complete.
+- Repository product contract: `ahbg_benchmark_lab` → `benchmark_lab`.
+- **Blocker**: create/publish the Play one-time product and an **active
+  non-consumable purchase option** with region availability and price.
+- **Blocker**: add the purchasing Google account under Play Console **License
+  testing** as well as the chosen test track. Track membership alone does not
+  make purchases sandbox transactions.
+- **Gate**: before buying, confirm the Play purchase sheet is a test transaction;
+  stop if an ordinary payment method would create a real charge.
+
+## 4. RevenueCat production provisioning — EXTERNAL
+
+- Client purchase/restore + runtime entitlement boundary complete.
 - **Blocker**: live RevenueCat project, Google Play app, Google Cloud service
   account (Play Developer + Reporting APIs), Play permission grants,
-  service-account JSON upload (up to 36h activation), product/entitlement/
-  offering mapping, and public SDK key.
+  service-account JSON upload/activation, product→entitlement→current-offering
+  mapping, and the app-specific `goog_...` public SDK key.
   See `REVENUECAT_PROVISIONING.md`.
 
-## 4. Publish + submission assets — EXTERNAL
+## 5. Publish + submission assets — EXTERNAL
 
 - Store listing, privacy policy, demo storyboard, Play runbook, and Devpost
   material are in `ahbg/submission/`.
-- **Blocker**: recording the ≤2-minute device demo, capturing screenshots,
-  creating promo/trial codes, uploading assets, obtaining the public Play
-  Store URL, and submitting that URL to Devpost.
-
-## Galaxy — deferred/optional compatibility
-
-Not an active Shipaton dependency. If re-enabled later, add
-`purchases-store-galaxy` (RevenueCat >= 10.7.0) back to the dependency graph
-and follow the archived Galaxy notes.
+- **Blocker**: record the ≤2-minute device demo, capture screenshots, upload
+  assets, obtain the public Play Store URL, and submit that URL to Devpost.
 
 ## Gate status
 
 - Signed API-36 AAB: source-ready; CI verifies `bundleRelease` unsigned each
   change; signing needs the production keystore (outside Git).
 - Connect conforming harness / A0 same contract / build / persist / reload:
-  verified by `ahbg/runtime` tests (12 OK) and the HTTP bridge.
+  verified by `ahbg/runtime` tests and the HTTP bridge.
+- In-app purchase + restore controls: source-complete; Android build must compile
+  them and live verification needs Play + RevenueCat provisioning above.
 - Sandbox purchase → `benchmark_lab` unlock → restore → restart persistence:
-  code path complete; live verification needs the Play test track and the
-  RevenueCat Play service credentials.
+  **EXTERNAL/UNVERIFIED** until exercised from the Play-installed test build.
+
+## hmmm
+
+Green source CI is permission to enter the store test, not evidence that Google
+has sold, restored, reviewed, or published anything.
