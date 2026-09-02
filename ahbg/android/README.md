@@ -29,10 +29,10 @@ canonical runtime (ahbg/runtime + frozen Grok engine + UCNS geometry)
 cd ahbg/android
 gradle assembleDebug -PruntimeUrl=http://10.0.2.2:8765
 
-# signed release against the production HTTPS endpoint
-gradle assembleRelease \
+# Google Play release artifact: signed Android App Bundle (AAB)
+gradle bundleRelease \
   -PruntimeUrl=https://ahbg.interdependentway.org \
-  -PrevenueCatApiKey=rc_public_key \
+  -PrevenueCatApiKey=<goog_public_sdk_key> \
   -PahbgStoreFile=/secure/ahbg-release.jks -PahbgStorePassword=... \
   -PahbgKeyAlias=... -PahbgKeyPassword=...
 ```
@@ -40,9 +40,10 @@ gradle assembleRelease \
 - `runtimeUrl` defaults to `https://ahbg.interdependentway.org` for release
   builds; debug may point at a local emulator host. Cleartext is allowed only
   for `10.0.2.2`/`localhost` in debug via `network_security_config.xml`.
-- `revenueCatApiKey` is a RevenueCat **public** API key provisioned at build
-  time and never committed. Without a key the app builds and runs on the free
-  tier (`NoopPremiumStore`).
+- `revenueCatApiKey` is the Google Play app's RevenueCat **public SDK key**
+  (`goog_...`) provisioned at build time and never committed. A RevenueCat
+  `rc_...` project identifier is not the Android SDK key. Without a key the app
+  builds and runs on the free tier (`NoopPremiumStore`).
 
 ## Entitlement
 
@@ -51,9 +52,14 @@ run comparison, and adversarial benchmark packs. Basic gameplay and external
 harness connectivity remain free. The runtime side only checks claims; the
 Android side verifies with the RevenueCat SDK.
 
+Current boundary: entitlement lookup is implemented, but purchase initiation
+and explicit restore controls are not. See
+`../submission/SUBMISSION_BLOCKERS.md`; the Play sandbox billing gate remains
+blocked until those user-visible operations are wired and tested.
+
 ## hmmm
 
-- Store publication needs signing, versioning policy, and submission assets —
-  outside this pass.
-- Local emulator uses cleartext HTTP; a release build must switch the runtime
-  URL to HTTPS and disable `usesCleartextTraffic`.
+- Store publication needs a production keystore, Play/RevenueCat provisioning,
+  policy declarations, purchase/restore wiring, and live sandbox verification.
+- Local emulator uses cleartext HTTP; release uses the production HTTPS runtime
+  URL.
