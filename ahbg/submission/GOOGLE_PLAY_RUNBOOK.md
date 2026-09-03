@@ -10,10 +10,17 @@ default), and a signed AAB.
 - RevenueCat `purchases:10.19.1` only (no Galaxy module); ordinary
   `PurchasesConfiguration` is the correct Play configuration.
 - Package `org.interdependency.ahbg`; entitlement `benchmark_lab` unchanged.
-- Entitlement lookup is wired, but **purchase initiation and explicit restore
-  controls are not yet implemented**. Do not call the Play billing gate complete
-  until the app can fetch the offering, launch the purchase, and call
-  `restorePurchases` through a user-visible path.
+- Entitlement lookup exists, but the Android/WebView surface currently reads a
+  synchronous Boolean while RevenueCat refreshes customer info asynchronously.
+- Purchase initiation and explicit restore controls are not yet implemented.
+- Verified client-to-runtime entitlement transport and enforcement of the
+  premium operations are not yet implemented.
+- `BuildConfig.RUNTIME_URL` points at the intended production host, but a source
+  constant is not deployment evidence. Production TLS/reachability and the
+  AHBG runtime service still require end-to-end acceptance.
+
+Do not call the Play billing or publication gate complete until those repository
+boundaries and the live-account boundaries below have been verified.
 
 ## 1. Play Console
 
@@ -23,13 +30,17 @@ default), and a signed AAB.
      testers for at least 14 days before production access.
 2. Create the app (`org.interdependency.ahbg`) and complete the store listing
    with `STORE_LISTING.md`, `PRIVACY_POLICY.md`, icon, and screenshots.
-3. Complete the mandatory **App content** declarations before production:
+3. Complete the mandatory **App content** declarations before production,
+   including the applicable "none" declaration when the app has no such
+   features:
    - Data safety;
    - public privacy-policy URL;
    - ads declaration;
    - app-access declaration/instructions;
-   - target audience and content declarations; and
-   - content-rating questionnaire.
+   - target audience and content declarations;
+   - content-rating questionnaire;
+   - Financial features declaration; and
+   - Health apps declaration.
 
 ## 2. Release artifact (Play-native AAB)
 
@@ -71,14 +82,34 @@ provisioned). Upload the signed AAB as the first internal/closed test release.
    activate.
 6. In RevenueCat, map product `ahbg_benchmark_lab` → entitlement
    `benchmark_lab` → default offering.
-7. Copy the Google Play app's RevenueCat **public SDK API key** (`goog_...`)
-   into the Android build. `rc_...` identifies RevenueCat project resources;
-   it is not the Google Play Android SDK key.
+7. Record the RevenueCat project ID exactly as shown by RevenueCat; v2 project
+   IDs use the `proj...` form. This is project metadata, not an Android SDK key.
+8. Copy the Google Play app's RevenueCat **public SDK API key** (`goog_...`)
+   into the Android build.
 
-## 5. Sandbox purchase + restore + persistence verification
+## 5. Repository billing and entitlement gate
 
-This gate is **repository-blocked until purchase and restore controls are
-wired**. Once that code exists:
+Sandbox verification is **repository-blocked** until all of these are real:
+
+1. fetch the current RevenueCat offering/package and initiate purchase of
+   `ahbg_benchmark_lab` from a user-visible control;
+2. expose an explicit restore control using RevenueCat restore and handle
+   success/cancel/error outcomes;
+3. notify/refresh the WebView when asynchronous customer-info refresh changes
+   `benchmark_lab`, including on cold start rather than relying on one early
+   synchronous read;
+4. carry a server-verifiable entitlement claim to the runtime and enforce it at
+   the premium operations instead of changing only a local status label; and
+5. deploy the production runtime and verify TLS, `board.html`, session creation,
+   plan/state calls, entitlement checks, and the premium gate through the exact
+   production URL.
+
+Do not replace these with a local Boolean, a documentation assertion, or an
+unverified client field.
+
+## 6. Sandbox purchase + restore + persistence verification
+
+Once section 5 exists:
 
 1. Play Console → Settings → License testing: add the Google account that will
    perform the billing test. Test-track membership alone does not make a
@@ -87,19 +118,24 @@ wired**. Once that code exists:
    install the Play-delivered test release.
 3. Verify free tier: basic play and external harness connectivity work.
 4. Fetch the current RevenueCat offering and initiate purchase of
-   `ahbg_benchmark_lab`; confirm `benchmark_lab` unlocks.
+   `ahbg_benchmark_lab`; confirm the verified runtime premium surface unlocks.
 5. Invoke the app's explicit restore path; confirm the entitlement re-activates
-   for the same store account.
-6. Force-stop and relaunch; confirm the entitlement remains correct.
+   for the same store account and the WebView receives the refreshed state.
+6. Force-stop and relaunch; confirm asynchronous customer-info refresh restores
+   the correct state without requiring a page reload or second app start.
+7. Exercise one premium operation and prove the runtime rejects it without a
+   valid entitlement and accepts it with the verified entitlement.
 
-## 6. Production
+## 7. Production
 
-1. Complete the required closed test if the account is subject to it.
-2. Complete all App content declarations and resolve every Play Console
+1. Deploy the production AHBG runtime at the exact configured HTTPS URL and run
+   the end-to-end health checks in section 5 from a release-equivalent client.
+2. Complete the required closed test if the account is subject to it.
+3. Complete all App content declarations and resolve every Play Console
    publication blocker.
-3. Apply for production access, promote the release, obtain the public Play
+4. Apply for production access, promote the release, obtain the public Play
    Store URL.
-4. Use that URL as the Devpost entry.
+5. Use that URL as the Devpost entry.
 
 ## Galaxy (deferred/optional)
 
@@ -109,7 +145,8 @@ and follow the archived Galaxy notes.
 
 ## hmmm
 
-The repository can prepare the AAB and entitlement boundary, but Play account
-approval, live service credentials, store policy declarations, and the real
-billing transaction remain external. Purchase/restore UI is still repository
-work and must be completed before sandbox verification.
+The repository can build the AAB and observe an existing RevenueCat entitlement,
+but acquisition, asynchronous UI refresh, verified runtime enforcement, and
+production-runtime acceptance remain repository work. Play account approval,
+live service credentials, policy declarations, and the real billing transaction
+remain external.
