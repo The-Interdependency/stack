@@ -1,8 +1,9 @@
 # AHBG submission blockers — Google Play (primary)
 
-The Android release artifact and entitlement-check boundary are source-ready.
-The remaining blockers are split below between repository work and live external
-Play/RevenueCat work so a green build is not mistaken for a publishable app.
+The Android release artifact is source-buildable, but the billing/acquisition,
+entitlement-delivery, runtime-enforcement, and production-deployment boundaries
+are not complete. The remaining blockers are split below so a green build is
+not mistaken for a publishable or sellable app.
 
 ## 1. Construction (core mechanics) — CLOSED
 
@@ -13,29 +14,50 @@ Play/RevenueCat work so a green build is not mistaken for a publishable app.
 - Post-merge hardening is owned by UCNS; AHBG does not invent replacement
   construction geometry.
 
-## 2. Billing controls — REPOSITORY BLOCKER
+## 2. Billing + entitlement enforcement — REPOSITORY BLOCKERS
 
-RevenueCat initialization and entitlement lookup exist, but the Android/WebView
-surface does not yet expose a complete acquisition flow.
+RevenueCat initialization and an asynchronous customer-info lookup exist, but
+the Android/WebView/runtime path does not yet form a complete premium gate.
 
 - **Blocker**: fetch the current RevenueCat offering/package.
 - **Blocker**: launch purchase of `ahbg_benchmark_lab` from a user-visible
   control and surface success/cancel/error state.
-- **Blocker**: expose an explicit restore control that calls
-  `Purchases.sharedInstance.restorePurchases` and refreshes entitlement state.
-- Regression-test the bridge/API boundary; do not mark the sandbox billing gate
-  complete from `getCustomerInfo` alone.
+- **Blocker**: expose an explicit restore control using RevenueCat restore.
+- **Blocker**: notify/refresh the WebView when asynchronous customer-info refresh
+  changes `benchmark_lab`; one synchronous read during page startup is not
+  persistence evidence.
+- **Blocker**: carry a server-verifiable entitlement claim to the runtime rather
+  than trusting a local client Boolean.
+- **Blocker**: enforce `benchmark_lab` at the actual premium runtime operations;
+  a changed status label is not feature gating.
+- Regression-test the acquisition, async-refresh, transport, and deny/allow
+  runtime boundaries before calling the billing gate complete.
 
-## 3. Google Play publication — EXTERNAL (primary path)
+## 3. Production AHBG runtime — REPOSITORY/DEPLOYMENT BLOCKER
 
-- Code compliance is done: `compileSdk`/`targetSdk` 36, AGP 8.9.1, Gradle
-  8.11.1, Play-native `bundleRelease` in CI, RevenueCat 10.19.1 core, production
-  HTTPS endpoint, signing config outside Git.
+The Android build carries an intended production `RUNTIME_URL`; that build-time
+constant is not proof that the service exists or is healthy.
+
+- **Blocker**: deploy the canonical AHBG runtime at the exact configured HTTPS
+  URL with valid TLS.
+- **Blocker**: verify from a release-equivalent client that `board.html`, session
+  creation, plan/state calls, entitlement verification, and a premium deny/allow
+  operation work end to end.
+- Preserve the Android layer as transport/presentation only; do not repair a
+  missing service by embedding a second runtime into the app.
+
+## 4. Google Play publication — EXTERNAL (primary path)
+
+- Code/build compliance is present: `compileSdk`/`targetSdk` 36, AGP 8.9.1,
+  Gradle 8.11.1, Play-native `bundleRelease` in CI, RevenueCat 10.19.1 core,
+  and signing config outside Git.
 - **Blocker**: Play developer account, app registration, first internal/closed
   test release upload, and production promotion.
 - **Blocker**: complete Play Console App content requirements: Data safety,
   public privacy-policy URL, ads declaration, app-access declaration, target
-  audience/content declarations, and content-rating questionnaire.
+  audience/content declarations, content-rating questionnaire, Financial
+  features declaration, and Health apps declaration. Where AHBG has no
+  financial/health features, submit the corresponding "none" declaration.
 - **Blocker**: create and activate the `ahbg_benchmark_lab` non-consumable
   one-time-product purchase option, including price and regional availability.
 - **Blocker**: configure the billing-test Google account under Play Console
@@ -45,20 +67,19 @@ surface does not yet expose a complete acquisition flow.
   Google currently requires 12 continuously opted-in testers for at least 14
   days before production access — start the closed test immediately.
 
-## 4. RevenueCat production provisioning — EXTERNAL
+## 5. RevenueCat production provisioning — EXTERNAL
 
-- Client/runtime entitlement-check boundary complete.
 - **Blocker**: live RevenueCat project, Google Play app, Google Cloud service
   account (Play Developer + Reporting APIs), Play permission grants,
   service-account JSON upload, product/entitlement/offering mapping, and the
   Google Play app's RevenueCat public SDK key (`goog_...`).
-- `rc_...` project identifiers are not valid substitutes for the Android Google
-  Play public SDK key.
+- RevenueCat v2 project IDs use the `proj...` form; project IDs are not valid
+  substitutes for the Android Google Play public SDK key.
 - **hmmm**: RevenueCat/Google Play service-account permissions can take time to
   propagate after provisioning.
   See `REVENUECAT_PROVISIONING.md`.
 
-## 5. Publish + submission assets — EXTERNAL
+## 6. Publish + submission assets — EXTERNAL
 
 - Store listing, privacy policy, demo storyboard, Play runbook, and Devpost
   material are in `ahbg/submission/`.
@@ -78,13 +99,22 @@ and follow the archived Galaxy notes.
   change; signing needs the production keystore outside Git.
 - Connect conforming harness / A0 same contract / build / persist / reload:
   verified by `ahbg/runtime` tests and the HTTP bridge.
-- Sandbox purchase → `benchmark_lab` unlock → restore → restart persistence:
-  **BLOCKED** until purchase/restore controls are implemented, then requires
-  the Play test track, License testing account, active purchase option, and
-  RevenueCat Play credentials.
+- Sandbox purchase → async entitlement refresh → verified runtime unlock →
+  restore → restart persistence → premium deny/allow: **BLOCKED** until the
+  repository work in sections 2–3 is implemented, then requires the Play test
+  track, License testing account, active purchase option, and RevenueCat Play
+  credentials.
+
+## Smallest repository next action
+
+Add one explicit entitlement-state notification/refresh path from
+`RevenueCatPremiumStore` to the WebView and a regression test proving a cold
+start can transition from the initial locked state to the eventual RevenueCat
+state without restart. This closes one concrete race without pretending that
+purchase, restore, server verification, feature gating, or deployment are done.
 
 ## hmmm
 
-A buildable AAB is not yet a sellable product. The smallest repository-owned
-next step is purchase + restore wiring; the rest of the gate then crosses into
-live Play/RevenueCat accounts.
+A buildable AAB is not yet a sellable product. After the async entitlement
+refresh is repaired, acquisition, verified runtime gating, and production
+runtime acceptance remain living continuation before the external store gate.
