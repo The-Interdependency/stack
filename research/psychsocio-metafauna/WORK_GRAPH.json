@@ -2,17 +2,17 @@
   "schema": "the-interdependency.psychsocio-metafauna-work-graph",
   "version": "0.1.0",
   "as_of": "2026-09-04",
-  "work_graph_sha256": "c0ab4f6f720136448570a71fa87c83e93399361949b84d6e15f0edf38e35c905",
+  "work_graph_sha256": "aa475076249eecdcfb114cdde55118828e41eeeb6fe708d9197e4976d1aed60d",
   "digest_contract": "sha256(canonical-json({participants,boundaries}); sort_keys=true; separators=(',',':'); participant order is significant)",
   "participants": [
     {
       "id": "stack",
       "kind": "repository",
       "repository": "The-Interdependency/stack",
-      "commit": "5b24db9a7fe40df4b2791e1137ade5de01c78942",
+      "commit": "6c3f94b1e6d77e8f1abd36edc53da5fda596b416",
       "path": "research/psychsocio-metafauna/",
-      "authority": "composition, provenance, and stack-local research placement",
-      "relation": "owner of this proposed cross-domain synthesis; owns no imported repository canon"
+      "authority": "composition, provenance, and stack-local research placement at workspace introduction",
+      "relation": "immutable introduction snapshot for this research workspace; current bytes are identified by the enclosing stack commit, avoiding recursive self-reference"
     },
     {
       "id": "skill-lib",
@@ -26,9 +26,9 @@
       "id": "metapat",
       "kind": "repository",
       "repository": "The-Interdependency/metapat",
-      "commit": "d6699e21b11c8f8394998efc34a468e2d6efc8b0",
-      "authority": "METAPAT root semantics and application-layer question forms",
-      "relation": "supplies distinction, boundary, relation, transformation, registration, symbolic transfer, and domain restraint"
+      "commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
+      "authority": "METAPAT semantics present in the stack-pinned canonical view",
+      "relation": "supplies root-preserving distinction/relation framing and domain-restraint rules available in libs/metapat; no later METAPAT commit is imported implicitly"
     },
     {
       "id": "ucns",

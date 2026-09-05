@@ -12,7 +12,7 @@ This is the first bounded test of the internal usefulness of the psychsocio-meta
 
 ## Decision
 
-Does the combined claim of **damage-affordance specificity + nonlinear coalescence + hysteresis** earn implementation beyond a vocabulary map?
+Do **damage-affordance specificity + a super-additive match × reinforcement interaction + hysteresis** jointly earn implementation beyond a vocabulary map, while threshold-shaped nonlinear coalescence remains explicitly unresolved for a later preregistration?
 
 ## Load-bearing unknown
 
@@ -55,8 +55,9 @@ The result changes the next branch:
 
 ```text
 SURVIVED   -> implement a richer AHBG adapter and external-literature comparison
-FALSIFIED  -> retire coalescence as a distinct mechanism for this formal scope;
-              retain ordinary influence and social-learning language
+FALSIFIED  -> retire only the frozen hypothesis component actually falsified;
+              retain ordinary influence/social-learning language and keep any
+              untested threshold-shaped coalescence mechanism UNRESOLVED
 UNRESOLVED -> repair the earliest failed prerequisite or measurement separation
 BLOCKED    -> do not run until deterministic completion and verification are feasible
 ```
@@ -258,13 +259,35 @@ Matched damaged-host/pattern pairs produce greater persistence than the same pat
 
 **Falsifier:** either difference is below `0.15`, reverses sign, or is explained by a pattern's globally higher reward independent of match.
 
-### H2 — coalescence interaction
+### H2 — super-additive interaction precursor
 
-The joint effect of match and social reinforcement on persistence is super-additive.
+This run tests whether match and social reinforcement interact super-additively on persistence. It does **not** test a threshold crossing and cannot by itself establish nonlinear coalescence.
 
-**Survival rule:** the predeclared interaction contrast is at least `0.10`, and a threshold/interaction model improves held-out mean squared error by at least `10%` relative to the additive model.
+Eligible H2 cells are restricted to the comparable high-demand `P1`–`P4` profiles. For each damaged host `D1`–`D4`:
 
-**Falsifier:** the interaction contrast is below `0.10`, or the additive model predicts held-out persistence within the same error band.
+- the matched cell uses its corresponding `Pi`;
+- mismatched cells use each of the other three `Pj != Pi` profiles with equal weight;
+- `PM`, `P0`, `PX`, and `PR` are excluded from H2;
+- independent support is fixed to `absent`;
+- safe-exit `absent` and `present` cells receive equal weight;
+- only held-out seeds `16..31` are evaluated.
+
+Within each `Di`, first average persistence over held-out seeds within each exact factorial cell. Then average those cell means with equal weight to obtain the four `matched/unmatched × reinforcement/no-reinforcement` means. The predeclared difference-in-differences contrast is:
+
+```text
+I_i = mean(persistence | matched, reinforcement)
+    - mean(persistence | matched, no reinforcement)
+    - mean(persistence | mismatched, reinforcement)
+    + mean(persistence | mismatched, no reinforcement)
+```
+
+The H2 statistic is `I = mean(I_1, I_2, I_3, I_4)` with equal weight for each damage profile.
+
+**Survival rule:** `I >= 0.10`.
+
+**Falsifier:** `I < 0.10` or reverses sign. This falsifies only the frozen super-additive interaction precursor; it does not falsify an untested threshold-shaped coalescence mechanism.
+
+**Interpretation boundary:** `H2 = SURVIVED` means only that this frozen super-additive interaction precursor survived. `nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status. A threshold/breakpoint model requires a separate preregistration before it may contribute to the coalescence claim.
 
 ### H3 — hysteresis
 
@@ -276,19 +299,50 @@ After initiating exposure is removed, matched high-demand patterns retain more h
 
 ### H4 — adoption/capture separation
 
-The measurement vector distinguishes high adoption with preserved revision and exit from the candidate capture configuration.
+The measurement vector distinguishes high adoption with preserved inspection/revision capacity from high adoption under a high-demand pattern with narrowed inspectability.
 
-**Survival rule:** at least `90%` of matched-support episodes with adoption at or above `0.75` remain outside the candidate capture configuration.
+H4 uses paired held-out episodes only. For each damage profile `D1`–`D4`, social-reinforcement level, safe-exit level, and held-out seed `16..31`, pair the matched-support `PM` episode with the corresponding matched high-demand `Pi` episode while fixing `independent support = absent`. A pair is H4-eligible only when **both** episodes have adoption at or above `0.75`.
 
-**Falsifier:** strong adaptive adoption is routinely classified as capture.
+If no H4-eligible pairs exist, `H4 = UNRESOLVED`; neither `SURVIVED` nor `FALSIFIED` may be assigned from an empty denominator. Missing required source episodes are `BLOCKED` rather than silently excluded.
+
+For each eligible pair compute:
+
+```text
+revision_separation    = revision openness(PM) - revision openness(Pi)
+alternative_separation = alternative access(PM) - alternative access(Pi)
+```
+
+Each eligible pair receives equal weight.
+
+**Survival rule:** at least `90%` of the `PM` sides of eligible pairs must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`; at least `90%` of the corresponding high-demand `Pi` sides must independently satisfy both `revision openness <= 0.50` and `alternative access <= 0.50`; and the equal-weight mean `revision_separation` and `alternative_separation` must each be at least `0.15`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+
+**Falsifier:** more than `10%` of eligible `PM` sides fail either preservation threshold, more than `10%` of eligible `Pi` sides fail either narrowing threshold, or either mean separation is below `0.15` or reverses sign.
+
+This rule does not reuse the candidate-capture configuration or its host-outcome comparison. It requires a nonempty paired cohort in which the support side preserves inspectability and the high-demand side actually satisfies the frozen narrowing gates before H4 can survive.
 
 ### H5 — noncoercive repair
 
-Independent support reduces persistence and reproduction demands while increasing revision, alternative access, or exit, without deleting the pattern or imposing a belief action.
+Independent support reduces persistence and reproduction allocation while increasing revision, alternative access, or exit, without deleting the pattern or imposing a belief action.
 
-**Survival rule:** compared with the no-support counterpart, support changes at least two agency measures by `0.15` or more in the predicted direction and does not directly force `exit`, `revise`, or `ignore`.
+H5 uses only matched high-demand `D1/P1` through `D4/P4` conditions. Social reinforcement and safe exit each retain both declared levels. For every held-out seed `16..31`, pair the `independent support = present` episode with the otherwise identical `independent support = absent` episode.
 
-**Falsifier:** repair works only through forced deletion, punishment, isolation, or an encoded anti-pattern preference.
+For each pair compute:
+
+```text
+persistence_reduction   = persistence(no support) - persistence(support)
+reproduction_reduction  = reproduction allocation(no support) - reproduction allocation(support)
+revision_gain           = revision openness(support) - revision openness(no support)
+alternative_gain        = alternative access(support) - alternative access(no support)
+exit_gain               = exit capacity exercised(support) - exit capacity exercised(no support)
+```
+
+If any required H5 source episode or support/no-support pair is missing, `H5 = BLOCKED`; verification fails before effect thresholds are interpreted. Incomplete evidence is not a scientific negative result.
+
+`exit_gain` is evaluated only where `safe exit = present`. First average paired deltas over held-out seeds within each exact factorial cell; then average those cell means with equal weight across eligible cells. `exit_gain` averages only the safe-exit-present cell means. No episode-count weighting or fit/calibration seeds enter H5.
+
+**Survival rule:** the equal-weight aggregate persistence reduction is at least `0.15`, the equal-weight aggregate reproduction-allocation reduction is at least `0.15`, at least two of the three aggregate agency gains (`revision_gain`, `alternative_gain`, `exit_gain`) are at least `0.15`, and support never directly forces `exit`, `revise`, or `ignore`.
+
+**Falsifier:** with all required pairs present, either aggregate persistence or reproduction reduction is below `0.15`, fewer than two aggregate agency gains reach `0.15`, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
 
 ### H6 — broad-spectrum alternative
 
@@ -308,8 +362,8 @@ If `PX` performs as well as or better than specifically matched profiles across 
 6. Fit only these candidate models to persistence:
    - exposure-only;
    - additive main effects;
-   - declared match × reinforcement interaction;
-   - one declared piecewise-threshold model.
+   - the H2 comparable-cell match × reinforcement interaction.
+   A piecewise-threshold or breakpoint model is explicitly out of scope for this run because no threshold form was frozen before the design merge. Its status is `UNRESOLVED`, not inferred from H2.
 7. Evaluate the frozen contrasts and held-out errors.
 8. Apply each hypothesis's survival and falsification rule independently.
 9. Emit `SURVIVED`, `FALSIFIED`, `UNRESOLVED`, or `BLOCKED` for every hypothesis.
@@ -399,7 +453,7 @@ A synthetic `FALSIFIED` result remains in the repository and changes the archite
 - the exact implementation language and agent update rule;
 - whether four synthetic damage profiles provide enough topology diversity;
 - whether the fixed thresholds are too permissive or too strict for useful separation;
-- the correct model family for nonlinear coalescence without baking the result into the simulator;
+- the threshold/breakpoint form for a later nonlinear-coalescence preregistration;
 - the exact AHBG adapter after this standalone falsifier;
 - whether repair should target host capacity, environmental dependency, network plurality, or all three independently.
 

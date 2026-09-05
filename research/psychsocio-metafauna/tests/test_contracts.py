@@ -76,12 +76,38 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             else:
                 self.assertRegex(commit, HEX40)
 
+        stack_participant = next(item for item in participants if item["id"] == "stack")
+        self.assertEqual(
+            stack_participant["commit"],
+            "6c3f94b1e6d77e8f1abd36edc53da5fda596b416",
+        )
+        self.assertEqual(stack_participant["path"], "research/psychsocio-metafauna/")
+        self.assertIn("introduction snapshot", stack_participant["relation"])
+        self.assertIn("avoiding recursive self-reference", stack_participant["relation"])
+
+        metapat = next(item for item in participants if item["id"] == "metapat")
+        metapat_base = json.loads(
+            (STACK / "research" / "metapat" / "BASE.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(metapat["commit"], metapat_base["source_commit"])
+        self.assertIn("libs/metapat", metapat["relation"])
+
         payload = {"participants": participants, "boundaries": boundaries}
         canonical = json.dumps(
             payload, sort_keys=True, separators=(",", ":")
         ).encode("utf-8")
         observed = hashlib.sha256(canonical).hexdigest()
         self.assertEqual(observed, graph["work_graph_sha256"])
+
+    def test_workflow_rechecks_when_metapat_base_changes(self) -> None:
+        workflow = (STACK / ".github" / "workflows" / "psychsocio-metafauna.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertGreaterEqual(
+            workflow.count('"research/metapat/BASE.json"'),
+            2,
+            "pull_request and push path filters must both watch the exact METAPAT pin",
+        )
 
     def test_non_transfer_boundaries_fail_closed(self) -> None:
         boundaries = load_json("WORK_GRAPH.json")["boundaries"]
@@ -105,6 +131,75 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         self.assertEqual(boundaries["edcm_activation"], "not-run")
         self.assertIsNone(boundaries["canon_selection"])
         self.assertTrue(boundaries["hmmm"])
+
+    def test_preregistration_decision_rules_are_independent_and_frozen(self) -> None:
+        prereg = (PROJECT / "PREREGISTRATION.md").read_text(encoding="utf-8")
+
+        self.assertIn("predeclared difference-in-differences contrast", prereg)
+        self.assertIn(
+            "Eligible H2 cells are restricted to the comparable high-demand `P1`–`P4` profiles.",
+            prereg,
+        )
+        self.assertIn("`PM`, `P0`, `PX`, and `PR` are excluded from H2", prereg)
+        self.assertIn("independent support is fixed to `absent`", prereg)
+        self.assertIn(
+            "`nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status",
+            prereg,
+        )
+        self.assertIn(
+            "This falsifies only the frozen super-additive interaction precursor",
+            prereg,
+        )
+        self.assertNotIn("one declared piecewise-threshold model", prereg)
+        self.assertIn(
+            "does not reuse the candidate-capture configuration",
+            prereg,
+        )
+        self.assertIn(
+            "A pair is H4-eligible only when **both** episodes have adoption at or above `0.75`",
+            prereg,
+        )
+        self.assertIn(
+            "If no H4-eligible pairs exist, `H4 = UNRESOLVED`",
+            prereg,
+        )
+        self.assertIn(
+            "at least `90%` of the corresponding high-demand `Pi` sides",
+            prereg,
+        )
+        self.assertIn(
+            "high-demand side actually satisfies the frozen narrowing gates",
+            prereg,
+        )
+        self.assertIn(
+            "For every held-out seed `16..31`, pair the `independent support = present` episode",
+            prereg,
+        )
+        self.assertIn(
+            "then average those cell means with equal weight across eligible cells",
+            prereg,
+        )
+        self.assertIn(
+            "equal-weight aggregate reproduction-allocation reduction is at least `0.15`",
+            prereg,
+        )
+        self.assertIn(
+            "If any required H5 source episode or support/no-support pair is missing, `H5 = BLOCKED`",
+            prereg,
+        )
+        self.assertIn(
+            "retire only the frozen hypothesis component actually falsified",
+            prereg,
+        )
+        self.assertNotIn(
+            "retire coalescence as a distinct mechanism for this formal scope",
+            prereg,
+        )
+        self.assertNotIn(
+            "a required support/no-support pair is missing, or the apparent repair",
+            prereg,
+        )
+        self.assertNotIn("reduces persistence and reproduction demands", prereg)
 
     def test_human_and_machine_entrypoints_agree(self) -> None:
         readme = (PROJECT / "README.md").read_text(encoding="utf-8")
