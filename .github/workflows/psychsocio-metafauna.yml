@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - "research/psychsocio-metafauna/**"
+      - "research/metapat/BASE.json"
       - "README.md"
       - ".github/workflows/psychsocio-metafauna.yml"
   push:
     branches: [main]
     paths:
       - "research/psychsocio-metafauna/**"
+      - "research/metapat/BASE.json"
       - "README.md"
       - ".github/workflows/psychsocio-metafauna.yml"
 
