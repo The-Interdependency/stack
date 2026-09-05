@@ -12,7 +12,7 @@ This is the first bounded test of the internal usefulness of the psychsocio-meta
 
 ## Decision
 
-Does the combined claim of **damage-affordance specificity + nonlinear coalescence + hysteresis** earn implementation beyond a vocabulary map?
+Do **damage-affordance specificity + a super-additive match × reinforcement interaction + hysteresis** jointly earn implementation beyond a vocabulary map, while threshold-shaped nonlinear coalescence remains explicitly unresolved for a later preregistration?
 
 ## Load-bearing unknown
 
@@ -258,22 +258,35 @@ Matched damaged-host/pattern pairs produce greater persistence than the same pat
 
 **Falsifier:** either difference is below `0.15`, reverses sign, or is explained by a pattern's globally higher reward independent of match.
 
-### H2 — coalescence interaction
+### H2 — super-additive interaction precursor
 
-The joint effect of match and social reinforcement on persistence is super-additive.
+This run tests whether match and social reinforcement interact super-additively on persistence. It does **not** test a threshold crossing and cannot by itself establish nonlinear coalescence.
 
-**Survival rule:** on held-out seeds, the predeclared difference-in-differences interaction contrast is at least `0.10`:
+Eligible H2 cells are restricted to the comparable high-demand `P1`–`P4` profiles. For each damaged host `D1`–`D4`:
+
+- the matched cell uses its corresponding `Pi`;
+- mismatched cells use each of the other three `Pj != Pi` profiles with equal weight;
+- `PM`, `P0`, `PX`, and `PR` are excluded from H2;
+- independent support is fixed to `absent`;
+- safe-exit `absent` and `present` cells receive equal weight;
+- only held-out seeds `16..31` are evaluated.
+
+Within each `Di`, first average persistence over held-out seeds within each exact factorial cell. Then average those cell means with equal weight to obtain the four `matched/unmatched × reinforcement/no-reinforcement` means. The predeclared difference-in-differences contrast is:
 
 ```text
-I = mean(persistence | matched, reinforcement)
-  - mean(persistence | matched, no reinforcement)
-  - mean(persistence | mismatched, reinforcement)
-  + mean(persistence | mismatched, no reinforcement)
+I_i = mean(persistence | matched, reinforcement)
+    - mean(persistence | matched, no reinforcement)
+    - mean(persistence | mismatched, reinforcement)
+    + mean(persistence | mismatched, no reinforcement)
 ```
 
-Compute `I` separately within each D1–D4 damage profile and require the pooled balanced-cell mean of those four contrasts to be at least `0.10`; no fitted threshold or breakpoint model participates in this decision.
+The H2 statistic is `I = mean(I_1, I_2, I_3, I_4)` with equal weight for each damage profile.
 
-**Falsifier:** the pooled held-out interaction contrast is below `0.10` or reverses sign. A threshold-shaped mechanism remains a separate `hmmm` requiring its own preregistration rather than being selected after outputs exist.
+**Survival rule:** `I >= 0.10`.
+
+**Falsifier:** `I < 0.10` or reverses sign.
+
+**Interpretation boundary:** `H2 = SURVIVED` means only that this frozen super-additive interaction precursor survived. `nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status. A threshold/breakpoint model requires a separate preregistration before it may contribute to the coalescence claim.
 
 ### H3 — hysteresis
 
@@ -297,9 +310,23 @@ This rule does not reuse the candidate-capture configuration or its host-outcome
 
 Independent support reduces persistence and reproduction allocation while increasing revision, alternative access, or exit, without deleting the pattern or imposing a belief action.
 
-**Survival rule:** relative to the same condition and seed without independent support, support must reduce both persistence and reproduction allocation by at least `0.15`, increase at least two of `revision openness`, `alternative access`, and `exit capacity exercised` by at least `0.15`, and never directly force `exit`, `revise`, or `ignore`.
+H5 uses only matched high-demand `D1/P1` through `D4/P4` conditions. Social reinforcement and safe exit each retain both declared levels. For every held-out seed `16..31`, pair the `independent support = present` episode with the otherwise identical `independent support = absent` episode.
 
-**Falsifier:** either persistence or reproduction allocation fails to decrease by `0.15`, fewer than two agency measures increase by `0.15`, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
+For each pair compute:
+
+```text
+persistence_reduction   = persistence(no support) - persistence(support)
+reproduction_reduction  = reproduction allocation(no support) - reproduction allocation(support)
+revision_gain           = revision openness(support) - revision openness(no support)
+alternative_gain        = alternative access(support) - alternative access(no support)
+exit_gain               = exit capacity exercised(support) - exit capacity exercised(no support)
+```
+
+`exit_gain` is evaluated only where `safe exit = present`. First average paired deltas over held-out seeds within each exact factorial cell; then average those cell means with equal weight across eligible cells. `exit_gain` averages only the safe-exit-present cell means. No episode-count weighting or fit/calibration seeds enter H5.
+
+**Survival rule:** the equal-weight aggregate persistence reduction is at least `0.15`, the equal-weight aggregate reproduction-allocation reduction is at least `0.15`, at least two of the three aggregate agency gains (`revision_gain`, `alternative_gain`, `exit_gain`) are at least `0.15`, and support never directly forces `exit`, `revise`, or `ignore`.
+
+**Falsifier:** either aggregate persistence or reproduction reduction is below `0.15`, fewer than two aggregate agency gains reach `0.15`, a required support/no-support pair is missing, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
 
 ### H6 — broad-spectrum alternative
 
@@ -319,8 +346,8 @@ If `PX` performs as well as or better than specifically matched profiles across 
 6. Fit only these candidate models to persistence:
    - exposure-only;
    - additive main effects;
-   - declared match × reinforcement interaction.
-   A piecewise-threshold or breakpoint model is explicitly out of scope for this run because no threshold form was frozen before the design merge.
+   - the H2 comparable-cell match × reinforcement interaction.
+   A piecewise-threshold or breakpoint model is explicitly out of scope for this run because no threshold form was frozen before the design merge. Its status is `UNRESOLVED`, not inferred from H2.
 7. Evaluate the frozen contrasts and held-out errors.
 8. Apply each hypothesis's survival and falsification rule independently.
 9. Emit `SURVIVED`, `FALSIFIED`, `UNRESOLVED`, or `BLOCKED` for every hypothesis.
@@ -410,7 +437,7 @@ A synthetic `FALSIFIED` result remains in the repository and changes the archite
 - the exact implementation language and agent update rule;
 - whether four synthetic damage profiles provide enough topology diversity;
 - whether the fixed thresholds are too permissive or too strict for useful separation;
-- whether a later preregistration should test a threshold/breakpoint form beyond the frozen interaction contrast;
+- the threshold/breakpoint form for a later nonlinear-coalescence preregistration;
 - the exact AHBG adapter after this standalone falsifier;
 - whether repair should target host capacity, environmental dependency, network plurality, or all three independently.
 
