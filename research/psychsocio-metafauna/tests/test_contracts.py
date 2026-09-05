@@ -76,6 +76,13 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             else:
                 self.assertRegex(commit, HEX40)
 
+        metapat = next(item for item in participants if item["id"] == "metapat")
+        metapat_base = json.loads(
+            (STACK / "research" / "metapat" / "BASE.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(metapat["commit"], metapat_base["source_commit"])
+        self.assertIn("libs/metapat", metapat["relation"])
+
         payload = {"participants": participants, "boundaries": boundaries}
         canonical = json.dumps(
             payload, sort_keys=True, separators=(",", ":")
@@ -105,6 +112,25 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         self.assertEqual(boundaries["edcm_activation"], "not-run")
         self.assertIsNone(boundaries["canon_selection"])
         self.assertTrue(boundaries["hmmm"])
+
+    def test_preregistration_decision_rules_are_independent_and_frozen(self) -> None:
+        prereg = (PROJECT / "PREREGISTRATION.md").read_text(encoding="utf-8")
+
+        self.assertIn("difference-in-differences interaction contrast", prereg)
+        self.assertIn(
+            "no fitted threshold or breakpoint model participates in this decision",
+            prereg,
+        )
+        self.assertNotIn("one declared piecewise-threshold model", prereg)
+        self.assertIn(
+            "does not reuse the candidate-capture configuration",
+            prereg,
+        )
+        self.assertIn(
+            "reduce both persistence and reproduction allocation by at least `0.15`",
+            prereg,
+        )
+        self.assertNotIn("reduces persistence and reproduction demands", prereg)
 
     def test_human_and_machine_entrypoints_agree(self) -> None:
         readme = (PROJECT / "README.md").read_text(encoding="utf-8")
