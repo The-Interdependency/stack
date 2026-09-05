@@ -118,7 +118,13 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
 
         self.assertIn("difference-in-differences interaction contrast", prereg)
         self.assertIn(
-            "no fitted threshold or breakpoint model participates in this decision",
+            "Eligible H2 cells are restricted to the comparable high-demand `P1`–`P4` profiles.",
+            prereg,
+        )
+        self.assertIn("`PM`, `P0`, `PX`, and `PR` are excluded from H2", prereg)
+        self.assertIn("independent support is fixed to `absent`", prereg)
+        self.assertIn(
+            "`nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status",
             prereg,
         )
         self.assertNotIn("one declared piecewise-threshold model", prereg)
@@ -127,7 +133,15 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             prereg,
         )
         self.assertIn(
-            "reduce both persistence and reproduction allocation by at least `0.15`",
+            "For every held-out seed `16..31`, pair the `independent support = present` episode",
+            prereg,
+        )
+        self.assertIn(
+            "then average those cell means with equal weight across eligible cells",
+            prereg,
+        )
+        self.assertIn(
+            "equal-weight aggregate reproduction-allocation reduction is at least `0.15`",
             prereg,
         )
         self.assertNotIn("reduces persistence and reproduction demands", prereg)
