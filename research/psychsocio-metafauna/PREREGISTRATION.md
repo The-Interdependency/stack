@@ -55,8 +55,9 @@ The result changes the next branch:
 
 ```text
 SURVIVED   -> implement a richer AHBG adapter and external-literature comparison
-FALSIFIED  -> retire coalescence as a distinct mechanism for this formal scope;
-              retain ordinary influence and social-learning language
+FALSIFIED  -> retire only the frozen hypothesis component actually falsified;
+              retain ordinary influence/social-learning language and keep any
+              untested threshold-shaped coalescence mechanism UNRESOLVED
 UNRESOLVED -> repair the earliest failed prerequisite or measurement separation
 BLOCKED    -> do not run until deterministic completion and verification are feasible
 ```
@@ -284,7 +285,7 @@ The H2 statistic is `I = mean(I_1, I_2, I_3, I_4)` with equal weight for each da
 
 **Survival rule:** `I >= 0.10`.
 
-**Falsifier:** `I < 0.10` or reverses sign.
+**Falsifier:** `I < 0.10` or reverses sign. This falsifies only the frozen super-additive interaction precursor; it does not falsify an untested threshold-shaped coalescence mechanism.
 
 **Interpretation boundary:** `H2 = SURVIVED` means only that this frozen super-additive interaction precursor survived. `nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status. A threshold/breakpoint model requires a separate preregistration before it may contribute to the coalescence claim.
 
@@ -298,15 +299,26 @@ After initiating exposure is removed, matched high-demand patterns retain more h
 
 ### H4 — adoption/capture separation
 
-The measurement vector distinguishes high adoption with preserved inspection/revision capacity from narrowed inspectability.
+The measurement vector distinguishes high adoption with preserved inspection/revision capacity from high adoption under a high-demand pattern with narrowed inspectability.
 
-The H4 eligible cohort is restricted to held-out seeds `16..31` from matched-support (`PM`) episodes with adoption at or above `0.75`. If that eligible cohort is empty, `H4 = UNRESOLVED`; neither `SURVIVED` nor `FALSIFIED` may be assigned from an empty denominator.
+H4 uses paired held-out episodes only. For each damage profile `D1`–`D4`, social-reinforcement level, safe-exit level, and held-out seed `16..31`, pair the matched-support `PM` episode with the corresponding matched high-demand `Pi` episode while fixing `independent support = absent`. A pair is H4-eligible only when **both** episodes have adoption at or above `0.75`.
 
-**Survival rule:** among eligible H4 episodes, at least `90%` must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+If no H4-eligible pairs exist, `H4 = UNRESOLVED`; neither `SURVIVED` nor `FALSIFIED` may be assigned from an empty denominator. Missing required source episodes are `BLOCKED` rather than silently excluded.
 
-**Falsifier:** more than `10%` of eligible H4 episodes have either `revision openness < 0.50` or `alternative access < 0.50`.
+For each eligible pair compute:
 
-This rule does not reuse the candidate-capture configuration or its host-outcome comparison; H4 therefore cannot survive merely because the matched-support cohort is its own control.
+```text
+revision_separation    = revision openness(PM) - revision openness(Pi)
+alternative_separation = alternative access(PM) - alternative access(Pi)
+```
+
+Each eligible pair receives equal weight.
+
+**Survival rule:** at least `90%` of the `PM` sides of eligible pairs must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`, and the equal-weight mean `revision_separation` and `alternative_separation` must each be at least `0.15`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+
+**Falsifier:** more than `10%` of eligible `PM` sides fail either preservation threshold, or either mean separation is below `0.15` or reverses sign.
+
+This rule does not reuse the candidate-capture configuration or its host-outcome comparison. It requires both a preserved-agency support cohort and a paired high-demand comparison cohort to exist before H4 can survive.
 
 ### H5 — noncoercive repair
 
