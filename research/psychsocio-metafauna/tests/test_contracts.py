@@ -116,7 +116,7 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
     def test_preregistration_decision_rules_are_independent_and_frozen(self) -> None:
         prereg = (PROJECT / "PREREGISTRATION.md").read_text(encoding="utf-8")
 
-        self.assertIn("difference-in-differences interaction contrast", prereg)
+        self.assertIn("predeclared difference-in-differences contrast", prereg)
         self.assertIn(
             "Eligible H2 cells are restricted to the comparable high-demand `P1`–`P4` profiles.",
             prereg,
