@@ -1,0 +1,28 @@
+name: psychsocio-metafauna
+
+on:
+  pull_request:
+    paths:
+      - "research/psychsocio-metafauna/**"
+      - "README.md"
+      - ".github/workflows/psychsocio-metafauna.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/psychsocio-metafauna/**"
+      - "README.md"
+      - ".github/workflows/psychsocio-metafauna.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate psychsocio-metafauna boundaries
+        run: python -m unittest discover -s research/psychsocio-metafauna/tests -q
