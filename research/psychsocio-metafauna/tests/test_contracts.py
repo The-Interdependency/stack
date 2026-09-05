@@ -76,6 +76,15 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             else:
                 self.assertRegex(commit, HEX40)
 
+        stack_participant = next(item for item in participants if item["id"] == "stack")
+        self.assertEqual(
+            stack_participant["commit"],
+            "6c3f94b1e6d77e8f1abd36edc53da5fda596b416",
+        )
+        self.assertEqual(stack_participant["path"], "research/psychsocio-metafauna/")
+        self.assertIn("introduction snapshot", stack_participant["relation"])
+        self.assertIn("avoiding recursive self-reference", stack_participant["relation"])
+
         metapat = next(item for item in participants if item["id"] == "metapat")
         metapat_base = json.loads(
             (STACK / "research" / "metapat" / "BASE.json").read_text(encoding="utf-8")
@@ -130,6 +139,10 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         self.assertNotIn("one declared piecewise-threshold model", prereg)
         self.assertIn(
             "does not reuse the candidate-capture configuration",
+            prereg,
+        )
+        self.assertIn(
+            "If that eligible cohort is empty, `H4 = UNRESOLVED`",
             prereg,
         )
         self.assertIn(
