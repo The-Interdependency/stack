@@ -262,9 +262,18 @@ Matched damaged-host/pattern pairs produce greater persistence than the same pat
 
 The joint effect of match and social reinforcement on persistence is super-additive.
 
-**Survival rule:** the predeclared interaction contrast is at least `0.10`, and a threshold/interaction model improves held-out mean squared error by at least `10%` relative to the additive model.
+**Survival rule:** on held-out seeds, the predeclared difference-in-differences interaction contrast is at least `0.10`:
 
-**Falsifier:** the interaction contrast is below `0.10`, or the additive model predicts held-out persistence within the same error band.
+```text
+I = mean(persistence | matched, reinforcement)
+  - mean(persistence | matched, no reinforcement)
+  - mean(persistence | mismatched, reinforcement)
+  + mean(persistence | mismatched, no reinforcement)
+```
+
+Compute `I` separately within each D1–D4 damage profile and require the pooled balanced-cell mean of those four contrasts to be at least `0.10`; no fitted threshold or breakpoint model participates in this decision.
+
+**Falsifier:** the pooled held-out interaction contrast is below `0.10` or reverses sign. A threshold-shaped mechanism remains a separate `hmmm` requiring its own preregistration rather than being selected after outputs exist.
 
 ### H3 — hysteresis
 
@@ -276,19 +285,21 @@ After initiating exposure is removed, matched high-demand patterns retain more h
 
 ### H4 — adoption/capture separation
 
-The measurement vector distinguishes high adoption with preserved revision and exit from the candidate capture configuration.
+The measurement vector distinguishes high adoption with preserved inspection/revision capacity from narrowed inspectability.
 
-**Survival rule:** at least `90%` of matched-support episodes with adoption at or above `0.75` remain outside the candidate capture configuration.
+**Survival rule:** among matched-support (`PM`) episodes with adoption at or above `0.75`, at least `90%` must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
 
-**Falsifier:** strong adaptive adoption is routinely classified as capture.
+**Falsifier:** more than `10%` of high-adoption `PM` episodes have either `revision openness < 0.50` or `alternative access < 0.50`.
+
+This rule does not reuse the candidate-capture configuration or its host-outcome comparison; H4 therefore cannot survive merely because the matched-support cohort is its own control.
 
 ### H5 — noncoercive repair
 
-Independent support reduces persistence and reproduction demands while increasing revision, alternative access, or exit, without deleting the pattern or imposing a belief action.
+Independent support reduces persistence and reproduction allocation while increasing revision, alternative access, or exit, without deleting the pattern or imposing a belief action.
 
-**Survival rule:** compared with the no-support counterpart, support changes at least two agency measures by `0.15` or more in the predicted direction and does not directly force `exit`, `revise`, or `ignore`.
+**Survival rule:** relative to the same condition and seed without independent support, support must reduce both persistence and reproduction allocation by at least `0.15`, increase at least two of `revision openness`, `alternative access`, and `exit capacity exercised` by at least `0.15`, and never directly force `exit`, `revise`, or `ignore`.
 
-**Falsifier:** repair works only through forced deletion, punishment, isolation, or an encoded anti-pattern preference.
+**Falsifier:** either persistence or reproduction allocation fails to decrease by `0.15`, fewer than two agency measures increase by `0.15`, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
 
 ### H6 — broad-spectrum alternative
 
@@ -308,8 +319,8 @@ If `PX` performs as well as or better than specifically matched profiles across 
 6. Fit only these candidate models to persistence:
    - exposure-only;
    - additive main effects;
-   - declared match × reinforcement interaction;
-   - one declared piecewise-threshold model.
+   - declared match × reinforcement interaction.
+   A piecewise-threshold or breakpoint model is explicitly out of scope for this run because no threshold form was frozen before the design merge.
 7. Evaluate the frozen contrasts and held-out errors.
 8. Apply each hypothesis's survival and falsification rule independently.
 9. Emit `SURVIVED`, `FALSIFIED`, `UNRESOLVED`, or `BLOCKED` for every hypothesis.
@@ -399,7 +410,7 @@ A synthetic `FALSIFIED` result remains in the repository and changes the archite
 - the exact implementation language and agent update rule;
 - whether four synthetic damage profiles provide enough topology diversity;
 - whether the fixed thresholds are too permissive or too strict for useful separation;
-- the correct model family for nonlinear coalescence without baking the result into the simulator;
+- whether a later preregistration should test a threshold/breakpoint form beyond the frozen interaction contrast;
 - the exact AHBG adapter after this standalone falsifier;
 - whether repair should target host capacity, environmental dependency, network plurality, or all three independently.
 
