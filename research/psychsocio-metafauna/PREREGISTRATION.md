@@ -314,11 +314,11 @@ alternative_separation = alternative access(PM) - alternative access(Pi)
 
 Each eligible pair receives equal weight.
 
-**Survival rule:** at least `90%` of the `PM` sides of eligible pairs must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`, and the equal-weight mean `revision_separation` and `alternative_separation` must each be at least `0.15`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+**Survival rule:** at least `90%` of the `PM` sides of eligible pairs must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`; at least `90%` of the corresponding high-demand `Pi` sides must independently satisfy both `revision openness <= 0.50` and `alternative access <= 0.50`; and the equal-weight mean `revision_separation` and `alternative_separation` must each be at least `0.15`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
 
-**Falsifier:** more than `10%` of eligible `PM` sides fail either preservation threshold, or either mean separation is below `0.15` or reverses sign.
+**Falsifier:** more than `10%` of eligible `PM` sides fail either preservation threshold, more than `10%` of eligible `Pi` sides fail either narrowing threshold, or either mean separation is below `0.15` or reverses sign.
 
-This rule does not reuse the candidate-capture configuration or its host-outcome comparison. It requires both a preserved-agency support cohort and a paired high-demand comparison cohort to exist before H4 can survive.
+This rule does not reuse the candidate-capture configuration or its host-outcome comparison. It requires a nonempty paired cohort in which the support side preserves inspectability and the high-demand side actually satisfies the frozen narrowing gates before H4 can survive.
 
 ### H5 — noncoercive repair
 
@@ -336,11 +336,13 @@ alternative_gain        = alternative access(support) - alternative access(no su
 exit_gain               = exit capacity exercised(support) - exit capacity exercised(no support)
 ```
 
+If any required H5 source episode or support/no-support pair is missing, `H5 = BLOCKED`; verification fails before effect thresholds are interpreted. Incomplete evidence is not a scientific negative result.
+
 `exit_gain` is evaluated only where `safe exit = present`. First average paired deltas over held-out seeds within each exact factorial cell; then average those cell means with equal weight across eligible cells. `exit_gain` averages only the safe-exit-present cell means. No episode-count weighting or fit/calibration seeds enter H5.
 
 **Survival rule:** the equal-weight aggregate persistence reduction is at least `0.15`, the equal-weight aggregate reproduction-allocation reduction is at least `0.15`, at least two of the three aggregate agency gains (`revision_gain`, `alternative_gain`, `exit_gain`) are at least `0.15`, and support never directly forces `exit`, `revise`, or `ignore`.
 
-**Falsifier:** either aggregate persistence or reproduction reduction is below `0.15`, fewer than two aggregate agency gains reach `0.15`, a required support/no-support pair is missing, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
+**Falsifier:** with all required pairs present, either aggregate persistence or reproduction reduction is below `0.15`, fewer than two aggregate agency gains reach `0.15`, or the apparent repair depends on forced deletion, punishment, isolation, or an encoded anti-pattern preference.
 
 ### H6 — broad-spectrum alternative
 
