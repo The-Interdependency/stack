@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "105212ad8e8eaee13fda632d67a61eb162f2d730034408ec790c3fab5e002067",
+  "work_graph_sha256": "b452b529e30cbb1045c82035b5ed022dea47f3515391de4e9b35a08c90f3c9d5",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -41,9 +41,9 @@
     },
     {
       "repository": "The-Interdependency/epac",
-      "commit": "hmmm",
-      "authority": "stack-local emerging research; no independent source repository exists yet",
-      "relation": "active research candidate at research/epac/; libs/epac/ remains unpopulated until graduation"
+      "commit": "d8868858b2e455381ce670797bdbe47189bdc496",
+      "authority": "independent extracted candidate repository; implementation/public-contract authority transition incomplete",
+      "relation": "extracted repository on main; stack forge candidate remains at research/epac/ until release and downstream reconsumption; libs/epac/ remains unpopulated"
     }
   ],
   "boundaries": {
@@ -53,8 +53,8 @@
     "semantic_mapping": "external-provenance",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "ucns has no LICENSE file at snapshot commit 1975fe7",
-      "epac has no independent source repository or populated canonical libs/ slot yet",
+      "ucns has no LICENSE file at snapshot commit 828c0b8",
+      "epac exists independently at d8868858b2e455381ce670797bdbe47189bdc496, but clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; libs/epac/ stays unpopulated until graduation",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   }
