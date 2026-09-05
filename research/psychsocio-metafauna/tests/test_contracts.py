@@ -99,6 +99,16 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         observed = hashlib.sha256(canonical).hexdigest()
         self.assertEqual(observed, graph["work_graph_sha256"])
 
+    def test_workflow_rechecks_when_metapat_base_changes(self) -> None:
+        workflow = (STACK / ".github" / "workflows" / "psychsocio-metafauna.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertGreaterEqual(
+            workflow.count('"research/metapat/BASE.json"'),
+            2,
+            "pull_request and push path filters must both watch the exact METAPAT pin",
+        )
+
     def test_non_transfer_boundaries_fail_closed(self) -> None:
         boundaries = load_json("WORK_GRAPH.json")["boundaries"]
 
@@ -154,7 +164,11 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             prereg,
         )
         self.assertIn(
-            "both a preserved-agency support cohort and a paired high-demand comparison cohort",
+            "at least `90%` of the corresponding high-demand `Pi` sides",
+            prereg,
+        )
+        self.assertIn(
+            "high-demand side actually satisfies the frozen narrowing gates",
             prereg,
         )
         self.assertIn(
@@ -170,11 +184,19 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             prereg,
         )
         self.assertIn(
+            "If any required H5 source episode or support/no-support pair is missing, `H5 = BLOCKED`",
+            prereg,
+        )
+        self.assertIn(
             "retire only the frozen hypothesis component actually falsified",
             prereg,
         )
         self.assertNotIn(
             "retire coalescence as a distinct mechanism for this formal scope",
+            prereg,
+        )
+        self.assertNotIn(
+            "a required support/no-support pair is missing, or the apparent repair",
             prereg,
         )
         self.assertNotIn("reduces persistence and reproduction demands", prereg)
