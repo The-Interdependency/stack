@@ -136,13 +136,25 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             "`nonlinear coalescence threshold = UNRESOLVED` regardless of H2 status",
             prereg,
         )
+        self.assertIn(
+            "This falsifies only the frozen super-additive interaction precursor",
+            prereg,
+        )
         self.assertNotIn("one declared piecewise-threshold model", prereg)
         self.assertIn(
             "does not reuse the candidate-capture configuration",
             prereg,
         )
         self.assertIn(
-            "If that eligible cohort is empty, `H4 = UNRESOLVED`",
+            "A pair is H4-eligible only when **both** episodes have adoption at or above `0.75`",
+            prereg,
+        )
+        self.assertIn(
+            "If no H4-eligible pairs exist, `H4 = UNRESOLVED`",
+            prereg,
+        )
+        self.assertIn(
+            "both a preserved-agency support cohort and a paired high-demand comparison cohort",
             prereg,
         )
         self.assertIn(
@@ -155,6 +167,14 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         )
         self.assertIn(
             "equal-weight aggregate reproduction-allocation reduction is at least `0.15`",
+            prereg,
+        )
+        self.assertIn(
+            "retire only the frozen hypothesis component actually falsified",
+            prereg,
+        )
+        self.assertNotIn(
+            "retire coalescence as a distinct mechanism for this formal scope",
             prereg,
         )
         self.assertNotIn("reduces persistence and reproduction demands", prereg)
