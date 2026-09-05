@@ -300,9 +300,11 @@ After initiating exposure is removed, matched high-demand patterns retain more h
 
 The measurement vector distinguishes high adoption with preserved inspection/revision capacity from narrowed inspectability.
 
-**Survival rule:** among matched-support (`PM`) episodes with adoption at or above `0.75`, at least `90%` must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+The H4 eligible cohort is restricted to held-out seeds `16..31` from matched-support (`PM`) episodes with adoption at or above `0.75`. If that eligible cohort is empty, `H4 = UNRESOLVED`; neither `SURVIVED` nor `FALSIFIED` may be assigned from an empty denominator.
 
-**Falsifier:** more than `10%` of high-adoption `PM` episodes have either `revision openness < 0.50` or `alternative access < 0.50`.
+**Survival rule:** among eligible H4 episodes, at least `90%` must independently satisfy both `revision openness >= 0.50` and `alternative access >= 0.50`. Safe-exit behavior is reported separately and absence of exit alone cannot make this rule survive or fail.
+
+**Falsifier:** more than `10%` of eligible H4 episodes have either `revision openness < 0.50` or `alternative access < 0.50`.
 
 This rule does not reuse the candidate-capture configuration or its host-outcome comparison; H4 therefore cannot survive merely because the matched-support cohort is its own control.
 
