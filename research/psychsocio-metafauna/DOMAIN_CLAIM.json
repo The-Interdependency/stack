@@ -1,0 +1,131 @@
+{
+  "schema": "the-interdependency.domain-claim",
+  "version": "0.1.0",
+  "term_id": "psychsocio-metafauna.pattern-lineage",
+  "surface_form": "psychsocio metafauna",
+  "claiming_domain": "psychsocio-metafauna",
+  "claimed_sense": "A substrate-portable, multiply instantiated thought-pattern lineage that preserves recognizable identity across transmission, can couple to identity-maintaining processes in hosts, and can modify host behavior in ways that affect its own persistence or reproduction.",
+  "scope": "Social-cognitive, cultural, institutional, and agent-mediated symbolic systems; including beneficial, neutral, harmful, and mixed host-pattern relations.",
+  "claim_type": "provisional cross-domain hypothesis",
+  "claim_status": "stack-local research; not canon; not diagnosis; not a human classifier",
+  "authority_source": {
+    "kind": "operator-authored proposal",
+    "author": "Erin Spencer",
+    "date": "2026-09-04",
+    "repository_record": "research/psychsocio-metafauna/",
+    "immutable_transcript_identity": "hmmm"
+  },
+  "included_uses": [
+    "distinguishing one symbolic instance from a pattern lineage across instances",
+    "describing host-pattern coupling without assuming consciousness in the pattern",
+    "testing whether specific damage topologies preferentially increase susceptibility to compatible pattern affordances",
+    "testing nonlinear coalescence, persistence, hysteresis, reproduction, and repair",
+    "allocating causal contribution and possible accountability among hosts, designers, amplifiers, institutions, and candidate distributed agents",
+    "self-auditing The Interdependent Way and its implementations under the same criteria"
+  ],
+  "excluded_uses": [
+    "diagnosing a person, community, religion, ideology, or political group as infected",
+    "inferring trauma, incapacity, hidden state, intention, or diminished accountability from belief or disagreement",
+    "treating persuasion, adoption, conviction, reproduction, or social similarity alone as identity capture",
+    "using UCNS geometry, EDCM readouts, model agreement, or implementation persistence as automatic proof of the theory",
+    "targeting people by vulnerability, optimizing coercive influence, forced deconversion, or suppressing lawful belief",
+    "claiming that a lineage possesses an accountable I merely because it has recognizable identity"
+  ],
+  "defined_terms": [
+    {
+      "term_id": "psychsocio-metafauna.pattern-instance",
+      "sense": "One embodied registration of a lineage in speech, text, ritual, image, software, institution, model state, memory, or behavior."
+    },
+    {
+      "term_id": "psychsocio-metafauna.pattern-lineage",
+      "sense": "The recoverable invariants joining related instances across transmission, mutation, embodiment, and time."
+    },
+    {
+      "term_id": "psychsocio-metafauna.host-pattern-coupling",
+      "sense": "A relation in which a reconstructed pattern participates in a host's identity maintenance, interpretation, or policy selection."
+    },
+    {
+      "term_id": "psychsocio-metafauna.identity-capture",
+      "sense": "A proposed subtype of host-pattern coupling in which defense or reproduction of a lineage becomes bound to identity maintenance while capacities to inspect, revise, refuse, or exit are materially narrowed."
+    },
+    {
+      "term_id": "psychsocio-metafauna.coalescence-site",
+      "sense": "A compatibility relation between a host's current susceptibility topology and a lineage's affordance profile."
+    },
+    {
+      "term_id": "psychsocio-metafauna.coalescence-event",
+      "sense": "A proposed threshold crossing at which several compatible host-pattern couplings become mutually reinforcing."
+    },
+    {
+      "term_id": "psychsocio-metafauna.capture-basin",
+      "sense": "A self-maintaining host-pattern configuration that persists after the initiating exposure or condition is reduced."
+    },
+    {
+      "term_id": "psychsocio-metafauna.accountable-i",
+      "sense": "A candidate coherency state among coupled arity sets capable of not-self(self) internal modeling, integrated policy selection, counterfactual revision, and enough causal persistence for action attribution."
+    },
+    {
+      "term_id": "psychsocio-metafauna.repair",
+      "sense": "Restoration or enlargement of inspectability, plurality, refusal, revision, safe exit, and accountable action; not compulsory abandonment of a belief."
+    }
+  ],
+  "nearby_terms": [
+    {
+      "term": "meme / memetics",
+      "distinction": "Nearby transmission vocabulary; psychsocio metafauna additionally requires explicit lineage identity, host coupling, coalescence, accountability, and repair boundaries."
+    },
+    {
+      "term": "cultural attractor",
+      "distinction": "Nearby account of recurrent cultural forms; this proposal separately models identity capture and distributed accountability."
+    },
+    {
+      "term": "ideology",
+      "distinction": "A content or doctrine class that may instantiate a lineage but is not synonymous with the lineage relation."
+    },
+    {
+      "term": "egregore / group mind",
+      "distinction": "Nearby folk or metaphysical vocabulary; no group consciousness is assumed."
+    },
+    {
+      "term": "pathogen / parasite",
+      "distinction": "Ecological analogy only. Harm is a host-pattern relation, not the defining essence of every lineage."
+    },
+    {
+      "term": "collective or distributed agent",
+      "distinction": "A possible higher-order status requiring additional evidence of boundary, memory, integrated policy, counterfactual revision, and causal persistence."
+    }
+  ],
+  "known_namespace_collisions": [
+    {
+      "surface": "megafauna",
+      "boundary": "Established zoological term for large animals; not a synonym and not the intended spelling."
+    },
+    {
+      "surface": "Meta/fauna",
+      "boundary": "Existing artistic title and ordinary meta-plus-fauna construction; no conceptual authority or identity is claimed."
+    },
+    {
+      "surface": "psychosocial",
+      "boundary": "Established adjective. The proposal's surface form is intentionally 'psychsocio'; do not silently normalize it."
+    },
+    {
+      "surface": "I",
+      "boundary": "Here it denotes a candidate coherency event with declared capacities, not every grammatical first-person token or persistent identity."
+    },
+    {
+      "surface": "capture",
+      "boundary": "Here it denotes a proposed narrowing of identity-maintenance and revision capacities, not data capture, military capture, attention alone, or persuasion alone."
+    }
+  ],
+  "effective_version": "0.1.0",
+  "hmmm": [
+    "Canonical spelling, pluralization, and whether the directory name becomes an independent project name.",
+    "Operational invariants sufficient to identify one lineage across substantial mutation.",
+    "Validated separation of deep identification, adaptive commitment, dependency, and identity capture.",
+    "The damage-affordance coupling matrix and whether susceptibility changes are directional, nonlinear, or context-specific.",
+    "The existence, location, and hysteresis of coalescence thresholds.",
+    "Criteria for accountable distributed I status.",
+    "Ethically admissible empirical methods beyond synthetic and archival work.",
+    "Exact current canonical source identity for The Interdependent Way self-audit."
+  ]
+}

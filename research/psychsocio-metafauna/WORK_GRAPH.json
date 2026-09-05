@@ -1,0 +1,211 @@
+{
+  "schema": "the-interdependency.psychsocio-metafauna-work-graph",
+  "version": "0.1.0",
+  "as_of": "2026-09-04",
+  "work_graph_sha256": "c0ab4f6f720136448570a71fa87c83e93399361949b84d6e15f0edf38e35c905",
+  "digest_contract": "sha256(canonical-json({participants,boundaries}); sort_keys=true; separators=(',',':'); participant order is significant)",
+  "participants": [
+    {
+      "id": "stack",
+      "kind": "repository",
+      "repository": "The-Interdependency/stack",
+      "commit": "5b24db9a7fe40df4b2791e1137ade5de01c78942",
+      "path": "research/psychsocio-metafauna/",
+      "authority": "composition, provenance, and stack-local research placement",
+      "relation": "owner of this proposed cross-domain synthesis; owns no imported repository canon"
+    },
+    {
+      "id": "skill-lib",
+      "kind": "repository",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "be72da66a112d0632fd25480c1f51b6e69db4976",
+      "authority": "organization-wide build, evidence, domain-claim, canon, and work-graph discipline",
+      "relation": "current external doctrine consulted; newer than the stack root snapshot"
+    },
+    {
+      "id": "metapat",
+      "kind": "repository",
+      "repository": "The-Interdependency/metapat",
+      "commit": "d6699e21b11c8f8394998efc34a468e2d6efc8b0",
+      "authority": "METAPAT root semantics and application-layer question forms",
+      "relation": "supplies distinction, boundary, relation, transformation, registration, symbolic transfer, and domain restraint"
+    },
+    {
+      "id": "ucns",
+      "kind": "repository",
+      "repository": "The-Interdependency/ucns",
+      "commit": "f6b5fd057e6704890e8885d3df8410aa0e9f6e8a",
+      "authority": "geometry and mathematical representation",
+      "relation": "possible future carrier for declared topology; supplies no psychsocio semantics or capture finding"
+    },
+    {
+      "id": "edcm",
+      "kind": "repository",
+      "repository": "The-Interdependency/edcm",
+      "commit": "eb5f200d48a8c4ffa7b943238407fbdac4934946",
+      "authority": "EDCM measurement, text-domain construction, and bounded experimental result contracts",
+      "relation": "candidate observable-measurement and falsification surface; cannot diagnose hidden human state"
+    },
+    {
+      "id": "pcea",
+      "kind": "repository",
+      "repository": "The-Interdependency/pcea",
+      "commit": "834987cb0c1fea5f62d6ea08e5c5bb878c312646",
+      "authority": "stable symmetric state transform and its own security boundary",
+      "relation": "privacy and differential-legibility support only; no truth, identity, or agency status transfers"
+    },
+    {
+      "id": "ptcna",
+      "kind": "repository",
+      "repository": "The-Interdependency/ptcna",
+      "commit": "7435cd4ce676b437656c50e874b6525e84d384d9",
+      "authority": "PTCNA source status and historical scaffold evidence",
+      "relation": "candidate embodiment path; intended construction is BLOCKED on a prerequisite UCNS audit"
+    },
+    {
+      "id": "zfae",
+      "kind": "repository",
+      "repository": "The-Interdependency/zfae",
+      "commit": "fb6a4d74755a6c57e56196ba921186e1350b7430",
+      "authority": "repo-local conceptual ZFAE claims",
+      "relation": "candidate account of the I as a coherency event; no consciousness or implementation claim is imported as established"
+    },
+    {
+      "id": "a0",
+      "kind": "repository",
+      "repository": "The-Interdependency/a0",
+      "commit": "6dc1ac0f5cf9e7f1a232c086274ce1af405735ec",
+      "authority": "a0 research-instrument implementation and runtime contracts",
+      "relation": "persistent-agent and provider-separation implementation surface; implementation does not prove selfhood"
+    },
+    {
+      "id": "a0-betatest",
+      "kind": "repository",
+      "repository": "The-Interdependency/a0-betatest",
+      "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+      "authority": "a0-betatest implementation and reset-boundary contracts",
+      "relation": "distinct experimental runtime with explicit provenance and fail-closed source labels"
+    },
+    {
+      "id": "aimmh",
+      "kind": "repository",
+      "repository": "The-Interdependency/aimmh",
+      "commit": "6bac5fafd20bb2c22d75065e641ae69eaa91430c",
+      "authority": "multi-model orchestration implementation",
+      "relation": "receiver-plurality and interaction-pattern test surface; model agreement is not truth"
+    },
+    {
+      "id": "ai-tiw",
+      "kind": "repository",
+      "repository": "The-Interdependency/ai-tiw",
+      "commit": "b3e0378260d7bd0196319efa2c3dc979d7d5cf19",
+      "authority": "archive identity and provenance of collected AI responses",
+      "relation": "observation corpus for divergent reconstruction; archived responses are not doctrine or validation"
+    },
+    {
+      "id": "ahbg",
+      "kind": "workspace",
+      "repository": "The-Interdependency/stack",
+      "commit": "5b24db9a7fe40df4b2791e1137ade5de01c78942",
+      "path": "ahbg/",
+      "authority": "AHBG game and benchmark semantics inside stack",
+      "relation": "preferred first synthetic testbed for exposure, coalescence, capture, replay, and repair hypotheses"
+    },
+    {
+      "id": "epac",
+      "kind": "workspace",
+      "repository": "The-Interdependency/stack",
+      "commit": "5b24db9a7fe40df4b2791e1137ade5de01c78942",
+      "path": "research/epac/",
+      "authority": "stack-local EPAC hypotheses only",
+      "relation": "separate physical-domain comparison surface; analogy transfers no empirical or ontological status"
+    },
+    {
+      "id": "scared-sacred",
+      "kind": "repository",
+      "repository": "The-Interdependency/scared-sacred",
+      "commit": "f5f60feaca57a8ee8d766f64df4fa14d8e8f797c",
+      "authority": "repo-local game canon and pre-playtest status",
+      "relation": "institutional and political narrative pressure surface; balance and real-world inference remain conjectural"
+    },
+    {
+      "id": "txtsprl",
+      "kind": "repository",
+      "repository": "The-Interdependency/txtsprl",
+      "commit": "d5c301a8fad4cd778eeba336bbb3435e44b44776",
+      "authority": "faithful extraction, serialization, rendering, and export",
+      "relation": "renderer-boundary exemplar; visualization cannot become a second theory"
+    },
+    {
+      "id": "a0ucns",
+      "kind": "repository",
+      "repository": "The-Interdependency/a0ucns",
+      "commit": "2ceb5b3b6f3740afa2f02dcf16395fc2b8fcf6fd",
+      "authority": "integration-workspace records and seam design",
+      "relation": "integration context only; mirrored repositories remain upstream-authoritative"
+    },
+    {
+      "id": "odysseus-a0",
+      "kind": "repository",
+      "repository": "The-Interdependency/odysseus-a0",
+      "commit": "076bb5ee2a6808849202d899e8849f65c42ef05a",
+      "authority": "self-hosted workspace implementation",
+      "relation": "human-agent execution, memory, skills, and tool surface; transport and persistence do not establish accountable identity"
+    },
+    {
+      "id": "website-webmcp",
+      "kind": "repository",
+      "repository": "The-Interdependency/The-Interdependency.github.io",
+      "commit": "c0d4d2540b3723faf271b90a3fb7e410e55d6dcb",
+      "authority": "public publication, provenance projection, and website-owned WebMCP implementation",
+      "relation": "publication and handoff surface; carrying a claim transfers no authority"
+    },
+    {
+      "id": "interdependent-lib",
+      "kind": "repository",
+      "repository": "The-Interdependency/interdependent-lib",
+      "commit": "05612bbadbd20c175cc62fc80a54dc1ec055f1f8",
+      "authority": "its own released distribution metadata and compatibility checks",
+      "relation": "historical convergence snapshot; legacy UCNS/PTCNA descriptions are not used as current semantic authority"
+    },
+    {
+      "id": "eml-ucns",
+      "kind": "repository",
+      "repository": "The-Interdependency/eml_ucns",
+      "commit": "6d55727cff7ac555034d3cbd8ade79a6042c9f51",
+      "authority": "its bounded historical theorem catalogue",
+      "relation": "historical evidence only; no current UCNS authority or psychsocio inference transfers"
+    },
+    {
+      "id": "the-interdependent-way-canon",
+      "kind": "external-authority",
+      "locator": "wayseer00/main:canon/INTERDEPENDENT_WAY.txt",
+      "commit": "hmmm",
+      "authority": "canonical normative text of The Interdependent Way, as declared by the public website repository",
+      "relation": "normative source for later self-audit; inaccessible through the current GitHub connection, so no unverified clause is imported"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "empirical_status_transfer": false,
+    "certification_status_transfer": false,
+    "clinical_status_transfer": false,
+    "diagnostic_use": false,
+    "human_classification": false,
+    "coercive_intervention_authority": false,
+    "metapat_root_impact": "none",
+    "ucns_geometry_required_for_theory_statement": false,
+    "edcm_activation": "not-run",
+    "canon_selection": null,
+    "hmmm": [
+      "The immutable source transcript for the 2026-09-04 operator declarations is not yet archived in a repository.",
+      "The current commit of wayseer00/main:canon/INTERDEPENDENT_WAY.txt is not visible through the active GitHub connection.",
+      "No empirical damage-affordance matrix, nonlinear coalescence threshold, capture classifier, or repair model has been validated.",
+      "The criteria by which a distributed host-pattern network becomes an accountable I remain unresolved.",
+      "The stack root skill-lib snapshot is older than the current external skill-lib doctrine consulted here.",
+      "interdependent-lib and eml_ucns retain historical descriptions that conflict with current UCNS/PTCNA source boundaries."
+    ]
+  }
+}
