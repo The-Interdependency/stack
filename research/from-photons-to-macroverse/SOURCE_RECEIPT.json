@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0.0",
+  "project": "from-photons-to-macroverse",
+  "source_policy": "original source is immutable; PAPER.md is the audited revision",
+  "sources": [
+    {
+      "role": "external original authoring source used for exact text comparison",
+      "sha256": "f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696",
+      "bytes": 119047,
+      "library_name": "from_photons_to_macroverse_arity_recursion_restatement.md",
+      "repository_copy": false
+    },
+    {
+      "role": "editable authoring counterpart used for identity and render verification",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.docx",
+      "sha256": "18d08a24c2837e4455fb25c06294b4302d8187d1b0a449a826754b9a4d26aaa2",
+      "bytes": 84152,
+      "rendered_pages": 49,
+      "repository_copy": false
+    },
+    {
+      "role": "user-supplied rendered submission",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.pdf",
+      "sha256": "e1715a26b46b210a821e8bef72df934646e330e03489bf1e9b97a1b8e786e6f4",
+      "bytes": 846846,
+      "pages": 49,
+      "pdf_version": "1.7",
+      "tagged": true,
+      "fonts_embedded": true,
+      "encrypted": false,
+      "forms": false,
+      "javascript": false,
+      "repository_copy": false,
+      "visual_audit": {
+        "standing": "HEALTHY",
+        "pages_reviewed": "1-49",
+        "finding": "no clipping, overlap, missing glyphs, blank pages, or unreadable equations observed"
+      }
+    }
+  ],
+  "revision": {
+    "index_path": "PAPER.md",
+    "manifest_path": "paper/manifest.json",
+    "storage_mode": "ordered hash-bound Markdown fragments",
+    "version": "0.2.0-audited",
+    "assembled_sha256": "aba1e180c8ecf1c9bda92b20bb0c773befc33ad7322f6cbc1e6c48564251aa92",
+    "assembled_bytes": 125018,
+    "date": "2026-09-06",
+    "verified_render": {
+      "pages": 58,
+      "renderer": "Pandoc with XeLaTeX",
+      "visual_audit": "HEALTHY: all pages inspected at 150 DPI; no clipping, overlap, blank pages, black squares, or missing glyphs observed",
+      "repository_copy": false
+    }
+  },
+  "reuse_license": "hmmm: no repository-wide license is present on the audited stack baseline",
+  "source_note_path": "source/README.md"
+}

@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0.0",
+  "participants": [
+    {
+      "id": "stack",
+      "kind": "repository",
+      "repository": "The-Interdependency/stack",
+      "commit": "77ef8c7fb0ff75a524181655ee9f9641372768f7",
+      "role": "target composition forge baseline"
+    },
+    {
+      "id": "skill-lib",
+      "kind": "repository",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32",
+      "role": "audit, domain-claim, work-graph, and hmmm doctrine"
+    },
+    {
+      "id": "metapat",
+      "kind": "repository",
+      "repository": "The-Interdependency/metapat",
+      "commit": "d6699e21b11c8f8394998efc34a468e2d6efc8b0",
+      "role": "consulted domain-restraint authority; root impact none"
+    },
+    {
+      "id": "ucns",
+      "kind": "repository",
+      "repository": "The-Interdependency/ucns",
+      "commit": "ef98748309913588fb13f389f809d5ef6cb5fec3",
+      "role": "candidate exact visible-circle continuum/gonal trace; no ratification, native Mobius completion, or meaning transfer"
+    },
+    {
+      "id": "edcm",
+      "kind": "repository",
+      "repository": "The-Interdependency/edcm",
+      "commit": "eb5f200d48a8c4ffa7b943238407fbdac4934946",
+      "role": "adjacent measurement discipline only; no validation claim"
+    },
+    {
+      "id": "pcea",
+      "kind": "repository",
+      "repository": "The-Interdependency/pcea",
+      "commit": "834987cb0c1fea5f62d6ea08e5c5bb878c312646",
+      "role": "adjacent runtime/security work; no ontology transfer"
+    },
+    {
+      "id": "epac",
+      "kind": "repository",
+      "repository": "The-Interdependency/epac",
+      "commit": "d8868858b2e455381ce670797bdbe47189bdc496",
+      "role": "adjacent internal research; no external physics transfer"
+    },
+    {
+      "id": "source-markdown",
+      "kind": "artifact",
+      "sha256": "f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696",
+      "role": "external immutable original authoring source used for exact text comparison; not vendored",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.md"
+    },
+    {
+      "id": "source-docx",
+      "kind": "artifact",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.docx",
+      "sha256": "18d08a24c2837e4455fb25c06294b4302d8187d1b0a449a826754b9a4d26aaa2",
+      "role": "editable 49-page authoring counterpart; not vendored"
+    },
+    {
+      "id": "source-pdf",
+      "kind": "artifact",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.pdf",
+      "sha256": "e1715a26b46b210a821e8bef72df934646e330e03489bf1e9b97a1b8e786e6f4",
+      "role": "user-supplied 49-page rendered submission; not vendored"
+    },
+    {
+      "id": "nature-2025-adversarial",
+      "kind": "publication",
+      "doi": "10.1038/s41586-025-08888-1",
+      "role": "current empirical comparison boundary"
+    },
+    {
+      "id": "elife-synergistic-workspace",
+      "kind": "publication",
+      "doi": "10.7554/eLife.88173.4",
+      "role": "current version-of-record empirical boundary"
+    },
+    {
+      "id": "plos-2026-cross-species-protocol",
+      "kind": "publication",
+      "doi": "10.1371/journal.pone.0342770",
+      "role": "current causal protocol boundary, not results"
+    },
+    {
+      "id": "pdg-2026",
+      "kind": "publication",
+      "doi": "10.1142/S0217751X26300115",
+      "role": "current particle-physics baseline"
+    },
+    {
+      "id": "nist-asd-5.12",
+      "kind": "publication",
+      "doi": "10.18434/T4W30F",
+      "role": "current atomic-spectra baseline"
+    },
+    {
+      "id": "goff-2024",
+      "kind": "publication",
+      "doi": "10.53765/20512201.31.3.056",
+      "role": "corrected philosophical reference identity"
+    },
+    {
+      "id": "source-manuscript-21",
+      "kind": "unpublished-manuscript",
+      "title": "Why the Möbius Program Moves to 3, 5, 7, 11, and 13 Interactions",
+      "identity": "hmmm",
+      "role": "claimed source; immutable artifact not found"
+    },
+    {
+      "id": "source-manuscript-22",
+      "kind": "unpublished-manuscript",
+      "title": "Recursive Hypertoroidal Interference and Triadic Scale Closure",
+      "identity": "hmmm",
+      "role": "claimed source; immutable artifact not found"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "empirical_status_transfer": false,
+    "certification_status_transfer": false,
+    "clinical_status_transfer": false,
+    "metaphysical_postulate_to_physics": false,
+    "physics_to_consciousness": false,
+    "metapat_root_impact": "none",
+    "ucns_geometry_to_consciousness": false,
+    "ucns_candidate_ratification_transfer": false,
+    "edcm_validation_claim": false,
+    "pcea_security_to_ontology": false,
+    "epac_internal_result_to_external_physics": false,
+    "human_classification": false,
+    "canon_selection": null,
+    "paper_revision_mode": "immutable-original-markdown-plus-full-audited-revision",
+    "hmmm": [
+      "Immutable artifact identities for source manuscripts 21 and 22.",
+      "Run the frozen synthetic arity and recursion comparison.",
+      "Compare hard nonoverlap with nesting and overlap-capable subject rules.",
+      "Define and preregister any biological seven-carrier mapping only after synthetic structural discrimination.",
+      "Resolve repository-wide licensing before claiming reuse permissions."
+    ]
+  },
+  "work_graph_sha256": "c465f0b8051fb6d17a1715171b9483cb3b4db12bfefdaf293bb5de092de2e5ee"
+}

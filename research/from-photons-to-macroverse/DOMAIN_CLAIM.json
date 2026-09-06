@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0.0",
+  "claim_id": "from-photons-to-macroverse",
+  "bounded_sense": "A stack-local candidate research program connecting established physical and mathematical descriptions to explicit, separately marked models, hypotheses, and metaphysical postulates about organized subjecthood and shared macroscopic reality.",
+  "claim_status": "stack-local research; not canon; not empirically validated; not clinical; not a human classifier",
+  "included_uses": [
+    "audit claim standing and mathematical type consistency",
+    "construct matched synthetic arity and recursion controls",
+    "compare subject-boundary selection rules",
+    "design preregistered causal and recovery experiments",
+    "preserve source and revision provenance"
+  ],
+  "excluded_uses": [
+    "derive primitive consciousness from Maxwell equations, quantum field theory, UCNS, METAPAT, EPAC, PCEA, or EDCM",
+    "treat a photon, standing wave, Möbius carrier, information score, triad, or heptad as automatic evidence for consciousness",
+    "clinical diagnosis, prognosis, treatment, or determination of personhood",
+    "classify a human, animal, model, organization, or machine as conscious",
+    "claim an extra spacetime dimension from organizational recursion",
+    "promote prime arities or seven carriers by numerology or diagram",
+    "transfer authority or validation from adjacent repositories"
+  ],
+  "defined_terms": [
+    {
+      "term_id": "primitive_intrinsic_presence",
+      "symbol": "C0",
+      "standing": "postulate"
+    },
+    {
+      "term_id": "organized_descriptor",
+      "symbol": "C_org(t)",
+      "standing": "model"
+    },
+    {
+      "term_id": "candidate_content",
+      "symbol": "Z_t",
+      "standing": "model"
+    },
+    {
+      "term_id": "boundary_integrity",
+      "symbol": "B_bdry",
+      "standing": "model"
+    },
+    {
+      "term_id": "subject_family",
+      "symbol": "P_t",
+      "standing": "model/hypothesis"
+    },
+    {
+      "term_id": "direct_arity",
+      "symbol": "n_out",
+      "standing": "structural model datum"
+    },
+    {
+      "term_id": "recursion_depth",
+      "symbol": "d_rec",
+      "standing": "structural model datum"
+    },
+    {
+      "term_id": "macroverse",
+      "symbol": "M_macro",
+      "standing": "model/hypothesis"
+    }
+  ],
+  "term_collisions": [
+    {
+      "surface": "consciousness",
+      "resolution": "always qualify as primitive intrinsic presence, organized subjecthood, or content"
+    },
+    {
+      "surface": "M",
+      "resolution": "separate macroverse, internal model, model efficacy, Möbius band, and filling manifold"
+    },
+    {
+      "surface": "B",
+      "resolution": "separate boundary integrity, body, block, and carrier"
+    },
+    {
+      "surface": "A",
+      "resolution": "separate action, agency score, torus automorphism, and aggregate"
+    },
+    {
+      "surface": "I",
+      "resolution": "separate mutual information, identity map, incidence, and I-event"
+    }
+  ],
+  "no_transfer": {
+    "metapat_root_impact": "none",
+    "ucns_geometry_to_consciousness": false,
+    "ucns_ratification_transfer": false,
+    "edcm_validation_claim": false,
+    "pcea_security_to_ontology": false,
+    "epac_internal_result_to_external_physics": false,
+    "clinical_or_personhood_use": false,
+    "canon_selection": null
+  },
+  "hmmm": [
+    "Immutable artifact identities for source manuscripts 21 and 22.",
+    "Run the frozen synthetic arity and recursion comparison.",
+    "Compare hard nonoverlap with nesting and overlap-capable subject rules.",
+    "Define and preregister any biological seven-carrier mapping only after synthetic structural discrimination.",
+    "Resolve repository-wide licensing before claiming reuse permissions."
+  ]
+}

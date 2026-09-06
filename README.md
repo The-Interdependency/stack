@@ -35,7 +35,8 @@ stack/
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── epac/                # extracted candidate remains forge-side until graduation completes
-│   └── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
+│   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
+│   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── ahbg/                    # emerging composed benchmark/game workspace
 ├── backend/                 # PostgreSQL-backed durable fresh-making control plane
 ├── frontend/
@@ -78,7 +79,7 @@ stack-local implementation.
 Psychsocio metafauna remains in that pre-graduation state. EPAC has an independent
 extracted repository, but extraction is not graduation: its forge research remains here
 until EPAC completes its release, downstream reconsumption, and authority-transition
-gates.
+gates. From Photons to the Macroverse is also stack-local pre-graduation research.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
