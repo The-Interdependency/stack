@@ -34,7 +34,7 @@ stack/
 │   ├── edcm/                # current EDCM research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
-│   ├── epac/                # emerging composed project; no independent repo yet
+│   ├── epac/                # extracted candidate remains forge-side until graduation completes
 │   └── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
 ├── ahbg/                    # emerging composed benchmark/game workspace
 ├── backend/                 # PostgreSQL-backed durable fresh-making control plane
@@ -75,7 +75,10 @@ coherent enough to graduate, create its independent repository, preserve provena
 package/release it, then let stack consume the released project rather than a hidden
 stack-local implementation.
 
-EPAC and psychsocio metafauna are currently in this pre-graduation state.
+Psychsocio metafauna remains in that pre-graduation state. EPAC has an independent
+extracted repository, but extraction is not graduation: its forge research remains here
+until EPAC completes its release, downstream reconsumption, and authority-transition
+gates.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
