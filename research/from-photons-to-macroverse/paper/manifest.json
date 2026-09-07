@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "assembled_filename": "from_photons_to_macroverse_audited_0.2.0.md",
-  "assembled_sha256": "2cc536bde374b2ba96bed756c86687b3b602b492299ebaf0e366f6cd4a674ee4",
+  "assembled_sha256": "cf8af499c3a0e9544eb22d0947b0e836123a60c75adcacbfb1e41a81112afd3b",
   "fragments": [
     {
       "path": "paper/00-frontmatter.md",
@@ -40,10 +40,10 @@
     },
     {
       "path": "paper/03-availability-and-self-location.md",
-      "sha256": "12493dd87d58b0d405e9808e6eec7b002988746434e31a07463f583f5dd0e402",
-      "bytes": 8482,
+      "sha256": "38cd5f6a2a11fa3c899bcad03f8c1037636daf7215e54aa5a86f7862f8d3b86b",
+      "bytes": 8793,
       "role": "global availability, temporal depth, and self-location, sections 12-13",
-      "git_blob_sha1": "baa0ef2b339f98d58cb6af5d9efcd5244e3651bb"
+      "git_blob_sha1": "fe9ec5c415886b4529271b901d6a7237d4015f79"
     },
     {
       "path": "paper/04-subject-and-i-event.md",
@@ -61,10 +61,10 @@
     },
     {
       "path": "paper/06-macroverse-ladder-and-predictions.md",
-      "sha256": "71fc1c4ea77892b6f3235f8f855158d1cdcb5fddc99dcf80302964399355bab3",
-      "bytes": 9917,
+      "sha256": "19b047a99da9e8073cbd49046b33437ea1a0415124762412475e2532424fbb73",
+      "bytes": 10393,
       "role": "macroverse, first-principles ladder, and predictions, sections 22-24",
-      "git_blob_sha1": "682c7ce31e4ce25bffb71bd646d939f1a4f7ab99"
+      "git_blob_sha1": "f54dd19025bcdf5df8a6d0c6eab3e701f7d49739"
     },
     {
       "path": "paper/06-falsification-program-and-limitations.md",

@@ -64,6 +64,55 @@ Use configuration `arity-recursion-synthetic-v1` exactly:
 - selection rule: select the restart with lowest calibration negative log
   likelihood before opening sealed test outputs.
 
+### Synthetic generator
+
+For direct arity `n`, the observed state is
+`x_t=(x_{t,0},...,x_{t,n-1})` with each `x_{t,i} in R^2`. For seed `s`,
+noise standard deviation `sigma`, and intervention input `u_t`, generate
+
+```text
+x_{t+1,i}
+= tanh(
+    L_i x_{t,i}
+  + beta_n/(n-1) sum_{j != i} W_{ij} x_{t,j}
+  + gamma_n h_i prod_{j != i} tanh(v_{ij}^T x_{t,j})
+  + A_i u_t
+  + b_i
+  )
+  + eta_{t,i}
+```
+
+with `eta_{t,i} ~ N(0, sigma^2 I_2)`, `beta_n=0.35`, and `gamma_n=0.20`.
+The `prod` term is omitted only for the declared feed-forward controls and for
+controls whose relation ledger says the relevant edge or carrier is cut.
+Interventions are applied through the declared `u_t` before the `tanh`
+nonlinearity, except additive state perturbations, which are applied directly to
+the selected coordinate after the transition and before noise.
+
+All generator coefficients and initial states are deterministic functions of
+`arity-recursion-synthetic-v1`, seed, arity, noise level, role, and coefficient
+index. The pseudorandom stream is SHA-256 counter mode over the UTF-8 key
+`arity-recursion-synthetic-v1|seed=s|arity=n|sigma=sigma|role=role|index=k`;
+each digest is split into four big-endian unsigned 64-bit words. Each word `w`
+maps to the open-unit uniform `(w+0.5)/2^64`; uniform pairs map to standard
+normal pairs by the Box-Muller transform in IEEE-754 double precision.
+Coefficients are:
+
+```text
+L_i = 0.45 I_2 + 0.10 N_{2x2}
+W_{ij} = N_{2x2}/sqrt(2n)
+v_{ij} = N_2/sqrt(2)
+h_i = N_2/sqrt(2)
+A_i = 0.20 N_{2xr}/sqrt(r) for r declared intervention channels
+b_i = 0.05 N_2
+x_{0,i} = 0.10 N_2
+```
+
+where every `N` entry is drawn from the counter stream with the listed index
+order. `SYSTEMS.json` must carry the realized coefficient tensors, stream keys,
+and coefficient hashes. If an implementation cannot reproduce these bytes from
+the frozen stream, the run is `BLOCKED` before fitting.
+
 Where exact equality is impossible, use the smaller common parameter budget and mask
 unused parameters. Report every resulting asymmetry; do not compensate with a score.
 If any frozen value cannot be implemented exactly, stop before fitting and report
@@ -122,6 +171,24 @@ For each generating system compare:
 - label-shuffled carrier assignment;
 - feed-forward control; and
 - a capacity-only baseline that receives the same inputs but no declared closure.
+
+All candidate and control likelihoods are evaluated on the generator's observed
+`R^(2n)` state, never on a private wrong-arity coordinate space. A control with
+`m != n` carriers uses a fixed, nontrainable observation adapter declared before
+fitting:
+
+```text
+q_{m,n}(i) = floor(i*m/n)       for m < n, i in {0,...,n-1}
+r_{m,n}(a) = floor(a*n/m)       for m > n, a in {0,...,m-1}
+```
+
+For `m < n`, control carrier `q_{m,n}(i)` supplies the predicted mean for
+observed carrier `i`. For `m > n`, all control carriers assigned by
+`r_{m,n}` to observed carrier `i` are averaged to form the predicted mean for
+that observed carrier. The predictive covariance is always a normalized
+diagonal Gaussian over the same `2n` observed coordinates and is included in the
+same parameter-budget accounting. Adjacent-arity comparisons are `BLOCKED` if
+this adapter and likelihood cannot be emitted exactly.
 
 ## Seeds and split
 

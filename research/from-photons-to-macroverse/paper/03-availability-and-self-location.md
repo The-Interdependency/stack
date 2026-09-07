@@ -55,24 +55,26 @@ w_{\mathrm{past}}(\tau)
 I(Z_t;X_{t-\tau})\,d\tau.
 \]
 
-For each intervention value \(z\), let
+Let \(\mu_{-Z}\) be a preregistered distribution over the current context
+\(X_t^{-Z}\), or a point mass when a single context is being evaluated. For
+each intervention value \(z\) and context \(x^{-Z}\), let
 
 \[
-P_z^{\tau}(\cdot\mid X_t^{-Z})
+P_z^{\tau}(\cdot\mid x^{-Z})
 =
-P(X_{t+\tau}\in\cdot\mid\operatorname{do}(Z_t=z),X_t^{-Z}).
+P(X_{t+\tau}\in\cdot\mid\operatorname{do}(Z_t=z),X_t^{-Z}=x^{-Z}).
 \]
 
 Define the pairwise prospective effect
 
 \[
-K_{\tau}(z,z')
+K_{\tau}(z,z'\mid x^{-Z})
 =
 D_{\mathrm{KL}}
 \left(
-P_z^{\tau}
+P_z^{\tau}(\cdot\mid x^{-Z})
 \,\|\,
-P_{z'}^{\tau}
+P_{z'}^{\tau}(\cdot\mid x^{-Z})
 \right).
 \]
 
@@ -83,7 +85,8 @@ Prospective interventional depth is
 =
 \int_0^{T_{\mathrm{future}}}
 w_{\mathrm{future}}(\tau)
-\mathbb E_{z,z'}[K_{\tau}(z,z')]\,d\tau.
+\mathbb E_{x^{-Z}\sim\mu_{-Z}}
+\mathbb E_{z,z'}[K_{\tau}(z,z'\mid x^{-Z})]\,d\tau.
 \]
 
 Then
@@ -96,7 +99,10 @@ Then
 \Theta_{\mathrm{pros}}(Z_t).
 \]
 
-The first term measures retained past. The second measures how alternate content states change future-state distributions beyond the rest of the current state. The weights and intervention distribution must be declared before estimation.
+The first term measures retained past. The second measures how alternate content
+states change future-state distributions beyond the rest of the current state.
+The weights, current-context distribution or point context, and intervention
+distribution must be declared before estimation.
 
 ## 12.3 Metastability
 

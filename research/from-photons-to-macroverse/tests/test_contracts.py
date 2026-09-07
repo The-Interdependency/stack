@@ -120,6 +120,12 @@ class Contracts(unittest.TestCase):
         self.assertNotIn(r"\mathcal S_t\in\arg\max_Y\Lambda(Y)", text)
         self.assertIn(r"\(|S_G|\ge k_G\)", text)
         self.assertIn(r"\(G_{\mathrm c}>0\) by itself is not enough", text)
+        self.assertIn(r"K_{\tau}(z,z'\mid x^{-Z})", text)
+        self.assertIn("current-context distribution or point context", text)
+        self.assertIn(r"R_\delta^{\mathrm{disj}}", text)
+        self.assertNotIn(r"R_\delta=\frac1{f_\delta}", text)
+        self.assertNotIn("Disorders of consciousness should be better classified", text)
+        self.assertIn("must not diagnose, classify, or determine the conscious status of any person", text)
         self.assertIn("10.53765/20512201.31.3.056", text)
         self.assertIn("10.1142/S0217751X26300115", text)
 
@@ -183,6 +189,10 @@ class Contracts(unittest.TestCase):
             self.assertIn(phrase, flat)
         for phrase in ("configuration `arity-recursion-synthetic-v1` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam, learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
             self.assertIn(phrase, flat)
+        for phrase in ("Synthetic generator", "SHA-256 counter mode", "SYSTEMS.json` must carry the realized coefficient tensors", "same `2n` observed coordinates", "Adjacent-arity comparisons are `BLOCKED`"):
+            self.assertIn(phrase, text)
+        self.assertIn("q_{m,n}(i) = floor(i*m/n)", text)
+        self.assertIn("r_{m,n}(a) = floor(a*n/m)", text)
         self.assertNotIn("both primary outcomes: interventional log score and recovery", flat)
         for control in ("six-carrier", "arbitrary-seven", "unnested-seven", "label-shuffled"):
             self.assertIn(control, text)

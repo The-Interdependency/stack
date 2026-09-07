@@ -64,8 +64,8 @@
     "manifest_path": "paper/manifest.json",
     "storage_mode": "ordered hash-bound Markdown fragments",
     "version": "0.2.0-audited",
-    "assembled_sha256": "2cc536bde374b2ba96bed756c86687b3b602b492299ebaf0e366f6cd4a674ee4",
-    "assembled_bytes": 126221,
+    "assembled_sha256": "cf8af499c3a0e9544eb22d0947b0e836123a60c75adcacbfb1e41a81112afd3b",
+    "assembled_bytes": 127008,
     "date": "2026-09-06",
     "verified_render": {
       "status": "HMMM_STALE_AFTER_PAPER_TEXT_REPAIRS",

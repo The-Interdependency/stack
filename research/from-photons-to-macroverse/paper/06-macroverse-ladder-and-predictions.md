@@ -9,21 +9,25 @@ Let \(S\) be a system and \(F\) a fragment of its environment. Their mutual info
 I(S;F)=H(S)+H(F)-H(SF).
 \]
 
-In quantum-Darwinism models [19], many disjoint environmental fragments can each carry nearly complete information about selected stable observables. For tolerance \(\delta\), let \(f_\delta\) be the smallest environment fraction satisfying
+In quantum-Darwinism models [19], many disjoint environmental fragments can each
+carry nearly complete information about selected stable observables. For
+tolerance \(\delta\), define redundancy by the number of disjoint informative
+fragments, not by one unusually informative small fragment:
 
 \[
-I(S;F_{f_\delta})
-\ge
-(1-\delta)H(S).
+R_\delta^{\mathrm{disj}}(S)
+=
+\max\left\{
+k:
+\exists\,F_1,\ldots,F_k\ \mathrm{pairwise\ disjoint},
+\ \forall i,\ I(S;F_i)\ge(1-\delta)H(S)
+\right\}.
 \]
 
-Redundancy is
-
-\[
-R_\delta=\frac1{f_\delta}.
-\]
-
-High redundancy makes a macroscopic property independently accessible to many observers without requiring them to interact directly with the system.
+High redundancy makes a macroscopic property independently accessible to many
+observers without requiring them to interact directly with the system. A small
+environment fraction is not sufficient unless the corresponding number of
+disjoint fragments also satisfies the same information threshold.
 
 ## 22.2 Shared inference
 
@@ -48,7 +52,7 @@ Shared reality is not mere agreement. It is convergence supported by persistent 
 (x_0,\ldots,x_N;\mathcal O):
  x_{k+1}=C_k(x_k),
  \Delta_k\le\varepsilon_k,
- R_\delta(x_N)\gg1
+ R_\delta^{\mathrm{disj}}(x_N)\gg1
 \right\},
 \]
 
@@ -182,8 +186,8 @@ The theory earns scientific standing only through predictions that differ from s
 10. Global broadcast without causal feedback should produce accessibility-like behavior with reduced recovery and reduced intrinsic unity.
 11. Disrupting one contextual layer should selectively reduce context-sensitive recovery while leaving some lower dynamics intact.
 12. Dreaming can remain organized consciousness with reduced external action because internal model efficacy, differentiation, temporal depth, self-location, and nested closure can persist while overt agency changes.
-13. Disorders of consciousness should be better classified by \((\mathbf C_t;\mathbf K_t)\) than by any one anatomical location or one-dimensional index.
-14. Competing subject-boundary and arity rules should make different predictions for split-brain, dissociation, brain-organoid, multi-agent, and tightly coupled human-machine cases. The rules must be preregistered before classification.
+13. In nonclinical protocol studies using independently supplied task states or archival labels, \((\mathbf C_t;\mathbf K_t)\) should improve model comparison over any one anatomical location or one-dimensional index. The descriptor itself must not diagnose, classify, or determine the conscious status of any person.
+14. Competing subject-boundary and arity rules should make different preregistered, nonclinical protocol predictions for split-brain, dissociation, brain-organoid, multi-agent, and tightly coupled human-machine cases. The rules must be preregistered before any comparison.
 15. Human conscious organization should exhibit a reproducible seven-carrier outer causal decomposition with at least one nested dyadic, triadic, or quintadic level. Six-carrier, arbitrary seven-carrier, and unnested controls should perform worse on intervention and recovery tests.
 16. Transitions described as organizational “4D” should introduce a measurable model-of-the-prior-closure level, not merely more state variables or an eighth peer carrier.
 
@@ -193,4 +197,3 @@ The theory earns scientific standing only through predictions that differ from s
 18. If prime-indexed Möbius complexes are physically relevant, they must produce projection-independent invariants and non-inserted prime/composite differences.
 19. Eleven- and thirteen-arity complete relation structures should require additional topology, phase channels, or representational depth relative to seven.
 20. If warped scale monodromy contributes to physical or cognitive organization, perturbations should reveal return transformations not explainable by ordinary untwisted recurrence.
-
