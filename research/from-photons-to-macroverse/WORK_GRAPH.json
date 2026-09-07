@@ -54,22 +54,40 @@
       "id": "source-markdown",
       "kind": "artifact",
       "sha256": "f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696",
-      "role": "external immutable original authoring source used for exact text comparison; not vendored",
-      "name": "from_photons_to_macroverse_arity_recursion_restatement.md"
+      "role": "external immutable original authoring source used for exact text comparison; not vendored; durable retrieval hmmm",
+      "name": "from_photons_to_macroverse_arity_recursion_restatement.md",
+      "retrieval": {
+        "status": "BLOCKED_EXTERNAL_HASH_ONLY",
+        "durable_locator": "hmmm",
+        "repository_owned_copy": false,
+        "fresh_checkout_reproducible": false
+      }
     },
     {
       "id": "source-docx",
       "kind": "artifact",
       "name": "from_photons_to_macroverse_arity_recursion_restatement.docx",
       "sha256": "18d08a24c2837e4455fb25c06294b4302d8187d1b0a449a826754b9a4d26aaa2",
-      "role": "editable 49-page authoring counterpart; not vendored"
+      "role": "editable 49-page authoring counterpart; not vendored; durable retrieval hmmm",
+      "retrieval": {
+        "status": "BLOCKED_EXTERNAL_HASH_ONLY",
+        "durable_locator": "hmmm",
+        "repository_owned_copy": false,
+        "fresh_checkout_reproducible": false
+      }
     },
     {
       "id": "source-pdf",
       "kind": "artifact",
       "name": "from_photons_to_macroverse_arity_recursion_restatement.pdf",
       "sha256": "e1715a26b46b210a821e8bef72df934646e330e03489bf1e9b97a1b8e786e6f4",
-      "role": "user-supplied 49-page rendered submission; not vendored"
+      "role": "user-supplied 49-page rendered submission; not vendored; durable retrieval hmmm",
+      "retrieval": {
+        "status": "BLOCKED_EXTERNAL_HASH_ONLY",
+        "durable_locator": "hmmm",
+        "repository_owned_copy": false,
+        "fresh_checkout_reproducible": false
+      }
     },
     {
       "id": "nature-2025-adversarial",
@@ -110,7 +128,7 @@
     {
       "id": "source-manuscript-21",
       "kind": "unpublished-manuscript",
-      "title": "Why the Möbius Program Moves to 3, 5, 7, 11, and 13 Interactions",
+      "title": "Why the M\u00f6bius Program Moves to 3, 5, 7, 11, and 13 Interactions",
       "identity": "hmmm",
       "role": "claimed source; immutable artifact not found"
     },
@@ -141,6 +159,7 @@
     "canon_selection": null,
     "paper_revision_mode": "immutable-original-markdown-plus-full-audited-revision",
     "hmmm": [
+      "Durable retrieval locators or repository-owned copies for the original Markdown, DOCX, and PDF source artifacts.",
       "Immutable artifact identities for source manuscripts 21 and 22.",
       "Run the frozen synthetic arity and recursion comparison.",
       "Compare hard nonoverlap with nesting and overlap-capable subject rules.",
@@ -148,5 +167,5 @@
       "Resolve repository-wide licensing before claiming reuse permissions."
     ]
   },
-  "work_graph_sha256": "c465f0b8051fb6d17a1715171b9483cb3b4db12bfefdaf293bb5de092de2e5ee"
+  "work_graph_sha256": "1ad5f6cff4af90c7d835c85062bc22f60fc4a90d04e72de7dd4af8acd85c9fdc"
 }

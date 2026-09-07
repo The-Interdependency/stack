@@ -16,6 +16,10 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def git_blob_sha1(data: bytes) -> str:
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+
+
 def assemble() -> bytes:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     parts: list[bytes] = []
@@ -26,6 +30,14 @@ def assemble() -> bytes:
         if observed != item["sha256"]:
             raise SystemExit(
                 f"fragment drift: {item['path']}: expected {item['sha256']}, observed {observed}"
+            )
+        blob = git_blob_sha1(data)
+        expected_blob = item.get("git_blob_sha1")
+        if expected_blob is None:
+            raise SystemExit(f"fragment missing git blob identity: {item['path']}")
+        if blob != expected_blob:
+            raise SystemExit(
+                f"fragment blob drift: {item['path']}: expected {expected_blob}, observed {blob}"
             )
         parts.append(data)
     paper = b"".join(parts)

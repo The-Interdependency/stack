@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import re
 import unittest
@@ -21,20 +22,61 @@ def load_json(name: str) -> dict:
     return json.loads((PROJECT / name).read_text(encoding="utf-8"))
 
 
+def load_assembler():
+    path = PROJECT / "tools" / "assemble_paper.py"
+    spec = importlib.util.spec_from_file_location("from_photons_assembler", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load assembler at {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class Contracts(unittest.TestCase):
     def test_original_markdown_is_immutable_and_receipted(self) -> None:
         receipt = load_json("SOURCE_RECEIPT.json")
         by_role = {item["role"]: item for item in receipt["sources"]}
-        self.assertEqual(by_role["external original authoring source used for exact text comparison"]["sha256"], SOURCE_MD_SHA)
-        self.assertFalse(by_role["external original authoring source used for exact text comparison"]["repository_copy"])
-        self.assertEqual(by_role["editable authoring counterpart used for identity and render verification"]["sha256"], SOURCE_DOCX_SHA)
+        self.assertEqual(
+            by_role["external original authoring source used for exact text comparison"]["sha256"],
+            SOURCE_MD_SHA,
+        )
+        self.assertFalse(
+            by_role["external original authoring source used for exact text comparison"]["repository_copy"]
+        )
+        self.assertEqual(
+            by_role["editable authoring counterpart used for identity and render verification"]["sha256"],
+            SOURCE_DOCX_SHA,
+        )
         self.assertEqual(by_role["user-supplied rendered submission"]["sha256"], SOURCE_PDF_SHA)
-        self.assertEqual(by_role["user-supplied rendered submission"]["visual_audit"]["standing"], "HEALTHY")
+        self.assertEqual(
+            by_role["user-supplied rendered submission"]["visual_audit"]["standing"], "HEALTHY"
+        )
         source_note = (PROJECT / receipt["source_note_path"]).read_text(encoding="utf-8")
         for digest in (SOURCE_MD_SHA, SOURCE_DOCX_SHA, SOURCE_PDF_SHA):
             self.assertIn(digest, source_note)
+        for source in receipt["sources"]:
+            retrieval = source["retrieval"]
+            self.assertEqual(retrieval["status"], "BLOCKED_EXTERNAL_HASH_ONLY")
+            self.assertEqual(retrieval["durable_locator"], "hmmm")
+            self.assertFalse(retrieval["fresh_checkout_reproducible"])
+
+    def test_audited_fragments_are_repository_owned_and_retrievable(self) -> None:
+        receipt = load_json("SOURCE_RECEIPT.json")
+        self.assertTrue(receipt["revision"]["repository_copy"])
+        retrieval = receipt["revision"]["retrieval"]
+        self.assertEqual(retrieval["status"], "REPOSITORY_OWNED_FRAGMENTS")
+        self.assertTrue(retrieval["fresh_checkout_reproducible"])
+        self.assertEqual(
+            retrieval["fragment_manifest_carries"],
+            ["path", "bytes", "sha256", "git_blob_sha1"],
+        )
         manifest = load_json("paper/manifest.json")
-        paper = b"".join((PROJECT / item["path"]).read_bytes() for item in manifest["fragments"])
+        assembler = load_assembler()
+        paper = assembler.assemble()
+        for item in manifest["fragments"]:
+            data = (PROJECT / item["path"]).read_bytes()
+            self.assertEqual(hashlib.sha256(data).hexdigest(), item["sha256"])
+            self.assertEqual(assembler.git_blob_sha1(data), item["git_blob_sha1"])
         self.assertEqual(hashlib.sha256(paper).hexdigest(), receipt["revision"]["assembled_sha256"])
         self.assertEqual(manifest["assembled_sha256"], receipt["revision"]["assembled_sha256"])
 

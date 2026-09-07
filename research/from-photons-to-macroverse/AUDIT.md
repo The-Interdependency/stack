@@ -3,14 +3,14 @@
 ## Baseline
 
 - Target: `The-Interdependency/stack@77ef8c7fb0ff75a524181655ee9f9641372768f7`
-- Original Markdown: external library artifact, SHA-256 `f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696`
-- Editable DOCX: SHA-256 `18d08a24c2837e4455fb25c06294b4302d8187d1b0a449a826754b9a4d26aaa2`, rendered to 49 pages
-- Submitted PDF: SHA-256 `e1715a26b46b210a821e8bef72df934646e330e03489bf1e9b97a1b8e786e6f4`, 49 pages
+- Original Markdown: external library artifact, SHA-256 `f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696`; durable retrieval `hmmm`
+- Editable DOCX: SHA-256 `18d08a24c2837e4455fb25c06294b4302d8187d1b0a449a826754b9a4d26aaa2`, rendered to 49 pages; durable retrieval `hmmm`
+- Submitted PDF: SHA-256 `e1715a26b46b210a821e8bef72df934646e330e03489bf1e9b97a1b8e786e6f4`, 49 pages; durable retrieval `hmmm`
 - Audit doctrine: `The-Interdependency/skill-lib@61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32`
 - Domain restraint: `The-Interdependency/metapat@d6699e21b11c8f8394998efc34a468e2d6efc8b0`
 - Current UCNS candidate boundary: `The-Interdependency/ucns@ef98748309913588fb13f389f809d5ef6cb5fec3`
 
-The originals are immutable external evidence with exact hashes. `PAPER.md` indexes the full audited revision stored as ordered, hash-bound fragments in `paper/`. The package does not overwrite history or call stack-local placement canon.
+The originals are external evidence with exact hashes but no durable locator in this repository. `PAPER.md` indexes the full audited revision stored as ordered, hash-bound fragments in `paper/`; those fragments are repository-owned and validated by SHA-256 plus Git blob identity. The package does not overwrite history or call stack-local placement canon.
 
 ## Disposition
 
@@ -66,7 +66,7 @@ The revision binds the eLife Version of Record, the 2026 PDG edition, the comple
 
 - All 49 submitted PDF pages rendered and visually inspected: healthy.
 - Exact 49-page DOCX counterpart located, hashed, rendered, and compared structurally.
-- Exact Markdown authoring source located and hashed; it remains an external input rather than being silently rewritten or promoted to repository authority.
+- Exact Markdown authoring source was located and hashed during audit; it remains an external input, and fresh-checkout retrievability is blocked until the bytes or a durable locator are supplied.
 - Current stack, skill-lib, METAPAT, UCNS, EDCM, PCEA, and EPAC identities pinned.
 - Current primary-source reference metadata checked.
 - Contract suite passes locally.
@@ -74,4 +74,4 @@ The revision binds the eLife Version of Record, the 2026 PDG edition, the comple
 
 ## hmmm
 
-References 21 and 22 remain unbound to immutable artifacts. The synthetic arity/recursion protocol is not run. Subject exclusion, heptadic necessity, biological carrier labels, the I-event, and P0 remain unresolved at their declared standings. The mathematics now has fewer loose shoelaces; it has not acquired wings.
+Original Markdown/DOCX/PDF retrieval remains blocked on repository-owned copies or durable external locators. References 21 and 22 remain unbound to immutable artifacts. The synthetic arity/recursion protocol is not run. Subject exclusion, heptadic necessity, biological carrier labels, the I-event, and P0 remain unresolved at their declared standings.

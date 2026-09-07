@@ -5,7 +5,7 @@ Stack-local audited research package for Erin Patrick Spencer's consciousness-fi
 ```text
 standing:               SURVIVED as a candidate research program
 version:                0.2.0-audited
-source status:          external originals hash-pinned
+source status:          audited fragments retrievable; external originals hash-only / retrieval hmmm
 active paper:           PAPER.md index + paper/ fragments
 canon:                  no
 empirical validation:   none added
@@ -49,7 +49,8 @@ This is new stack-local composed research, not a pinned canonical repository vie
 
 ## Usage guidance
 
-- Cite exact source and revision hashes from `SOURCE_RECEIPT.json`.
+- Cite exact source and revision hashes from `SOURCE_RECEIPT.json`; do not claim fresh-checkout
+  reproduction of the external originals until their bytes or durable locators are supplied.
 - Use names from `SYMBOL_REGISTRY.md` in code and result files.
 - Emit only `SURVIVED`, `FALSIFIED`, `UNRESOLVED`, `BLOCKED`, or `DEPRECATED` against a frozen claim and control set.
 - Do not infer human carrier labels after observing a desired result.
@@ -61,8 +62,8 @@ This is new stack-local composed research, not a pinned canonical repository vie
 python -m unittest discover -s research/from-photons-to-macroverse/tests -q
 ```
 
-The assembled paper was rendered as a 58-page PDF and every rendered page was visually inspected. The repository keeps hash-bound Markdown fragments rather than a generated binary.
+The assembled paper was rendered as a 58-page PDF and every rendered page was visually inspected. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.
 
 ## hmmm
 
-The source manuscripts behind references 21 and 22 still lack immutable identities. The synthetic protocol is not run. The subject-family exclusion rule remains one competitor rather than a solution. The seven carriers have a hypothesis, not a lease.
+The original Markdown, DOCX, and PDF artifacts remain hash-only external evidence until supplied as repository-owned copies or durable retrieval locators. The source manuscripts behind references 21 and 22 still lack immutable identities. The synthetic protocol is not run. The subject-family exclusion rule remains one competitor rather than a solution. The seven carriers have a hypothesis, not a lease.

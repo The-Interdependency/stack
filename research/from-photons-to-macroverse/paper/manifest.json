@@ -7,73 +7,85 @@
       "path": "paper/00-frontmatter.md",
       "sha256": "c3c72e786a3256fc11d5c9de42fa2c228009d5aaaaf35661b1c05eca3d513324",
       "bytes": 6059,
-      "role": "front matter, abstract, and author note"
+      "role": "front matter, abstract, and author note",
+      "git_blob_sha1": "d70878f0e3ff21b67fa14854a0350114d058a15f"
     },
     {
       "path": "paper/01-claim-and-photons.md",
       "sha256": "561ac6b056634e2c8a27fe2651cf6cfbf95a84ca2b4ea49ae7f30d340e7e8520",
       "bytes": 9472,
-      "role": "claim discipline and photon phase-bearing baseline, sections 1-2"
+      "role": "claim discipline and photon phase-bearing baseline, sections 1-2",
+      "git_blob_sha1": "a391959fb52a14ab595996b63014f4849d41de1c"
     },
     {
       "path": "paper/01-bound-states-and-open-systems.md",
       "sha256": "189775eb5087c6214f41ce329ad8183462a1557b52671abde271e0773628538f",
       "bytes": 11524,
-      "role": "bound states, atomic physics, and open systems, sections 3-4"
+      "role": "bound states, atomic physics, and open systems, sections 3-4",
+      "git_blob_sha1": "a3fe544fde75b996c5778e12896147fab4477c03"
     },
     {
       "path": "paper/02-dynamics-and-agency.md",
       "sha256": "b3fb8582cb2d1d77a2b438d52fa559c19f5598ca211001c60515a5da751712dc",
       "bytes": 13784,
-      "role": "pattern formation, stability, scale, information, boundaries, and agency, sections 5-10"
+      "role": "pattern formation, stability, scale, information, boundaries, and agency, sections 5-10",
+      "git_blob_sha1": "e11133edb4aa1549ed54d2afd0127eb985e3dfcc"
     },
     {
       "path": "paper/03-arity-and-recursion.md",
       "sha256": "6429cdabe4e739683027875999a300910cf6aa83aac66519dc45b65d95ba9f41",
       "bytes": 9773,
-      "role": "arity-specific closure and nested recursion, section 11"
+      "role": "arity-specific closure and nested recursion, section 11",
+      "git_blob_sha1": "f072b856455c9828859b60e677355be612048ec3"
     },
     {
       "path": "paper/03-availability-and-self-location.md",
       "sha256": "5ee8c70e099a7227970776690902d64cdebb2f7f6ad9d4562d6fe1387dc38b86",
       "bytes": 8228,
-      "role": "global availability, temporal depth, and self-location, sections 12-13"
+      "role": "global availability, temporal depth, and self-location, sections 12-13",
+      "git_blob_sha1": "2048eacf0d62297e7c07bdae82295df72f2e6279"
     },
     {
       "path": "paper/04-subject-and-i-event.md",
       "sha256": "38c041d56e0048f49950cd8dd9821982d83e1639f7279f66289307801b78e0fb",
       "bytes": 16430,
-      "role": "organized descriptor, subject formation, and I-event, sections 14-16"
+      "role": "organized descriptor, subject formation, and I-event, sections 14-16",
+      "git_blob_sha1": "7366228e35253c01bdc5ca21d1971a90f0fc7b16"
     },
     {
       "path": "paper/05-geometry-heptad-neural.md",
       "sha256": "4432249e613e15044863b1adabf256179467e86920b7872b8c9db524fa099c94",
       "bytes": 13387,
-      "role": "Möbius, prime geometry, heptad, and neural implementation, sections 17-21"
+      "role": "M\u00f6bius, prime geometry, heptad, and neural implementation, sections 17-21",
+      "git_blob_sha1": "31342fc4169a79b11bf601317fa1a3a9ade46081"
     },
     {
       "path": "paper/06-macroverse-ladder-and-predictions.md",
       "sha256": "71fc1c4ea77892b6f3235f8f855158d1cdcb5fddc99dcf80302964399355bab3",
       "bytes": 9917,
-      "role": "macroverse, first-principles ladder, and predictions, sections 22-24"
+      "role": "macroverse, first-principles ladder, and predictions, sections 22-24",
+      "git_blob_sha1": "682c7ce31e4ce25bffb71bd646d939f1a4f7ab99"
     },
     {
       "path": "paper/06-falsification-program-and-limitations.md",
       "sha256": "81c722d62c84d19cc9e9bb63e42c107d63841f7ec57b264d563a6d9b5a0b08cc",
       "bytes": 9651,
-      "role": "falsifiers, research program, and limitations, sections 25-27"
+      "role": "falsifiers, research program, and limitations, sections 25-27",
+      "git_blob_sha1": "d3a580468c84fd2f634bdba5a9417c7547d710b5"
     },
     {
       "path": "paper/07-conclusion-and-appendices.md",
       "sha256": "06f6aab6eedd111e80eae424eeda5b2161d4354250bb1a021ae53f5b89abd8f6",
       "bytes": 10407,
-      "role": "conclusion and mathematical appendices"
+      "role": "conclusion and mathematical appendices",
+      "git_blob_sha1": "39f0aa857734255b25af63e08bb33d638cee1c24"
     },
     {
       "path": "paper/07-references-and-hmmm.md",
       "sha256": "39f40c60e9b8f0bcb615ebb20e8903c99f53a3f76bde24c0d2461d1d24d8b235",
       "bytes": 6386,
-      "role": "references and hmmm"
+      "role": "references and hmmm",
+      "git_blob_sha1": "1b9ee49ebb19dadbf55aeb7df18e90402f16c70b"
     }
   ]
 }
