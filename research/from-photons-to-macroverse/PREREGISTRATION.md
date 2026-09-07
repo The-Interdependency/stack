@@ -89,14 +89,35 @@ Interventions are applied through the declared `u_t` before the `tanh`
 nonlinearity, except additive state perturbations, which are applied directly to
 the selected coordinate after the transition and before noise.
 
-All generator coefficients and initial states are deterministic functions of
-`arity-recursion-synthetic-v1`, seed, arity, noise level, role, and coefficient
-index. The pseudorandom stream is SHA-256 counter mode over the UTF-8 key
-`arity-recursion-synthetic-v1|seed=s|arity=n|sigma=sigma|role=role|index=k`;
+Every result-bearing stochastic draw is deterministic under
+`arity-recursion-synthetic-v1`, seed, arity, noise level, stream domain, role,
+and index tuple. The pseudorandom stream is SHA-256 counter mode over the UTF-8
+key
+`arity-recursion-synthetic-v1|seed=s|arity=n|sigma=sigma|domain=domain|role=role|index=k`;
 each digest is split into four big-endian unsigned 64-bit words. Each word `w`
 maps to the open-unit uniform `(w+0.5)/2^64`; uniform pairs map to standard
-normal pairs by the Box-Muller transform in IEEE-754 double precision.
-Coefficients are:
+normal pairs by the Box-Muller transform in IEEE-754 double precision. No other
+random-number source is admissible.
+
+The stream domains are exactly:
+
+```text
+coefficients:        role, tensor_name, carrier_i, carrier_j, row, column
+initial_state:       episode_id, carrier_i, coordinate
+process_noise:       episode_id, time, carrier_i, coordinate
+intervention_plan:   episode_id, intervention_class, draw_index
+model_initializers:  model_id, restart, tensor_name, row, column
+minibatch_order:     model_id, restart, update_index, draw_index
+bootstrap:           outcome_id, bootstrap_index, sealed_seed_index
+permutation:         comparison_id, permutation_index, sealed_seed_index
+```
+
+All index tuples are emitted in lexicographic order and written to the run
+receipt. Discrete choices use `floor(u*K)` for a stream uniform `u` and a
+declared option count `K`. Without-replacement schedules sort candidate options
+by their stream uniforms, consume them in that order, then reshuffle with the
+next stream block when exhausted. Minibatches draw 64 training transition
+indices with replacement by the same `floor(u*K)` rule. Coefficients are:
 
 ```text
 L_i = 0.45 I_2 + 0.10 N_{2x2}
@@ -108,20 +129,48 @@ b_i = 0.05 N_2
 x_{0,i} = 0.10 N_2
 ```
 
-where every `N` entry is drawn from the counter stream with the listed index
-order. `SYSTEMS.json` must carry the realized coefficient tensors, stream keys,
-and coefficient hashes. If an implementation cannot reproduce these bytes from
-the frozen stream, the run is `BLOCKED` before fitting.
+where every `N` entry is drawn from the `coefficients` stream. `SYSTEMS.json`
+must carry the realized coefficient tensors, stream keys, and coefficient
+hashes. `INTERVENTIONS.jsonl` must carry the intervention plans and matched
+noise-stream keys. If an implementation cannot reproduce these bytes from the
+frozen streams, the run is `BLOCKED` before fitting.
 
 Where exact equality is impossible, use the smaller common parameter budget and mask
 unused parameters. Report every resulting asymmetry; do not compensate with a score.
 If any frozen value cannot be implemented exactly, stop before fitting and report
 `BLOCKED`.
 
-Nested systems use rooted arity trees of depth two. The primary seven-carrier candidate
-uses immediate child arities drawn from `{2,3,5}`. Controls include the same leaves
-rewired into a different tree, a flat model with the same total state dimension, and a
-label-permuted seven-carrier model.
+Nested systems use rooted arity trees of depth two. For an outer arity `n`, the
+ordered child-arity vector is
+
+```text
+a_i = (2, 3, 5)[i mod 3] for i in {0,...,n-1}
+```
+
+so the primary seven-carrier candidate has child arities
+`(2,3,5,2,3,5,2)`. Leaf states are
+`y_{t,i,l} in R^2` for outer carrier `i` and child slot
+`l in {0,...,a_i-1}`. The observed nested state is the lexicographic leaf list;
+the outer summary used for inter-outer coupling is
+`x_{t,i}=a_i^{-1} sum_l y_{t,i,l}` and is not an additional observed variable.
+
+Within each outer carrier, leaf updates use the same direct generator with
+arity `a_i` and coefficient role `nested_local/i`. Between outer carriers, the
+direct `n`-carrier generator is applied to the outer summaries; its contribution
+to target carrier `i` is broadcast additively to each child leaf of `i` with
+scale `1/a_i` before the leaf `tanh`. An outer-edge cut zeros the corresponding
+summary-to-summary term and its broadcast. A child-edge cut zeros the matching
+within-carrier leaf term. Whole-carrier ablation zeros all leaves under that
+outer carrier for the ablation interval.
+
+Wrong-tree controls preserve the same flattened leaf coordinates and total
+observed dimension but regroup them by the left-rotated child-arity vector
+`b_i=a_{(i+1) mod n}`. The flattened lexicographic leaf list is repartitioned
+into contiguous blocks of sizes `b_i`; those blocks define the wrong outer
+carriers and summaries. Flat controls preserve the same leaf coordinates but
+remove the outer-summary broadcast. Label-permuted controls apply the sealed
+carrier permutation from the `intervention_plan` stream before fitting and
+invert it before scoring.
 
 ## Interventions
 
@@ -137,12 +186,64 @@ For every seed, generate matched episodes under:
 Intervention targets and held-out combinations are generated before any model is fit and
 stored in the run receipt.
 
+For all intervention classes, transition times are drawn from
+`{0,...,127-cut_duration}` after burn-in unless the class is the recovery
+perturbation, whose time is fixed below. Single-carrier state interventions
+choose one carrier and one coordinate without replacement, then add the declared
+`0.5` perturbation for one transition. Single-edge cuts choose one declared
+directed edge without replacement and zero that edge for `16` transitions.
+Whole-carrier ablations choose one carrier without replacement and zero its
+observed coordinates for `16` transitions. Constraint-modulation interventions
+choose one declared coupling term without replacement and multiply it by `0.5`
+for `16` transitions. Out-of-distribution combinations are lexicographic pairs
+of the preceding intervention classes selected by the `intervention_plan` stream
+and withheld from fitting. Matched candidate/control comparisons use the same
+episode ids, times, targets, and process-noise stream keys.
+
 ## Outcomes
 
 Primary decision outcomes:
 
 - held-out interventional negative log likelihood;
 - recovery difference `Gamma_T = E[R_full - R_cut]`.
+
+Held-out interventional negative log likelihood is the mean one-step predictive
+Gaussian NLL over every post-burn-in transition and observed scalar coordinate
+in the held-out intervention episodes:
+
+```text
+NLL = mean 0.5 * ((x_{t+1,c} - mu_{t,c})^2 / v_{t,c}
+                  + log(2*pi*v_{t,c}))
+```
+
+where `mu` and diagonal variance `v` are decoded to the generator's observed
+coordinate system before scoring, and `v >= 1e-6`. The same held-out episode
+ids, intervention plans, and process-noise keys are used for every compared
+candidate/control family.
+
+Recovery is frozen as follows. Matched full and cut recovery episodes share
+initial state, perturbation target, perturbation time, and process-noise stream.
+The perturbation time is transition `0` after burn-in. The perturbation target is
+one observed scalar coordinate drawn from the `intervention_plan` stream without
+replacement until every coordinate has appeared once, then reshuffled by the same
+stream. The recovery horizon set is `{1,2,4,8,16}`. For mode
+`M in {full, cut}`, let `x^0` be the matched unperturbed trajectory in the same
+observed coordinate system and let `x^M` be the perturbed trajectory decoded to
+that coordinate system. The identity map is the observed coordinate identity for
+direct systems and the lexicographic leaf identity for nested systems; wrong
+arity controls are scored only after the fixed adapter below decodes them to the
+generator's observed coordinates.
+
+```text
+R_M = - mean_{h in {1,2,4,8,16}} ||x^M_{t0+h} - x^0_{t0+h}||_2^2
+      / (N_obs * 0.5^2)
+Gamma_T = E[R_full - R_cut]
+```
+
+where `N_obs` is the number of observed scalar coordinates. The expectation is
+the arithmetic mean over sealed recovery episodes and sealed seeds. The
+measurement certificate records these values and their stream keys; it may not
+replace this estimator after sealed outputs are opened.
 
 Guardrail and diagnostic outcomes:
 
@@ -173,9 +274,8 @@ For each generating system compare:
 - a capacity-only baseline that receives the same inputs but no declared closure.
 
 All candidate and control likelihoods are evaluated on the generator's observed
-`R^(2n)` state, never on a private wrong-arity coordinate space. A control with
-`m != n` carriers uses a fixed, nontrainable observation adapter declared before
-fitting:
+state, never on a private wrong-arity coordinate space. A direct control with
+`m != n` carriers uses a fixed, nontrainable adapter declared before fitting:
 
 ```text
 q_{m,n}(i) = floor(i*m/n)       for m < n, i in {0,...,n-1}
@@ -185,10 +285,19 @@ r_{m,n}(a) = floor(a*n/m)       for m > n, a in {0,...,m-1}
 For `m < n`, control carrier `q_{m,n}(i)` supplies the predicted mean for
 observed carrier `i`. For `m > n`, all control carriers assigned by
 `r_{m,n}` to observed carrier `i` are averaged to form the predicted mean for
-that observed carrier. The predictive covariance is always a normalized
-diagonal Gaussian over the same `2n` observed coordinates and is included in the
-same parameter-budget accounting. Adjacent-arity comparisons are `BLOCKED` if
-this adapter and likelihood cannot be emitted exactly.
+that observed carrier. The input encoding is the dual map: for `m < n`, control
+carrier `a` receives the arithmetic mean of all observed carriers with
+`q_{m,n}(i)=a`; for `m > n`, control carrier `a` receives observed carrier
+`r_{m,n}(a)`. Carrier-targeted additive interventions are encoded by the same
+map before dynamics: merged controls receive the arithmetic mean of all
+interventions in their bucket, and split controls receive the same intervention
+on every split carrier assigned to the targeted observed carrier. Edge cuts with
+endpoints collapsed into one merged carrier become recorded self-edge no-ops;
+all other cuts map to the corresponding encoded edge. The predictive covariance
+is always a normalized diagonal Gaussian over the generator's observed
+coordinates and is included in the same parameter-budget accounting.
+Adjacent-arity comparisons are `BLOCKED` if this adapter and likelihood cannot
+be emitted exactly.
 
 ## Seeds and split
 

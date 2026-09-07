@@ -189,8 +189,10 @@ class Contracts(unittest.TestCase):
             self.assertIn(phrase, flat)
         for phrase in ("configuration `arity-recursion-synthetic-v1` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam, learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
             self.assertIn(phrase, flat)
-        for phrase in ("Synthetic generator", "SHA-256 counter mode", "SYSTEMS.json` must carry the realized coefficient tensors", "same `2n` observed coordinates", "Adjacent-arity comparisons are `BLOCKED`"):
-            self.assertIn(phrase, text)
+        for phrase in ("Synthetic generator", "SHA-256 counter mode", "process_noise", "intervention_plan", "model_initializers", "Discrete choices use `floor(u*K)`", "Matched candidate/control comparisons use the same", "Held-out interventional negative log likelihood is the mean one-step predictive Gaussian NLL", "ordered child-arity vector", "left-rotated child-arity vector", "Recovery is frozen as follows", "same observed coordinate system", "input encoding is the dual map", "Adjacent-arity comparisons are `BLOCKED`"):
+            self.assertIn(phrase, flat)
+        self.assertIn("No other random-number source is admissible", flat)
+        self.assertIn("`SYSTEMS.json` must carry the realized coefficient tensors", flat)
         self.assertIn("q_{m,n}(i) = floor(i*m/n)", text)
         self.assertIn("r_{m,n}(a) = floor(a*n/m)", text)
         self.assertNotIn("both primary outcomes: interventional log score and recovery", flat)
