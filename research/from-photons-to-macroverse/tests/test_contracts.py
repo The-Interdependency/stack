@@ -75,6 +75,7 @@ class Contracts(unittest.TestCase):
             ["path", "bytes", "sha256", "git_blob_sha1"],
         )
         manifest = load_json("paper/manifest.json")
+        ledger = load_json("CLAIM_LEDGER.json")
         assembler = load_assembler()
         paper = assembler.assemble()
         for item in manifest["fragments"]:
@@ -83,6 +84,7 @@ class Contracts(unittest.TestCase):
             self.assertEqual(assembler.git_blob_sha1(data), item["git_blob_sha1"])
         self.assertEqual(hashlib.sha256(paper).hexdigest(), receipt["revision"]["assembled_sha256"])
         self.assertEqual(manifest["assembled_sha256"], receipt["revision"]["assembled_sha256"])
+        self.assertEqual(ledger["paper_sha256"], receipt["revision"]["assembled_sha256"])
 
     def test_parser_artifact_is_not_misreported_as_defect(self) -> None:
         source_note = (PROJECT / "source" / "README.md").read_text(encoding="utf-8")
@@ -116,6 +118,8 @@ class Contracts(unittest.TestCase):
         self.assertIn(r"n_r(t)=(\cos 2\pi t,\sin 2\pi t,0)", text)
         self.assertIn(r"\mathcal P_t\in\operatorname*{arg\,max}_{\mathcal A\subseteq\mathcal Y_t}", text)
         self.assertNotIn(r"\mathcal S_t\in\arg\max_Y\Lambda(Y)", text)
+        self.assertIn(r"\(|S_G|\ge k_G\)", text)
+        self.assertIn(r"\(G_{\mathrm c}>0\) by itself is not enough", text)
         self.assertIn("10.53765/20512201.31.3.056", text)
         self.assertIn("10.1142/S0217751X26300115", text)
 
@@ -199,6 +203,8 @@ class Contracts(unittest.TestCase):
         root_manifest_text = (STACK / "STACK_MANIFEST.md").read_text(encoding="utf-8")
         root_manifest = json.loads((STACK / "stack-manifest.json").read_text(encoding="utf-8"))
         self.assertIn("Research-Only Composition Participants", root_manifest_text)
+        self.assertEqual(root_manifest["version"], "1.1.0")
+        self.assertIn("version `1.1.0`", root_manifest_text)
         records = [
             item
             for item in root_manifest["research_participants"]

@@ -1,6 +1,6 @@
 {
   "schema": "the-interdependency.stack-manifest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "work_graph_sha256": "bbcb6b7582192c02e79f5b98b8f857385a07cda3280f24602f825ecd15ac405f",
   "repositories": [
     {

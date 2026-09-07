@@ -448,7 +448,9 @@ F_l(\mu_l)
 +K_{l+1}\varepsilon_{l+1}.
 \]
 
-The precise update law is architecture-dependent. Conscious access requires that the selected content affect memory, valuation, planning, and action, represented by \(G_{\mathrm c}>0\).
+The precise update law is architecture-dependent. Conscious access requires that
+the selected content affect memory, valuation, planning, and action above the
+preregistered per-module threshold; \(G_{\mathrm c}>0\) by itself is not enough.
 
 ## 21.3 Relation to existing consciousness research
 

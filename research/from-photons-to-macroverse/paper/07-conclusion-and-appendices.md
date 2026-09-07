@@ -175,7 +175,7 @@ This is one candidate embedding, not a uniqueness result. Its contacts, crossing
 | Model efficacy | \(\mathcal M=\mathbb E[\mathcal L_{\mathrm{ablated}}-\mathcal L_{\mathrm{intact}}]\) |
 | Agency | interventional divergence under alternate actions |
 | Causal irreducibility | \(\Phi_{\mathrm c}\) minimum partition loss |
-| Global availability | \(G_{\mathrm c}\) cross-module causal effect |
+| Global availability | \(G_{\mathrm c}>0,\ g_j>\tau_G\) for required modules, and \(|S_G|\ge k_G\) |
 | Temporal depth | \(\Theta=\Theta_{\mathrm{ret}}+\Theta_{\mathrm{pros}}\) |
 | Direct scale set | \(\mathbb S_{n,\boldsymbol\alpha}^{[r]}=(L_{\alpha_1}^{[r]},\ldots,L_{\alpha_n}^{[r]})\) |
 | Relational triad | \(\mathcal R_3=\operatorname{Cl}_3(O,S,E)\) |

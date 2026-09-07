@@ -6,7 +6,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Layout migration UTC: `2026-08-30T02:58:49Z`
 - PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
-- Stack-manifest schema: `the-interdependency.stack-manifest` version `1.0.0`
+- Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
   `bbcb6b7582192c02e79f5b98b8f857385a07cda3280f24602f825ecd15ac405f`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)

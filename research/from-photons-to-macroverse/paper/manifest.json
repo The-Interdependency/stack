@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "assembled_filename": "from_photons_to_macroverse_audited_0.2.0.md",
-  "assembled_sha256": "5ee955f78e8d274a9b644d0efae737c413e90d0e5e66b0d426f041bf02a0fcf6",
+  "assembled_sha256": "2cc536bde374b2ba96bed756c86687b3b602b492299ebaf0e366f6cd4a674ee4",
   "fragments": [
     {
       "path": "paper/00-frontmatter.md",
@@ -40,10 +40,10 @@
     },
     {
       "path": "paper/03-availability-and-self-location.md",
-      "sha256": "5ee8c70e099a7227970776690902d64cdebb2f7f6ad9d4562d6fe1387dc38b86",
-      "bytes": 8228,
+      "sha256": "12493dd87d58b0d405e9808e6eec7b002988746434e31a07463f583f5dd0e402",
+      "bytes": 8482,
       "role": "global availability, temporal depth, and self-location, sections 12-13",
-      "git_blob_sha1": "2048eacf0d62297e7c07bdae82295df72f2e6279"
+      "git_blob_sha1": "baa0ef2b339f98d58cb6af5d9efcd5244e3651bb"
     },
     {
       "path": "paper/04-subject-and-i-event.md",
@@ -54,10 +54,10 @@
     },
     {
       "path": "paper/05-geometry-heptad-neural.md",
-      "sha256": "4432249e613e15044863b1adabf256179467e86920b7872b8c9db524fa099c94",
-      "bytes": 13387,
+      "sha256": "ee7921c0d5d0a64728943b68510aad649dde52a09a12ba98b6c4e4ec3e20410f",
+      "bytes": 13441,
       "role": "M\u00f6bius, prime geometry, heptad, and neural implementation, sections 17-21",
-      "git_blob_sha1": "31342fc4169a79b11bf601317fa1a3a9ade46081"
+      "git_blob_sha1": "9120bf8292888e0c067489dbcf5ef7969d827c13"
     },
     {
       "path": "paper/06-macroverse-ladder-and-predictions.md",
@@ -75,10 +75,10 @@
     },
     {
       "path": "paper/07-conclusion-and-appendices.md",
-      "sha256": "bfecf60ade0e476dc2ea62b5943d1f28999087d3b3e21338c7759ce8fab0087e",
-      "bytes": 10643,
+      "sha256": "539b6d43f17c635ce5cac222616cbd01f90e6cfa10f6bd0a86093e7db844c6a5",
+      "bytes": 10674,
       "role": "conclusion and mathematical appendices",
-      "git_blob_sha1": "487ff6eebeb06a8e84c3ee255ad5472b535ce4ba"
+      "git_blob_sha1": "680dec962dca1b550f0ecd8270cbf4e1d03f4d05"
     },
     {
       "path": "paper/07-references-and-hmmm.md",

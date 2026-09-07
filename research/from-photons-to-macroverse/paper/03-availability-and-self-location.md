@@ -30,7 +30,16 @@ P(Y_{t+\Delta}^j\mid\operatorname{do}(Z_t=z_0))
 \right].
 \]
 
-Conscious access, under this model, means that changing \(Z_t\) changes several otherwise specialized processes. The module set, reference state, intervention distribution, horizon, and estimator must be frozen before comparison.
+The mean alone is not sufficient. Define the per-module effect \(g_j\) as the
+summand inside \(G_{\mathrm c}\), and define
+\[
+S_G=\{j:g_j>\tau_G\}.
+\]
+Conscious access, under this model, requires \(G_{\mathrm c}>0\), per-module
+effects above \(\tau_G\) for the preregistered memory, valuation, planning, and
+action modules, and \(|S_G|\ge k_G\). The module set, \(\tau_G\), \(k_G\),
+reference state, intervention distribution, horizon, and estimator must be
+frozen before comparison.
 
 ## 12.2 Temporal depth
 
