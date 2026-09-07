@@ -76,10 +76,11 @@ coherent enough to graduate, create its independent repository, preserve provena
 package/release it, then let stack consume the released project rather than a hidden
 stack-local implementation.
 
-Psychsocio metafauna remains in that pre-graduation state. EPAC has an independent
-extracted repository, but extraction is not graduation: its forge research remains here
-until EPAC completes its release, downstream reconsumption, and authority-transition
-gates. From Photons to the Macroverse is also stack-local pre-graduation research.
+EPAC and psychsocio metafauna are currently in this pre-graduation state. EPAC
+has an independent extracted repository, but extraction is not graduation: its
+forge research remains here until EPAC completes its release, downstream
+reconsumption, and authority-transition gates. From Photons to the Macroverse is
+also stack-local pre-graduation research.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
