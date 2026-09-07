@@ -70,8 +70,8 @@ The revision binds the eLife Version of Record, the 2026 PDG edition, the comple
 - Current stack, skill-lib, METAPAT, UCNS, EDCM, PCEA, and EPAC identities pinned.
 - Current primary-source reference metadata checked.
 - Contract suite passes locally.
-- Audited revision assembled from `paper/` and rendered to a 58-page PDF with Pandoc/XeLaTeX; all pages were rendered at 150 DPI and visually inspected with no clipping, overlap, blank pages, black squares, or missing glyphs observed. The convenience render is not repository authority and is not vendored.
+- Prior audited revision assembled from `paper/` and rendered to a 58-page PDF with Pandoc/XeLaTeX; all pages were rendered at 150 DPI and visually inspected with no clipping, overlap, blank pages, black squares, or missing glyphs observed before the human-classifier text repair. The current Markdown fragments are hash-bound and assemble cleanly, but current visual render status is `hmmm` until rerendered.
 
 ## hmmm
 
-Original Markdown/DOCX/PDF retrieval remains blocked on repository-owned copies or durable external locators. References 21 and 22 remain unbound to immutable artifacts. The synthetic arity/recursion protocol is not run. Subject exclusion, heptadic necessity, biological carrier labels, the I-event, and P0 remain unresolved at their declared standings.
+Original Markdown/DOCX/PDF retrieval remains blocked on repository-owned copies or durable external locators. Current audited-revision visual render remains stale after the text repair. References 21 and 22 remain unbound to immutable artifacts. The synthetic arity/recursion protocol is not run. Subject exclusion, heptadic necessity, biological carrier labels, the I-event, and P0 remain unresolved at their declared standings.

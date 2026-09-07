@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "assembled_filename": "from_photons_to_macroverse_audited_0.2.0.md",
-  "assembled_sha256": "aba1e180c8ecf1c9bda92b20bb0c773befc33ad7322f6cbc1e6c48564251aa92",
+  "assembled_sha256": "fb67e718b2c658671c8d60ca6a946921d14012d94d3e5f69f53d93a6b0f9ecaa",
   "fragments": [
     {
       "path": "paper/00-frontmatter.md",
@@ -47,10 +47,10 @@
     },
     {
       "path": "paper/04-subject-and-i-event.md",
-      "sha256": "38c041d56e0048f49950cd8dd9821982d83e1639f7279f66289307801b78e0fb",
-      "bytes": 16430,
+      "sha256": "bf5e59410eedc4ef84baab356b8bbca1fd395ccbac004244db3d4b6fbf9f6e80",
+      "bytes": 16648,
       "role": "organized descriptor, subject formation, and I-event, sections 14-16",
-      "git_blob_sha1": "7366228e35253c01bdc5ca21d1971a90f0fc7b16"
+      "git_blob_sha1": "d2a8c2c37a88b788c0cb1eec89099b16f9d9349e"
     },
     {
       "path": "paper/05-geometry-heptad-neural.md",

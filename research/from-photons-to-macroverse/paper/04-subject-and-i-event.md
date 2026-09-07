@@ -82,7 +82,13 @@ Two systems can have similar scalar organization measures and different closure 
 \mathbf 1[\mathbf C_t\in\Omega_C].
 \]
 
-The indicator classifies organized episodes, not primitive consciousness. The region must be learned from preregistered contrasts among waking reportable experience, dreaming, anesthesia, disorders of consciousness, seizures, sleep stages, and carefully matched unconscious processing. It must not be chosen after seeing the desired result.
+The indicator is non-operational in this package. It is a future protocol sketch
+for candidate organized-episode contrasts, not a classifier available for use on
+humans, patients, models, organizations, or machines. Before it can become an
+executable protocol, \(\Omega_C\) must be preregistered, every component must
+carry a measurement certificate, and outputs must be limited to protocol-level
+model diagnostics. It must not classify a person or episode as conscious, support
+clinical or personhood decisions, or be chosen after seeing the desired result.
 
 The theory predicts that no single component is sufficient:
 

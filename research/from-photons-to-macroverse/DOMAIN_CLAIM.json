@@ -85,7 +85,9 @@
   ],
   "no_transfer": {
     "metapat_root_impact": "none",
-    "ucns_geometry_to_consciousness": false,
+    "ucns_geometry_to_primitive_intrinsic_presence": false,
+    "ucns_geometry_to_organized_subjecthood": false,
+    "ucns_geometry_to_candidate_content": false,
     "ucns_ratification_transfer": false,
     "edcm_validation_claim": false,
     "pcea_security_to_ontology": false,

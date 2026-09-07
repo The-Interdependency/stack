@@ -63,6 +63,10 @@ class Contracts(unittest.TestCase):
     def test_audited_fragments_are_repository_owned_and_retrievable(self) -> None:
         receipt = load_json("SOURCE_RECEIPT.json")
         self.assertTrue(receipt["revision"]["repository_copy"])
+        self.assertEqual(
+            receipt["revision"]["verified_render"]["status"],
+            "HMMM_STALE_AFTER_TEXT_REPAIR",
+        )
         retrieval = receipt["revision"]["retrieval"]
         self.assertEqual(retrieval["status"], "REPOSITORY_OWNED_FRAGMENTS")
         self.assertTrue(retrieval["fresh_checkout_reproducible"])
@@ -102,6 +106,9 @@ class Contracts(unittest.TestCase):
         self.assertNotIn("Consciousness precedes biological life as a pattern class", text)
         self.assertIn("pre-biological embodiments remain logically open within the postulate but empirically unestablished", flat)
         self.assertIn("not ratified as selected UCNS geometry", text)
+        self.assertIn("The indicator is non-operational in this package", text)
+        self.assertNotIn("The indicator classifies organized episodes", text)
+        self.assertNotIn("learned from preregistered contrasts among waking reportable experience", text)
         self.assertIn("10.53765/20512201.31.3.056", text)
         self.assertIn("10.1142/S0217751X26300115", text)
 
@@ -148,8 +155,10 @@ class Contracts(unittest.TestCase):
         payload = {"participants": participants, "boundaries": boundaries}
         observed = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
         self.assertEqual(observed, graph["work_graph_sha256"])
-        for key in ("authority_transfer", "proof_status_transfer", "measurement_status_transfer", "empirical_status_transfer", "clinical_status_transfer", "metaphysical_postulate_to_physics", "physics_to_consciousness", "ucns_geometry_to_consciousness", "ucns_candidate_ratification_transfer", "edcm_validation_claim", "pcea_security_to_ontology", "epac_internal_result_to_external_physics", "human_classification"):
+        for key in ("authority_transfer", "proof_status_transfer", "measurement_status_transfer", "empirical_status_transfer", "clinical_status_transfer", "metaphysical_postulate_to_physics", "physics_to_primitive_intrinsic_presence", "physics_to_organized_subjecthood", "physics_to_candidate_content", "ucns_geometry_to_primitive_intrinsic_presence", "ucns_geometry_to_organized_subjecthood", "ucns_geometry_to_candidate_content", "ucns_candidate_ratification_transfer", "edcm_validation_claim", "pcea_security_to_ontology", "epac_internal_result_to_external_physics", "human_classification"):
             self.assertIs(boundaries[key], False, key)
+        self.assertNotIn("physics_to_consciousness", boundaries)
+        self.assertNotIn("ucns_geometry_to_consciousness", boundaries)
         self.assertEqual(boundaries["metapat_root_impact"], "none")
         self.assertIsNone(boundaries["canon_selection"])
         ucns = next(x for x in participants if x["id"] == "ucns")
@@ -169,15 +178,49 @@ class Contracts(unittest.TestCase):
         readme = (PROJECT / "README.md").read_text(encoding="utf-8")
         paper_index = (PROJECT / "PAPER.md").read_text(encoding="utf-8")
         root = (STACK / "README.md").read_text(encoding="utf-8")
-        for phrase in ("SURVIVED as a candidate research program", "canon:                  no", "clinical use:           no", "human classification:  no", "Why the root stack manifest is unchanged", "## hmmm"):
+        for phrase in ("SURVIVED as a candidate research program", "canon:                  no", "clinical use:           no", "human classification:  no", "Why the root canonical pins are unchanged", "## hmmm"):
             self.assertIn(phrase, readme)
         self.assertIn("ordered, hash-bound Markdown fragments", paper_index)
+        self.assertIn("current visual render is `hmmm` until rerendered", readme)
         self.assertIn("from-photons-to-macroverse/", root)
         self.assertIn("consciousness-first candidate research", root)
+
+    def test_root_manifest_records_noncanonical_research_participants(self) -> None:
+        root_manifest_text = (STACK / "STACK_MANIFEST.md").read_text(encoding="utf-8")
+        root_manifest = json.loads((STACK / "stack-manifest.json").read_text(encoding="utf-8"))
+        self.assertIn("Research-Only Composition Participants", root_manifest_text)
+        records = [
+            item
+            for item in root_manifest["research_participants"]
+            if item["workspace"] == "research/from-photons-to-macroverse/"
+        ]
+        self.assertEqual(len(records), 7)
+        by_repo = {item["repository"]: item for item in records}
+        self.assertEqual(
+            by_repo["The-Interdependency/skill-lib"]["commit"],
+            "61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32",
+        )
+        self.assertEqual(
+            by_repo["The-Interdependency/ucns"]["commit"],
+            "ef98748309913588fb13f389f809d5ef6cb5fec3",
+        )
+        self.assertTrue(all(item["canonical_release"] is False for item in records))
+        payload = {
+            "repositories": root_manifest["repositories"],
+            "research_participants": root_manifest["research_participants"],
+            "boundaries": root_manifest["boundaries"],
+        }
+        observed = hashlib.sha256(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+        self.assertEqual(observed, root_manifest["work_graph_sha256"])
+        self.assertIn(root_manifest["work_graph_sha256"], root_manifest_text)
 
     def test_workflow_is_path_scoped(self) -> None:
         workflow = (STACK / ".github/workflows/from-photons-to-macroverse.yml").read_text(encoding="utf-8")
         self.assertGreaterEqual(workflow.count('"research/from-photons-to-macroverse/**"'), 2)
+        self.assertGreaterEqual(workflow.count('"STACK_MANIFEST.md"'), 2)
+        self.assertGreaterEqual(workflow.count('"stack-manifest.json"'), 2)
         self.assertIn("actions/checkout@v6", workflow)
         self.assertIn("actions/setup-python@v6", workflow)
         self.assertIn("python -m unittest discover -s research/from-photons-to-macroverse/tests -q", workflow)

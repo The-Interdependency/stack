@@ -5,12 +5,16 @@ on:
     paths:
       - "research/from-photons-to-macroverse/**"
       - "README.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
       - ".github/workflows/from-photons-to-macroverse.yml"
   push:
     branches: [main]
     paths:
       - "research/from-photons-to-macroverse/**"
       - "README.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
       - ".github/workflows/from-photons-to-macroverse.yml"
 
 permissions:

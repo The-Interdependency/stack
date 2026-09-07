@@ -148,9 +148,13 @@
     "certification_status_transfer": false,
     "clinical_status_transfer": false,
     "metaphysical_postulate_to_physics": false,
-    "physics_to_consciousness": false,
+    "physics_to_primitive_intrinsic_presence": false,
+    "physics_to_organized_subjecthood": false,
+    "physics_to_candidate_content": false,
     "metapat_root_impact": "none",
-    "ucns_geometry_to_consciousness": false,
+    "ucns_geometry_to_primitive_intrinsic_presence": false,
+    "ucns_geometry_to_organized_subjecthood": false,
+    "ucns_geometry_to_candidate_content": false,
     "ucns_candidate_ratification_transfer": false,
     "edcm_validation_claim": false,
     "pcea_security_to_ontology": false,
@@ -167,5 +171,5 @@
       "Resolve repository-wide licensing before claiming reuse permissions."
     ]
   },
-  "work_graph_sha256": "1ad5f6cff4af90c7d835c85062bc22f60fc4a90d04e72de7dd4af8acd85c9fdc"
+  "work_graph_sha256": "902fef7a2c7bacf7a97fc4a1e7e80a7327a52cb41197b60a323e9cd034c74916"
 }

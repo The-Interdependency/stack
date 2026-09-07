@@ -43,9 +43,12 @@ Run only the frozen synthetic model-recovery protocol in `PREREGISTRATION.md`. I
 
 A surviving synthetic result would show only structural identifiability inside the frozen systems. It would not establish P0, a Möbius substrate, prime arity, a human heptad, or consciousness in any tested system.
 
-## Why the root stack manifest is unchanged
+## Why the root canonical pins are unchanged
 
-This is new stack-local composed research, not a pinned canonical repository view. Adding it to `STACK_MANIFEST.md` or `stack-manifest.json` would falsely suggest an owning repository and release identity. Graduation remains a later, explicit event.
+This is new stack-local composed research, not a pinned canonical repository view.
+The root stack manifests record its noncanonical research participants, but
+those records do not refresh `libs/`, change canonical repository pins, or
+create an owning release identity. Graduation remains a later, explicit event.
 
 ## Usage guidance
 
@@ -62,7 +65,7 @@ This is new stack-local composed research, not a pinned canonical repository vie
 python -m unittest discover -s research/from-photons-to-macroverse/tests -q
 ```
 
-The assembled paper was rendered as a 58-page PDF and every rendered page was visually inspected. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.
+The prior `0.2.0-audited` paper was rendered as a 58-page PDF and every rendered page was visually inspected before the human-classifier text repair. The current visual render is `hmmm` until rerendered. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.
 
 ## hmmm
 
