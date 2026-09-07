@@ -107,10 +107,12 @@ The theory predicts that no single component is sufficient:
 1. belongs to a bounded viable process;
 2. is causally irreducible at the scale of description;
 3. has a differentiated repertoire;
-4. is available to several specialized processes;
-5. incorporates past and constrains future;
-6. is indexed to self, other, and environment;
-7. causally improves adaptive recovery through a closed scale loop.
+4. has positive internal-model efficacy under ablation;
+5. has agency through model-dependent counterfactual action;
+6. is available to several specialized processes;
+7. incorporates past and constrains future;
+8. is indexed to self, other, and environment;
+9. causally improves adaptive recovery through a closed scale loop.
 
 A photon, interference fringe, static archive, or isolated Möbius carrier does not satisfy this conjunction and is not thereby a miniature agent or subject. That statement is compatible with P0: primitive intrinsic presence and bounded subjecthood are different claims.
 
@@ -153,6 +155,8 @@ F_{\Lambda}
 \left(
 \mathcal B_{\mathrm{bdry}}(Y),
 \Phi_{\mathrm c}(Y),
+\mathcal M_T(Y),
+\mathcal A_M(Y),
 G_{\mathrm c}(Y),
 \Theta(Y),
 \Gamma(Y),
@@ -169,7 +173,8 @@ A single argmax selects one high-scoring candidate; it does not define “maxima
 \sum_{Y\in\mathcal A}\Lambda(Y)
 \]
 
-subject to preregistered viability, boundary, temporal-continuity, and pairwise constitutive nonoverlap:
+subject to preregistered viability, boundary, model-efficacy, agency,
+temporal-continuity, and pairwise constitutive nonoverlap:
 
 \[
 Y_i^{\mathrm{const}}\cap Y_j^{\mathrm{const}}=\varnothing

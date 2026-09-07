@@ -37,17 +37,37 @@ and interventions; it would not show that nature uses those structures.
 ## Systems
 
 Construct synthetic systems at direct arities `n in {2,3,5,6,7,8}`. Each carrier has the
-same local state dimension and update family. For each comparison family, freeze:
+same local state dimension and update family.
 
-- total trainable parameter budget;
-- observed state dimension;
-- noise family and signal-to-noise range;
-- training sample count and intervention count;
-- stability envelope and perturbation magnitude;
-- optimizer, initialization family, and selection rule.
+## Frozen implementation configuration
+
+Use configuration `arity-recursion-synthetic-v1` exactly:
+
+- carrier state dimension: `2` real coordinates per carrier;
+- update family: discrete-time Gaussian state-space updates with `tanh` local
+  dynamics, declared cross-carrier terms, and no undeclared latent carriers;
+- trainable parameter ceiling: `4096` parameters per candidate/control family;
+- parameter equalization: use the smaller common unmasked budget when exact
+  equality is impossible; unused parameters are masked and reported;
+- episode length: `128` transitions after a `32`-transition burn-in;
+- per-seed data: `64` observational training episodes, `16` calibration episodes,
+  `16` held-out test episodes, and all six intervention classes below;
+- noise family: independent Gaussian process noise with standard deviations
+  `0.01`, `0.05`, and `0.10`, crossed with the sealed seeds;
+- stability envelope: reject generated systems whose no-intervention trajectories
+  leave `[-3,3]` in any coordinate before burn-in completes;
+- perturbation magnitude: single-coordinate additive interventions of `0.5`;
+- cut duration: cross-carrier terms are zeroed for `16` transitions;
+- optimizer: Adam, learning rate `0.001`, batch size `64`, and `2000` updates;
+- initialization family: Glorot-uniform weights and zero biases from
+  `(seed, model_id, restart)` for restarts `0..4`;
+- selection rule: select the restart with lowest calibration negative log
+  likelihood before opening sealed test outputs.
 
 Where exact equality is impossible, use the smaller common parameter budget and mask
 unused parameters. Report every resulting asymmetry; do not compensate with a score.
+If any frozen value cannot be implemented exactly, stop before fitting and report
+`BLOCKED`.
 
 Nested systems use rooted arity trees of depth two. The primary seven-carrier candidate
 uses immediate child arities drawn from `{2,3,5}`. Controls include the same leaves
@@ -68,13 +88,18 @@ For every seed, generate matched episodes under:
 Intervention targets and held-out combinations are generated before any model is fit and
 stored in the run receipt.
 
-## Primary outcomes
+## Outcomes
+
+Primary decision outcomes:
 
 - held-out interventional negative log likelihood;
+- recovery difference `Gamma_T = E[R_full - R_cut]`.
+
+Guardrail and diagnostic outcomes:
+
 - multi-horizon state-prediction error;
-- recovery difference `Gamma_T = E[R_full - R_cut]`;
-- minimum partition loss under the frozen partition family;
-- calibration of predictive uncertainty; and
+- minimum partition loss under the frozen proper partition family;
+- calibration of predictive uncertainty;
 - parameter-normalized description length as a secondary complexity check.
 
 The source program's `Phi_c` is not treated as an IIT quantity. Every estimator,
@@ -111,14 +136,15 @@ No decision threshold may be changed after any sealed output is opened.
 ## Decision rule
 
 For each hypothesis, compute the paired sealed-seed difference between the candidate and
-every required control for both primary outcomes: interventional log score and recovery.
+every required control for both primary decision outcomes: interventional log score and
+recovery.
 Use simultaneous 95% bootstrap intervals over sealed seeds and report the paired
 standardized effect. Control family-wise error across all required control/outcome
 comparisons with a max-statistic paired permutation procedure at `alpha=0.05`.
 
 `SURVIVED` requires all of the following:
 
-1. the candidate beats every required control on both primary outcomes;
+1. the candidate beats every required control on both primary decision outcomes;
 2. every simultaneous 95% interval excludes zero in the candidate-favoring direction;
 3. every max-statistic adjusted paired permutation test has `p < 0.05`;
 4. the smallest paired standardized effect across required comparisons is at least `0.5`;
@@ -126,10 +152,10 @@ comparisons with a max-statistic paired permutation procedure at `alpha=0.05`.
 6. the result is reproduced by an independent implementation from the sealed run receipt.
 
 `FALSIFIED` applies when any required equal-budget control outperforms the candidate on
-either primary outcome with a simultaneous 95% interval excluding zero after the frozen
-family-wise adjustment. A carrier-specific claim is also falsified when the
+either primary decision outcome with a simultaneous 95% interval excluding zero after the
+frozen family-wise adjustment. A carrier-specific claim is also falsified when the
 candidate-minus-label-shuffle interval lies wholly inside the equivalence band
-`[-0.2, 0.2]` standardized effect on both primary outcomes.
+`[-0.2, 0.2]` standardized effect on both primary decision outcomes.
 
 `UNRESOLVED` applies when neither rule is met, support/estimator assumptions fail, an
 implementation discrepancy remains, or a required comparison cannot be equalized.

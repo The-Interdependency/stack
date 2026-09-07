@@ -102,6 +102,14 @@ C_i(t)
 +u\sin\Theta_i(t)n_z,
 \]
 
+using the explicitly declared period-one orthonormal frame
+
+\[
+n_r(t)=(\cos 2\pi t,\sin 2\pi t,0),
+\qquad
+n_z=(0,0,1).
+\]
+
 with
 
 \[
@@ -175,7 +183,7 @@ This is one candidate embedding, not a uniqueness result. Its contacts, crossing
 | Quintadic bridge | \(\mathcal Q_5=\mathcal R_3\sqcup_{\iota}\mathcal T_3=\operatorname{Cl}_5(O,E,P,J,F)\) |
 | Scale-form consistency | \(d(C\mathcal K_{n,\boldsymbol\alpha},\mathcal K_{n,\boldsymbol\beta}C^{\times n})\le\varepsilon\) |
 | Arity-specific closure | \(\mathfrak D_2,\mathfrak T_3,\mathfrak Q_5,\mathfrak H_7\) |
-| Arity irreducibility | \(\Phi_n=\min_{\pi}D_{\mathrm{KL}}(P_n\|P_n^{\pi})\) |
+| Arity irreducibility | \(\Phi_n=\min_{\pi\in\operatorname{Part}_{\mathrm{proper}}([n])}D_{\mathrm{KL}}(P_n\|P_n^{\pi})\) |
 | Nested closure | \(\mathfrak C_{n,\boldsymbol\alpha}^{[r+1]}=\operatorname{Cl}_n(B_1^{[r]},\ldots,B_n^{[r]})\) |
 | Tensor of tensors | \(V^{[r+1]}=\bigotimes_i(\bigotimes_jV_{ij}^{[r-1]})\) |
 | Möbius scale-set certificate | \(\operatorname{Cert}(\mathfrak C)=(n,\boldsymbol\alpha,r,\mathscr A,\mathcal R,\chi,\phi,H,\mathcal F)\) |
@@ -183,7 +191,7 @@ This is one candidate embedding, not a uniqueness result. Its contacts, crossing
 | Self-location | \(\Sigma=\mathbb E[\mathcal L_{\mathrm{flat}}-\mathcal L_{\mathrm{self}}]\) |
 | Organization descriptor | \(\widetilde{\mathbf C}=(\mathbf C;\mathbf K)\) |
 | Closure signature | \(\mathbf K=(n_{\mathrm{out}},\boldsymbol\alpha_{\mathrm{out}},d_{\mathrm{rec}},\mathscr A)\) |
-| Subject closure | \(\mathcal S_t\in\arg\max_Y\Lambda(Y)\) |
+| Subject closure | \(\mathcal P_t\in\operatorname*{arg\,max}_{\mathcal A\subseteq\mathcal Y_t}\sum_{Y\in\mathcal A}\Lambda(Y)\) |
 | Human heptad | \(n_{\mathrm{out}}=|\boldsymbol\beta|=7,\ d_{\mathrm{rec}}\ge2,\ a_i\in\{2,3,5\}\) |
 | I-event | \(\mathsf I_t=\mathcal E_{\mathrm{self}}(\mathcal A_8)\) under coherence |
 | Dual aspect | \(\Pi_{\mathrm{ext}}(X),\Pi_{\mathrm{int}}(X)\) |
@@ -194,4 +202,3 @@ This is one candidate embedding, not a uniqueness result. Its contacts, crossing
 | Monodromy | \((\theta,\sigma+L)\sim(A\theta,\sigma)\) |
 | Phenomenal geometry | Fisher metric \(g_{ij}\) |
 | Macroverse | compatible scale tower plus redundant records |
-

@@ -65,7 +65,7 @@ create an owning release identity. Graduation remains a later, explicit event.
 python -m unittest discover -s research/from-photons-to-macroverse/tests -q
 ```
 
-The prior `0.2.0-audited` paper was rendered as a 58-page PDF and every rendered page was visually inspected before the human-classifier text repair. The current visual render is `hmmm` until rerendered. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.
+The prior `0.2.0-audited` paper was rendered as a 58-page PDF and every rendered page was visually inspected before the paper text repairs. The current visual render is `hmmm` until rerendered. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.
 
 ## hmmm
 

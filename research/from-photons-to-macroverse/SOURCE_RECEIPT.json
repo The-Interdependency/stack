@@ -64,14 +64,14 @@
     "manifest_path": "paper/manifest.json",
     "storage_mode": "ordered hash-bound Markdown fragments",
     "version": "0.2.0-audited",
-    "assembled_sha256": "fb67e718b2c658671c8d60ca6a946921d14012d94d3e5f69f53d93a6b0f9ecaa",
-    "assembled_bytes": 125236,
+    "assembled_sha256": "5ee955f78e8d274a9b644d0efae737c413e90d0e5e66b0d426f041bf02a0fcf6",
+    "assembled_bytes": 125882,
     "date": "2026-09-06",
     "verified_render": {
-      "status": "HMMM_STALE_AFTER_TEXT_REPAIR",
+      "status": "HMMM_STALE_AFTER_PAPER_TEXT_REPAIRS",
       "prior_pages": 58,
       "prior_renderer": "Pandoc with XeLaTeX",
-      "visual_audit": "prior 0.2.0-audited render was HEALTHY before the human-classifier text repair; rerender before claiming current visual layout",
+      "visual_audit": "prior 0.2.0-audited render was HEALTHY before the paper text repairs; rerender before claiming current visual layout",
       "repository_copy": false
     },
     "repository_copy": true,

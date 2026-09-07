@@ -146,7 +146,7 @@ unless the added carrier is causally separable and the higher-order partition lo
 \[
 \Phi_n
 =
-\min_{\pi\in\operatorname{Part}([n])}
+\min_{\pi\in\operatorname{Part}_{\mathrm{proper}}([n])}
 D_{\mathrm{KL}}
 \left(
 P_n(\mathbf x'\mid\mathbf x)
@@ -154,6 +154,10 @@ P_n(\mathbf x'\mid\mathbf x)
 P_n^{\pi}(\mathbf x'\mid\mathbf x)
 \right).
 \]
+
+Here \(\operatorname{Part}_{\mathrm{proper}}([n])\) excludes the one-block
+partition \(\{[n]\}\) and admits only partitions with at least two blocks. The
+unpartitioned transition law is therefore not its own control.
 
 When \(\Phi_n>0\), no admissible partition into lower-arity blocks reproduces the full transition law.
 
@@ -317,4 +321,3 @@ within a declared tolerance and disturbance class. The identity is distributed a
 A positive \(\Gamma_T\) shows that cross-scale closure contributes causally to recovery.
 
 **H:** Broad, context-sensitive self-preservation requires at least a triadic direct closure. Human consciousness adds the stronger heptadic and recursion-depth requirements stated in Section 20. The two thresholds must not be conflated.
-

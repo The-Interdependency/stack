@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
   "assembled_filename": "from_photons_to_macroverse_audited_0.2.0.md",
-  "assembled_sha256": "fb67e718b2c658671c8d60ca6a946921d14012d94d3e5f69f53d93a6b0f9ecaa",
+  "assembled_sha256": "5ee955f78e8d274a9b644d0efae737c413e90d0e5e66b0d426f041bf02a0fcf6",
   "fragments": [
     {
       "path": "paper/00-frontmatter.md",
@@ -33,10 +33,10 @@
     },
     {
       "path": "paper/03-arity-and-recursion.md",
-      "sha256": "6429cdabe4e739683027875999a300910cf6aa83aac66519dc45b65d95ba9f41",
-      "bytes": 9773,
+      "sha256": "a3c1530fbfd76f4e519b6d1d551c8295a6001f5d0c810a3a12f45c80c3073f41",
+      "bytes": 10008,
       "role": "arity-specific closure and nested recursion, section 11",
-      "git_blob_sha1": "f072b856455c9828859b60e677355be612048ec3"
+      "git_blob_sha1": "492371d87d490fe5c3714025fb12aa0cdfd3667f"
     },
     {
       "path": "paper/03-availability-and-self-location.md",
@@ -47,10 +47,10 @@
     },
     {
       "path": "paper/04-subject-and-i-event.md",
-      "sha256": "bf5e59410eedc4ef84baab356b8bbca1fd395ccbac004244db3d4b6fbf9f6e80",
-      "bytes": 16648,
+      "sha256": "e723b0c902ceb1b718db4f2f73c66ff15a22046fa19921b0231afe6195d3e0b4",
+      "bytes": 16823,
       "role": "organized descriptor, subject formation, and I-event, sections 14-16",
-      "git_blob_sha1": "d2a8c2c37a88b788c0cb1eec89099b16f9d9349e"
+      "git_blob_sha1": "ba5a199cfc3e5c2b493b9df043ef5f3dae383a80"
     },
     {
       "path": "paper/05-geometry-heptad-neural.md",
@@ -75,10 +75,10 @@
     },
     {
       "path": "paper/07-conclusion-and-appendices.md",
-      "sha256": "06f6aab6eedd111e80eae424eeda5b2161d4354250bb1a021ae53f5b89abd8f6",
-      "bytes": 10407,
+      "sha256": "bfecf60ade0e476dc2ea62b5943d1f28999087d3b3e21338c7759ce8fab0087e",
+      "bytes": 10643,
       "role": "conclusion and mathematical appendices",
-      "git_blob_sha1": "39f0aa857734255b25af63e08bb33d638cee1c24"
+      "git_blob_sha1": "487ff6eebeb06a8e84c3ee255ad5472b535ce4ba"
     },
     {
       "path": "paper/07-references-and-hmmm.md",

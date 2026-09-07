@@ -65,7 +65,7 @@ class Contracts(unittest.TestCase):
         self.assertTrue(receipt["revision"]["repository_copy"])
         self.assertEqual(
             receipt["revision"]["verified_render"]["status"],
-            "HMMM_STALE_AFTER_TEXT_REPAIR",
+            "HMMM_STALE_AFTER_PAPER_TEXT_REPAIRS",
         )
         retrieval = receipt["revision"]["retrieval"]
         self.assertEqual(retrieval["status"], "REPOSITORY_OWNED_FRAGMENTS")
@@ -109,6 +109,13 @@ class Contracts(unittest.TestCase):
         self.assertIn("The indicator is non-operational in this package", text)
         self.assertNotIn("The indicator classifies organized episodes", text)
         self.assertNotIn("learned from preregistered contrasts among waking reportable experience", text)
+        self.assertIn(r"\operatorname{Part}_{\mathrm{proper}}([n])", text)
+        self.assertNotIn(r"\Phi_n=\min_{\pi}D_{\mathrm{KL}}", text)
+        self.assertIn(r"\mathcal M_T(Y)", text)
+        self.assertIn(r"\mathcal A_M(Y)", text)
+        self.assertIn(r"n_r(t)=(\cos 2\pi t,\sin 2\pi t,0)", text)
+        self.assertIn(r"\mathcal P_t\in\operatorname*{arg\,max}_{\mathcal A\subseteq\mathcal Y_t}", text)
+        self.assertNotIn(r"\mathcal S_t\in\arg\max_Y\Lambda(Y)", text)
         self.assertIn("10.53765/20512201.31.3.056", text)
         self.assertIn("10.1142/S0217751X26300115", text)
 
@@ -170,6 +177,9 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
         for phrase in ("run status: not-run", "human subjects: none", "animal subjects: none", "LLM calls: none", "seeds `32..63`: sealed decision set", "`SURVIVED` requires all of the following", "`FALSIFIED` applies", "`UNRESOLVED` applies", "No outcome classifies a human, animal, model, organization, or physical system as conscious"):
             self.assertIn(phrase, flat)
+        for phrase in ("configuration `arity-recursion-synthetic-v1` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam, learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
+            self.assertIn(phrase, flat)
+        self.assertNotIn("both primary outcomes: interventional log score and recovery", flat)
         for control in ("six-carrier", "arbitrary-seven", "unnested-seven", "label-shuffled"):
             self.assertIn(control, text)
         self.assertIn("hmmm_undefined", text)
