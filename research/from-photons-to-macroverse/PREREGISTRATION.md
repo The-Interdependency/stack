@@ -1,7 +1,7 @@
 # Preregistration: matched arity and recursion discrimination
 
 ```text
-protocol version: 0.2.0
+protocol version: 0.3.0
 run status:       not-run
 human subjects:   none
 animal subjects:  none
@@ -41,24 +41,26 @@ same local state dimension and update family.
 
 ## Frozen implementation configuration
 
-Use configuration `arity-recursion-synthetic-v1` exactly:
+Use configuration `arity-recursion-synthetic-v2` exactly. The version changes
+because the repairs below change result-bearing bytes; no earlier identifier is
+an alias.
 
 - carrier state dimension: `2` real coordinates per carrier;
 - update family: discrete-time Gaussian state-space updates with `tanh` local
   dynamics, declared cross-carrier terms, and no undeclared latent carriers;
-- trainable parameter ceiling: `4096` parameters per candidate/control family;
-- parameter equalization: use the smaller common unmasked budget when exact
-  equality is impossible; unused parameters are masked and reported;
+- trainable parameter ceiling: `4096` active parameters per candidate/control
+  family, with the exact common-budget rule frozen under **Fitted families**;
 - episode length: `128` transitions after a `32`-transition burn-in;
-- per-seed data: `64` observational training episodes, `16` calibration episodes,
-  `16` held-out test episodes, and all six intervention classes below;
+- per `(seed, arity, noise level)` observational data: `64` training episodes,
+  `16` calibration episodes, and `16` held-out test episodes; these counts exclude
+  the separately frozen intervention allocation below;
 - noise family: independent Gaussian process noise with standard deviations
   `0.01`, `0.05`, and `0.10`, crossed with the sealed seeds;
-- stability envelope: reject generated systems whose no-intervention trajectories
-  leave `[-3,3]` in any coordinate before burn-in completes;
+- stability envelope: accept only by the deterministic probe-and-retry rule below;
 - perturbation magnitude: single-coordinate additive interventions of `0.5`;
 - cut duration: cross-carrier terms are zeroed for `16` transitions;
-- optimizer: Adam, learning rate `0.001`, batch size `64`, and `2000` updates;
+- optimizer: Adam with learning rate `0.001`, `beta_1=0.9`, `beta_2=0.999`,
+  `epsilon=1e-8`, no weight decay, batch size `64`, and `2000` updates;
 - initialization family: Glorot-uniform weights and zero biases from
   `(seed, model_id, restart)` for restarts `0..4`;
 - selection rule: select the restart with lowest calibration negative log
@@ -67,8 +69,8 @@ Use configuration `arity-recursion-synthetic-v1` exactly:
 ### Synthetic generator
 
 For direct arity `n`, the observed state is
-`x_t=(x_{t,0},...,x_{t,n-1})` with each `x_{t,i} in R^2`. For seed `s`,
-noise standard deviation `sigma`, and intervention input `u_t`, generate
+`x_t=(x_{t,0},...,x_{t,n-1})` with each `x_{t,i} in R^2`. For seed `s` and
+noise standard deviation `sigma`, generate
 
 ```text
 x_{t+1,i}
@@ -76,28 +78,44 @@ x_{t+1,i}
     L_i x_{t,i}
   + beta_n/(n-1) sum_{j != i} W_{ij} x_{t,j}
   + gamma_n h_i prod_{j != i} tanh(v_{ij}^T x_{t,j})
-  + A_i u_t
   + b_i
   )
   + eta_{t,i}
 ```
 
 with `eta_{t,i} ~ N(0, sigma^2 I_2)`, `beta_n=0.35`, and `gamma_n=0.20`.
-The `prod` term is omitted only for the declared feed-forward controls and for
-controls whose relation ledger says the relevant edge or carrier is cut.
-Interventions are applied through the declared `u_t` before the `tanh`
-nonlinearity, except additive state perturbations, which are applied directly to
-the selected coordinate after the transition and before noise.
+The generator has exactly `r=0` generic intervention channels: `u_t=()` at every
+transition, `A_i` is the unique `2 x 0` empty matrix, and there is no `A_i u_t`
+term to sample or fit. Structured interventions are the coefficient masks,
+modulators, and state operators declared under **Interventions**. Additive state
+perturbations are applied after the deterministic `tanh` transition and before
+process noise. No intervention may be re-expressed as an undeclared additive
+input channel.
 
 Every result-bearing stochastic draw is deterministic under
-`arity-recursion-synthetic-v1`, seed, arity, noise level, stream domain, role,
-and index tuple. The pseudorandom stream is SHA-256 counter mode over the UTF-8
-key
-`arity-recursion-synthetic-v1|seed=s|arity=n|sigma=sigma|domain=domain|role=role|index=k`;
-each digest is split into four big-endian unsigned 64-bit words. Each word `w`
-maps to the open-unit uniform `(w+0.5)/2^64`; uniform pairs map to standard
-normal pairs by the Box-Muller transform in IEEE-754 double precision. No other
-random-number source is admissible.
+`arity-recursion-synthetic-v2`, seed, arity, noise level, stream domain, role,
+index tuple, and digest-block number. The SHA-256 input is the UTF-8 encoding of
+this whitespace-free JSON array:
+
+```text
+["arity-recursion-synthetic-v2",s,n,sigma_milli,domain,role,[k0,...,kp],block]
+```
+
+Integers use minimal unsigned base-10 notation (`0`, never `00`); `sigma_milli`
+is exactly `10`, `50`, or `100`; `block` starts at `0`; and every string token is
+restricted to lowercase ASCII `[a-z0-9_./-]+`, so JSON escaping is never used.
+An index tuple element is either such a quoted token or an unsigned integer in
+the domain-field order below. The complete tuple, including `block`, is the
+counter-stream key; concatenated placeholders or language-native float strings
+are forbidden. Every listed field is present; use the literal token `"none"`
+for an inapplicable field. A nested carrier or tensor component is one token
+such as `outer/3/leaf/2`, not an implementation-native tuple string.
+
+Each digest is split in order into four big-endian unsigned 64-bit words. Each
+word `w` maps to the open-unit uniform `(w+0.5)/2^64`. Words `(0,1)` and `(2,3)`
+map to standard-normal pairs as
+`sqrt(-2 ln u0)*(cos(2*pi*u1), sin(2*pi*u1))` in IEEE-754 binary64. No other
+random-number source or key encoding is admissible.
 
 The stream domains are exactly:
 
@@ -105,11 +123,12 @@ The stream domains are exactly:
 coefficients:        role, tensor_name, carrier_i, carrier_j, row, column
 initial_state:       episode_id, carrier_i, coordinate
 process_noise:       episode_id, time, carrier_i, coordinate
+stability_probe:     attempt, probe_episode, phase, time, carrier_i, coordinate
 intervention_plan:   episode_id, intervention_class, draw_index
 model_initializers:  model_id, restart, tensor_name, row, column
 minibatch_order:     model_id, restart, update_index, draw_index
-bootstrap:           outcome_id, bootstrap_index, sealed_seed_index
-permutation:         comparison_id, permutation_index, sealed_seed_index
+bootstrap:           hypothesis_id, bootstrap_index, draw_index
+permutation:         hypothesis_id, permutation_index, sealed_seed_index
 ```
 
 All index tuples are emitted in lexicographic order and written to the run
@@ -124,19 +143,32 @@ L_i = 0.45 I_2 + 0.10 N_{2x2}
 W_{ij} = N_{2x2}/sqrt(2n)
 v_{ij} = N_2/sqrt(2)
 h_i = N_2/sqrt(2)
-A_i = 0.20 N_{2xr}/sqrt(r) for r declared intervention channels
 b_i = 0.05 N_2
 x_{0,i} = 0.10 N_2
 ```
 
-where every `N` entry is drawn from the `coefficients` stream. `SYSTEMS.json`
+where coefficient `N` entries are drawn from the `coefficients` stream and
+`x_0` entries are drawn from `initial_state`. `SYSTEMS.json`
 must carry the realized coefficient tensors, stream keys, and coefficient
 hashes. `INTERVENTIONS.jsonl` must carry the intervention plans and matched
 noise-stream keys. If an implementation cannot reproduce these bytes from the
 frozen streams, the run is `BLOCKED` before fitting.
 
-Where exact equality is impossible, use the smaller common parameter budget and mask
-unused parameters. Report every resulting asymmetry; do not compensate with a score.
+For each `(seed, arity, sigma, generator_role)`, coefficient attempt `a` is
+encoded by appending `/attempt/a` to the coefficient role. Test attempts
+`a=0,...,255` in order. Each attempt is simulated without intervention for the
+`32` burn-in transitions from exactly `16` probe initial states named
+`stability/00` through `stability/15`; their initial-state keys use phase
+`initial` and time `0`, while their noise keys use phase `noise` and the actual
+transition index in the `stability_probe` tuple above. Initial probe normals are
+scaled by `0.10` and noise probe normals by `sigma`, exactly as for dataset
+states and noise. Accept the
+first attempt for which every coordinate of every probe remains in `[-3,3]`
+after each burn-in transition. Rejected attempts consume no dataset episode id
+and are recorded with their coefficient and probe hashes. If no attempt is
+accepted, that system is `BLOCKED`; coefficients are never silently dropped,
+redrawn from an unkeyed stream, or replaced by another seed.
+
 If any frozen value cannot be implemented exactly, stop before fitting and report
 `BLOCKED`.
 
@@ -154,14 +186,36 @@ so the primary seven-carrier candidate has child arities
 the outer summary used for inter-outer coupling is
 `x_{t,i}=a_i^{-1} sum_l y_{t,i,l}` and is not an additional observed variable.
 
-Within each outer carrier, leaf updates use the same direct generator with
-arity `a_i` and coefficient role `nested_local/i`. Between outer carriers, the
-direct `n`-carrier generator is applied to the outer summaries; its contribution
-to target carrier `i` is broadcast additively to each child leaf of `i` with
-scale `1/a_i` before the leaf `tanh`. An outer-edge cut zeros the corresponding
-summary-to-summary term and its broadcast. A child-edge cut zeros the matching
-within-carrier leaf term. Whole-carrier ablation zeros all leaves under that
-outer carrier for the ablation interval.
+The nested transition has one leaf noise source and no hidden outer state,
+outer local update, outer bias, outer activation, or outer process noise. Define
+
+```text
+ell_{t,i,l}
+= L^leaf_{i,l} y_{t,i,l}
+  + beta_{a_i}/(a_i-1) sum_{q != l} W^leaf_{i,lq} y_{t,i,q}
+  + gamma_{a_i} h^leaf_{i,l}
+      prod_{q != l} tanh((v^leaf_{i,lq})^T y_{t,i,q})
+  + b^leaf_{i,l}
+
+g_{t,i}
+= beta_n/(n-1) sum_{j != i} W^outer_{ij} x_{t,j}
+  + gamma_n h^outer_i
+      prod_{j != i} tanh((v^outer_{ij})^T x_{t,j})
+
+y_{t+1,i,l} = tanh(ell_{t,i,l} + g_{t,i}/a_i) + eta^leaf_{t,i,l}
+eta^leaf_{t,i,l} ~ N(0, sigma^2 I_2)
+```
+
+Here `beta_k=0.35` and `gamma_k=0.20` for every admitted arity. Leaf
+coefficients use role `nested_leaf/i`; outer coefficients use role
+`nested_outer`; leaf noise uses role `nested_leaf/i`; and no other coefficient
+or noise role contributes to this transition. Coefficient masks and modulators
+are applied to `ell` or `g` before the one leaf `tanh`; state operators are
+applied afterward at the point declared under **Interventions**. An outer-edge
+cut zeros its `W^outer` summand and the entire target `g` product term, whose
+all-source closure would otherwise still contain the cut source. A child-edge
+cut applies the same rule to the corresponding `ell` terms. Whole-outer-carrier
+ablation clamps every leaf under that carrier as declared below.
 
 Wrong-tree controls preserve the same flattened leaf coordinates and total
 observed dimension but regroup them by the left-rotated child-arity vector
@@ -174,7 +228,7 @@ invert it before scoring.
 
 ## Interventions
 
-For every seed, generate matched episodes under:
+For every `(seed, arity, noise level)`, generate matched episodes under:
 
 1. single-carrier state interventions;
 2. single-edge cuts;
@@ -183,33 +237,70 @@ For every seed, generate matched episodes under:
 5. bounded perturbations followed by recovery; and
 6. out-of-distribution combinations withheld from fitting.
 
-Intervention targets and held-out combinations are generated before any model is fit and
-stored in the run receipt.
+The frozen intervention allocation is:
 
-For all intervention classes, transition times are drawn from
-`{0,...,127-cut_duration}` after burn-in unless the class is the recovery
-perturbation, whose time is fixed below. Single-carrier state interventions
-choose one carrier and one coordinate without replacement, then add the declared
-`0.5` perturbation for one transition. Single-edge cuts choose one declared
-directed edge without replacement and zero that edge for `16` transitions.
-Whole-carrier ablations choose one carrier without replacement and zero its
-observed coordinates for `16` transitions. Constraint-modulation interventions
-choose one declared coupling term without replacement and multiply it by `0.5`
-for `16` transitions. Out-of-distribution combinations are lexicographic pairs
-of the preceding intervention classes selected by the `intervention_plan` stream
-and withheld from fitting. Matched candidate/control comparisons use the same
-episode ids, times, targets, and process-noise stream keys.
+| class | training | calibration | held-out test |
+|---|---:|---:|---:|
+| `1` state | 8 | 4 | 8 |
+| `2` edge cut | 8 | 4 | 8 |
+| `3` ablation | 8 | 4 | 8 |
+| `4` modulation | 8 | 4 | 8 |
+| `5` recovery | 0 | 0 | 16 |
+| `6` OOD pair | 0 | 0 | 12 |
+
+These are additional to the `64/16/16` observational episodes. Episode ids are
+exactly `obs/<split>/<three-digit ordinal>` and
+`int/<class>/<split>/<three-digit ordinal>`, where `split` is `train`, `cal`, or
+`test`. Class `5` and `6` are never used for fitting or restart selection.
+Class `6` contains the six unordered pairs from classes `1..4`, in lexicographic
+order, exactly twice each. Both interventions in a class-`6` episode start at
+the same scheduled transition. This allocation is crossed with all three noise
+levels; it is not multiplied or reweighted after sealed outputs are opened.
+
+All plans are generated before any model is fit and stored in
+`INTERVENTIONS.jsonl`. For class `1`, choose a scalar observed coordinate without
+replacement and choose a start in `{0,...,127}`; add `+0.5` after the
+deterministic transition and before process noise for that one transition. For
+classes `2`, `3`, and `4`, choose respectively a declared directed edge, a
+carrier, or one declared cross-carrier summand without replacement and choose a
+start in `{0,...,112}`. The intervention is active for the `16` transitions
+whose indices are `start,...,start+15`:
+
+- an edge cut zeros its directed `W` summand and the target's all-source product
+  term before `tanh`;
+- an ablation clamps all selected carrier coordinates to exactly zero after
+  process noise at every active transition, so no residual noise survives the
+  clamp; a fitted predictive distribution is clamped to mean `0` and variance
+  `1e-6` on those coordinates while the ablation is active;
+- a modulation multiplies the selected `W` summand or the selected all-source
+  product term, named in the plan, by exactly `0.5` before `tanh`.
+
+Nested plans name `outer/i` or `leaf/i/l` targets and apply the explicit nested
+equation above. Class `5` uses the primary-outcome certificate below. Class `6`
+composes the two corresponding operators in numeric class order; masks and
+modulators act before `tanh`, then additive state, process noise, and ablation
+clamp act in that order. Matched candidate/control comparisons use the same
+episode ids, times, targets, and process-noise stream keys. Controls receive the
+plan through these fixed operators and the adapter below, never through a
+learned or undeclared `u_t` channel.
 
 ## Outcomes
 
-Primary decision outcomes:
+### Embedded primary-outcome certificate `primary-outcome-v1`
+
+This section is the complete primary certificate. Before any sealed run, the
+implementation receipt must bind the exact Git commit and SHA-256 of this UTF-8
+file. A later measurement certificate may copy these definitions and record
+their realized keys; it may not choose or replace a primary estimator.
+
+Primary decision outcomes are:
 
 - held-out interventional negative log likelihood;
 - recovery difference `Gamma_T = E[R_full - R_cut]`.
 
 Held-out interventional negative log likelihood is the mean one-step predictive
 Gaussian NLL over every post-burn-in transition and observed scalar coordinate
-in the held-out intervention episodes:
+in all held-out intervention episodes from classes `1..6`:
 
 ```text
 NLL = mean 0.5 * ((x_{t+1,c} - mu_{t,c})^2 / v_{t,c}
@@ -221,57 +312,173 @@ coordinate system before scoring, and `v >= 1e-6`. The same held-out episode
 ids, intervention plans, and process-noise keys are used for every compared
 candidate/control family.
 
-Recovery is frozen as follows. Matched full and cut recovery episodes share
-initial state, perturbation target, perturbation time, and process-noise stream.
-The perturbation time is transition `0` after burn-in. The perturbation target is
-one observed scalar coordinate drawn from the `intervention_plan` stream without
-replacement until every coordinate has appeared once, then reshuffled by the same
-stream. The recovery horizon set is `{1,2,4,8,16}`. For mode
-`M in {full, cut}`, let `x^0` be the matched unperturbed trajectory in the same
-observed coordinate system and let `x^M` be the perturbed trajectory decoded to
-that coordinate system. The identity map is the observed coordinate identity for
-direct systems and the lexicographic leaf identity for nested systems; wrong
-arity controls are scored only after the fixed adapter below decodes them to the
-generator's observed coordinates.
+Recovery uses exactly the `16` held-out class-`5` episodes. Matched full and cut
+episodes share accepted coefficients, true post-burn-in initial state,
+perturbation target, perturbation time, and process-noise key. The perturbation
+is always `+0.5` at transition `t0=0` after burn-in. Targets traverse the
+lexicographic list of observed scalar coordinates without replacement in the
+order ranked by the canonical `intervention_plan` stream; after exhausting the
+list, a new ranked block is used.
+
+For a target in direct carrier `i`, the cut source is the element at index
+`episode_ordinal mod (n-1)` of the ascending list
+`[j for j in {0,...,n-1} if j != i]`. For a target leaf under nested outer
+carrier `i`, use the same rule over outer sources. The cut starts before
+transition `t0` and is active for transitions `t0,...,t0+15`. It zeros the
+selected directed `W` summand and the target's all-source product term under the
+edge-cut rule above. The full mode applies no cut. Adapter-collapsed edges and
+families without the selected structural term emit a receipted no-op rather
+than substituting another cut.
+
+For each fitted family, initialize a deterministic mean rollout at the shared
+true state. Recursively feed back that family's decoded predictive mean; do not
+sample predictive noise. Let `x^{0,f}` be its unperturbed mean rollout and
+`x^{M,f}` its matched perturbed rollout in mode `M in {full,cut}`. The identity
+map is the observed scalar-coordinate identity for direct systems and the
+lexicographic leaf-scalar identity for nested systems. Every wrong-arity or
+wrong-tree family is scored only after the fixed decoder below returns that
+identity. The recovery horizon set is exactly `{1,2,4,8,16}`.
 
 ```text
-R_M = - mean_{h in {1,2,4,8,16}} ||x^M_{t0+h} - x^0_{t0+h}||_2^2
+R_{M,f} = - mean_{h in {1,2,4,8,16}} ||x^{M,f}_{t0+h} - x^{0,f}_{t0+h}||_2^2
       / (N_obs * 0.5^2)
-Gamma_T = E[R_full - R_cut]
+Gamma_{s,f} = mean_{sigma, episode}(R_{full,f} - R_{cut,f})
+Gamma_{T,f} = mean_{sealed seed s}(Gamma_{s,f})
 ```
 
-where `N_obs` is the number of observed scalar coordinates. The expectation is
-the arithmetic mean over sealed recovery episodes and sealed seeds. The
-measurement certificate records these values and their stream keys; it may not
-replace this estimator after sealed outputs are opened.
+`N_obs` is the generator's number of observed scalar coordinates. The only
+normalizer is `N_obs * 0.5^2`; the only aggregation is the arithmetic mean shown
+above with equal weight per episode, noise level, and sealed seed. Larger
+`Gamma_T` is the candidate-favoring direction. The run receipt records every
+target, cut, horizon, adapter result, and stream key.
 
 Guardrail and diagnostic outcomes:
 
 - multi-horizon state-prediction error;
 - minimum partition loss under the frozen proper partition family;
-- calibration of predictive uncertainty;
+- calibration of predictive uncertainty, using the frozen ECE below;
 - parameter-normalized description length as a secondary complexity check.
 
-The source program's `Phi_c` is not treated as an IIT quantity. Every estimator,
-partition family, smoothing rule, support requirement, reference distribution, baseline
-state, and uncertainty procedure is fixed in a measurement certificate and the run
-receipt. A failed support test emits `hmmm_undefined`; it is never converted to a perfect
+Predictive calibration uses randomized-free Gaussian probability-integral
+transform values `p=Phi((x_next-mu)/sqrt(v))` for the same scalar observations as
+NLL. For each fitted family and sealed seed, pool classes `1..6`, transitions,
+coordinates, and the three noise levels. At thresholds
+`q in {0.05,0.10,...,0.95}`, compute `F_hat(q)=mean(1[p <= q])` and
+`ECE=mean_q |F_hat(q)-q|`; then average seed ECEs arithmetically. The calibration
+guardrail is evaluated for every required candidate/control pair as
+`ECE_candidate - ECE_control <= 0.02`. Ties use `<=`; NaN, infinite, empty, or
+unsupported values emit `hmmm_undefined` and force `UNRESOLVED`.
+
+The source program's `Phi_c` is not treated as an IIT quantity. Remaining
+diagnostic estimators, partitions, and smoothing rules are non-decision-bearing
+and must be frozen before execution if reported. They cannot change a status.
+A failed support test emits `hmmm_undefined`; it is never converted to a perfect
 score.
 
 ## Controls
 
-For each generating system compare:
+### Fitted-family equations and registry
 
-- correct arity and correct recursion tree;
-- lower-arity partitioned models;
-- adjacent arities `n-1` and `n+1` when available;
-- arbitrary models with equal parameter budget;
-- correct arity with all cross-carrier feedback cut;
-- correct leaves with wrong recursion tree;
-- unnested model with matched state dimension;
-- label-shuffled carrier assignment;
-- feed-forward control; and
-- a capacity-only baseline that receives the same inputs but no declared closure.
+Every structural direct family over `m` model carriers uses one-step mean
+
+```text
+mu_i = tanh(
+    Lhat_i z_i
+  + 0.35/(m-1) sum_{j in E_i} What_{ij} z_j
+  + C_i * 0.20 hhat_i prod_{j in E_i} tanh(vhat_{ij}^T z_j)
+  + bhat_i)
+```
+
+where the registry fixes the directed predecessor set `E_i` and closure switch
+`C_i in {0,1}`. An empty product is not used: if `C_i=0` the entire product
+term is absent. Every structural nested family uses the explicit nested equation
+above with hats on every coefficient and with registry-fixed leaf and outer edge
+masks. The capacity-only family over flattened observed dimension `D` is exactly
+
+```text
+h = tanh(U z + a)                 with hidden width 32
+mu = tanh(V h + c)
+```
+
+with dense `U in R^(32 x D)` and `V in R^(D x 32)`. It has no carrier,
+edge, closure-product, or tree parameters. For every family and decoded observed
+scalar coordinate `c`, predictive variance is the state-independent diagonal
+head `v_c = 1e-6 + softplus(rho_c)`. `rho` is trainable, participates in the
+budget, and is decoded by the same copy/average map as the mean. There are no
+other heads, skip paths, hidden layers, attention terms, or learned intervention
+embeddings.
+
+The fitted family ids and masks are exactly:
+
+| id | fixed architecture |
+|---|---|
+| `direct-n` | structural direct family, every `j != i`, `C_i=1` |
+| `partition-m` / `adjacent-m` | the same family over adapter-encoded `m` carriers |
+| `arbitrary-n` | `direct-n` after a sealed scalar-coordinate permutation; consecutive coordinate pairs form carriers, then predictions are inverse-permuted |
+| `feedback-cut-n` | `direct-n` with `E_i` empty and `C_i=0` |
+| `label-shuffle-n` | `direct-n` after a sealed permutation of whole two-coordinate carriers, inverted before scoring |
+| `feed-forward-n` | structural direct family with `E_i={j:j<i}` and `C_i=0` |
+| `nested-n` | structural nested family with every declared leaf and outer edge and both product terms present |
+| `wrong-tree-n` | `nested-n` on the left-rotated contiguous blocks already declared |
+| `outer-cut-n` | `nested-n` with every outer edge and outer product term absent |
+| `label-shuffle-tree-n` | `nested-n` after a sealed permutation of whole outer-carrier blocks, inverted before scoring |
+| `feed-forward-tree-n` | nested family with only source indices lower than target indices at each level and both product terms absent |
+| `arbitrary-tree-n` | `nested-n` after a sealed leaf permutation, repartitioned into blocks of the original ordered sizes, then inverse-permuted before scoring |
+| `unnested-n` | one structural direct family treating every observed leaf pair as a carrier, with no outer summary or tree |
+| `balanced-m-tree` | nested family preserving the observed leaf list but grouping leaf index `k` into outer carrier `floor(k*m/N_leaf)` |
+| `capacity-only-D` | the dense width-32 equation above on the ungrouped flattened state |
+
+All sealed permutations are ranked without replacement by the canonical
+`intervention_plan` stream under role `model_partition/<family_id>` and are
+written before fitting. Whole-carrier label shuffles preserve membership;
+arbitrary partitions change membership. This is the only distinction between
+those controls.
+
+Every tensor scalar has a canonical path formed from family id, tensor name,
+and row-major indices. Every `rho` entry is mandatory so each decoded coordinate
+has an explicit variance; biases enter the ranked pool. For each hypothesis,
+let `P_f` be the resulting raw trainable count for each required family and set
+`B_H=min(4096,min_f P_f)`. If mandatory entries exceed `B_H`, the comparison is
+`BLOCKED`. Otherwise rank every nonmandatory path by SHA-256 of the UTF-8 string
+`arity-recursion-synthetic-v2|<family_id>|<parameter_path>` and activate the
+lowest hashes until exactly `B_H` scalars are active; inactive scalars are fixed
+to zero. Hash ties break by path bytes. The pre-fit receipt records `P_f`, `B_H`,
+the sorted active paths, and their SHA-256. Thus every required family has the
+same number of output-bearing trainable scalars; unused capacity cannot hide in
+nuisance parameters.
+
+Each active matrix uses Glorot-uniform bounds
+`+/-sqrt(6/(fan_in+fan_out))` from `model_initializers`, with fan sizes taken
+from the declared full tensor before masking. Treat `v` as a `1 x 2`
+matrix and `h` as a `2 x 1` matrix for those bounds. Active biases start at zero.
+For a model fitted at noise level `sigma`, every active `rho` starts at
+`softplus_inverse(max(sigma^2-1e-6,1e-12))`; inactive entries remain exactly
+zero and never receive an optimizer state. Adam arithmetic and all model,
+adapter, loss, and rollout arithmetic use IEEE-754 binary64.
+
+All families minimize the mean training Gaussian NLL over observational and
+class-`1..4` training episodes using the frozen optimizer. Restart selection
+uses the corresponding observational and class-`1..4` calibration episodes.
+Inputs are the current adapted state plus the externally applied fixed
+intervention operators; class `5` and `6` never influence fitting or restart
+selection.
+
+### Required comparisons
+
+- `H_A(n)` requires `partition-m` for every `m in {2,3,5,6,7,8}` with `m<n`,
+  `adjacent-(n-1)` when `n-1>=2`, `adjacent-(n+1)`, `arbitrary-n`,
+  `feedback-cut-n`, `label-shuffle-n`, `feed-forward-n`, and
+  `capacity-only-(2n)`. Duplicate `m` families are fitted once.
+- `H_R(n)` requires `wrong-tree-n`, `outer-cut-n`, `feed-forward-tree-n`,
+  `arbitrary-tree-n`, `unnested-n`, the whole-outer-carrier label shuffle of
+  `nested-n`, and `capacity-only-(2*N_leaf)`.
+- `H_7` uses the union of `H_R(7)` and exactly four named heptadic controls:
+  `balanced-6-tree`, `balanced-8-tree`, `arbitrary-tree-7`, and `unnested-7`.
+  Duplicates in the union are fitted and tested once.
+
+Each balanced tree uses the table's floor grouping on the same `N_leaf`
+observations, so six- and eight-carrier controls neither drop nor invent a leaf.
+No control outside these sets affects `SURVIVED`, `FALSIFIED`, or `UNRESOLVED`.
 
 All candidate and control likelihoods are evaluated on the generator's observed
 state, never on a private wrong-arity coordinate space. A direct control with
@@ -285,7 +492,9 @@ r_{m,n}(a) = floor(a*n/m)       for m > n, a in {0,...,m-1}
 For `m < n`, control carrier `q_{m,n}(i)` supplies the predicted mean for
 observed carrier `i`. For `m > n`, all control carriers assigned by
 `r_{m,n}` to observed carrier `i` are averaged to form the predicted mean for
-that observed carrier. The input encoding is the dual map: for `m < n`, control
+that observed carrier. Variances use the same copy rule for `m<n` and the
+arithmetic mean of assigned positive variances for `m>n`. The input encoding is
+the dual map: for `m < n`, control
 carrier `a` receives the arithmetic mean of all observed carriers with
 `q_{m,n}(i)=a`; for `m > n`, control carrier `a` receives observed carrier
 `r_{m,n}(a)`. Carrier-targeted additive interventions are encoded by the same
@@ -293,8 +502,11 @@ map before dynamics: merged controls receive the arithmetic mean of all
 interventions in their bucket, and split controls receive the same intervention
 on every split carrier assigned to the targeted observed carrier. Edge cuts with
 endpoints collapsed into one merged carrier become recorded self-edge no-ops;
-all other cuts map to the corresponding encoded edge. The predictive covariance
-is always a normalized diagonal Gaussian over the generator's observed
+all other cuts map to the corresponding encoded edge. Ablations use the same
+merged/split carrier mapping. Modulations map their endpoints and named summand;
+if that summand is absent in the family, the receipt records a no-op. OOD pairs
+compose these mapped operators in numeric class order. The predictive covariance
+is always the declared diagonal Gaussian over the generator's observed
 coordinates and is included in the same parameter-budget accounting.
 Adjacent-arity comparisons are `BLOCKED` if this adapter and likelihood cannot
 be emitted exactly.
@@ -311,12 +523,42 @@ No decision threshold may be changed after any sealed output is opened.
 
 ## Decision rule
 
-For each hypothesis, compute the paired sealed-seed difference between the candidate and
-every required control for both primary decision outcomes: interventional log score and
-recovery.
-Use simultaneous 95% bootstrap intervals over sealed seeds and report the paired
-standardized effect. Control family-wise error across all required control/outcome
-comparisons with a max-statistic paired permutation procedure at `alpha=0.05`.
+For each `H_A(n)`, `H_R(n)`, and `H_7`, first average each family outcome within
+each sealed seed equally over the three noise levels and the specified held-out
+episodes. For every required control `c`, define candidate-favoring paired values
+
+```text
+d_{s,c,NLL}      = NLL_{s,c} - NLL_{s,candidate}
+d_{s,c,recovery} = Gamma_{s,candidate} - Gamma_{s,c}
+```
+
+over the `32` sealed seeds. The point estimate is the arithmetic mean. The paired
+standardized effect is `mean(d)/sd(d)` with sample standard deviation denominator
+`31`; `sd=0`, NaN, or infinity emits `hmmm_undefined` and forces `UNRESOLVED`.
+
+The simultaneous interval uses exactly `B=65536` nonparametric paired bootstrap
+draws. For bootstrap index `b`, draw `32` sealed-seed indices with replacement
+from the canonical `bootstrap` stream and use the same index vector for every
+required control and both outcomes in that hypothesis. For each cell compute its
+bootstrap mean and sample standard error `se_b`; define
+`Z_b=max_{c,outcome}|(mean_b(d)-mean(d))/se_b|`. A zero or nonfinite `se_b`
+emits `hmmm_undefined`. Let `q95` be sorted
+`Z[ceil(0.95*B)-1]` under zero-based indexing. With original
+`se=sd(d)/sqrt(32)`, the simultaneous interval for each mean is
+`[mean(d)-q95*se, mean(d)+q95*se]`; endpoints equal to zero do not exclude zero.
+
+The family-wise test uses exactly `P=65536` sampled paired sign permutations.
+For permutation `p`, obtain one sign per sealed seed from the canonical
+`permutation` stream (`u<0.5` gives `-1`, otherwise `+1`) and reuse that sign
+vector for every required control and both outcomes in the hypothesis. Define
+`T_{c,o}=mean(d)/(sd(d)/sqrt(32))`; recompute both the mean and sample standard
+deviation after applying each sign vector, and set
+`M_p=max_{c,o}|T_{c,o}^{(p)}|`. The two-sided adjusted value for each comparison
+is
+`p_adj=(1 + count_p[M_p >= |T_{c,o}|])/(P+1)`. Comparisons use `>=`, include the
+finite-sample `+1` correction, and are never replaced by an exact-enumeration or
+different resampling method. `alpha=0.05`; direction is determined separately
+by the sign of `mean(d)`.
 
 `SURVIVED` requires all of the following:
 
@@ -324,12 +566,13 @@ comparisons with a max-statistic paired permutation procedure at `alpha=0.05`.
 2. every simultaneous 95% interval excludes zero in the candidate-favoring direction;
 3. every max-statistic adjusted paired permutation test has `p < 0.05`;
 4. the smallest paired standardized effect across required comparisons is at least `0.5`;
-5. calibration does not worsen by more than `0.02` absolute expected calibration error;
+5. every required candidate/control pair satisfies the frozen `0.02` ECE guardrail;
 6. the result is reproduced by an independent implementation from the sealed run receipt.
 
-`FALSIFIED` applies when any required equal-budget control outperforms the candidate on
-either primary decision outcome with a simultaneous 95% interval excluding zero after the
-frozen family-wise adjustment. A carrier-specific claim is also falsified when the
+`FALSIFIED` applies when any required equal-budget control has a negative
+candidate-favoring mean on either primary outcome, its simultaneous interval is
+strictly below zero, and its adjusted permutation value is `<0.05`. A
+carrier-specific claim is also falsified when the
 candidate-minus-label-shuffle interval lies wholly inside the equivalence band
 `[-0.2, 0.2]` standardized effect on both primary decision outcomes.
 
@@ -341,10 +584,11 @@ recursion claim receives its own result.
 
 ## Stop conditions
 
-Stop before fitting and mark `BLOCKED` if parameter budgets, intervention receipts,
-sealed splits, or independent replay cannot be generated exactly. Runtime is allowed to
-finish naturally once launched; resource adequacy is assessed before launch rather than
-with an arbitrary wall-clock cutoff.
+Stop before fitting and mark `BLOCKED` if the accepted-system attempt, canonical
+stream keys, family masks, parameter budgets, intervention receipts, embedded
+primary certificate, sealed splits, or independent replay cannot be generated
+exactly. Runtime is allowed to finish naturally once launched; resource adequacy
+is assessed before launch rather than with an arbitrary wall-clock cutoff.
 
 ## Outputs
 
@@ -360,7 +604,8 @@ REPLAY.md
 ```
 
 Each file includes source commit, implementation digest, environment, seed range,
-parameter budgets, estimator definitions, and the `WORK_GRAPH.json` digest.
+parameter budgets, estimator definitions, the SHA-256 of this exact
+`PREREGISTRATION.md`, and the `WORK_GRAPH.json` digest.
 
 ## Non-use boundary
 
@@ -372,7 +617,9 @@ necessity.
 ## Usage guidance
 
 Implement only after this document, `PAPER.md`, and `CLAIM_LEDGER.json` are frozen in
-one commit.
+one commit. The implementation must first emit the accepted-system attempts,
+canonical stream keys, fitted-family masks, intervention allocation, and embedded
+primary-certificate hash without opening sealed outputs.
 Development seeds may expose bugs but cannot alter the sealed decision rule. Publish
 negative and unresolved outcomes with the same receipts as positive outcomes.
 
