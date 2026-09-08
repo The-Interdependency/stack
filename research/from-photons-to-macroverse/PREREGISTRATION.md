@@ -1,7 +1,7 @@
 # Preregistration: matched arity and recursion discrimination
 
 ```text
-protocol version: 0.3.2
+protocol version: 0.3.3
 run status:       not-run
 human subjects:   none
 animal subjects:  none
@@ -43,7 +43,7 @@ same local state dimension and update family.
 
 ## Frozen implementation configuration
 
-Use configuration `arity-recursion-synthetic-v4` exactly. The version changes
+Use configuration `arity-recursion-synthetic-v5` exactly. The version changes
 because the repairs below change result-bearing bytes; no earlier identifier is
 an alias.
 
@@ -95,12 +95,12 @@ process noise. No intervention may be re-expressed as an undeclared additive
 input channel.
 
 Every result-bearing stochastic draw is deterministic under
-`arity-recursion-synthetic-v4`, seed, arity, noise level, stream domain, role,
+`arity-recursion-synthetic-v5`, seed, arity, noise level, stream domain, role,
 index tuple, and digest-block number. The SHA-256 input is the UTF-8 encoding of
 this whitespace-free JSON array:
 
 ```text
-["arity-recursion-synthetic-v4",s,n,sigma_milli,domain,role,[k0,...,kp],block]
+["arity-recursion-synthetic-v5",s,n,sigma_milli,domain,role,[k0,...,kp],block]
 ```
 
 Integers use minimal unsigned base-10 notation (`0`, never `00`); `sigma_milli`
@@ -140,7 +140,8 @@ For an `intervention_plan` target schedule, candidate position `k` is the
 target-schedule `choice_kind` tokens are `state_target`, `edge_target`,
 `carrier_target`, `summand_target`, and `recovery_target` for classes `1`
 through `5`, respectively; `split` is the allocation-table split, and `r` is
-that class and split's zero-based episode ordinal. Start time is the separate
+that dedicated class and split's zero-based episode ordinal, except for the
+class-`6` component continuation ordinals frozen under **Interventions**. Start time is the separate
 `choice_kind` token `start_time`: classes `1..4` use tuple
 `[episode_id,intervention_class,"start_time"]`, `block=0`, and
 `start=floor(u_0*128)` for class `1` or `start=floor(u_0*113)` for classes
@@ -289,9 +290,21 @@ These are additional to the `64/16/16` observational episodes. Episode ids are
 exactly `obs/<split>/<three-digit ordinal>` and
 `int/<class>/<split>/<three-digit ordinal>`, where `split` is `train`, `cal`, or
 `test`. Class `5` and `6` are never used for fitting or restart selection.
-Class `6` contains the six unordered pairs from classes `1..4`, in lexicographic
-order, exactly twice each. Both interventions in a class-`6` episode start at
-the same scheduled transition. This allocation is crossed with all three noise
+For class `6`, define the ordered pair list
+`P=((1,2),(1,3),(1,4),(2,3),(2,4),(3,4))`. Zero-based class-`6` episode ordinal
+`e in {0,...,11}` receives pair `P[floor(e/2)]`, so each pair occurs in two
+consecutive episodes. For each component class `c` in that pair, let
+`o_c(e)=count{e'<e:c in P[floor(e'/2)]}`. Its target uses the existing class-`c`
+test target-schedule tuple and candidate list with schedule ordinal
+`r=8+o_c(e)`: explicitly, candidate `k` is keyed by
+`["schedule/test/<choice_kind_c>",c,k]`, where `choice_kind_c` is
+`state_target`, `edge_target`, `carrier_target`, or `summand_target` for
+`c=1,2,3,4`. Thus the eight dedicated class-`c` test targets consume ordinals
+`0..7`, and that class's six OOD component appearances consume `8..13` without
+reuse; the general block rule determines any reshuffle. The receipt stores both
+component classes, both `r` values, every ranking key, and both selected targets
+for each `e`. Both interventions start at the class-`6` episode's one common
+scheduled transition and compose in numeric class order. This allocation is crossed with all three noise
 levels; it is not multiplied or reweighted after sealed outputs are opened.
 
 All plans are generated before any model is fit and stored in
@@ -488,7 +501,7 @@ Every tensor scalar path is the UTF-8 encoding of this whitespace-free JSON
 array:
 
 ```text
-["arity-recursion-synthetic-v4","parameter-mask",family_id,tensor_name,[i0,...,iq]]
+["arity-recursion-synthetic-v5","parameter-mask",family_id,tensor_name,[i0,...,iq]]
 ```
 
 `family_id` and `tensor_name` obey `[a-z0-9_./-]+`. Each concrete family id is
