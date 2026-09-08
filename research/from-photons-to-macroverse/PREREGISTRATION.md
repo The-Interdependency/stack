@@ -1,7 +1,7 @@
 # Preregistration: matched arity and recursion discrimination
 
 ```text
-protocol version: 0.3.1
+protocol version: 0.3.2
 run status:       not-run
 human subjects:   none
 animal subjects:  none
@@ -43,7 +43,7 @@ same local state dimension and update family.
 
 ## Frozen implementation configuration
 
-Use configuration `arity-recursion-synthetic-v3` exactly. The version changes
+Use configuration `arity-recursion-synthetic-v4` exactly. The version changes
 because the repairs below change result-bearing bytes; no earlier identifier is
 an alias.
 
@@ -95,12 +95,12 @@ process noise. No intervention may be re-expressed as an undeclared additive
 input channel.
 
 Every result-bearing stochastic draw is deterministic under
-`arity-recursion-synthetic-v3`, seed, arity, noise level, stream domain, role,
+`arity-recursion-synthetic-v4`, seed, arity, noise level, stream domain, role,
 index tuple, and digest-block number. The SHA-256 input is the UTF-8 encoding of
 this whitespace-free JSON array:
 
 ```text
-["arity-recursion-synthetic-v3",s,n,sigma_milli,domain,role,[k0,...,kp],block]
+["arity-recursion-synthetic-v4",s,n,sigma_milli,domain,role,[k0,...,kp],block]
 ```
 
 Integers use minimal unsigned base-10 notation (`0`, never `00`); `sigma_milli`
@@ -137,15 +137,23 @@ random-number source, output lane, block rule, or key encoding is admissible.
 For an `intervention_plan` target schedule, candidate position `k` is the
 `draw_index` in tuple
 `["schedule/<split>/<choice_kind>",intervention_class,k]`. The only
-`choice_kind` tokens are `state_target`, `edge_target`, `carrier_target`,
-`summand_target`, and `recovery_target` for classes `1` through `5`,
-respectively; `split` is the allocation-table split, and `r` is that class and
-split's zero-based episode ordinal. A model-partition permutation instead uses
+target-schedule `choice_kind` tokens are `state_target`, `edge_target`,
+`carrier_target`, `summand_target`, and `recovery_target` for classes `1`
+through `5`, respectively; `split` is the allocation-table split, and `r` is
+that class and split's zero-based episode ordinal. Start time is the separate
+`choice_kind` token `start_time`: classes `1..4` use tuple
+`[episode_id,intervention_class,"start_time"]`, `block=0`, and
+`start=floor(u_0*128)` for class `1` or `start=floor(u_0*113)` for classes
+`2..4`. Each class-`6` episode uses tuple `[episode_id,6,"start_time"]`,
+`block=0`, and `start=floor(u_0*113)` for the common composed-operator start.
+Class `5` has the fixed `t0=0` and consumes no start-time draw. A
+model-partition permutation instead uses
 role `model_partition/<family_id>`, tuple
 `["schedule/model_partition",0,k]`, `r` equal to the output position, and
 `block=0`. Candidate `k` is its position in the emitted lexicographic candidate
-list. These fixed schedule tuples, not an actual episode id or a mutable draw
-cursor, supply the three `intervention_plan` domain fields.
+list. Target and partition schedules use the displayed `schedule/...` literal;
+start-time draws use the displayed actual `episode_id`. No mutable draw cursor
+or alternate tuple supplies the three `intervention_plan` domain fields.
 
 The stream domains are exactly:
 
@@ -455,7 +463,7 @@ integer and admit no other spelling or separator:
 |---|---|---|
 | `direct-n` | `direct/<n>` | structural direct family, every `j != i`, `C_i=1` |
 | `partition-m` | `partition/<m>` | the same family over adapter-encoded `m` carriers |
-| `adjacent-m` | `adjacent/<m>` | the same family over adapter-encoded `m` carriers |
+| `adjacent-m` | `adjacent/<m>` unless aliased to `partition/<m>` by the duplicate rule below | the same family over adapter-encoded `m` carriers |
 | `arbitrary-n` | `arbitrary/<n>` | `direct-n` after a sealed scalar-coordinate permutation; consecutive coordinate pairs form carriers, then predictions are inverse-permuted |
 | `feedback-cut-n` | `feedback-cut/<n>` | `direct-n` with `E_i` empty and `C_i=0` |
 | `label-shuffle-n` | `label-shuffle/<n>` | `direct-n` after a sealed permutation of whole two-coordinate carriers, inverted before scoring |
@@ -480,7 +488,7 @@ Every tensor scalar path is the UTF-8 encoding of this whitespace-free JSON
 array:
 
 ```text
-["arity-recursion-synthetic-v3","parameter-mask",family_id,tensor_name,[i0,...,iq]]
+["arity-recursion-synthetic-v4","parameter-mask",family_id,tensor_name,[i0,...,iq]]
 ```
 
 `family_id` and `tensor_name` obey `[a-z0-9_./-]+`. Each concrete family id is
@@ -517,6 +525,23 @@ SHA-256, and any candidate-to-shuffle path map. Thus every required family has
 the same number of output-bearing trainable scalars; unused capacity cannot hide
 in nuisance parameters or a label-specific mask lottery.
 
+Every observed scalar, direct carrier, outer carrier, and leaf carries its
+immutable pre-permutation identity. Candidate and label-shuffle programs use
+that original identity, not current model position, to freeze every binary64
+reduction. A two-coordinate dot product is the serial left fold in coordinate
+order `0,1`; each structural sum is the serial left fold from `+0.0` in
+lexicographic original source-identity order; and each structural product is the
+serial left fold from `1.0` in that same order. Loss terms within a minibatch are
+left-folded by `draw_index`, then transition index, then lexicographic original
+observed scalar identity. Recovery squared coordinates and every reported mean
+use the corresponding lexicographic original-identity order and a serial left
+fold before the single final division. Reverse-mode gradients are derivatives
+of this ordered scalar program and accumulate contributions in the same order.
+Reassociation, tree or parallel reductions, model-position ordering, and fused
+multiply-add contraction are forbidden. These rules apply before fitting,
+during every optimizer update, and during rollout and scoring, so a carrier
+permutation changes addresses only and cannot change reduction order.
+
 Each active matrix uses Glorot-uniform bounds
 `+/-sqrt(6/(fan_in+fan_out))` from `model_initializers`, with fan sizes taken
 from the declared full tensor before masking. Treat `v` as a `1 x 2`
@@ -539,8 +564,13 @@ selection.
   `m in {2,3,5,6,7,8}` with `m<n`,
   `adjacent-(n-1)` when `n-1>=2`, `adjacent-(n+1)`, `arbitrary-n`,
   `feedback-cut-n`, `feed-forward-n`, and `capacity-only-(2n)`. It also requires
-  `label-shuffle-n` solely as the exact invariance control below. Duplicate `m`
-  families are fitted once.
+  `label-shuffle-n` solely as the exact invariance control below. Let
+  `M_partition={m in {2,3,5,6,7,8}:m<n}`. If an adjacent request has carrier
+  count `m in M_partition`, it is an exact alias of that one `partition-m`
+  control: the sole concrete id is `partition/<m>`, and no `adjacent/<m>` mask,
+  stream, fit, or test cell exists. If its carrier count is not in
+  `M_partition`, its sole id is `adjacent/<m>`. Thus duplicate carrier counts
+  are fitted and tested exactly once under the unique id selected by this rule.
 - `H_R(n)` requires as superiority controls `wrong-tree-n`, `outer-cut-n`,
   `feed-forward-tree-n`, `arbitrary-tree-n`, `unnested-n`, and
   `capacity-only-(2*N_leaf)`. It also requires `label-shuffle-tree-n` solely as
