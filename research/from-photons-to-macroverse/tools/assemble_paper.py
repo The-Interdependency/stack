@@ -26,6 +26,11 @@ def assemble() -> bytes:
     for item in manifest["fragments"]:
         path = PROJECT / item["path"]
         data = path.read_bytes()
+        observed_bytes = len(data)
+        if observed_bytes != item["bytes"]:
+            raise SystemExit(
+                f"fragment length drift: {item['path']}: expected {item['bytes']}, observed {observed_bytes}"
+            )
         observed = sha256(data)
         if observed != item["sha256"]:
             raise SystemExit(
