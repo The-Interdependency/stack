@@ -187,7 +187,7 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
         for phrase in ("run status: not-run", "human subjects: none", "animal subjects: none", "LLM calls: none", "seeds `32..63`: sealed decision set", "`SURVIVED` requires all of the following", "`FALSIFIED` applies", "`UNRESOLVED` applies", "No outcome classifies a human, animal, model, organization, or physical system as conscious"):
             self.assertIn(phrase, flat)
-        for phrase in ("configuration `arity-recursion-synthetic-v2` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam with learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
+        for phrase in ("configuration `arity-recursion-synthetic-v3` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam with learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
             self.assertIn(phrase, flat)
         for phrase in ("Synthetic generator", "SHA-256 input is the UTF-8 encoding", "process_noise", "intervention_plan", "model_initializers", "Discrete choices use `floor(u*K)`", "Matched candidate/control comparisons use the same", "Held-out interventional negative log likelihood is the mean one-step predictive Gaussian NLL", "ordered child-arity vector", "left-rotated child-arity vector", "Embedded primary-outcome certificate", "observed scalar-coordinate identity", "input encoding is the dual map", "Adjacent-arity comparisons are `BLOCKED`"):
             self.assertIn(phrase, flat)
@@ -205,8 +205,8 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
 
         for phrase in (
-            "protocol version: 0.3.0",
-            '["arity-recursion-synthetic-v2",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
+            "protocol version: 0.3.1",
+            '["arity-recursion-synthetic-v3",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
             "concatenated placeholders or language-native float strings are forbidden",
             "stability/00` through `stability/15",
             "If no attempt is accepted, that system is `BLOCKED`",
@@ -256,18 +256,25 @@ class Contracts(unittest.TestCase):
             self.assertIn(phrase, flat)
 
         for phrase in (
-            "One scalar key consumes exactly one lane from `block=0`",
-            "implementations never take a second lane or advance to `block>0`",
-            '["arity-recursion-synthetic-v2","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
+            "`block=floor(r/K)`",
+            "ordinal `K` starts the deterministic block-`1` reshuffle",
+            '`["schedule/<split>/<choice_kind>",intervention_class,k]`',
+            '["arity-recursion-synthetic-v3","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
             "The label-shuffle families are the sole exception to independent ranking",
+            "`feed-forward/tree/<n>`",
             "let `S_f(a)` be the set of original observed scalar coordinates",
-            "The class-`5` recovery cut uses this same map",
+            "The class-`5` recovery cut uses both the `W` and target-product maps",
             "exactly `0.5*NLL_full + 0.5*NLL_cut`",
+            "`F_e(q)=0.5*mean_full(1[p<=q])+0.5*mean_cut(1[p<=q])`",
+            "Mapping preserves the plan's named summand type",
             "The simultaneous standardized-effect interval is `I_g=[g-q95_g,g+q95_g]`",
+            "define the label-shuffle standardized effect and interval by convention as `g=0` and `I_g=[0,0]`",
+            "These shuffle cells never enter `Z_b`, `G_b`, `M_p`, or their maxima",
         ):
             self.assertIn(phrase, flat)
 
         self.assertNotIn("arity-recursion-synthetic-v1", text)
+        self.assertNotIn("arity-recursion-synthetic-v2", text)
 
     def test_human_and_machine_entrypoints_agree(self) -> None:
         readme = (PROJECT / "README.md").read_text(encoding="utf-8")
