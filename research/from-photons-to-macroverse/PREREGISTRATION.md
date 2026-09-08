@@ -111,11 +111,20 @@ are forbidden. Every listed field is present; use the literal token `"none"`
 for an inapplicable field. A nested carrier or tensor component is one token
 such as `outer/3/leaf/2`, not an implementation-native tuple string.
 
-Each digest is split in order into four big-endian unsigned 64-bit words. Each
-word `w` maps to the open-unit uniform `(w+0.5)/2^64`. Words `(0,1)` and `(2,3)`
-map to standard-normal pairs as
-`sqrt(-2 ln u0)*(cos(2*pi*u1), sin(2*pi*u1))` in IEEE-754 binary64. No other
-random-number source or key encoding is admissible.
+Each digest is split in order into four big-endian unsigned 64-bit words and
+each word `w_k` maps to the open-unit uniform `u_k=(w_k+0.5)/2^64`. One scalar
+key consumes exactly one lane from `block=0`:
+
+```text
+uniform or discrete scalar: u_0
+standard-normal scalar:     sqrt(-2 ln u_0) * cos(2*pi*u_1)
+```
+
+`u_2`, `u_3`, and the Box-Muller sine result are discarded. A requested scalar
+must have its own complete index tuple; implementations never take a second lane
+or advance to `block>0`. Exhaustion of the declared index space is `BLOCKED` and
+requires a new protocol version, not implicit block consumption. No other
+random-number source, output lane, block rule, or key encoding is admissible.
 
 The stream domains are exactly:
 
@@ -300,7 +309,7 @@ Primary decision outcomes are:
 
 Held-out interventional negative log likelihood is the mean one-step predictive
 Gaussian NLL over every post-burn-in transition and observed scalar coordinate
-in all held-out intervention episodes from classes `1..6`:
+in all held-out intervention episode ids from classes `1..6`:
 
 ```text
 NLL = mean 0.5 * ((x_{t+1,c} - mu_{t,c})^2 / v_{t,c}
@@ -310,7 +319,11 @@ NLL = mean 0.5 * ((x_{t+1,c} - mu_{t,c})^2 / v_{t,c}
 where `mu` and diagonal variance `v` are decoded to the generator's observed
 coordinate system before scoring, and `v >= 1e-6`. The same held-out episode
 ids, intervention plans, and process-noise keys are used for every compared
-candidate/control family.
+candidate/control family. A class-`5` id contains both modes; compute its
+episode value as exactly `0.5*NLL_full + 0.5*NLL_cut`. Each other id has one
+trajectory. For each `(seed, sigma)`, average the resulting `60` episode-id
+values with equal weight; then average the three noise-level values equally.
+Neither class-`5` mode is omitted or counted as an additional episode.
 
 Recovery uses exactly the `16` held-out class-`5` episodes. Matched full and cut
 episodes share accepted coefficients, true post-burn-in initial state,
@@ -434,18 +447,45 @@ written before fitting. Whole-carrier label shuffles preserve membership;
 arbitrary partitions change membership. This is the only distinction between
 those controls.
 
-Every tensor scalar has a canonical path formed from family id, tensor name,
-and row-major indices. Every `rho` entry is mandatory so each decoded coordinate
-has an explicit variance; biases enter the ranked pool. For each hypothesis,
-let `P_f` be the resulting raw trainable count for each required family and set
+Every tensor scalar path is the UTF-8 encoding of this whitespace-free JSON
+array:
+
+```text
+["arity-recursion-synthetic-v2","parameter-mask",family_id,tensor_name,[i0,...,iq]]
+```
+
+`family_id` and `tensor_name` obey `[a-z0-9_./-]+`. A concrete family id replaces
+the table's metavariable with `/` plus its minimal integer, for example
+`direct/7`, `partition/3`, `balanced/6/tree`, and `capacity-only/44`. Structural
+direct tensor names are exactly `l`, `w`, `v`, `h`, `b`, and `rho`; nested names
+are exactly `leaf/l`, `leaf/w`, `leaf/v`, `leaf/h`, `leaf/b`, `outer/w`,
+`outer/v`, `outer/h`, and `rho`; dense names are exactly `u`, `a`, `v`, `c`, and
+`rho`. Indices use minimal unsigned base-10 integers in row-major axis order,
+and a scalar tensor uses `[]`. No bracket notation, delimiter substitution,
+escaping, omitted axis, or implementation-native tuple string is admissible.
+
+Every `rho` path is mandatory so each decoded coordinate has an explicit
+variance; biases enter the ranked pool. For each hypothesis, let `P_f` be the
+resulting raw trainable count for each required family and set
 `B_H=min(4096,min_f P_f)`. If mandatory entries exceed `B_H`, the comparison is
-`BLOCKED`. Otherwise rank every nonmandatory path by SHA-256 of the UTF-8 string
-`arity-recursion-synthetic-v2|<family_id>|<parameter_path>` and activate the
-lowest hashes until exactly `B_H` scalars are active; inactive scalars are fixed
-to zero. Hash ties break by path bytes. The pre-fit receipt records `P_f`, `B_H`,
-the sorted active paths, and their SHA-256. Thus every required family has the
-same number of output-bearing trainable scalars; unused capacity cannot hide in
-nuisance parameters.
+`BLOCKED`. Otherwise rank every nonmandatory path by SHA-256 of those exact path
+bytes and activate the lowest hashes until exactly `B_H` scalars are active;
+inactive scalars are fixed to zero. Hash ties break by path bytes.
+
+The label-shuffle families are the sole exception to independent ranking. First
+select the `direct-n` or `nested-n` candidate mask. Derive the corresponding
+`label-shuffle-n` or `label-shuffle-tree-n` mask by applying the sealed carrier
+permutation to every candidate parameter path, including `rho` and biases, and
+replace only the concrete family-id element with the corresponding
+`label-shuffle/<n>` or `label-shuffle/tree/<n>` id.
+Initialize its tensors and Adam states by the same permutation of the candidate
+restart, and use the candidate minibatch indices on permuted inputs. No
+family-id hash is evaluated for a label-shuffle mask.
+
+The pre-fit receipt records `P_f`, `B_H`, the canonical active path bytes, their
+SHA-256, and any candidate-to-shuffle path map. Thus every required family has
+the same number of output-bearing trainable scalars; unused capacity cannot hide
+in nuisance parameters or a label-specific mask lottery.
 
 Each active matrix uses Glorot-uniform bounds
 `+/-sqrt(6/(fan_in+fan_out))` from `model_initializers`, with fan sizes taken
@@ -508,6 +548,40 @@ if that summand is absent in the family, the receipt records a no-op. OOD pairs
 compose these mapped operators in numeric class order. The predictive covariance
 is always the declared diagonal Gaussian over the generator's observed
 coordinates and is included in the same parameter-budget accounting.
+
+For every permutation or regrouping family, let `S_f(a)` be the set of original
+observed scalar coordinates assigned to model carrier `a`, and for a nested
+family let `O_f(g)` be the set of original leaf pairs assigned to outer group
+`g`; these sets are determined completely by the registry's permutation,
+contiguous-block, unnested-singleton, or floor-grouping rule. Apply interventions
+as follows:
+
+- `label-shuffle-n` and `label-shuffle-tree-n` conjugate the complete operator
+  by the sealed permutation, including targets, sources, tensor terms, state
+  coordinates, and duration, then inverse-permute the prediction;
+- `arbitrary-n` maps a scalar state target to its unique permuted coordinate.
+  A generator edge from carrier coordinate set `J` to target set `I` maps to
+  every model edge `a -> b` with `S_f(a) intersect J` and `S_f(b) intersect I`
+  nonempty; ablation clamps every mapped coordinate; modulation changes that
+  same edge set and each affected target product term exactly once;
+- `wrong-tree-n`, `arbitrary-tree-n`, and `balanced-m-tree` map an outer edge
+  `J -> I` to every outer edge `g -> h` whose `O_f(g)` overlaps source leaves
+  `J` and whose `O_f(h)` overlaps target leaves `I`. A child edge maps to the
+  corresponding leaf edge when both leaves remain in one outer group, otherwise
+  to the outer edge between their assigned groups. State targets and ablations
+  follow the unique leaf-scalar identity;
+- `unnested-n` treats each leaf pair as one direct carrier. Both original outer
+  and child edges map to every direct leaf edge whose source and target leaf
+  identities belong to the original source and target sets;
+- `capacity-only-D` has no structural edge or product term, so cuts and
+  modulations are receipted no-ops; scalar additions and ablation clamps still
+  apply to their identical flattened coordinates.
+
+For any mapped edge set, an architecture mask such as feed-forward or outer-cut
+removes absent edges after mapping; only an empty resulting set is a no-op. The
+class-`5` recovery cut uses this same map. Every `S_f`, `O_f`, mapped edge list,
+and no-op is emitted before fitting in lexicographic order.
+
 Adjacent-arity comparisons are `BLOCKED` if this adapter and likelihood cannot
 be emitted exactly.
 
@@ -547,6 +621,14 @@ emits `hmmm_undefined`. Let `q95` be sorted
 `se=sd(d)/sqrt(32)`, the simultaneous interval for each mean is
 `[mean(d)-q95*se, mean(d)+q95*se]`; endpoints equal to zero do not exclude zero.
 
+The same bootstrap index vectors also define the standardized-effect interval.
+For every cell compute `g=mean(d)/sd(d)` and
+`g_b=mean_b(d)/sd_b(d)`, then
+`G_b=max_{c,outcome}|g_b-g|` across the same hypothesis family. Let `q95_g` be
+sorted `G[ceil(0.95*B)-1]`. The simultaneous standardized-effect interval is
+`I_g=[g-q95_g,g+q95_g]`. A zero or nonfinite original or bootstrap standard
+deviation emits `hmmm_undefined`; no raw-mean interval is rescaled or substituted.
+
 The family-wise test uses exactly `P=65536` sampled paired sign permutations.
 For permutation `p`, obtain one sign per sealed seed from the canonical
 `permutation` stream (`u<0.5` gives `-1`, otherwise `+1`) and reuse that sign
@@ -572,9 +654,9 @@ by the sign of `mean(d)`.
 `FALSIFIED` applies when any required equal-budget control has a negative
 candidate-favoring mean on either primary outcome, its simultaneous interval is
 strictly below zero, and its adjusted permutation value is `<0.05`. A
-carrier-specific claim is also falsified when the
-candidate-minus-label-shuffle interval lies wholly inside the equivalence band
-`[-0.2, 0.2]` standardized effect on both primary decision outcomes.
+carrier-specific claim is also falsified when the candidate-minus-label-shuffle
+`I_g` lies wholly inside the closed equivalence band `[-0.2,0.2]` on both
+primary decision outcomes. Equality to either band endpoint counts as inside.
 
 `UNRESOLVED` applies when neither rule is met, support/estimator assumptions fail, an
 implementation discrepancy remains, or a required comparison cannot be equalized.

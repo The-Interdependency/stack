@@ -191,7 +191,7 @@ class Contracts(unittest.TestCase):
             self.assertIn(phrase, flat)
         for phrase in ("Synthetic generator", "SHA-256 input is the UTF-8 encoding", "process_noise", "intervention_plan", "model_initializers", "Discrete choices use `floor(u*K)`", "Matched candidate/control comparisons use the same", "Held-out interventional negative log likelihood is the mean one-step predictive Gaussian NLL", "ordered child-arity vector", "left-rotated child-arity vector", "Embedded primary-outcome certificate", "observed scalar-coordinate identity", "input encoding is the dual map", "Adjacent-arity comparisons are `BLOCKED`"):
             self.assertIn(phrase, flat)
-        self.assertIn("No other random-number source or key encoding is admissible", flat)
+        self.assertIn("No other random-number source, output lane, block rule, or key encoding is admissible", flat)
         self.assertIn("`SYSTEMS.json` must carry the realized coefficient tensors", flat)
         self.assertIn("q_{m,n}(i) = floor(i*m/n)", text)
         self.assertIn("r_{m,n}(a) = floor(a*n/m)", text)
@@ -252,6 +252,18 @@ class Contracts(unittest.TestCase):
             "exactly `B=65536` nonparametric paired bootstrap draws",
             "exactly `P=65536` sampled paired sign permutations",
             "finite-sample `+1` correction",
+        ):
+            self.assertIn(phrase, flat)
+
+        for phrase in (
+            "One scalar key consumes exactly one lane from `block=0`",
+            "implementations never take a second lane or advance to `block>0`",
+            '["arity-recursion-synthetic-v2","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
+            "The label-shuffle families are the sole exception to independent ranking",
+            "let `S_f(a)` be the set of original observed scalar coordinates",
+            "The class-`5` recovery cut uses this same map",
+            "exactly `0.5*NLL_full + 0.5*NLL_cut`",
+            "The simultaneous standardized-effect interval is `I_g=[g-q95_g,g+q95_g]`",
         ):
             self.assertIn(phrase, flat)
 
