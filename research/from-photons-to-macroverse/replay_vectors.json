@@ -48,7 +48,10 @@
     "complete_path_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"model_initializers\",\"parameter\",[\"direct/7\",0,\"w\",3,5,1,0],0]",
     "complete_path_sha256": "a1361ff6b2df7b177d7d59642032cf93800f9d3529c7855ff8ad1af13e521ce0",
     "different_carrier_sha256": "678465b036832878696515fa8396a5b437f0e7e5be122ff303f4979157a2e93e",
-    "distinct": true
+    "distinct": true,
+    "glorot_f64": "3fd4567787472ab1",
+    "rho_sigma_050_f64": "c017f663be616d7b",
+    "unnested_kind": "direct"
   },
   "minibatch": {
     "draw_key_sha256": "8ef7dab016a249a135928d3b10acd46ed55c84113d9812ac7640defeeccc1884",
@@ -118,8 +121,15 @@
     ]
   },
   "schema": "the-interdependency.arity-recursion-replay-vectors",
+  "stability_probe": {
+    "distinct": true,
+    "initial_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"stability_probe\",\"direct/attempt/0\",[0,\"stability/00\",\"initial\",0,\"3\",1],0]",
+    "noise_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"stability_probe\",\"direct/attempt/0\",[0,\"stability/00\",\"noise\",0,\"3\",1],0]"
+  },
   "stream": {
     "bytes_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"coefficients\",\"direct/attempt/0\",[\"w\",3,5,1,0],0]",
+    "maximum_open_uniform_f64": "3fefffffffffffff",
+    "minimum_open_uniform_f64": "3be0000000000000",
     "normal_f64": "bfd2e86ee75a1753",
     "sha256": "061bd70dc1ffc5f4bb9664eff24fac0c1ec4a53ddfafc5b39b14f3186a29449f",
     "uniform_0_f64": "3f986f5c3707ff18",

@@ -5,9 +5,9 @@
   "protocol_version": "0.4.0",
   "status": "not-run",
   "reference_path": "tools/replay_reference.py",
-  "reference_sha256": "a4258d2318192477f6e1db6c8b6845104383f43658050e3b598134b67ba2ef70",
-  "contract_sha256": "3f9ca385203effd349a0c03c279cdaa06f357a928849f1c0afd86e61b18236d2",
+  "reference_sha256": "476c3647025adec07d791347c630569679a72f90be20ac579c4d720bd733d9cf",
+  "contract_sha256": "fd8091d81785ec9fb90612a8faa8b31596030fd5ef74c2d547a77d0c1d011cc8",
   "vectors_path": "replay_vectors.json",
-  "vectors_sha256": "ae286e5dca1740e0a3d12a9db22c49523aea877cfb88876b549766597e0740ea",
+  "vectors_sha256": "2bc24cd1be2729f34aa709b7398ea28493adcf51bf344a53b20ee8b0c01861b9",
   "verification_command": "python tools/replay_reference.py verify"
 }

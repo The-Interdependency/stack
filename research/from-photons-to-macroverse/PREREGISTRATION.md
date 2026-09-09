@@ -139,6 +139,8 @@ standard-normal scalar:     sqrt(-2 ln u_0) * cos(2*pi*u_1)
 
 The displayed formula is explanatory. Its only result-bearing evaluation is the
 fixed-precision implementation and frozen output vectors in the pinned executable;
+when binary64 conversion would round the exact rational to `1.0`, the executable
+uses the greatest binary64 value below one,
 language-native `ln`, `cos`, `sqrt`, `pi`, `tanh`, `softplus`, and Gaussian CDF are
 not replay authorities.
 
@@ -182,7 +184,7 @@ The stream domains are exactly:
 coefficients:        role, tensor_name, carrier_i, carrier_j, row, column
 initial_state:       episode_id, carrier_i, coordinate
 process_noise:       episode_id, phase, phase_time, carrier_id, coordinate
-stability_probe:     attempt, probe_episode, phase, time, carrier_i, coordinate
+stability_probe:     attempt, probe_episode, phase, phase_time, carrier_i, coordinate
 intervention_plan:   episode_id, intervention_class, draw_index
 model_initializers:  model_id, restart, tensor_name, every parameter axis
 minibatch_order:     model_id, restart, update_index, draw_index
@@ -221,9 +223,10 @@ For each `(seed, arity, sigma, generator_role)`, coefficient attempt `a` is
 encoded by appending `/attempt/a` to the coefficient role. Test attempts
 `a=0,...,255` in order. Each attempt is simulated without intervention for the
 `32` burn-in transitions from exactly `16` probe initial states named
-`stability/00` through `stability/15`; their initial-state keys use phase
-`initial` and time `0`, while their noise keys use phase `noise` and the actual
-transition index in the `stability_probe` tuple above. Initial probe normals are
+`stability/00` through `stability/15`. Both use the `stability_probe` domain and
+the executable's complete coefficient-attempt role: initial keys use phase
+`initial` and phase time `0`, while noise keys use phase `noise` and the actual
+transition index in the tuple above. Initial probe normals are
 scaled by `0.10` and noise probe normals by `sigma`, exactly as for dataset
 states and noise. Accept the
 first attempt for which every coordinate of every probe remains in `[-3,3]`
@@ -590,7 +593,9 @@ from the declared full tensor before masking. Treat `v` as a `1 x 2`
 matrix and `h` as a `2 x 1` matrix for those bounds. Active biases start at zero.
 For a model fitted at noise level `sigma`, every active `rho` starts at
 `softplus_inverse(max(sigma^2-1e-6,1e-12))`; inactive entries remain exactly
-zero and never receive an optimizer state. Adam arithmetic and all model,
+zero and never receive an optimizer state. The pinned executable's
+`glorot_initializer_value` and `rho_initializer_value` functions are the sole
+value-producing authority for these initializers. Adam arithmetic and all model,
 adapter, loss, and rollout arithmetic use IEEE-754 binary64.
 
 All families minimize the mean training Gaussian NLL over observational and

@@ -55,6 +55,7 @@ TOKEN = re.compile(r"^[a-z0-9_./-]+$")
 PI = Decimal(
     "3.141592653589793238462643383279502884197169399375105820974944592307816406286"
 )
+OPEN_UNIT_MAX = float.fromhex("0x1.fffffffffffffp-1")
 
 HYPOTHESIS_IDS = tuple(
     [f"h_a/{arity}" for arity in DIRECT_ARITIES]
@@ -101,7 +102,10 @@ CONTRACT = {
     "hypothesis_ids": list(HYPOTHESIS_IDS),
     "process_noise_index": ["episode_id", "phase", "phase_time", "carrier_id", "coordinate"],
     "process_noise_phases": {"burn": [0, 31], "scored": [0, 127]},
+    "stability_probe_index": ["attempt", "probe_episode", "phase", "phase_time", "carrier_id", "coordinate"],
     "initializer_index": ["model_id", "restart", "tensor_name", "all_parameter_axes_in_row_major_order"],
+    "initializer_values": "glorot_initializer_value and rho_initializer_value in this executable",
+    "open_uniform_binary64_top": "0x1.fffffffffffffp-1 when exact rational conversion rounds to 1.0",
     "training_population_order": [
         "observational episode ordinal",
         "intervention class 1..4",
@@ -218,14 +222,22 @@ def fdiv(left: float, right: float) -> float:
     return f64(f64(left) / f64(right))
 
 
-def open_uniform(payload: bytes, lane: int = 0) -> float:
-    if lane not in range(4):
-        raise ValueError("lane must be 0..3")
-    word = digest_words(payload)[lane]
+def open_uniform_word(word: int) -> float:
+    """Map one uint64 word to the nearest admitted open binary64 value."""
+
+    if isinstance(word, bool) or not isinstance(word, int) or not 0 <= word < 2**64:
+        raise ValueError("word must be an unsigned 64-bit integer")
     with localcontext() as ctx:
         ctx.prec = 96
         ctx.rounding = ROUND_HALF_EVEN
-        return f64((Decimal(word) + Decimal("0.5")) / (Decimal(2) ** 64))
+        value = f64((Decimal(word) + Decimal("0.5")) / (Decimal(2) ** 64))
+    return OPEN_UNIT_MAX if value >= 1.0 else value
+
+
+def open_uniform(payload: bytes, lane: int = 0) -> float:
+    if lane not in range(4):
+        raise ValueError("lane must be 0..3")
+    return open_uniform_word(digest_words(payload)[lane])
 
 
 def _decimal(value: float | Decimal | int | str) -> Decimal:
@@ -317,6 +329,18 @@ def deterministic_softplus(value: float) -> float:
         return f64((Decimal(1) + x.exp()).ln())
 
 
+def deterministic_softplus_inverse(value: float) -> float:
+    """Inverse softplus under the reference Decimal-to-binary64 contract."""
+
+    if value <= 0:
+        raise ValueError("softplus inverse input must be positive")
+    with localcontext() as ctx:
+        ctx.prec = 96
+        ctx.rounding = ROUND_HALF_EVEN
+        x = _decimal(value)
+        return f64((x.exp() - Decimal(1)).ln())
+
+
 def gaussian_cdf(value: float) -> float:
     """Deterministic standard-normal CDF; tails are frozen at +/-8."""
 
@@ -348,7 +372,7 @@ def family_kind(family_id: str) -> str:
     if family_id.startswith("capacity-only/"):
         return "dense"
     if "/tree" in family_id or family_id.startswith(
-        ("nested/", "wrong-tree/", "outer-cut/", "unnested/")
+        ("nested/", "wrong-tree/", "outer-cut/")
     ):
         return "nested"
     return "direct"
@@ -389,6 +413,46 @@ def initializer_key(
     )
 
 
+def glorot_initializer_value(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    family_id: str,
+    restart: int,
+    tensor_name: str,
+    axes: Sequence[int],
+    fan_in: int,
+    fan_out: int,
+) -> float:
+    """Return one exact Glorot-uniform initialized matrix scalar."""
+
+    if _uint(fan_in, "fan_in") == 0 or _uint(fan_out, "fan_out") == 0:
+        raise ValueError("Glorot fan sizes must be positive")
+    payload = initializer_key(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        family_id=family_id,
+        restart=restart,
+        tensor_name=tensor_name,
+        axes=axes,
+    )
+    bound = deterministic_sqrt(fdiv(6.0, fadd(fan_in, fan_out)))
+    centered = fsub(fmul(2.0, open_uniform(payload)), 1.0)
+    return fmul(centered, bound)
+
+
+def rho_initializer_value(sigma_milli: int) -> float:
+    """Return the exact raw diagonal-variance initializer for one noise level."""
+
+    if sigma_milli not in NOISE_MILLI:
+        raise ValueError("sigma_milli must be 10, 50, or 100")
+    sigma = fdiv(sigma_milli, 1000)
+    target = max(fsub(fmul(sigma, sigma), 1e-6), 1e-12)
+    return deterministic_softplus_inverse(target)
+
+
 def process_noise_key(
     *,
     seed: int,
@@ -425,6 +489,42 @@ def coefficient_role(system_kind: str, attempt: int, outer: int | None = None) -
     else:
         raise ValueError("unknown or incomplete generator role")
     return f"{base}/attempt/{attempt}"
+
+
+def stability_probe_key(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    system_kind: str,
+    attempt: int,
+    probe_ordinal: int,
+    phase: str,
+    phase_time: int,
+    carrier_id: str,
+    coordinate: int,
+    outer: int | None = None,
+) -> bytes:
+    """Emit one complete stability initial-state or noise scalar key."""
+
+    if not 0 <= probe_ordinal < 16:
+        raise ValueError("probe_ordinal must be 0..15")
+    if phase == "initial":
+        if phase_time != 0:
+            raise ValueError("stability initial state exists only at time 0")
+    elif phase == "noise":
+        if not 0 <= phase_time <= 31:
+            raise ValueError("stability noise time must be 0..31")
+    else:
+        raise ValueError("stability phase must be initial or noise")
+    return stream_bytes(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        domain="stability_probe",
+        role=coefficient_role(system_kind, attempt, outer),
+        indices=[attempt, f"stability/{probe_ordinal:02d}", phase, phase_time, carrier_id, coordinate],
+    )
 
 
 def hypothesis_id(kind: str, arity: int | None = None) -> str:
@@ -597,6 +697,18 @@ def test_vectors() -> dict[str, object]:
         seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
         tensor_name="w", axes=[4, 5, 1, 0]
     )
+    glorot_value = glorot_initializer_value(
+        seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
+        tensor_name="w", axes=[3, 5, 1, 0], fan_in=2, fan_out=2
+    )
+    probe_initial = stability_probe_key(
+        seed=32, arity=7, sigma_milli=50, system_kind="direct", attempt=0,
+        probe_ordinal=0, phase="initial", phase_time=0, carrier_id="3", coordinate=1
+    )
+    probe_noise = stability_probe_key(
+        seed=32, arity=7, sigma_milli=50, system_kind="direct", attempt=0,
+        probe_ordinal=0, phase="noise", phase_time=0, carrier_id="3", coordinate=1
+    )
     burn = process_noise_key(
         seed=32, arity=7, sigma_milli=50, role="direct",
         episode_id="obs/test/000", phase="burn", phase_time=0,
@@ -637,12 +749,22 @@ def test_vectors() -> dict[str, object]:
             "words_hex": [f"{word:016x}" for word in digest_words(payload)],
             "uniform_0_f64": f64_hex(open_uniform(payload, 0)),
             "normal_f64": f64_hex(standard_normal(payload)),
+            "minimum_open_uniform_f64": f64_hex(open_uniform_word(0)),
+            "maximum_open_uniform_f64": f64_hex(open_uniform_word(2**64 - 1)),
         },
         "initializer": {
             "complete_path_ascii": initializer_a.decode("ascii"),
             "complete_path_sha256": hashlib.sha256(initializer_a).hexdigest(),
             "different_carrier_sha256": hashlib.sha256(initializer_b).hexdigest(),
             "distinct": initializer_a != initializer_b,
+            "glorot_f64": f64_hex(glorot_value),
+            "rho_sigma_050_f64": f64_hex(rho_initializer_value(50)),
+            "unnested_kind": family_kind("unnested/7"),
+        },
+        "stability_probe": {
+            "initial_ascii": probe_initial.decode("ascii"),
+            "noise_ascii": probe_noise.decode("ascii"),
+            "distinct": probe_initial != probe_noise,
         },
         "noise_phase": {
             "burn_ascii": burn.decode("ascii"),
@@ -707,6 +829,13 @@ def file_sha256(path: Path) -> str:
 def verify(pin_path: Path) -> dict[str, object]:
     pin = json.loads(pin_path.read_text(encoding="utf-8"))
     here = Path(__file__).resolve()
+    declared_path = pin.get("reference_path")
+    if not isinstance(declared_path, str) or Path(declared_path).is_absolute():
+        raise RuntimeError("reference_path must be one relative path")
+    if (pin_path.parent / declared_path).resolve() != here:
+        raise RuntimeError("reference_path does not resolve to this executable")
+    if pin.get("verification_command") != f"python {declared_path} verify":
+        raise RuntimeError("verification_command does not invoke the pinned executable")
     vectors = test_vectors()
     vectors_path = pin_path.parent / pin["vectors_path"]
     stored_vectors = json.loads(vectors_path.read_text(encoding="utf-8"))

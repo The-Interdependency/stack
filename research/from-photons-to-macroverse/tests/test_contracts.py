@@ -315,6 +315,10 @@ class Contracts(unittest.TestCase):
         )
         self.assertEqual(contract["training_population_size"], 12288)
         self.assertEqual(
+            contract["stability_probe_index"],
+            ["attempt", "probe_episode", "phase", "phase_time", "carrier_id", "coordinate"],
+        )
+        self.assertEqual(
             contract["variance_head_space"],
             "model output before the fixed observation decoder",
         )
@@ -326,7 +330,20 @@ class Contracts(unittest.TestCase):
 
         vectors = load_json("replay_vectors.json")
         self.assertTrue(vectors["initializer"]["distinct"])
+        self.assertEqual(vectors["initializer"]["unnested_kind"], "direct")
+        self.assertTrue(vectors["stability_probe"]["distinct"])
         self.assertTrue(vectors["noise_phase"]["distinct"])
+        self.assertGreater(replay.open_uniform_word(0), 0.0)
+        self.assertLess(replay.open_uniform_word(2**64 - 1), 1.0)
+        self.assertEqual(
+            replay.f64_hex(replay.rho_initializer_value(50)),
+            vectors["initializer"]["rho_sigma_050_f64"],
+        )
+        self.assertEqual(pin["reference_path"], "tools/replay_reference.py")
+        self.assertEqual(
+            pin["verification_command"],
+            f"python {pin['reference_path']} verify",
+        )
         self.assertEqual(vectors["optimizer"]["tied_restart"], 1)
         self.assertEqual(
             vectors["decision_edges"]["label_shuffle_zero"]["standing"],
