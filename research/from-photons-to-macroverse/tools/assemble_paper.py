@@ -10,6 +10,7 @@ from pathlib import Path
 
 PROJECT = Path(__file__).resolve().parents[1]
 MANIFEST = PROJECT / "paper" / "manifest.json"
+SOURCE_RECEIPT = PROJECT / "SOURCE_RECEIPT.json"
 
 
 def sha256(data: bytes) -> str:
@@ -50,6 +51,13 @@ def assemble() -> bytes:
     expected = manifest["assembled_sha256"]
     if observed != expected:
         raise SystemExit(f"assembled paper drift: expected {expected}, observed {observed}")
+    receipt = json.loads(SOURCE_RECEIPT.read_text(encoding="utf-8"))
+    expected_bytes = receipt["revision"]["assembled_bytes"]
+    observed_bytes = len(paper)
+    if observed_bytes != expected_bytes:
+        raise SystemExit(
+            f"assembled paper length drift: expected {expected_bytes}, observed {observed_bytes}"
+        )
     return paper
 
 
