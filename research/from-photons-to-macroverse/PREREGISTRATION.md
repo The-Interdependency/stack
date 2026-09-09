@@ -64,7 +64,8 @@ an alias.
 - optimizer: Adam with learning rate `0.001`, `beta_1=0.9`, `beta_2=0.999`,
   `epsilon=1e-8`, no weight decay, batch size `64`, and `2000` updates;
 - initialization family: Glorot-uniform weights and zero biases from
-  `(seed, model_id, restart)` for restarts `0..4`;
+  `(seed, model_id, restart)` for restarts `0..4`; the stream's outer
+  `sigma_milli` is the fixed namespace sentinel `10` at every fitted noise level;
 - selection rule: select the restart with lowest calibration negative log
   likelihood before opening sealed test outputs; an exact tie selects the lowest
   restart index.
@@ -177,6 +178,10 @@ role `model_partition/<family_id>`, tuple
 list. Target and partition schedules use the displayed `schedule/...` literal;
 start-time draws use the displayed actual `episode_id`. No mutable draw cursor
 or alternate tuple supplies the three `intervention_plan` domain fields.
+Every target and start-time draw uses role `schedule`; model partitions alone
+use the displayed `model_partition/<family_id>` role. The executable's
+`intervention_target_key`, `intervention_start_key`, and
+`model_partition_key` functions emit these complete keys.
 
 The stream domains are exactly:
 
@@ -196,6 +201,9 @@ Here `model_id` is exactly the canonical `family_id`; generator roles, complete
 parameter-axis ranks, `burn`/`scored` phase-local noise indices, hypothesis ids,
 schedule-candidate bytes, and the 12,288-entry minibatch population order are the
 registries emitted by the pinned executable.
+For aggregate bootstrap and permutation keys, the outer fields are always
+`seed=0`, hypothesis arity (`7` for `h_7`), `sigma_milli=10`, and role
+`sealed_aggregate`; these are namespace sentinels, not another data cell.
 
 All index tuples are emitted in lexicographic order and written to the run
 receipt. Discrete choices use `floor(u*K)` for a stream uniform `u` and a
@@ -364,6 +372,11 @@ clamp act in that order. Matched candidate/control comparisons use the same
 episode ids, times, targets, and process-noise stream keys. Controls receive the
 plan through these fixed operators and the adapter below, never through a
 learned or undeclared `u_t` channel.
+
+The executable's candidate registry is the complete representation: `state`
+and `recovery` use a token observed identity plus an unsigned coordinate;
+`carrier` uses one token; and `edge` and `summand` use three tokens. Numeric
+strings never alias unsigned integers.
 
 ## Outcomes
 
@@ -795,6 +808,9 @@ finite-sample `+1` correction, and are never replaced by an exact-enumeration or
 different resampling method. `alpha=0.05`; direction is determined separately
 by the sign of `mean(d)`.
 
+`bootstrap_key` and `permutation_key` in the pinned executable are the sole
+constructors for those streams, including all outer fields and index bounds.
+
 `SURVIVED` requires all of the following:
 
 1. the candidate beats every required superiority control on both primary decision outcomes;
@@ -812,8 +828,12 @@ label-shuffle cell never triggers scientific falsification: exact zero is the
 required coordinate-invariance result, and any other value is `BLOCKED` as
 specified above.
 
-`UNRESOLVED` applies when neither rule is met, support/estimator assumptions fail, an
-implementation discrepancy remains, or a required comparison cannot be equalized.
+`BLOCKED` has precedence over every scientific terminal rule. Evaluate the stop
+conditions and every earlier `BLOCKED` clause first; a blocked cell or hypothesis
+cannot be relabeled `UNRESOLVED`, `SURVIVED`, or `FALSIFIED`.
+`UNRESOLVED` applies only after no `BLOCKED` condition holds and neither
+scientific decision rule is met, or when a specified support/estimator assumption
+fails without violating a pre-fit generation or equalization requirement.
 
 The heptadic claim is not allowed to inherit `SURVIVED` from another arity. Each arity and
 recursion claim receives its own result.

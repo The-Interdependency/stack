@@ -314,6 +314,17 @@ class Contracts(unittest.TestCase):
             contract["process_noise_phases"], {"burn": [0, 31], "scored": [0, 127]}
         )
         self.assertEqual(contract["training_population_size"], 12288)
+        self.assertEqual(contract["initializer_sigma_namespace"], 10)
+        self.assertEqual(contract["intervention_plan_role"], "schedule")
+        self.assertEqual(
+            contract["resampling_outer_fields"],
+            {
+                "seed": 0,
+                "sigma_milli": 10,
+                "role": "sealed_aggregate",
+                "arity": "arity suffix in hypothesis_id; h_7 uses 7",
+            },
+        )
         self.assertEqual(
             contract["stability_probe_index"],
             ["attempt", "probe_episode", "phase", "phase_time", "carrier_id", "coordinate"],
@@ -332,6 +343,10 @@ class Contracts(unittest.TestCase):
         self.assertTrue(vectors["initializer"]["distinct"])
         self.assertEqual(vectors["initializer"]["unnested_kind"], "direct")
         self.assertTrue(vectors["stability_probe"]["distinct"])
+        self.assertIn('"intervention_plan","schedule"', vectors["schedule"]["target_key_ascii"])
+        self.assertIn('"bootstrap","sealed_aggregate"', vectors["resampling"]["bootstrap_ascii"])
+        with self.assertRaises(ValueError):
+            replay.candidate_bytes("state", 0, 0)
         self.assertTrue(vectors["noise_phase"]["distinct"])
         self.assertGreater(replay.open_uniform_word(0), 0.0)
         self.assertLess(replay.open_uniform_word(2**64 - 1), 1.0)

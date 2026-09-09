@@ -44,12 +44,15 @@
       8
     ]
   },
+  "initial_state": {
+    "episode_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"initial_state\",\"direct/attempt/0\",[\"obs/test/000\",\"3\",1],0]"
+  },
   "initializer": {
-    "complete_path_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"model_initializers\",\"parameter\",[\"direct/7\",0,\"w\",3,5,1,0],0]",
-    "complete_path_sha256": "a1361ff6b2df7b177d7d59642032cf93800f9d3529c7855ff8ad1af13e521ce0",
-    "different_carrier_sha256": "678465b036832878696515fa8396a5b437f0e7e5be122ff303f4979157a2e93e",
+    "complete_path_ascii": "[\"arity-recursion-synthetic-v6\",32,7,10,\"model_initializers\",\"parameter\",[\"direct/7\",0,\"w\",3,5,1,0],0]",
+    "complete_path_sha256": "8a22c60ee757f8f1932fc97ac0392faa1b6ab9e9f0253914a3e2e47e2b1c9b3b",
+    "different_carrier_sha256": "a2351e5385cf64f84804fb15dafeba7ee9946ca77e9cc3f85d155a9fa203008a",
     "distinct": true,
-    "glorot_f64": "3fd4567787472ab1",
+    "glorot_f64": "3fb8d3df191ea54d",
     "rho_sigma_050_f64": "c017f663be616d7b",
     "unnested_kind": "direct"
   },
@@ -93,6 +96,10 @@
     "tied_restart": 1
   },
   "protocol_id": "arity-recursion-synthetic-v6",
+  "resampling": {
+    "bootstrap_ascii": "[\"arity-recursion-synthetic-v6\",0,7,10,\"bootstrap\",\"sealed_aggregate\",[\"h_7\",0,0],0]",
+    "permutation_ascii": "[\"arity-recursion-synthetic-v6\",0,7,10,\"permutation\",\"sealed_aggregate\",[\"h_7\",0,0],0]"
+  },
   "schedule": {
     "class6_episode_0": [
       [
@@ -118,7 +125,11 @@
       "[\"summand\",\"product\",\"outer/2\",\"none\"]",
       "[\"summand\",\"w\",\"outer/2\",\"outer/0\"]",
       "[\"summand\",\"w\",\"outer/2\",\"outer/1\"]"
-    ]
+    ],
+    "partition_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"model_partition/arbitrary/7\",[\"schedule/model_partition\",0,0],0]",
+    "start_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"schedule\",[\"int/1/test/000\",1,\"start_time\"],0]",
+    "state_candidate_ascii": "[\"state\",\"carrier/0\",0]",
+    "target_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"schedule\",[\"schedule/test/state_target\",1,0],0]"
   },
   "schema": "the-interdependency.arity-recursion-replay-vectors",
   "stability_probe": {

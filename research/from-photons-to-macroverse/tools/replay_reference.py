@@ -51,6 +51,7 @@ PROTOCOL_VERSION = "0.4.0"
 DIRECT_ARITIES = (2, 3, 5, 6, 7, 8)
 NESTED_ARITIES = DIRECT_ARITIES
 NOISE_MILLI = (10, 50, 100)
+NAMESPACE_SIGMA_MILLI = 10
 TOKEN = re.compile(r"^[a-z0-9_./-]+$")
 PI = Decimal(
     "3.141592653589793238462643383279502884197169399375105820974944592307816406286"
@@ -87,6 +88,22 @@ PARAMETER_RANKS = {
     "dense": {"u": 2, "a": 1, "v": 2, "c": 1, "rho": 1},
 }
 
+CANDIDATE_TYPES = {
+    "state": ("token", "uint"),
+    "edge": ("token", "token", "token"),
+    "carrier": ("token",),
+    "summand": ("token", "token", "token"),
+    "recovery": ("token", "uint"),
+}
+
+INTERVENTION_TARGET_KINDS = {
+    1: "state_target",
+    2: "edge_target",
+    3: "carrier_target",
+    4: "summand_target",
+    5: "recovery_target",
+}
+
 CONTRACT = {
     "schema": "the-interdependency.arity-recursion-replay-reference",
     "version": "1.0.0",
@@ -105,7 +122,16 @@ CONTRACT = {
     "stability_probe_index": ["attempt", "probe_episode", "phase", "phase_time", "carrier_id", "coordinate"],
     "initializer_index": ["model_id", "restart", "tensor_name", "all_parameter_axes_in_row_major_order"],
     "initializer_values": "glorot_initializer_value and rho_initializer_value in this executable",
+    "initializer_sigma_namespace": NAMESPACE_SIGMA_MILLI,
     "open_uniform_binary64_top": "0x1.fffffffffffffp-1 when exact rational conversion rounds to 1.0",
+    "intervention_plan_role": "schedule",
+    "resampling_outer_fields": {
+        "seed": 0,
+        "sigma_milli": NAMESPACE_SIGMA_MILLI,
+        "role": "sealed_aggregate",
+        "arity": "arity suffix in hypothesis_id; h_7 uses 7",
+    },
+    "candidate_types": CANDIDATE_TYPES,
     "training_population_order": [
         "observational episode ordinal",
         "intervention class 1..4",
@@ -395,7 +421,6 @@ def initializer_key(
     *,
     seed: int,
     arity: int,
-    sigma_milli: int,
     family_id: str,
     restart: int,
     tensor_name: str,
@@ -406,7 +431,7 @@ def initializer_key(
     return stream_bytes(
         seed=seed,
         arity=arity,
-        sigma_milli=sigma_milli,
+        sigma_milli=NAMESPACE_SIGMA_MILLI,
         domain="model_initializers",
         role="parameter",
         indices=[family_id, _uint(restart, "restart"), tensor_name, *axes],
@@ -417,7 +442,6 @@ def glorot_initializer_value(
     *,
     seed: int,
     arity: int,
-    sigma_milli: int,
     family_id: str,
     restart: int,
     tensor_name: str,
@@ -432,7 +456,6 @@ def glorot_initializer_value(
     payload = initializer_key(
         seed=seed,
         arity=arity,
-        sigma_milli=sigma_milli,
         family_id=family_id,
         restart=restart,
         tensor_name=tensor_name,
@@ -527,6 +550,30 @@ def stability_probe_key(
     )
 
 
+def initial_state_key(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    system_kind: str,
+    attempt: int,
+    episode_id: str,
+    carrier_id: str,
+    coordinate: int,
+    outer: int | None = None,
+) -> bytes:
+    """Emit one complete accepted-generator episode initial-state key."""
+
+    return stream_bytes(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        domain="initial_state",
+        role=coefficient_role(system_kind, attempt, outer),
+        indices=[episode_id, carrier_id, coordinate],
+    )
+
+
 def hypothesis_id(kind: str, arity: int | None = None) -> str:
     if kind == "h_7" and arity is None:
         return "h_7"
@@ -535,6 +582,57 @@ def hypothesis_id(kind: str, arity: int | None = None) -> str:
         if result in HYPOTHESIS_IDS:
             return result
     raise ValueError("hypothesis has no canonical identifier")
+
+
+def _hypothesis_arity(canonical_hypothesis_id: str) -> int:
+    if canonical_hypothesis_id == "h_7":
+        return 7
+    try:
+        kind, arity_text = canonical_hypothesis_id.split("/", 1)
+        arity = int(arity_text)
+    except (ValueError, TypeError):
+        raise ValueError("hypothesis has no canonical arity") from None
+    if hypothesis_id(kind, arity) != canonical_hypothesis_id:
+        raise ValueError("hypothesis has no canonical arity")
+    return arity
+
+
+def bootstrap_key(
+    canonical_hypothesis_id: str,
+    bootstrap_index: int,
+    draw_index: int,
+) -> bytes:
+    """Emit one sealed-aggregate bootstrap draw key."""
+
+    if not 0 <= bootstrap_index < 65536 or not 0 <= draw_index < 32:
+        raise ValueError("bootstrap indices are outside the frozen range")
+    return stream_bytes(
+        seed=0,
+        arity=_hypothesis_arity(canonical_hypothesis_id),
+        sigma_milli=NAMESPACE_SIGMA_MILLI,
+        domain="bootstrap",
+        role="sealed_aggregate",
+        indices=[canonical_hypothesis_id, bootstrap_index, draw_index],
+    )
+
+
+def permutation_key(
+    canonical_hypothesis_id: str,
+    permutation_index: int,
+    sealed_seed_index: int,
+) -> bytes:
+    """Emit one sealed-aggregate sign-permutation key."""
+
+    if not 0 <= permutation_index < 65536 or not 0 <= sealed_seed_index < 32:
+        raise ValueError("permutation indices are outside the frozen range")
+    return stream_bytes(
+        seed=0,
+        arity=_hypothesis_arity(canonical_hypothesis_id),
+        sigma_milli=NAMESPACE_SIGMA_MILLI,
+        domain="permutation",
+        role="sealed_aggregate",
+        indices=[canonical_hypothesis_id, permutation_index, sealed_seed_index],
+    )
 
 
 def training_population() -> list[tuple[str, int]]:
@@ -565,24 +663,19 @@ def minibatch_key(
 
 
 def candidate_bytes(kind: str, *identity: str | int) -> bytes:
-    shapes = {
-        "state": 2,       # observed identity, coordinate
-        "edge": 3,        # level, target identity, source identity
-        "carrier": 1,     # carrier identity
-        "summand": 3,     # w|product, target identity, source identity|none
-        "recovery": 2,    # observed identity, coordinate
-    }
-    if kind not in shapes or len(identity) != shapes[kind]:
+    field_types = CANDIDATE_TYPES.get(kind)
+    if field_types is None or len(identity) != len(field_types):
         raise ValueError("candidate identity does not match its frozen shape")
     if kind == "summand" and identity[0] not in {"w", "product"}:
         raise ValueError("summand kind must be w or product")
     normalized: list[str | int] = []
-    for position, value in enumerate(identity):
-        normalized.append(
-            _token(value, f"candidate[{position}]")
-            if isinstance(value, str)
-            else _uint(value, f"candidate[{position}]")
-        )
+    for position, (value, field_type) in enumerate(zip(identity, field_types)):
+        if field_type == "token" and isinstance(value, str):
+            normalized.append(_token(value, f"candidate[{position}]"))
+        elif field_type == "uint" and isinstance(value, int) and not isinstance(value, bool):
+            normalized.append(_uint(value, f"candidate[{position}]"))
+        else:
+            raise ValueError(f"candidate[{position}] must be a {field_type}")
     return canonical_json([kind, *normalized])
 
 
@@ -591,6 +684,79 @@ def ordered_candidates(candidates: Iterable[bytes]) -> tuple[bytes, ...]:
     if len(result) != len(set(result)):
         raise ValueError("schedule candidates must be unique")
     return result
+
+
+def intervention_target_key(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    split: str,
+    intervention_class: int,
+    candidate_index: int,
+    block: int = 0,
+) -> bytes:
+    """Emit a target-ranking key with the one admitted schedule role."""
+
+    if split not in {"train", "cal", "test"}:
+        raise ValueError("intervention split must be train, cal, or test")
+    choice_kind = INTERVENTION_TARGET_KINDS.get(intervention_class)
+    if choice_kind is None:
+        raise ValueError("target intervention class must be 1..5")
+    return stream_bytes(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        domain="intervention_plan",
+        role="schedule",
+        indices=[f"schedule/{split}/{choice_kind}", intervention_class, candidate_index],
+        block=block,
+    )
+
+
+def intervention_start_key(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    episode_id: str,
+    intervention_class: int,
+) -> bytes:
+    """Emit a start-time key for class 1..4 or composed class 6."""
+
+    if intervention_class not in {1, 2, 3, 4, 6}:
+        raise ValueError("start-time intervention class must be 1..4 or 6")
+    return stream_bytes(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        domain="intervention_plan",
+        role="schedule",
+        indices=[episode_id, intervention_class, "start_time"],
+    )
+
+
+def model_partition_key(
+    *,
+    seed: int,
+    arity: int,
+    sigma_milli: int,
+    family_id: str,
+    candidate_index: int,
+    block: int = 0,
+) -> bytes:
+    """Emit one model-partition ranking key."""
+
+    _token(family_id, "family_id")
+    return stream_bytes(
+        seed=seed,
+        arity=arity,
+        sigma_milli=sigma_milli,
+        domain="intervention_plan",
+        role=f"model_partition/{family_id}",
+        indices=["schedule/model_partition", 0, candidate_index],
+        block=block,
+    )
 
 
 def class6_component_ordinals(episode_ordinal: int) -> tuple[tuple[int, int], tuple[int, int]]:
@@ -690,15 +856,15 @@ def test_vectors() -> dict[str, object]:
         indices=["w", 3, 5, 1, 0],
     )
     initializer_a = initializer_key(
-        seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
+        seed=32, arity=7, family_id="direct/7", restart=0,
         tensor_name="w", axes=[3, 5, 1, 0]
     )
     initializer_b = initializer_key(
-        seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
+        seed=32, arity=7, family_id="direct/7", restart=0,
         tensor_name="w", axes=[4, 5, 1, 0]
     )
     glorot_value = glorot_initializer_value(
-        seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
+        seed=32, arity=7, family_id="direct/7", restart=0,
         tensor_name="w", axes=[3, 5, 1, 0], fan_in=2, fan_out=2
     )
     probe_initial = stability_probe_key(
@@ -708,6 +874,10 @@ def test_vectors() -> dict[str, object]:
     probe_noise = stability_probe_key(
         seed=32, arity=7, sigma_milli=50, system_kind="direct", attempt=0,
         probe_ordinal=0, phase="noise", phase_time=0, carrier_id="3", coordinate=1
+    )
+    episode_initial = initial_state_key(
+        seed=32, arity=7, sigma_milli=50, system_kind="direct", attempt=0,
+        episode_id="obs/test/000", carrier_id="3", coordinate=1
     )
     burn = process_noise_key(
         seed=32, arity=7, sigma_milli=50, role="direct",
@@ -726,6 +896,21 @@ def test_vectors() -> dict[str, object]:
             candidate_bytes("summand", "w", "outer/2", "outer/1"),
         ]
     )
+    state_candidate = candidate_bytes("state", "carrier/0", 0)
+    target_key = intervention_target_key(
+        seed=32, arity=7, sigma_milli=50, split="test",
+        intervention_class=1, candidate_index=0
+    )
+    start_key = intervention_start_key(
+        seed=32, arity=7, sigma_milli=50,
+        episode_id="int/1/test/000", intervention_class=1
+    )
+    partition_key = model_partition_key(
+        seed=32, arity=7, sigma_milli=50,
+        family_id="arbitrary/7", candidate_index=0
+    )
+    bootstrap = bootstrap_key("h_7", 0, 0)
+    permutation = permutation_key("h_7", 0, 0)
     minibatch_payload, minibatch_selected = minibatch_key(
         seed=32, arity=7, sigma_milli=50, family_id="direct/7", restart=0,
         update_index=0, draw_index=0
@@ -766,6 +951,7 @@ def test_vectors() -> dict[str, object]:
             "noise_ascii": probe_noise.decode("ascii"),
             "distinct": probe_initial != probe_noise,
         },
+        "initial_state": {"episode_ascii": episode_initial.decode("ascii")},
         "noise_phase": {
             "burn_ascii": burn.decode("ascii"),
             "scored_ascii": scored.decode("ascii"),
@@ -783,8 +969,16 @@ def test_vectors() -> dict[str, object]:
         },
         "schedule": {
             "ordered_candidates_ascii": [item.decode("ascii") for item in candidates],
+            "state_candidate_ascii": state_candidate.decode("ascii"),
             "class6_episode_0": class6_component_ordinals(0),
             "class6_episode_11": class6_component_ordinals(11),
+            "target_key_ascii": target_key.decode("ascii"),
+            "start_key_ascii": start_key.decode("ascii"),
+            "partition_key_ascii": partition_key.decode("ascii"),
+        },
+        "resampling": {
+            "bootstrap_ascii": bootstrap.decode("ascii"),
+            "permutation_ascii": permutation.decode("ascii"),
         },
         "minibatch": {
             "population_size": len(population),
