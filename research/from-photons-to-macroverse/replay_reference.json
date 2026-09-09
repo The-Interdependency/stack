@@ -2,12 +2,12 @@
   "schema": "the-interdependency.arity-recursion-replay-pin",
   "version": "1.0.0",
   "protocol_id": "arity-recursion-synthetic-v6",
-  "protocol_version": "0.4.0",
+  "protocol_version": "0.5.0",
   "status": "not-run",
   "reference_path": "tools/replay_reference.py",
-  "reference_sha256": "67a17f0c33b28765e0189505ab6fc6f18a10530008211bf4e7abdcf9e2744fe9",
-  "contract_sha256": "12f1a245de8bda5efe1b04547f54ca4da961287f6f48fd3becbee91ce07c799e",
+  "reference_sha256": "3b3c6babd2340eb5d08aadbbfa3b2c3b21af75683210957c3730e72a52a70460",
+  "contract_sha256": "8584dd017603e0b5f4b6be7c6756e348b3f3255bcbfbe42f0294ea2e993b6ffe",
   "vectors_path": "replay_vectors.json",
-  "vectors_sha256": "053dd257e90d324ce022444d3a9d1d2fcd468d411533704a711f6405e0db3c33",
+  "vectors_sha256": "87ac49b3baa50430760ab0702ae8f13a374d3e0baac7e1283122767f6386d4b4",
   "verification_command": "python tools/replay_reference.py verify"
 }

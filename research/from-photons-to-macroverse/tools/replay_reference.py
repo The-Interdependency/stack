@@ -47,7 +47,7 @@ from typing import Iterable, Sequence
 
 
 PROTOCOL_ID = "arity-recursion-synthetic-v6"
-PROTOCOL_VERSION = "0.4.0"
+PROTOCOL_VERSION = "0.5.0"
 DIRECT_ARITIES = (2, 3, 5, 6, 7, 8)
 NESTED_ARITIES = DIRECT_ARITIES
 NOISE_MILLI = (10, 50, 100)
@@ -132,6 +132,19 @@ CONTRACT = {
         "arity": "arity suffix in hypothesis_id; h_7 uses 7",
     },
     "candidate_types": CANDIDATE_TYPES,
+    "candidate_registry": "canonical_candidate_lists in this executable",
+    "backward_primitives": [
+        "binary_multiply_adjoint",
+        "binary_divide_adjoint",
+        "serial_sum_adjoint",
+        "serial_product_adjoint",
+        "tanh_adjoint",
+        "softplus_adjoint",
+        "variance_head_value",
+        "variance_head_adjoint",
+        "gaussian_nll_term",
+        "gaussian_nll_adjoint",
+    ],
     "training_population_order": [
         "observational episode ordinal",
         "intervention class 1..4",
@@ -662,7 +675,7 @@ def minibatch_key(
     return payload, population[selected]
 
 
-def candidate_bytes(kind: str, *identity: str | int) -> bytes:
+def _candidate_payload(kind: str, *identity: str | int) -> bytes:
     field_types = CANDIDATE_TYPES.get(kind)
     if field_types is None or len(identity) != len(field_types):
         raise ValueError("candidate identity does not match its frozen shape")
@@ -686,12 +699,108 @@ def ordered_candidates(candidates: Iterable[bytes]) -> tuple[bytes, ...]:
     return result
 
 
+def child_arities(arity: int) -> tuple[int, ...]:
+    """Return the sole admitted depth-two child-arity vector."""
+
+    if arity not in NESTED_ARITIES:
+        raise ValueError("nested arity is not admitted")
+    pattern = (2, 3, 5)
+    return tuple(pattern[index % len(pattern)] for index in range(arity))
+
+
+def canonical_candidate_lists(
+    system_kind: str,
+    arity: int,
+) -> dict[str, tuple[bytes, ...]]:
+    """Enumerate every target identity admitted for one generator."""
+
+    if arity not in DIRECT_ARITIES:
+        raise ValueError("candidate arity is not admitted")
+    if system_kind == "direct":
+        observed = tuple(f"carrier/{index}" for index in range(arity))
+        carriers = observed
+        edges = tuple(
+            ("w", target, source)
+            for target in carriers
+            for source in carriers
+            if source != target
+        )
+        product_targets = carriers
+    elif system_kind == "nested":
+        carriers = tuple(f"outer/{index}" for index in range(arity))
+        observed = tuple(
+            f"outer/{outer}/leaf/{leaf}"
+            for outer, child_arity in enumerate(child_arities(arity))
+            for leaf in range(child_arity)
+        )
+        leaf_edges = tuple(
+            (
+                "w",
+                f"outer/{outer}/leaf/{target}",
+                f"outer/{outer}/leaf/{source}",
+            )
+            for outer, child_arity in enumerate(child_arities(arity))
+            for target in range(child_arity)
+            for source in range(child_arity)
+            if source != target
+        )
+        outer_edges = tuple(
+            ("w", target, source)
+            for target in carriers
+            for source in carriers
+            if source != target
+        )
+        edges = (*leaf_edges, *outer_edges)
+        product_targets = (*observed, *carriers)
+    else:
+        raise ValueError("system_kind must be direct or nested")
+    result = {
+        "state": tuple(
+            _candidate_payload("state", target, coordinate)
+            for target in observed
+            for coordinate in range(2)
+        ),
+        "edge": tuple(_candidate_payload("edge", *edge) for edge in edges),
+        "carrier": tuple(
+            _candidate_payload("carrier", carrier) for carrier in carriers
+        ),
+        "summand": (
+            *tuple(_candidate_payload("summand", *edge) for edge in edges),
+            *tuple(
+                _candidate_payload("summand", "product", target, "none")
+                for target in product_targets
+            ),
+        ),
+        "recovery": tuple(
+            _candidate_payload("recovery", target, coordinate)
+            for target in observed
+            for coordinate in range(2)
+        ),
+    }
+    return {kind: ordered_candidates(items) for kind, items in result.items()}
+
+
+def candidate_bytes(
+    system_kind: str,
+    arity: int,
+    kind: str,
+    *identity: str | int,
+) -> bytes:
+    """Return one candidate only when it belongs to the complete registry."""
+
+    payload = _candidate_payload(kind, *identity)
+    if payload not in canonical_candidate_lists(system_kind, arity).get(kind, ()):
+        raise ValueError("candidate identity is outside the canonical registry")
+    return payload
+
+
 def intervention_target_key(
     *,
     seed: int,
     arity: int,
     sigma_milli: int,
     split: str,
+    system_kind: str,
     intervention_class: int,
     candidate_index: int,
     block: int = 0,
@@ -703,6 +812,16 @@ def intervention_target_key(
     choice_kind = INTERVENTION_TARGET_KINDS.get(intervention_class)
     if choice_kind is None:
         raise ValueError("target intervention class must be 1..5")
+    candidate_kind = {
+        1: "state",
+        2: "edge",
+        3: "carrier",
+        4: "summand",
+        5: "recovery",
+    }[intervention_class]
+    candidate_count = len(canonical_candidate_lists(system_kind, arity)[candidate_kind])
+    if not 0 <= candidate_index < candidate_count:
+        raise ValueError("candidate_index is outside the canonical target list")
     return stream_bytes(
         seed=seed,
         arity=arity,
@@ -748,6 +867,8 @@ def model_partition_key(
     """Emit one model-partition ranking key."""
 
     _token(family_id, "family_id")
+    if not 0 <= candidate_index < arity:
+        raise ValueError("model partition candidate must be one carrier index")
     return stream_bytes(
         seed=seed,
         arity=arity,
@@ -821,6 +942,137 @@ def label_shuffle_equivalence(differences: Sequence[float]) -> dict[str, object]
     return {"standing": "equivalent", "g": 0, "interval": [0, 0]}
 
 
+def binary_multiply_adjoint(
+    left: float,
+    right: float,
+    upstream: float,
+) -> tuple[float, float]:
+    """Reverse one ``fmul(left, right)`` in operand order."""
+
+    return fmul(upstream, right), fmul(upstream, left)
+
+
+def binary_divide_adjoint(
+    numerator: float,
+    denominator: float,
+    upstream: float,
+) -> tuple[float, float]:
+    """Reverse one ``fdiv(numerator, denominator)`` without reassociation."""
+
+    numerator_adjoint = fdiv(upstream, denominator)
+    denominator_squared = fmul(denominator, denominator)
+    negative_numerator = fsub(0.0, numerator)
+    denominator_adjoint = fmul(
+        upstream,
+        fdiv(negative_numerator, denominator_squared),
+    )
+    return numerator_adjoint, denominator_adjoint
+
+
+def serial_sum_adjoint(length: int, upstream: float) -> tuple[float, ...]:
+    """Reverse a serial sum; each ordered input receives the same adjoint."""
+
+    _uint(length, "length")
+    return tuple(f64(upstream) for _ in range(length))
+
+
+def serial_product_adjoint(
+    factors: Sequence[float],
+    upstream: float,
+) -> tuple[float, ...]:
+    """Reverse the exact serial left-fold product recurrence."""
+
+    prefixes = [1.0]
+    for factor in factors:
+        prefixes.append(fmul(prefixes[-1], factor))
+    running = f64(upstream)
+    gradients = [0.0] * len(factors)
+    for index in range(len(factors) - 1, -1, -1):
+        gradients[index] = fmul(running, prefixes[index])
+        running = fmul(running, factors[index])
+    return tuple(gradients)
+
+
+def tanh_adjoint(value: float, upstream: float) -> float:
+    """Reverse the executable tanh using one frozen local recurrence."""
+
+    output = deterministic_tanh(value)
+    local = fsub(1.0, fmul(output, output))
+    return fmul(upstream, local)
+
+
+def softplus_adjoint(value: float, upstream: float) -> float:
+    """Reverse the executable softplus branch with stable sigmoid arithmetic."""
+
+    if value > 40.0:
+        local = 1.0
+    elif value >= 0.0:
+        local = fdiv(1.0, fadd(1.0, deterministic_exp(fsub(0.0, value))))
+    else:
+        exponential = deterministic_exp(value)
+        local = fdiv(exponential, fadd(1.0, exponential))
+    return fmul(upstream, local)
+
+
+def variance_head_value(raw_rho: float) -> float:
+    """Decode one variance head scalar in the sole admitted operation order."""
+
+    return fadd(deterministic_softplus(raw_rho), 1e-6)
+
+
+def variance_head_adjoint(raw_rho: float, upstream: float) -> float:
+    """Reverse the variance-head softplus; the additive floor passes through."""
+
+    return softplus_adjoint(raw_rho, upstream)
+
+
+def gaussian_nll_term(observed: float, mean: float, variance: float) -> float:
+    """Evaluate one diagonal-Gaussian NLL scalar in the sole operation order."""
+
+    if not math.isfinite(variance) or variance < 1e-6:
+        raise ValueError("variance must be finite and at least 1e-6")
+    residual = fsub(observed, mean)
+    squared = fmul(residual, residual)
+    scaled_error = fdiv(squared, variance)
+    two_pi = fmul(2.0, f64(PI))
+    scaled_variance = fmul(two_pi, variance)
+    log_term = deterministic_log(scaled_variance)
+    return fmul(0.5, fadd(scaled_error, log_term))
+
+
+def gaussian_nll_adjoint(
+    observed: float,
+    mean: float,
+    variance: float,
+    upstream: float,
+) -> tuple[float, float, float]:
+    """Reverse ``gaussian_nll_term`` without algebraic reassociation."""
+
+    gaussian_nll_term(observed, mean, variance)
+    residual = fsub(observed, mean)
+    squared = fmul(residual, residual)
+    two_pi = fmul(2.0, f64(PI))
+    scaled_variance = fmul(two_pi, variance)
+    summed_adjoint = fmul(upstream, 0.5)
+    squared_adjoint = fdiv(summed_adjoint, variance)
+    negative_squared = fsub(0.0, squared)
+    variance_squared = fmul(variance, variance)
+    variance_from_error = fmul(
+        summed_adjoint,
+        fdiv(negative_squared, variance_squared),
+    )
+    scaled_variance_adjoint = fdiv(summed_adjoint, scaled_variance)
+    variance_from_log = fmul(scaled_variance_adjoint, two_pi)
+    variance_adjoint = fadd(variance_from_error, variance_from_log)
+    residual_adjoint = fadd(
+        fmul(squared_adjoint, residual),
+        fmul(squared_adjoint, residual),
+    )
+    observed_adjoint = residual_adjoint
+    mean_adjoint = fsub(0.0, residual_adjoint)
+    return observed_adjoint, mean_adjoint, variance_adjoint
+
+
 def adam_step(
     *, parameter: float, gradient: float, first_moment: float, second_moment: float,
     beta1_power: float, beta2_power: float
@@ -889,16 +1141,11 @@ def test_vectors() -> dict[str, object]:
         episode_id="obs/test/000", phase="scored", phase_time=0,
         carrier_id="3", coordinate=1
     )
-    candidates = ordered_candidates(
-        [
-            candidate_bytes("summand", "product", "outer/2", "none"),
-            candidate_bytes("summand", "w", "outer/2", "outer/0"),
-            candidate_bytes("summand", "w", "outer/2", "outer/1"),
-        ]
-    )
-    state_candidate = candidate_bytes("state", "carrier/0", 0)
+    direct_candidates = canonical_candidate_lists("direct", 7)
+    nested_candidates = canonical_candidate_lists("nested", 7)
+    state_candidate = candidate_bytes("direct", 7, "state", "carrier/0", 0)
     target_key = intervention_target_key(
-        seed=32, arity=7, sigma_milli=50, split="test",
+        seed=32, arity=7, sigma_milli=50, split="test", system_kind="direct",
         intervention_class=1, candidate_index=0
     )
     start_key = intervention_start_key(
@@ -968,13 +1215,55 @@ def test_vectors() -> dict[str, object]:
             "nested_outer_arities": list(NESTED_ARITIES),
         },
         "schedule": {
-            "ordered_candidates_ascii": [item.decode("ascii") for item in candidates],
             "state_candidate_ascii": state_candidate.decode("ascii"),
             "class6_episode_0": class6_component_ordinals(0),
             "class6_episode_11": class6_component_ordinals(11),
             "target_key_ascii": target_key.decode("ascii"),
             "start_key_ascii": start_key.decode("ascii"),
             "partition_key_ascii": partition_key.decode("ascii"),
+        },
+        "candidate_registry": {
+            system_kind: {
+                kind: {
+                    "count": len(items),
+                    "sha256": hashlib.sha256(
+                        canonical_json([item.decode("ascii") for item in items])
+                    ).hexdigest(),
+                }
+                for kind, items in candidate_lists.items()
+            }
+            for system_kind, candidate_lists in (
+                ("direct", direct_candidates),
+                ("nested", nested_candidates),
+            )
+        },
+        "adjoints": {
+            "binary_multiply_f64": [
+                f64_hex(value)
+                for value in binary_multiply_adjoint(0.25, -0.5, 1.25)
+            ],
+            "binary_divide_f64": [
+                f64_hex(value)
+                for value in binary_divide_adjoint(0.25, -0.5, 1.25)
+            ],
+            "serial_sum_f64": [
+                f64_hex(value) for value in serial_sum_adjoint(3, 1.25)
+            ],
+            "serial_product_f64": [
+                f64_hex(value)
+                for value in serial_product_adjoint([0.25, -0.5, 0.75], 1.25)
+            ],
+            "tanh_f64": f64_hex(tanh_adjoint(0.5, 1.25)),
+            "softplus_f64": f64_hex(softplus_adjoint(-0.5, 1.25)),
+            "variance_value_f64": f64_hex(variance_head_value(-0.5)),
+            "variance_adjoint_f64": f64_hex(
+                variance_head_adjoint(-0.5, 1.25)
+            ),
+            "nll_term_f64": f64_hex(gaussian_nll_term(0.75, 0.25, 0.5)),
+            "nll_adjoint_f64": [
+                f64_hex(value)
+                for value in gaussian_nll_adjoint(0.75, 0.25, 0.5, 1.25)
+            ],
         },
         "resampling": {
             "bootstrap_ascii": bootstrap.decode("ascii"),

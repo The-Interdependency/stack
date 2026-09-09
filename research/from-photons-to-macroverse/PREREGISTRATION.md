@@ -1,7 +1,7 @@
 # Preregistration: matched arity and recursion discrimination
 
 ```text
-protocol version: 0.4.0
+protocol version: 0.5.0
 run status:       not-run
 human subjects:   none
 animal subjects:  none
@@ -127,7 +127,7 @@ the domain-field order below. The complete tuple, including `block`, is the
 counter-stream key; concatenated placeholders or language-native float strings
 are forbidden. Every listed field is present; use the literal token `"none"`
 for an inapplicable field. A nested carrier or tensor component is one token
-such as `outer/3/leaf/2`, not an implementation-native tuple string.
+such as `outer/2/leaf/2`, not an implementation-native tuple string.
 
 Each digest is split in order into four big-endian unsigned 64-bit words and
 each word `w_k` maps to the open-unit uniform `u_k=(w_k+0.5)/2^64`. One scalar
@@ -364,7 +364,7 @@ whose indices are `start,...,start+15`:
 - a modulation multiplies the selected `W` summand or the selected all-source
   product term, named in the plan, by exactly `0.5` before `tanh`.
 
-Nested plans name `outer/i` or `leaf/i/l` targets and apply the explicit nested
+Nested plans name `outer/i` or `outer/i/leaf/l` targets and apply the explicit nested
 equation above. Class `5` uses the primary-outcome certificate below. Class `6`
 composes the two corresponding operators in numeric class order; masks and
 modulators act before `tanh`, then additive state, process noise, and ablation
@@ -373,10 +373,13 @@ episode ids, times, targets, and process-noise stream keys. Controls receive the
 plan through these fixed operators and the adapter below, never through a
 learned or undeclared `u_t` channel.
 
-The executable's candidate registry is the complete representation: `state`
-and `recovery` use a token observed identity plus an unsigned coordinate;
-`carrier` uses one token; and `edge` and `summand` use three tokens. Numeric
-strings never alias unsigned integers.
+The executable's `canonical_candidate_lists(system_kind,arity)` output is the
+complete candidate vocabulary and list for every schedule. `state` and
+`recovery` use a canonical observed identity plus an unsigned coordinate;
+`carrier` uses a canonical direct carrier or outer-carrier identity; and `edge`
+and `summand` use the exact term, target, and source identities emitted there.
+Numeric strings never alias unsigned integers, and no other token spelling is
+admissible.
 
 ## Outcomes
 
@@ -593,8 +596,11 @@ serial left fold from `1.0` in that same order. Loss terms within a minibatch ar
 left-folded by `draw_index`, then transition index, then lexicographic original
 observed scalar identity. Recovery squared coordinates and every reported mean
 use the corresponding lexicographic original-identity order and a serial left
-fold before the single final division. Reverse-mode gradients are derivatives
-of this ordered scalar program and accumulate contributions in the same order.
+fold before the single final division. Reverse-mode gradients use only the
+pinned executable's binary multiply/divide, serial sum/product, `tanh`,
+`softplus`, variance-head, and Gaussian-NLL adjoint functions and accumulate
+contributions in the same order. `variance_head_value` and
+`gaussian_nll_term` are the sole scalar variance and NLL forward recurrences.
 Reassociation, tree or parallel reductions, model-position ordering, and fused
 multiply-add contraction are forbidden. These rules apply before fitting,
 during every optimizer update, and during rollout and scoring, so a carrier
@@ -665,10 +671,13 @@ carrier `a` receives the arithmetic mean of all observed carriers with
 `q_{m,n}(i)=a`; for `m > n`, control carrier `a` receives observed carrier
 `r_{m,n}(a)`. Define the model-carrier image of observed carrier `i` as
 `A_{m,n}(i)={q_{m,n}(i)}` for `m<n` and
-`A_{m,n}(i)={a:r_{m,n}(a)=i}` for `m>n`. Carrier-targeted additive interventions are encoded by the same
-map before dynamics: merged controls receive the arithmetic mean of all
-interventions in their bucket, and split controls receive the same intervention
-on every split carrier assigned to the targeted observed carrier. Edge cuts with
+`A_{m,n}(i)={a:r_{m,n}(a)=i}` for `m>n`. Carrier-targeted additive interventions
+use the same map only to identify model output coordinates: merged controls
+receive the arithmetic mean of all additions in their bucket, and split controls
+receive the same addition on every split carrier assigned to the targeted
+observed carrier. Every resulting addition is applied after that model carrier's
+deterministic `tanh` transition and before process noise; it is never applied to
+the input encoding or before dynamics. Edge cuts with
 endpoints collapsed into one merged carrier become recorded self-edge no-ops;
 all other cuts map to every nonself model edge in
 `A_{m,n}(source) x A_{m,n}(target)` and zero both those `W` summands and every

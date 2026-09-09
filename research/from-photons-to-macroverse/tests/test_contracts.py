@@ -215,7 +215,7 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
 
         for phrase in (
-            "protocol version: 0.4.0",
+            "protocol version: 0.5.0",
             '["arity-recursion-synthetic-v6",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
             "concatenated placeholders or language-native float strings are forbidden",
             "stability/00` through `stability/15",
@@ -302,7 +302,7 @@ class Contracts(unittest.TestCase):
         pin = load_json("replay_reference.json")
         observed = replay.verify(PROJECT / "replay_reference.json")
         self.assertEqual(observed["protocol_id"], "arity-recursion-synthetic-v6")
-        self.assertEqual(observed["protocol_version"], "0.4.0")
+        self.assertEqual(observed["protocol_version"], "0.5.0")
         self.assertEqual(observed["reference_sha256"], pin["reference_sha256"])
         self.assertEqual(observed["contract_sha256"], pin["contract_sha256"])
         self.assertEqual(observed["vectors_sha256"], pin["vectors_sha256"])
@@ -345,8 +345,19 @@ class Contracts(unittest.TestCase):
         self.assertTrue(vectors["stability_probe"]["distinct"])
         self.assertIn('"intervention_plan","schedule"', vectors["schedule"]["target_key_ascii"])
         self.assertIn('"bootstrap","sealed_aggregate"', vectors["resampling"]["bootstrap_ascii"])
+        self.assertEqual(
+            vectors["candidate_registry"]["direct"]["state"]["count"], 14
+        )
+        self.assertEqual(
+            vectors["candidate_registry"]["nested"]["state"]["count"], 44
+        )
+        self.assertEqual(
+            vectors["candidate_registry"]["nested"]["edge"]["count"], 100
+        )
         with self.assertRaises(ValueError):
-            replay.candidate_bytes("state", 0, 0)
+            replay.candidate_bytes("nested", 7, "state", "leaf/3/2", 0)
+        with self.assertRaises(ValueError):
+            replay.candidate_bytes("nested", 7, "state", "outer/3/leaf/2", 0)
         self.assertTrue(vectors["noise_phase"]["distinct"])
         self.assertGreater(replay.open_uniform_word(0), 0.0)
         self.assertLess(replay.open_uniform_word(2**64 - 1), 1.0)
