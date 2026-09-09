@@ -22,8 +22,9 @@ The original paper explicitly presents itself as a candidate theory with a metap
 2. [`AUDIT.md`](AUDIT.md) - findings, repairs, and unresolved boundaries.
 3. [`CLAIM_LEDGER.json`](CLAIM_LEDGER.json) - machine-readable standing per claim.
 4. [`PREREGISTRATION.md`](PREREGISTRATION.md) - first permitted synthetic test.
-5. [`WORK_GRAPH.json`](WORK_GRAPH.json) - exact source and authority identities.
-6. [`source/README.md`](source/README.md) - exact external-source identities and parser-artifact boundary.
+5. [`replay_reference.json`](replay_reference.json) - hash pin for the sole executable replay authority and vectors.
+6. [`WORK_GRAPH.json`](WORK_GRAPH.json) - exact source and authority identities.
+7. [`source/README.md`](source/README.md) - exact external-source identities and parser-artifact boundary.
 
 ## What changed
 
@@ -54,6 +55,8 @@ create an owning release identity. Graduation remains a later, explicit event.
 
 - Cite exact source and revision hashes from `SOURCE_RECEIPT.json`; do not claim fresh-checkout
   reproduction of the external originals until their bytes or durable locators are supplied.
+- Run `python tools/replay_reference.py verify` from this directory before implementing
+  the experiment; a port must reproduce `replay_vectors.json` byte-for-byte.
 - Use names from `SYMBOL_REGISTRY.md` in code and result files.
 - Emit only `SURVIVED`, `FALSIFIED`, `UNRESOLVED`, `BLOCKED`, or `DEPRECATED` against a frozen claim and control set.
 - Do not infer human carrier labels after observing a desired result.
@@ -63,6 +66,7 @@ create an owning release identity. Graduation remains a later, explicit event.
 
 ```bash
 python -m unittest discover -s research/from-photons-to-macroverse/tests -q
+python research/from-photons-to-macroverse/tools/replay_reference.py verify
 ```
 
 The prior `0.2.0-audited` paper was rendered as a 58-page PDF and every rendered page was visually inspected before the paper text repairs. The current visual render is `hmmm` until rerendered. The repository keeps hash-bound Markdown fragments rather than a generated binary; the assembler validates per-fragment SHA-256 and Git blob identities.

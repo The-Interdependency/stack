@@ -1,7 +1,7 @@
 # Preregistration: matched arity and recursion discrimination
 
 ```text
-protocol version: 0.3.3
+protocol version: 0.4.0
 run status:       not-run
 human subjects:   none
 animal subjects:  none
@@ -38,12 +38,12 @@ and interventions; it would not show that nature uses those structures.
 
 ## Systems
 
-Construct synthetic systems at direct arities `n in {2,3,5,6,7,8}`. Each carrier has the
-same local state dimension and update family.
+Construct synthetic direct and depth-two nested systems at outer arities
+`n in {2,3,5,6,7,8}`. Each carrier has the same local state dimension and update family.
 
 ## Frozen implementation configuration
 
-Use configuration `arity-recursion-synthetic-v5` exactly. The version changes
+Use configuration `arity-recursion-synthetic-v6` exactly. The version changes
 because the repairs below change result-bearing bytes; no earlier identifier is
 an alias.
 
@@ -66,7 +66,22 @@ an alias.
 - initialization family: Glorot-uniform weights and zero biases from
   `(seed, model_id, restart)` for restarts `0..4`;
 - selection rule: select the restart with lowest calibration negative log
-  likelihood before opening sealed test outputs.
+  likelihood before opening sealed test outputs; an exact tie selects the lowest
+  restart index.
+
+### Executable replay authority
+
+[`tools/replay_reference.py`](tools/replay_reference.py) is the sole normative
+authority for result-bearing byte serialization, identifiers, indices, schedules,
+transcendentals, reductions, optimizer recurrence, and replay edge cases. Its exact
+SHA-256 and generated vector digest are frozen in
+[`replay_reference.json`](replay_reference.json); the committed byte-level examples
+are [`replay_vectors.json`](replay_vectors.json). Run
+`python tools/replay_reference.py verify` from this directory before implementing or
+opening any sealed output. A port is admissible only if it reproduces every committed
+vector. The prose below states scientific intent and the non-use boundary; it supplies
+no alternate result-bearing choice. A conflict or missing executable primitive is
+`BLOCKED`, not permission to extend the protocol.
 
 ### Synthetic generator
 
@@ -95,12 +110,12 @@ process noise. No intervention may be re-expressed as an undeclared additive
 input channel.
 
 Every result-bearing stochastic draw is deterministic under
-`arity-recursion-synthetic-v5`, seed, arity, noise level, stream domain, role,
+`arity-recursion-synthetic-v6`, seed, arity, noise level, stream domain, role,
 index tuple, and digest-block number. The SHA-256 input is the UTF-8 encoding of
 this whitespace-free JSON array:
 
 ```text
-["arity-recursion-synthetic-v5",s,n,sigma_milli,domain,role,[k0,...,kp],block]
+["arity-recursion-synthetic-v6",s,n,sigma_milli,domain,role,[k0,...,kp],block]
 ```
 
 Integers use minimal unsigned base-10 notation (`0`, never `00`); `sigma_milli`
@@ -121,6 +136,11 @@ draw consumes these fixed lanes from its keyed block:
 uniform or discrete scalar: u_0
 standard-normal scalar:     sqrt(-2 ln u_0) * cos(2*pi*u_1)
 ```
+
+The displayed formula is explanatory. Its only result-bearing evaluation is the
+fixed-precision implementation and frozen output vectors in the pinned executable;
+language-native `ln`, `cos`, `sqrt`, `pi`, `tanh`, `softplus`, and Gaussian CDF are
+not replay authorities.
 
 `u_2`, `u_3`, and the Box-Muller sine result are discarded. A requested scalar
 must have its own complete index tuple; implementations never take a second
@@ -161,14 +181,19 @@ The stream domains are exactly:
 ```text
 coefficients:        role, tensor_name, carrier_i, carrier_j, row, column
 initial_state:       episode_id, carrier_i, coordinate
-process_noise:       episode_id, time, carrier_i, coordinate
+process_noise:       episode_id, phase, phase_time, carrier_id, coordinate
 stability_probe:     attempt, probe_episode, phase, time, carrier_i, coordinate
 intervention_plan:   episode_id, intervention_class, draw_index
-model_initializers:  model_id, restart, tensor_name, row, column
+model_initializers:  model_id, restart, tensor_name, every parameter axis
 minibatch_order:     model_id, restart, update_index, draw_index
 bootstrap:           hypothesis_id, bootstrap_index, draw_index
 permutation:         hypothesis_id, permutation_index, sealed_seed_index
 ```
+
+Here `model_id` is exactly the canonical `family_id`; generator roles, complete
+parameter-axis ranks, `burn`/`scored` phase-local noise indices, hypothesis ids,
+schedule-candidate bytes, and the 12,288-entry minibatch population order are the
+registries emitted by the pinned executable.
 
 All index tuples are emitted in lexicographic order and written to the run
 receipt. Discrete choices use `floor(u*K)` for a stream uniform `u` and a
@@ -206,6 +231,9 @@ after each burn-in transition. Rejected attempts consume no dataset episode id
 and are recorded with their coefficient and probe hashes. If no attempt is
 accepted, that system is `BLOCKED`; coefficients are never silently dropped,
 redrawn from an unkeyed stream, or replaced by another seed.
+
+The executable fixes base roles as `direct`, `nested_outer`, and
+`nested_leaf/<outer>` before appending the attempt suffix.
 
 If any frozen value cannot be implemented exactly, stop before fitting and report
 `BLOCKED`.
@@ -386,15 +414,15 @@ than substituting another cut.
 
 For each fitted family, initialize a deterministic mean rollout at the shared
 true state. Recursively feed back that family's decoded predictive mean; do not
-sample predictive noise. Let `x^{0,f}` be its unperturbed mean rollout and
-`x^{M,f}` its matched perturbed rollout in mode `M in {full,cut}`. The identity
+sample predictive noise. Let `x^{0,M,f}` be its mode-matched unperturbed mean
+rollout and `x^{M,f}` its matched perturbed rollout in mode `M in {full,cut}`. The identity
 map is the observed scalar-coordinate identity for direct systems and the
 lexicographic leaf-scalar identity for nested systems. Every wrong-arity or
 wrong-tree family is scored only after the fixed decoder below returns that
 identity. The recovery horizon set is exactly `{1,2,4,8,16}`.
 
 ```text
-R_{M,f} = - mean_{h in {1,2,4,8,16}} ||x^{M,f}_{t0+h} - x^{0,f}_{t0+h}||_2^2
+R_{M,f} = - mean_{h in {1,2,4,8,16}} ||x^{M,f}_{t0+h} - x^{0,M,f}_{t0+h}||_2^2
       / (N_obs * 0.5^2)
 Gamma_{s,f} = mean_{sigma, episode}(R_{full,f} - R_{cut,f})
 Gamma_{T,f} = mean_{sealed seed s}(Gamma_{s,f})
@@ -461,10 +489,11 @@ mu = tanh(V h + c)
 ```
 
 with dense `U in R^(32 x D)` and `V in R^(D x 32)`. It has no carrier,
-edge, closure-product, or tree parameters. For every family and decoded observed
-scalar coordinate `c`, predictive variance is the state-independent diagonal
-head `v_c = 1e-6 + softplus(rho_c)`. `rho` is trainable, participates in the
-budget, and is decoded by the same copy/average map as the mean. There are no
+edge, closure-product, or tree parameters. For every family and model-output
+coordinate `c` before the fixed observation decoder, predictive variance is the
+state-independent diagonal head `v_c = 1e-6 + softplus(rho_c)`. `rho` is
+trainable, participates in the budget, and the resulting positive variance is
+decoded by the same copy/average map as the mean. There are no
 other heads, skip paths, hidden layers, attention terms, or learned intervention
 embeddings.
 
@@ -501,7 +530,7 @@ Every tensor scalar path is the UTF-8 encoding of this whitespace-free JSON
 array:
 
 ```text
-["arity-recursion-synthetic-v5","parameter-mask",family_id,tensor_name,[i0,...,iq]]
+["arity-recursion-synthetic-v6","parameter-mask",family_id,tensor_name,[i0,...,iq]]
 ```
 
 `family_id` and `tensor_name` obey `[a-z0-9_./-]+`. Each concrete family id is
@@ -700,7 +729,8 @@ No decision threshold may be changed after any sealed output is opened.
 
 ## Decision rule
 
-For each `H_A(n)`, `H_R(n)`, and `H_7`, first average each family outcome within
+For each `H_A(n)`, `H_R(n)`, and `H_7`, whose executable identifiers are exactly
+`h_a/<n>`, `h_r/<n>`, and `h_7`, first average each family outcome within
 each sealed seed equally over the three noise levels and the specified held-out
 episodes. For every required superiority control `c` (which excludes the two
 isomorphic label-shuffle controls), define candidate-favoring paired values

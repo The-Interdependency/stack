@@ -1,0 +1,147 @@
+{
+  "decision_edges": {
+    "class5_cdf_f64": "3fe8000000000000",
+    "cut_baseline_ascii": "[\"unperturbed\",\"cut\",\"direct/7\"]",
+    "full_baseline_ascii": "[\"unperturbed\",\"full\",\"direct/7\"]",
+    "label_shuffle_zero": {
+      "g": 0,
+      "interval": [
+        0,
+        0
+      ],
+      "standing": "equivalent"
+    },
+    "serial_reduction_f64": "0000000000000000"
+  },
+  "identifiers": {
+    "generator_roles": [
+      "direct/attempt/0",
+      "nested_outer/attempt/0",
+      "nested_leaf/3/attempt/0"
+    ],
+    "hypotheses": [
+      "h_a/2",
+      "h_a/3",
+      "h_a/5",
+      "h_a/6",
+      "h_a/7",
+      "h_a/8",
+      "h_r/2",
+      "h_r/3",
+      "h_r/5",
+      "h_r/6",
+      "h_r/7",
+      "h_r/8",
+      "h_7"
+    ],
+    "model_id": "direct/7",
+    "nested_outer_arities": [
+      2,
+      3,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "initializer": {
+    "complete_path_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"model_initializers\",\"parameter\",[\"direct/7\",0,\"w\",3,5,1,0],0]",
+    "complete_path_sha256": "a1361ff6b2df7b177d7d59642032cf93800f9d3529c7855ff8ad1af13e521ce0",
+    "different_carrier_sha256": "678465b036832878696515fa8396a5b437f0e7e5be122ff303f4979157a2e93e",
+    "distinct": true
+  },
+  "minibatch": {
+    "draw_key_sha256": "8ef7dab016a249a135928d3b10acd46ed55c84113d9812ac7640defeeccc1884",
+    "first": [
+      "obs/train/000",
+      0
+    ],
+    "intervention_start": [
+      "int/1/train/000",
+      0
+    ],
+    "last": [
+      "int/4/train/007",
+      127
+    ],
+    "observational_end": [
+      "obs/train/063",
+      127
+    ],
+    "population_size": 12288,
+    "selected": [
+      "obs/train/053",
+      78
+    ]
+  },
+  "noise_phase": {
+    "burn_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"process_noise\",\"direct\",[\"obs/test/000\",\"burn\",0,\"3\",1],0]",
+    "distinct": true,
+    "scored_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"process_noise\",\"direct\",[\"obs/test/000\",\"scored\",0,\"3\",1],0]"
+  },
+  "optimizer": {
+    "adam_step_1_f64": [
+      "3fd010624dbcf42a",
+      "bf89999999999998",
+      "3ef0624dd2f1aa00",
+      "3feccccccccccccd",
+      "3feff7ced916872b"
+    ],
+    "tied_restart": 1
+  },
+  "protocol_id": "arity-recursion-synthetic-v6",
+  "schedule": {
+    "class6_episode_0": [
+      [
+        1,
+        8
+      ],
+      [
+        2,
+        8
+      ]
+    ],
+    "class6_episode_11": [
+      [
+        3,
+        13
+      ],
+      [
+        4,
+        13
+      ]
+    ],
+    "ordered_candidates_ascii": [
+      "[\"summand\",\"product\",\"outer/2\",\"none\"]",
+      "[\"summand\",\"w\",\"outer/2\",\"outer/0\"]",
+      "[\"summand\",\"w\",\"outer/2\",\"outer/1\"]"
+    ]
+  },
+  "schema": "the-interdependency.arity-recursion-replay-vectors",
+  "stream": {
+    "bytes_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"coefficients\",\"direct/attempt/0\",[\"w\",3,5,1,0],0]",
+    "normal_f64": "bfd2e86ee75a1753",
+    "sha256": "061bd70dc1ffc5f4bb9664eff24fac0c1ec4a53ddfafc5b39b14f3186a29449f",
+    "uniform_0_f64": "3f986f5c3707ff18",
+    "words_hex": [
+      "061bd70dc1ffc5f4",
+      "bb9664eff24fac0c",
+      "1ec4a53ddfafc5b3",
+      "9b14f3186a29449f"
+    ]
+  },
+  "transcendentals": {
+    "cdf_half_f64": "3fe62075e232ac77",
+    "exp_1_f64": "4005bf0a8b145769",
+    "log_2_f64": "3fe62e42fefa39ef",
+    "softplus_half_f64": "3fef2ba37edae032",
+    "sqrt_2_f64": "3ff6a09e667f3bcd",
+    "tanh_half_f64": "3fdd9353d7568af3"
+  },
+  "variance": {
+    "direct_5_count": 10,
+    "first_path_ascii": "[\"arity-recursion-synthetic-v6\",\"parameter-mask\",\"adjacent/5\",\"rho\",[0]]",
+    "space": "model output before the fixed observation decoder"
+  },
+  "version": "1.0.0"
+}

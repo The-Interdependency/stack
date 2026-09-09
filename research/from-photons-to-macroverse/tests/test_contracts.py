@@ -32,6 +32,16 @@ def load_assembler():
     return module
 
 
+def load_replay_reference():
+    path = PROJECT / "tools" / "replay_reference.py"
+    spec = importlib.util.spec_from_file_location("from_photons_replay_reference", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load replay reference at {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class Contracts(unittest.TestCase):
     def test_original_markdown_is_immutable_and_receipted(self) -> None:
         receipt = load_json("SOURCE_RECEIPT.json")
@@ -187,7 +197,7 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
         for phrase in ("run status: not-run", "human subjects: none", "animal subjects: none", "LLM calls: none", "seeds `32..63`: sealed decision set", "`SURVIVED` requires all of the following", "`FALSIFIED` applies", "`UNRESOLVED` applies", "No outcome classifies a human, animal, model, organization, or physical system as conscious"):
             self.assertIn(phrase, flat)
-        for phrase in ("configuration `arity-recursion-synthetic-v5` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam with learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
+        for phrase in ("configuration `arity-recursion-synthetic-v6` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam with learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
             self.assertIn(phrase, flat)
         for phrase in ("Synthetic generator", "SHA-256 input is the UTF-8 encoding", "process_noise", "intervention_plan", "model_initializers", "Discrete choices use `floor(u*K)`", "Matched candidate/control comparisons use the same", "Held-out interventional negative log likelihood is the mean one-step predictive Gaussian NLL", "ordered child-arity vector", "left-rotated child-arity vector", "Embedded primary-outcome certificate", "observed scalar-coordinate identity", "input encoding is the dual map", "Adjacent-arity comparisons are `BLOCKED`"):
             self.assertIn(phrase, flat)
@@ -205,8 +215,8 @@ class Contracts(unittest.TestCase):
         flat = " ".join(text.split())
 
         for phrase in (
-            "protocol version: 0.3.3",
-            '["arity-recursion-synthetic-v5",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
+            "protocol version: 0.4.0",
+            '["arity-recursion-synthetic-v6",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
             "concatenated placeholders or language-native float strings are forbidden",
             "stability/00` through `stability/15",
             "If no attempt is accepted, that system is `BLOCKED`",
@@ -264,7 +274,7 @@ class Contracts(unittest.TestCase):
             '`P=((1,2),(1,3),(1,4),(2,3),(2,4),(3,4))`',
             '`r=8+o_c(e)`',
             "both selected targets for each `e`",
-            '["arity-recursion-synthetic-v5","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
+            '["arity-recursion-synthetic-v6","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
             "The label-shuffle families are the sole exception to independent ranking",
             "`feed-forward/tree/<n>`",
             "it is an exact alias of that one `partition-m` control",
@@ -285,6 +295,43 @@ class Contracts(unittest.TestCase):
         self.assertNotIn("arity-recursion-synthetic-v2", text)
         self.assertNotIn("arity-recursion-synthetic-v3", text)
         self.assertNotIn("arity-recursion-synthetic-v4", text)
+        self.assertNotIn("arity-recursion-synthetic-v5", text)
+
+    def test_executable_replay_reference_is_hash_pinned(self) -> None:
+        replay = load_replay_reference()
+        pin = load_json("replay_reference.json")
+        observed = replay.verify(PROJECT / "replay_reference.json")
+        self.assertEqual(observed["protocol_id"], "arity-recursion-synthetic-v6")
+        self.assertEqual(observed["protocol_version"], "0.4.0")
+        self.assertEqual(observed["reference_sha256"], pin["reference_sha256"])
+        self.assertEqual(observed["contract_sha256"], pin["contract_sha256"])
+        self.assertEqual(observed["vectors_sha256"], pin["vectors_sha256"])
+
+        contract = replay.CONTRACT
+        self.assertEqual(contract["nested_outer_arities"], [2, 3, 5, 6, 7, 8])
+        self.assertEqual(contract["model_id"], "canonical family_id bytes")
+        self.assertEqual(
+            contract["process_noise_phases"], {"burn": [0, 31], "scored": [0, 127]}
+        )
+        self.assertEqual(contract["training_population_size"], 12288)
+        self.assertEqual(
+            contract["variance_head_space"],
+            "model output before the fixed observation decoder",
+        )
+        self.assertEqual(contract["restart_tie_break"], "lowest restart index")
+        self.assertEqual(
+            contract["recovery_baseline"],
+            "mode-matched unperturbed rollout x^(0,M,f)",
+        )
+
+        vectors = load_json("replay_vectors.json")
+        self.assertTrue(vectors["initializer"]["distinct"])
+        self.assertTrue(vectors["noise_phase"]["distinct"])
+        self.assertEqual(vectors["optimizer"]["tied_restart"], 1)
+        self.assertEqual(
+            vectors["decision_edges"]["label_shuffle_zero"]["standing"],
+            "equivalent",
+        )
 
     def test_human_and_machine_entrypoints_agree(self) -> None:
         readme = (PROJECT / "README.md").read_text(encoding="utf-8")
