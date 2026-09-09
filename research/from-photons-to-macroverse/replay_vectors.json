@@ -198,6 +198,8 @@
       ]
     ],
     "partition_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"model_partition/arbitrary/7\",[\"schedule/model_partition\",0,0],0]",
+    "partition_last_leaf_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"model_partition/arbitrary/tree/7\",[\"schedule/model_partition\",0,21],0]",
+    "partition_last_scalar_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"model_partition/arbitrary/7\",[\"schedule/model_partition\",0,13],0]",
     "start_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"schedule\",[\"int/1/test/000\",1,\"start_time\"],0]",
     "state_candidate_ascii": "[\"state\",\"carrier/0\",0]",
     "target_key_ascii": "[\"arity-recursion-synthetic-v6\",32,7,50,\"intervention_plan\",\"schedule\",[\"schedule/test/state_target\",1,0],0]"

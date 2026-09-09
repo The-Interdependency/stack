@@ -133,6 +133,12 @@ CONTRACT = {
     },
     "candidate_types": CANDIDATE_TYPES,
     "candidate_registry": "canonical_candidate_lists in this executable",
+    "model_partition_populations": {
+        "arbitrary/<n>": "scalar-coordinate indices 0..2*n-1",
+        "label-shuffle/<n>": "carrier indices 0..n-1",
+        "arbitrary/tree/<n>": "leaf indices 0..sum(child_arities(n))-1",
+        "label-shuffle/tree/<n>": "outer-carrier indices 0..n-1",
+    },
     "backward_primitives": [
         "binary_multiply_adjoint",
         "binary_divide_adjoint",
@@ -867,8 +873,9 @@ def model_partition_key(
     """Emit one model-partition ranking key."""
 
     _token(family_id, "family_id")
-    if not 0 <= candidate_index < arity:
-        raise ValueError("model partition candidate must be one carrier index")
+    population_size = model_partition_population_size(family_id, arity)
+    if not 0 <= candidate_index < population_size:
+        raise ValueError("model partition candidate is outside its frozen population")
     return stream_bytes(
         seed=seed,
         arity=arity,
@@ -878,6 +885,22 @@ def model_partition_key(
         indices=["schedule/model_partition", 0, candidate_index],
         block=block,
     )
+
+
+def model_partition_population_size(family_id: str, arity: int) -> int:
+    """Return the exact permutation population for one admitted family."""
+
+    if arity not in DIRECT_ARITIES:
+        raise ValueError("model partition arity is not admitted")
+    if family_id == f"arbitrary/{arity}":
+        return 2 * arity
+    if family_id == f"label-shuffle/{arity}":
+        return arity
+    if family_id == f"arbitrary/tree/{arity}":
+        return sum(child_arities(arity))
+    if family_id == f"label-shuffle/tree/{arity}":
+        return arity
+    raise ValueError("family has no sealed model-partition permutation")
 
 
 def class6_component_ordinals(episode_ordinal: int) -> tuple[tuple[int, int], tuple[int, int]]:
@@ -1156,6 +1179,14 @@ def test_vectors() -> dict[str, object]:
         seed=32, arity=7, sigma_milli=50,
         family_id="arbitrary/7", candidate_index=0
     )
+    partition_last_scalar = model_partition_key(
+        seed=32, arity=7, sigma_milli=50,
+        family_id="arbitrary/7", candidate_index=13
+    )
+    partition_last_leaf = model_partition_key(
+        seed=32, arity=7, sigma_milli=50,
+        family_id="arbitrary/tree/7", candidate_index=21
+    )
     bootstrap = bootstrap_key("h_7", 0, 0)
     permutation = permutation_key("h_7", 0, 0)
     minibatch_payload, minibatch_selected = minibatch_key(
@@ -1221,6 +1252,8 @@ def test_vectors() -> dict[str, object]:
             "target_key_ascii": target_key.decode("ascii"),
             "start_key_ascii": start_key.decode("ascii"),
             "partition_key_ascii": partition_key.decode("ascii"),
+            "partition_last_scalar_ascii": partition_last_scalar.decode("ascii"),
+            "partition_last_leaf_ascii": partition_last_leaf.decode("ascii"),
         },
         "candidate_registry": {
             system_kind: {

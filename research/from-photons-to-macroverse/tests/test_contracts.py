@@ -338,12 +338,44 @@ class Contracts(unittest.TestCase):
             contract["recovery_baseline"],
             "mode-matched unperturbed rollout x^(0,M,f)",
         )
+        self.assertEqual(
+            contract["model_partition_populations"]["arbitrary/<n>"],
+            "scalar-coordinate indices 0..2*n-1",
+        )
 
         vectors = load_json("replay_vectors.json")
         self.assertTrue(vectors["initializer"]["distinct"])
         self.assertEqual(vectors["initializer"]["unnested_kind"], "direct")
         self.assertTrue(vectors["stability_probe"]["distinct"])
         self.assertIn('"intervention_plan","schedule"', vectors["schedule"]["target_key_ascii"])
+        self.assertIn(
+            '["schedule/model_partition",0,13]',
+            vectors["schedule"]["partition_last_scalar_ascii"],
+        )
+        self.assertIn(
+            '["schedule/model_partition",0,21]',
+            vectors["schedule"]["partition_last_leaf_ascii"],
+        )
+        self.assertEqual(replay.model_partition_population_size("arbitrary/7", 7), 14)
+        self.assertEqual(
+            replay.model_partition_population_size("arbitrary/tree/7", 7), 22
+        )
+        with self.assertRaises(ValueError):
+            replay.model_partition_key(
+                seed=32,
+                arity=7,
+                sigma_milli=50,
+                family_id="arbitrary/7",
+                candidate_index=14,
+            )
+        with self.assertRaises(ValueError):
+            replay.model_partition_key(
+                seed=32,
+                arity=7,
+                sigma_milli=50,
+                family_id="arbitrary/tree/7",
+                candidate_index=22,
+            )
         self.assertIn('"bootstrap","sealed_aggregate"', vectors["resampling"]["bootstrap_ascii"])
         self.assertEqual(
             vectors["candidate_registry"]["direct"]["state"]["count"], 14
