@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0.0",
+  "assembled_filename": "from_photons_to_macroverse_audited_0.2.0.md",
+  "assembled_sha256": "cf8af499c3a0e9544eb22d0947b0e836123a60c75adcacbfb1e41a81112afd3b",
+  "fragments": [
+    {
+      "path": "paper/00-frontmatter.md",
+      "sha256": "c3c72e786a3256fc11d5c9de42fa2c228009d5aaaaf35661b1c05eca3d513324",
+      "bytes": 6059,
+      "role": "front matter, abstract, and author note",
+      "git_blob_sha1": "d70878f0e3ff21b67fa14854a0350114d058a15f"
+    },
+    {
+      "path": "paper/01-claim-and-photons.md",
+      "sha256": "561ac6b056634e2c8a27fe2651cf6cfbf95a84ca2b4ea49ae7f30d340e7e8520",
+      "bytes": 9472,
+      "role": "claim discipline and photon phase-bearing baseline, sections 1-2",
+      "git_blob_sha1": "a391959fb52a14ab595996b63014f4849d41de1c"
+    },
+    {
+      "path": "paper/01-bound-states-and-open-systems.md",
+      "sha256": "189775eb5087c6214f41ce329ad8183462a1557b52671abde271e0773628538f",
+      "bytes": 11524,
+      "role": "bound states, atomic physics, and open systems, sections 3-4",
+      "git_blob_sha1": "a3fe544fde75b996c5778e12896147fab4477c03"
+    },
+    {
+      "path": "paper/02-dynamics-and-agency.md",
+      "sha256": "b3fb8582cb2d1d77a2b438d52fa559c19f5598ca211001c60515a5da751712dc",
+      "bytes": 13784,
+      "role": "pattern formation, stability, scale, information, boundaries, and agency, sections 5-10",
+      "git_blob_sha1": "e11133edb4aa1549ed54d2afd0127eb985e3dfcc"
+    },
+    {
+      "path": "paper/03-arity-and-recursion.md",
+      "sha256": "a3c1530fbfd76f4e519b6d1d551c8295a6001f5d0c810a3a12f45c80c3073f41",
+      "bytes": 10008,
+      "role": "arity-specific closure and nested recursion, section 11",
+      "git_blob_sha1": "492371d87d490fe5c3714025fb12aa0cdfd3667f"
+    },
+    {
+      "path": "paper/03-availability-and-self-location.md",
+      "sha256": "38cd5f6a2a11fa3c899bcad03f8c1037636daf7215e54aa5a86f7862f8d3b86b",
+      "bytes": 8793,
+      "role": "global availability, temporal depth, and self-location, sections 12-13",
+      "git_blob_sha1": "fe9ec5c415886b4529271b901d6a7237d4015f79"
+    },
+    {
+      "path": "paper/04-subject-and-i-event.md",
+      "sha256": "e723b0c902ceb1b718db4f2f73c66ff15a22046fa19921b0231afe6195d3e0b4",
+      "bytes": 16823,
+      "role": "organized descriptor, subject formation, and I-event, sections 14-16",
+      "git_blob_sha1": "ba5a199cfc3e5c2b493b9df043ef5f3dae383a80"
+    },
+    {
+      "path": "paper/05-geometry-heptad-neural.md",
+      "sha256": "ee7921c0d5d0a64728943b68510aad649dde52a09a12ba98b6c4e4ec3e20410f",
+      "bytes": 13441,
+      "role": "M\u00f6bius, prime geometry, heptad, and neural implementation, sections 17-21",
+      "git_blob_sha1": "9120bf8292888e0c067489dbcf5ef7969d827c13"
+    },
+    {
+      "path": "paper/06-macroverse-ladder-and-predictions.md",
+      "sha256": "19b047a99da9e8073cbd49046b33437ea1a0415124762412475e2532424fbb73",
+      "bytes": 10393,
+      "role": "macroverse, first-principles ladder, and predictions, sections 22-24",
+      "git_blob_sha1": "f54dd19025bcdf5df8a6d0c6eab3e701f7d49739"
+    },
+    {
+      "path": "paper/06-falsification-program-and-limitations.md",
+      "sha256": "81c722d62c84d19cc9e9bb63e42c107d63841f7ec57b264d563a6d9b5a0b08cc",
+      "bytes": 9651,
+      "role": "falsifiers, research program, and limitations, sections 25-27",
+      "git_blob_sha1": "d3a580468c84fd2f634bdba5a9417c7547d710b5"
+    },
+    {
+      "path": "paper/07-conclusion-and-appendices.md",
+      "sha256": "539b6d43f17c635ce5cac222616cbd01f90e6cfa10f6bd0a86093e7db844c6a5",
+      "bytes": 10674,
+      "role": "conclusion and mathematical appendices",
+      "git_blob_sha1": "680dec962dca1b550f0ecd8270cbf4e1d03f4d05"
+    },
+    {
+      "path": "paper/07-references-and-hmmm.md",
+      "sha256": "39f40c60e9b8f0bcb615ebb20e8903c99f53a3f76bde24c0d2461d1d24d8b235",
+      "bytes": 6386,
+      "role": "references and hmmm",
+      "git_blob_sha1": "1b9ee49ebb19dadbf55aeb7df18e90402f16c70b"
+    }
+  ]
+}

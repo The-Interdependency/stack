@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "project": "from-photons-to-macroverse",
+  "revision": "0.2.0-audited",
+  "source_sha256": "f25960d3f691788d3c79bf11a1c6fa47ae1a76700e7d7c042e911f6b56579696",
+  "paper_sha256": "cf8af499c3a0e9544eb22d0947b0e836123a60c75adcacbfb1e41a81112afd3b",
+  "claims": [
+    {
+      "id": "P0_ONTOLOGICAL_PRIORITY",
+      "standing": "POSTULATE",
+      "status": "PRESERVED_NOT_VALIDATED",
+      "audited_statement": "Primitive intrinsic presence is ontologically prior within the theory dependency graph; this is not a chronology claim and is not derived from physics.",
+      "falsifier_or_boundary": "Empirical work may constrain consequences and explanatory value but cannot relabel the postulate as a known physical law without an independent derivation."
+    },
+    {
+      "id": "PHYSICS_FIREWALL",
+      "standing": "KNOWN_DERIVED",
+      "status": "HEALTHY",
+      "audited_statement": "The physical ladder distinguishes photons, QED interactions, QCD hadrons, nuclei, atoms, radiative stabilization, and chemistry; it does not rename interference as matter or subjecthood.",
+      "falsifier_or_boundary": "Any consciousness interpretation must leave tested physics unchanged."
+    },
+    {
+      "id": "DIFFERENTIATION_RANGE",
+      "standing": "DERIVED",
+      "status": "HEALTHY_PARSER_ARTIFACT_CLOSED",
+      "audited_statement": "The exact Markdown, DOCX render, and PDF page 15 state D(Z)=H(Z)/log|Z| in [0,1]. A parsed-text closing-parenthesis appearance was not a source defect.",
+      "falsifier_or_boundary": "The uniform distribution attains 1; any future source that excludes 1 is defective."
+    },
+    {
+      "id": "BOUNDARY_INTEGRITY_SUPPORT",
+      "standing": "MODEL",
+      "status": "REPAIRED",
+      "audited_statement": "B_bdry is defined only when conditional entropy support H_b meets preregistered threshold tau_H; below threshold it is hmmm_undefined.",
+      "falsifier_or_boundary": "A constant system may not receive a perfect boundary score from a smoothing epsilon."
+    },
+    {
+      "id": "MEASUREMENT_CERTIFICATE",
+      "standing": "MODEL_CONTRACT",
+      "status": "ADDED",
+      "audited_statement": "Every estimated component binds variables, scale, estimator, interventions, reference distribution, support, horizon, normalization, uncertainty, and data/code identity.",
+      "falsifier_or_boundary": "Uncertified or unsupported numbers have no comparable standing and cannot classify consciousness."
+    },
+    {
+      "id": "TRIADIC_MINIMUM",
+      "standing": "HYPOTHESIS",
+      "status": "REPAIRED_NECESSARY_NOT_SUFFICIENT",
+      "audited_statement": "A mutually coupled triad with constraint modulation is a candidate necessary architecture only; triadicity alone is neither subjecthood nor consciousness.",
+      "falsifier_or_boundary": "Matched dyadic, triadic, higher-arity, feed-forward, and equal-capacity controls must test the structural claim."
+    },
+    {
+      "id": "BIOLOGY_EMBODIMENT",
+      "standing": "POSTULATE_HYPOTHESIS_BOUNDARY",
+      "status": "REPAIRED",
+      "audited_statement": "P0 supplies ontological priority. Biology is an established embodiment considered by the paper; pre-biological or non-biological organized subjects remain logically open but empirically unestablished.",
+      "falsifier_or_boundary": "The mathematics does not establish chronological pre-biological organized consciousness."
+    },
+    {
+      "id": "SUBJECT_FAMILY_SELECTION",
+      "standing": "MODEL_HYPOTHESIS",
+      "status": "REPAIRED_BUT_UNRESOLVED",
+      "audited_statement": "A hard-exclusion subject model now selects a score-maximizing family of pairwise constitutively nonoverlapping candidates rather than calling one argmax a nonoverlapping population.",
+      "falsifier_or_boundary": "Hard exclusion must be compared against nesting, overlap-penalty, split, and coupled-subject rules; no rule is selected as canon."
+    },
+    {
+      "id": "ARITY_RECURSION_SEPARATION",
+      "standing": "MODEL_HYPOTHESIS",
+      "status": "HEALTHY_CANDIDATE",
+      "audited_statement": "Direct arity, exact carrier labels, and recursion depth remain distinct structural variables; circle count does not count nested contents.",
+      "falsifier_or_boundary": "Equal-budget lower-, adjacent-, wrong-tree, unnested, and label-shuffled controls must fail to reconstruct held-out structure."
+    },
+    {
+      "id": "HUMAN_HEPTAD",
+      "standing": "HYPOTHESIS",
+      "status": "UNVALIDATED_HIGH_RISK",
+      "audited_statement": "Human consciousness is hypothesized to require seven outer carriers and recursion depth at least two; no empirical carrier map or advantage over matched controls exists.",
+      "falsifier_or_boundary": "Six, eight, arbitrary-seven, unnested-seven, and lower-arity controls are mandatory."
+    },
+    {
+      "id": "UCNS_VISIBLE_BOUNDARY_TRACE",
+      "standing": "EXTERNAL_CANDIDATE_INPUT",
+      "status": "CURRENT_BOUNDARY_PINNED",
+      "audited_statement": "UCNS ef98748309913588fb13f389f809d5ef6cb5fec3 has an executable candidate exact visible-circle continuum/gonal trace with no ratification, no native M\u00f6bius completion, and no physical or consciousness meaning transfer.",
+      "falsifier_or_boundary": "Executability does not select the representation as UCNS canon or validate this theory."
+    },
+    {
+      "id": "SOURCE_REFERENCES_21_22",
+      "standing": "HMMM",
+      "status": "UNRESOLVED_PROVENANCE",
+      "audited_statement": "The consolidation note identifies the two manuscript titles and roles, but no immutable file or repository identity was found for either manuscript.",
+      "falsifier_or_boundary": "Bind each title to an exact artifact hash or repository commit before treating it as independently inspectable evidence."
+    },
+    {
+      "id": "REFERENCE_METADATA",
+      "standing": "BIBLIOGRAPHIC",
+      "status": "UPDATED",
+      "audited_statement": "Reference 17 now uses the eLife Version of Record DOI; reference 24 uses the 2026 PDG edition; reference 31 includes volume, issue, pages, and DOI; references 32-33 record current UCNS and a 2026 causal protocol.",
+      "falsifier_or_boundary": "Bibliographic currency does not transfer empirical support to the candidate theory."
+    }
+  ],
+  "hmmm": [
+    "Immutable artifact identities for source manuscripts 21 and 22.",
+    "Run the frozen synthetic arity and recursion comparison.",
+    "Compare hard nonoverlap with nesting and overlap-capable subject rules.",
+    "Define and preregister any biological seven-carrier mapping only after synthetic structural discrimination.",
+    "Resolve repository-wide licensing before claiming reuse permissions."
+  ]
+}

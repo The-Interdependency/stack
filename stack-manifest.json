@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
-  "version": "1.0.0",
-  "work_graph_sha256": "b452b529e30cbb1045c82035b5ed022dea47f3515391de4e9b35a08c90f3c9d5",
+  "version": "1.1.0",
+  "work_graph_sha256": "bbcb6b7582192c02e79f5b98b8f857385a07cda3280f24602f825ecd15ac405f",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -57,5 +57,70 @@
       "epac exists independently at d8868858b2e455381ce670797bdbe47189bdc496, but clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; libs/epac/ stays unpopulated until graduation",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
-  }
+  },
+  "research_participants": [
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "stack-baseline",
+      "repository": "The-Interdependency/stack",
+      "commit": "77ef8c7fb0ff75a524181655ee9f9641372768f7",
+      "relation": "target composition forge baseline at audit start",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32",
+      "relation": "audit, domain-claim, work-graph, and hmmm doctrine",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "d6699e21b11c8f8394998efc34a468e2d6efc8b0",
+      "relation": "domain-restraint authority; root impact none",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "ef98748309913588fb13f389f809d5ef6cb5fec3",
+      "relation": "candidate exact visible-circle continuum/gonal trace; no ratification or meaning transfer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "edcm",
+      "repository": "The-Interdependency/edcm",
+      "commit": "eb5f200d48a8c4ffa7b943238407fbdac4934946",
+      "relation": "adjacent measurement discipline only; no validation claim",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "pcea",
+      "repository": "The-Interdependency/pcea",
+      "commit": "834987cb0c1fea5f62d6ea08e5c5bb878c312646",
+      "relation": "adjacent runtime/security work; no ontology transfer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/from-photons-to-macroverse/",
+      "participant_id": "epac",
+      "repository": "The-Interdependency/epac",
+      "commit": "d8868858b2e455381ce670797bdbe47189bdc496",
+      "relation": "adjacent internal research; no external physics transfer",
+      "canonical_release": false,
+      "authority_transfer": false
+    }
+  ]
 }

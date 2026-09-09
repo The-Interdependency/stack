@@ -1,0 +1,32 @@
+name: from-photons-to-macroverse
+
+on:
+  pull_request:
+    paths:
+      - "research/from-photons-to-macroverse/**"
+      - "README.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
+      - ".github/workflows/from-photons-to-macroverse.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/from-photons-to-macroverse/**"
+      - "README.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
+      - ".github/workflows/from-photons-to-macroverse.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate From Photons to the Macroverse research boundaries
+        run: python -m unittest discover -s research/from-photons-to-macroverse/tests -q
