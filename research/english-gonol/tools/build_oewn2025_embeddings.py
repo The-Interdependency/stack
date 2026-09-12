@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Build the deterministic OEWN 2025 EDCM-on-UCNS lexical floor."""
+"""Build the deterministic OEWN 2025 English-on-UCNS lexical floor.
+
+Owned by English Gonol Construction (``research/english-gonol/``), moved from
+EDCM without redesign. Frozen schema/commit identities are retained.
+"""
 
 # === MODULE_BUILD ===
 # id: edcm_oewn2025_lexical_floor_builder
@@ -50,9 +54,9 @@ import json
 from pathlib import Path
 import subprocess
 
-from edcm.language.affixes import affix_inventory_record, load_affix_inventory
-from edcm.language.morphology import build_morphology_graph
-from edcm.language.relational_bridge import (
+from english_gonol.language.affixes import affix_inventory_record, load_affix_inventory
+from english_gonol.language.morphology import build_morphology_graph
+from english_gonol.language.relational_bridge import (
     UCNS_RELATIONAL_COMMIT,
     build_direct_atomic,
     build_molecular,
@@ -62,8 +66,8 @@ from edcm.language.relational_bridge import (
     validate_frozen_branch,
     verify_ucns_producer,
 )
-from edcm.language.rendering import normalize_lemma, transformation_inventory
-from edcm.language.source import (
+from english_gonol.language.rendering import normalize_lemma, transformation_inventory
+from english_gonol.language.source import (
     OEWN_COMMIT, OEWN_EXPECTED_RELATION_COUNT, OEWN_EXPECTED_SYNSET_COUNT, OEWN_EXPECTED_WORD_COUNT,
     OEWN_LICENSE, OEWN_RELEASE_DATE, OEWN_REPOSITORY, OEWN_TAG, load_oewn_2025,
 )

@@ -52,7 +52,7 @@ from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
-from edcm.gonol import (
+from english_gonol.gonol import (
     CONSTRUCTOR_ID,
     CONSTRUCTOR_VERSION,
     SCALE_OPTION_SETS,
@@ -99,7 +99,7 @@ class GonolConstructorTest(unittest.TestCase):
 
     def test_explicit_geometry_is_observed_without_operation_claim(self) -> None:
         digest, fake = _fake_public_gonol_authority()
-        with patch("edcm.gonol.PINNED_PUBLIC_GONOL_SHA256", digest):
+        with patch("english_gonol.gonol.PINNED_PUBLIC_GONOL_SHA256", digest):
             receipt = construct_gonol(
                 scale="character",
                 source="A",
@@ -298,7 +298,7 @@ class GonolConstructorTest(unittest.TestCase):
     def test_participant_receipt_identity_is_bound_into_parent_closure(self) -> None:
         digest, fake = _fake_public_gonol_authority()
         absent = construct_gonol(scale="word", source="A", source_id="fixture:A")
-        with patch("edcm.gonol.PINNED_PUBLIC_GONOL_SHA256", digest):
+        with patch("english_gonol.gonol.PINNED_PUBLIC_GONOL_SHA256", digest):
             observed = construct_gonol(
                 scale="word",
                 source="A",

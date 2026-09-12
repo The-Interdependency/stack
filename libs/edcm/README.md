@@ -1,15 +1,15 @@
 # EDCM
 
-EDCM is the Energy–Dissonance Circuit Model research, text-gonol construction, and measurement repository.
+EDCM is the Energy–Dissonance Circuit Model research and measurement repository. English text-domain gonol construction moved out of EDCM into the stack-local research component [`research/english-gonol/`](../../research/english-gonol/); EDCM may evaluate its outputs but must not define the construction.
 
 The repository has four deliberately separate surfaces:
 
 1. **Frozen maintained baseline:** `edcm/measurement/`, preserved as candidate `edcm-measurement-v1` with byte-checked canon and provenance.
-2. **Text-domain gonol construction:** EDCM-owned character admission and linguistic/semantic construction using current METAPAT affixiation semantics and current UCNS geometry.
+2. **English Gonol Construction consumer boundary:** EDCM no longer owns text-domain gonol construction. The construction (character admission, linguistic/semantic construction, relational carrier, affixiation application) lives in [`research/english-gonol/`](../../research/english-gonol/).
 3. **Experiment-first joint program:** reproducible UCNS–EDCM experiments that determine which structural and measurement candidates deserve later canon review.
 4. **Historical corpus-observation profiles:** pinned EDCM/UCNS producer epochs used to expose assumptions against full real-system corpora. They are observation/replay evidence, not the definition of current text construction.
 
-The baseline is executable. Text construction does not activate measurement. Neither is automatically the final UCNS–EDCM canon.
+The baseline is executable. Text construction lives in English Gonol Construction and does not activate EDCM measurement. Neither is automatically the final UCNS–EDCM canon.
 
 ## UCNS–EDCM canon
 
@@ -44,35 +44,26 @@ may carry a source-pinned copy but is not the mathematical authority.
 
 ## Gonol language boundary
 
-The active authority split is:
+English text-domain gonol construction is no longer defined in EDCM. It moved to
+[`research/english-gonol/`](../../research/english-gonol/) under the authority split:
 
 ```text
 METAPAT   -> affixiation semantics and relational-integration invariants
 UCNS      -> gonol geometry, native Möbius/Public Gonol carrier,
              geometrically established operations
-EDCM      -> text-domain admission and linguistic/semantic gonol construction
-EDCM      -> separately frozen measurement projections and falsifiers
+English Gonol Construction
+          -> text-domain admission and linguistic/semantic gonol construction
+EDCM      -> measurement and evaluation only; may evaluate English Gonol
+             outputs but must not define the construction
 ```
 
-For active EDCM text construction:
+For the active construction contract, including the rule
+`every admitted character is a gonol`, see
+[`research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md`](../../research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md).
 
-```text
-every admitted character is a gonol
-```
-
-EDCM owns the source/profile that determines what is admitted as a character. If a profile has not selected Unicode code point, grapheme, exact Public Gonol glyph inventory, or another explicit unit, that admission boundary remains `hmmm`; UCNS does not silently choose it merely because UCNS owns the geometry.
-
-Current EDCM text construction uses declared scale option sets rather than a mandatory adjacent-scale ladder. `edcm.gonol` is the implemented candidate constructor for closing one gonol at an admissible scale. None of its scale options is selected canon, and construction does not activate measurement. Suffix-coupling exceptions are carried by the closed suffix gonol, such as `ing` carrying `suffix-coupling.final-y-after-consonant = preserve-y`, rather than by a global morphology law. UCNS coupling geometry remains `hmmm` unless an explicit matching geometry authority is supplied.
-
-Affixiation is defined by METAPAT. UCNS owns any exact geometric realization. EDCM applies affixiation to text-domain gonols. Once closed, a gonol is atomic at any scale. Closed gonols may participate directly at any admissible scale without reopening, while constituent identity and provenance remain recoverable.
-
-Do not insert conventional NLP token IDs, subword pieces, opaque external embedding vectors, or whole-string hashes as substitutes for gonol identity. Source prose, dictionaries, corpora, labels, and annotations may remain evidence and provenance; they become gonol semantics only through explicit EDCM construction.
-
-Public Gonol operations are usable only where current UCNS geometry establishes them. Unicode names, dictionary definitions, glyph shape, adjacency, and conventional punctuation grammar do not define a UCNS operation. Unresolved geometry remains `hmmm` rather than being filled with an invented carrier, scale rule, or semantic inference.
-
-A reproducible gonol construction establishes only that construction. Any EDCM measurement projection is frozen and evaluated separately.
-
-See [`docs/GONOL_LANGUAGE_BOUNDARY.md`](docs/GONOL_LANGUAGE_BOUNDARY.md).
+EDCM retains its separately frozen measurement projections and falsifiers. A
+reproducible English Gonol construction establishes only that construction; any
+EDCM measurement projection is frozen and evaluated separately.
 
 ## First joint experiment
 
@@ -346,10 +337,10 @@ Historical implementation, source packets, repair handoffs, and prior adapter co
 
 ## Usage guidance
 
-For new text-gonol work, start in EDCM and follow [`docs/GONOL_LANGUAGE_BOUNDARY.md`](docs/GONOL_LANGUAGE_BOUNDARY.md): resolve the source/admission profile, import METAPAT affixiation semantics, supply explicit UCNS geometry authority when geometry is claimed, build and replay the declared construction, and freeze any later measurement separately.
+For new text-gonol work, start in [`research/english-gonol/`](../../research/english-gonol/) and follow its [`docs/GONOL_LANGUAGE_BOUNDARY.md`](../../research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md): resolve the source/admission profile, import METAPAT affixiation semantics, supply explicit UCNS geometry authority when geometry is claimed, build and replay the declared construction, and let EDCM freeze any later measurement separately.
 
 For historical experiment replay, use the exact historical producer commit and profile named by the artifact; do not repin or reinterpret sealed evidence as current authority.
 
 ## hmmm
 
-The exact EDCM character-admission unit remains profile-specific where not selected. The source-supported complete English morphology law, exact UCNS native Möbius-carrier affixiation/coupling geometry, and direct distant-scale coupling remain unresolved. EDCM has not selected a lawful projection, information-loss account, metric, benchmark, or falsifier for evaluating completed recursive text-gonol constructions. Historical MultiWOZ seals remain represented evidence, not measurement validity; external replication and broader carrier coverage remain separate unresolveds.
+The exact English Gonol character-admission unit remains profile-specific where not selected. The source-supported complete English morphology law, exact UCNS native Möbius-carrier affixiation/coupling geometry, and direct distant-scale coupling remain unresolved. EDCM has not selected a lawful projection, information-loss account, metric, benchmark, or falsifier for evaluating completed recursive text-gonol constructions. Historical MultiWOZ seals remain represented evidence, not measurement validity; external replication and broader carrier coverage remain separate unresolveds.

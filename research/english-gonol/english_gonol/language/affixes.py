@@ -1,8 +1,9 @@
 """Complete affix inventory for the OEWN 2025 embedding run.
 
-"Complete" means every canonical affix and every declared allomorph in EDCM's
-versioned ``bones_affixes_v1.json`` is materialized. The inventory is a frozen
-run boundary, not a claim that English can never acquire another affix.
+"Complete" means every canonical affix and every declared allomorph in the
+English Gonol Construction versioned ``bones_affixes_v1.json`` is materialized.
+The inventory is a frozen run boundary, not a claim that English can never
+acquire another affix.
 
 Applicability is universal: no record contains or enforces a root-selection
 predicate. Conventionality is evidence attached after composition.
@@ -12,7 +13,7 @@ predicate. Conventionality is evidence attached after composition.
 # id: edcm_language_affixes
 #   module_name: affixes
 #   module_kind: engine
-#   summary: expands every canonical EDCM affix and allomorph into a deterministic universally applicable inventory for the OEWN 2025 run
+#   summary: expands every canonical English affix and allomorph into a deterministic universally applicable inventory for the OEWN 2025 run
 #   owner: Erin Spencer
 #   public_surface: AffixRecord, load_affix_inventory, affix_inventory_record
 #   internal_surface: _canon_path, _slug
@@ -24,7 +25,7 @@ predicate. Conventionality is evidence attached after composition.
 #   tests: tests.test_language_full_run
 #   rollout: default_enabled
 #   rollback: restore the prior inventory version and regenerate every dependent artifact
-#   requires: edcm measurement canon bones_affixes_v1.json
+#   requires: english_gonol language data bones_affixes_v1.json
 #   since: 2026-07-13
 #   unresolved: future run versions may add newly documented English affixes without invalidating this freeze
 # === END MODULE_BUILD ===
@@ -76,9 +77,7 @@ _SECTION_ORDER = (
 
 def _canon_path() -> Path:
     return (
-        Path(__file__).resolve().parents[1]
-        / "measurement"
-        / "canon"
+        Path(__file__).resolve().parent
         / "data"
         / "bones_affixes_v1.json"
     )
@@ -144,7 +143,7 @@ def affix_inventory_record(records: tuple[AffixRecord, ...] | None = None) -> di
         "version": "1.0.0",
         "universal_application": True,
         "selection_restrictions": False,
-        "source": "edcm/measurement/canon/data/bones_affixes_v1.json",
+        "source": "english_gonol/language/data/bones_affixes_v1.json",
         "count": len(values),
         "affixes": [asdict(record) for record in values],
     }

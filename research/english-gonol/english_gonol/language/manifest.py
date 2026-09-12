@@ -24,7 +24,7 @@
 # === CONTRACTS ===
 # id: lexical_manifest_preserves_authority_firewall
 #   given: the English lexical-floor manifest is inspected
-#   then: EDCM owns English evidence, UCNS owns representation, and geometry, proof, measurement, empirical, and canon transfer remain false
+#   then: English Gonol Construction owns English evidence, UCNS owns representation, and geometry, proof, measurement, empirical, and canon transfer remain false
 #   class: doctrine
 #   since: 2026-08-16
 # === END CONTRACTS ===

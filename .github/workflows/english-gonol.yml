@@ -1,0 +1,29 @@
+name: english-gonol
+
+on:
+  push:
+    paths:
+      - "research/english-gonol/**"
+      - "libs/ucns/**"
+      - ".github/workflows/english-gonol.yml"
+  pull_request:
+    paths:
+      - "research/english-gonol/**"
+      - "libs/ucns/**"
+      - ".github/workflows/english-gonol.yml"
+
+jobs:
+  english-gonol-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pytest
+        run: python -m pip install pytest
+
+      - name: English Gonol construction tests
+        working-directory: research/english-gonol
+        run: python -m pytest -q tests

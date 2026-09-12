@@ -1,6 +1,6 @@
 ---
 name: gonol-build
-description: Cross-repository construction, review, replay, and continuation discipline for gonols. Load this when realizing gonol or affixiation geometry in UCNS; when constructing character, word, morphology, definition, punctuation-function, or recursive gonols in EDCM; when deciding whether a relation belongs inside a gonol; or when promoting a completed gonol to atomic participation at another scale. Do not load for unrelated geometry, ordinary prose editing, or EDCM measurement that consumes already-closed gonols without changing their construction. Resolve METAPAT semantic authority, UCNS geometric authority, and EDCM text-domain authority separately; never restore historical gonal-morphology, omega/phi/psi, bone/flesh, or carrier-LCM language rules.
+description: Cross-repository construction, review, replay, and continuation discipline for gonols. Load this when realizing gonol or affixiation geometry in UCNS; when constructing character, word, morphology, definition, punctuation-function, or recursive gonols in English Gonol Construction; when deciding whether a relation belongs inside a gonol; or when promoting a completed gonol to atomic participation at another scale. Do not load for unrelated geometry, ordinary prose editing, or EDCM measurement that consumes already-closed gonols without changing their construction. Resolve METAPAT semantic authority, UCNS geometric authority, and English Gonol text-domain authority separately; never restore historical gonal-morphology, omega/phi/psi, bone/flesh, or carrier-LCM language rules.
 ---
 
 # gonol-build — construct, close, promote, recurse
@@ -13,7 +13,7 @@ The governing split is:
 ```text
 METAPAT   -> conceptual meaning of affixiation and relational integration
 UCNS      -> gonol geometry, native Möbius/Public Gonol carrier, geometric operations
-EDCM      -> text-domain admission and linguistic/semantic gonol construction
+English Gonol Construction -> text-domain admission and linguistic/semantic gonol construction
 skill-lib -> construction, evidence, replay, and continuation discipline
 ```
 
@@ -33,7 +33,7 @@ Before acting:
 4. For carrier, topology, orientation, closure geometry, or Public Gonol
    operations, resolve current UCNS authority.
 5. For character admission, morphology, words, definitions, source corpora, and
-   recursive textual relations, resolve current EDCM authority.
+   recursive textual relations, resolve current English Gonol Construction authority.
 6. Distinguish declared architecture, implemented construction, evidence status,
    proposed continuation, and `hmmm`.
 7. If governing sources disagree, stop at the conflict. Do not choose the most
@@ -49,24 +49,24 @@ construction.
 
 ## Domain rule: every character is a gonol
 
-For active EDCM text construction:
+For active English Gonol text construction:
 
 ```text
 every admitted character is a gonol
 ```
 
-This is an **EDCM text-domain rule**, not a UCNS linguistic rule and not a
+This is an **English Gonol text-domain rule**, not a UCNS linguistic rule and not a
 METAPAT axiom.
 
-EDCM owns what counts as an admitted character for a declared source/profile.
+English Gonol Construction owns what counts as an admitted character for a declared source/profile.
 If the source boundary has not selected code point, grapheme, exact Public Gonol
 glyph inventory, or another character unit, preserve that question as `hmmm`.
 UCNS may geometrically realize an admitted character on its carrier; UCNS does
-not silently decide EDCM's character-admission semantics.
+not silently decide English Gonol's character-admission semantics.
 
 Character occurrences remain separately addressable even when repeated. Their
 source identity, order, multiplicity, and provenance are preserved according to
-the active EDCM construction profile.
+the active English Gonol construction profile.
 
 ## Construction invariant
 
@@ -88,9 +88,9 @@ gonol construction. Sidecars may carry indexes, caches, projections,
 provenance, and receipts; an external edge table does not become the gonol's
 authoritative relational content merely because it is easier to query.
 
-## Active EDCM text order
+## Active English Gonol text order
 
-Unless current EDCM authority explicitly changes it, preserve:
+Unless current English Gonol authority explicitly changes it, preserve:
 
 ```text
 characters -> morphology -> definitions -> recursive gonol relations
@@ -118,11 +118,11 @@ or coupling law merely to complete an implementation. Implement the native
 carrier under the fixed METAPAT invariants and let unresolved geometric law
 remain `hmmm` until construction exposes it.
 
-EDCM applies affixiation to text-domain gonols. Linguistic prefixes and suffixes
+English Gonol Construction applies affixiation to text-domain gonols. Linguistic prefixes and suffixes
 are one instance of affixiation; they do not define affixiation.
 
 The complete English root, stem, affix, irregular-transformation, and family law
-remains unresolved unless current EDCM source/evidence establishes otherwise.
+remains unresolved unless current English Gonol source/evidence establishes otherwise.
 Never invent a decomposition to complete a pipeline. Do not assume every word is
 `root + affix`, that a lemma is a final root, or that one stemmer supplies
 semantic authority.
@@ -130,7 +130,7 @@ semantic authority.
 ## Closure rules
 
 - Preserve ordered occurrence identity, multiplicity, exact source evidence,
-  source offsets, and provenance required by the governing EDCM profile.
+  source offsets, and provenance required by the governing English Gonol profile.
 - Apply no normalization, folding, trimming, deduplication, inferred sorting,
   or silent collapse unless the current profile explicitly authorizes it.
 - Keep completed gonol closure intact inside larger constructions. Do not reopen
@@ -146,14 +146,14 @@ semantic authority.
 
 ## Public Gonol function application
 
-UCNS owns the geometric operation of Public Gonol function positions. EDCM may
+UCNS owns the geometric operation of Public Gonol function positions. English Gonol Construction may
 apply only operations geometrically authorized by the current UCNS source and
 evidence.
 
 - An unresolved geometric operation remains `hmmm`; Unicode names, dictionary
   definitions, neighboring glyphs, or conventional punctuation grammar do not
   fill it.
-- Require occurrence-addressed application context when the governing EDCM
+- Require occurrence-addressed application context when the governing English Gonol
   construction requires context.
 - Never infer adjacency, precedence, grammatical role, or application scope from
   glyph shape alone.
@@ -182,7 +182,7 @@ construction cannot begin.
 
 For a construction that claims completion:
 
-1. Bind exact METAPAT, UCNS, EDCM, source-artifact, profile, code, and option
+1. Bind exact METAPAT, UCNS, English Gonol Construction, source-artifact, profile, code, and option
    identities that materially determine the construction.
 2. Admit the complete declared source, not an inspected prefix presented as a
    finished run.
@@ -224,7 +224,7 @@ the governing protocol. Do not translate `SURVIVED` into proved or canonical.
 
 ## Usage guidance
 
-When building text gonols, start in EDCM and consume UCNS geometry rather than
+When building text gonols, start in English Gonol Construction and consume UCNS geometry rather than
 moving text semantics into UCNS. When building or repairing carrier geometry,
 start in UCNS and use the METAPAT contract only for the relational invariants it
 authorizes. When affixiation semantics themselves are in question, repair or
@@ -235,14 +235,14 @@ A minimal routing example is:
 ```text
 METAPAT: affixiation preserves bounded participant identity/provenance
 UCNS:    realize that relation on the native Möbius/Public Gonol geometry
-EDCM:    admit characters as gonols and construct text through affixiation
+English Gonol Construction: admit characters as gonols and construct text through affixiation
 ```
 
 ## Anti-patterns: refuse these
 
 - Assigning character, morphology, definition, or lexical-source authority to
   UCNS merely because UCNS provides their geometry.
-- Assigning affixiation semantics to EDCM or UCNS merely because they implement
+- Assigning affixiation semantics to English Gonol Construction or UCNS merely because they implement
   or apply it.
 - Reopening closed gonols merely because a larger construction contains them.
 - Inferring function context, syntax, precedence, or operation from adjacency,
@@ -266,9 +266,9 @@ EDCM:    admit characters as gonols and construct text through affixiation
 Character admission:
 
 ```text
-EDCM source/profile admits "a" -> that character occurrence is a gonol
+English Gonol source/profile admits "a" -> that character occurrence is a gonol
 UCNS supplies its authorized carrier geometry
-EDCM owns the text-domain construction that consumes it
+English Gonol Construction owns the text-domain construction that consumes it
 ```
 
 Recursive closure:
@@ -277,7 +277,7 @@ Recursive closure:
 bounded gonols + declared relation
     -> affixiate under METAPAT invariants
     -> UCNS geometric realization
-    -> closed EDCM text-domain gonol
+    -> closed English Gonol text-domain gonol
     -> atomic participation in a later declared relation
 ```
 
@@ -295,7 +295,7 @@ geometric coupling law unresolved
 `hmmm` blocks unqualified promotion. It does not block experimentation or
 construction of a declared candidate.
 
-- which exact EDCM character-admission unit applies where not already source-pinned;
+- which exact English Gonol character-admission unit applies where not already source-pinned;
 - the source-supported complete English morphology law;
 - the exact UCNS Möbius-carrier affixiation/coupling law exposed by implementation;
 - executable geometry for direct coupling across distant recursive scales;

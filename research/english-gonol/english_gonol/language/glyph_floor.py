@@ -1,16 +1,17 @@
 """Compatibility access to the UCNS-owned public gonol.
 
-EDCM does not construct or own the public 157-gonal. The canonical source is
-the UCNS public package, promoted from ``a0-betatest@7af8deb``. This module is a
-lazy compatibility adapter so importing the base EDCM package does not imply
-that the optional UCNS integration is installed or active.
+English Gonol Construction does not construct or own the public 157-gonal. The
+canonical source is the UCNS public package, promoted from
+``a0-betatest@7af8deb``. This module is a lazy compatibility adapter so
+importing the English Gonol package does not imply that the optional UCNS
+integration is installed or active.
 """
 
 # === MODULE_BUILD ===
 # id: edcm_language_glyph_floor
 #   module_name: glyph_floor
 #   module_kind: adapter
-#   summary: lazily consumes the UCNS-owned public gonol without retaining a competing EDCM arrangement authority
+#   summary: lazily consumes the UCNS-owned public gonol without retaining a competing arrangement authority
 #   owner: Erin Spencer
 #   public_surface: PUBLIC_GLYPH_FLOOR_157, build_public_glyph_floor_157, validate_public_glyph_floor, glyph_floor_sha256, UCNSPublicGonolDependencyError, UCNSPublicGonolContractError
 #   internal_surface: _load_ucns_public_gonol, _PublicGonolProxy
@@ -24,7 +25,7 @@ that the optional UCNS integration is installed or active.
 #   rollback: restore only after reverting canonical ownership to the exact pinned UCNS source
 #   requires: edcm_language_manifest
 #   since: 2026-07-16
-#   unresolved: canonical public-gonol to EDCM language-object bridge remains hmmm
+#   unresolved: canonical public-gonol to English language-object bridge remains hmmm
 # === END MODULE_BUILD ===
 
 from __future__ import annotations
@@ -54,7 +55,7 @@ def _load_ucns_public_gonol() -> ModuleType:
         if exc.name != "ucns":
             raise
         raise UCNSPublicGonolDependencyError(
-            "EDCM no longer owns a public-gonol copy; install the pinned UCNS integration",
+            "English Gonol Construction no longer owns a public-gonol copy; install the pinned UCNS integration",
             name="ucns",
         ) from exc
 
@@ -111,7 +112,7 @@ class _PublicGonolProxy(Sequence[str]):
         return iter(self._glyphs())
 
     def __repr__(self) -> str:
-        return "<UCNS-owned public gonol; lazy EDCM compatibility view>"
+        return "<UCNS-owned public gonol; lazy English Gonol compatibility view>"
 
 
 def build_public_glyph_floor_157() -> tuple[str, ...]:
@@ -132,7 +133,7 @@ def validate_public_glyph_floor(glyphs: Sequence[str]) -> None:
     canonical = build_public_glyph_floor_157()
     candidate = tuple(glyphs)
     if candidate != canonical:
-        raise UCNSPublicGonolContractError("EDCM glyph input differs from UCNS public gonol")
+        raise UCNSPublicGonolContractError("English Gonol glyph input differs from UCNS public gonol")
 
 
 PUBLIC_GLYPH_FLOOR_157: Sequence[str] = _PublicGonolProxy()

@@ -25,10 +25,10 @@ from types import ModuleType
 
 import pytest
 
-from edcm.language.affixes import AffixRecord
-from edcm.language.morphology import Decomposition, MorphologyGraph, build_morphology_graph
-from edcm.language.manifest import embedding_manifest
-from edcm.language.model import (
+from english_gonol.language.affixes import AffixRecord
+from english_gonol.language.morphology import Decomposition, MorphologyGraph, build_morphology_graph
+from english_gonol.language.manifest import embedding_manifest
+from english_gonol.language.model import (
     AtomicForkRelation,
     AtomicForkResult,
     Attestation,
@@ -36,25 +36,29 @@ from edcm.language.model import (
     LexicalEvidence,
     Soundness,
 )
-from edcm.language.relational_bridge import (
+from english_gonol.language.relational_bridge import (
     LexicalBridgeError, UCNSProducerVerification, build_direct_atomic, build_molecular,
     canonical_json_bytes, compare_frozen_branches, freeze_branch,
     validate_frozen_branch, verify_ucns_producer,
 )
-from edcm.language.source import LexemeRecord, SenseRecord, SynsetRecord, WordnetSnapshot
+from english_gonol.language.source import LexemeRecord, SenseRecord, SynsetRecord, WordnetSnapshot
 from tools import build_oewn2025_embeddings as lexical_builder
 from tools.build_oewn2025_embeddings import REQUIRED_ARTIFACT_FILES, _resume_complete
 
 
 def _ucns_root() -> Path:
-    configured = os.environ.get("EDCM_LEXICAL_UCNS_ROOT") or os.environ.get("UCNS_SOURCE_ROOT")
+    configured = (
+        os.environ.get("ENGLISH_GONOL_UCNS_ROOT")
+        or os.environ.get("EDCM_LEXICAL_UCNS_ROOT")
+        or os.environ.get("UCNS_SOURCE_ROOT")
+    )
     if configured:
         return Path(configured).resolve()
     try:
         import ucns.relational_carrier as module
     except ImportError as exc:
         raise RuntimeError(
-            "set EDCM_LEXICAL_UCNS_ROOT to the exact lexical producer checkout"
+            "set ENGLISH_GONOL_UCNS_ROOT (or EDCM_LEXICAL_UCNS_ROOT) to the exact lexical producer checkout"
         ) from exc
     path = Path(module.__file__ or "").resolve()
     if len(path.parents) < 3:
@@ -343,7 +347,7 @@ def test_fresh_build_rejects_preexisting_output_files(tmp_path: Path) -> None:
 
 
 def test_glyph_floor_compatibility_module_imports() -> None:
-    import edcm.language.glyph_floor as glyph_floor
+    import english_gonol.language.glyph_floor as glyph_floor
 
     assert glyph_floor.PUBLIC_GLYPH_FLOOR_157 is not None
     assert "UCNS-owned public gonol" in repr(glyph_floor.PUBLIC_GLYPH_FLOOR_157)

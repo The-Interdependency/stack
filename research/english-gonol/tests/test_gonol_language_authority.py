@@ -5,10 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LIVE_SURFACES = (
-    ROOT / "CANON.md",
     ROOT / "README.md",
-    ROOT / "CLAUDE.md",
-    ROOT / "AGENTS.md",
     ROOT / "docs" / "GONOL_LANGUAGE_BOUNDARY.md",
 )
 
@@ -19,10 +16,9 @@ def _compact(path: Path) -> str:
 
 def test_live_surfaces_route_gonol_authority_consistently() -> None:
     boundary = _compact(ROOT / "docs" / "GONOL_LANGUAGE_BOUNDARY.md")
-    canon = _compact(ROOT / "CANON.md")
-    agents = _compact(ROOT / "AGENTS.md")
+    readme = _compact(ROOT / "README.md")
 
-    for text in (boundary, canon, agents):
+    for text in (boundary, readme):
         assert "every admitted character is a gonol" in text
         assert "METAPAT" in text
         assert "UCNS" in text
@@ -30,8 +26,8 @@ def test_live_surfaces_route_gonol_authority_consistently() -> None:
 
     assert "METAPAT defines affixiation" in boundary
     assert "UCNS owns any exact geometric realization" in boundary
-    assert "EDCM applies affixiation to text-domain gonols" in boundary
-    for text in (boundary, canon, agents):
+    assert "English Gonol Construction applies affixiation to text-domain gonols" in boundary
+    for text in (boundary, readme):
         assert "scale option sets" in text
         assert "edcm.gonol" in text
         assert "Once closed, a gonol is atomic at any scale" in text
@@ -45,7 +41,7 @@ def test_live_surfaces_do_not_restore_ucns_language_ownership() -> None:
         "UCNS owns the gonol construction",
         "UCNS lexical construction remains upstream",
         "UCNS owns lexical/gonol construction surfaces",
-        "EDCM owns neither lexical-floor membership nor UCNS character-, word-, or definition-gonol construction",
+        "English Gonol owns neither lexical-floor membership nor UCNS character-, word-, or definition-gonol construction",
         "UCNS has authorized a Scrabble dictionary as the replacement lexical source class",
     )
     for path in LIVE_SURFACES:
@@ -62,7 +58,7 @@ def test_unresolved_ucns_operations_remain_hmmm_not_semantics() -> None:
 
 
 def test_measurement_does_not_activate_from_construction() -> None:
-    canon = _compact(ROOT / "CANON.md")
+    readme = _compact(ROOT / "README.md")
     boundary = _compact(ROOT / "docs" / "GONOL_LANGUAGE_BOUNDARY.md")
-    assert "EDCM construction does not validate EDCM measurement" in boundary
-    assert "EDCM construction and EDCM measurement remain separate" in canon
+    assert "English Gonol construction does not validate EDCM measurement" in boundary
+    assert "English Gonol construction and EDCM measurement remain separate" in readme

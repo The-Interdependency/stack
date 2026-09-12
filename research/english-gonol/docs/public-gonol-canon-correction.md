@@ -1,4 +1,4 @@
-# EDCM public-gonol canon correction
+# English Gonol public-gonol canon correction
 
 Status: retirement completed; lawful non-geometric replacement active.
 
@@ -10,12 +10,12 @@ the replacement branch tests passed.
 
 ## Decision
 
-EDCM does not own the public gonol.
+English Gonol Construction does not own the public gonol.
 
 The exact public gonol implemented in
 `The-Interdependency/a0-betatest@7af8debf6ef3905f01baff02b43d8c3bee16ccbc`
 is canon for all UCNS and is being promoted into the UCNS public package.
-EDCM is a downstream consumer.
+English Gonol Construction (and EDCM) are downstream consumers.
 
 The earlier EDCM language experiment is retired because it:
 
@@ -49,9 +49,9 @@ digit "0" as an ordinary nonzero glyph
 No `k/157`, `2k/157`, arbitrary-origin, or removable-gauge interpretation is
 introduced as public-gonol canon.
 
-## Current EDCM behavior
+## Current English Gonol behavior
 
-`edcm.language.glyph_floor` is now a lazy compatibility view over the pinned
+`english_gonol.language.glyph_floor` is now a lazy compatibility view over the pinned
 UCNS public surface. It contains no arrangement construction law.
 
 If the optional canonical UCNS package is absent, accessing the public gonol
@@ -80,7 +80,7 @@ intrinsic carriers, bindings, receipts, and producer identities are revalidated.
 ## Reopening conditions
 
 Language-gonol construction may reopen only after Erin ratifies an explicit
-bridge from the UCNS-owned public gonol into the intended EDCM language object.
+bridge from the UCNS-owned public gonol into the intended English Gonol language object.
 That bridge must state exactly what is preserved and must not silently:
 
 - move or normalize away the twist origin;

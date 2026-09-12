@@ -1,4 +1,7 @@
-"""Unified EDCM gonol candidate constructor.
+"""Unified English Gonol candidate constructor.
+
+Moved from EDCM into ``research/english-gonol/`` without redesign. Frozen
+constructor/schema identities are retained for receipt continuity.
 
 Usage guidance
 --------------
@@ -6,7 +9,7 @@ This is an implemented candidate, not selected canon. It closes one gonol at a
 declared scale using the scale's option set. It does not encode a mandatory
 ``character -> word -> definition -> recursive`` ladder.
 
-    from edcm.gonol import construct_gonol, replay_gonol
+    from english_gonol.gonol import construct_gonol, replay_gonol
 
     word = construct_gonol(scale="word", source="try", source_id="example:try")
     ing = construct_gonol(
@@ -43,11 +46,11 @@ Frozen choices for ``edcm.gonol/v1``:
 # id: edcm_gonol
 #   module_name: gonol
 #   module_kind: engine
-#   summary: unified EDCM candidate constructor that closes gonols through declared scale option sets while preserving closed-gonol atomicity, carried suffix options, deterministic replay, and UCNS/METAPAT authority boundaries
+#   summary: unified English Gonol candidate constructor that closes gonols through declared scale option sets while preserving closed-gonol atomicity, carried suffix options, deterministic replay, and UCNS/METAPAT authority boundaries; moved from EDCM without redesign
 #   owner: Erin Spencer
 #   public_surface: CONSTRUCTOR_ID, CONSTRUCTOR_VERSION, PINNED_PUBLIC_GONOL_SHA256, ScaleOptionSet, ClosedGonol, GonolReceipt, GonolConstructionError, SCALE_OPTION_SETS, construct_gonol, replay_gonol, canonical_receipt_bytes
 #   internal_surface: _option_set, _require_text, _source_units, _closed_participants, _validate_closed_gonol, _carried_option_pairs, _has_suffix_coupling_options, _relation_value, _geometry_observation, _source_character_gonols, _participant_payload, _atomic_payload, _receipt_payload, _digest
-#   auth_boundary: EDCM owns text-domain closure; UCNS Public Gonol geometry is optional observation only when supplied as an explicit matching authority; METAPAT affixiation semantics are consumed, not redefined
+#   auth_boundary: English Gonol Construction owns text-domain closure; UCNS Public Gonol geometry is optional observation only when supplied as an explicit matching authority; METAPAT affixiation semantics are consumed, not redefined; EDCM may evaluate outputs but must not define this construction
 #   storage_boundary: none; receipts remain caller-owned in-memory objects
 #   network_boundary: none
 #   user_data_boundary: caller-supplied source, relation, participants, and source_id remain in memory and are not transmitted

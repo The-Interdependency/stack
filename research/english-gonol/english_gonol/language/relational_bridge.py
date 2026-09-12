@@ -45,7 +45,7 @@
 #   since: 2026-08-16
 #
 # id: lexical_ucns_producer_is_exactly_verified
-#   given: EDCM opens the UCNS relational construction API
+#   given: English Gonol Construction opens the UCNS relational construction API
 #   then: the checkout HEAD equals the merged producer commit and every construction freshly compiles the exact committed module bytes named by the verification receipt
 #   class: safety
 #   since: 2026-08-16
@@ -57,7 +57,11 @@
 #   since: 2026-08-16
 # === END CONTRACTS ===
 
-"""EDCM-owned English evidence adapter for UCNS relational representation."""
+"""English evidence adapter for UCNS relational representation.
+
+Owned by English Gonol Construction (``research/english-gonol/``), moved from
+EDCM without redesign. Frozen schema/commit identities are retained.
+"""
 
 from __future__ import annotations
 

@@ -4,9 +4,9 @@ from dataclasses import replace
 
 import pytest
 
-from edcm.language.affixes import AffixRecord, load_affix_inventory
-from edcm.language.morphology import build_morphology_graph
-from edcm.language.rendering import inverse_affix_candidates, render_affix_candidates
+from english_gonol.language.affixes import AffixRecord, load_affix_inventory
+from english_gonol.language.morphology import build_morphology_graph
+from english_gonol.language.rendering import inverse_affix_candidates, render_affix_candidates
 
 
 def _find_affix(surface: str, primary: str | None = None) -> AffixRecord:

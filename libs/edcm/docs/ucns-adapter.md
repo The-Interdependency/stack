@@ -18,10 +18,12 @@ The current boundary is instead:
 METAPAT   -> affixiation semantics and relational-integration invariants
 UCNS      -> gonol geometry, native Möbius/Public Gonol carrier,
              geometrically established operations
-EDCM      -> text-domain admission and linguistic/semantic gonol construction
+English Gonol Construction
+          -> text-domain admission and linguistic/semantic gonol construction
+EDCM      -> measurement and evaluation only
 ```
 
-For active EDCM text construction, every admitted character is a gonol. See [`GONOL_LANGUAGE_BOUNDARY.md`](GONOL_LANGUAGE_BOUNDARY.md).
+For active English Gonol text construction, every admitted character is a gonol. See [`research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md`](../../research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md).
 
 Current authority does not retroactively mutate this adapter or its sealed receipts. Historical names and options stay fixed for replay.
 
@@ -181,18 +183,18 @@ because both surfaces use UCNS identifiers.
 
 This historical adapter is not the current gonol constructor.
 
-New text-gonol work starts in EDCM and follows the active contract:
+New text-gonol work starts in [`research/english-gonol/`](../../research/english-gonol/) and follows the active contract:
 
-- EDCM declares the exact source and character-admission profile;
+- English Gonol Construction declares the exact source and character-admission profile;
 - every admitted character is a gonol;
 - METAPAT supplies affixiation semantics without being redefined downstream;
 - UCNS supplies the current gonol/Möbius/Public Gonol geometry;
 - unresolved UCNS operations remain `hmmm` rather than being inferred from Unicode names, dictionary definitions, adjacency, glyph shape, or conventional grammar;
-- EDCM closes gonols through declared scale option sets while preserving identity, occurrence, order, multiplicity, relation identity, scale, source, and provenance; `edcm.gonol` is the implemented candidate constructor;
+- English Gonol Construction closes gonols through declared scale option sets while preserving identity, occurrence, order, multiplicity, relation identity, scale, source, and provenance; the candidate constructor (identity `edcm.gonol`) now lives in `english_gonol.gonol`;
 - completion claims require a deterministic receipt and independent complete replay; and
 - EDCM measurement remains a separate projection with explicit information loss and falsifiers.
 
-Do not create a parallel “consumer” that waits for UCNS to own language construction. UCNS is the geometry authority; EDCM is the current text-construction authority.
+Do not create a parallel “consumer” that waits for UCNS to own language construction. UCNS is the geometry authority; English Gonol Construction is the current text-construction authority; EDCM may evaluate its outputs but must not define the construction.
 
 ## Historical experiment epoch
 
@@ -213,7 +215,7 @@ their recorded epoch.
 Use this adapter only for artifacts that name its exact pinned historical profile. Do not
 repin it to current UCNS merely to make terminology look current.
 
-For new text construction, do not extend this historical adapter. Work in EDCM under [`GONOL_LANGUAGE_BOUNDARY.md`](GONOL_LANGUAGE_BOUNDARY.md), consume current UCNS geometry and METAPAT affixiation semantics, and keep the later EDCM measurement boundary separate.
+For new text construction, do not extend this historical adapter. Work in [`research/english-gonol/`](../../research/english-gonol/) under its [`docs/GONOL_LANGUAGE_BOUNDARY.md`](../../research/english-gonol/docs/GONOL_LANGUAGE_BOUNDARY.md), consume current UCNS geometry and METAPAT affixiation semantics, and keep the later EDCM measurement boundary separate.
 
 ## hmmm
 
@@ -222,4 +224,4 @@ admitted SPACE manifestations to its pinned Möbius-origin interpretation.
 Coverage of true non-SPACE code points outside the 157-token carrier alphabet
 remains open for that historical profile. UCNS v0.19 supplies a nonselected trace-local
 source-coordinate candidate over its fixed demonstration, but this adapter does
-not attach or consume that evidence. For current work, the exact EDCM character-admission unit remains profile-specific where not selected, the exact UCNS native Möbius-carrier affixiation/coupling geometry remains unresolved, and EDCM's recursive text-gonol measurement projection, metric, benchmark, and falsifier remain unselected.
+not attach or consume that evidence. For current work, the exact English Gonol character-admission unit remains profile-specific where not selected, the exact UCNS native Möbius-carrier affixiation/coupling geometry remains unresolved, and EDCM's recursive text-gonol measurement projection, metric, benchmark, and falsifier remain unselected.

@@ -12,7 +12,6 @@ Installed skills:
 
 - `canon/`
 - `domain-claims/`
-- `gonol-build/`
 - `interdependent-work-graph/`
 - `meta-module-build/`
 - `msdmd/`

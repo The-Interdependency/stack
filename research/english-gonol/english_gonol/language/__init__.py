@@ -1,21 +1,25 @@
-"""EDCM English lexical evidence over a UCNS-owned relational carrier."""
+"""English lexical evidence over a UCNS-owned relational carrier.
+
+Owned by English Gonol Construction (``research/english-gonol/``), moved from
+EDCM without redesign. Frozen schema/commit identities are retained.
+"""
 
 # === MODULE_BUILD ===
 # id: edcm_language_package
 #   module_name: language
 #   module_kind: engine
-#   summary: exposes exact OEWN evidence, reversible lexical candidates, and independent EDCM-to-UCNS relational branch construction without EDCM-owned geometry
+#   summary: exposes exact OEWN evidence, reversible lexical candidates, and independent English-to-UCNS relational branch construction without owned geometry; moved from EDCM into English Gonol Construction
 #   owner: Erin Spencer
 #   public_surface: source, affix, rendering, morphology, model, manifest, and relational-bridge names listed in __all__
 #   internal_surface: none
-#   auth_boundary: exact OEWN and UCNS producer commits
+#   auth_boundary: exact OEWN and UCNS producer commits; English Gonol Construction owns the construction; EDCM may evaluate outputs
 #   storage_boundary: caller-selected lexical artifact directory
 #   network_boundary: none
 #   user_data_boundary: public licensed lexical evidence only
 #   admin_only: false
 #   tests: tests.test_language_full_run, tests.test_language_relational_bridge
 #   rollout: explicit lexical-floor construction; no measurement or higher-language activation
-#   rollback: remove relational bridge while retaining EDCM evidence modules
+#   rollback: remove relational bridge while retaining source evidence modules
 #   requires: edcm_language_manifest, edcm_language_model, edcm_language_oewn_source, edcm_language_affixes, edcm_language_rendering, edcm_language_morphology, edcm_language_relational_bridge
 #   since: 2026-08-16
 #   unresolved: UCNS geometry and higher-gonol composition remain absent; lexical decomposition remains dictionary-and-inventory bounded evidence
