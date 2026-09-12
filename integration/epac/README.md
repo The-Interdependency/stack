@@ -1,7 +1,7 @@
 # EPAC artifact consumption
 
 These commands verify EPAC's public interfaces from an installed wheel. They do
-not establish empirical validity or change the four retained FALSIFIED results.
+not establish empirical validity or change the 14 retained FALSIFIED results, including the original four.
 The independent repository's license and distribution rights must be resolved
 before a candidate qualifies for stable publication.
 
@@ -22,8 +22,8 @@ Run the stack integration gate from an external working directory:
 ```
 
 The gate checks installed payload hashes and import origins, exact UCNS source
-provenance, Public Gonol construction/replay, all five declared molecules, helium
-replay, and all four FALSIFIED standings. Its receipt binds the wheel and verifier
+provenance, Public Gonol construction/replay, all nine declared molecules, helium
+replay, and all 14 FALSIFIED standings. Its receipt binds the wheel and verifier
 hashes. A failure requires a repaired candidate and new verification before
 stable publication.
 

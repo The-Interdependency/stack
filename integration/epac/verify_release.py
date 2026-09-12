@@ -39,6 +39,24 @@ import sys
 import zipfile
 
 
+EXPECTED_STANDINGS = {
+    "atomic_shells_as_sealed_shape_prediction": "FALSIFIED",
+    "boundary_capacity_as_sealed_shape_prediction": "FALSIFIED",
+    "charged_3_structure_as_sealed_shape_prediction": "FALSIFIED",
+    "harmonic_survival_as_sealed_shape_prediction": "FALSIFIED",
+    "lifted_spiral_as_sealed_shape_prediction": "FALSIFIED",
+    "per_symbol_harmonic_survival_as_sealed_shape_prediction": "FALSIFIED",
+    "periodic_element_boundary_capacity_as_sealed_shape_prediction": "FALSIFIED",
+    "periodic_element_harmonic_survival_as_sealed_shape_prediction": "FALSIFIED",
+    "periodic_element_lifted_spiral_as_sealed_shape_prediction": "FALSIFIED",
+    "subatomic_boundary_capacity_as_sealed_shape_prediction": "FALSIFIED",
+    "subatomic_harmonic_survival_as_sealed_shape_prediction": "FALSIFIED",
+    "subatomic_lifted_spiral_as_sealed_shape_prediction": "FALSIFIED",
+    "topology_3_structure_as_sealed_shape_prediction": "FALSIFIED",
+    "ucns_mobius_as_sealed_shape_prediction": "FALSIFIED"
+}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
@@ -66,14 +84,14 @@ def main() -> None:
     assert replayed.receipt_digest == result.receipt_digest
     assert result.geometry["ucns_commit"] == PINNED_UCNS_COMMIT != "hmmm"
     molecules = construct_declared_molecules()
-    assert set(molecules) == {"H2", "H2O", "NH3", "CH4", "CO2"}
+    assert set(molecules) == {"H2", "H2O", "NH3", "CH4", "CO2", "H2S", "BF3", "PH3", "SiH4"}
     for molecule in molecules.values():
         assert replay_molecule(molecule).receipt_digest == molecule.receipt.receipt_digest
     element = affixiate_element("He")
     assert replay_element("He") == (True, element.receipt)
     assert element.source_commits["ucns"] == PINNED_UCNS_COMMIT
     standings = compare_after_construction()["standings"]
-    assert len(standings) == 4 and set(standings.values()) == {"FALSIFIED"}
+    assert standings == EXPECTED_STANDINGS
     origins = {name: Path(module.__file__).resolve() for name, module in sys.modules.items()
                if (name.startswith("epac_") or name == "ucns" or name.startswith("ucns.")) and getattr(module, "__file__", None)}
     assert all(path.is_relative_to(Path(sys.prefix)) and not path.is_relative_to(stack) for path in origins.values())
