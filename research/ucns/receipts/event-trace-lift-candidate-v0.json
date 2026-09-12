@@ -1,0 +1,109 @@
+{
+  "comparison": {
+    "constructor_survivor_count": 0,
+    "continuations": [
+      {
+        "basis": "the next complete hexagonal ring under the unchanged adjacency-to-built rule",
+        "candidate_id": "radius_two_hex_disk",
+        "construction_trace_count": 97934946851520,
+        "edge_count": 42,
+        "lifted_cardinality": 391739787406081,
+        "standing": "FALSIFIED",
+        "target_match": false,
+        "vertex_count": 19
+      },
+      {
+        "basis": "promote each of the twelve structural relations to one incidence participant",
+        "candidate_id": "structural_relation_incidence",
+        "construction_trace_count": 3625881589440,
+        "edge_count": 24,
+        "lifted_cardinality": 14503526357761,
+        "standing": "FALSIFIED",
+        "target_match": false,
+        "vertex_count": 19
+      },
+      {
+        "basis": "promote each of the thirteen projection nodes to one incidence participant",
+        "candidate_id": "projection_node_incidence",
+        "construction_trace_count": 648016379781120,
+        "edge_count": 36,
+        "lifted_cardinality": 2592065519124481,
+        "standing": "FALSIFIED",
+        "target_match": false,
+        "vertex_count": 20
+      }
+    ],
+    "event_identity": {
+      "lifted_cardinality": 157,
+      "public_arity_match": true,
+      "state_count": 39
+    },
+    "next_prediction": null,
+    "observed": [
+      157,
+      2881,
+      54837698421
+    ],
+    "preregistration_standing": "post-observation; first-gate matches are retrodictive only",
+    "status": "RETRODICTIVE_MATCH_ONLY",
+    "third_observation_state_quotient": 13709424605,
+    "trace_identity": {
+      "construction_trace_count": 720,
+      "first_successor_match": true,
+      "lifted_cardinality": 2881
+    }
+  },
+  "hmmm": [
+    "the source declares four boundary relation events per structural pair, not one selected global cardinality lift",
+    "the 157 identity uses projection-event count while the 2881 identity uses construction-trace count, so they are not yet one unchanged state extractor",
+    "the completed 2881-gonol event and structural-relation ledger has not been constructed",
+    "later Flower-of-Life rings are unresolved in UCNS authority",
+    "no continuation survives the second observed gate and no next prediction is authorized"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not a recovered recursive-scale transition law",
+    "not a preregistered first-gate prediction",
+    "not evidence that source-declared boundary events are physical contacts",
+    "not a PCEA runtime, entropy, hardness, or authenticity claim"
+  ],
+  "receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+  "schema_id": "the-interdependency.stack-research.ucns.event-trace-lift",
+  "schema_version": "0.1.0",
+  "seed_geometry": {
+    "bands": 7,
+    "pair_relations": 21,
+    "pairwise_projection_events": 39,
+    "source_declared_boundary_multiplicity_per_structural_relation": 4,
+    "structural_relations": 12,
+    "total_source_declared_structural_boundary_events": 48
+  },
+  "source": {
+    "public_gonol_arity": 157,
+    "public_gonol_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "libs/ucns/CANON.md",
+        "sha256": "bf675898b95cf393ffc8f6c16d5f42ccf1d323990556ce624d94f3c98507c487"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_seed.py",
+        "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+      }
+    ],
+    "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-post-observation-candidate"
+}

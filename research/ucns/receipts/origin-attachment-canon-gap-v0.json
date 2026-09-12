@@ -1,0 +1,292 @@
+{
+  "canon_gap": {
+    "attachment_choice_audit": {
+      "authoritative_admissible_attachments": [],
+      "authoritative_attachment_count": 0,
+      "conditional_native_target_fiber": {
+        "assumption": "the undeclared attachment target is the native Mobius phase-zero fiber",
+        "framed_lift_count": 2,
+        "framed_lifts": [
+          {
+            "frame": "positive-local-frame",
+            "phase_turns": "0"
+          },
+          {
+            "frame": "reversed-local-frame",
+            "phase_turns": "0"
+          }
+        ],
+        "one_turn_exchanges_framed_lifts": true,
+        "selected_framed_lift": null,
+        "standing": "CONDITIONAL_TARGET_FIBER_ONLY__NOT_ATTACHMENT_CHOICES",
+        "visible_class_count": 1,
+        "visible_key": [
+          "ucns.native-mobius-root-loop",
+          "0"
+        ]
+      },
+      "current_status": "NO_AUTHORITATIVE_ADMISSIBLE_ATTACHMENT",
+      "future_attachment_choice_space_determinable": false,
+      "future_status": "NOT_DETERMINABLE_UNTIL_TARGET_STRUCTURE_IS_CANON",
+      "reason": "canon defines neither an origin incidence nor the recursive traversable codomain; therefore no future attachment alternatives can be declared complete"
+    },
+    "canonical_callable_inventory": {
+      "conclusion": "the only module text joining Public Gonol and native Mobius symbols is the re-export facade; no declared callable consumes either origin type and emits a traversable state",
+      "declared_origin_to_traversable_callables": [],
+      "direct_state_factory_parameters": [
+        "turns",
+        "frame"
+      ],
+      "facade_top_level_callable_count": 0,
+      "public_and_native_symbol_modules": [
+        "__init__.py"
+      ],
+      "python_module_count": 31,
+      "typed_direct_origin_consumers": [],
+      "typed_public_origin_consumers": []
+    },
+    "canonical_geometry_evidence": {
+      "carrier": {
+        "null_has_only_null_preimage": true,
+        "null_preserved_by_deck_translation": true,
+        "null_preserved_by_project": true,
+        "structural_null_coordinate_free": true
+      },
+      "compatibility": {
+        "compatible_incident_checks": 0,
+        "selection_effect": "none",
+        "standing": "all tested incident seed-edge full states are incompatible; no origin attachment is supplied"
+      },
+      "direct_origin": {
+        "carrier_position": 0,
+        "frame": null,
+        "origin_id": "ucns.structural-null-origin",
+        "phase_turns": null
+      },
+      "missing_maps": {
+        "public_origin_to_structural_null": null,
+        "structural_null_to_native_state": null
+      },
+      "prime_lifts": {
+        "p5_origin_void_lower_bound": "9/100",
+        "p7_origin_void_lower_bound": "9/100",
+        "public_gonol_bridge": null,
+        "selection_effect": "none",
+        "standing": "prime-indexed local origin voids, not Public Gonol attachment"
+      },
+      "public_origin": {
+        "arrangement_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+        "glyph": " ",
+        "index": 0,
+        "operation_beyond_carrier_identity": null
+      },
+      "seed": {
+        "all_lifted_occurrences_nonzero": true,
+        "lifted_occurrence_count": 6,
+        "origin_contact_margin": {
+          "binary64": 0.05928203230275509,
+          "exact": "(-1/100)+(1/25)*sqrt(3)",
+          "rational": "-1/100",
+          "sqrt3_coefficient": "1/25"
+        },
+        "origin_contact_margin_positive": true,
+        "projected_null_incident_slot_count": 6,
+        "projected_null_is_structural_null": false,
+        "projected_null_is_vertex": false,
+        "selection_effect": "none",
+        "standing": "projection coincidence remains a nonvertex void"
+      },
+      "vesica": {
+        "null_clearance_lower_bound": "49/100",
+        "origin_incident_to_band": false,
+        "selection_effect": "none",
+        "standing": "origin excluded from both bands"
+      }
+    },
+    "downstream": {
+      "constructor_continuation_permitted": false,
+      "fields_evaluated": false,
+      "reason": "origin_attachment is the first unresolved dependency"
+    },
+    "field": "origin_attachment",
+    "field_status": "MISSING_AUTHORITATIVE_GEOMETRIC_DERIVATION",
+    "origin_attachment": null,
+    "required_additional_axiom": {
+      "axiom_id": "ucns.origin-to-traversable-base-incidence",
+      "minimum_receipt_fields": [
+        "authority",
+        "ucns_commit",
+        "operation_id",
+        "source_origin_id",
+        "target_structure_id",
+        "target_object_id",
+        "relation_kind",
+        "input_geometry_sha256",
+        "replay_sha256"
+      ],
+      "must_not_select": [
+        "directed tangent or chirality",
+        "rotation system",
+        "marked outgoing dart",
+        "closure rule"
+      ],
+      "relation": "an authority-owned geometric incidence iota: {O} -> V(T) with iota(O) = v0, mapping the exact Public Gonol or Structural Null origin O to one unframed base object v0 of a canon-defined traversable recursive structure T",
+      "replay_requirement": "independent replay from exact UCNS geometry must reproduce the same source, target, relation kind, and evidence digest",
+      "selection_requirement": "the target must be invariantly characterized without source, storage, numeric, commit, caller, or default order",
+      "source_requirement": "identify the exact origin representation; if Public Gonol position zero and Structural Null are identified, bind that identification explicitly",
+      "target_requirement": "identify T and one target object from intrinsic geometry, including any required embedding from the native visible phase-zero class into T"
+    },
+    "status": "CANON_GAP",
+    "stop_reason": "pinned UCNS canon contains an exact origin but no authoritative geometric incidence from it to a traversable recursive base object"
+  },
+  "hmmm": [
+    "the origin has an exact address but no authority-owned incidence to a traversable recursive object",
+    "current canon does not define the target recursive path object strongly enough to enumerate future attachment choices",
+    "the direct Mobius phase-zero fiber has one visible class and two framed lifts, but neither fact attaches Structural Null to it",
+    "the smallest admissible addition is an unoriented geometric incidence; direction must remain a later dependency"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not an origin attachment",
+    "not a choice of positive or reversed local frame",
+    "not a claim that a projected coincidence is a physical vertex",
+    "not an evaluation of direction, rotation, outgoing-dart, or closure fields",
+    "not a traversal, monodromy, arithmetic readout, or successor operation"
+  ],
+  "producer_code_reference": "sha256:a10c9333e6a96f190225c68dfcbcb453c0edb4cac92b2175bf53bae1b0a5975e",
+  "receipt_sha256": "f0f2a4a127e7a83c26291b94f58543b6881f7e1eda52940c7df3c14b121ad0f4",
+  "schema_id": "the-interdependency.stack-research.ucns.origin-attachment-canon-gap",
+  "schema_version": "0.1.0",
+  "scope": {
+    "admitted_basis": "existing authoritative UCNS geometry only",
+    "downstream_fields_evaluated": false,
+    "evaluated_field": "origin_attachment",
+    "forbidden_bases": [
+      "carrier tuple order",
+      "source text order",
+      "caller order",
+      "caller slot order",
+      "API default",
+      "local frame default",
+      "construction ordinal",
+      "commit order",
+      "prose adjacency",
+      "identifier",
+      "hash",
+      "PCEA expectation",
+      "observed gonol number"
+    ]
+  },
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "constructor_contract_receipt_sha256": "12100f1bd08d76d2b86bd3d4b7786b5e7bde07fda789dc2937817990c7a5849a",
+    "network_used": false,
+    "provenance_history_receipt_sha256": "ed08c5315ab7dc6988985455d7226ced9151481883b7b8bbb0050ffc2bbc82e2",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/__init__.py",
+        "sha256": "1cb5dc7bc4d0988eab8f4227a8f6f6996d3ec64ab09d78ce8c704f1001379a80"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_vesica.py",
+        "sha256": "ac05d4043e60f272cee365852f068521c1e96f4b716cab67eb449483ed9c827d"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_seed.py",
+        "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_global_compatibility.py",
+        "sha256": "cd5cf73e072c405bbf4c33c18804c5822700ad813def76b063a40ebeb9e7ac3b"
+      },
+      {
+        "path": "libs/ucns/src/ucns/prime_primitives.py",
+        "sha256": "aba49af233d17e7663caad40b7faa0d73bf524cdd21f09b52ed07607f72d30cb"
+      },
+      {
+        "path": "libs/ucns/src/ucns/prime_phase_lift.py",
+        "sha256": "9091ea420bedb93df5bc5a844fe515cc86bd0523d5b9c6e05225d9c532423b76"
+      },
+      {
+        "path": "libs/ucns/tests/test_public_gonol.py",
+        "sha256": "312216dc2bfc62ca5ccaec7f671b12f1e4ec6ac44eb0452eeb48abceccfffbf3"
+      },
+      {
+        "path": "libs/ucns/tests/test_carrier.py",
+        "sha256": "ab1ee591858f7cf0faa2436c7e45ea32b44a19bea1c3f1a34b5d926b9ee72e14"
+      },
+      {
+        "path": "libs/ucns/tests/test_direct_mobius.py",
+        "sha256": "e6cd47b2ed270761ce85dc47782551e2198a6026fbeee411f6c78a1eebed5b5e"
+      },
+      {
+        "path": "libs/ucns/tests/test_mobius_seed.py",
+        "sha256": "1e2b13607a15630429a8aade69828bacdadb5852b9470bfd89d22dbb59462d5e"
+      },
+      {
+        "path": "libs/ucns/tests/test_mobius_global_compatibility.py",
+        "sha256": "84c8b3ad5a30a8c7e1cc05cf2b73286929b5b9eb3cb81fec1e9e2fdd2806def6"
+      },
+      {
+        "path": "libs/ucns/tests/test_prime_primitives.py",
+        "sha256": "34fee43a8698732e2eeb3de50d7b6e420cfcc41ec81aedbe0e4851cbd800d985"
+      },
+      {
+        "path": "libs/ucns/generated/mobius-vesica-certificate.json",
+        "sha256": "2008e942e16d1632c80d193f8d75c14d180baf6142ab95d9bec31de76996b86f"
+      },
+      {
+        "path": "libs/ucns/generated/mobius-seed-global-compatibility-certificate.json",
+        "sha256": "2aacab28359301eeea7823fe05fe4ffd8cd8a6e193713bea6acc76ec774fda9c"
+      },
+      {
+        "path": "libs/ucns/generated/prime-phase-lift-family-certificate.json",
+        "sha256": "1f3538425e5cd253db9bab40bd7db86c713e182e09fe21737983bb040738e024"
+      },
+      {
+        "path": "research/ucns/based_traversal_constructor_contract.py",
+        "sha256": "c31dd280c1c5e91a986214fa0ba646aa655cc36044c7374db83b526c79ec20e1"
+      },
+      {
+        "path": "research/ucns/receipts/based-traversal-constructor-contract-v0.json",
+        "sha256": "9688ff0407d3c72f5b7adb4c2bdb8bd0fb5602635987cf31eb0dba5528e41874"
+      },
+      {
+        "path": "research/ucns/based_traversal_provenance_history_audit.py",
+        "sha256": "ec0eb8b37a6daa1e33701d25c306ce2d4420e4b4264487b9d3eaa408ac0f75e1"
+      },
+      {
+        "path": "research/ucns/receipts/based-traversal-provenance-history-audit-v0.json",
+        "sha256": "dfefa3bf4f9b36dd7f0b1990a5f492b517fd4a9c9894c462b50fa8fd9242fea0"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "ucns_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62"
+  },
+  "standing": "stack-local-authority-bound-first-field-canon-gap"
+}

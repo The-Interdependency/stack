@@ -8,6 +8,11 @@ Its active scope is limited to constructions that directly represent or test geo
 - the directed lifted carrier and its 360° visible / 720° complete return;
 - exact framed Möbius motion;
 - Möbius vesica and Seed-of-Life constructions and certificates;
+- the native two-turn Möbius root-loop standing-wave candidate, including its
+  operator, domain, boundary conditions, admissible modes, and derived seam
+  trace;
+- the canonical Möbius band coordinate standing-wave candidate, including its
+  physical-edge boundary conditions and sampled continuous-boundary trace rank;
 - prime-indexed ribbon, link, interval, Milnor, Alexander, and related topological geometry;
 - numerical machinery used to certify those constructions.
 
@@ -32,6 +37,22 @@ One visible turn preserves phase and reverses the local frame. Two visible turns
 ## Geometry modules
 
 The active package also retains the Möbius vesica/seed family and the `prime_*` topological geometry family. Generated geometry certificates remain evidence; semantic receipts do not.
+
+`src/ucns/mobius_standing_wave.py` is the smallest explicit continuum
+standing-wave model currently admitted by UCNS canon: a scalar second-order
+wave equation on the native two-turn Möbius root loop. Its boundary trace is
+the derived value/derivative trace at the quotient seam. That trace has rank at
+most two through every finite mode cutoff, so this model falsifies direct
+induction of PCEA-style boundary-measure capacity channels.
+
+`src/ucns/mobius_band_standing_wave.py` extends that construction to the
+canonical Möbius band coordinate domain `[0,2] x [-w,w]` with the native
+quotient `(t+1,u)~(t,-u)`. Its coordinate-domain Laplacian, Neumann physical
+edge condition, admissible parity-matched modes, and sampled continuous-boundary
+trace are executable. Finite capacity channels survive only when they fit the
+derived boundary trace rank. Bulk-only counting is falsified when interior
+transverse modes exceed the independent boundary traces. The embedded
+Laplace-Beltrami operator and exact PCEA channel encoding remain `hmmm`.
 
 ## Usage
 
@@ -59,4 +80,4 @@ python -m build
 python -m twine check dist/*
 ```
 
-`hmmm`: the complete higher-dimensional UCNS construction and the exact geometric operation of every Public Gonol function position remain unresolved. Unresolved geometry stays unresolved; semantic machinery is not used to fill it.
+`hmmm`: the embedded continuum surface operator, exact continuum boundary-measure capacity theorem, derived PCEA channel encoding, complete higher-dimensional UCNS construction, and exact geometric operation of every Public Gonol function position remain unresolved. Unresolved geometry stays unresolved; semantic machinery is not used to fill it.

@@ -16,7 +16,13 @@ from epac_molecular import construct_declared_molecules, replay_molecule
 class MolecularAffixiationTest(unittest.TestCase):
     def test_declared_formulas_close_and_replay(self) -> None:
         molecules = construct_declared_molecules()
-        self.assertEqual(set(molecules), {"H2", "H2O", "NH3", "CH4", "CO2"})
+        # After deliberate enlargement of the preregistered molecular experiment
+        # (next maximal step after broadening subatomic coverage to Z=1..36),
+        # more formulas are constructed. The original preregistered set must still work.
+        original_prereg = {"H2", "H2O", "NH3", "CH4", "CO2"}
+        self.assertTrue(original_prereg.issubset(set(molecules)))
+        self.assertGreaterEqual(len(molecules), 5)
+
         for formula, construction in molecules.items():
             replayed = replay_molecule(construction)
             self.assertEqual(construction.receipt.receipt_digest, replayed.receipt_digest, formula)

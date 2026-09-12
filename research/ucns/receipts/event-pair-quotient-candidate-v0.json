@@ -1,0 +1,57 @@
+{
+  "candidate": {
+    "boundary_lift": "1+4*state_count",
+    "constraint_assumption": "one independent rank-one constraint per pinned band-pair relation",
+    "operator": "C(state_count,2)-constraint_rank",
+    "post_observation": true
+  },
+  "comparison": {
+    "constructor_survivor_count": 0,
+    "event_state_count": 39,
+    "first_gate": {
+      "exterior_pair_dimension": 741,
+      "lifted_gonol": 2881,
+      "quotient_state": 720,
+      "standing": "RETRODICTIVE_MATCH_ONLY",
+      "target_match": true
+    },
+    "next_prediction": null,
+    "observed": [
+      157,
+      2881,
+      54837698421
+    ],
+    "relation_constraint_rank": 21,
+    "second_gate": {
+      "exterior_pair_dimension": 258840,
+      "lifted_gonol": 1035277,
+      "quotient_state": 258819,
+      "standing": "FALSIFIED",
+      "target_match": false
+    }
+  },
+  "hmmm": [
+    "UCNS declares event and relation ledgers but no exterior algebra over them",
+    "constraint independence is an explicit candidate assumption, not source authority",
+    "the exact first-gate identity does not survive unchanged recursion",
+    "the completed 2881-gonol relation ledger and its actual constraint rank remain absent",
+    "no constructor survives and no next prediction is authorized"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not evidence that projection events form an exterior vector space",
+    "not evidence that each band-pair relation has independent quotient rank one",
+    "not a recovered recursive-scale transition law",
+    "not a PCEA runtime, entropy, hardness, or authenticity claim"
+  ],
+  "receipt_sha256": "330581ff3edbb3b3b99021e9c026e585dc4619c0ae60e9f1d1425c350c834482",
+  "schema_id": "the-interdependency.stack-research.ucns.event-pair-quotient",
+  "schema_version": "0.1.0",
+  "source": {
+    "event_trace_producer_path": "research/ucns/event_trace_lift_candidate.py",
+    "event_trace_producer_sha256": "d1cb1e301de8d081653c0cc8f07730ae09afac652867236c266c3c9b67d7b9b4",
+    "event_trace_receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+    "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-post-observation-falsified-candidate"
+}

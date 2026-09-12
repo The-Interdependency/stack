@@ -1,0 +1,255 @@
+{
+  "bootstrap": {
+    "atomic_id": "ucns.research.public-gonol-atom:cf9d901c3747b5dbe53d67e04d910fe9a214e59523716c9f5845795f34b76fbd",
+    "provenance": [
+      "libs/ucns/src/ucns/public_gonol.py",
+      "ucns-commit:1975fe70cf4e0826a8020c2da3047569e277af64",
+      "public-gonol-sha256:55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+    ],
+    "relation_basis": [],
+    "relation_rank": 0,
+    "scale_id": "public-gonol-carrier",
+    "source_digest": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+  },
+  "candidate": {
+    "arithmetic_factor_input": null,
+    "closure_gate": "complete key equality, not visible phase equality",
+    "desired_relation_rank_input": null,
+    "operation": "attach native two-turn complete-return loop at promoted atomic whole",
+    "prior_relation_policy": "retain exact ids; append one geometry-derived generator",
+    "relation_measure": "first-homology rank of unfilled return quotient",
+    "successor_cardinality_input": null
+  },
+  "falsification_conditions": [
+    "the pinned native Mobius law no longer reverses frame after one turn or restore complete state after two turns",
+    "the one-turn occurrence is identified using visible phase while its complete frame differs",
+    "the two-turn endpoint fails exact complete-state equality with the start",
+    "the complete-return quotient boundary matrix does not have first-homology rank one",
+    "a required UCNS two-cell fills the return loop and kills its first-homology generator",
+    "promotion drops, rewrites, or identifies a prior relation generator",
+    "later UCNS geometry supplies nontrivial monodromy on the promoted whole incompatible with retained inner relations",
+    "a successor value, factorization, or requested rank enters the operation definition"
+  ],
+  "hmmm": [
+    "the native root loop is exact, but its attachment to circle, epicycle, disk, sphere, and full gonol constructions remains unresolved in UCNS authority",
+    "the candidate assumes no higher-dimensional two-cell fills the outer complete-return loop at the tested closure boundary",
+    "the candidate retains inner relation ids under atomic promotion because current carrier geometry defines no payload action; later nontrivial monodromy would require a different quotient",
+    "one topological cycle generator is not yet an arithmetic factor or Boolean divisor-lattice axis",
+    "successor cardinality and the size of any new arithmetic factor remain unresolved"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not a completed higher-dimensional gonol geometry",
+    "not a successor-cardinality constructor",
+    "not evidence that a return-cycle generator is an arithmetic prime factor",
+    "not a numerical next-gonol prediction",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "producer_code_reference": "sha256:7c09ee73fe18ea0489f1a7cee5738b140d761dab6d09fcba6104d7ff4a8b5f53",
+  "promotion_evidence": [
+    "construct the return-loop attachment inside an accepted higher-dimensional UCNS gonol geometry",
+    "show whether disk or sphere closure preserves rather than fills the return-cycle generator",
+    "derive any monodromy action on inner relations from geometry and recompute the quotient exactly",
+    "validate the unchanged operation against independently observed relation structure without changing this module",
+    "supply a separate geometric map before interpreting relation rank as arithmetic prime-factor rank"
+  ],
+  "receipt_sha256": "f1ebfed99730b338a8b716ae4f7e2984c243ee294d7806f54182c24c849ceaea",
+  "sample_extension": {
+    "closed_affinization": {
+      "coupling_digest": "f2c71c187b61fedcdc383cd1ad261137898c560fa02f71118201541b93c310de",
+      "digest": "15fadb33d1716ba7e2de43d413b0e8c6823b0f93e0bd07fb5a9b534748043f8d",
+      "whole_id": "ucns.affinization:f6827c315056284b19820f8d5acb9294e5ec07ad534a667bffb91fe12cece46c"
+    },
+    "new_relation_id": "ucns.relation.complete-return:0b06808b521a10f0dcf5661b0162235bada03c453773666fc4e0eb354a916758",
+    "operation": "atomic-complete-return-loop-extension",
+    "output": {
+      "atomic_id": "ucns.atomic:e666504bfe30acf6f5ac4610b96a7dd2af6342e810f620e2529fa53f712a05e1",
+      "provenance": [
+        "libs/ucns/src/ucns/public_gonol.py",
+        "ucns-commit:1975fe70cf4e0826a8020c2da3047569e277af64",
+        "public-gonol-sha256:55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+        "complete-return-trace:8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+        "closed-affinization:15fadb33d1716ba7e2de43d413b0e8c6823b0f93e0bd07fb5a9b534748043f8d",
+        "recursive-transition:9c50ab2d154a0b2c52dbdd86d2a43627c9e89e4109f3943212e9fa0e4cae3756"
+      ],
+      "relation_basis": [
+        "ucns.relation.complete-return:0b06808b521a10f0dcf5661b0162235bada03c453773666fc4e0eb354a916758"
+      ],
+      "relation_rank": 1,
+      "scale_id": "sample-complete-return-scale-1",
+      "source_digest": "9c50ab2d154a0b2c52dbdd86d2a43627c9e89e4109f3943212e9fa0e4cae3756"
+    },
+    "prior_relation_ids_preserved": true,
+    "rank_delta": 1,
+    "relation_basis_digest": "d48fb49940359a2eeca21105da59b3b06fddc645d0cfd270c4e55fc12d8a2028",
+    "source": {
+      "atomic_id": "ucns.research.public-gonol-atom:cf9d901c3747b5dbe53d67e04d910fe9a214e59523716c9f5845795f34b76fbd",
+      "provenance": [
+        "libs/ucns/src/ucns/public_gonol.py",
+        "ucns-commit:1975fe70cf4e0826a8020c2da3047569e277af64",
+        "public-gonol-sha256:55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+      ],
+      "relation_basis": [],
+      "relation_rank": 0,
+      "scale_id": "public-gonol-carrier",
+      "source_digest": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+    },
+    "trace": {
+      "chain_witness": {
+        "boundary_matrix_c1_to_c0": [
+          [
+            -1,
+            1
+          ],
+          [
+            1,
+            -1
+          ]
+        ],
+        "boundary_rank": 1,
+        "c1_dimension": 2,
+        "filling_two_cell_count": 0,
+        "first_homology_rank": 1
+      },
+      "law_id": "ucns.native-mobius-root-loop",
+      "law_version": "1.0.0",
+      "occurrences": [
+        {
+          "complete_key": [
+            "ucns.native-mobius-root-loop",
+            "0",
+            "positive-local-frame"
+          ],
+          "frame": "positive-local-frame",
+          "ordinal": 0,
+          "phase_turns": "0",
+          "quotient_vertex": "return-quotient.frame-positive",
+          "turns": 0,
+          "visible_key": [
+            "ucns.native-mobius-root-loop",
+            "0"
+          ]
+        },
+        {
+          "complete_key": [
+            "ucns.native-mobius-root-loop",
+            "0",
+            "reversed-local-frame"
+          ],
+          "frame": "reversed-local-frame",
+          "ordinal": 1,
+          "phase_turns": "0",
+          "quotient_vertex": "return-quotient.frame-reversed",
+          "turns": 1,
+          "visible_key": [
+            "ucns.native-mobius-root-loop",
+            "0"
+          ]
+        },
+        {
+          "complete_key": [
+            "ucns.native-mobius-root-loop",
+            "0",
+            "positive-local-frame"
+          ],
+          "frame": "positive-local-frame",
+          "ordinal": 2,
+          "phase_turns": "0",
+          "quotient_vertex": "return-quotient.frame-positive",
+          "turns": 2,
+          "visible_key": [
+            "ucns.native-mobius-root-loop",
+            "0"
+          ]
+        }
+      ],
+      "quotient": {
+        "directed_edges": [
+          [
+            "return-quotient.frame-positive",
+            "return-quotient.frame-reversed"
+          ],
+          [
+            "return-quotient.frame-reversed",
+            "return-quotient.frame-positive"
+          ]
+        ],
+        "endpoint_policy": "identify zero and two turns only after complete state restoration",
+        "one_turn_policy": "retain as distinct reversed-frame occurrence despite equal visible phase",
+        "vertices": [
+          "return-quotient.frame-positive",
+          "return-quotient.frame-reversed"
+        ]
+      }
+    },
+    "transition": {
+      "atomic_participant": {
+        "atomic_id": "ucns.atomic:e666504bfe30acf6f5ac4610b96a7dd2af6342e810f620e2529fa53f712a05e1",
+        "constituents_recoverable": true,
+        "coupling_digest": "f2c71c187b61fedcdc383cd1ad261137898c560fa02f71118201541b93c310de",
+        "source_digest": "15fadb33d1716ba7e2de43d413b0e8c6823b0f93e0bd07fb5a9b534748043f8d",
+        "source_scale": "public-gonol-carrier",
+        "source_whole_id": "ucns.affinization:f6827c315056284b19820f8d5acb9294e5ec07ad534a667bffb91fe12cece46c",
+        "target_scale": "sample-complete-return-scale-1"
+      },
+      "digest": "9c50ab2d154a0b2c52dbdd86d2a43627c9e89e4109f3943212e9fa0e4cae3756",
+      "occurrence_id": "complete-return.sample-1.promoted-whole"
+    }
+  },
+  "schema_id": "the-interdependency.stack-research.ucns.complete-return-relation-extension",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "mechanic_receipts": {
+      "affinization_coupling_geometry": "a59d291b77c0110ffc0c401dcc94d25ad63a3372c51eab26989a5b6acf9ff68d",
+      "public_gonol_functional_operations": "351d91a1d27f9b29b4222325df0a359682c9c8dd0903fdfef8d4f73c13074194",
+      "recursive_scale_transition": "3297ced3efb9c127a01337d479ce8382b771ea9d2ab66faa7e79a0ec2a197496"
+    },
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/CANON.md",
+        "sha256": "bf675898b95cf393ffc8f6c16d5f42ccf1d323990556ce624d94f3c98507c487"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "research/ucns/public_gonol_functional_operations.py",
+        "sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3"
+      },
+      {
+        "path": "research/ucns/affinization_coupling_geometry.py",
+        "sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a"
+      },
+      {
+        "path": "research/ucns/recursive_scale_transition.py",
+        "sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1"
+      }
+    ],
+    "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-target-free-geometric-candidate",
+  "validation_state": "NOT_COMPARED_WITH_OBSERVED_SCALES"
+}

@@ -1,0 +1,320 @@
+{
+  "audit": {
+    "native_direction_symmetry": {
+      "conclusion": "the local state law does not select displacement sign; a directed recursive attachment would have to be supplied independently",
+      "geometry_selected_direction": null,
+      "integer_return_traces_equal": true,
+      "negative_states": [
+        {
+          "frame": "positive-local-frame",
+          "phase_turns": "0"
+        },
+        {
+          "frame": "reversed-local-frame",
+          "phase_turns": "0"
+        },
+        {
+          "frame": "positive-local-frame",
+          "phase_turns": "0"
+        }
+      ],
+      "negative_turns": [
+        "0",
+        "-1",
+        "-2"
+      ],
+      "positive_states": [
+        {
+          "frame": "positive-local-frame",
+          "phase_turns": "0"
+        },
+        {
+          "frame": "reversed-local-frame",
+          "phase_turns": "0"
+        },
+        {
+          "frame": "positive-local-frame",
+          "phase_turns": "0"
+        }
+      ],
+      "positive_turns": [
+        "0",
+        "1",
+        "2"
+      ],
+      "reflection": {
+        "all_exact": true,
+        "conjugacy_law": "rho(state.advance(d)) = rho(state).advance(-d)",
+        "exact_check_count": 35,
+        "fixes_base_state": true,
+        "lifted_coordinate_law": "rho(u) = -u mod 2"
+      }
+    },
+    "origin_attachment_audit": {
+      "carrier_structural_null_coordinate_free": true,
+      "conclusion": "an intrinsic carrier origin exists, but current geometry defines no attachment morphism from coordinate-free Structural Null to the non-null recursive return base object",
+      "direct_structural_null_carrier_position": 0,
+      "geometry_selected_origin_to_base_object_map": null,
+      "ordered_model_base_object": "return-groupoid.promoted-positive-frame",
+      "public_gonol_origin": {
+        "arrangement_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+        "glyph": " ",
+        "index": 0
+      },
+      "status": "UNRESOLVED_NO_GEOMETRIC_ATTACHMENT_MAP"
+    },
+    "rank_three_permutation_obstruction": {
+      "action_count": 6,
+      "common_abelianization": [
+        1,
+        1,
+        1
+      ],
+      "conclusion": "no once-each based word is invariant under every symmetry of the current unmarked identical-loop shape",
+      "fixed_once_each_words": [],
+      "geometry_selected_word": null,
+      "orbit_size": 6,
+      "orbit_words": [
+        [
+          "g1",
+          "g2",
+          "g3"
+        ],
+        [
+          "g1",
+          "g3",
+          "g2"
+        ],
+        [
+          "g2",
+          "g1",
+          "g3"
+        ],
+        [
+          "g2",
+          "g3",
+          "g1"
+        ],
+        [
+          "g3",
+          "g1",
+          "g2"
+        ],
+        [
+          "g3",
+          "g2",
+          "g1"
+        ]
+      ],
+      "rank": 3,
+      "seed_word": [
+        "g1",
+        "g2",
+        "g3"
+      ],
+      "symmetry_group": "S3 loop renaming",
+      "unmarked_shape_sha256": "f29e38e07aaffcc1803693427212805026630abc940e44663ca5ba52cb1a103c"
+    },
+    "required_geometric_marks": {
+      "all_required_marks_present": false,
+      "complete_return_closure_rule": null,
+      "directed_tangent_or_chirality": null,
+      "geometrically_marked_outgoing_dart": null,
+      "oriented_rotation_or_successor_system": null,
+      "origin_to_groupoid_attachment": null,
+      "required_provenance": "each mark must replay from UCNS geometry before word construction"
+    },
+    "result": {
+      "current_arithmetic_readout": null,
+      "current_global_monodromy": null,
+      "geometry_selected_attaching_word": null,
+      "geometry_selected_basepoint": null,
+      "geometry_selected_orientation": null,
+      "geometry_selected_traversal_word": null,
+      "numerical_next_gonol": null,
+      "observation_comparison": null
+    },
+    "selector_evaluations": [
+      {
+        "component": "basepoint",
+        "proposed_basis": "Public Gonol position zero / Structural Null identity",
+        "reason": "intrinsically distinguished, but coordinate-free and not attached to the promoted return-groupoid object",
+        "source": "pinned Public Gonol and carrier geometry",
+        "status": "UNRESOLVED_NO_GEOMETRIC_ATTACHMENT_MAP"
+      },
+      {
+        "component": "orientation",
+        "proposed_basis": "forward direction of the Public Gonol arrangement tuple",
+        "reason": "exact carrier order is data geometry but no Public Gonol operation turns tuple direction into recursive path orientation",
+        "source": "pinned carrier order",
+        "status": "REJECTED_SELECTOR_BASIS"
+      },
+      {
+        "component": "basepoint/orientation",
+        "proposed_basis": "phase-zero positive-frame API default",
+        "reason": "a local coordinate representative and frame label are not a Public-Gonol-derived recursive attachment",
+        "source": "native_mobius_state default arguments",
+        "status": "REJECTED_SELECTOR_BASIS"
+      },
+      {
+        "component": "orientation",
+        "proposed_basis": "positive native turn displacement",
+        "reason": "exact reflection exchanges displacement signs until an admitted directed recursive attachment breaks the symmetry",
+        "source": "native Mobius state law",
+        "status": "UNSELECTED_BY_CURRENT_GEOMETRY"
+      },
+      {
+        "component": "traversal",
+        "proposed_basis": "retained relation-basis ordinal order",
+        "reason": "generation history addresses loops but supplies no path incidence or successor relation between them",
+        "source": "recursive construction provenance",
+        "status": "REJECTED_SELECTOR_BASIS"
+      },
+      {
+        "component": "traversal",
+        "proposed_basis": "affinization participant slot order",
+        "reason": "the tuple is explicitly caller supplied and its coordinate/topological embedding remains unresolved",
+        "source": "stack-local coupling mechanic",
+        "status": "REJECTED_SELECTOR_BASIS"
+      },
+      {
+        "component": "traversal",
+        "proposed_basis": "Mobius seed event or band order",
+        "reason": "exact seed order has no authorized map to Public Gonol recursive return generators",
+        "source": "pinned seed candidate",
+        "status": "REJECTED_SELECTOR_BASIS"
+      },
+      {
+        "component": "traversal",
+        "proposed_basis": "one permutation of the unmarked rank-three return loops",
+        "reason": "S3 preserves every currently admitted unlabeled shape datum and moves the word through all six permutations",
+        "source": "ordered return groupoid",
+        "status": "UNSELECTED_BY_CURRENT_GEOMETRY"
+      }
+    ],
+    "status": "STOP_NO_GEOMETRY_SELECTED_BASED_TRAVERSAL",
+    "stop_reason": "current Public Gonol and recursive UCNS geometry do not provide the attachment, orientation, rotation/marked-germ, and closure data needed to select one based word"
+  },
+  "experiment_boundary": {
+    "admitted_selector_basis": "intrinsic replayable UCNS geometry only",
+    "excluded_selector_bases": [
+      "caller order",
+      "carrier tuple order without a geometric operation",
+      "local API or frame default",
+      "construction ordinal or scale address",
+      "seed order without a recursive Public Gonol attachment",
+      "hash or id",
+      "observed gonol cardinality or arithmetic factor"
+    ],
+    "observed_arithmetic_factor_input": null,
+    "observed_successor_cardinality_input": null,
+    "question": "does current Public Gonol geometry select a canonical based complete-return traversal?"
+  },
+  "falsification_conditions": [
+    "current canon already defines a geometric map from Public Gonol origin to the promoted return base object and this audit omits it",
+    "current canon already derives recursive orientation or chirality at that attachment and this audit omits it",
+    "current geometry already supplies a rotation system, marked outgoing germ, or attaching word over retained return loops",
+    "the exact native Mobius reflection fails to conjugate signed displacement while fixing the chosen phase-zero positive state",
+    "the unmarked identical-loop rank-three shape does not admit all six loop permutations",
+    "a carrier tuple, API default, caller order, construction ordinal, seed order without attachment, hash, id, or observation is reported as geometry-selected",
+    "a based traversal, monodromy, factorization, or numerical successor is emitted while any required geometric mark is absent"
+  ],
+  "hmmm": [
+    "Public Gonol position zero and Structural Null are distinguished, but Structural Null is coordinate-free and no admitted geometry attaches it to the non-null promoted return-groupoid base object",
+    "the native Mobius state law admits exact sign-reversing reflection; a directed carrier could break that symmetry only after a Public-Gonol-to-recursive-return attachment is geometrically supplied",
+    "the retained loops have identical local trace geometry and no cross-generator incidence, so their unmarked rank-three shape admits every S3 loop permutation",
+    "recursive construction ordinals and relation ids distinguish provenance occurrences but are not traversal geometry",
+    "a canonical based boundary word requires at least an oriented rotation system and a geometrically marked outgoing dart or equivalent structure",
+    "no complete-return attaching word, global monodromy, arithmetic readout, or numerical successor is currently selected"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not proof that future UCNS geometry cannot select a based traversal",
+    "not denial that Public Gonol has an exact distinguished carrier origin",
+    "not permission to treat carrier order, API defaults, construction order, ids, or hashes as geometric traversal",
+    "not a monodromy, attaching-word, arithmetic-factor, or successor-cardinality operation",
+    "not a numerical next-gonol prediction",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "producer_code_reference": "sha256:f3c8cc74fe209d9849e5aff77647928e0798be64c9040dc57759b4351ba1e684",
+  "promotion_evidence": [
+    "construct an exact geometric attachment from the distinguished Public Gonol origin or another intrinsic point to one recursive return-groupoid object",
+    "derive an orientation, tangent, chirality, or directed germ at that attachment from UCNS geometry rather than a coordinate convention",
+    "derive a rotation/successor system on all incident oriented return germs from geometric incidence",
+    "mark the first outgoing germ geometrically so cyclic conjugacy does not erase the based distinction",
+    "derive and freeze the complete return closure or attaching word before computing monodromy or any arithmetic invariant"
+  ],
+  "receipt_sha256": "4c4f06aae237fd4ce771dc7849738617b0cbc9ab3cc5bd6685ffec84b2921a09",
+  "schema_id": "the-interdependency.stack-research.ucns.geometry-selected-based-traversal-audit",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "ordered_groupoid_receipt_sha256": "cf61151f9e9ce1479b6d7eb95ff51bb2a683045de292243e1f14a9b3dd050f69",
+    "ordered_invariant_audit_receipt_sha256": "18a2ddffd70aef891a4fab6d1a202642faf10f1f4ee8ae11aeabeeb3163df2d1",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_seed.py",
+        "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+      },
+      {
+        "path": "research/ucns/public_gonol_functional_operations.py",
+        "sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3"
+      },
+      {
+        "path": "research/ucns/affinization_coupling_geometry.py",
+        "sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a"
+      },
+      {
+        "path": "research/ucns/recursive_scale_transition.py",
+        "sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1"
+      },
+      {
+        "path": "research/ucns/complete_return_relation_extension.py",
+        "sha256": "7c09ee73fe18ea0489f1a7cee5738b140d761dab6d09fcba6104d7ff4a8b5f53"
+      },
+      {
+        "path": "research/ucns/ordered_complete_return_groupoid.py",
+        "sha256": "d1c83252371bbe50fbc7d514bba43de6685d8eb5045060037941d38a5914b6e5"
+      },
+      {
+        "path": "research/ucns/receipts/ordered-complete-return-groupoid-v0.json",
+        "sha256": "741495c16f3d1b439663aa1710e89175c3f1ee67d5b6c0336d8ecf4cf854d002"
+      },
+      {
+        "path": "research/ucns/ordered_return_invariant_audit.py",
+        "sha256": "fb33b5b7ab7a5053c75389c11378c4e31b67fb2b9b1dfaae089bdb2056df05d4"
+      },
+      {
+        "path": "research/ucns/receipts/ordered-return-invariant-audit-v0.json",
+        "sha256": "0bfba647fcea7765eea624b5f4c3a7137ffec8b7581034d5bb4defbadd46420f"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-target-free-geometry-selection-obstruction-audit"
+}

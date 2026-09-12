@@ -1,0 +1,846 @@
+{
+  "candidate": {
+    "coefficient_ring": "integral group ring Z[F_r] for Fox derivatives",
+    "magnus_truncation_degree": 2,
+    "observed_arithmetic_factor_input": null,
+    "observed_successor_cardinality_input": null,
+    "operation": "exact noncommutative word invariants before homology",
+    "word_selection_policy": "enumeration witness only; current geometry selects no cross-generator traversal"
+  },
+  "falsification_conditions": [
+    "Fox differentiation violates the exact group-ring fundamental identity",
+    "Magnus degree-one coefficients differ from the word exponent sums",
+    "two distinct triadic based permutations receive the same degree-two ordered fingerprint",
+    "homology is treated as if it uniquely determined a free-group monodromy",
+    "a traversal word is silently imposed as a relator without geometric closure evidence",
+    "a determinant, factorization, or observed-prime comparison is emitted while the presentation or specialization is absent",
+    "an observed gonol value or factor enters noncommutative invariant derivation"
+  ],
+  "hmmm": [
+    "the ordered groupoid can represent every based word, but current UCNS recursive geometry does not select which cross-generator traversal words actually occur",
+    "Fox derivatives of a traversal word are order-sensitive fingerprints, not a presentation matrix unless geometry declares the word to be a relator",
+    "degree-two Magnus coefficients preserve pairwise ordering but provide no canonical finite cardinality",
+    "identity action on H1 does not determine free-group monodromy; at rank three a commutator shear is already invisible to abelianization",
+    "current recursive return geometry has no cross-generator crossing, linking, intersection, or attaching-word ledger",
+    "without frozen relators and a geometry-derived representation or specialization, there is no determinant or factorization gate to compare with observations",
+    "numerical next gonol remains unresolved"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not evidence that an arbitrary traversal word is selected by recursive gonol geometry",
+    "not a Wirtinger presentation for the recursive gonol",
+    "not permission to take a determinant before geometry supplies relators and a specialization",
+    "not an arithmetic factor or successor-cardinality operation",
+    "not a numerical next-gonol prediction",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "producer_code_reference": "sha256:fb33b5b7ab7a5053c75389c11378c4e31b67fb2b9b1dfaae089bdb2056df05d4",
+  "promotion_evidence": [
+    "derive exact cross-generator traversal and closure words from recursive UCNS geometry",
+    "derive a based monodromy automorphism on every retained free-group generator",
+    "derive projection crossings, intersection numbers, or attaching maps with replayable provenance",
+    "freeze the resulting noncommutative presentation before choosing any representation or abelian specialization",
+    "freeze a canonical integer readout before opening the observation comparison gate"
+  ],
+  "receipt_sha256": "18a2ddffd70aef891a4fab6d1a202642faf10f1f4ee8ae11aeabeeb3163df2d1",
+  "result": {
+    "authority_surface_audit": [
+      {
+        "existing_ordered_data": "exact position and glyph order",
+        "missing_recursive_geometry": "position-specific geometric operations and traversal words",
+        "required_source_marker": "unresolved: the exact geometric operation expressed by each function position beyond its carrier identity",
+        "source_path": "libs/ucns/src/ucns/public_gonol.py",
+        "source_sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
+        "surface": "canonical Public Gonol carrier"
+      },
+      {
+        "existing_ordered_data": "exact positive/reversed frame sequence under local turns",
+        "missing_recursive_geometry": "attachment to higher geometry and action on retained inner loops",
+        "required_source_marker": "unresolved: attachment to higher-dimensional circle, epicycle, disk, sphere, and full gonol constructions",
+        "source_path": "libs/ucns/src/ucns/direct_mobius.py",
+        "source_sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+        "surface": "canonical native Mobius return"
+      },
+      {
+        "existing_ordered_data": "identity and candidate cyclic carrier permutations",
+        "missing_recursive_geometry": "canonical position operation and recursive traversal selection",
+        "required_source_marker": "the exact operation expressed by each Public Gonol function position remains unresolved",
+        "source_path": "research/ucns/public_gonol_functional_operations.py",
+        "source_sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3",
+        "surface": "stack-local Public Gonol operations"
+      },
+      {
+        "existing_ordered_data": "slot-sensitive order supplied explicitly by the caller",
+        "missing_recursive_geometry": "coordinate or topological coupling that derives participant order",
+        "required_source_marker": "exact coordinate embedding of coupling on the UCNS carrier remains unresolved",
+        "source_path": "research/ucns/affinization_coupling_geometry.py",
+        "source_sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a",
+        "surface": "stack-local affinization coupling"
+      },
+      {
+        "existing_ordered_data": "recoverable constituent order inside a digest-bound promoted atom",
+        "missing_recursive_geometry": "next-scale placement and free-group transport or monodromy",
+        "required_source_marker": "exact next-scale carrier placement remains unresolved",
+        "source_path": "research/ucns/recursive_scale_transition.py",
+        "source_sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1",
+        "surface": "stack-local recursive promotion"
+      },
+      {
+        "existing_ordered_data": "exact band event turns, projection incidences, and over-under changes",
+        "missing_recursive_geometry": "authorized map from seed events to Public Gonol recursive relation words",
+        "required_source_marker": "the canonical UCNS seven-gonol composition and option-registry standing remain separate decisions",
+        "source_path": "libs/ucns/src/ucns/mobius_seed.py",
+        "source_sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770",
+        "surface": "canonical Mobius seed candidate"
+      }
+    ],
+    "homology_monodromy_obstruction": [
+      {
+        "abelianization_matrix": [
+          [
+            1,
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "images": {
+          "g1": [
+            "g2",
+            "g1",
+            "g2^-1"
+          ],
+          "g2": [
+            "g2"
+          ]
+        },
+        "interpretation": "a based inner conjugation; it may become a basepoint change in an outer-monodromy quotient",
+        "inverse_images": {
+          "g1": [
+            "g2^-1",
+            "g1",
+            "g2"
+          ],
+          "g2": [
+            "g2"
+          ]
+        },
+        "inverse_replay": true,
+        "nonidentity_before_abelianization": true,
+        "rank": 2,
+        "same_as_identity_on_h1": true,
+        "witness_id": "rank-two-inner-basepoint-transport"
+      },
+      {
+        "abelianization_matrix": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            1
+          ]
+        ],
+        "images": {
+          "g1": [
+            "g1",
+            "g2",
+            "g3",
+            "g2^-1",
+            "g3^-1"
+          ],
+          "g2": [
+            "g2"
+          ],
+          "g3": [
+            "g3"
+          ]
+        },
+        "interpretation": "x maps to x[y,z] while y and z remain fixed; the commutator is erased by H1",
+        "inverse_images": {
+          "g1": [
+            "g1",
+            "g3",
+            "g2",
+            "g3^-1",
+            "g2^-1"
+          ],
+          "g2": [
+            "g2"
+          ],
+          "g3": [
+            "g3"
+          ]
+        },
+        "inverse_replay": true,
+        "nonidentity_before_abelianization": true,
+        "rank": 3,
+        "same_as_identity_on_h1": true,
+        "witness_id": "rank-three-commutator-ia-shear"
+      }
+    ],
+    "numerical_next_gonol": null,
+    "ordered_groupoid": {
+      "abelianization": "Z^4",
+      "basis_digest": "8acae6efc896db3a4a6c1c218fd610c69d0373d6ebe1c758865c04f017d917ca",
+      "fundamental_group_candidate": "F_4",
+      "groupoid_digest": "5174f6293a40ddbd8e425c60a7352a08dcdad46aedbd65062750ed6570338fc1",
+      "rank": 4
+    },
+    "presentation_gate": {
+      "canonical_integer_invariant": null,
+      "cross_generator_crossings": null,
+      "cross_generator_linking_or_intersection_data": null,
+      "current_global_monodromy": null,
+      "current_group": "free-group candidate F_4",
+      "factorization": null,
+      "fox_presentation_matrix": null,
+      "gate_result": "NOT_REACHED_MISSING_GEOMETRY_DERIVED_RELATORS_AND_MONODROMY",
+      "generators": [
+        "g1",
+        "g2",
+        "g3",
+        "g4"
+      ],
+      "geometry_derived_relators": [],
+      "observation_comparison": null,
+      "relator_count": 0
+    },
+    "status": "ORDERED_LAYER_EXECUTABLE__MONODROMY_PRESENTATION_AND_FACTOR_BRIDGE_UNRESOLVED",
+    "triadic_order_audit": {
+      "abelianization_vector_count": 1,
+      "based_permutation_count": 6,
+      "fox_fingerprint_count": 6,
+      "magnus_degree_two_fingerprint_count": 6,
+      "words": [
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g1",
+            "g2",
+            "g3"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g1"
+                ]
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g1",
+                  "g2"
+                ]
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "e19f0d7926fa21382a609349911eaa664dcb0b242d51bb82152ea1cd30dfd156",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "fab27bcee9d83dd8323a107b18b2dbecdc7d09448625f687413a82d9a2469a1b",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g3"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g2",
+            "g3"
+          ]
+        },
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g1",
+            "g3",
+            "g2"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g1",
+                  "g3"
+                ]
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g1"
+                ]
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "7ee269c400bc71d7ef697cc78c184e1e0ece108431fc8d777d9d1b2564f97aab",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "7d274df41544b6df476f64e314e4c07e79dc911092fb1e74c6a0f9f10eb77d24",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g3",
+            "g2"
+          ]
+        },
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g2",
+            "g1",
+            "g3"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g2"
+                ]
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g2",
+                  "g1"
+                ]
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "c697518bd5b93f835274463b41a3607f7fbbde45b6c59831b801a427c8aec2bc",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "e8a799be88ff7bed4b593cc578a75f247bdab2df3c12812f55f0bba6225df32d",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g3"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g3",
+            "g2"
+          ]
+        },
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g2",
+            "g3",
+            "g1"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g2",
+                  "g3"
+                ]
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g2"
+                ]
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "a342198837b445b490481265233f83c92d1c2a43cd1dea8dea8fb3d1e56ac469",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "758bb074a985e84a7eae9cb46cc9b5666ec1ce432face42e9dd3a344fb7c378e",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g3"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g2",
+            "g3"
+          ]
+        },
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g3",
+            "g1",
+            "g2"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g3"
+                ]
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g3",
+                  "g1"
+                ]
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "64b1d67c882ca95ae9df421db82914dfadeed083d42dce88e741aed2e804e1b0",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "b8e01b0bd4bb137a70dd82329bef1ed47c00ef2b21674af6326899677b4cb0b4",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g2",
+            "g3"
+          ]
+        },
+        {
+          "abelianization": [
+            1,
+            1,
+            1,
+            0
+          ],
+          "based_word": [
+            "g3",
+            "g2",
+            "g1"
+          ],
+          "fox_derivatives": {
+            "g1": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g3",
+                  "g2"
+                ]
+              }
+            ],
+            "g2": [
+              {
+                "coefficient": 1,
+                "word": [
+                  "g3"
+                ]
+              }
+            ],
+            "g3": [
+              {
+                "coefficient": 1,
+                "word": []
+              }
+            ],
+            "g4": []
+          },
+          "fox_fingerprint_sha256": "9461c311afd2c39a703530b347707f2ec6411b739e55516f4c90c58b0113d576",
+          "fox_fundamental_identity": true,
+          "magnus_degree": 2,
+          "magnus_fingerprint_sha256": "8e55711a3129a74105d0d988f3144ecde12e6cb6315051c3fda0d068f82b4d89",
+          "magnus_terms": [
+            {
+              "coefficient": 1,
+              "monomial": []
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g1"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g3",
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2"
+              ]
+            },
+            {
+              "coefficient": 1,
+              "monomial": [
+                "g2",
+                "g1"
+              ]
+            }
+          ],
+          "oriented_cyclic_key": [
+            "g1",
+            "g3",
+            "g2"
+          ]
+        }
+      ]
+    }
+  },
+  "schema_id": "the-interdependency.stack-research.ucns.ordered-return-invariant-audit",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "canonical_architecture_precedent": {
+      "pipeline": "geometry-derived Wirtinger words -> noncommutative Fox/Magnus data -> explicit later abelian specialization",
+      "transfer_boundary": "architecture only; canonical prime-selected P7/P5 data do not define recursive return words or factors"
+    },
+    "ordered_groupoid_receipt_sha256": "cf61151f9e9ce1479b6d7eb95ff51bb2a683045de292243e1f14a9b3dd050f69",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "libs/ucns/src/ucns/prime_exact_milnor_alexander.py",
+        "sha256": "e26d37ac8bacfd58d365d8aa98da67ddf5d529e450a0803e2220be8db012c56d"
+      },
+      {
+        "path": "libs/ucns/src/ucns/prime_symbolic_alexander.py",
+        "sha256": "6202dd871c2ac00623380739bedc3a5b87a8ff8b87d4ea3595cd7488d3705fea"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "libs/ucns/src/ucns/mobius_seed.py",
+        "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+      },
+      {
+        "path": "research/ucns/public_gonol_functional_operations.py",
+        "sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3"
+      },
+      {
+        "path": "research/ucns/affinization_coupling_geometry.py",
+        "sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a"
+      },
+      {
+        "path": "research/ucns/recursive_scale_transition.py",
+        "sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1"
+      },
+      {
+        "path": "research/ucns/ordered_complete_return_groupoid.py",
+        "sha256": "d1c83252371bbe50fbc7d514bba43de6685d8eb5045060037941d38a5914b6e5"
+      },
+      {
+        "path": "research/ucns/receipts/ordered-complete-return-groupoid-v0.json",
+        "sha256": "741495c16f3d1b439663aa1710e89175c3f1ee67d5b6c0336d8ecf4cf854d002"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-target-free-noncommutative-invariant-audit"
+}

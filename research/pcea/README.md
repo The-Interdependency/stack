@@ -45,7 +45,19 @@ PCEA keys must still derive from real secret entropy; gonol state may organize, 
 5. Preserve negative results and attack harnesses; a passing harness grants permission for a harder attack, not a security claim.
 6. Graduate only completed, bounded behavior back to `The-Interdependency/pcea` through an explicit owning-repository change.
 
+## Current content
+
+- [`docs/provenance-tracker-v0.md`](docs/provenance-tracker-v0.md) - Actor A stack-local candidate note for using PCEA as a lineage/provenance tracker, with public authenticity and security claims explicitly out of scope.
+- [`docs/recursive-gonol-transition-candidates-v0.md`](docs/recursive-gonol-transition-candidates-v0.md) - Stack-local transition-family falsification and interpolation control from the observed `157 -> 2881 -> 54837698421` chain; no UCNS constructor or PCEA runtime claim.
+- [`gonol_transition_candidates.py`](gonol_transition_candidates.py) - Executable candidate registry, falsification checks, and deterministic receipt bytes.
+- [`docs/gonol-successor-mechanics-v0.md`](docs/gonol-successor-mechanics-v0.md) - Mechanics-derived successor-candidate gate starting from the pinned 157-position Public Gonol structure.
+- [`gonol_successor_mechanics.py`](gonol_successor_mechanics.py) - Executable mechanics snapshot, successor candidate evaluation, and deterministic receipt bytes.
+
 ## hmmm
 
 - The exact UCNS recursive transition operator producing `157 -> 2881 -> 54837698421` is not yet independently replayed here.
 - No independent cryptographic/security review is implied by this migration or by the PCEA runtime tests.
+- Public authenticity receipts remain unimplemented and must be supplied by a separate signature/transparency/verifier layer before any public proof claim.
+- Public Gonol projection may be useful as a public vocabulary/indexing layer, but no Public Gonol position operation or authenticity property is inferred here.
+- The actual UCNS recursive gonol geometry remains unresolved. The interpolation-control prediction `164513086777` has status `UNRESOLVED`: no independent UCNS constructor has produced a comparison value, so it is neither `SURVIVED` nor `FALSIFIED`.
+- Current mechanics-derived successor candidates do not produce `2881` from the pinned 157-gonol; Public Gonol position operation, affixiation/coupling geometry, recursive-scale transition, and completed 2881-gonol structure remain unresolved.

@@ -1,0 +1,305 @@
+{
+  "contract": {
+    "allowed_selection_basis": "intrinsic-ucns-geometry",
+    "certificate_output_contract": {
+      "emitted_only_when_all_fields_ready": true,
+      "independent_replay_requirement": "recompute every field and the traversal from pinned input geometry; canonical bytes must reproduce certificate_sha256",
+      "required_authority_bindings": [
+        "ucns_repository",
+        "ucns_commit",
+        "ucns_tree",
+        "constructor_id",
+        "input_geometry_sha256"
+      ],
+      "required_field_evidence": [
+        "operation_id",
+        "source_paths",
+        "selection_basis",
+        "input_binding_sha256",
+        "output_payload",
+        "replay_sha256"
+      ],
+      "required_field_order": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "rotation_system",
+        "marked_outgoing_dart",
+        "closure_rule"
+      ],
+      "required_outputs": [
+        "attached_origin_object",
+        "selected_direction",
+        "rotation_system",
+        "marked_outgoing_dart",
+        "closure_witness",
+        "traversal_word",
+        "certificate_sha256"
+      ]
+    },
+    "field_requirements": [
+      {
+        "acceptance_condition": "an authoritative UCNS geometric morphism identifies both source origin and target path object and replays independently",
+        "current_authoritative_primitives": [
+          "Public Gonol carrier position zero",
+          "direct Mobius Structural Null carrier position zero",
+          "coordinate-free carrier Structural Null"
+        ],
+        "field": "origin_attachment",
+        "forbidden_substitutes": [
+          "carrier tuple order",
+          "source text order",
+          "caller order",
+          "caller slot order",
+          "API default",
+          "local frame default",
+          "construction ordinal",
+          "commit order",
+          "prose adjacency",
+          "identifier",
+          "hash",
+          "PCEA expectation",
+          "observed gonol number"
+        ],
+        "prerequisites": [],
+        "required_semantics": "attach one intrinsic Public Gonol or Structural Null origin to one recursive return-groupoid object"
+      },
+      {
+        "acceptance_condition": "geometry selects one direction and demonstrates why exact sign reflection no longer preserves the attached structure",
+        "current_authoritative_primitives": [
+          "positive and reversed local frames",
+          "caller-addressable positive and negative displacement"
+        ],
+        "field": "directed_tangent_or_chirality",
+        "forbidden_substitutes": [
+          "carrier tuple order",
+          "source text order",
+          "caller order",
+          "caller slot order",
+          "API default",
+          "local frame default",
+          "construction ordinal",
+          "commit order",
+          "prose adjacency",
+          "identifier",
+          "hash",
+          "PCEA expectation",
+          "observed gonol number"
+        ],
+        "prerequisites": [
+          "origin_attachment"
+        ],
+        "required_semantics": "transport one intrinsic directed germ or chirality through the origin attachment"
+      },
+      {
+        "acceptance_condition": "an intrinsic incidence operation returns one replayable cyclic order independent of storage and caller enumeration",
+        "current_authoritative_primitives": [
+          "unmarked identical local return loops"
+        ],
+        "field": "rotation_system",
+        "forbidden_substitutes": [
+          "carrier tuple order",
+          "source text order",
+          "caller order",
+          "caller slot order",
+          "API default",
+          "local frame default",
+          "construction ordinal",
+          "commit order",
+          "prose adjacency",
+          "identifier",
+          "hash",
+          "PCEA expectation",
+          "observed gonol number"
+        ],
+        "prerequisites": [
+          "origin_attachment",
+          "directed_tangent_or_chirality"
+        ],
+        "required_semantics": "derive cyclic incidence for every oriented recursive return germ"
+      },
+      {
+        "acceptance_condition": "geometry distinguishes one dart after cyclic incidence, preventing cyclic conjugacy from erasing the based word",
+        "current_authoritative_primitives": [
+          "distinguished carrier origin without an outgoing relation germ"
+        ],
+        "field": "marked_outgoing_dart",
+        "forbidden_substitutes": [
+          "carrier tuple order",
+          "source text order",
+          "caller order",
+          "caller slot order",
+          "API default",
+          "local frame default",
+          "construction ordinal",
+          "commit order",
+          "prose adjacency",
+          "identifier",
+          "hash",
+          "PCEA expectation",
+          "observed gonol number"
+        ],
+        "prerequisites": [
+          "rotation_system"
+        ],
+        "required_semantics": "mark one outgoing recursive germ as the based traversal start"
+      },
+      {
+        "acceptance_condition": "the same geometry deterministically emits termination, the complete traversal word, and a replay-verifiable closure witness",
+        "current_authoritative_primitives": [
+          "local two-turn frame restoration"
+        ],
+        "field": "closure_rule",
+        "forbidden_substitutes": [
+          "carrier tuple order",
+          "source text order",
+          "caller order",
+          "caller slot order",
+          "API default",
+          "local frame default",
+          "construction ordinal",
+          "commit order",
+          "prose adjacency",
+          "identifier",
+          "hash",
+          "PCEA expectation",
+          "observed gonol number"
+        ],
+        "prerequisites": [
+          "origin_attachment",
+          "directed_tangent_or_chirality",
+          "rotation_system",
+          "marked_outgoing_dart"
+        ],
+        "required_semantics": "close the selected ordered return as an attaching or monodromy word"
+      }
+    ],
+    "registered_derivations": []
+  },
+  "hmmm": [
+    "origin_attachment: current UCNS canon distinguishes Public Gonol and Structural Null origin, but defines no geometric morphism from that origin to one recursive return-groupoid object",
+    "the contract stops before direction because direction must be transported through the missing attachment",
+    "rotation system, marked outgoing dart, and closure rule are not evaluated after the first missing dependency",
+    "resume only when an authoritative UCNS geometric operation supplies the origin attachment with deterministic replay evidence"
+  ],
+  "nonclaims": [
+    "not a completed based-traversal constructor",
+    "not evidence that position zero alone attaches to a recursive path object",
+    "not permission to choose orientation, cyclic order, first dart, or closure by convention",
+    "not a traversal word, attaching word, monodromy, arithmetic readout, or gonol successor",
+    "not PCEA work and not a PCEA control comparison",
+    "not UCNS canon"
+  ],
+  "origin_primitive_evidence": {
+    "carrier_structural_null_coordinate_free": true,
+    "direct_structural_null_carrier_position": 0,
+    "origin_to_groupoid_attachment": null,
+    "public_gonol_origin": {
+      "arrangement_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5",
+      "glyph": " ",
+      "index": 0
+    },
+    "recursive_groupoid_base_object": "return-groupoid.promoted-positive-frame",
+    "status": "ORIGIN_PRIMITIVES_PRESENT__ATTACHMENT_ABSENT"
+  },
+  "producer_code_reference": "sha256:c31dd280c1c5e91a986214fa0ba646aa655cc36044c7374db83b526c79ec20e1",
+  "receipt_sha256": "12100f1bd08d76d2b86bd3d4b7786b5e7bde07fda789dc2937817990c7a5849a",
+  "result": {
+    "constructor_certificate": null,
+    "field_evaluations": [
+      {
+        "derivation": null,
+        "field": "origin_attachment",
+        "reason": "no registered authority-bound intrinsic UCNS geometric operation satisfies this field",
+        "status": "MISSING_AUTHORITATIVE_GEOMETRIC_DERIVATION"
+      },
+      {
+        "derivation": null,
+        "field": "directed_tangent_or_chirality",
+        "reason": "not evaluated after missing prerequisite field origin_attachment",
+        "status": "NOT_EVALUATED_DEPENDENCY_BLOCKED"
+      },
+      {
+        "derivation": null,
+        "field": "rotation_system",
+        "reason": "not evaluated after missing prerequisite field origin_attachment",
+        "status": "NOT_EVALUATED_DEPENDENCY_BLOCKED"
+      },
+      {
+        "derivation": null,
+        "field": "marked_outgoing_dart",
+        "reason": "not evaluated after missing prerequisite field origin_attachment",
+        "status": "NOT_EVALUATED_DEPENDENCY_BLOCKED"
+      },
+      {
+        "derivation": null,
+        "field": "closure_rule",
+        "reason": "not evaluated after missing prerequisite field origin_attachment",
+        "status": "NOT_EVALUATED_DEPENDENCY_BLOCKED"
+      }
+    ],
+    "hmmm": {
+      "field": "origin_attachment",
+      "promotion_evidence": "authoritative UCNS operation, exact source identity, target path object, intrinsic selection proof, and deterministic replay receipt",
+      "unresolved": "geometric morphism from intrinsic Public Gonol or Structural Null origin to one recursive return-groupoid object"
+    },
+    "outputs": {
+      "arithmetic_readout": null,
+      "attaching_word": null,
+      "monodromy": null,
+      "successor": null,
+      "traversal_word": null
+    },
+    "pcea_handoff_permitted": false,
+    "status": "STOP_MISSING_ORIGIN_ATTACHMENT",
+    "stop_field": "origin_attachment"
+  },
+  "schema_id": "the-interdependency.stack-research.ucns.based-traversal-constructor-contract",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "geometry_selection_receipt_sha256": "4c4f06aae237fd4ce771dc7849738617b0cbc9ab3cc5bd6685ffec84b2921a09",
+    "provenance_history_receipt_sha256": "ed08c5315ab7dc6988985455d7226ced9151481883b7b8bbb0050ffc2bbc82e2",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "research/ucns/geometry_selected_based_traversal_audit.py",
+        "sha256": "f3c8cc74fe209d9849e5aff77647928e0798be64c9040dc57759b4351ba1e684"
+      },
+      {
+        "path": "research/ucns/receipts/geometry-selected-based-traversal-audit-v0.json",
+        "sha256": "f331c5a9f2479251c19dd6c77c593724b61b3a3a45c2e14e73f131ff653b368e"
+      },
+      {
+        "path": "research/ucns/based_traversal_provenance_history_audit.py",
+        "sha256": "ec0eb8b37a6daa1e33701d25c306ce2d4420e4b4264487b9d3eaa408ac0f75e1"
+      },
+      {
+        "path": "research/ucns/receipts/based-traversal-provenance-history-audit-v0.json",
+        "sha256": "dfefa3bf4f9b36dd7f0b1990a5f492b517fd4a9c9894c462b50fa8fd9242fea0"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "ucns_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62"
+  },
+  "standing": "stack-local-fail-closed-constructor-contract"
+}

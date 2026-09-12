@@ -1,0 +1,781 @@
+{
+  "candidate": {
+    "closure_quotients": {
+      "based": "no quotient",
+      "orientation_reversal": "not authorized",
+      "unbased_oriented": "cyclic conjugacy only"
+    },
+    "desired_arithmetic_rank_input": null,
+    "midpoint_policy": "one relation-specific reversed-frame object per complete-return loop",
+    "observed_arithmetic_factor_input": null,
+    "observed_successor_cardinality_input": null,
+    "operation": "minimal subdivided-bouquet path-groupoid lift before abelianization",
+    "recursive_inclusion": "retain prior based loops unchanged at the promoted positive occurrence",
+    "word_reduction": "cancel adjacent inverse edge or generator pairs only; never commute"
+  },
+  "current_arithmetic_factor_map": null,
+  "current_cross_generator_relators": [],
+  "current_global_monodromy": null,
+  "falsification_conditions": [
+    "the native complete-return trace does not have distinct positive and reversed frame occurrences",
+    "recursive promotion does not preserve prior loops at a common based positive occurrence",
+    "a required attachment identifies distinct reversed-frame midpoints and introduces additional mixed cycles",
+    "a required two-cell or relator fills or identifies one of the declared free loops",
+    "path composition accepts mismatched endpoints or reduction reorders distinct generators",
+    "cyclic rotation or orientation reversal is applied before the closure policy is geometrically declared",
+    "an observed gonol value or arithmetic factor enters groupoid construction"
+  ],
+  "groupoid": {
+    "attachment_policy": {
+      "cross_generator_relators": [],
+      "global_monodromy": null,
+      "positive_basepoint": "shared under the candidate basepoint-preserving recursive inclusion",
+      "reversed_midpoints": "one distinct object per retained complete-return relation"
+    },
+    "base_object": "return-groupoid.promoted-positive-frame",
+    "basis_digest": "8acae6efc896db3a4a6c1c218fd610c69d0373d6ebe1c758865c04f017d917ca",
+    "edges": [
+      {
+        "edge_id": "return-groupoid.edge.outbound:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "half": "positive-to-reversed",
+        "relation_id": "ucns.relation.complete-return:85c2173f72f64edf75124061ffb65c311dd2d4444851cd7530adc32a97e86430",
+        "source": "return-groupoid.promoted-positive-frame",
+        "target": "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.return:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "half": "reversed-to-positive",
+        "relation_id": "ucns.relation.complete-return:85c2173f72f64edf75124061ffb65c311dd2d4444851cd7530adc32a97e86430",
+        "source": "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "target": "return-groupoid.promoted-positive-frame",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.outbound:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "half": "positive-to-reversed",
+        "relation_id": "ucns.relation.complete-return:8ec5636e6d3cb0e0eb31ee63e275added3e818ca8498e795713e32d8ad5d0323",
+        "source": "return-groupoid.promoted-positive-frame",
+        "target": "return-groupoid.reversed-midpoint:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.return:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "half": "reversed-to-positive",
+        "relation_id": "ucns.relation.complete-return:8ec5636e6d3cb0e0eb31ee63e275added3e818ca8498e795713e32d8ad5d0323",
+        "source": "return-groupoid.reversed-midpoint:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "target": "return-groupoid.promoted-positive-frame",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.outbound:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "half": "positive-to-reversed",
+        "relation_id": "ucns.relation.complete-return:8d692bccb371e14e57f1020265e1e4e6b2db74906033c2156ce15d8fce8b7e1a",
+        "source": "return-groupoid.promoted-positive-frame",
+        "target": "return-groupoid.reversed-midpoint:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.return:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "half": "reversed-to-positive",
+        "relation_id": "ucns.relation.complete-return:8d692bccb371e14e57f1020265e1e4e6b2db74906033c2156ce15d8fce8b7e1a",
+        "source": "return-groupoid.reversed-midpoint:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "target": "return-groupoid.promoted-positive-frame",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.outbound:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "half": "positive-to-reversed",
+        "relation_id": "ucns.relation.complete-return:364c9e5768c3216d4a80b64ac1d815fd0a60c02f7c797840657ba58e1c62faf0",
+        "source": "return-groupoid.promoted-positive-frame",
+        "target": "return-groupoid.reversed-midpoint:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "edge_id": "return-groupoid.edge.return:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "half": "reversed-to-positive",
+        "relation_id": "ucns.relation.complete-return:364c9e5768c3216d4a80b64ac1d815fd0a60c02f7c797840657ba58e1c62faf0",
+        "source": "return-groupoid.reversed-midpoint:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "target": "return-groupoid.promoted-positive-frame",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      }
+    ],
+    "final_atomic_id": "ucns.atomic:34932a39c2c04fa16e79e8a930fab7e5a14c8197d58876c8de3bffe2eec180ce",
+    "generators": [
+      {
+        "midpoint_object": "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "ordinal": 1,
+        "outbound_edge_id": "return-groupoid.edge.outbound:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "promoted_atomic_id": "ucns.atomic:632b484803e9fab46f7be575aa9c15b6f5fcc915c265a16e5a40650182e1bb2b",
+        "relation_id": "ucns.relation.complete-return:85c2173f72f64edf75124061ffb65c311dd2d4444851cd7530adc32a97e86430",
+        "return_edge_id": "return-groupoid.edge.return:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+        "source_atomic_id": "ucns.research.public-gonol-atom:cf9d901c3747b5dbe53d67e04d910fe9a214e59523716c9f5845795f34b76fbd",
+        "symbol": "g1",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "midpoint_object": "return-groupoid.reversed-midpoint:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "ordinal": 2,
+        "outbound_edge_id": "return-groupoid.edge.outbound:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "promoted_atomic_id": "ucns.atomic:023332a29989d6b8f258665eeee378dea22edc5c0a6b4c2ab99a88719c360af2",
+        "relation_id": "ucns.relation.complete-return:8ec5636e6d3cb0e0eb31ee63e275added3e818ca8498e795713e32d8ad5d0323",
+        "return_edge_id": "return-groupoid.edge.return:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+        "source_atomic_id": "ucns.atomic:632b484803e9fab46f7be575aa9c15b6f5fcc915c265a16e5a40650182e1bb2b",
+        "symbol": "g2",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "midpoint_object": "return-groupoid.reversed-midpoint:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "ordinal": 3,
+        "outbound_edge_id": "return-groupoid.edge.outbound:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "promoted_atomic_id": "ucns.atomic:79983439a75bc938d35fbcd8f717dc27616ac2fd508485c38e52b3c40fcf9b35",
+        "relation_id": "ucns.relation.complete-return:8d692bccb371e14e57f1020265e1e4e6b2db74906033c2156ce15d8fce8b7e1a",
+        "return_edge_id": "return-groupoid.edge.return:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+        "source_atomic_id": "ucns.atomic:023332a29989d6b8f258665eeee378dea22edc5c0a6b4c2ab99a88719c360af2",
+        "symbol": "g3",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      },
+      {
+        "midpoint_object": "return-groupoid.reversed-midpoint:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "ordinal": 4,
+        "outbound_edge_id": "return-groupoid.edge.outbound:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "promoted_atomic_id": "ucns.atomic:34932a39c2c04fa16e79e8a930fab7e5a14c8197d58876c8de3bffe2eec180ce",
+        "relation_id": "ucns.relation.complete-return:364c9e5768c3216d4a80b64ac1d815fd0a60c02f7c797840657ba58e1c62faf0",
+        "return_edge_id": "return-groupoid.edge.return:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7",
+        "source_atomic_id": "ucns.atomic:79983439a75bc938d35fbcd8f717dc27616ac2fd508485c38e52b3c40fcf9b35",
+        "symbol": "g4",
+        "trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+      }
+    ],
+    "graph": {
+      "abelianization": "Z^4",
+      "boundary_rank": 4,
+      "connected_components": 1,
+      "edge_count": 8,
+      "filling_two_cell_count": 0,
+      "first_betti_rank": 4,
+      "fundamental_group_candidate": "F_4",
+      "vertex_count": 5
+    },
+    "groupoid_digest": "5174f6293a40ddbd8e425c60a7352a08dcdad46aedbd65062750ed6570338fc1",
+    "objects": [
+      "return-groupoid.promoted-positive-frame",
+      "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+      "return-groupoid.reversed-midpoint:112e2db76cceb8b36b49293a2f01b60e9dd5094c2ab34a38bb5cbd3dbf15c9d6",
+      "return-groupoid.reversed-midpoint:1f85e6cf4c216aa505cea7cac5c9f5413742741290bab88f7a187a4e41a6997c",
+      "return-groupoid.reversed-midpoint:9107ae3c277027810f78f65abe6b4634d9ed5f0b70c0db49848d7ca4f546c9a7"
+    ],
+    "standing": "stack-local-target-free-noncommutative-geometric-candidate"
+  },
+  "hmmm": [
+    "retained relation ids are lifted as basepoint-preserving inclusions at the promoted positive frame; actual recursive transport may apply nontrivial free-group monodromy",
+    "each reversed-frame midpoint remains relation-specific so the combined graph has exactly the previously declared rank rather than unsupported mixed half-edge cycles",
+    "the local native complete-return trace supplies oriented halves but no cross-generator intersections, crossings, or relators",
+    "based words and oriented cyclic closure classes are both retained because UCNS has not declared whether recursive closure forgets the basepoint",
+    "orientation reversal is not quotiented; a geometric rule would be required before identifying opposite traversal classes",
+    "no current ordered word selects an arithmetic factor cardinality or numerical successor gonol"
+  ],
+  "local_basepoint_witness": {
+    "based_paths_distinct": true,
+    "complete_loop": {
+      "source": "return-groupoid.promoted-positive-frame",
+      "steps": [
+        [
+          "return-groupoid.edge.outbound:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+          1
+        ],
+        [
+          "return-groupoid.edge.return:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+          1
+        ]
+      ],
+      "target": "return-groupoid.promoted-positive-frame"
+    },
+    "one_turn_shifted_loop": {
+      "source": "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+      "steps": [
+        [
+          "return-groupoid.edge.return:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+          1
+        ],
+        [
+          "return-groupoid.edge.outbound:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f",
+          1
+        ]
+      ],
+      "target": "return-groupoid.reversed-midpoint:c65d35aa1b4819c191986cf39e72aac5e4c1eec5c323bea2dd7cf560e7482e0f"
+    },
+    "transported_shifted_loop_reduces_to_complete_loop": true
+  },
+  "nonclaims": [
+    "not UCNS canon",
+    "not proof that the full recursive gonol is a bouquet of circles",
+    "not a derived global monodromy or cross-generator closure relation",
+    "not an arithmetic factor or successor-cardinality operation",
+    "not a numerical next-gonol prediction",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "numerical_next_gonol": null,
+  "order_profiles": [
+    {
+      "abelianization_class_count": 1,
+      "abelianization_vectors": [
+        [
+          1
+        ]
+      ],
+      "based_word_count": 1,
+      "based_words": [
+        [
+          "g1"
+        ]
+      ],
+      "expected_based_word_count": 1,
+      "expected_oriented_cyclic_class_count": 1,
+      "oriented_cyclic_class_count": 1,
+      "oriented_cyclic_classes": [
+        [
+          [
+            "g1"
+          ]
+        ]
+      ],
+      "rank": 1
+    },
+    {
+      "abelianization_class_count": 1,
+      "abelianization_vectors": [
+        [
+          1,
+          1
+        ]
+      ],
+      "based_word_count": 2,
+      "based_words": [
+        [
+          "g1",
+          "g2"
+        ],
+        [
+          "g2",
+          "g1"
+        ]
+      ],
+      "expected_based_word_count": 2,
+      "expected_oriented_cyclic_class_count": 1,
+      "oriented_cyclic_class_count": 1,
+      "oriented_cyclic_classes": [
+        [
+          [
+            "g1",
+            "g2"
+          ],
+          [
+            "g2",
+            "g1"
+          ]
+        ]
+      ],
+      "rank": 2
+    },
+    {
+      "abelianization_class_count": 1,
+      "abelianization_vectors": [
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "based_word_count": 6,
+      "based_words": [
+        [
+          "g1",
+          "g2",
+          "g3"
+        ],
+        [
+          "g1",
+          "g3",
+          "g2"
+        ],
+        [
+          "g2",
+          "g1",
+          "g3"
+        ],
+        [
+          "g2",
+          "g3",
+          "g1"
+        ],
+        [
+          "g3",
+          "g1",
+          "g2"
+        ],
+        [
+          "g3",
+          "g2",
+          "g1"
+        ]
+      ],
+      "expected_based_word_count": 6,
+      "expected_oriented_cyclic_class_count": 2,
+      "oriented_cyclic_class_count": 2,
+      "oriented_cyclic_classes": [
+        [
+          [
+            "g1",
+            "g3",
+            "g2"
+          ],
+          [
+            "g2",
+            "g1",
+            "g3"
+          ],
+          [
+            "g3",
+            "g2",
+            "g1"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g2",
+            "g3"
+          ],
+          [
+            "g2",
+            "g3",
+            "g1"
+          ],
+          [
+            "g3",
+            "g1",
+            "g2"
+          ]
+        ]
+      ],
+      "rank": 3
+    },
+    {
+      "abelianization_class_count": 1,
+      "abelianization_vectors": [
+        [
+          1,
+          1,
+          1,
+          1
+        ]
+      ],
+      "based_word_count": 24,
+      "based_words": [
+        [
+          "g1",
+          "g2",
+          "g3",
+          "g4"
+        ],
+        [
+          "g1",
+          "g2",
+          "g4",
+          "g3"
+        ],
+        [
+          "g1",
+          "g3",
+          "g2",
+          "g4"
+        ],
+        [
+          "g1",
+          "g3",
+          "g4",
+          "g2"
+        ],
+        [
+          "g1",
+          "g4",
+          "g2",
+          "g3"
+        ],
+        [
+          "g1",
+          "g4",
+          "g3",
+          "g2"
+        ],
+        [
+          "g2",
+          "g1",
+          "g3",
+          "g4"
+        ],
+        [
+          "g2",
+          "g1",
+          "g4",
+          "g3"
+        ],
+        [
+          "g2",
+          "g3",
+          "g1",
+          "g4"
+        ],
+        [
+          "g2",
+          "g3",
+          "g4",
+          "g1"
+        ],
+        [
+          "g2",
+          "g4",
+          "g1",
+          "g3"
+        ],
+        [
+          "g2",
+          "g4",
+          "g3",
+          "g1"
+        ],
+        [
+          "g3",
+          "g1",
+          "g2",
+          "g4"
+        ],
+        [
+          "g3",
+          "g1",
+          "g4",
+          "g2"
+        ],
+        [
+          "g3",
+          "g2",
+          "g1",
+          "g4"
+        ],
+        [
+          "g3",
+          "g2",
+          "g4",
+          "g1"
+        ],
+        [
+          "g3",
+          "g4",
+          "g1",
+          "g2"
+        ],
+        [
+          "g3",
+          "g4",
+          "g2",
+          "g1"
+        ],
+        [
+          "g4",
+          "g1",
+          "g2",
+          "g3"
+        ],
+        [
+          "g4",
+          "g1",
+          "g3",
+          "g2"
+        ],
+        [
+          "g4",
+          "g2",
+          "g1",
+          "g3"
+        ],
+        [
+          "g4",
+          "g2",
+          "g3",
+          "g1"
+        ],
+        [
+          "g4",
+          "g3",
+          "g1",
+          "g2"
+        ],
+        [
+          "g4",
+          "g3",
+          "g2",
+          "g1"
+        ]
+      ],
+      "expected_based_word_count": 24,
+      "expected_oriented_cyclic_class_count": 6,
+      "oriented_cyclic_class_count": 6,
+      "oriented_cyclic_classes": [
+        [
+          [
+            "g1",
+            "g3",
+            "g2",
+            "g4"
+          ],
+          [
+            "g2",
+            "g4",
+            "g1",
+            "g3"
+          ],
+          [
+            "g3",
+            "g2",
+            "g4",
+            "g1"
+          ],
+          [
+            "g4",
+            "g1",
+            "g3",
+            "g2"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g2",
+            "g3",
+            "g4"
+          ],
+          [
+            "g2",
+            "g3",
+            "g4",
+            "g1"
+          ],
+          [
+            "g3",
+            "g4",
+            "g1",
+            "g2"
+          ],
+          [
+            "g4",
+            "g1",
+            "g2",
+            "g3"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g2",
+            "g4",
+            "g3"
+          ],
+          [
+            "g2",
+            "g4",
+            "g3",
+            "g1"
+          ],
+          [
+            "g3",
+            "g1",
+            "g2",
+            "g4"
+          ],
+          [
+            "g4",
+            "g3",
+            "g1",
+            "g2"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g4",
+            "g3",
+            "g2"
+          ],
+          [
+            "g2",
+            "g1",
+            "g4",
+            "g3"
+          ],
+          [
+            "g3",
+            "g2",
+            "g1",
+            "g4"
+          ],
+          [
+            "g4",
+            "g3",
+            "g2",
+            "g1"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g3",
+            "g4",
+            "g2"
+          ],
+          [
+            "g2",
+            "g1",
+            "g3",
+            "g4"
+          ],
+          [
+            "g3",
+            "g4",
+            "g2",
+            "g1"
+          ],
+          [
+            "g4",
+            "g2",
+            "g1",
+            "g3"
+          ]
+        ],
+        [
+          [
+            "g1",
+            "g4",
+            "g2",
+            "g3"
+          ],
+          [
+            "g2",
+            "g3",
+            "g1",
+            "g4"
+          ],
+          [
+            "g3",
+            "g1",
+            "g4",
+            "g2"
+          ],
+          [
+            "g4",
+            "g2",
+            "g3",
+            "g1"
+          ]
+        ]
+      ],
+      "rank": 4
+    }
+  ],
+  "producer_code_reference": "sha256:d1c83252371bbe50fbc7d514bba43de6685d8eb5045060037941d38a5914b6e5",
+  "promotion_evidence": [
+    "derive the basepoint transport of every retained inner loop from full recursive UCNS geometry",
+    "derive the action of one complete recursive return on the free-group generators before abelianization",
+    "derive cross-generator intersections, crossings, or attaching words from geometry",
+    "declare from geometry whether closure retains a basepoint, takes conjugacy classes, or also identifies orientation reversal",
+    "validate any later arithmetic invariant only after freezing those ordered geometric data"
+  ],
+  "receipt_sha256": "cf61151f9e9ce1479b6d7eb95ff51bb2a683045de292243e1f14a9b3dd050f69",
+  "schema_id": "the-interdependency.stack-research.ucns.ordered-complete-return-groupoid",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "complete_return_candidate_receipt_sha256": "f1ebfed99730b338a8b716ae4f7e2984c243ee294d7806f54182c24c849ceaea",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "research/ucns/complete_return_relation_extension.py",
+        "sha256": "7c09ee73fe18ea0489f1a7cee5738b140d761dab6d09fcba6104d7ff4a8b5f53"
+      },
+      {
+        "path": "research/ucns/receipts/complete-return-relation-extension-v0.json",
+        "sha256": "5475b0839b80ddc892d94256dd5e138838ff7f71e4d5eda6901584b614b60e03"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-target-free-noncommutative-geometric-candidate",
+  "triadic_witness": {
+    "g1_g2_g3": {
+      "abelianization": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "based_word": [
+        "g1",
+        "g2",
+        "g3"
+      ],
+      "oriented_cyclic_key": [
+        "g1",
+        "g2",
+        "g3"
+      ]
+    },
+    "g1_g3_g2": {
+      "abelianization": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "based_word": [
+        "g1",
+        "g3",
+        "g2"
+      ],
+      "oriented_cyclic_key": [
+        "g1",
+        "g3",
+        "g2"
+      ]
+    },
+    "g2_g3_g1": {
+      "abelianization": [
+        1,
+        1,
+        1,
+        0
+      ],
+      "based_word": [
+        "g2",
+        "g3",
+        "g1"
+      ],
+      "oriented_cyclic_key": [
+        "g1",
+        "g2",
+        "g3"
+      ]
+    }
+  }
+}

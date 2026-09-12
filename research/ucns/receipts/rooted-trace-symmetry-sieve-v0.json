@@ -1,0 +1,69 @@
+{
+  "comparison": {
+    "constructor_survivor_count": 0,
+    "falsified_class_count": 2,
+    "fourfold_state_target": 13709424605,
+    "next_prediction": null,
+    "observed": [
+      157,
+      2881,
+      54837698421
+    ],
+    "radius_two_hex_disk": {
+      "construction_trace_count": 97934946851520,
+      "rooted_symmetry_order": 12,
+      "standing": "FALSIFIED",
+      "target_divisible_by_symmetry_order": false
+    },
+    "seed": {
+      "construction_trace_count": 720,
+      "free_orbit_count": 60,
+      "rooted_automorphism_order": 12
+    },
+    "state_target_factorization": [
+      [
+        5,
+        1
+      ],
+      [
+        2741884921,
+        1
+      ]
+    ],
+    "symmetric_two_face_seed": {
+      "construction_trace_count": 1779148800,
+      "root_fixed_layer_swap": true,
+      "standing": "FALSIFIED",
+      "target_is_even": false
+    }
+  },
+  "hmmm": [
+    "if the third quotient counts construction traces, bare D6 adjacency cannot be the complete next-scale mechanic",
+    "phase, chirality, or ordered coupling would have to enter build admissibility to remove the excluded rooted symmetries",
+    "a symmetry quotient could change the counted object, but no UCNS quotient operation is currently declared",
+    "the third quotient may instead be a different invariant, because the 39-event and 720-trace identities already use different state extractors",
+    "no completed 2881-gonol graph or next prediction is authorized"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not a recovered successor constructor",
+    "not proof that the third quotient is a construction-trace count",
+    "not permission to break symmetry toward the observed target",
+    "not a PCEA runtime, entropy, hardness, or authenticity claim"
+  ],
+  "receipt_sha256": "00aade4e906b55f65854f4623a52820268b07b66752185576db77cc1353adfbf",
+  "schema_id": "the-interdependency.stack-research.ucns.rooted-trace-symmetry-sieve",
+  "schema_version": "0.1.0",
+  "source": {
+    "event_trace_producer_path": "research/ucns/event_trace_lift_candidate.py",
+    "event_trace_producer_sha256": "d1cb1e301de8d081653c0cc8f07730ae09afac652867236c266c3c9b67d7b9b4",
+    "event_trace_receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+    "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "stack-local-post-observation-falsification-sieve",
+  "surviving_constraints": [
+    "a connected-trace interpretation must remove D6 rooted symmetry through declared mechanics or use a different counted object",
+    "indistinguishable upper/lower faces cannot remain related by a root-fixed layer-swap involution",
+    "phase/chirality-sensitive admissibility, an authorized quotient, and a different state extractor remain distinct unresolved alternatives"
+  ]
+}

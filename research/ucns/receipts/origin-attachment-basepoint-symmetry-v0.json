@@ -1,0 +1,230 @@
+{
+  "audit": {
+    "automorphism_group": {
+      "action": "tau_c([q]) = [q+c]; tau_c([q],d) = ([q+c],d)",
+      "action_free": true,
+      "action_transitive": true,
+      "completeness_proof": [
+        "for any label-preserving automorphism F, set c = F([0])",
+        "equivariance gives F([q]) = F([0]+q) = F([0])+q = [c+q]",
+        "therefore F = tau_c, and c is unique",
+        "conversely every tau_c preserves every declared object and path operation"
+      ],
+      "composition": "tau_c then tau_e = tau_[c+e]",
+      "element_form": "tau_c for one unique c in Q/Z",
+      "exact_group": "Q/Z under addition",
+      "group_id": "Aut_Q(T)",
+      "inverse": "tau_c^-1 = tau_[-c]",
+      "larger_unlabelled_group_needed": false,
+      "preserved_data": [
+        "visible phase equivalence modulo one",
+        "every signed rational displacement label d",
+        "path source, target, identity, inverse, and composition",
+        "one-turn visible return and two-turn complete-return locations"
+      ],
+      "scope_note": "translations already prove transitivity; allowing sign reversal would enlarge symmetry without creating a fixed object"
+    },
+    "candidate_boundaries": [
+      {
+        "candidate_id": "public-gonol-157-position-carrier",
+        "orbit_information": "not defined; positions have no canonical traversal or incidence operation",
+        "qualifies_as_t": false,
+        "reason": "an ordered carrier identity alone is not a traversable structure",
+        "standing": "pinned canon"
+      },
+      {
+        "candidate_id": "non-null-directed-carrier",
+        "orbit_information": "each fixed positive-breadth angular shell is translation-transitive; different breadths remain separate and no breadth is selected from Structural Null",
+        "qualifies_as_t": false,
+        "reason": "canon supplies neither a selected non-null breadth nor an origin incidence",
+        "standing": "pinned geometric candidate/projection"
+      },
+      {
+        "candidate_id": "stack-local-subdivided-return-bouquet",
+        "orbit_information": "for rank at least two the shared vertex is uniquely distinguished by degree 2r from degree-two midpoint vertices",
+        "qualifies_as_t": false,
+        "reason": "the unique vertex is created by the declared shared positive-basepoint, basepoint-preserving attachment whose geometric authorization remains unresolved",
+        "standing": "stack-local candidate, not canon"
+      }
+    ],
+    "candidate_traversable_structure": {
+      "authority_operation": "NativeMobiusState.advance with frame forgotten only after visible projection",
+      "law_id": "ucns.native-mobius-root-loop",
+      "law_version": "1.0.0",
+      "morphisms": {
+        "composition": "([q], d) then ([q+d], e) = ([q], d+e)",
+        "set": "Mor(T) = {([q], d) : [q] in Q/Z, d in Q}",
+        "source": "s([q], d) = [q]",
+        "target": "t([q], d) = [q + d]"
+      },
+      "objects": {
+        "all_objects_admissible": true,
+        "cardinality": "countably infinite",
+        "enumeration": "{a/b : b > 0, 0 <= a < b, gcd(a,b) = 1}; a = 0 occurs only as 0/1",
+        "excluded_or_marked_phase": null,
+        "set": "V(T) = Q/Z"
+      },
+      "phase_zero_intrinsically_marked": false,
+      "structural_null_is_object": false,
+      "structure_id": "ucns.native-mobius-visible-rational-displacement-groupoid",
+      "unframed": true
+    },
+    "existing_canon_test": {
+      "distinguishes_exactly_one_object_within_orbit": false,
+      "distinguishes_exactly_one_orbit": true,
+      "invariant_witness": "tau_[1/2] preserves every declared unframed displacement relation and has no fixed object"
+    },
+    "finite_replay_witness": {
+      "all_checks_passed": true,
+      "automorphism_path_checks": 484,
+      "canonical_visible_state_checks": 968,
+      "half_turn_fixed_object_count": 0,
+      "maximum_denominator": 8,
+      "object_count": 22,
+      "object_pair_count": 484,
+      "standing": "finite exact replay witness; the full transitivity result is algebraic",
+      "transporter_checks": 484,
+      "witness_sha256": "d0702974ae741315d2019f777ff289552b39328625c92378a11ca54dd8dfeed9"
+    },
+    "orbit_partition": {
+      "canonical_orbit_section": null,
+      "fixed_point_obstruction": "tau_[1/2]([q]) = [q+1/2] differs from [q] for every [q], because 1/2 is not zero in Q/Z",
+      "globally_fixed_objects": [],
+      "object_set": "Q/Z",
+      "orbit_count": 1,
+      "orbits": [
+        "Q/Z"
+      ],
+      "outcome": "TRANSITIVE_SYMMETRY",
+      "phase_zero_half_turn_image": {
+        "phase_class_mod_one": "1/2"
+      },
+      "transporter_formula": "c = [y-x] uniquely sends [x] to [y]",
+      "unique_object_within_orbit": false,
+      "unique_orbit": true
+    },
+    "outputs": {
+      "downstream_constructor_fields_evaluated": false,
+      "iota": null,
+      "tangent_or_chirality_evaluated": false
+    },
+    "required_additional_structure": {
+      "current_canon_supplies": false,
+      "equivalent_geometric_forms": [
+        "a unique branch or singular point lying in the traversable structure",
+        "a unique boundary incidence or attachment germ with its direction forgotten",
+        "an intrinsic scalar or incidence invariant with exactly one object-level extremum"
+      ],
+      "exact_effect": "marking b restricts the translation group to {tau_c : tau_c(b)=b}; because the action is free, only tau_0 remains",
+      "required_kind": "one geometry-derived distinguished unframed zero-cell in T",
+      "selected_object": null
+    },
+    "secondary_classification": "UNIQUE_ORBIT_NOT_OBJECT",
+    "status": "TRANSITIVE_SYMMETRY",
+    "stop_reason": "V(T) is one transitive automorphism orbit with no invariant object; a canonical v0 requires new geometry that marks or singularizes one object"
+  },
+  "experiment_boundary": {
+    "automorphism_signature": "bijections of Q/Z preserving every signed rational displacement label and path operation",
+    "forbidden_selectors": [
+      "glyph or relation label",
+      "source order",
+      "storage order",
+      "numeric order",
+      "local frame",
+      "chirality",
+      "API default",
+      "implementation convenience",
+      "external expectation"
+    ],
+    "framing_or_chirality_input": null,
+    "observed_cardinality_input": null,
+    "question": "does current canon intrinsically select one unframed v0 in the smallest traversable T?"
+  },
+  "hmmm": [
+    "the exact canon-backed root loop is homogeneous: its unframed rational visible objects form one simply transitive translation orbit",
+    "the one orbit is canonical as an equivalence class, but it has no canonical object-valued section",
+    "Structural Null is uniquely distinguished outside T, yet current canon supplies no incidence transporting that distinction into V(T)",
+    "the stack-local return bouquet has a degree-distinguished center only because its unresolved shared-basepoint attachment has already been assumed",
+    "a future recursive T may break symmetry, but that requires new canon-defined incidence, singularity, boundary, or marked zero-cell structure"
+  ],
+  "nonclaims": [
+    "not UCNS canon or canon ratification",
+    "not a definition of the absent full recursive traversable structure",
+    "not an origin attachment or choice of base object",
+    "not a tangent, chirality, rotation-system, outgoing-dart, or closure result",
+    "not a traversal, monodromy, arithmetic readout, or successor operation",
+    "not proof that every future enriched UCNS geometry must remain homogeneous"
+  ],
+  "producer_code_reference": "sha256:6728b2cac11caa5c5ca26efb40a1bf01f6856be08a38796c952648c38397d214",
+  "receipt_sha256": "5b38d70047ec62ba4c269b13f0f41f3e0c5f661d9f9b317bf8cf8c2b61cda197",
+  "schema_id": "the-interdependency.stack-research.ucns.origin-attachment-basepoint-symmetry",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "network_used": false,
+    "ordered_groupoid_candidate_receipt_sha256": "cf61151f9e9ce1479b6d7eb95ff51bb2a683045de292243e1f14a9b3dd050f69",
+    "origin_attachment_canon_gap_receipt_sha256": "f0f2a4a127e7a83c26291b94f58543b6881f7e1eda52940c7df3c14b121ad0f4",
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/AGENTS.md",
+        "sha256": "2a5cb93af7bab5ca8c55d83b20e45c7ea8fcc7aed41aeb635d64653eb03abff8"
+      },
+      {
+        "path": "libs/ucns/CANON.md",
+        "sha256": "bf675898b95cf393ffc8f6c16d5f42ccf1d323990556ce624d94f3c98507c487"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/direct_mobius.py",
+        "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+      },
+      {
+        "path": "libs/ucns/tests/test_carrier.py",
+        "sha256": "ab1ee591858f7cf0faa2436c7e45ea32b44a19bea1c3f1a34b5d926b9ee72e14"
+      },
+      {
+        "path": "libs/ucns/tests/test_direct_mobius.py",
+        "sha256": "e6cd47b2ed270761ce85dc47782551e2198a6026fbeee411f6c78a1eebed5b5e"
+      },
+      {
+        "path": "research/ucns/origin_attachment_canon_gap.py",
+        "sha256": "a10c9333e6a96f190225c68dfcbcb453c0edb4cac92b2175bf53bae1b0a5975e"
+      },
+      {
+        "path": "research/ucns/receipts/origin-attachment-canon-gap-v0.json",
+        "sha256": "c2846476c1fa8cab2d4f7d2b79cc311f9963e7c80b5dc1cc16f10dc393b3b745"
+      },
+      {
+        "path": "research/ucns/ordered_complete_return_groupoid.py",
+        "sha256": "d1c83252371bbe50fbc7d514bba43de6685d8eb5045060037941d38a5914b6e5"
+      },
+      {
+        "path": "research/ucns/receipts/ordered-complete-return-groupoid-v0.json",
+        "sha256": "741495c16f3d1b439663aa1710e89175c3f1ee67d5b6c0336d8ecf4cf854d002"
+      }
+    ],
+    "ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "ucns_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62"
+  },
+  "standing": "stack-local-pre-ratification-exact-symmetry-obstruction"
+}

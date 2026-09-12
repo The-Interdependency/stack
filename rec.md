@@ -79,3 +79,25 @@ Usage Guidance:
 ### hmmm
 - War collision resolution remains unresolved and intentionally fail-closed.
 - Tokens, latency, retries, and tool-call telemetry remain mostly `hmmm`, so runtime burden mapping is not closed.
+
+## 2026-08-30T20:22:20Z AHBG Hierarchy Fixture Comparator
+
+Usage Guidance:
+- Use `ahbg/burden_coupling.py` for local org-wide burden/coupling aggregation.
+- Treat hierarchy lift as fixture evidence only; it is not a general claim.
+
+### Findings
+- The aggregate runner and report were recreated under schema `interdependency.ahbg.burden-coupling/1.2.0`.
+- Common corpus survival is `SURVIVED` across Grok, Codex, and DeepCode on `calibration-family-1.0.1-proposal-1`.
+- Scenario-level runtime burden observables are now present across all three builders.
+- The hierarchy fixture comparator is `UNRESOLVED`: 2 admitted fixture rows, minimum claim sample 6.
+- Shared runtime hierarchy vectors remain `BLOCKED`: DeepCode records impedance telemetry, Grok and Codex do not.
+
+### Verification
+- `PYTHONDONTWRITEBYTECODE=1 python3 ahbg/burden_coupling.py`
+- Report: `ahbg/burden-coupling/BURDEN_COUPLING.md`
+- JSON: `ahbg/burden-coupling/BURDEN_COUPLING.json`
+
+### hmmm
+- Runtime burden mapping remains unfitted.
+- Hierarchy comparison exists, but the sample is too small and not implemented across all builders.
