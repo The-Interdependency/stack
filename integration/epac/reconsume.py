@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -46,6 +47,10 @@ from urllib.request import urlopen
 def main() -> None:
     lock_path, output = (Path(argument).resolve() for argument in sys.argv[1:3])
     runtime = sys.argv[3]
+    child_env = {key: value for key, value in os.environ.items()
+                 if key not in {"PYTHONPATH", "PYTHONHOME", "PYTEST_ADDOPTS", "PYTEST_PLUGINS"}}
+    child_env["PYTHONDONTWRITEBYTECODE"] = "1"
+    child_env["PYTHONNOUSERSITE"] = "1"
     stack = Path(__file__).resolve().parents[2]
     if output.exists() or output.is_relative_to(stack):
         raise ValueError("output must be new and outside stack")
@@ -89,13 +94,13 @@ def main() -> None:
         raise ValueError("source archive root mismatch")
     source_root = roots[0]
     requirements = output / "dependencies.txt"
-    subprocess.run(["uv", "export", "--project", str(source_root), "--locked", "--no-emit-project", "--no-dev", "--format", "requirements.txt", "--output-file", str(requirements)], check=True)
+    subprocess.run(["uv", "export", "--project", str(source_root), "--locked", "--no-emit-project", "--no-dev", "--format", "requirements.txt", "--output-file", str(requirements)], check=True, env=child_env)
     environment = output / "venv"
-    subprocess.run(["uv", "venv", "--python", runtime, str(environment)], check=True)
+    subprocess.run(["uv", "venv", "--python", runtime, str(environment)], check=True, env=child_env)
     python = str(environment / "bin/python")
-    subprocess.run(["uv", "pip", "sync", "--python", python, "--require-hashes", str(requirements)], check=True)
-    subprocess.run(["uv", "pip", "install", "--python", python, "--no-deps", str(wheels[0])], check=True)
-    subprocess.run([python, str(stack / "integration/epac/verify_release.py"), str(wheels[0]), str(output / "consumption.json"), "--phase", lock["phase"]], check=True, cwd=output)
+    subprocess.run(["uv", "pip", "sync", "--python", python, "--require-hashes", str(requirements)], check=True, env=child_env)
+    subprocess.run(["uv", "pip", "install", "--python", python, "--no-deps", str(wheels[0])], check=True, env=child_env)
+    subprocess.run([python, str(stack / "integration/epac/verify_release.py"), str(wheels[0]), str(output / "consumption.json"), "--phase", lock["phase"]], check=True, cwd=output, env=child_env)
     (output / "release-lock.json").write_bytes(lock_path.read_bytes())
 
 

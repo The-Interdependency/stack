@@ -1,0 +1,393 @@
+{
+  "authority_transfer": false,
+  "empirical_status_transfer": false,
+  "epac_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
+  "epac_tree": "8c9acb943ea05cbe3305fd0a10dd6a38b2fa684f",
+  "prepared_at": "2026-09-12T23:33:26.754361+00:00",
+  "preserved_historical_files": [
+    {
+      "path": "research/epac/README.md",
+      "sha256": "f1a4639327828f6bc5ca39a3a1c441d5fc3f3b60823e646d149920e225554c11"
+    },
+    {
+      "path": "research/epac/data/periodic_table_z1_18.json",
+      "sha256": "748de9e986eaaa588092796d00d8e5d464c14d6308673402b4f6ac98ca81df19"
+    },
+    {
+      "path": "research/epac/data/sealed_known_molecular_geometry.json",
+      "sha256": "8e8e8382a86bdeeb7720a14f6370e0b8c142729e2092f58a97ba8108fd4ef7d3"
+    },
+    {
+      "path": "research/epac/docs/arity.md",
+      "sha256": "7ed7db4c25c53805df05c71ae92a0c1ef2b5c378b08c44588d5ecdbfd9da5e22"
+    },
+    {
+      "path": "research/epac/docs/boundary_capacity_principle.md",
+      "sha256": "d82623ef38378fbff856a9a4a4fd75e7ca50a4ea59959158a867f4a1fbe3326d"
+    },
+    {
+      "path": "research/epac/docs/boundary_capacity_quotient.md",
+      "sha256": "3159024e61e1edee0d0338e7b9984a0f0228a7c425c37a059e87a3222b212d5e"
+    },
+    {
+      "path": "research/epac/docs/boundary_descriptor_nondegeneracy.md",
+      "sha256": "49f4025aef6711b72a372ebb41cd07b851c4e55ad1670cc1145c75180920e4ef"
+    },
+    {
+      "path": "research/epac/docs/boundary_minimal_refinement.md",
+      "sha256": "bba6e05440b1bc9db9c8a6285a6dd13592df0c941d20de9a31d526bb5bd7db9b"
+    },
+    {
+      "path": "research/epac/docs/boundary_probe_completeness.md",
+      "sha256": "bcb1db06672deb0703f0aa0afb0e41db1da3e7476e602322897662e9ce9a8043"
+    },
+    {
+      "path": "research/epac/docs/cross_scale_compositional_closure.md",
+      "sha256": "402b9191311b2b5606a30893b001c5383236017afb379138081ed6b0f3c71d6e"
+    },
+    {
+      "path": "research/epac/docs/preregistration-molecular-geometry-from-element-gonols.md",
+      "sha256": "bedc374cca8435e6ffde48f0e0aa90b3dcbef2b519d5e455270dc9c754d11025"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/c.json",
+      "sha256": "f957a829d9c246521113b435fff57f9f96f7171675bf28e27c1cdce78999ea30"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/gonol_c.json",
+      "sha256": "ec5c8d7121388405f0fa15c4a0ddb0879d3ae1cfd653faa9ac446553ae4e88a1"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/gonol_h.json",
+      "sha256": "864cf67e78e69a6c5255941e67c99bbfccab155b2fa5b5a01370852a3cfb2194"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/gonol_he.json",
+      "sha256": "46493d333082c3bff3fe551b235ef1b8d70be6601af7d6703fb1c2a90fda9d14"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/gonol_li.json",
+      "sha256": "3090fbf140c01672b0f19e86b62a7189c283c778b39b6c8d4d7a07cb14b121d2"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/h.json",
+      "sha256": "0fbeb009859592a18d14e0d44539637306ef6a9b14b54c7b55027fd2ea2b659b"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/harmonic_alpha_cluster_recurrence.json",
+      "sha256": "d45969aa486d1b49a23840940a76338f943a946a8524b284bb6359fa4c300de1"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/harmonic_binding_per_nucleon_commensurability.json",
+      "sha256": "f167754001eb500261198914eb6f66b0af151b59ca5d6fcc1a1ee7ff2182deca"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/harmonic_ground_state_spin_parity_symmetry.json",
+      "sha256": "7cc2c97c60ed00decaf389c7592d0fb03367066086dcc3a0135140fe6ecba71f"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/harmonic_n_z_ratio_commensurability.json",
+      "sha256": "fa364116c0d4ceab3403a422e6c62bdcff2dc7c2375329add73cdb5d1dca683c"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/harmonic_proton_neutron_inversion_symmetry.json",
+      "sha256": "1505af798120449ad64e0cc4352afeebf0f4d2ca1e3e680f9651e4e0163e6a4a"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/he.json",
+      "sha256": "761d160209318acca3773bd1669dbc8eb4587e141926dc45684aea38f60d7c5c"
+    },
+    {
+      "path": "research/epac/subatomic/receipts/li.json",
+      "sha256": "a407cf2345037a0ca9c064eaea266a886de927044a65b4dd03c4f9dfea55c8a0"
+    },
+    {
+      "path": "research/epac/subatomic/subatomic-affixiation-baseline.md",
+      "sha256": "43440232af92ecbb175dbae688bc1acc188c976879ef270d1396c6a3ce129ea4"
+    },
+    {
+      "path": "research/epac/viz/README.md",
+      "sha256": "3603f9ca0604eaff72bb1ba511f419eabcadf55ebc0f298dbe49722318345157"
+    },
+    {
+      "path": "research/epac/viz/carbon_lifted_spiral.svg",
+      "sha256": "c96e9249b0f33ba09336ccc94e93fa47a89c687b6b15316a7272b4b31698880a"
+    },
+    {
+      "path": "research/epac/viz/h2o_lifted_spiral.svg",
+      "sha256": "c3e651ed0ff231bc75fe9d021abdacd504f1bc171cc4b6447204c23d72189d99"
+    }
+  ],
+  "proposed_python_retirements": [
+    {
+      "path": "research/epac/epac_atomic.py",
+      "replacement_byte_identical": true,
+      "replacement_path": "epac_atomic.py",
+      "replacement_sha256": "1ef464df3e984320499c1a421d49d3b5c36e0d5bcdfc93176394d34cd71c59fb",
+      "sha256": "1ef464df3e984320499c1a421d49d3b5c36e0d5bcdfc93176394d34cd71c59fb"
+    },
+    {
+      "path": "research/epac/epac_boundary_minimal_refinement.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_boundary_minimal_refinement.py",
+      "replacement_sha256": "168943a1d198147d5e91c21069c06d343366979b6dffacf1e2ee664d3b6edce8",
+      "sha256": "5c04ca8a6f1de3a4ee0b18ac687ae5344ece6404649afc3259c9d97338fd7fec"
+    },
+    {
+      "path": "research/epac/epac_boundary_nondegeneracy.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_boundary_nondegeneracy.py",
+      "replacement_sha256": "e67edf2c171b178873f21eeadc743581c83dff7abb0d6e32cd643843627c2306",
+      "sha256": "57506fad240c4e8b3a0baf6d0f0748eea8d692ccbad4fdc3943774f4bda82a5f"
+    },
+    {
+      "path": "research/epac/epac_boundary_probe_completeness.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_boundary_probe_completeness.py",
+      "replacement_sha256": "8dad10b3ac9d3873f134af131488463511b8e66ecefc7fdb82609e92fa328eb9",
+      "sha256": "cb1d9e4e2e1339123eab2775509e9604c6a25482d21c77e158cd4514bd5b743e"
+    },
+    {
+      "path": "research/epac/epac_boundary_quotient.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_boundary_quotient.py",
+      "replacement_sha256": "91a966c68d65938a9e2641a10b8b2935fe1992fdc70f129b9424290b38b3ab98",
+      "sha256": "7398f3f9b3dca1776fc72a001701732bc768b9e76a5e8ff9a740cff48b73120b"
+    },
+    {
+      "path": "research/epac/epac_comparison.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_comparison.py",
+      "replacement_sha256": "7283c099923310f8dae24d577505b54c25919290b358be2aefa5fde1b8285535",
+      "sha256": "f96f81e37127ada9c93008440929d499466ae2c28024575ba58f59dd31f8e10f"
+    },
+    {
+      "path": "research/epac/epac_cross_scale_closure.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_cross_scale_closure.py",
+      "replacement_sha256": "9cf3a0c76e17076217dd0c90f467d45a2aa0647754a031f6f826dc3f3a9e9e2c",
+      "sha256": "f633a75755884f0b2ba7860b54e3943058891e7711775b9b3a3efefc1ab81d3a"
+    },
+    {
+      "path": "research/epac/epac_dimensional_arity.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_dimensional_arity.py",
+      "replacement_sha256": "5ed353191c853aaeecb62ba520ce89010682949053c8d6a04315531ec3c7429c",
+      "sha256": "8424e83115e5558cd7957e37115df615dc32859b6c19482f951feafc33c664a1"
+    },
+    {
+      "path": "research/epac/epac_molecular.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_molecular.py",
+      "replacement_sha256": "0fce13c83ea65a21ad81acd206927dedbaae336d7d980bd1dbd0858f58537108",
+      "sha256": "df121c18b37b4c2f1acf58a879b5f4f02974408cc91a5747a74b2e6cf42d726a"
+    },
+    {
+      "path": "research/epac/epac_periodic.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_periodic.py",
+      "replacement_sha256": "20474c25aaad15121efc2010227071bd31d1304080dfe45f2aa1115edb95d332",
+      "sha256": "b3a813ee948d0771601d4fb5bc132c1d9f9144ebac89ac8143cb90228350d541"
+    },
+    {
+      "path": "research/epac/epac_public_gonol.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "epac_public_gonol.py",
+      "replacement_sha256": "1a088076a19aba34a281ba1b3c25f47dee962a0aa8e61915bfe44e7b94357697",
+      "sha256": "ca8258303711f6f30da6d00db93abb5cff22d9213085a5457358dcd24ab59d58"
+    },
+    {
+      "path": "research/epac/subatomic/element_affixiation_candidate.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "subatomic/element_affixiation_candidate.py",
+      "replacement_sha256": "3a282b1911657f7482dc08023b76e206f96210b90685f0caad4ecc689406b004",
+      "sha256": "226e4a38dcb6bbc050ce01273a0e1c7c561900019dd68f34f80324af9eac30de"
+    },
+    {
+      "path": "research/epac/subatomic/extended_atomic.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "subatomic/extended_atomic.py",
+      "replacement_sha256": "7818c546c95d8f8ca7699e4c2133520f3ffef1e48b26accd978decf1fa2c6302",
+      "sha256": "816935506f7352e66b5beb49c2322f65f5b06d5a68b15b4fc0c8d1c7ca0f26af"
+    },
+    {
+      "path": "research/epac/subatomic/nuclear_harmonic_candidates.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "subatomic/nuclear_harmonic_candidates.py",
+      "replacement_sha256": "90f6c4ce1b8c1caf0d9c5605c65b2100a63089a1563858d6e91fee01721fdef6",
+      "sha256": "cb4b97e2e8595ace20ca7a3e5f6915dcf7125d3cd199454eab55e5e9987aa308"
+    },
+    {
+      "path": "research/epac/subatomic/subatomic_gonol.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "subatomic/subatomic_gonol.py",
+      "replacement_sha256": "3e97f3406eb3406aeb8fa30ec33778226fbc1ab9d2b368f60c2df0a9b0865cda",
+      "sha256": "7faa9ed9e1d59ee1abca32462679e6ae33233b51713d4a51e7fd070a254e7841"
+    },
+    {
+      "path": "research/epac/subatomic/symbol_coupling.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "subatomic/symbol_coupling.py",
+      "replacement_sha256": "dbd2cc072291f31798c5db6bd4935f80218135c2a4da5c33776cfb0f6cc285b2",
+      "sha256": "dc7e329b1cd6b88e6c764fc12795446075543034ba4a8c0c55fcffb625045a76"
+    },
+    {
+      "path": "research/epac/subatomic/test_element_affixiation_candidate.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/subatomic/test_element_affixiation_candidate.py",
+      "replacement_sha256": "876178c114a801e2d3b51559a8879e4ec0c5553f02406be81b6b4e237032ef23",
+      "sha256": "4911ab5075454965a42c4e403dbb91ef20dadb554256ff3fc37f8ae99f9e0c0f"
+    },
+    {
+      "path": "research/epac/subatomic/test_extended_atomic.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/subatomic/test_extended_atomic.py",
+      "replacement_sha256": "9b653e63295ee74864558d50efff325f9c793d3886c6c4a5769a4fffba37110d",
+      "sha256": "30e0674c6fa998e704648b399ecf7f6d8ee795525d644bcfe4bf7fd4fd7965ce"
+    },
+    {
+      "path": "research/epac/subatomic/test_nuclear_harmonic_candidates.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/subatomic/test_nuclear_harmonic_candidates.py",
+      "replacement_sha256": "a414993d8274bb0a7ae1e5ceef9975f115ab50e5801da65971ae6e212523c00e",
+      "sha256": "e17db29cbb1474e33075a0ffd1d00a0ced796a603f75bed5625ba89451cefc71"
+    },
+    {
+      "path": "research/epac/subatomic/test_subatomic_gonol.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/subatomic/test_subatomic_gonol.py",
+      "replacement_sha256": "3aa9c7cbc878d1926ac9cd3461d953275fec5f9e911ff7cdfe30348789d2fee9",
+      "sha256": "b6dd5271d9f7b4c45b4d09596915c29a570f2649717dd7925500b7593d0f0e99"
+    },
+    {
+      "path": "research/epac/subatomic/test_symbol_coupling.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/subatomic/test_symbol_coupling.py",
+      "replacement_sha256": "a5711f72c3f2a953811adce77159a23100388ef2662ceb4b6df832d426e91847",
+      "sha256": "07cb0bf5e290b9b3f18e9123e23e8608b894171f69c34c4b645eca4860ab3081"
+    },
+    {
+      "path": "research/epac/tests/test_atomic_promotion.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_atomic_promotion.py",
+      "replacement_sha256": "8cbd7644436597f9bf12845a5ef788c8dfb73d51b715b2bc7c3509cc29da939c",
+      "sha256": "473507856bb9e35f19915a3403fd2f07ccb98ff02b3d74cc80f516ad76ffe260"
+    },
+    {
+      "path": "research/epac/tests/test_boundary_capacity_quotient.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_boundary_capacity_quotient.py",
+      "replacement_sha256": "fcb95ee31f0551e8a4fb9217f39c8894fa8314a4d8e509a792d8881b2e2125de",
+      "sha256": "057c779537771a46ea7c99748ef74372966295b90ce3df09f03d94264c4e7811"
+    },
+    {
+      "path": "research/epac/tests/test_boundary_descriptor_nondegeneracy.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_boundary_descriptor_nondegeneracy.py",
+      "replacement_sha256": "2d154f2cc97833d27375d85343dcb5cf1465fdc01e29a0b2af25d99e6f7142b2",
+      "sha256": "fdd95f563f2ed91a28aaa21c8876dd117047b855283a87cb847748f78ddbbc5b"
+    },
+    {
+      "path": "research/epac/tests/test_boundary_minimal_refinement.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_boundary_minimal_refinement.py",
+      "replacement_sha256": "476136fe2af33f45b7cef4d7b8c8f86c6d61920bb87ba1820203debb753d886b",
+      "sha256": "9744c2b513ec92375334c5f06e65e2f1b01e0fbf7e720346025d7187d9ca894c"
+    },
+    {
+      "path": "research/epac/tests/test_boundary_probe_completeness.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_boundary_probe_completeness.py",
+      "replacement_sha256": "8a45855a4489893fab46ad60477ab50170d63a84eed7ec88d65ca51f9b9068c5",
+      "sha256": "f279644854c703679ae6097bd269d09ec9e1aec73e091b1613f5a6504d17ea59"
+    },
+    {
+      "path": "research/epac/tests/test_cross_scale_compositional_closure.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_cross_scale_compositional_closure.py",
+      "replacement_sha256": "51a0a735c9f90292e1968ef3e34c965641a56cd496e0ce780591eeeac40dda69",
+      "sha256": "f412165deef20eda92f0241d39e107e2bdf4944cb5ad55c66ca768d02efa635b"
+    },
+    {
+      "path": "research/epac/tests/test_epac_arity.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_epac_arity.py",
+      "replacement_sha256": "cc1444faf18adf0984e017728e6cc19a813e5255e5709e5ee2e15cfc1c445792",
+      "sha256": "16261bab702e16bf140372451cb5a14eb3ecf5d63ac21c224ea48012ddaef5ef"
+    },
+    {
+      "path": "research/epac/tests/test_epac_public_gonol.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_epac_public_gonol.py",
+      "replacement_sha256": "92572cad225ed1c2a4e6ea517ac2af71c1126c3c838f40bed90fdcc1b6a13646",
+      "sha256": "462ffab9296328e0514f7a87d1783cb03bf18af537ec560985dc387eeb9f155c"
+    },
+    {
+      "path": "research/epac/tests/test_geometry_comparison_after_construction.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_geometry_comparison_after_construction.py",
+      "replacement_sha256": "0721a13ed61ce210417075af0dfb6fef0d3a03fad29a60cc2ce584b1107d10e8",
+      "sha256": "7b433384035f726626a0a40799537604c4b32aa677232d2bcee88d0bfa9bfbc5"
+    },
+    {
+      "path": "research/epac/tests/test_molecular_affixiation.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_molecular_affixiation.py",
+      "replacement_sha256": "c945d2a3d27f8aaf4db13294601c4c1f18d7d2b4a1c2ae5890e40b9e713e5032",
+      "sha256": "8c6f6aca06cf738b234aac87aec46b143f8ba373ea2ce363dcc211e159fea340"
+    },
+    {
+      "path": "research/epac/tests/test_periodic_element_gonols.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_periodic_element_gonols.py",
+      "replacement_sha256": "d5330b4dad462464bd8f03966eacacac6de2a181274e93a781e42d9a71f6f5bc",
+      "sha256": "0f914321b30dacd147ef59eaac732df014f40d08ecb1048d2976872a9274ada9"
+    },
+    {
+      "path": "research/epac/tests/test_spiral_population.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "tests/test_spiral_population.py",
+      "replacement_sha256": "3f208d281bd8ae0a740bad0023a6b228c08a463264f1d98ca323f939529f7b2c",
+      "sha256": "14c3563267d21e41f04e20e8dbdd8c88a071841b77b9a4ba0936835950a6d826"
+    },
+    {
+      "path": "research/epac/viz/__init__.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "viz/__init__.py",
+      "replacement_sha256": "6c6dea83d6381b5ee7beebc66592d60831d6df791ad05e3335318e6adc479c0a",
+      "sha256": "8a49e7b32f1dc8fa2411fade7692986fb30cfdc7e993e29f7a9572888e3f6518"
+    },
+    {
+      "path": "research/epac/viz/__main__.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "viz/__main__.py",
+      "replacement_sha256": "5d34e27b2bef8c2cf52fd2f419a424c530d5c0a1f422b3f0339bf2727d0c6495",
+      "sha256": "00509d95dd39dae60300d870f976cf4e1115066cee607e5d493df55167904ef7"
+    },
+    {
+      "path": "research/epac/viz/cli.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "viz/cli.py",
+      "replacement_sha256": "85018412bf5d4b7c3e2d0f9a85b3bd64bdc09ec2b6b74ce4492f0e5c7b0adb0e",
+      "sha256": "5f234d44c3ee85b7872ff506f518cc66e6257b0871c7c9a9d525dd5c3b3a72da"
+    },
+    {
+      "path": "research/epac/viz/spiral_viz.py",
+      "replacement_byte_identical": false,
+      "replacement_path": "viz/spiral_viz.py",
+      "replacement_sha256": "b7bb06a4160d09e7461fd10dc60d7c2ba2fe3b3b6b233a7da20b27c6322a62a9",
+      "sha256": "4a888dd253665518cca48e764262e2ec1b3be53a713d15ca17d5cd48af18361e"
+    }
+  ],
+  "requires_before_mutation": [
+    "owner-selected EPAC license",
+    "verified immutable public EPAC release",
+    "successful same-release Stack reconsumption",
+    "latest upstream forge check with no untransferred changes"
+  ],
+  "schema": "stack.epac-forge-retirement-preview",
+  "stack_commit": "e9454b1de8602c8dba8bc968d809fe3238655a0d",
+  "stack_tree": "2ab442701c5ab3fb67462fb7d01bb853ecc11e07",
+  "status": "preview only",
+  "version": 1
+}

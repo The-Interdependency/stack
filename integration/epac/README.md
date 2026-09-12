@@ -39,7 +39,7 @@ After publishing those verified bytes, record a release lock with:
 
 The public asset set contains the wheel, source archive, `release-manifest.json`,
 and `SHA256SUMS`. The lock is repository-owned acceptance evidence once its public
-bytes have been independently verified. No final lock exists during preparation.
+bytes have been independently verified. The accepted `release-lock.json` binds the published v0.1.0 assets. Qualification and public-consumption evidence is retained in `evidence/`.
 
 ```bash
 python3 integration/epac/reconsume.py \

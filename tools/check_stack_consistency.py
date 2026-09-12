@@ -290,6 +290,80 @@ def check_stack_update_skill_provenance(findings: list[str]) -> None:
                 error(findings, "skill.index_drift", f".agents/skills/README.md does not carry provenance value {value!r}")
 
 
+def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None:
+    """Check the declared transition's local evidence and severed source path.
+
+    This checks coherent historical evidence, not current public availability or
+    scientific standing. The EPAC CI consumer independently checks public bytes.
+    """
+    epac = next((r for r in manifest.get("repositories", [])
+                 if r.get("repository") == "The-Interdependency/epac"), {})
+    receipt_path = ROOT / "integration/epac/authority-transition.json"
+    if epac.get("lifecycle") != "graduated" and not receipt_path.exists():
+        return
+
+    def require(condition: bool, message: str) -> None:
+        if not condition:
+            error(findings, "epac.graduation", message)
+
+    def digest(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+
+    try:
+        require(epac.get("lifecycle") == "graduated", "completed transition requires graduated lifecycle")
+        require(epac["authority"] == "independent implementation and public-contract authority for EPAC", "graduated authority projection differs")
+        require(epac["transition_receipt"] == "integration/epac/authority-transition.json", "unexpected transition receipt path")
+        require(epac["release"]["lock"] == "integration/epac/release-lock.json", "unexpected release lock path")
+        lock_path = ROOT / "integration/epac/release-lock.json"
+        lock = load_json(lock_path)
+        receipt = load_json(ROOT / "integration/epac/authority-transition.json")
+        require(receipt["schema"] == "the-interdependency.scoped-authority-transition" and receipt["status"] == "completed" and receipt["lifecycle_state"] == "graduated", "completed scoped transition required")
+        require(receipt["to"]["repository"] == epac["repository"] and receipt["to"]["source_commit"] == epac["commit"] == lock["source_commit"], "release source identity differs")
+        require(receipt["to"]["release_tag"] == epac["release"]["tag"] == lock["release_tag"], "release tag differs")
+        require(lock["phase"] == "graduated", "graduated consumer phase required")
+        require(digest(lock_path) == epac["release"]["lock_sha256"] == receipt["release_lock_sha256"], "release lock digest differs")
+        require(receipt["after_work_graph_sha256"] == manifest["work_graph_sha256"], "transition graph differs")
+        required_gates = {"public_api", "independent_tests", "clean_build_install", "license_distribution_rights", "release_ownership_authority", "provenance_preserved", "exact_candidate_forge_verification", "stable_release", "downstream_reconsumption", "forge_implementation_retired", "clean_retired_source_verification"}
+        require(set(receipt["gates"]) == required_gates and set(receipt["gates"].values()) == {"pass"}, "complete passed graduation gates required")
+        require(receipt["scope"] == {"implementation_authority_transfer": True, "public_contract_authority_transfer": True, "semantic_status_transfer": False, "theorem_status_transfer": False, "proof_status_transfer": False, "certification_status_transfer": False, "measurement_status_transfer": False, "empirical_status_transfer": False, "upstream_license_transfer": False, "freshness_authority_transfer": False}, "authority scope differs")
+        require(not list((ROOT / "research/epac").rglob("*.py")), "forge Python implementation has returned")
+        expected_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json"}
+        prefix = "integration/epac/evidence/"
+        require(set(receipt["evidence"]) == {prefix + name for name in expected_evidence}, "complete evidence inventory required")
+        records = {}
+        for name in sorted(expected_evidence):
+            path = ROOT / prefix / name
+            require(digest(path) == receipt["evidence"].get(prefix + name), f"evidence digest differs: {name}")
+            records[name] = load_json(path)
+        public = records["public-release.json"]
+        require(public["status"] == "passed" and public["immutable"] is True and public["source_commit"] == epac["commit"], "immutable public release evidence differs")
+        require({name: item["sha256"] for name, item in lock["assets"].items()} == public["public_assets_sha256"], "public assets differ from lock")
+        matrix = records["candidate-matrix.json"]
+        require(matrix["status"] == "passed" and matrix["source_commit"] == epac["commit"] and set(matrix["runtimes"]) == {"3.10", "3.11", "3.12"}, "candidate matrix identity differs")
+        for runtime in matrix["runtimes"].values():
+            require(set(runtime["runs"]) == {"wheel", "sdist"}, "both installed artifacts required")
+            require(all(run["tests"] == 209 and run["skips"] == 0 for run in runtime["runs"].values()), "complete clean-install tests required")
+            require(runtime["assets_sha256"] == public["public_assets_sha256"], "matrix candidate bytes differ from publication")
+        wheel_hash = lock["assets"]["interdependency_epac-0.1.0-py3-none-any.whl"]["sha256"]
+        for phase in ("candidate", "reconsumed", "graduated"):
+            record = records[f"stack-{phase}.json"]
+            require(record["status"] == "passed" and record["phase"] == phase and record["source_unchanged"] is True, f"invalid {phase} consumer evidence")
+            require(record["artifact_sha256"] == wheel_hash and record["ucns_source_commit"] == epac["upstream"]["commit"], f"{phase} consumer artifact/dependency differs")
+            require(record["empirical_status_transfer"] is False and len(record["comparison_standings"]) == 14 and set(record["comparison_standings"].values()) == {"FALSIFIED"}, f"{phase} scientific boundary differs")
+        require(records["stack-graduated.json"]["source_commit"] == receipt["retirement_source_commit"] and records["stack-graduated.json"]["source_tree"] == receipt["retirement_source_tree"], "retirement verification source differs")
+        inventory = records["retirement-inventory.json"]
+        require(inventory["epac_commit"] == epac["commit"] and len(inventory["proposed_python_retirements"]) == 37, "retirement source/inventory differs")
+        for item in inventory["preserved_historical_files"]:
+            path = ROOT / item["path"]
+            if item["path"] == "research/epac/README.md":
+                path = ROOT / "research/epac/README.forge-history.md"
+            require(digest(path) == item["sha256"], f"retained historical bytes differ: {path.relative_to(ROOT)}")
+        base = load_json(ROOT / "research/epac/BASE.json")
+        require(base["source_repository"] == receipt["from"]["repository"] and base["source_commit"] == receipt["from"]["source_commit"] and base["standing"] == "historical-forge-evidence", "historical forge BASE differs")
+    except (KeyError, TypeError, ValueError, OSError) as exc:
+        error(findings, "epac.graduation", f"invalid or missing transition evidence: {exc}")
+
+
 def main() -> int:
     findings: list[str] = []
     try:
@@ -307,6 +381,7 @@ def main() -> int:
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)
+    check_epac_graduation(manifest, findings)
 
     if findings:
         for finding in findings:

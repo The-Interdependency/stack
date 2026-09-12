@@ -13,6 +13,9 @@ projects may later graduate into their own repositories.
 - `research/english-gonol/` is a distinct stack-local English lexical/gonol construction
   component. UCNS owns consumed geometry; EDCM may evaluate outputs but does not define
   the English Gonol construction.
+- `integration/epac/` consumes the hash-pinned public EPAC release.
+  `research/epac/` retains historical evidence only; route implementation changes to
+  `The-Interdependency/epac`. Do not restore the retired forge import path.
 - root-level emerging projects such as `ahbg/` may be close to external repo-hood; root
   placement does not transfer authority from their inputs.
 - `STACK_MANIFEST.md` and `stack-manifest.json` own stack-level participant provenance.
@@ -78,6 +81,13 @@ Structural stack consistency:
 
 ```bash
 python tools/check_stack_consistency.py
+```
+
+EPAC release integration (new output directory outside Stack):
+
+```bash
+python3 integration/epac/reconsume.py \
+  integration/epac/release-lock.json /tmp/epac-public-consumption python3.12
 ```
 
 Fresh-making/backend checks that can run without PostgreSQL:

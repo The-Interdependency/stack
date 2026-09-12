@@ -9,7 +9,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `9ab3b3f75a32f5f73b5df68419148181fc632593babe4ec6adf4269d4f35badb`
+  `23309848ffbcee5775a07f0a517c5658e04a40d5e76f793e5fee6c02caffad58`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -41,7 +41,7 @@ meaning used by that repository.
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
 | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
-| `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | main | independent extracted candidate repository; implementation/public-contract authority transition incomplete | extracted repo exists; forge candidate remains `research/epac/` until release/reconsumption; `libs/epac/` remains unpopulated |
+| `The-Interdependency/epac` | `949cb1cb304927942966c9fb396caf6227120e7f` | v0.1.0 | independent released EPAC repository; final implementation/public-contract authority receipt pending | immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated |
 
 ## Research-Only Composition Participants
 
@@ -51,6 +51,7 @@ release identity.
 
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
+| `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
@@ -87,9 +88,11 @@ extracted from as provenance while declaring a distinct `project` and stack-loca
 authority. Such a component must also appear in the stack research-participant graph;
 its source repository must stop claiming the separated responsibility at stack level.
 
-EPAC is currently an extraction-transition exception: the independent repository exists,
-but authority transfer is not complete, so the forge candidate remains in `research/epac/`
-and no `libs/epac/` canonical import is created yet.
+EPAC is consumed as an immutable release artifact through `integration/epac/`.
+`research/epac/` retains historical forge evidence at its explicit Stack BASE, with
+all Python implementation/test copies retired. A `libs/epac/` source mirror is not
+required for artifact consumption. Final scoped transition evidence follows the
+clean retired-source consumer gate.
 
 ## License status at pinned commits
 
@@ -101,7 +104,7 @@ and no `libs/epac/` canonical import is created yet.
 | edcm | MPL-2.0 (`LICENSE`) |
 | pcea | present (`LICENSE`) |
 | ptcna | present (`LICENSE`) |
-| epac | independent repository exists; no `LICENSE` yet — `hmmm` |
+| epac | MPL-2.0 (`LICENSE`); owner weak-copyleft instruction recorded in the release source |
 
 ## Non-transfer boundaries
 
@@ -131,10 +134,12 @@ repository, merge it there, then refresh the pinned view.
 
 ## Graduation boundary
 
-EPAC now has an independent extracted repository, but extraction is not graduation.
-Do not populate `libs/epac/`, replace the forge candidate, or assert implementation/public-contract
-authority transfer until EPAC completes its clean build/install, license/distribution,
-immutable release, downstream stack reconsumption, and authority-transition receipt gates.
+EPAC has passed its licensed candidate matrix, pre-publication Stack check, immutable
+publication and public Stack reconsumption. The historical implementation path is
+retired. The clean retired-source consumer gate and scoped authority-transition
+receipt complete the remaining transition. See `integration/epac/` for the immutable
+release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec99879f8090ea5d48352d8c2d`;
+Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
 
 English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
 research component, not EDCM and not an independent canonical release.
@@ -142,6 +147,6 @@ research component, not EDCM and not an independent canonical release.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- EPAC clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; `libs/epac/` stays unpopulated until graduation.
+- EPAC final scoped transition receipt awaits the clean retired-source consumer gate.
 - English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
