@@ -33,8 +33,10 @@ from __future__ import annotations
 import argparse
 import hashlib
 from importlib import metadata
+import io
 import json
 from pathlib import Path
+import subprocess
 import sys
 import zipfile
 
@@ -66,7 +68,17 @@ def main() -> None:
     parser.add_argument("--phase", choices=("candidate", "reconsumed", "graduated"), required=True)
     args = parser.parse_args()
     stack = Path(__file__).resolve().parents[2]
-    with zipfile.ZipFile(args.wheel) as archive:
+    assert not args.receipt.resolve().is_relative_to(stack), "write consumer evidence outside stack"
+    def git(*arguments):
+        return subprocess.check_output(["git", "-C", str(stack), *arguments])
+    assert not git("status", "--porcelain", "--untracked-files=all"), "consumer source must be clean"
+    source_commit = git("rev-parse", "HEAD").decode().strip()
+    source_tree = git("rev-parse", "HEAD^{tree}").decode().strip()
+    verifier_bytes = Path(__file__).read_bytes()
+    assert verifier_bytes == git("show", source_commit + ":integration/epac/verify_release.py")
+    wheel_bytes = args.wheel.read_bytes()
+    wheel_digest = hashlib.sha256(wheel_bytes).hexdigest()
+    with zipfile.ZipFile(io.BytesIO(wheel_bytes)) as archive:
         expected = {name: hashlib.sha256(archive.read(name)).hexdigest() for name in archive.namelist()
                     if name.startswith("epac_") and not name.endswith("/")}
     distribution = metadata.distribution("interdependency-epac")
@@ -99,9 +111,16 @@ def main() -> None:
     assert all(path.is_relative_to(Path(sys.prefix)) and not path.is_relative_to(stack) for path in origins.values())
     if args.phase == "graduated":
         assert not list((stack / "research/epac").rglob("*.py")), "forge-local implementation must be retired"
+    assert args.wheel.read_bytes() == wheel_bytes, "candidate wheel changed during consumption"
+    assert Path(__file__).read_bytes() == verifier_bytes, "consumer verifier changed during execution"
+    assert git("rev-parse", "HEAD").decode().strip() == source_commit
+    assert not git("status", "--porcelain", "--untracked-files=all"), "consumer source changed during execution"
+    for name, path in installed.items():
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == expected[name], "installed payload changed during consumption"
     receipt = {"schema": "stack.epac-artifact-consumption", "version": 1, "phase": args.phase,
-               "status": "passed", "artifact_sha256": hashlib.sha256(args.wheel.read_bytes()).hexdigest(),
-               "verifier_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+               "status": "passed", "artifact_sha256": wheel_digest,
+               "verifier_sha256": hashlib.sha256(verifier_bytes).hexdigest(),
+               "source_commit": source_commit, "source_tree": source_tree, "source_unchanged": True,
                "python": sys.version, "epac_version": distribution.version, "ucns_source_commit": PINNED_UCNS_COMMIT,
                "installed_payload_sha256": expected,
                "imported_origins": {name: str(path.relative_to(Path(sys.prefix))) for name, path in origins.items()},

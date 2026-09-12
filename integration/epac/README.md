@@ -24,7 +24,9 @@ Run the stack integration gate from an external working directory:
 The gate checks installed payload hashes and import origins, exact UCNS source
 provenance, Public Gonol construction/replay, all nine declared molecules, helium
 replay, and all 14 FALSIFIED standings. Its receipt binds the wheel and verifier
-hashes. A failure requires a repaired candidate and new verification before
+hashes plus the clean stack commit and tree. Candidate bytes, installed payloads,
+verifier bytes, and the stack source must remain unchanged through execution.
+A failure requires a repaired candidate and new verification before
 stable publication.
 
 ## Public reconsumption
