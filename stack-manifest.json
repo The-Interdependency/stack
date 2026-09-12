@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "9ab3b3f75a32f5f73b5df68419148181fc632593babe4ec6adf4269d4f35badb",
+  "work_graph_sha256": "482e9a4f70c18ad4888d1fab32e44a6ab550fe7486fabd2f1253876c266212eb",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -55,6 +55,7 @@
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "epac exists independently at d8868858b2e455381ce670797bdbe47189bdc496, but clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; libs/epac/ stays unpopulated until graduation",
+      "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
@@ -128,6 +129,15 @@
       "repository": "The-Interdependency/stack",
       "commit": "030022948fb7c749961ae65743a4448c4bb6cbbe",
       "relation": "stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/python-gonol/",
+      "participant_id": "python-gonol",
+      "repository": "The-Interdependency/stack",
+      "commit": "0e8384bbb60e4c2189016a212bdd0030d04aed7d",
+      "relation": "stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM",
       "canonical_release": false,
       "authority_transfer": false
     },

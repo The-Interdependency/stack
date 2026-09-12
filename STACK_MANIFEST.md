@@ -7,9 +7,10 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
+- Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `9ab3b3f75a32f5f73b5df68419148181fc632593babe4ec6adf4269d4f35badb`
+  `482e9a4f70c18ad4888d1fab32e44a6ab550fe7486fabd2f1253876c266212eb`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -52,6 +53,7 @@ release identity.
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
 | `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/skill-lib` | `61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32` | audit, domain-claim, work-graph, and hmmm doctrine | no |
@@ -139,9 +141,14 @@ immutable release, downstream stack reconsumption, and authority-transition rece
 English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
 research component, not EDCM and not an independent canonical release.
 
+Python Gonol Construction is also stack-local research. Its Python 3.12 source
+constructor has no independent repository/release authority, and its successful replay
+transfers no semantic, geometric, measurement, or language-canon status.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - EPAC clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; `libs/epac/` stays unpopulated until graduation.
 - English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
+- Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
