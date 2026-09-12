@@ -1,163 +1,115 @@
-# Python source affixiation boundary
+# Python affixiation boundary
 
-**Status:** implemented stack-local Python 3.12 file-input candidate.
-**Scope:** determine and implement how Python source affixiates into gonols from
-the lowest admitted source units upward.
-**Root impact:** none.
+Status: **stack-local implemented candidate**. This document defines construction and evidence boundaries; it does not promote Python Gonol Construction to canon.
 
-## Governing relation
+## Construction contract
 
-Python Gonol Construction applies METAPAT's affixiation meaning: already-bounded
-participants remain individually addressable, with identity and provenance
-preserved, while their declared relation may close as a higher-scale
-object-whole.  A closed whole may participate recursively without erasing its
-constituents.
+Python source is admitted from the bottom up:
 
-UCNS owns any exact geometric realization.  Python Gonol Construction owns the
-Python source profile, admission, lexical relations, delimiter closure, grammar
-relations, and receipts.  Tokens, AST nodes, compiler objects, and metadata own
-none of the construction.
+```text
+source bytes
+  -> exact decoded source
+  -> occurrence-specific character gonols
+  -> character-definition gonols
+  -> lexical-form gonols
+  -> delimiter constructions
+  -> recursive grammar constructions
+  -> module
+```
 
-## Source floor: letters
+A parent may reference only an already-closed child. Closing a larger gonol never erases the child's identity, order, multiplicity, source span, relation, or provenance.
 
-Python 3.12 reads program text as Unicode code points.  This construction admits
-each decoded Unicode scalar occurrence in exact source order and closes it as one
-letter gonol.
+### Character floor
 
-`letter` here means the irreducible admitted source occurrence.  It includes an
-alphabetic character, digit, space, tab, newline, quote, operator, delimiter, or
-other exact source scalar without introducing UCNS letter/punctuation subclasses.
-The original file bytes, detected Python encoding, decoded-source digest,
-occurrence index, line/column span, scalar value, source identity, and optional
-observed Public Gonol position remain receipt-bound.
+Every decoded Unicode scalar occurrence closes exactly once as `scale="character"`. "Character" is a source-floor term, not an alphabetic category. Newlines, spaces, punctuation, digits, quote marks, operators, and letters are admitted identically as occurrences.
 
-Repeated equal values have distinct occurrence addresses.  No normalization,
-identifier NFKC replacement, case folding, trimming, gap deletion, or
-deduplication changes the admitted source.
+Each occurrence then receives one or more `scale="character-definition"` gonols. Every definition has exactly one `origin` member: the already-closed character occurrence. Definitions are deliberately non-exclusive. Examples include:
 
-## Lexical affixiation
+- `unicode-category = Pd` and `python-exact-token = MINUS` for `-`;
+- `python-identifier = start` and `python-identifier = continue` for an identifier-capable character;
+- `python-layout = line-break` for a newline;
+- `python-delimiter = comment-introducer` for `#`.
 
-After every letter closes, Python's lexical witness identifies nonempty lexical
-forms.  Each lexical form closes solely from the exact ordered letter gonols in
-its source span.  Source gaps that Python uses to separate forms also close as
-`python.lexical.INTERTOKEN`; this preserves whitespace the tokenizer does not
-emit as a token.
+Definitions describe capabilities or source-profile facts. They do not pre-decide the contextual lexical role of an occurrence.
 
-The lexical relation, exact form class, source length, role order, and CPython
-3.12 witness provenance live inside the lexical gonol.  The runtime `TokenInfo`
-does not.
+### Lexical forms
 
-Zero-width `INDENT`/`DEDENT` witness events have no source occurrence from which
-to form a separate gonol.  They therefore remain identity-bearing properties of
-the consuming module/source relation.  The actual indentation characters remain
-letter and lexical gonols.
+CPython 3.12 `tokenize` is a recognition witness after character closure. A lexical gonol is built from the exact ordered character gonols spanning the recognized surface form. Inter-token gaps are explicit lexical gonols too, so whitespace/comments/source gaps do not disappear.
 
-## Larger construction affixiation
+Tokenizer objects never enter the receipt.
 
-Matched `()`, `[]`, and `{}` relations close from lexical gonols and already
-closed nested delimiter gonols.  Opener, content order, nested multiplicity, and
-closer belong inside the delimiter gonol.  Missing or mismatched closure becomes
-`hmmm`.
+### Delimiters and grammar
 
-After those closures, the CPython 3.12 grammar witness supplies accepted grammar
-relations and child roles.  A grammar construction closes over:
+Matched `()`, `[]`, and `{}` relations close from already-closed lexical/enclosed gonols. CPython 3.12 `ast.parse(..., mode="exec", feature_version=(3, 12))` then supplies the grammar witness. The recursive constructor walks arbitrary AST fields rather than dispatching through a hand-maintained Python syntax whitelist. AST nodes themselves are discarded after their source relation has been projected onto closed source-built gonols.
 
-1. already-closed child grammar gonols;
-2. already-closed delimiter gonols intersecting its concrete source relation;
-3. remaining already-closed lexical forms in its exact source span; and
-4. identity-bearing relation properties such as operator or grammar-field roles.
+Spanless parser relations that cannot honestly close as independently sourced gonols remain intrinsic relation properties on the source-owning parent rather than being invented as source objects.
 
-Construction proceeds postorder.  Thus every member identity in a parent receipt
-was closed earlier.  Overlapping relations—such as a call's argument role and
-the parentheses enclosing its arguments—may both reference the same canonical
-source occurrences; they do not duplicate those occurrences.
+## Private recognition module
 
-Some CPython witness records have no independent source span, including an
-empty `arguments` record and `TypeIgnore`.  Such a record cannot honestly close
-as a separate gonol.  Its relation is retained as an intrinsic property of the
-source-built parent that contains the exact delimiter or comment gonols.  The
-witness object is then discarded.  Decorated function and class spans are
-extended to the exact leading `@` lexical gonol so the decorator relation does
-not lose its constitutive marker.
+`python_gonol._recognition` is the original source-recognition implementation. Its historical `letter` scale is no longer a public construction. The current public constructor consumes that module only as an internal plan and rematerializes the receipt as:
 
-The module gonol closes last and covers every source occurrence, including
-comments, blank space, redundant parentheses, and other concrete source material
-that abstract grammar nodes omit.
+```text
+character -> definitions -> lexical -> larger constructions
+```
 
-## Recognition is not substitution
+`replay_python_affixiation()` rejects any public receipt containing the deprecated `letter` scale or `#letter:` address.
 
-CPython's tokenizer and AST are bounded recognition witnesses for the Python
-3.12 language profile.  They determine where accepted lexical and grammar
-relations apply.  They are discarded after each relation is translated into
-source-occurrence membership, closed-gonol references, order, roles, and
-provenance.
+This removes the deprecated contract while preserving the proven tokenizer/AST witnessing logic.
 
-The following never serve as a gonol identity or participant:
+## Failure boundary
 
-- token numbers or `TokenInfo` instances;
-- AST instances or AST dumps;
-- compiled code objects;
-- evaluated literal values;
-- symbol-table/compiler objects;
-- whole-source hashes standing in for visible construction.
+Unfinished or invalid Python remains constructible below the unresolved point. Tokenizer failure, delimiter mismatch, or grammar failure produces a `python.source.hmmm` root over the largest honest lower closures. Exact unresolved details are retained in the receipt.
 
-SHA-256 identifies a complete visible gonol or receipt payload.  The visible
-payload—not its hash—is the construction.
+No error recovery is allowed to invent the missing source.
 
-## Failure and replay
+## Geometry boundary
 
-Tokenizer, delimiter, or grammar failure does not erase completed work.  The
-constructor closes a `python.source.hmmm` root over every lower construction it
-can honestly retain, records the exact unresolved finding, and sets receipt
-standing to `hmmm`.
+UCNS owns geometry. When an explicit UCNS Public Gonol authority with the pinned digest is supplied, character occurrences record their observed Public Gonol positions. When it is absent, geometry remains `hmmm`. Python Gonol Construction does not invent a UCNS function operation or Möbius coupling law.
 
-Replay checks:
+## Replay
 
-- exact original bytes and encoding;
-- exact source reconstruction from ordered letter gonols;
-- one contiguous letter floor with distinct occurrence addresses;
-- every member references an earlier closed gonol by exact address and identity;
-- every larger gonol's exact span equals the union of its atomic closed-child
-  spans, without flattening descendant leaves back into the parent;
-- every gonol identity and the final receipt digest recompute; and
-- the root covers every source occurrence.
+Replay verifies, at minimum:
 
-Replay proves deterministic construction integrity only.  It does not execute
-the source or prove behavior, equivalence, safety, semantic quality, geometry,
-measurement validity, or canon.
+1. receipt schema/profile/constructor identity;
+2. exact source bytes and decoded-source digests;
+3. contiguous occurrence-specific character coverage;
+4. at least one definition-space gonol for every character occurrence;
+5. definitions reference one already-closed character origin;
+6. lexical forms are an exact partition of the closed character occurrences;
+7. every larger relation references only already-closed children;
+8. every non-character construction span equals the union of its atomic participants;
+9. the root covers the complete source; and
+10. every gonol identity plus the receipt digest reproduces deterministically.
 
-## Python profile
+Replay proves this construction is internally reproducible. It does not establish semantic quality, runtime equivalence, measurement validity, or canon.
 
-The implemented profile is CPython 3.12 file input.  It covers any exact source
-accepted by `ast.parse(..., mode="exec", type_comments=True,
-feature_version=(3, 12))`, including Python 3.12 type statements/type parameters,
-pattern matching, exception groups, asynchronous constructs, comprehensions,
-formatted strings, comments within formatted replacement fields, Unicode
-identifiers, explicit/implicit line joining, and all ordinary expression and
-statement forms.
+## Python 3.12 surface evidence
 
-The committed broad-surface fixture exercises these relations but does not claim
-that one finite fixture enumerates all possible programs.  Generic traversal,
-rather than a hand-selected statement dispatcher, is what keeps the constructor
-open over the complete accepted 3.12 grammar.
+The constructor is generic over the AST witness rather than an AST-node whitelist, and the regression fixture exercises modern Python 3.12 constructs including type aliases/generics, decorators, positional-only and variadic arguments, async constructs, comprehensions, assignment expressions, pattern matching, exception groups, f-strings, lambdas, slicing, calls, and the operator families.
+
+That fixture is evidence, not an exhaustive grammar proof. Complete parity replay against CPython's full grammar/test corpus remains `hmmm` until run as its own declared experiment.
 
 ## Usage guidance
 
 ```bash
 cd research/python-gonol
 python -m pytest -q tests
-python -m python_gonol ../../some-file.py --out /tmp/some-file.gonol.json
-python -m python_gonol --verify /tmp/some-file.gonol.json
+python -m python_gonol example.py --out example.gonol.json --pretty
+python -m python_gonol --verify example.gonol.json
 ```
 
-Prefer `affixiate_python_bytes()` for files.  Use
-`affixiate_python_source()` only when exact original file bytes are unavailable
-or irrelevant to the declared source profile.
+Programmatic use:
+
+```python
+from python_gonol import affixiate_python_source, replay_python_affixiation
+
+receipt = affixiate_python_source("answer = 40 + 2\n", source_id="example.py")
+assert replay_python_affixiation(receipt).receipt_digest == receipt.receipt_digest
+```
 
 ## hmmm
 
-- exact UCNS function operation for each Public Gonol position;
-- exact UCNS Möbius-carrier affixiation/coupling geometry;
-- whether and how Python 3.13+ language profiles share or revise this constructor;
-- streaming or checkpointed materialization for source large enough that a full
-  in-memory visible receipt would exceed available resources.
+- exact UCNS relation geometry for Python constructions;
+- full CPython 3.12 grammar/test-corpus parity replay;
+- language profiles after Python 3.12;
+- large-source streaming/checkpoint policy.
