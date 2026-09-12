@@ -33,7 +33,7 @@ stack/
 │   ├── metapat/             # current METAPAT research + BASE.json
 │   ├── ucns/                # current UCNS research + BASE.json
 │   ├── english-gonol/       # English lexical/gonol construction; distinct from EDCM
-│   ├── python-gonol/        # Python 3.12 source affixiation from letters upward
+│   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
@@ -79,11 +79,12 @@ English text-domain construction candidate. EDCM may evaluate those outputs but 
 not define the construction.
 
 Python Gonol Construction is a separate stack-local component at
-`research/python-gonol/`. It admits every exact Python source occurrence as a letter
-gonol, then affixiates lexical forms, delimiters, grammar constructions, and the module.
-METAPAT owns affixiation semantics; UCNS owns optional consumed geometry; Python Gonol
-owns Python source construction. Tokens and AST nodes are recognition witnesses, never
-gonol substitutes.
+`research/python-gonol/`. It admits every exact Python source occurrence as a character
+gonol, closes the occurrence's applicable character-definition gonols, then affixiates
+lexical forms, delimiters, grammar constructions, and the module from already-closed
+participants. METAPAT owns affixiation semantics; UCNS owns optional consumed geometry;
+Python Gonol owns Python source construction. Tokens and AST nodes are recognition
+witnesses, never gonol substitutes.
 
 ### Change stack structure
 
