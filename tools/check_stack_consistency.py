@@ -32,6 +32,12 @@
 #   class: evidence
 #   since: 2026-09-12
 #
+# id: alternate_research_source_is_explicit
+#   given: a research BASE.json source commit differs from its repository's manifest-pinned libs commit
+#   then: the workspace carries an explicit matching research_participants source identity rather than silently rebasing the libs pin
+#   class: boundary
+#   since: 2026-09-12
+#
 # id: separated_stack_component_has_graph_identity
 #   given: a research BASE.json declares a project name distinct from its source repository name
 #   then: the project has an explicit research_participants record and the former source owner does not retain a known superseded authority claim
@@ -128,25 +134,34 @@ def check_repository_projection(manifest: dict[str, Any], human: str, findings: 
     return index
 
 
-def check_research_participants(manifest: dict[str, Any], human: str, findings: list[str]) -> set[tuple[str, str]]:
-    seen: set[tuple[str, str]] = set()
+def check_research_participants(
+    manifest: dict[str, Any],
+    human: str,
+    findings: list[str],
+) -> tuple[set[tuple[str, str]], set[tuple[str, str, str]]]:
+    keys: set[tuple[str, str]] = set()
+    sources: set[tuple[str, str, str]] = set()
     for entry in manifest.get("research_participants", []):
-        key = (entry.get("workspace", ""), entry.get("participant_id", ""))
-        if key in seen:
+        workspace = str(entry.get("workspace", ""))
+        participant_id = str(entry.get("participant_id", ""))
+        repository = str(entry.get("repository", ""))
+        commit = str(entry.get("commit", ""))
+        key = (workspace, participant_id)
+        if key in keys:
             error(findings, "research.duplicate", f"duplicate research participant {key!r}")
-        seen.add(key)
-        workspace = entry.get("workspace", "")
-        commit = entry.get("commit", "")
+        keys.add(key)
+        sources.add((workspace, repository, commit))
         if workspace and workspace not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention workspace {workspace!r}")
         if commit and commit not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
-    return seen
+    return keys, sources
 
 
 def check_base_records(
     repositories: dict[str, dict[str, Any]],
-    research_participants: set[tuple[str, str]],
+    research_participant_keys: set[tuple[str, str]],
+    research_source_identities: set[tuple[str, str, str]],
     readme: str,
     findings: list[str],
 ) -> None:
@@ -165,15 +180,17 @@ def check_base_records(
         source_entry = repositories.get(source_repository)
 
         if source_entry and source_commit != source_entry.get("commit"):
-            error(
-                findings,
-                "base.source_drift",
-                f"{base_path.relative_to(ROOT)} pins {source_repository}@{source_commit}, manifest pins {source_entry.get('commit')}",
-            )
+            explicit_source = (workspace, source_repository, source_commit)
+            if explicit_source not in research_source_identities:
+                error(
+                    findings,
+                    "base.source_drift",
+                    f"{base_path.relative_to(ROOT)} pins {source_repository}@{source_commit}, manifest libs pin is {source_entry.get('commit')}, and no matching research_participants source identity exists",
+                )
 
         source_name = source_repository.rsplit("/", 1)[-1] if source_repository else ""
         if project and source_name and project != source_name:
-            if (workspace, project) not in research_participants:
+            if (workspace, project) not in research_participant_keys:
                 error(
                     findings,
                     "base.separated_unrepresented",
@@ -185,7 +202,7 @@ def check_base_records(
 
 def check_english_gonol_regression(
     repositories: dict[str, dict[str, Any]],
-    research_participants: set[tuple[str, str]],
+    research_participant_keys: set[tuple[str, str]],
     human: str,
     readme: str,
     findings: list[str],
@@ -204,7 +221,7 @@ def check_english_gonol_regression(
         error(findings, "english_gonol.stale_edcm_authority", "EDCM still claims English/text gonol construction authority after separation")
 
     expected = ("research/english-gonol/", "english-gonol")
-    if expected not in research_participants:
+    if expected not in research_participant_keys:
         error(findings, "english_gonol.graph_missing", "English Gonol is missing its explicit stack research-participant identity")
 
     for surface_name, surface in (("STACK_MANIFEST.md", human), ("README.md", readme)):
@@ -225,9 +242,9 @@ def main() -> int:
     check_manifest_shape(manifest, findings)
     check_digest(manifest, human, findings)
     repositories = check_repository_projection(manifest, human, findings)
-    research_participants = check_research_participants(manifest, human, findings)
-    check_base_records(repositories, research_participants, readme, findings)
-    check_english_gonol_regression(repositories, research_participants, human, readme, findings)
+    research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
+    check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
+    check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
 
     if findings:
         for finding in findings:
@@ -235,7 +252,7 @@ def main() -> int:
         print(f"stack consistency: fail ({len(findings)} error(s))")
         return 1
 
-    print(f"stack consistency: pass ({len(repositories)} repositories, {len(research_participants)} research participant identities)")
+    print(f"stack consistency: pass ({len(repositories)} repositories, {len(research_participant_keys)} research participant identities)")
     return 0
 
 
