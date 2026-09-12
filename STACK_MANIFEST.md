@@ -6,9 +6,10 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Layout migration UTC: `2026-08-30T02:58:49Z`
 - PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
+- English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `bbcb6b7582192c02e79f5b98b8f857385a07cda3280f24602f825ecd15ac405f`
+  `aa979936a351d2331cf8079939bba5ecb0bc9d694a29badd17335dad6afb2086`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -33,7 +34,7 @@ meaning used by that repository.
 | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
-| `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and text-gonol construction | canon view `libs/edcm/`; research `research/edcm/` |
+| `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
 | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
 | `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | main | independent extracted candidate repository; implementation/public-contract authority transition incomplete | extracted repo exists; forge candidate remains `research/epac/` until release/reconsumption; `libs/epac/` remains unpopulated |
@@ -46,6 +47,7 @@ release identity.
 
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
+| `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/skill-lib` | `61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32` | audit, domain-claim, work-graph, and hmmm doctrine | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/metapat` | `d6699e21b11c8f8394998efc34a468e2d6efc8b0` | domain-restraint authority; root impact none | no |
@@ -68,7 +70,10 @@ Each established `research/<repo>/` workspace carries a `BASE.json` with:
 - authority owner;
 - standing `stack-local-research`.
 
-Use that record before interpreting or extending work in the workspace.
+A newly separated stack-local component may instead preserve the repository it was
+extracted from as provenance while declaring a distinct `project` and stack-local
+authority. Such a component must also appear in the stack research-participant graph;
+its source repository must stop claiming the separated responsibility at stack level.
 
 EPAC is currently an extraction-transition exception: the independent repository exists,
 but authority transfer is not complete, so the forge candidate remains in `research/epac/`
@@ -104,8 +109,10 @@ rm -rf libs/<name>/*
 git -C <checkout> archive <commit> | tar -x -C libs/<name>/
 ```
 
-Then update this file, `stack-manifest.json`, and `research/<name>/BASE.json`; recompute
-the work-graph digest; and commit with the new source commit SHA.
+Then update this file, `stack-manifest.json`, and the matching
+`research/<name>/BASE.json`; recompute the work-graph digest; and commit with the new
+source commit SHA. Structural ownership/relation changes must additionally follow the
+`stack-update` skill and pass `python tools/check_stack_consistency.py`.
 
 Do not edit `libs/<name>/` to create a canonical change. Route the change to the owning
 repository, merge it there, then refresh the pinned view.
@@ -117,8 +124,12 @@ Do not populate `libs/epac/`, replace the forge candidate, or assert implementat
 authority transfer until EPAC completes its clean build/install, license/distribution,
 immutable release, downstream stack reconsumption, and authority-transition receipt gates.
 
+English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
+research component, not EDCM and not an independent canonical release.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - EPAC clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; `libs/epac/` stays unpopulated until graduation.
+- English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
