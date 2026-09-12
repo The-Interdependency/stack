@@ -58,6 +58,8 @@ EXPECTED_STANDINGS = {
 
 
 def main() -> None:
+    if sys.flags.optimize:
+        raise SystemExit("optimized Python mode cannot produce consumer evidence")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("wheel", type=Path)
     parser.add_argument("receipt", type=Path)
