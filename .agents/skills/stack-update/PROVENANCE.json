@@ -1,0 +1,11 @@
+{
+  "schema": "the-interdependency.vendored-skill-provenance",
+  "version": "1.0.0",
+  "skill": "stack-update",
+  "source_repository": "The-Interdependency/skill-lib",
+  "source_commit": "a7b95f891d2e88c62e61524dc52a2e1577c9983d",
+  "source_path": "stack-update/SKILL.md",
+  "source_blob_sha": "a1e914893fa047e28d039050395937a1cf6e0138",
+  "authority_transfer": false,
+  "relation": "repo-local consumed copy; canonical doctrine remains in source repository"
+}

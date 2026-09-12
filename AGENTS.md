@@ -10,6 +10,9 @@ projects may later graduate into their own repositories.
   inside stack; canonical edits happen in the owning repository.
 - `research/<repo>/` is current stack-local research against an exact pinned base. It is
   not canon merely because it is in stack.
+- `research/english-gonol/` is a distinct stack-local English lexical/gonol construction
+  component. UCNS owns consumed geometry; EDCM may evaluate outputs but does not define
+  the English Gonol construction.
 - root-level emerging projects such as `ahbg/` may be close to external repo-hood; root
   placement does not transfer authority from their inputs.
 - `STACK_MANIFEST.md` and `stack-manifest.json` own stack-level participant provenance.
@@ -17,6 +20,27 @@ projects may later graduate into their own repositories.
 - `frontend/cli/` is the replaceable human/operator surface for that backend.
 - `skill-lib/` is the currently pinned operational skill snapshot; exact newer doctrine
   may be bound separately only when its provenance and non-transfer boundary are explicit.
+
+## Structural update gate
+
+Before adding, moving, separating, extracting, graduating, renaming, removing, or
+changing the authority/relation/pin of a stack participant or research workspace, load:
+
+```text
+.agents/skills/stack-update/SKILL.md
+```
+
+Also resolve the applicable `interdependent-work-graph` doctrine and, for lifecycle
+transitions, `project-incubation-graduation`. Structural changes are one transaction:
+update every affected machine/human authority projection, remove superseded ownership
+claims, recompute the work-graph digest, and pass:
+
+```bash
+python tools/check_stack_consistency.py
+```
+
+Do not treat moved code, passing local tests, or a new repository as sufficient evidence
+that stack authority/provenance records are current.
 
 ## Fresh-making boundary
 
@@ -50,6 +74,12 @@ namespace is deprecated and removed; use `stackctl fresh ...`.
 
 ## Checks
 
+Structural stack consistency:
+
+```bash
+python tools/check_stack_consistency.py
+```
+
 Fresh-making/backend checks that can run without PostgreSQL:
 
 ```bash
@@ -65,13 +95,16 @@ PostgreSQL integration checks require an explicitly disposable database. A skipp
 integration check is `hmmm`, not a pass.
 
 AHBG/Grok has its own local suites under `ahbg/grok/`; run those when touching that
-workspace. Do not claim root manifest-check tooling that is not present in this branch.
+workspace. The root stack-consistency checker verifies declared authority/provenance
+coherence; it does not replace workspace behavioral tests.
 
 ## hmmm
 
 - Concrete VM PostgreSQL/auth/service-account/storage and backup-mount acceptance remains
   unobserved until checked on the VM.
 - Organization aggregate and website-projection derivation specs are not yet registered.
+- English Gonol Construction has distinct stack-local authority but has not yet gained an
+  independent repository/release authority boundary.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
