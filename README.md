@@ -102,11 +102,12 @@ package/release it, then let stack consume the released project rather than a hi
 stack-local implementation.
 
 English Gonol Construction is currently a distinct stack-local research component,
-separated from EDCM but not independently graduated. EPAC and psychsocio metafauna are
-currently in this pre-graduation state. EPAC is further along: it has an independent
-extracted repository, but extraction is not graduation, so its forge research remains
-here until EPAC completes its release, downstream reconsumption, and authority-transition
-gates. From Photons to the Macroverse is also stack-local pre-graduation research.
+separated from EDCM but not independently graduated.
+EPAC and psychsocio metafauna are currently in this pre-graduation state.
+EPAC is further along: it has an independent extracted repository, but extraction is not
+graduation, so its forge research remains here until EPAC completes its release,
+downstream reconsumption, and authority-transition gates. From Photons to the Macroverse
+is also stack-local pre-graduation research.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
