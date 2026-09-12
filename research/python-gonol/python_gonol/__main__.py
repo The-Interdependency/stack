@@ -5,15 +5,16 @@ Usage guidance::
     python -m python_gonol source.py --out source.gonol.json
     python -m python_gonol --verify source.gonol.json
 
-The construction command exits 2 when source syntax remains ``hmmm``.  The
-receipt is still written so its admitted letter and lexical closures survive.
+The construction command exits 2 when source syntax remains ``hmmm``. The
+receipt is still written so admitted character, definition, and lexical
+closures survive.
 """
 
 # === MODULE_BUILD ===
 # id: python_gonol_cli
 #   module_name: python_gonol.__main__
 #   module_kind: adapter
-#   summary: provides file-to-receipt construction and receipt verification commands
+#   summary: provides file-to-receipt character-first construction and receipt verification commands
 #   owner: Python Gonol Construction (stack-local research)
 #   public_surface: python -m python_gonol
 #   internal_surface: main
@@ -59,7 +60,7 @@ from .model import PythonAffixiationReceipt
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Affixiate Python 3.12 source into gonols from letters upward."
+        description="Affixiate Python 3.12 source into gonols from characters upward."
     )
     parser.add_argument("source", nargs="?", help="Python source file")
     parser.add_argument("--out", help="receipt path; omit for stdout")
