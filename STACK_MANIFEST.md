@@ -9,7 +9,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `aa979936a351d2331cf8079939bba5ecb0bc9d694a29badd17335dad6afb2086`
+  `9ab3b3f75a32f5f73b5df68419148181fc632593babe4ec6adf4269d4f35badb`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -18,11 +18,15 @@ For an established repository participating in stack:
 
 ```text
 libs/<repo>/       = exact imported canonical repository view at the manifest commit
-research/<repo>/   = mutable stack-local research based on that imported view
+research/<repo>/   = mutable stack-local research bound to an explicit source identity
 ```
 
 `libs/` does not gain authority by containing a copy. The owning repository remains
 canonical. `research/` does not gain canon status by producing a useful result.
+
+A research workspace normally shares the imported `libs/<repo>/` pin. If it intentionally
+uses a different exact source commit, that source identity must be represented explicitly
+in `research_participants`; it does not silently refresh or replace the `libs/` pin.
 
 A Python `src/` directory inside `libs/<repo>/` retains the normal package-layout
 meaning used by that repository.
@@ -48,6 +52,7 @@ release identity.
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
 | `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/skill-lib` | `61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32` | audit, domain-claim, work-graph, and hmmm doctrine | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/metapat` | `d6699e21b11c8f8394998efc34a468e2d6efc8b0` | domain-restraint authority; root impact none | no |
@@ -64,11 +69,18 @@ VCS metadata, virtualenvs, caches, and untracked files are excluded.
 
 Each established `research/<repo>/` workspace carries a `BASE.json` with:
 
-- owning repository;
+- owning/source repository;
 - exact source commit;
-- matching `libs/<repo>/` canon path;
+- canon path when one exists;
 - authority owner;
 - standing `stack-local-research`.
+
+When `BASE.json.source_commit` differs from the repository's manifest-pinned `libs/`
+commit, the workspace must carry an explicit matching `research_participants` identity.
+That record preserves the newer/different research input without pretending `libs/` was
+refreshed. `research/ucns/` currently uses this form: its exact source base is UCNS
+`1975fe70cf4e0826a8020c2da3047569e277af64`, while `libs/ucns/` remains pinned at
+`828c0b8bbcfc267efb5701da714191c1f73a81ff`.
 
 A newly separated stack-local component may instead preserve the repository it was
 extracted from as provenance while declaring a distinct `project` and stack-local
