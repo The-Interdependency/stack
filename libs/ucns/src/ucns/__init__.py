@@ -4,17 +4,17 @@
 #   module_kind: facade
 #   summary: geometry-only UCNS public surface
 #   owner: Erin Spencer
-#   public_surface: carrier geometry, framed Mobius root loop, exact Public Gonol carrier, Mobius vesica and seed geometry
+#   public_surface: carrier geometry, framed Mobius root loop, exact Public Gonol carrier, Mobius vesica and seed geometry, native root-loop and band standing-wave candidates
 #   internal_surface: none
 #   auth_boundary: none
 #   storage_boundary: none
 #   network_boundary: none
 #   user_data_boundary: none
 #   admin_only: false
-#   tests: tests.test_public_gonol, tests.test_geometry_public_surface, tests.test_carrier
+#   tests: tests.test_public_gonol, tests.test_geometry_public_surface, tests.test_carrier, tests.test_mobius_standing_wave, tests.test_mobius_band_standing_wave
 #   rollout: active geometry-only package facade
 #   rollback: restore prior facade from Git history
-#   requires: directed_carrier_floor, ucns_native_mobius_geometry, ucns_public_gonol_geometry, ucns_mobius_vesica_candidate, ucns_mobius_seed_of_life_candidate
+#   requires: directed_carrier_floor, ucns_native_mobius_geometry, ucns_public_gonol_geometry, ucns_mobius_vesica_candidate, ucns_mobius_seed_of_life_candidate, ucns_mobius_standing_wave_root_loop, ucns_mobius_band_standing_wave
 #   since: 2026-08-20
 #   unresolved: canonical completion of the full UCNS geometric construction
 # === END MODULE_BUILD ===
@@ -30,7 +30,8 @@
 """UCNS geometry.
 
 The active package surface is deliberately geometric: carriers, exact motion,
-Möbius constructions, geometric certificates, and topological/prime geometry.
+Möbius constructions, root-loop and band standing-wave candidates, geometric
+certificates, and topological/prime geometry.
 Lexical semantics, corpora, morphology, definition recursion, evaluator
 frameworks, PTCNA state, and cross-stack adapters are not UCNS package content.
 """
@@ -69,6 +70,10 @@ from .mobius_vesica import __all__ as _mobius_vesica_all
 from .mobius_vesica import *  # noqa: F401,F403 - geometric public module
 from .mobius_seed import __all__ as _mobius_seed_all
 from .mobius_seed import *  # noqa: F401,F403 - geometric public module
+from .mobius_standing_wave import __all__ as _mobius_standing_wave_all
+from .mobius_standing_wave import *  # noqa: F401,F403 - geometric public module
+from .mobius_band_standing_wave import __all__ as _mobius_band_standing_wave_all
+from .mobius_band_standing_wave import *  # noqa: F401,F403 - geometric public module
 
 __all__ = list(dict.fromkeys([
     "DirectMobiusError",
@@ -95,4 +100,4 @@ __all__ = list(dict.fromkeys([
     "radius_from_breadth",
     "same_lifted_position",
     "same_visible_position",
-] + list(_mobius_vesica_all) + list(_mobius_seed_all)))
+] + list(_mobius_vesica_all) + list(_mobius_seed_all) + list(_mobius_standing_wave_all) + list(_mobius_band_standing_wave_all)))

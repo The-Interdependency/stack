@@ -20,6 +20,7 @@ For repositories with an independent authority:
 ```text
 stack/
 ├── skill-lib/               # operational pinned snapshot of org build/evidence doctrine
+├── .agents/skills/          # repo-local consumed skills; stack-update guards structural changes
 ├── libs/                    # manifest-pinned canonical repository views; do not edit
 │   ├── metapat/
 │   ├── ucns/
@@ -31,7 +32,8 @@ stack/
 ├── research/                # stack-local work; never source authority by location
 │   ├── metapat/             # current METAPAT research + BASE.json
 │   ├── ucns/                # current UCNS research + BASE.json
-│   ├── edcm/                # current EDCM research + BASE.json
+│   ├── english-gonol/       # English lexical/gonol construction; distinct from EDCM
+│   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── epac/                # extracted candidate remains forge-side until graduation completes
@@ -41,6 +43,8 @@ stack/
 ├── backend/                 # PostgreSQL-backed durable fresh-making control plane
 ├── frontend/
 │   └── cli/                 # human control/status surface for backend
+├── tools/
+│   └── check_stack_consistency.py # deterministic authority/provenance drift gate
 ├── STACK_MANIFEST.md        # human-readable provenance and boundary record
 └── stack-manifest.json      # machine-readable work graph
 ```
@@ -68,6 +72,27 @@ cat research/ucns/BASE.json
 If the result changes UCNS itself, prepare the change for `The-Interdependency/ucns`.
 After upstream merge, refresh `libs/ucns/` and update `research/ucns/BASE.json`.
 
+English Gonol Construction is a separated stack-local component at
+`research/english-gonol/`. UCNS owns its consumed geometry. English Gonol owns the
+English text-domain construction candidate. EDCM may evaluate those outputs but does
+not define the construction.
+
+### Change stack structure
+
+Any change that alters a participant, pin, authority, relation, research workspace,
+extraction/graduation standing, `BASE.json`, or architecture projection must load the
+`stack-update` skill and finish as one coherent stack transaction.
+
+Run the deterministic gate before and after the mutation:
+
+```bash
+python tools/check_stack_consistency.py
+```
+
+A structural change is not complete merely because moved code or local tests pass. The
+machine manifest, human manifest, affected base records, architecture description, and
+work-graph digest must agree before merge.
+
 ### Compose something new
 
 New cross-project work may be born in stack. It does not inherit the authority of its
@@ -76,11 +101,13 @@ coherent enough to graduate, create its independent repository, preserve provena
 package/release it, then let stack consume the released project rather than a hidden
 stack-local implementation.
 
-EPAC and psychsocio metafauna are currently in this pre-graduation state. EPAC
-has an independent extracted repository, but extraction is not graduation: its
-forge research remains here until EPAC completes its release, downstream
-reconsumption, and authority-transition gates. From Photons to the Macroverse is
-also stack-local pre-graduation research.
+English Gonol Construction is currently a distinct stack-local research component,
+separated from EDCM but not independently graduated.
+EPAC and psychsocio metafauna are currently in this pre-graduation state.
+EPAC is further along: it has an independent extracted repository, but extraction is not
+graduation, so its forge research remains here until EPAC completes its release,
+downstream reconsumption, and authority-transition gates. From Photons to the Macroverse
+is also stack-local pre-graduation research.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
@@ -122,7 +149,8 @@ git -C <checkout> archive <commit> | tar -x -C libs/<name>/
 
 Then update `STACK_MANIFEST.md`, `stack-manifest.json`, and the matching
 `research/<name>/BASE.json`; recompute the work-graph digest; and commit with the exact
-source commit in the message.
+source commit in the message. Run `python tools/check_stack_consistency.py` before
+merge.
 
 ## Boundaries
 
@@ -132,7 +160,7 @@ source commit in the message.
   populated only from an owning canonical repository at an exact commit.
 - proof, measurement, semantic, empirical, and certification standing do not transfer
   merely because projects are composed in stack.
-- `backend/` may coordinate an owning repository but does not acquire that repository's
+- backend may coordinate an owning repository but does not acquire that repository's
   authority.
 - PostgreSQL owns orchestration/freshness evidence, not repository artifacts or canon.
 - executor success alone cannot establish freshness; the declared verifier and accepted
@@ -147,6 +175,8 @@ source commit in the message.
   `libs/` + `research/` pair.
 - The exact graduation automation from stack-local project to independent repo + package
   is not yet implemented.
+- English Gonol Construction has distinct stack-local authority but has not yet gained an
+  independent repository/release authority boundary.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the

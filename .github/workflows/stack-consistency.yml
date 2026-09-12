@@ -1,0 +1,37 @@
+name: stack-consistency
+
+on:
+  pull_request:
+    paths:
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
+      - 'README.md'
+      - 'AGENTS.md'
+      - 'research/**'
+      - 'libs/**'
+      - 'tools/check_stack_consistency.py'
+      - '.agents/skills/stack-update/**'
+      - '.github/workflows/stack-consistency.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
+      - 'README.md'
+      - 'AGENTS.md'
+      - 'research/**'
+      - 'libs/**'
+      - 'tools/check_stack_consistency.py'
+      - '.agents/skills/stack-update/**'
+      - '.github/workflows/stack-consistency.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  consistency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify stack authority and provenance projections
+        run: python tools/check_stack_consistency.py

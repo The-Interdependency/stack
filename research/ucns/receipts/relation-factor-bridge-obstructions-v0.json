@@ -1,0 +1,255 @@
+{
+  "audit": {
+    "bridge_classes": [
+      {
+        "bridge_class": "stable persistent-generator prime product",
+        "conclusion": "observed cardinalities are pairwise coprime, so no preserved generator can retain one fixed prime factor in the product",
+        "evidence": {
+          "adjacent_divisibility": [
+            false,
+            false
+          ],
+          "nested_factor_sets": [
+            false,
+            false
+          ],
+          "pairwise_gcds": [
+            1,
+            1,
+            1
+          ],
+          "relation_basis_nested": true
+        },
+        "necessary_condition": "preserved generator factors make every prior gonol divide every successor and make prime-factor sets nested",
+        "status": "FALSIFIED"
+      },
+      {
+        "bridge_class": "local complete-return trace isomorphism map",
+        "conclusion": "one local value repeated at rank two has a squared prime exponent and cannot equal a squarefree two-factor cardinality",
+        "evidence": {
+          "all_local_traces_identical": true,
+          "local_trace_digests": [
+            "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+            "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+            "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+            "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b"
+          ],
+          "rank_two_observation_squarefree": true,
+          "repeated_local_factor_product_at_rank_two": "p^2"
+        },
+        "necessary_condition": "isomorphic local trace geometry receives the same factor cardinality",
+        "status": "FALSIFIED"
+      },
+      {
+        "bridge_class": "generator hash, id, or scale-address prime selection",
+        "conclusion": "hash-to-prime and index-to-prime rules are target-free numerically but nongeometric and therefore inadmissible",
+        "evidence": {
+          "generator_ids_are_sha256_addresses": true,
+          "geometric_measurement_defined": false,
+          "scale_indices_are_external_addresses": true
+        },
+        "necessary_condition": "factor cardinality must be derived from UCNS geometry rather than deterministic addressing",
+        "status": "REJECTED_NON_GEOMETRIC"
+      },
+      {
+        "bridge_class": "current free-homology cardinality",
+        "conclusion": "free relation modules have infinite cardinality and do not contain a canonical prime order",
+        "evidence": {
+          "finite_orders": [
+            null,
+            null,
+            null,
+            null
+          ],
+          "modules": [
+            "Z^1",
+            "Z^2",
+            "Z^3",
+            "Z^4"
+          ],
+          "torsion_invariants": [
+            [],
+            [],
+            [],
+            []
+          ]
+        },
+        "necessary_condition": "a finite arithmetic cardinality requires torsion or another independently derived finite presentation",
+        "status": "FALSIFIED"
+      },
+      {
+        "bridge_class": "global geometry-derived integer presentation",
+        "conclusion": "this class can rotate all arithmetic factors globally between scales, but current UCNS geometry supplies no matrix to execute",
+        "evidence": {
+          "complete_return_degree_two_boundary": null,
+          "complete_return_monodromy_matrix": null,
+          "complete_return_pairing_matrix": null,
+          "finite_presentation_readout_implemented": true
+        },
+        "necessary_condition": "all matrix entries come from replayable linking, intersection, degree-two, or monodromy geometry before determinant factorization",
+        "status": "BLOCKED_MISSING_GEOMETRIC_PRESENTATION"
+      }
+    ],
+    "homology_profiles": [
+      {
+        "homology": {
+          "finite_order": null,
+          "free_rank": 1,
+          "module": "Z^1",
+          "torsion_invariants": []
+        },
+        "local_trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+        "relation_ids": [
+          "ucns.relation.complete-return:42a8be02126d4c58f7b18632359fbd0e433e0b05d8d8f5fd8acd0879db0aa9ef"
+        ],
+        "relation_rank": 1,
+        "scale_index": 1
+      },
+      {
+        "homology": {
+          "finite_order": null,
+          "free_rank": 2,
+          "module": "Z^2",
+          "torsion_invariants": []
+        },
+        "local_trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+        "relation_ids": [
+          "ucns.relation.complete-return:42a8be02126d4c58f7b18632359fbd0e433e0b05d8d8f5fd8acd0879db0aa9ef",
+          "ucns.relation.complete-return:c712c5be99b59123855a403b8408b4bc3173e4951e282653d8cd9f6e98524198"
+        ],
+        "relation_rank": 2,
+        "scale_index": 2
+      },
+      {
+        "homology": {
+          "finite_order": null,
+          "free_rank": 3,
+          "module": "Z^3",
+          "torsion_invariants": []
+        },
+        "local_trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+        "relation_ids": [
+          "ucns.relation.complete-return:42a8be02126d4c58f7b18632359fbd0e433e0b05d8d8f5fd8acd0879db0aa9ef",
+          "ucns.relation.complete-return:c712c5be99b59123855a403b8408b4bc3173e4951e282653d8cd9f6e98524198",
+          "ucns.relation.complete-return:3afff8d2665a5149b56a7bfaedc45deb6d0c7dfc3fa9ae855e7fe3fa86da173c"
+        ],
+        "relation_rank": 3,
+        "scale_index": 3
+      },
+      {
+        "homology": {
+          "finite_order": null,
+          "free_rank": 4,
+          "module": "Z^4",
+          "torsion_invariants": []
+        },
+        "local_trace_sha256": "8e58e1a89e87f068f8d5ee85b7daeae10353a2c53368857631d88e88845b6d1b",
+        "relation_ids": [
+          "ucns.relation.complete-return:42a8be02126d4c58f7b18632359fbd0e433e0b05d8d8f5fd8acd0879db0aa9ef",
+          "ucns.relation.complete-return:c712c5be99b59123855a403b8408b4bc3173e4951e282653d8cd9f6e98524198",
+          "ucns.relation.complete-return:3afff8d2665a5149b56a7bfaedc45deb6d0c7dfc3fa9ae855e7fe3fa86da173c",
+          "ucns.relation.complete-return:9de505b40af9fe5d685b13f166709d82a1c6c557e162bbaa9f221f48101d96d0"
+        ],
+        "relation_rank": 4,
+        "scale_index": 4
+      }
+    ],
+    "numerical_next_gonol": null,
+    "observed_factor_sets": [
+      [
+        157
+      ],
+      [
+        43,
+        67
+      ],
+      [
+        3,
+        11,
+        1661748437
+      ]
+    ],
+    "observed_values": [
+      157,
+      2881,
+      54837698421
+    ],
+    "remaining_admissible_class": {
+      "current_factor_cardinalities": null,
+      "current_geometric_presentation": null,
+      "kind": "global geometry-derived integer presentation",
+      "readout": "prime factors of the finite cokernel order abs(det R_s), with Smith invariants retained",
+      "required_sources": [
+        "exact linking or intersection numbers among all retained return generators",
+        "or exact degree-two attachment coefficients",
+        "or exact monodromy presentation coefficients"
+      ]
+    },
+    "status": "NO_SURVIVING_EXECUTABLE_FACTOR_CARDINALITY_MAP"
+  },
+  "falsification_conditions": [
+    "a reported stable generator-prime product does not imply divisibility nesting",
+    "a local trace-only map assigns different values to isomorphic trace inputs without additional geometry",
+    "free homology is reported as a finite cyclic group without an independently derived relation",
+    "a matrix entry is selected from an observed gonol value or factor rather than exact geometric evidence",
+    "a singular presentation is reported as having finite cokernel order",
+    "hashes, scale labels, or generator ids are presented as physical or geometric factor cardinalities",
+    "factor identities or numerical n4 are emitted while the geometric presentation matrix is absent"
+  ],
+  "generic_presentation_gate": {
+    "current_matrix": null,
+    "operation": "geometry-derived square integer matrix R -> finite order abs(det R) -> exact prime factorization",
+    "target_values_are_inputs": false
+  },
+  "hmmm": [
+    "persistent relation ids cannot carry fixed prime labels because observed prime sets are not nested and observed gonol cardinalities are pairwise coprime",
+    "all current return generators have the same local trace geometry, so a local isomorphism-invariant map cannot distinguish their prime identities",
+    "the current unfilled return loops generate free Z modules, which have no finite order to factor",
+    "a viable bridge must be global and scale-dependent through exact geometric interactions rather than generator addresses",
+    "no complete-return linking, intersection, degree-two boundary, or monodromy presentation matrix is currently defined",
+    "numerical n4 remains unresolved"
+  ],
+  "nonclaims": [
+    "not UCNS canon",
+    "not proof that no future geometry-to-prime bridge can exist",
+    "not an arithmetic reinterpretation of free first homology",
+    "not permission to use hashes, ids, or scale indices as geometric measurements",
+    "not a factor-cardinality or successor-gonol constructor",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "producer_code_reference": "sha256:03f615131e74a2b1b7ef53e1d645eef01572d8b78ffaf2d77daa6e41fd07f466",
+  "promotion_evidence": [
+    "construct exact pairwise linking, intersection, degree-two attachment, or monodromy coefficients for the full recursive relation basis",
+    "bind every integer matrix entry to replayable UCNS geometry without observation-derived constants",
+    "freeze the complete integer presentation before factoring its determinant or Smith invariants",
+    "recover all three observed factor multisets under one unchanged matrix-construction law",
+    "derive the next presentation and factor multiset before any numerical next-gonol comparison"
+  ],
+  "receipt_sha256": "2d3f06ce4eedc80ab030177b1dee79b8d6a109b4477ba7f7e0836ab4afad699c",
+  "schema_id": "the-interdependency.stack-research.ucns.relation-factor-bridge-obstructions",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "complete_return_candidate": {
+      "code_sha256": "7c09ee73fe18ea0489f1a7cee5738b140d761dab6d09fcba6104d7ff4a8b5f53",
+      "path": "research/ucns/complete_return_relation_extension.py",
+      "receipt_sha256": "f1ebfed99730b338a8b716ae4f7e2984c243ee294d7806f54182c24c849ceaea"
+    },
+    "relation_rank_gate": {
+      "code_sha256": "248001fd757faa8d88f02c6453fe039b4b09d65d9fd2f3c60911e3d6ea8ebbb6",
+      "path": "research/ucns/complete_return_relation_rank_experiment.py",
+      "receipt_sha256": "5b35e5ccfcdc253161a5a34dc99a3652c81c77f898df02d3e8d527c784dcc8f7"
+    },
+    "squarefree_control": {
+      "code_sha256": "34b4a3602f42a216bda0ffea8096fac47efd83338fc15a96bf27d79aa9914e32",
+      "path": "research/ucns/squarefree_divisor_lattice_control.py",
+      "receipt_sha256": "1c23366a6aabc5dbd576aea07c03fc46a13c10822ada9e8c6198f6043d2933b8"
+    },
+    "ucns_prime_primitives": {
+      "code_sha256": "aba49af233d17e7663caad40b7faa0d73bf524cdd21f09b52ed07607f72d30cb",
+      "direction_boundary": "constructs geometry from selected arithmetic prime labels; does not invert recursive return geometry to a prime",
+      "path": "libs/ucns/src/ucns/prime_primitives.py"
+    }
+  },
+  "standing": "stack-local-post-observation-bridge-obstruction-audit"
+}

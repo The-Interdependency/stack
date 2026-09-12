@@ -33,6 +33,12 @@ def test_geometry_public_surface_excludes_removed_domains() -> None:
         "MobiusSeedOfLife",
         "MobiusBandSpec",
         "build_mobius_seed_of_life",
+        "StandingWaveModel",
+        "build_native_mobius_standing_wave",
+        "evaluate_capacity_channel_induction",
+        "MobiusBandStandingWaveModel",
+        "build_mobius_band_standing_wave",
+        "evaluate_band_capacity_channel_induction",
     }.issubset(exported)
     assert not exported.intersection({
         "PublicGonolFunctionTable",

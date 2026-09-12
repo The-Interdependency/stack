@@ -1,0 +1,391 @@
+{
+  "comparison": {
+    "actual_fourth_value": null,
+    "claim_boundary": "one match would let this structural control survive one out-of-sample test; it would not recover a constructor",
+    "falsified_if": "the full squarefree=true, omega=4, tau=16, mu=+1, divisor_lattice=B_4 tuple fails",
+    "status": "PENDING_FOURTH_OBSERVATION",
+    "survives_if": "the full tuple matches one independently obtained fourth observation"
+  },
+  "falsification_conditions": [
+    "any frozen observed factorization fails exact multiplication or primality replay",
+    "any observed value is not squarefree or does not have the recorded omega, tau, and mu invariants",
+    "the fourth observed gonol is not squarefree with exactly four distinct prime factors",
+    "the fourth observed gonol has tau other than 16 or number-theoretic mu other than +1",
+    "the structural control is later presented as a numerical successor prediction or as a UCNS-derived constructor",
+    "a claimed UCNS explanation cannot execute a product decomposition and one-new-independent-factor transition without target-derived tuning"
+  ],
+  "hmmm": [
+    "39 to 720 is retained as an exact but nonrecursive local accounting mechanism: C(39,2)-21=720, while the unchanged next step is 258819 and the lifted gonol is 1035277",
+    "the observed cardinalities have squarefree divisor lattices B1, B2, and B3, but this is post-observation arithmetic classification rather than UCNS construction",
+    "independent prime-factor dimension currently means Boolean divisor-lattice rank only; geometric independence has not been established",
+    "current UCNS mechanics do not declare a product decomposition of a closed gonol, a prime label for each component, or a transition that preserves all factors and adds one new factor",
+    "the live question is why apparent divisor-lattice rank increases by one while the obvious event-pair construction fails to recurse",
+    "the numerical value and prime factors of the fourth gonol remain unresolved"
+  ],
+  "mechanics_audit": {
+    "declared_add_one_prime_dimension_transition": false,
+    "declared_arithmetic_factor_to_geometry_operation": false,
+    "declared_product_decomposition_operation": false,
+    "explanation_status": "UNRESOLVED_NO_DECLARED_FACTOR_MAPPING",
+    "mechanic_1": {
+      "cardinality_effect": "fixed n -> n over the pinned 157-position carrier",
+      "cyclic_output_arity": 157,
+      "identity_output_arity": 157,
+      "preserves_fixed_carrier": true
+    },
+    "mechanic_2": {
+      "arity_source": "explicit caller-supplied ordered participant tuple",
+      "cardinality_effect": "arity equals the explicit caller-supplied participant tuple",
+      "explicit_three_participant_arity": 3,
+      "sample_coupling_arity": 2
+    },
+    "mechanic_3": {
+      "cardinality_effect": "one closed affinization -> one atomic participant; next carrier size is not defined",
+      "next_carrier_cardinality": null,
+      "promoted_atomic_participants": 1
+    },
+    "public_gonol_arity": 157,
+    "smallest_composed_constructor": {
+      "first_input": 157,
+      "first_output": 629,
+      "first_target": 2881,
+      "status": "FALSIFIED"
+    }
+  },
+  "nonclaims": [
+    "not UCNS canon",
+    "not a recovered or surviving gonol successor constructor",
+    "not a numerical prediction for the fourth gonol",
+    "not evidence that arithmetic factors are UCNS geometric components",
+    "not evidence that divisor-lattice independence is geometric independence",
+    "not PCEA key, entropy, hardness, replay-resistance, recovery, or public-authenticity evidence"
+  ],
+  "observations": [
+    {
+      "divisor_lattice": {
+        "name": "B_1",
+        "rank": 1,
+        "rank_counts": [
+          {
+            "count": 1,
+            "rank": 0
+          },
+          {
+            "count": 1,
+            "rank": 1
+          }
+        ],
+        "subset_product_bijection": [
+          {
+            "divisor": 1,
+            "rank": 0,
+            "subset_mask": 0
+          },
+          {
+            "divisor": 157,
+            "rank": 1,
+            "subset_mask": 1
+          }
+        ]
+      },
+      "divisors": [
+        1,
+        157
+      ],
+      "factorization": [
+        {
+          "exponent": 1,
+          "prime": 157
+        }
+      ],
+      "mobius_mu": -1,
+      "observation_index": 1,
+      "omega": 1,
+      "reconstructed_value": 157,
+      "squarefree": true,
+      "tau": 2,
+      "value": 157
+    },
+    {
+      "divisor_lattice": {
+        "name": "B_2",
+        "rank": 2,
+        "rank_counts": [
+          {
+            "count": 1,
+            "rank": 0
+          },
+          {
+            "count": 2,
+            "rank": 1
+          },
+          {
+            "count": 1,
+            "rank": 2
+          }
+        ],
+        "subset_product_bijection": [
+          {
+            "divisor": 1,
+            "rank": 0,
+            "subset_mask": 0
+          },
+          {
+            "divisor": 43,
+            "rank": 1,
+            "subset_mask": 1
+          },
+          {
+            "divisor": 67,
+            "rank": 1,
+            "subset_mask": 2
+          },
+          {
+            "divisor": 2881,
+            "rank": 2,
+            "subset_mask": 3
+          }
+        ]
+      },
+      "divisors": [
+        1,
+        43,
+        67,
+        2881
+      ],
+      "factorization": [
+        {
+          "exponent": 1,
+          "prime": 43
+        },
+        {
+          "exponent": 1,
+          "prime": 67
+        }
+      ],
+      "mobius_mu": 1,
+      "observation_index": 2,
+      "omega": 2,
+      "reconstructed_value": 2881,
+      "squarefree": true,
+      "tau": 4,
+      "value": 2881
+    },
+    {
+      "divisor_lattice": {
+        "name": "B_3",
+        "rank": 3,
+        "rank_counts": [
+          {
+            "count": 1,
+            "rank": 0
+          },
+          {
+            "count": 3,
+            "rank": 1
+          },
+          {
+            "count": 3,
+            "rank": 2
+          },
+          {
+            "count": 1,
+            "rank": 3
+          }
+        ],
+        "subset_product_bijection": [
+          {
+            "divisor": 1,
+            "rank": 0,
+            "subset_mask": 0
+          },
+          {
+            "divisor": 3,
+            "rank": 1,
+            "subset_mask": 1
+          },
+          {
+            "divisor": 11,
+            "rank": 1,
+            "subset_mask": 2
+          },
+          {
+            "divisor": 33,
+            "rank": 2,
+            "subset_mask": 3
+          },
+          {
+            "divisor": 1661748437,
+            "rank": 1,
+            "subset_mask": 4
+          },
+          {
+            "divisor": 4985245311,
+            "rank": 2,
+            "subset_mask": 5
+          },
+          {
+            "divisor": 18279232807,
+            "rank": 2,
+            "subset_mask": 6
+          },
+          {
+            "divisor": 54837698421,
+            "rank": 3,
+            "subset_mask": 7
+          }
+        ]
+      },
+      "divisors": [
+        1,
+        3,
+        11,
+        33,
+        1661748437,
+        4985245311,
+        18279232807,
+        54837698421
+      ],
+      "factorization": [
+        {
+          "exponent": 1,
+          "prime": 3
+        },
+        {
+          "exponent": 1,
+          "prime": 11
+        },
+        {
+          "exponent": 1,
+          "prime": 1661748437
+        }
+      ],
+      "mobius_mu": -1,
+      "observation_index": 3,
+      "omega": 3,
+      "reconstructed_value": 54837698421,
+      "squarefree": true,
+      "tau": 8,
+      "value": 54837698421
+    }
+  ],
+  "producer_code_reference": "sha256:34b4a3602f42a216bda0ffea8096fac47efd83338fc15a96bf27d79aa9914e32",
+  "promotion_evidence": [
+    "define a UCNS geometric decomposition whose independent component cardinalities multiply to each gonol cardinality",
+    "identify each component and its arithmetic-prime cardinality from geometry rather than from post-observation factorization",
+    "execute one unchanged recursive transition that preserves prior components and adds exactly one independently derived component",
+    "reconstruct 157, 2881, and 54837698421 under that transition and freeze the fourth numerical output before comparison",
+    "survive the fourth observation while keeping arithmetic primality separate from UCNS primitive standing"
+  ],
+  "receipt_sha256": "1c23366a6aabc5dbd576aea07c03fc46a13c10822ada9e8c6198f6043d2933b8",
+  "retained_falsified_local_mechanism": {
+    "first_lifted_gonol": 2881,
+    "first_local_state": 39,
+    "first_output_state": 720,
+    "first_relation_constraint_rank": 21,
+    "producer_path": "research/ucns/event_pair_quotient_candidate.py",
+    "producer_sha256": "42289230971ec3d47081b22254d19a1cf26b12537b3ed0f241702ec3057b71bc",
+    "receipt_sha256": "330581ff3edbb3b3b99021e9c026e585dc4619c0ae60e9f1d1425c350c834482",
+    "standing": "useful falsified local mechanism, not recursive law",
+    "status": "FALSIFIED",
+    "unchanged_second_lifted_gonol": 1035277,
+    "unchanged_second_output_state": 258819
+  },
+  "schema_id": "the-interdependency.stack-research.ucns.squarefree-divisor-lattice-control",
+  "schema_version": "0.1.0",
+  "selection_effect": "none",
+  "source": {
+    "authority": "The-Interdependency/ucns",
+    "frozen_mechanics": [
+      {
+        "code_sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3",
+        "mechanic_id": "mechanic_1_public_gonol_functional_operations",
+        "module_path": "research/ucns/public_gonol_functional_operations.py",
+        "producer_code_reference": "sha256:bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3",
+        "receipt_sha256": "351d91a1d27f9b29b4222325df0a359682c9c8dd0903fdfef8d4f73c13074194"
+      },
+      {
+        "code_sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a",
+        "mechanic_id": "mechanic_2_affinization_coupling_geometry",
+        "module_path": "research/ucns/affinization_coupling_geometry.py",
+        "producer_code_reference": "sha256:65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a",
+        "receipt_sha256": "a59d291b77c0110ffc0c401dcc94d25ad63a3372c51eab26989a5b6acf9ff68d"
+      },
+      {
+        "code_sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1",
+        "mechanic_id": "mechanic_3_recursive_scale_transition",
+        "module_path": "research/ucns/recursive_scale_transition.py",
+        "producer_code_reference": "sha256:882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1",
+        "receipt_sha256": "3297ced3efb9c127a01337d479ce8382b771ea9d2ab66faa7e79a0ec2a197496"
+      }
+    ],
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "stack-manifest.json",
+        "sha256": "f6c9cffce8b3bddefb298d1f3cc0224559de1df4d86fc28e358222dd4a35dd7d"
+      },
+      {
+        "path": "libs/ucns/CANON.md",
+        "sha256": "bf675898b95cf393ffc8f6c16d5f42ccf1d323990556ce624d94f3c98507c487"
+      },
+      {
+        "path": "libs/ucns/docs/GEOMETRY.md",
+        "sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e"
+      },
+      {
+        "path": "libs/ucns/src/ucns/carrier.py",
+        "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+      },
+      {
+        "path": "libs/ucns/src/ucns/public_gonol.py",
+        "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+      },
+      {
+        "path": "libs/ucns/src/ucns/prime_primitives.py",
+        "sha256": "aba49af233d17e7663caad40b7faa0d73bf524cdd21f09b52ed07607f72d30cb"
+      },
+      {
+        "path": "research/ucns/public_gonol_functional_operations.py",
+        "sha256": "bf81a18b9074ce10232e73afa42d23690f4172c9b60b0284a986abbf5738a1d3"
+      },
+      {
+        "path": "research/ucns/affinization_coupling_geometry.py",
+        "sha256": "65c5bbee87fa1a5cb9119c19a8e186b62827e55a91b17c4111aa06b8df0ce21a"
+      },
+      {
+        "path": "research/ucns/recursive_scale_transition.py",
+        "sha256": "882b2defbc88c686011a3c66d1e7d080adc9623b219a91a4253c0378b69292f1"
+      },
+      {
+        "path": "research/ucns/composed_successor_constructor.py",
+        "sha256": "05330f604f81402c3fa12e17f1c9d9c23f1510a9304b8c15631e13cf3fb3d2ce"
+      },
+      {
+        "path": "research/ucns/event_pair_quotient_candidate.py",
+        "sha256": "42289230971ec3d47081b22254d19a1cf26b12537b3ed0f241702ec3057b71bc"
+      }
+    ],
+    "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
+  },
+  "standing": "PREREGISTERED_STRUCTURAL_CONTROL",
+  "structural_control": {
+    "basis": "post-observation structural extrapolation from exact B_1 -> B_2 -> B_3 divisor lattices",
+    "divisor_lattice": "B_4",
+    "mobius_mu": 1,
+    "numerical_value": null,
+    "observation_index": 4,
+    "omega": 4,
+    "squarefree": true,
+    "standing": "PREREGISTERED_STRUCTURAL_CONTROL",
+    "tau": 16
+  },
+  "theorem_used": {
+    "scope": "elementary integer arithmetic only; no UCNS geometric interpretation is transferred",
+    "statement": "the positive divisors of a squarefree integer with k distinct prime factors form a Boolean lattice B_k under divisibility",
+    "witness": "subset masks map bijectively to products of selected distinct prime factors"
+  }
+}

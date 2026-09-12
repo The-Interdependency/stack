@@ -1,0 +1,49 @@
+{
+  "constructor": {
+    "constructor_id": "edcm.gonol",
+    "constructor_version": "v1",
+    "pinned_public_gonol_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+  },
+  "corpus": {
+    "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+    "lexeme_count": 135969,
+    "relation_count": 244727,
+    "repository": "globalwordnet/english-wordnet",
+    "sense_count": 185129,
+    "source_file_count": 73,
+    "source_tree_sha256": "3a46546a1ffbb4aed98990535ad5155c69be12ad09fdf093701b257d2a3e468f",
+    "synset_count": 107519,
+    "tag": "2025-edition"
+  },
+  "counts": {
+    "affixiation_records": 185155,
+    "definition_gonols": 185155,
+    "lemma_compositions": 53060,
+    "multiword_surfaces": 52913,
+    "single_token_surfaces": 122520,
+    "word_gonols": 122520
+  },
+  "hmmm": [
+    "exact UCNS orthogonal-affixiation geometry remains unresolved",
+    "affixiation records expose the unresolved geometry boundary without a substitute",
+    "emergent-relationship analysis is deferred until after construction"
+  ],
+  "nonclaims": [
+    "no orthogonal affixiation geometry is invented",
+    "no carrier or bucket placement exists in this run",
+    "not UCNS geometry canon",
+    "not an English lexical truth claim",
+    "not a measurement of semantic quality"
+  ],
+  "records_file": "records.jsonl",
+  "records_sha256": "0eb37abb8975a1896bb80dfa02cb11b736cc352a798ee147263560113eb9ee9a",
+  "replay_digest": "a67ed0a1af86710fa880a6b5b6eae0ba3861a22bcd7b12076996dde6cf3bd729",
+  "schema": "english-gonol.oewn-orthogonal-affixiation",
+  "ucns": {
+    "orthogonal_affixiation_geometry": "hmmm",
+    "orthogonal_affixiation_reason": "exact UCNS orthogonal-affixiation geometry is unresolved; no substitute placement or invented orthogonal axis is implemented",
+    "ucns_relational_commit": "d7c6f51304ed6c32d48badf63132bea6de8af497",
+    "ucns_relational_module_sha256": "b839d29c79b43d29faf6f5d9a39b7a1485f39a0f071b525fd1848cf18f061cdd"
+  },
+  "version": "0.1.0"
+}

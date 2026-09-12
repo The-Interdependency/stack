@@ -1,0 +1,655 @@
+{
+  "audit": {
+    "certificate_fields": [
+      {
+        "candidate_artifact_ids": [
+          "pinned_public_gonol",
+          "pinned_direct_mobius",
+          "merged_public_gonol_contract",
+          "merged_public_gonol_formal",
+          "merged_public_gonol_lifted_text_path",
+          "merged_v015_partial_attachment",
+          "merged_v017_source_bound_initiation",
+          "p5_p7_marked_link_preregistration",
+          "old_twist_seam_specification",
+          "a0_source_architecture_foundation",
+          "a0_source_lifted_text_path",
+          "a0_lifted_path_scope_correction",
+          "a0_reset_boundary"
+        ],
+        "field": "origin_attachment",
+        "promotion_requirement": "an authoritative map from Public Gonol or Structural Null origin into the recursive based path object",
+        "qualifying_artifact_ids": [],
+        "reason": "an intrinsic carrier origin exists, but no audited source defines its geometric morphism to one recursive return-groupoid object",
+        "status": "UNRESOLVED_NO_QUALIFYING_GEOMETRIC_SOURCE"
+      },
+      {
+        "candidate_artifact_ids": [
+          "pinned_direct_mobius",
+          "pinned_directed_carrier",
+          "merged_public_gonol_contract",
+          "merged_public_gonol_formal",
+          "merged_public_gonol_faces",
+          "merged_public_gonol_lifted_text_path",
+          "p5_p7_marked_link_preregistration",
+          "old_twist_seam_specification",
+          "a0_source_architecture_foundation",
+          "a0_source_faces",
+          "a0_source_lifted_text_path",
+          "a0_lifted_path_scope_correction",
+          "a0_faces_scope_correction"
+        ],
+        "field": "directed_tangent_or_chirality",
+        "promotion_requirement": "a direction or chirality transported intrinsically through the origin attachment",
+        "qualifying_artifact_ids": [],
+        "reason": "local signs and frame labels exist, but they are caller selected or reflection symmetric before an attachment",
+        "status": "UNRESOLVED_NO_QUALIFYING_GEOMETRIC_SOURCE"
+      },
+      {
+        "candidate_artifact_ids": [
+          "merged_public_gonol_lifted_text_path",
+          "merged_generic_recursive_traversal",
+          "post_pinned_seed_construction",
+          "a0_source_lifted_text_path",
+          "a0_lifted_path_scope_correction"
+        ],
+        "field": "rotation_system",
+        "promotion_requirement": "an oriented cyclic order on all incident recursive return germs derived from geometric incidence",
+        "qualifying_artifact_ids": [],
+        "reason": "no audited source defines cyclic incidence among recursive return germs; available orders are source or caller orders",
+        "status": "UNRESOLVED_NO_QUALIFYING_GEOMETRIC_SOURCE"
+      },
+      {
+        "candidate_artifact_ids": [
+          "post_pinned_seed_construction",
+          "p5_p7_marked_link_preregistration"
+        ],
+        "field": "marked_outgoing_dart",
+        "promotion_requirement": "one intrinsic marked outgoing germ that fixes the start within the rotation system",
+        "qualifying_artifact_ids": [],
+        "reason": "no audited source geometrically marks one recursive outgoing germ; partial seams and unrelated link marks do not do so",
+        "status": "UNRESOLVED_NO_QUALIFYING_GEOMETRIC_SOURCE"
+      },
+      {
+        "candidate_artifact_ids": [
+          "pinned_direct_mobius",
+          "pinned_directed_carrier",
+          "merged_public_gonol_contract",
+          "merged_public_gonol_formal",
+          "merged_generic_recursive_traversal",
+          "merged_v017_source_bound_initiation",
+          "p5_p7_marked_link_preregistration",
+          "a0_source_architecture_foundation"
+        ],
+        "field": "closure_rule",
+        "promotion_requirement": "a deterministic recursive complete-return closure over the selected based oriented traversal",
+        "qualifying_artifact_ids": [],
+        "reason": "local two-turn return exists, but no audited source closes a selected multi-generator traversal as an attaching or monodromy word",
+        "status": "UNRESOLVED_NO_QUALIFYING_GEOMETRIC_SOURCE"
+      }
+    ],
+    "constructor_certificate": {
+      "closure_rule": null,
+      "directed_tangent_or_chirality": null,
+      "marked_outgoing_dart": null,
+      "origin_attachment": null,
+      "rotation_system": null
+    },
+    "constructor_outputs": {
+      "arithmetic_readout": null,
+      "fourth_gonol": null,
+      "geometry_selected_traversal_word": null,
+      "monodromy": null,
+      "successor": null
+    },
+    "constructor_status": "STOP_NO_GEOMETRY_SELECTED_BASED_TRAVERSAL",
+    "history_status": "NO_AUTHORITATIVE_CERTIFICATE_SOURCE_FOUND_IN_AUDITED_PROVENANCE",
+    "pcea_interpolation_control": {
+      "comparison_performed": false,
+      "falsified": null,
+      "prediction": 164513086777,
+      "reason": "no independent UCNS constructor emitted a comparison value",
+      "status": "UNRESOLVED",
+      "survived": null
+    }
+  },
+  "evidence_artifacts": [
+    {
+      "artifact_id": "pinned_public_gonol",
+      "authority_standing": "pinned-authority",
+      "blob_oid": "c1955e46e2dc918fb657cb346e42106d71937e91",
+      "candidate_fields": [
+        "origin_attachment"
+      ],
+      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "commit_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+      "content_sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
+      "disqualifier": "defines no operation attaching the carrier origin to a recursive relation-groupoid object",
+      "observed_capability": "fixes the exact ordered 157-position carrier and position-zero origin",
+      "path": "src/ucns/public_gonol.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "pinned_direct_mobius",
+      "authority_standing": "pinned-authority",
+      "blob_oid": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "closure_rule"
+      ],
+      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "commit_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+      "content_sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+      "disqualifier": "explicitly leaves attachment to full gonol constructions unresolved and does not select displacement sign or a multi-generator closure",
+      "observed_capability": "fixes carrier position zero, two frame labels, signed caller displacement, and local two-turn return",
+      "path": "src/ucns/direct_mobius.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "pinned_directed_carrier",
+      "authority_standing": "pinned-authority",
+      "blob_oid": "7f39c03a6794bddffe5b1be808e2117dc48fb26f",
+      "candidate_fields": [
+        "directed_tangent_or_chirality",
+        "closure_rule"
+      ],
+      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "commit_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+      "content_sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+      "disqualifier": "the contract explicitly forbids inferring chirality or frame inversion and supplies no recursive attachment",
+      "observed_capability": "defines a coordinate-free Structural Null and directed 4-pi local cover",
+      "path": "src/ucns/carrier.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "pinned_geometry_boundary",
+      "authority_standing": "pinned-authority",
+      "blob_oid": "81ac41bf9f9edd0a2cbdc7d921ca00891f1921c2",
+      "candidate_fields": [],
+      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "commit_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+      "content_sha256": "5350ebeec5b909957d9a5c40b6d938744ef2e1c23eac46d8dbc0c49e5998a13e",
+      "disqualifier": "states that historical existence is not current authority and excludes generic nongeometric traversal frameworks",
+      "observed_capability": "defines what may count as current UCNS geometric authority",
+      "path": "docs/GEOMETRY.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_public_gonol_contract",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "6521f866cc739e2e416cc36e03a3f85265d50a7c",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "closure_rule"
+      ],
+      "commit": "23c32d90ce78f9b9da37308e098df30448c9df15",
+      "commit_tree": "8ad0fd0e1bda92141856d34529a4edbf36b5a77f",
+      "content_sha256": "b4c211e279e74e50944aefdfb2b680ebf68e5a588e9e7aab2ebb5f716a1c1912",
+      "disqualifier": "explicitly says the bridge into another UCNS representation is future work and must not be invented",
+      "observed_capability": "documents fixed origin, local orientation flip, and 720-degree carrier return",
+      "path": "docs/public-gonol.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_public_gonol_formal",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "e2fa9997b7fde5d03f53f69244f6b11a71853075",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "closure_rule"
+      ],
+      "commit": "23c32d90ce78f9b9da37308e098df30448c9df15",
+      "commit_tree": "8ad0fd0e1bda92141856d34529a4edbf36b5a77f",
+      "content_sha256": "1c929a0ca5c6fbc9ed116067d52a5c180a8ce200a7068b6741909e7d2828adcd",
+      "disqualifier": "explicitly does not map public vertices into recursive factorization values and leaves that bridge hmmm",
+      "observed_capability": "formalizes position-zero origin and local one- and two-circuit frame behavior",
+      "path": "formal/Ucns/PublicGonol.lean",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_public_gonol_faces",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "1d90b10161c7df1a75ea92df37dfeb5e9531ce27",
+      "candidate_fields": [
+        "directed_tangent_or_chirality"
+      ],
+      "commit": "038b96b5899650449db067cbd2b30ade96f0bef0",
+      "commit_tree": "c563579924437c3aa2f67ed2db1b58290b6b8502",
+      "content_sha256": "455e29d9d519b0d3f76204e0939e17f08d3417205bcc3c70aece78c152caad8f",
+      "disqualifier": "direction is a required caller argument and both signs are exported; geometry selects neither",
+      "observed_capability": "provides clockwise and counterclockwise neighbor operations",
+      "path": "ucns/public_gonol_faces.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_public_gonol_lifted_text_path",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "c6a817a917c06674b9244f2d04afb3c689149aea",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "rotation_system"
+      ],
+      "commit": "fd95f23daaf1301d4f4dbc24e8794f1d72b55bc1",
+      "commit_tree": "4d6abc4fcf3ec447344ca4d01a1bcac45d4a07f7",
+      "content_sha256": "0e42060a76607ef6d5eae087285a2057fdc941fa9833fe0a53a8483216808334",
+      "disqualifier": "it is a lossless text codec over source order, not a traversal of recursive relation germs",
+      "observed_capability": "starts at the carrier origin and advances positively through caller text order",
+      "path": "ucns/public_gonol_lifted_path.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_generic_recursive_traversal",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "690de4273b0a3af796d23758d700b8795dc748f6",
+      "candidate_fields": [
+        "rotation_system",
+        "closure_rule"
+      ],
+      "commit": "35e54e744365f49ab16c7f1370dc4570c46c5d53",
+      "commit_tree": "3371fe07b02c1f999cdd0321f6c399111441dbfb",
+      "content_sha256": "84a1144997fe86a387a9fbfd34051ad2cecf9fd9710faac5dbd677c9c875c3bd",
+      "disqualifier": "caller child enumeration and policy determine order and closure behavior; canonical recursive semantics are unresolved",
+      "observed_capability": "implements cycle-safe recursion under explicit identity, child, policy, and budget inputs",
+      "path": "src/ucns/traversal.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_v015_partial_attachment",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "aa542f47a3c3b7d7494be2ccf6ae5db69f146cf8",
+      "candidate_fields": [
+        "origin_attachment"
+      ],
+      "commit": "31249681e0c66e8ce269d7b7aff30bd5dde9487e",
+      "commit_tree": "7346b8870e37869a3cd562b0c8f39f17cc44116a",
+      "content_sha256": "e2e5245e706dfa05a4d7fe9d99e763b1838b5cae680387391319017244d5c9fc",
+      "disqualifier": "the evidence is nonselecting, excludes a total Structural Null relation, and leaves marked-versus-intrinsic seam choice unresolved",
+      "observed_capability": "records source-bound partial root attachments at a marked initiation seam",
+      "path": "docs/FULL_CARRIER_ATTACHMENT_EVIDENCE_V015.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "merged_v017_source_bound_initiation",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "eda4ebeb9b3af53e27dc22be464a60bce874937c",
+      "candidate_fields": [
+        "origin_attachment",
+        "closure_rule"
+      ],
+      "commit": "7b126e82fae01a25350e7f88beef4d258e0633e0",
+      "commit_tree": "67a3b3a3463ed857f94bb91e16df9a4c2b0d4def",
+      "content_sha256": "c8db3c390de65fc88db649f0d790b77aef9c85067900ddae5d828e26ffac767f",
+      "disqualifier": "no geometric position is assigned, selection effect is none, and higher-gonol composition remains unresolved",
+      "observed_capability": "records one source-bound twist receipt and bounded root-loop return",
+      "path": "docs/GONOL_INITIATION_STRUCTURAL_NULL_V017.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "geometry_only_purge_receipt",
+      "authority_standing": "merged-current-authority-boundary",
+      "blob_oid": "30a1e48fa517ec492e5a49c84f69baa73e39eb0d",
+      "candidate_fields": [],
+      "commit": "9985835bda9a84b71c8f14367d01988c314ab870",
+      "commit_tree": "dc5cb7812dffe97a53d5622d8a5425ee6df65100",
+      "content_sha256": "5ff4fe5c86539c66749090cdbe0ac53c4885a9bdbe6b1856df0d14cda69037ed",
+      "disqualifier": "mixed wrappers do not retain active standing merely because they contain geometric calculations",
+      "observed_capability": "records the geometry-only purge and preserves Git history as recovery mechanism",
+      "path": "docs/GEOMETRY_PURGE_RECEIPT.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "post_pinned_seed_construction",
+      "authority_standing": "post-pinned-not-audit-authority",
+      "blob_oid": "193fb7a27d9a827a7eeec0ae4a2e79aae7f5285d",
+      "candidate_fields": [
+        "rotation_system",
+        "marked_outgoing_dart"
+      ],
+      "commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "commit_tree": "07d1103d8678942efb25363605b4266933cab6ca",
+      "content_sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36",
+      "disqualifier": "all six ring slots are initially buildable, returned ordering is implementation sorting, and selection effect is none",
+      "observed_capability": "starts at the center and derives currently buildable slots from seed relations",
+      "path": "src/ucns/mobius_seed_construction.py",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "p5_p7_marked_link_preregistration",
+      "authority_standing": "post-pinned-separate-experiment",
+      "blob_oid": "dd661782b8add5933bb12f5232e9836c1c916dbc",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "marked_outgoing_dart",
+        "closure_rule"
+      ],
+      "commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "commit_tree": "07d1103d8678942efb25363605b4266933cab6ca",
+      "content_sha256": "ffaecb935e8086200fa9a27c5d55ba6e759721107d8c4979049eed760eae8aee",
+      "disqualifier": "the marks are scoped to P5/P7 ribbon/link presentations and no artifact maps them to Public Gonol recursive return generators",
+      "observed_capability": "uses fixed link basepoints and marked meridian-longitude data in a prime-link experiment",
+      "path": "docs/PREREGISTRATION_P7_P5_NILPOTENT_DISCRIMINATOR.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "old_twist_seam_specification",
+      "authority_standing": "merged-history-superseded-by-current-boundary",
+      "blob_oid": "bef3616bdd12018ccd75d47becbad808a4091c16",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality"
+      ],
+      "commit": "f69fc13621dcb95227a5faeebb8c983651a3bda2",
+      "commit_tree": "1b2bfd430bac5f093abd15c8bab69b5fe7aca994",
+      "content_sha256": "c8374d4ac36434c0df05385cd6105f93e3f8295549a1edd661c665f27ffef998",
+      "disqualifier": "the same specification says the seam has no orientation to carry a path forward and it predates later boundary corrections",
+      "observed_capability": "calls the twist seam the beginning",
+      "path": "ucns-spec.md",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    },
+    {
+      "artifact_id": "a0_source_architecture_foundation",
+      "authority_standing": "exact-upstream-source-provenance",
+      "blob_oid": "d7d22cc771ee6cb10cfe54b16033d1ea51851c9c",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "closure_rule"
+      ],
+      "commit": "7af8debf6ef3905f01baff02b43d8c3bee16ccbc",
+      "commit_tree": "fd53c96ddb57dbabce9386593232c3961c49fc6f",
+      "content_sha256": "f46518f47405a8433f7e093cc91e99f319f77e02b14738fa2b3472a0804de5eb",
+      "disqualifier": "defines no map from source carrier or text traversal into recursive relation-groupoid generators",
+      "observed_capability": "records position-zero SPACE/ZERO origin and the source lifted-path model",
+      "path": "memory/ARCHITECTURE_FOUNDATION.md",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    },
+    {
+      "artifact_id": "a0_source_faces",
+      "authority_standing": "exact-upstream-source-provenance",
+      "blob_oid": "0246f1033154e5a8b41f68fb592087051b02fc77",
+      "candidate_fields": [
+        "directed_tangent_or_chirality"
+      ],
+      "commit": "7af8debf6ef3905f01baff02b43d8c3bee16ccbc",
+      "commit_tree": "fd53c96ddb57dbabce9386593232c3961c49fc6f",
+      "content_sha256": "14356d5b32de0b51a3201b08dc57befdf7ac45b09c07357c4f41e069b5696261",
+      "disqualifier": "direction is caller supplied and no operation selects one sign",
+      "observed_capability": "defines both directional neighbor operations",
+      "path": "backend/interdependent_lib/gonal/faces.py",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    },
+    {
+      "artifact_id": "a0_source_lifted_text_path",
+      "authority_standing": "exact-upstream-source-provenance",
+      "blob_oid": "190f80084a0bb36ce38a1fe774e95e397c803f1f",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "rotation_system"
+      ],
+      "commit": "7af8debf6ef3905f01baff02b43d8c3bee16ccbc",
+      "commit_tree": "fd53c96ddb57dbabce9386593232c3961c49fc6f",
+      "content_sha256": "ddf0c04f1292567cd1bf30fd47fafe67d6c1e50be774cc200f1681771a03b871",
+      "disqualifier": "caller text order selects targets; it does not order recursive relation germs",
+      "observed_capability": "walks source text from origin in positive carrier order",
+      "path": "backend/interdependent_lib/gonal/lifted_path.py",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    },
+    {
+      "artifact_id": "a0_lifted_path_scope_correction",
+      "authority_standing": "later-source-boundary-correction",
+      "blob_oid": "a7f17cf4af9bcc07235d2a39f6171632c60cf42a",
+      "candidate_fields": [
+        "origin_attachment",
+        "directed_tangent_or_chirality",
+        "rotation_system"
+      ],
+      "commit": "1635a2b0768132bf08c3eda6aef337a0719c9173",
+      "commit_tree": "372eef64d3501cd1fa810e31cbbf23c888c45a86",
+      "content_sha256": "af651efea68596b8222b0a8341590e3d4663b896307f7d83370319b1e7a617f3",
+      "disqualifier": "explicitly scopes it to a text codec and rejects current UCNS double-cover authority",
+      "observed_capability": "retains deterministic source-frame text traversal",
+      "path": "backend/interdependent_lib/gonal/lifted_path.py",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    },
+    {
+      "artifact_id": "a0_faces_scope_correction",
+      "authority_standing": "later-source-boundary-correction",
+      "blob_oid": "0bb1e0b7a7908bf0cbbfb3523dee4bffb25076ab",
+      "candidate_fields": [
+        "directed_tangent_or_chirality"
+      ],
+      "commit": "7fcd7cc0aab604f35b7db6fedf1e719abfb53031",
+      "commit_tree": "7665a92aa70aa6f6be73c8bb180fc97d79a599c5",
+      "content_sha256": "a7aa0b4dd0846a396f06d55c055485cd3764aca163005f6a799d92dce0216266",
+      "disqualifier": "explicitly says these labels are not current lawful seam-crossing parity",
+      "observed_capability": "retains source-frame labels and both adjacency signs",
+      "path": "backend/interdependent_lib/gonal/faces.py",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    },
+    {
+      "artifact_id": "a0_reset_boundary",
+      "authority_standing": "later-source-boundary-correction",
+      "blob_oid": "3bf9b5666c22d24062ac0d96ba8b3ce654c653e5",
+      "candidate_fields": [
+        "origin_attachment"
+      ],
+      "commit": "544301c150e8567d1dbc98bb56d5c96b6d5736db",
+      "commit_tree": "2a78c80fc6b37d6ad102eefd2844b75bf1ff5f7f",
+      "content_sha256": "24db1905a84ab4151ca4e1d66acca85802d074949114804ab31b3b574b0d1984",
+      "disqualifier": "states that lawful projection into the restarted UCNS object remains unresolved",
+      "observed_capability": "preserves the exact 157-glyph source fixture",
+      "path": "memory/UCNS_RESET_BOUNDARY.md",
+      "qualifying_certificate_fields": [],
+      "repository": "a0-betatest"
+    }
+  ],
+  "excluded_candidate_clusters": [
+    {
+      "authority_standing": "reachable-branch-only-not-in-pinned-ancestry",
+      "candidate_capability": "lexical and source-order gonol composition",
+      "cluster_id": "branch_only_lexical_recursive_gonol",
+      "commits": [
+        {
+          "commit": "17a1202bb3645e7daa7de50b66a02139551d9e39",
+          "subject": "Construct the source-native recursive-gonol candidate",
+          "tree": "e53282313bf1ffd6b3fedbdf8021143d67430e98"
+        },
+        {
+          "commit": "568a29da5f834c751d4d81aeb66276a4c9a152be",
+          "subject": "Add a generic affixiate gonol constructor candidate",
+          "tree": "c44d13ba03f2ed845cbd04043886e8f7a7e63710"
+        },
+        {
+          "commit": "9c74fb79cc1750a54b8da444011d24eedc8fdc05",
+          "subject": "Make characters gonols in affixiate construction",
+          "tree": "b16f44c263f55fd9900a21a4e3ee2f19c61a98d7"
+        }
+      ],
+      "disqualifier": "the cluster is not in pinned ancestry, derives composition from lexical/source order rather than intrinsic geometry, and was excluded by the geometry-only boundary",
+      "qualifying_certificate_fields": [],
+      "repository": "ucns"
+    }
+  ],
+  "falsification_conditions": [
+    "an audited authoritative artifact is shown to define a geometric origin-to-recursive-groupoid attachment",
+    "an audited authoritative artifact is shown to select tangent or chirality from geometry rather than caller or source order",
+    "an audited authoritative artifact is shown to define cyclic incidence among recursive return germs",
+    "an audited authoritative artifact is shown to mark one outgoing recursive dart geometrically",
+    "an audited authoritative artifact is shown to close the selected multi-generator return as an attaching or monodromy word",
+    "a cited repository, commit, tree, blob, content digest, ancestry relation, or history-search result does not replay",
+    "the PCEA interpolation control is labeled survived or falsified before an independent constructor is executed"
+  ],
+  "hmmm": [
+    "position zero is an authoritative carrier origin, but no audited source attaches it to the recursive relation-groupoid base object",
+    "clockwise and counterclockwise helpers expose two caller-selected directions; neither is selected by geometry",
+    "the lifted Public Gonol path orders source text, not recursive relation germs",
+    "historical marked seams are source-bound partial receipts and explicitly nonselecting",
+    "generic traversal delegates child enumeration, identity, policy, and budget to its caller",
+    "prime-link basepoints and marked meridians remain scoped to separate P5/P7 experiments with no Public Gonol bridge",
+    "post-pinned seed construction makes every ring slot buildable from the center and declares selection effect none",
+    "the five-field constructor certificate remains absent in the audited reachable provenance"
+  ],
+  "nonclaims": [
+    "not proof that no certificate exists outside the audited local reachable histories",
+    "not proof that deleted unreachable Git objects contain no candidate",
+    "not permission to promote a historical mixed-domain artifact into current UCNS authority",
+    "not a geometry-selected basepoint, orientation, traversal, attaching word, or monodromy",
+    "not an arithmetic readout or numerical gonol constructor",
+    "not a PCEA security, entropy, hardness, authenticity, replay-resistance, or recovery claim"
+  ],
+  "producer_code_reference": "sha256:ec0eb8b37a6daa1e33701d25c306ce2d4420e4b4264487b9d3eaa408ac0f75e1",
+  "promotion_evidence": [
+    "supply the authoritative UCNS commit and exact artifact defining the missing field",
+    "show that the definition is intrinsic geometry and not carrier order, source order, caller order, an API default, an id, or a hash",
+    "map Public Gonol or Structural Null geometry into the recursive relation groupoid explicitly",
+    "preserve basepoint, orientation, cyclic incidence, outgoing mark, and closure through deterministic replay",
+    "rerun the successor experiment only after all five fields are executable"
+  ],
+  "receipt_sha256": "ed08c5315ab7dc6988985455d7226ced9151481883b7b8bbb0050ffc2bbc82e2",
+  "schema_id": "the-interdependency.stack-research.ucns.based-traversal-provenance-history-audit",
+  "schema_version": "0.1.0",
+  "search_boundary": {
+    "committed_reachable_history_only": true,
+    "excluded_path_classes": "non-source/spec paths such as raw conversation exports and generated UI data; the executable search is restricted to Python, Markdown, and Lean",
+    "network_used": false,
+    "repository_snapshots": [
+      {
+        "all_local_refs": {
+          "count": 225,
+          "name_and_object_set_sha256": "7db1f42da92c14b0cc26f95bb9f0a18453a00754c004be02442dd041f53ec115",
+          "unique_tip_count": 188,
+          "unique_tip_set_sha256": "9bd507bceb6dd3ee5c4f9ce741c64a112d1884996dae07cdec36226b74af62a1"
+        },
+        "anchor_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+        "anchor_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+        "head_commit": "52ce6839c3f884d01a3cf561ae96fd2ef4c35ab8",
+        "history_search": {
+          "exact_certificate_terms": [
+            "rotation system",
+            "outgoing dart",
+            "marked outgoing",
+            "basepoint attachment",
+            "origin attachment",
+            "attaching word",
+            "canonical basepoint",
+            "canonical traversal",
+            "geometry-selected",
+            "selected traversal"
+          ],
+          "exact_term_match_count": 0,
+          "exact_term_match_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pathspecs": [
+            "*.py",
+            "*.md",
+            "*.lean"
+          ],
+          "scope": "all local refs, root diffs included, committed Python/Markdown/Lean source and specification paths only",
+          "semantic_candidate_count": 283,
+          "semantic_candidate_regex": "origin|basepoint|attachment|tangent|chirality|rotation system|outgoing dart|traversal|attaching word|closure rule|monodromy",
+          "semantic_candidate_set_sha256": "549b3953f290b9ff8c6482625fb1823e485db14e0714bca6e3948cc7fd272cc0"
+        },
+        "origin_main_commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+        "remote_url": "https://github.com/The-Interdependency/ucns.git",
+        "repository": "ucns",
+        "unique_reachable_commit_count": 1128
+      },
+      {
+        "all_local_refs": {
+          "count": 18,
+          "name_and_object_set_sha256": "4eb447e000c3ff129c3599210f8e305a947292e19da95108c6cca11d2b31413c",
+          "unique_tip_count": 15,
+          "unique_tip_set_sha256": "dab518bfa3271bc4905a4dd07cb45778a8b82adce53fe71f4a17e0e5ff9d0d0c"
+        },
+        "anchor_commit": "7af8debf6ef3905f01baff02b43d8c3bee16ccbc",
+        "anchor_tree": "fd53c96ddb57dbabce9386593232c3961c49fc6f",
+        "head_commit": "11cda399f510b2bb3b0ba0a717b379a777200b88",
+        "history_search": {
+          "exact_certificate_terms": [
+            "rotation system",
+            "outgoing dart",
+            "marked outgoing",
+            "basepoint attachment",
+            "origin attachment",
+            "attaching word",
+            "canonical basepoint",
+            "canonical traversal",
+            "geometry-selected",
+            "selected traversal"
+          ],
+          "exact_term_match_count": 0,
+          "exact_term_match_set_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "pathspecs": [
+            "*.py",
+            "*.md",
+            "*.lean"
+          ],
+          "scope": "all local refs, root diffs included, committed Python/Markdown/Lean source and specification paths only",
+          "semantic_candidate_count": 133,
+          "semantic_candidate_regex": "origin|basepoint|attachment|tangent|chirality|rotation system|outgoing dart|traversal|attaching word|closure rule|monodromy",
+          "semantic_candidate_set_sha256": "4455d6101ea2c709be05785bb89f19b63d2cb6e55f23c980cf04cb3f77a8c406"
+        },
+        "origin_main_commit": "11cda399f510b2bb3b0ba0a717b379a777200b88",
+        "remote_url": "https://github.com/The-Interdependency/a0-betatest.git",
+        "repository": "a0-betatest",
+        "unique_reachable_commit_count": 2032
+      }
+    ],
+    "review_method": "exact certificate-term search plus broad semantic candidate search; high-signal current, merged-history, post-pinned, and exact-source artifacts are bound and manually classified below",
+    "working_trees_searched": false
+  },
+  "selection_effect": "none",
+  "source": {
+    "a0_source_commit": "7af8debf6ef3905f01baff02b43d8c3bee16ccbc",
+    "a0_source_tree": "fd53c96ddb57dbabce9386593232c3961c49fc6f",
+    "authority": "The-Interdependency/ucns",
+    "pinned_ucns_commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "pinned_ucns_tree": "06c2fe6cf2e148d610808c6f00f4a26e85f43d62",
+    "predecessor_audit_receipt": {
+      "formatted_file_sha256": "f331c5a9f2479251c19dd6c77c593724b61b3a3a45c2e14e73f131ff653b368e",
+      "payload_sha256": "4c4f06aae237fd4ce771dc7849738617b0cbc9ab3cc5bd6685ffec84b2921a09",
+      "status": "STOP_NO_GEOMETRY_SELECTED_BASED_TRAVERSAL"
+    },
+    "source_file_digests": [
+      {
+        "path": "research/ucns/BASE.json",
+        "sha256": "0217e64533bcff29705222c563384fb957d671c37ca3ed24ecc437fc990ebed7"
+      },
+      {
+        "path": "research/ucns/geometry_selected_based_traversal_audit.py",
+        "sha256": "f3c8cc74fe209d9849e5aff77647928e0798be64c9040dc57759b4351ba1e684"
+      },
+      {
+        "path": "research/ucns/receipts/geometry-selected-based-traversal-audit-v0.json",
+        "sha256": "f331c5a9f2479251c19dd6c77c593724b61b3a3a45c2e14e73f131ff653b368e"
+      }
+    ],
+    "stack_head": "7e570117c88244e7ca6f2594a9e345f496a67998"
+  },
+  "standing": "stack-local-committed-history-provenance-obstruction-audit"
+}
