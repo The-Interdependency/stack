@@ -70,12 +70,16 @@ research/english-gonol/
 ├── README.md
 ├── english_gonol/
 │   ├── gonol.py                  # unified candidate constructor (identity edcm.gonol)
-│   └── language/                 # English lexical evidence over UCNS carrier
+│   ├── language/                 # English lexical evidence over UCNS carrier
+│   └── orthogonal_carrier_sweep.py  # 1-7 carrier experimental sweep
 ├── tools/build_oewn2025_embeddings.py
 ├── tests/
 ├── docs/
-│   └── GONOL_LANGUAGE_BOUNDARY.md
-└── experiments/lexical/          # frozen lexical-floor run artifacts
+│   ├── GONOL_LANGUAGE_BOUNDARY.md
+│   └── orthogonal-carrier-sweep-v0.md
+└── experiments/
+    ├── lexical/                  # frozen lexical-floor run artifacts
+    └── orthogonal-carrier-sweep-v0.json
 ```
 
 ## Entry points
@@ -105,6 +109,15 @@ python tools/build_oewn2025_embeddings.py \
   --ucns-source-root /path/to/ucns-at-d7c6f51304ed6c32d48badf63132bea6de8af497 \
   --output /path/to/output --acquire --resume
 ```
+
+The orthogonal unit-circle carrier sweep (experimental, meaning-agnostic):
+
+```bash
+python -m english_gonol.orthogonal_carrier_sweep \
+  --out experiments/orthogonal-carrier-sweep-v0.json
+```
+
+See [`docs/orthogonal-carrier-sweep-v0.md`](docs/orthogonal-carrier-sweep-v0.md).
 
 ## Research status
 
