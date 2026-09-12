@@ -1,18 +1,18 @@
 """Public surface for stack-local Python Gonol Construction.
 
 Usage guidance: call ``affixiate_python_bytes`` for a file or
-``affixiate_python_source`` for already-decoded text, then persist or compare
-the returned receipt.  Call ``replay_python_affixiation`` before consuming a
-receipt across a boundary.
+``affixiate_python_source`` for already-decoded text, persist the returned
+receipt, and call ``replay_python_affixiation`` before consuming a receipt
+across a boundary.
 """
 
 # === MODULE_BUILD ===
 # id: python_gonol_public_surface
 #   module_name: python_gonol
 #   module_kind: adapter
-#   summary: exposes the bounded Python 3.12 bottom-up affixiation constructor and immutable receipt types
+#   summary: exposes the bounded Python 3.12 character-first affixiation constructor and immutable receipt types
 #   owner: Python Gonol Construction (stack-local research)
-#   public_surface: affixiate_python_source, affixiate_python_bytes, replay_python_affixiation, reconstruct_source, PythonAffixiationReceipt
+#   public_surface: affixiate_python_source, affixiate_python_bytes, replay_python_affixiation, reconstruct_source, grammar_witness_inventory, PythonAffixiationReceipt
 #   internal_surface: none
 #   auth_boundary: none
 #   storage_boundary: none
@@ -35,6 +35,7 @@ from .affixiation import (
     PythonGonolConstructionError,
     affixiate_python_bytes,
     affixiate_python_source,
+    grammar_witness_inventory,
     reconstruct_source,
     replay_python_affixiation,
 )
@@ -59,6 +60,7 @@ __all__ = [
     "SourceSpan",
     "affixiate_python_bytes",
     "affixiate_python_source",
+    "grammar_witness_inventory",
     "reconstruct_source",
     "replay_python_affixiation",
 ]
