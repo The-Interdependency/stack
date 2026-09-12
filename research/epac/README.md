@@ -2,7 +2,7 @@
 
 The active implementation is owned by [The-Interdependency/epac](https://github.com/The-Interdependency/epac).
 Stack has reconsumed its immutable MPL-2.0 `v0.1.0` release and retired the 37
-forge Python implementation/test files. Final transition evidence is recorded
+forge Python implementation/test files. The completed scoped authority-transition receipt is recorded
 under [`integration/epac/`](../../integration/epac/).
 
 This directory preserves historical documents, data, SVGs and receipts from

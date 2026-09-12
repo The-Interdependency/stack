@@ -27,7 +27,6 @@ stack/
 │   ├── edcm/
 │   ├── pcea/
 │   ├── ptcna/
-│   ├── epac/                # unpopulated; EPAC is consumed as a release artifact
 │   └── skill-lib/           # reserved; root skill-lib/ remains the operational special case
 ├── research/                # stack-local work; never source authority by location
 │   ├── metapat/             # current METAPAT research + BASE.json
@@ -107,8 +106,9 @@ separated from EDCM but not independently graduated.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
-`research/epac/` preserves historical evidence. The final scoped authority receipt
-follows the clean retired-source consumer check in `integration/epac/`.
+`research/epac/` preserves historical evidence. EPAC is graduated: implementation and public-contract authority belong to the
+independent repository, as recorded in
+[`integration/epac/authority-transition.json`](integration/epac/authority-transition.json).
 
 ```bash
 python3 integration/epac/reconsume.py \

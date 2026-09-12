@@ -88,7 +88,7 @@ def main() -> None:
             if name.is_absolute() or ".." in name.parts or not (member.isfile() or member.isdir()) or member.name in seen:
                 raise ValueError("unsafe source archive")
             seen.add(member.name)
-        archive.extractall(source)
+        archive.extractall(source, filter="data")
     roots = list(source.iterdir())
     if len(roots) != 1 or not roots[0].is_dir():
         raise ValueError("source archive root mismatch")

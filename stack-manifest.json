@@ -4,8 +4,7 @@
     "authority_transfer": false,
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
-      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
-      "EPAC public release and reconsumption passed; clean retired-source verification and the final scoped transition receipt remain pending"
+      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ],
     "measurement_status_transfer": false,
     "proof_status_transfer": false,
@@ -49,9 +48,9 @@
       "repository": "The-Interdependency/ptcna"
     },
     {
-      "authority": "independent released EPAC repository; final implementation/public-contract authority receipt pending",
+      "authority": "independent implementation and public-contract authority for EPAC",
       "commit": "949cb1cb304927942966c9fb396caf6227120e7f",
-      "lifecycle": "released-and-reconsumed",
+      "lifecycle": "graduated",
       "relation": "immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated",
       "release": {
         "lock": "integration/epac/release-lock.json",
@@ -60,6 +59,7 @@
         "url": "https://github.com/The-Interdependency/epac/releases/tag/v0.1.0"
       },
       "repository": "The-Interdependency/epac",
+      "transition_receipt": "integration/epac/authority-transition.json",
       "upstream": {
         "authority_transfer": false,
         "commit": "6eea1828a34ed8ec99879f8090ea5d48352d8c2d",
@@ -161,5 +161,5 @@
   ],
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "23309848ffbcee5775a07f0a517c5658e04a40d5e76f793e5fee6c02caffad58"
+  "work_graph_sha256": "29e1808cf8c0c6507b9d6509f27d23b1174c21b94033711e05701aed08f56e35"
 }

@@ -299,7 +299,13 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
     epac = next((r for r in manifest.get("repositories", [])
                  if r.get("repository") == "The-Interdependency/epac"), {})
     receipt_path = ROOT / "integration/epac/authority-transition.json"
-    if epac.get("lifecycle") != "graduated" and not receipt_path.exists():
+    has_transition = (
+        epac.get("lifecycle") in {"released-and-reconsumed", "graduated"}
+        or "release" in epac
+        or receipt_path.exists()
+        or epac.get("authority") == "independent implementation and public-contract authority for EPAC"
+    )
+    if not has_transition:
         return
 
     def require(condition: bool, message: str) -> None:

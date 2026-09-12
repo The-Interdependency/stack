@@ -5,6 +5,18 @@ not establish empirical validity or change the 14 retained FALSIFIED results, in
 The independent repository's license and distribution rights must be resolved
 before a candidate qualifies for stable publication.
 
+## Accepted release
+
+EPAC v0.1.0 has graduated. The independent repository owns EPAC implementation
+and public contracts; Stack consumes its immutable public artifacts.
+[`authority-transition.json`](authority-transition.json) binds the before/after
+work graphs, public release, all six 209-test installs, pre-publication and public
+Stack checks, source retirement and explicit non-transfer boundaries.
+
+The source archive retains the qualification-time graduation record. The
+subsequent lifecycle receipt records the completed event without rewriting the
+immutable release bytes.
+
 ## Before publication
 
 Build a clean, licensed candidate in the owning EPAC repository with
@@ -30,6 +42,11 @@ A failure requires a repaired candidate and new verification before
 stable publication.
 
 ## Public reconsumption
+
+Use a clean Git checkout with `uv==0.11.18` on PATH. Run the launcher with
+Python 3.12 (or a patched interpreter providing `tarfile.data_filter`); the
+selected package runtime is a separate argument. The launcher clears inherited
+Python import paths and user-site imports for its child environments.
 
 After publishing those verified bytes, record a release lock with:
 
