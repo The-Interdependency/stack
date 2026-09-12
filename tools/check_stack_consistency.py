@@ -2,10 +2,10 @@
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
 #   module_kind: verification-tool
-#   summary: fail-closed structural consistency checks across stack manifests, research bases, authority projections, and work-graph identity
+#   summary: fail-closed structural consistency checks across stack manifests, research bases, authority projections, work-graph identity, and vendored-skill provenance
 #   owner: The-Interdependency/stack
 #   public_surface: command-line exit status and human-readable findings
-#   internal_surface: manifest digest, repository/base cross-checks, separated-component checks
+#   internal_surface: manifest digest, repository/base cross-checks, separated-component checks, vendored-skill provenance
 #   auth_boundary: none
 #   storage_boundary: read-only repository files
 #   network_boundary: none
@@ -43,6 +43,12 @@
 #   then: the project has an explicit research_participants record and the former source owner does not retain a known superseded authority claim
 #   class: boundary
 #   since: 2026-09-12
+#
+# id: vendored_stack_skill_has_exact_source_identity
+#   given: stack vendors .agents/skills/stack-update/SKILL.md
+#   then: provenance pins an immutable skill-lib commit and source blob, authority_transfer is false, and the local Git blob identity matches the declared source blob
+#   class: boundary
+#   since: 2026-09-12
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -71,6 +77,9 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "stack-manifest.json"
 HUMAN_MANIFEST_PATH = ROOT / "STACK_MANIFEST.md"
 README_PATH = ROOT / "README.md"
+SKILLS_README_PATH = ROOT / ".agents" / "skills" / "README.md"
+STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.md"
+STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
@@ -83,6 +92,11 @@ def manifest_digest(manifest: dict[str, Any]) -> str:
     payload = {key: manifest[key] for key in HASHED_FIELDS}
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def git_blob_sha(data: bytes) -> str:
+    header = f"blob {len(data)}\0".encode("ascii")
+    return hashlib.sha1(header + data).hexdigest()
 
 
 def error(findings: list[str], code: str, message: str) -> None:
@@ -229,6 +243,53 @@ def check_english_gonol_regression(
             error(findings, "english_gonol.projection_missing", f"{surface_name} does not expose English Gonol's separated workspace")
 
 
+def check_stack_update_skill_provenance(findings: list[str]) -> None:
+    if not STACK_UPDATE_SKILL_PATH.exists():
+        error(findings, "skill.missing", "vendored stack-update/SKILL.md is missing")
+        return
+    if not STACK_UPDATE_PROVENANCE_PATH.exists():
+        error(findings, "skill.provenance_missing", "vendored stack-update skill has no PROVENANCE.json")
+        return
+
+    try:
+        provenance = load_json(STACK_UPDATE_PROVENANCE_PATH)
+    except (OSError, json.JSONDecodeError) as exc:
+        error(findings, "skill.provenance_invalid", f"cannot read stack-update provenance: {exc}")
+        return
+
+    expected_values = {
+        "schema": "the-interdependency.vendored-skill-provenance",
+        "version": "1.0.0",
+        "skill": "stack-update",
+        "source_repository": "The-Interdependency/skill-lib",
+        "source_path": "stack-update/SKILL.md",
+    }
+    for field, expected in expected_values.items():
+        if provenance.get(field) != expected:
+            error(findings, "skill.provenance_field", f"{field} must be {expected!r}, got {provenance.get(field)!r}")
+
+    source_commit = str(provenance.get("source_commit", ""))
+    source_blob_sha = str(provenance.get("source_blob_sha", ""))
+    if not HEX40.fullmatch(source_commit):
+        error(findings, "skill.source_commit", f"invalid source_commit {source_commit!r}")
+    if not HEX40.fullmatch(source_blob_sha):
+        error(findings, "skill.source_blob", f"invalid source_blob_sha {source_blob_sha!r}")
+    if provenance.get("authority_transfer") is not False:
+        error(findings, "skill.authority_transfer", "vendored stack-update must keep authority_transfer=false")
+
+    actual_blob_sha = git_blob_sha(STACK_UPDATE_SKILL_PATH.read_bytes())
+    if source_blob_sha and source_blob_sha != actual_blob_sha:
+        error(findings, "skill.content_drift", f"vendored stack-update blob is {actual_blob_sha}, provenance pins {source_blob_sha}")
+
+    if not SKILLS_README_PATH.exists():
+        error(findings, "skill.index_missing", ".agents/skills/README.md is missing")
+    else:
+        skills_readme = SKILLS_README_PATH.read_text(encoding="utf-8")
+        for value in (source_commit, source_blob_sha, "The-Interdependency/skill-lib"):
+            if value and value not in skills_readme:
+                error(findings, "skill.index_drift", f".agents/skills/README.md does not carry provenance value {value!r}")
+
+
 def main() -> int:
     findings: list[str] = []
     try:
@@ -245,6 +306,7 @@ def main() -> int:
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
+    check_stack_update_skill_provenance(findings)
 
     if findings:
         for finding in findings:
