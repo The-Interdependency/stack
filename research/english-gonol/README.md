@@ -119,6 +119,19 @@ python -m english_gonol.orthogonal_carrier_sweep \
 
 See [`docs/orthogonal-carrier-sweep-v0.md`](docs/orthogonal-carrier-sweep-v0.md).
 
+The full-corpus definition re-affixiation run (no sampling, no hash
+placement, no carrier buckets; reuses each closed word gonol once):
+
+```bash
+python -m english_gonol.definition_affixiation_run \
+  --source-root /path/to/oewn-2025/src/yaml \
+  --out-dir experiments/oewn-affixiation-v0 --workers 2
+```
+
+See [`docs/oewn-orthogonal-affixiation-v0.md`](docs/oewn-orthogonal-affixiation-v0.md).
+The large `records.jsonl` is local persisted state and is not committed; the
+committed `manifest.json` binds it via `records_sha256`.
+
 ## Research status
 
 Standing: **stack-local research, not canon**. The construction is an

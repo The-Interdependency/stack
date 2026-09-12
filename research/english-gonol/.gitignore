@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Full-corpus affixiation records are large local persisted state. The
+# deterministic manifest (which binds the records file via records_sha256)
+# is committed; the records file itself is reproduced with the runner.
+experiments/oewn-affixiation-v0/records.jsonl
+experiments/oewn-affixiation-v0/records.worker-*.jsonl
