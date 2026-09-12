@@ -1,14 +1,21 @@
 # === CHECKS ===
-# id: every_python_source_occurrence_closes_first_check
-#   proves: every_python_source_occurrence_closes_first
-#   call: self::test_letter_floor_preserves_identity_order_multiplicity_and_provenance
+# id: every_python_source_character_closes_first_check
+#   proves: every_python_source_character_closes_first
+#   call: self::test_character_floor_preserves_identity_order_multiplicity_and_provenance
 #   timeout: 30
 #   mutates: none
 #   cleanup: none
 #
-# id: python_lexical_forms_affixiate_letters_check
-#   proves: python_lexical_forms_affixiate_letters
-#   call: self::test_lexical_floor_is_an_exact_partition_of_closed_letters
+# id: python_character_definitions_share_character_origin_check
+#   proves: python_character_definitions_share_character_origin
+#   call: self::test_character_definition_space_closes_before_lexical_forms
+#   timeout: 30
+#   mutates: none
+#   cleanup: none
+#
+# id: python_lexical_forms_affixiate_characters_check
+#   proves: python_lexical_forms_affixiate_characters
+#   call: self::test_lexical_floor_is_an_exact_partition_of_closed_characters
 #   timeout: 30
 #   mutates: none
 #   cleanup: none
@@ -66,39 +73,77 @@ from python_gonol import (
     PythonGonolConstructionError,
     affixiate_python_bytes,
     affixiate_python_source,
+    grammar_witness_inventory,
     reconstruct_source,
     replay_python_affixiation,
 )
 
 
-def _letters(receipt: PythonAffixiationReceipt):
-    return tuple(gonol for gonol in receipt.gonols if gonol.scale == "letter")
+def _characters(receipt: PythonAffixiationReceipt):
+    return tuple(gonol for gonol in receipt.gonols if gonol.scale == "character")
 
 
-def test_letter_floor_preserves_identity_order_multiplicity_and_provenance() -> None:
+def _definitions(receipt: PythonAffixiationReceipt):
+    return tuple(gonol for gonol in receipt.gonols if gonol.scale == "character-definition")
+
+
+def test_character_floor_preserves_identity_order_multiplicity_and_provenance() -> None:
     source = "π = (a + a)\n# a\n"
     receipt = affixiate_python_source(source, source_id="fixture/repeated.py")
-    letters = _letters(receipt)
-    assert len(letters) == len(source)
-    assert [item.span.start for item in letters] == list(range(len(source)))
-    assert len({item.address for item in letters}) == len(source)
-    assert len({item.gonol_id for item in letters}) == len(source)
-    repeated = [item for item in letters if dict(item.relation.properties)["unicode_scalar"] == "a"]
+    characters = _characters(receipt)
+    assert len(characters) == len(source)
+    assert [item.span.start for item in characters] == list(range(len(source)))
+    assert len({item.address for item in characters}) == len(source)
+    assert len({item.gonol_id for item in characters}) == len(source)
+    repeated = [item for item in characters if dict(item.relation.properties)["unicode_scalar"] == "a"]
     assert len(repeated) == 3
     assert len({item.address for item in repeated}) == 3
-    assert all(("source_id", "fixture/repeated.py") in item.provenance for item in letters)
+    assert all("#character:" in item.address for item in characters)
+    assert all(("source_id", "fixture/repeated.py") in item.provenance for item in characters)
+    assert not any(gonol.scale == "letter" for gonol in receipt.gonols)
 
 
-def test_lexical_floor_is_an_exact_partition_of_closed_letters() -> None:
+def test_character_definition_space_closes_before_lexical_forms() -> None:
+    source = "x-y # note\n"
+    receipt = affixiate_python_source(source, source_id="fixture/definitions.py")
+    positions = {gonol.gonol_id: index for index, gonol in enumerate(receipt.gonols)}
+    definitions = _definitions(receipt)
+    by_origin: Counter[str] = Counter()
+    for definition in definitions:
+        assert definition.relation.kind == "python.character.definition"
+        assert len(definition.relation.members) == 1
+        origin = definition.relation.members[0]
+        assert origin.role == "origin"
+        assert receipt.gonols[positions[origin.gonol_id]].scale == "character"
+        assert positions[origin.gonol_id] < positions[definition.gonol_id]
+        by_origin[origin.address] += 1
+    assert set(by_origin) == {item.address for item in _characters(receipt)}
+
+    minus = next(item for item in _characters(receipt) if dict(item.relation.properties)["unicode_scalar"] == "-")
+    minus_defs = {
+        (dict(item.relation.properties)["definition_kind"], dict(item.relation.properties)["definition_value"])
+        for item in definitions
+        if item.relation.members[0].gonol_id == minus.gonol_id
+    }
+    assert ("python-exact-token", "MINUS") in minus_defs
+
+    first_lexical = min(
+        positions[item.gonol_id] for item in receipt.gonols if item.scale == "lexical-form"
+    )
+    assert all(positions[item.gonol_id] < first_lexical for item in definitions)
+
+
+def test_lexical_floor_is_an_exact_partition_of_closed_characters() -> None:
     source = "value  = f'{name!r:>{width}}'  # keep both spaces\n"
     receipt = affixiate_python_source(source, source_id="fixture/lexical.py")
     lexical = [gonol for gonol in receipt.gonols if gonol.scale == "lexical-form"]
     counts = Counter(member.address for gonol in lexical for member in gonol.relation.members)
-    assert counts == Counter(item.address for item in _letters(receipt))
-    earlier = {gonol.gonol_id: index for index, gonol in enumerate(receipt.gonols)}
+    assert counts == Counter(item.address for item in _characters(receipt))
+    position = {gonol.gonol_id: index for index, gonol in enumerate(receipt.gonols)}
     for gonol in lexical:
         assert gonol.relation.members
-        assert all(receipt.gonols[earlier[member.gonol_id]].scale == "letter" for member in gonol.relation.members)
+        assert all(receipt.gonols[position[member.gonol_id]].scale == "character" for member in gonol.relation.members)
+        assert all(member.role.startswith("character[") for member in gonol.relation.members)
     kinds = {gonol.relation.kind for gonol in lexical}
     assert "python.lexical.FSTRING_START" in kinds
     assert "python.lexical.COMMENT" in kinds
@@ -144,7 +189,8 @@ def test_missing_parenthesis_preserves_lower_closures_and_records_hmmm(tmp_path:
     assert receipt.standing == "hmmm"
     assert receipt.gonols[-1].relation.kind == "python.source.hmmm"
     assert reconstruct_source(receipt) == source
-    assert len(_letters(receipt)) == len(source)
+    assert len(_characters(receipt)) == len(source)
+    assert len(_definitions(receipt)) >= len(source)
     assert any("unmatched opening delimiter" in item for item in receipt.hmmm)
     assert any(item.startswith("grammar:") for item in receipt.hmmm)
     replay_python_affixiation(receipt)
@@ -173,9 +219,25 @@ def test_receipt_contains_source_relations_not_parser_objects() -> None:
     assert "TokenInfo" not in encoded
     assert "<_ast." not in encoded
     assert "occurrence_addresses" not in encoded
-    assert all(gonol.scale in {"letter", "lexical-form", "delimiter-construction", "python-construction", "module"} for gonol in receipt.gonols)
+    assert all(
+        gonol.scale in {
+            "character",
+            "character-definition",
+            "lexical-form",
+            "delimiter-construction",
+            "python-construction",
+            "module",
+        }
+        for gonol in receipt.gonols
+    )
     assert all(type(gonol).__module__ == "python_gonol.model" for gonol in receipt.gonols)
     replay_python_affixiation(receipt)
+
+
+def test_runtime_ast_witness_inventory_is_explicit_without_becoming_construction() -> None:
+    inventory = grammar_witness_inventory()
+    assert {"Module", "FunctionDef", "TypeAlias", "Match", "TryStar", "FormattedValue"} <= set(inventory)
+    assert "AST" not in inventory
 
 
 def test_exact_ucns_carrier_is_observed_and_drift_fails_closed() -> None:
@@ -194,8 +256,8 @@ def test_exact_ucns_carrier_is_observed_and_drift_fails_closed() -> None:
         source_id="fixture/ucns.py",
         geometry_authority=authority,
     )
-    for letter in _letters(receipt):
-        properties = dict(letter.relation.properties)
+    for character in _characters(receipt):
+        properties = dict(character.relation.properties)
         assert properties["public_gonol_position"].isdigit()
         assert properties["public_gonol_function"] == "hmmm"
     assert "UCNS Public Gonol geometry authority was not supplied" not in receipt.hmmm
