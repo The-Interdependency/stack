@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "bbcb6b7582192c02e79f5b98b8f857385a07cda3280f24602f825ecd15ac405f",
+  "work_graph_sha256": "aa979936a351d2331cf8079939bba5ecb0bc9d694a29badd17335dad6afb2086",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -24,8 +24,8 @@
     {
       "repository": "The-Interdependency/edcm",
       "commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
-      "authority": "measurement and text-gonol construction",
-      "relation": "pinned canonical repository view at libs/edcm/; stack-local work at research/edcm/"
+      "authority": "measurement and evaluation of text-domain outputs",
+      "relation": "pinned canonical repository view at libs/edcm/; stack-local measurement research at research/edcm/; English Gonol construction is separate at research/english-gonol/"
     },
     {
       "repository": "The-Interdependency/pcea",
@@ -119,6 +119,15 @@
       "repository": "The-Interdependency/epac",
       "commit": "d8868858b2e455381ce670797bdbe47189bdc496",
       "relation": "adjacent internal research; no external physics transfer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "english-gonol",
+      "repository": "The-Interdependency/stack",
+      "commit": "030022948fb7c749961ae65743a4448c4bb6cbbe",
+      "relation": "stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction",
       "canonical_release": false,
       "authority_transfer": false
     }
