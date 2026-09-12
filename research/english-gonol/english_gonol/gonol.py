@@ -10,20 +10,26 @@ declared scale using the scale's option set. It does not encode a mandatory
 ``character -> word -> definition -> recursive`` ladder.
 
     from english_gonol.gonol import construct_gonol, replay_gonol
+    from english_gonol.language.suffixiation import suffixiate
 
     word = construct_gonol(scale="word", source="try", source_id="example:try")
+    y_character = word.gonol.source_characters[-1]  # already-closed "y" gonol
+    construct_gonol(
+        scale="definition",
+        participants=(y_character,),
+        relation="orthographic-behavior:final-y-after-consonant",
+        source_id="example:y-orthographic-behavior",
+    )
     ing = construct_gonol(
         scale="suffix",
         source="ing",
         source_id="example:ing",
-        carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+        carried_options=(("suffix-coupling.vowel-initial", "true"),),
     )
-    rel = construct_gonol(
-        scale="suffix-coupling",
-        participants=(word.gonol, ing.gonol),
-        source_id="example:trying#1",
-    )
-    assert rel.receipt_digest == replay_gonol(receipt=rel).receipt_digest
+    rel = suffixiate(word.gonol, ing.gonol, source_id="example:trying#1")
+    assert rel.coupling_receipt.receipt_digest == replay_gonol(
+        receipt=rel.coupling_receipt
+    ).receipt_digest
 
 Frozen choices for ``edcm.gonol/v1``:
 
@@ -35,8 +41,10 @@ Frozen choices for ``edcm.gonol/v1``:
   folding, trimming, deduplication, or token substitution;
 - relation identity is exact caller-supplied text where the option set requires
   it;
-- suffix-coupling exceptions are carried by the closed suffix gonol, not by a
-  global morphology law or by reopening the suffix during coupling;
+- suffix-coupling options that are suffix-specific (for example vowel-initial)
+  are carried by the closed suffix gonol; character-specific behavior such as
+  final-y rendering belongs to the ``y`` character gonol's definition-space and
+  is resolved during suffixiation without reopening either gonol;
 - UCNS Public Gonol geometry is consumed only from an explicit supplied
   authority, and absence remains ``hmmm`` rather than a base-package failure;
 - no UCNS function operation or Mobius coupling law is invented.
@@ -76,11 +84,11 @@ Frozen choices for ``edcm.gonol/v1``:
 #   class: construction
 #   since: 2026-08-22
 #
-# id: suffix_exception_carried_by_suffix_gonol
-#   given: suffix coupling has a final-y exception such as ing preserving y after a consonant
-#   then: the exception is stored on the closed suffix gonol participant and replayed through participant provenance rather than global morphology law
+# id: character_behavior_resolved_during_suffixiation
+#   given: a suffix coupling touches a final y after a consonant
+#   then: the y character gonol's own orthographic-behavior definitions supply the y rendering, the closed suffix supplies only suffix-specific behavior, and suffixiation resolves their interaction without reopening either gonol
 #   class: construction
-#   since: 2026-08-22
+#   since: 2026-09-12
 #
 # id: construction_survives_absent_ucns_geometry
 #   given: UCNS Public Gonol geometry authority is not explicitly supplied

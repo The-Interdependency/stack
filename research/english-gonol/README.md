@@ -70,16 +70,25 @@ research/english-gonol/
 ├── README.md
 ├── english_gonol/
 │   ├── gonol.py                  # unified candidate constructor (identity edcm.gonol)
-│   ├── language/                 # English lexical evidence over UCNS carrier
-│   └── orthogonal_carrier_sweep.py  # 1-7 carrier experimental sweep
+│   ├── definition_affixiation_run.py  # full-corpus definition re-affixiation
+│   ├── orthogonal_carrier_sweep.py  # 1-7 carrier experimental sweep (control)
+│   ├── primitive_layer_run.py    # character definitions + corrected suffixiation
+│   └── language/
+│       ├── character_definitions.py  # primitive character definition-space
+│       ├── suffixiation.py       # closed-gonol affixiation for suffixes
+│       └── data/                 # affix + character definition tables
 ├── tools/build_oewn2025_embeddings.py
 ├── tests/
 ├── docs/
 │   ├── GONOL_LANGUAGE_BOUNDARY.md
-│   └── orthogonal-carrier-sweep-v0.md
+│   ├── orthogonal-carrier-sweep-v0.md
+│   ├── oewn-orthogonal-affixiation-v0.md
+│   └── primitive-layer-correction-v0.md
 └── experiments/
     ├── lexical/                  # frozen lexical-floor run artifacts
-    └── orthogonal-carrier-sweep-v0.json
+    ├── orthogonal-carrier-sweep-v0.json
+    ├── primitive-layer-v0.json
+    └── oewn-affixiation-v0/      # full-corpus manifest (records local-only)
 ```
 
 ## Entry points
@@ -131,6 +140,16 @@ python -m english_gonol.definition_affixiation_run \
 See [`docs/oewn-orthogonal-affixiation-v0.md`](docs/oewn-orthogonal-affixiation-v0.md).
 The large `records.jsonl` is local persisted state and is not committed; the
 committed `manifest.json` binds it via `records_sha256`.
+
+The primitive-layer correction and extension (character definitions, digit
+number names, corrected suffixiation):
+
+```bash
+python -m english_gonol.primitive_layer_run \
+  --out experiments/primitive-layer-v0.json
+```
+
+See [`docs/primitive-layer-correction-v0.md`](docs/primitive-layer-correction-v0.md).
 
 ## Research status
 

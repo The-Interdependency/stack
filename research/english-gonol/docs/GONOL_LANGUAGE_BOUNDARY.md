@@ -67,7 +67,7 @@ UCNS owns any exact geometric realization of that operation. The native Möbius/
 
 English Gonol Construction applies affixiation to text-domain gonols. Linguistic prefixes and suffixes are one instance of affixiation; they do not define affixiation.
 
-Suffix-coupling options that affect a suffix relation are carried by the relevant closed suffix gonol. For example, a closed `ing` suffix gonol may carry `suffix-coupling.final-y-after-consonant = preserve-y`; the suffix-coupling construction preserves that option through the suffix participant instead of storing an `ing` exception in a global morphology law or reopening the suffix.
+Suffix-coupling options that are suffix-specific are carried by the relevant closed suffix gonol. For example, a closed `ing` suffix gonol may carry `suffix-coupling.vowel-initial = true`. Character-specific behavior is not placed on suffix gonols: final-y rendering belongs to the `y` character gonol's definition-space (`orthographic-behavior:final-y-after-consonant`). `suffixiate()` resolves the interaction between the closed base's final character definitions and the closed suffix's suffix-specific behavior without reopening either gonol.
 
 The complete English root, stem, affix, irregular-transformation, and family law remains unresolved unless source-backed English Gonol evidence establishes it. English Gonol Construction must not invent decomposition to complete a pipeline.
 
@@ -123,13 +123,21 @@ Copy-pasteable unified candidate:
 
 ```python
 from english_gonol.gonol import construct_gonol, replay_gonol
+from english_gonol.language.suffixiation import suffixiate
 
 word = construct_gonol(scale="word", source="try", source_id="example:try")
+y_character = word.gonol.source_characters[-1]
+construct_gonol(
+    scale="definition",
+    participants=(y_character,),
+    relation="orthographic-behavior:final-y-after-consonant",
+    source_id="example:y-orthographic-behavior",
+)
 ing = construct_gonol(
     scale="suffix",
     source="ing",
     source_id="example:ing",
-    carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+    carried_options=(("suffix-coupling.vowel-initial", "true"),),
 )
 definition = construct_gonol(
     scale="definition",
@@ -144,13 +152,11 @@ recursive = construct_gonol(
     participants=(word.gonol, definition.gonol),
     source_id="example:relation#1",
 )
-suffix_coupling = construct_gonol(
-    scale="suffix-coupling",
-    participants=(word.gonol, ing.gonol),
-    source_id="example:trying#1",
-)
+suffix_coupling = suffixiate(word.gonol, ing.gonol, source_id="example:trying#1")
 assert recursive.receipt_digest == replay_gonol(receipt=recursive).receipt_digest
-assert suffix_coupling.receipt_digest == replay_gonol(receipt=suffix_coupling).receipt_digest
+assert suffix_coupling.coupling_receipt.receipt_digest == replay_gonol(
+    receipt=suffix_coupling.coupling_receipt
+).receipt_digest
 ```
 
 If an explicit `geometry_authority` supplies `PUBLIC_GONOL_157` with a digest matching the pinned Public Gonol identity, `english_gonol.gonol` (constructor identity retained as `edcm.gonol`) observes source-unit positions. If no authority is supplied, construction records geometry as `hmmm` and still closes the candidate. It does not probe ambient imports and does not mutate `sys.path`.
