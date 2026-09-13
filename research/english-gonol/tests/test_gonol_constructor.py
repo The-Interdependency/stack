@@ -296,8 +296,14 @@ class GonolConstructorTest(unittest.TestCase):
             construct_gonol(scale="word", source="bad", source_id="fixture:\ud800")
         with self.assertRaisesRegex(GonolConstructionError, "relation contains a surrogate"):
             construct_gonol(scale="definition", source="bad", relation="fixture:\ud800", source_id="fixture:bad")
-        with self.assertRaisesRegex(GonolConstructionError, "whitespace-delimited"):
-            construct_gonol(scale="word", source="two words", source_id="fixture:bad-word")
+
+    def test_whitespace_is_admitted_as_source_construction(self) -> None:
+        word = construct_gonol(scale="word", source="ice cream", source_id="fixture:ice cream")
+        self.assertEqual(word.gonol.source_units, ("i", "c", "e", " ", "c", "r", "e", "a", "m"))
+        self.assertEqual(word.gonol.source_characters[3].source_units, (" ",))
+        self.assertEqual(word.gonol.source_characters[3].scale, "character")
+        replay = replay_gonol(receipt=word)
+        self.assertEqual(word.receipt_digest, replay.receipt_digest)
 
     def test_declared_default_relation_and_registry_are_frozen(self) -> None:
         with self.assertRaisesRegex(GonolConstructionError, "declared default"):

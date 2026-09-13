@@ -1,9 +1,17 @@
-"""Full-corpus English Gonol definition re-affixiation run (experimental, v0).
+"""Full-corpus English Gonol definition re-affixiation run (experimental, v0.2).
 
 Runs the complete pinned OEWN 2025 corpus through English Gonol Construction
 while reusing every already-closed word gonol. This runner is not the earlier
 1-7 hash-carrier sweep; that sweep remains unchanged as a control experiment
 and supplies no placement rules here.
+
+Whitespace contract
+-------------------
+Whitespace is not a destructive parsing boundary. Word surfaces close with
+their exact source including whitespace, and every definition closes over the
+exact ordered run sequence of its text: each non-whitespace run reuses its
+already-closed word gonol and each whitespace scalar is a closed character
+gonol participating in the definition in its exact position and multiplicity.
 
 Boundary contract implemented by this runner
 --------------------------------------------
@@ -11,12 +19,12 @@ Boundary contract implemented by this runner
 - Do not hash-place: gonol identity comes from exact source identities, never
   from a carrier/hash placement. No carrier or angle cell exists in this run.
 - Do not stop on collisions: there is no collision concept in this run.
-- Do not rebuild lexical identity: each unique single-token surface is closed
-  exactly once and reused everywhere it appears.
+- Do not rebuild lexical identity: each unique surface is closed exactly once
+  and reused everywhere it appears.
 - Do not invent semantic axes or assign meanings to orthogonal directions.
 - If exact UCNS orthogonal-affixiation geometry is unresolved, implement no
   substitute: the run closes every definition gonol from its already-closed
-  constituent word gonols (existing authority) and records each requested
+  constituent gonols (existing authority) and records each requested
   orthogonal affixiation step with ``geometry_state = hmmm``.
 """
 
@@ -51,7 +59,7 @@ from english_gonol.language.source import (
 )
 
 SCHEMA = "english-gonol.oewn-orthogonal-affixiation"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 GEOMETRY_STATE = "hmmm"
 GEOMETRY_REASON = (
     "exact UCNS orthogonal-affixiation geometry is unresolved; "
@@ -59,7 +67,7 @@ GEOMETRY_REASON = (
 )
 
 _WORD_SOURCE_PREFIX = "oewn:surface"
-_LEMMA_SOURCE_PREFIX = "oewn:lemma-composition"
+_WHITESPACE_SOURCE_PREFIX = "oewn:whitespace"
 _DEFINITION_SOURCE_PREFIX = "oewn:def"
 _SENSE_RELATION_PREFIX = "oewn:sense"
 
@@ -69,18 +77,6 @@ class WordRecord:
     type: str
     surface: str
     source_id: str
-    atomic_id: str
-    receipt_digest: str
-
-
-@dataclass(frozen=True, slots=True)
-class LemmaCompositionRecord:
-    type: str
-    lemma: str
-    part_of_speech: str
-    source_id: str
-    relation: str
-    constituent_source_ids: tuple[str, ...]
     atomic_id: str
     receipt_digest: str
 
@@ -96,6 +92,7 @@ class DefinitionRecord:
     relation: str
     definition_text: str
     constituent_source_ids: tuple[str, ...]
+    whitespace_preserved: bool
     atomic_id: str
     receipt_digest: str
 
@@ -112,10 +109,6 @@ class AffixiationRecord:
     reason: str
 
 
-def _single_token(surface: str) -> bool:
-    return bool(surface) and not any(character.isspace() for character in surface)
-
-
 def _canonical_json_bytes(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode(
         "utf-8"
@@ -130,34 +123,60 @@ class GonolAffixiationRunError(RuntimeError):
     pass
 
 
+def _definition_runs(text: str) -> tuple[tuple[str, str], ...]:
+    """Split into exact ordered runs without discarding whitespace.
+
+    Returns runs of ``("word", token)`` and ``("ws", scalar)`` whose
+    concatenation is exactly ``text``, preserving order and multiplicity.
+    """
+
+    runs: list[tuple[str, str]] = []
+    buffer: list[str] = []
+    for character in text:
+        if character.isspace():
+            if buffer:
+                runs.append(("word", "".join(buffer)))
+                buffer.clear()
+            runs.append(("ws", character))
+        else:
+            buffer.append(character)
+    if buffer:
+        runs.append(("word", "".join(buffer)))
+    return tuple(runs)
+
+
 def collect_surfaces(snapshot: WordnetSnapshot) -> tuple[tuple[str, ...], tuple[str, ...]]:
-    """Return ``(single_token_surfaces, multiword_surfaces)`` in sorted order."""
+    """Return ``(word_surfaces, whitespace_scalars)`` in sorted order.
+
+    Word surfaces are the exact lemma and form strings plus every
+    non-whitespace run of every definition text. Whitespace scalars are the
+    exact whitespace scalars appearing in definition texts; they close as
+    character gonols and participate in the definition sequence.
+    """
 
     surfaces: set[str] = set()
+    whitespace: set[str] = set()
     for record in snapshot.lexemes:
         surfaces.add(record.lemma)
-        surfaces.update(record.lemma.split())
         surfaces.update(record.forms)
-        for form in record.forms:
-            surfaces.update(form.split())
     for synset in snapshot.synsets:
         for definition in synset.definitions:
-            surfaces.update(definition.split())
-    single = tuple(sorted(surface for surface in surfaces if _single_token(surface)))
-    multi = tuple(sorted(surfaces - set(single)))
-    return single, multi
+            for kind, value in _definition_runs(definition):
+                if kind == "word":
+                    surfaces.add(value)
+                else:
+                    whitespace.add(value)
+    return tuple(sorted(surfaces)), tuple(sorted(whitespace))
 
 
 def build_word_registry(
     surfaces: Sequence[str],
 ) -> tuple[dict[str, ClosedGonol], tuple[WordRecord, ...]]:
-    """Close each surface exactly once and return the shared word registry."""
+    """Close each surface exactly once with its exact source."""
 
     registry: dict[str, ClosedGonol] = {}
     records: list[WordRecord] = []
     for surface in surfaces:
-        if not _single_token(surface):
-            raise GonolAffixiationRunError(f"word surface is not single-token: {surface!r}")
         source_id = f"{_WORD_SOURCE_PREFIX}:{surface}"
         receipt = construct_gonol(scale="word", source=surface, source_id=source_id)
         registry[surface] = receipt.gonol
@@ -173,39 +192,38 @@ def build_word_registry(
     return registry, tuple(records)
 
 
-def _lemma_gonol(
-    lemma: str,
-    part_of_speech: str,
-    registry: Mapping[str, ClosedGonol],
-) -> tuple[ClosedGonol, str, tuple[str, ...]]:
-    """Return the lemma's gonol and its source identity.
+def build_whitespace_registry(
+    scalars: Sequence[str],
+) -> tuple[dict[str, ClosedGonol], tuple[WordRecord, ...]]:
+    """Close each whitespace scalar as a character gonol exactly once."""
 
-    Single-token lemmas reuse the corpus word gonol directly. Multiword lemmas
-    are composed from their ordered constituent word gonols through the
-    existing recursive scale; the composition is recorded, not a redesign.
-    """
-
-    if _single_token(lemma):
-        gonol = registry[lemma]
-        return gonol, f"{_WORD_SOURCE_PREFIX}:{lemma}", (f"{_WORD_SOURCE_PREFIX}:{lemma}",)
-
-    tokens = tuple(lemma.split())
-    source_id = f"{_LEMMA_SOURCE_PREFIX}:{lemma}:{part_of_speech}"
-    relation = f"oewn:lemma:{lemma}:{part_of_speech}"
-    receipt = construct_gonol(
-        scale="recursive",
-        participants=tuple(registry[token] for token in tokens),
-        relation=relation,
-        source_id=source_id,
-    )
-    return receipt.gonol, source_id, tuple(f"{_WORD_SOURCE_PREFIX}:{token}" for token in tokens)
+    registry: dict[str, ClosedGonol] = {}
+    records: list[WordRecord] = []
+    for scalar in scalars:
+        source_id = f"{_WHITESPACE_SOURCE_PREFIX}:{ord(scalar)}"
+        receipt = construct_gonol(scale="character", source=scalar, source_id=source_id)
+        registry[scalar] = receipt.gonol
+        records.append(
+            WordRecord(
+                type="whitespace",
+                surface=scalar,
+                source_id=source_id,
+                atomic_id=receipt.gonol.atomic_id,
+                receipt_digest=receipt.receipt_digest,
+            )
+        )
+    return registry, tuple(records)
 
 
 def build_lemma_gonols(
     snapshot: WordnetSnapshot,
     registry: Mapping[str, ClosedGonol],
 ) -> dict[tuple[str, str], tuple[ClosedGonol, str, tuple[str, ...]]]:
-    """Compose or reuse one gonol per (lemma, part_of_speech) that owns senses."""
+    """Return one gonol per (lemma, part_of_speech) that owns senses.
+
+    The lemma gonol is the already-closed word gonol for the exact lemma
+    surface, including any whitespace inside the lemma.
+    """
 
     result: dict[tuple[str, str], tuple[ClosedGonol, str, tuple[str, ...]]] = {}
     for lexeme in snapshot.lexemes:
@@ -214,7 +232,8 @@ def build_lemma_gonols(
         key = (lexeme.lemma, lexeme.part_of_speech)
         if key in result:
             continue
-        result[key] = _lemma_gonol(lexeme.lemma, lexeme.part_of_speech, registry)
+        source_id = f"{_WORD_SOURCE_PREFIX}:{lexeme.lemma}"
+        result[key] = (registry[lexeme.lemma], source_id, (source_id,))
     return result
 
 
@@ -240,7 +259,7 @@ def _definition_tasks(
                         "word_source_id": word_source_id,
                         "definition_index": definition_index,
                         "definition_text": definition_text,
-                        "tokens": tuple(definition_text.split()),
+                        "runs": _definition_runs(definition_text),
                     }
                 )
     tasks.sort(key=lambda item: (item["word_source_id"], item["sense_id"], item["definition_index"]))
@@ -250,16 +269,26 @@ def _definition_tasks(
 def _build_definition(
     task: Mapping[str, Any],
     registry: Mapping[str, ClosedGonol],
+    whitespace_registry: Mapping[str, ClosedGonol],
 ) -> tuple[DefinitionRecord, tuple[str, ...]]:
     sense_id = str(task["sense_id"])
     definition_index = int(task["definition_index"])
     relation = f"{_SENSE_RELATION_PREFIX}:{sense_id}"
     definition_source_id = f"{_DEFINITION_SOURCE_PREFIX}:{sense_id}:{definition_index}"
-    constituent_source_ids = tuple(f"{_WORD_SOURCE_PREFIX}:{token}" for token in task["tokens"])
-    participants = tuple(registry[token] for token in task["tokens"])
+
+    participants: list[ClosedGonol] = []
+    constituent_source_ids: list[str] = []
+    for kind, value in task["runs"]:
+        if kind == "word":
+            participants.append(registry[value])
+            constituent_source_ids.append(f"{_WORD_SOURCE_PREFIX}:{value}")
+        else:
+            participants.append(whitespace_registry[value])
+            constituent_source_ids.append(f"{_WHITESPACE_SOURCE_PREFIX}:{ord(value)}")
+
     receipt = construct_gonol(
         scale="definition",
-        participants=participants,
+        participants=tuple(participants),
         relation=relation,
         source_id=definition_source_id,
     )
@@ -272,11 +301,12 @@ def _build_definition(
         order=0,  # per-word order is assigned after grouping in the worker
         relation=relation,
         definition_text=str(task["definition_text"]),
-        constituent_source_ids=constituent_source_ids,
+        constituent_source_ids=tuple(constituent_source_ids),
+        whitespace_preserved=True,
         atomic_id=receipt.gonol.atomic_id,
         receipt_digest=receipt.receipt_digest,
     )
-    return record, constituent_source_ids
+    return record, tuple(constituent_source_ids)
 
 
 def _affixiation_records(
@@ -308,14 +338,15 @@ def _worker_process_tasks(
 ) -> dict[str, int]:
     """Build definition gonols for a task slice and stream records to JSONL."""
 
-    # The shared word registry is inherited from the parent via fork.
+    # Shared registries are inherited from the parent via fork.
     registry = _WORKER_REGISTRY
-    if registry is None:
-        raise GonolAffixiationRunError("worker registry is unavailable")
+    whitespace_registry = _WORKER_WHITESPACE_REGISTRY
+    if registry is None or whitespace_registry is None:
+        raise GonolAffixiationRunError("worker registries are unavailable")
 
     built: list[DefinitionRecord] = []
     for task in tasks:
-        record, _constituents = _build_definition(task, registry)
+        record, _constituents = _build_definition(task, registry, whitespace_registry)
         built.append(record)
 
     # Group per owning word, assign the ordered affixiation sequence, and only
@@ -346,11 +377,16 @@ def _worker_process_tasks(
 
 
 _WORKER_REGISTRY: dict[str, ClosedGonol] | None = None
+_WORKER_WHITESPACE_REGISTRY: dict[str, ClosedGonol] | None = None
 
 
-def _worker_initializer(registry: Mapping[str, ClosedGonol]) -> None:
-    global _WORKER_REGISTRY
+def _worker_initializer(
+    registry: Mapping[str, ClosedGonol],
+    whitespace_registry: Mapping[str, ClosedGonol],
+) -> None:
+    global _WORKER_REGISTRY, _WORKER_WHITESPACE_REGISTRY
     _WORKER_REGISTRY = dict(registry)
+    _WORKER_WHITESPACE_REGISTRY = dict(whitespace_registry)
 
 
 def run(
@@ -366,35 +402,17 @@ def run(
     if any(output.iterdir()):
         raise GonolAffixiationRunError(f"output directory must be empty: {output}")
 
-    single_surfaces, multiword_surfaces = collect_surfaces(snapshot)
-    registry, word_records = build_word_registry(single_surfaces)
+    surfaces, whitespace_scalars = collect_surfaces(snapshot)
+    registry, word_records = build_word_registry(surfaces)
+    whitespace_registry, whitespace_records = build_whitespace_registry(whitespace_scalars)
 
-    # Compose or reuse one gonol per (lemma, part_of_speech) that owns senses.
     lemma_gonols = build_lemma_gonols(snapshot, registry)
-
-    # Record multiword lemma compositions (single-token lemmas are word gonols).
-    lemma_compositions: list[LemmaCompositionRecord] = []
-    for (lemma, part_of_speech), (gonol, source_id, constituents) in sorted(lemma_gonols.items()):
-        if not _single_token(lemma):
-            lemma_compositions.append(
-                LemmaCompositionRecord(
-                    type="lemma",
-                    lemma=lemma,
-                    part_of_speech=part_of_speech,
-                    source_id=source_id,
-                    relation=f"oewn:lemma:{lemma}:{part_of_speech}",
-                    constituent_source_ids=constituents,
-                    atomic_id=gonol.atomic_id,
-                    receipt_digest=gonol.receipt_digest,
-                )
-            )
-
     tasks = _definition_tasks(snapshot, lemma_gonols)
 
     worker_count = max(1, min(workers, multiprocessing.cpu_count()))
     if worker_count == 1:
         partial_paths = [output / "records.jsonl"]
-        _worker_initializer(registry)
+        _worker_initializer(registry, whitespace_registry)
         summary = _worker_process_tasks(tasks, str(partial_paths[0]))
     else:
         chunk_size = (len(tasks) + worker_count - 1) // worker_count
@@ -403,7 +421,7 @@ def run(
         with context.Pool(
             processes=worker_count,
             initializer=_worker_initializer,
-            initargs=(registry,),
+            initargs=(registry, whitespace_registry),
         ) as pool:
             results = [
                 pool.apply_async(
@@ -418,7 +436,7 @@ def run(
             "affixiations": sum(item["affixiations"] for item in summaries),
         }
 
-    # Merge word + lemma + worker partial records into one records file.
+    # Merge word + whitespace + worker partial records into one records file.
     records_path = output / "records.jsonl"
     if worker_count > 1:
         with open(records_path, "w", encoding="utf-8") as merged:
@@ -426,7 +444,7 @@ def run(
                 merged.write(
                     json.dumps(asdict(record), ensure_ascii=False, sort_keys=True) + "\n"
                 )
-            for record in lemma_compositions:
+            for record in whitespace_records:
                 merged.write(
                     json.dumps(asdict(record), ensure_ascii=False, sort_keys=True) + "\n"
                 )
@@ -435,14 +453,14 @@ def run(
                 partial.unlink()
     else:
         # Single worker wrote only definitions/affixiations; prepend word and
-        # lemma records to the same file in canonical order.
+        # whitespace records to the same file in canonical order.
         existing = records_path.read_text(encoding="utf-8")
         with open(records_path, "w", encoding="utf-8") as merged:
             for record in word_records:
                 merged.write(
                     json.dumps(asdict(record), ensure_ascii=False, sort_keys=True) + "\n"
                 )
-            for record in lemma_compositions:
+            for record in whitespace_records:
                 merged.write(
                     json.dumps(asdict(record), ensure_ascii=False, sort_keys=True) + "\n"
                 )
@@ -475,11 +493,13 @@ def run(
             "orthogonal_affixiation_geometry": GEOMETRY_STATE,
             "orthogonal_affixiation_reason": GEOMETRY_REASON,
         },
+        "whitespace": {
+            "preserved": True,
+            "whitespace_gonols": len(whitespace_records),
+        },
         "counts": {
-            "single_token_surfaces": len(single_surfaces),
-            "multiword_surfaces": len(multiword_surfaces),
+            "word_surfaces": len(surfaces),
             "word_gonols": len(word_records),
-            "lemma_compositions": len(lemma_compositions),
             "definition_gonols": summary["definitions"],
             "affixiation_records": summary["affixiations"],
         },

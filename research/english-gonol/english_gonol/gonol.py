@@ -39,6 +39,8 @@ Frozen choices for ``edcm.gonol/v1``:
   reopening;
 - source strings are exact Unicode scalar sequences: no normalization, case
   folding, trimming, deduplication, or token substitution;
+- whitespace is not a destructive parsing boundary: whitespace scalars are
+  admitted as exact source units and participate in the construction;
 - relation identity is exact caller-supplied text where the option set requires
   it;
 - suffix-coupling options that are suffix-specific (for example vowel-initial)
@@ -311,10 +313,9 @@ def _source_units(source: str | None, *, options: ScaleOptionSet) -> tuple[str, 
     units = tuple(text)
     if options.scale == "character" and len(units) != 1:
         raise GonolConstructionError("character scale closes exactly one Unicode scalar")
-    if options.scale in {"word", "suffix"} and any(unit.isspace() for unit in units):
-        raise GonolConstructionError(
-            f"{options.scale} scale source must be one closed source unit, not whitespace-delimited text"
-        )
+    # Whitespace is not a destructive parsing boundary: it is admitted as exact
+    # source units and participates in the construction like every other
+    # Unicode scalar (SPACE is the Public Gonol origin glyph).
     return units
 
 

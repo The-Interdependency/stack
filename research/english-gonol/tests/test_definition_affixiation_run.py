@@ -66,31 +66,49 @@ def test_full_fixture_run_persists_and_replays(tmp_path: Path) -> None:
     records = _read_lines(tmp_path / "records.jsonl")
 
     words = [record for record in records if record["type"] == "word"]
+    whitespace = [record for record in records if record["type"] == "whitespace"]
     definitions = [record for record in records if record["type"] == "definition"]
     affixiations = [record for record in records if record["type"] == "affixiation"]
-    lemmas = [record for record in records if record["type"] == "lemma"]
 
     # No sampling: every sense and every definition is processed.
     assert manifest["counts"]["definition_gonols"] == 2
     assert len(definitions) == 2
     assert len(affixiations) == 2
-    # One multiword lemma composition for "ice cream".
-    assert len(lemmas) == 1
-    assert lemmas[0]["lemma"] == "ice cream"
-    assert lemmas[0]["constituent_source_ids"] == ["oewn:surface:ice", "oewn:surface:cream"]
+    # Whitespace is construction, not parsing.
+    assert manifest["whitespace"]["preserved"] is True
+    assert manifest["whitespace"]["whitespace_gonols"] >= 1
+    assert any(record["surface"] == " " for record in whitespace)
 
-    # No hash placement: word identity is the exact surface source id.
+    # No hash placement: word identity is the exact surface source id,
+    # including multiword surfaces with their exact whitespace.
     word_sources = {record["source_id"] for record in words}
     assert "oewn:surface:kind" in word_sources
     assert "oewn:surface:kinder" in word_sources
     assert "oewn:surface:a" in word_sources
+    assert "oewn:surface:ice cream" in word_sources
     for record in words:
         assert record["atomic_id"] and len(record["atomic_id"]) == 64
 
-    # Definitions preserve sense identity, order, and constituent identities.
+    # Definitions preserve sense identity, order, and constituent identities;
+    # whitespace scalars participate between the word gonols.
     by_sense = {record["sense_id"]: record for record in definitions}
     assert by_sense["kind%1"]["constituent_source_ids"][0] == "oewn:surface:having"
-    assert by_sense["ice_cream%1"]["word_source_id"] == "oewn:lemma-composition:ice cream:n"
+    assert by_sense["ice_cream%1"]["word_source_id"] == "oewn:surface:ice cream"
+    ice_ids = by_sense["ice_cream%1"]["constituent_source_ids"]
+    assert ice_ids == [
+        "oewn:surface:a",
+        "oewn:whitespace:32",
+        "oewn:surface:frozen",
+        "oewn:whitespace:32",
+        "oewn:surface:dessert",
+        "oewn:whitespace:32",
+        "oewn:surface:made",
+        "oewn:whitespace:32",
+        "oewn:surface:from",
+        "oewn:whitespace:32",
+        "oewn:surface:cream",
+    ]
+    assert by_sense["ice_cream%1"]["whitespace_preserved"] is True
 
     # Orthogonal affixiation boundary is exposed with no invented substitute.
     for record in affixiations:
