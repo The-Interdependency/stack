@@ -497,6 +497,19 @@ def replay_python_affixiation(receipt: PythonAffixiationReceipt) -> PythonAffixi
         or root.scale not in {"module", "source"}
     ):
         raise PythonGonolConstructionError("receipt root does not cover every source occurrence")
+    root_kind = root.relation.kind
+    if receipt.standing == STANDING:
+        if root.scale != "module" or root_kind != "python.grammar.Module":
+            raise PythonGonolConstructionError(
+                "implemented-candidate receipt must be rooted at a compiler-valid module"
+            )
+    elif receipt.standing == "hmmm":
+        if root.scale != "source" or root_kind != "python.source.hmmm":
+            raise PythonGonolConstructionError(
+                "hmmm receipt must be rooted at the source-hmmm construction"
+            )
+    else:
+        raise PythonGonolConstructionError(f"unsupported receipt standing: {receipt.standing!r}")
     if receipt.nonclaims != NONCLAIMS or not all(item in receipt.hmmm for item in BASE_HMMM):
         raise PythonGonolConstructionError("receipt nonclaim or hmmm boundary mismatch")
     if receipt.receipt_digest != _receipt_digest(replace(receipt, receipt_digest="")):

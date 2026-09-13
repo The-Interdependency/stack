@@ -137,6 +137,7 @@ SCHEMA_VERSION = "1.0.0"
 CONSTRUCTOR_ID = "python-gonol.affixiation"
 CONSTRUCTOR_VERSION = "0.1.0"
 LANGUAGE_PROFILE = "python-3.12-file-input"
+CPYTHON_VERSION = (3, 12, 14)
 PINNED_PUBLIC_GONOL_SHA256 = (
     "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
 )
@@ -186,11 +187,35 @@ class _MemberCandidate:
 class _SourceIndex:
     def __init__(self, source: str) -> None:
         self.source = source
+        self.recognition_source = source.replace("\r\n", "\n").replace("\r", "\n")
+        self._recognition_to_source: list[int] = []
+        index = 0
+        while index < len(source):
+            self._recognition_to_source.append(index)
+            if source[index] == "\r" and index + 1 < len(source) and source[index + 1] == "\n":
+                index += 2
+            else:
+                index += 1
+        self._recognition_to_source.append(len(source))
         starts = [0]
         for index, character in enumerate(source):
-            if character == "\n":
+            if character == "\r":
+                if index + 1 < len(source) and source[index + 1] == "\n":
+                    continue
+                starts.append(index + 1)
+            elif character == "\n":
                 starts.append(index + 1)
         self.line_starts = tuple(starts)
+        recognition_starts = [0]
+        for index, character in enumerate(self.recognition_source):
+            if character == "\n":
+                recognition_starts.append(index + 1)
+        self.recognition_line_starts = tuple(recognition_starts)
+
+    def recognition_offset(self, offset: int) -> int:
+        if not 0 <= offset <= len(self.recognition_source):
+            raise PythonGonolConstructionError(f"recognition offset outside source: {offset}")
+        return self._recognition_to_source[offset]
 
     def token_offset(self, position: tuple[int, int]) -> int:
         row, column = position
@@ -200,28 +225,28 @@ class _SourceIndex:
             if row == len(self.line_starts) + 1 and column == 0:
                 return len(self.source)
             raise PythonGonolConstructionError(f"tokenizer position outside source: {position!r}")
-        offset = self.line_starts[row - 1] + column
-        if not 0 <= offset <= len(self.source):
+        offset = self.recognition_line_starts[row - 1] + column
+        if not 0 <= offset <= len(self.recognition_source):
             raise PythonGonolConstructionError(f"tokenizer position outside source: {position!r}")
-        return offset
+        return self.recognition_offset(offset)
 
     def ast_offset(self, row: int, utf8_column: int) -> int:
         if row < 1 or row > len(self.line_starts):
             raise PythonGonolConstructionError(
                 f"AST position outside decoded source: {(row, utf8_column)!r}"
             )
-        start = self.line_starts[row - 1]
-        end = self.line_starts[row] if row < len(self.line_starts) else len(self.source)
-        line = self.source[start:end]
+        start = self.recognition_line_starts[row - 1]
+        end = self.recognition_line_starts[row] if row < len(self.recognition_line_starts) else len(self.recognition_source)
+        line = self.recognition_source[start:end]
         byte_count = 0
         for char_column, character in enumerate(line):
             if byte_count == utf8_column:
-                return start + char_column
+                return self.recognition_offset(start + char_column)
             byte_count += len(character.encode("utf-8"))
             if byte_count > utf8_column:
                 break
         if byte_count == utf8_column:
-            return end
+            return self.recognition_offset(end)
         raise PythonGonolConstructionError(
             f"AST UTF-8 column does not align to a source scalar: {(row, utf8_column)!r}"
         )
@@ -420,7 +445,7 @@ def _lexical_floor(
     raw_tokens: list[tuple[int, int, str, str, str]] = []
     zero_width: list[str] = []
     unresolved: list[str] = []
-    stream = tokenize.generate_tokens(io.StringIO(source).readline)
+    stream = tokenize.generate_tokens(io.StringIO(source_index.recognition_source).readline)
     while True:
         try:
             item = next(stream)
@@ -444,7 +469,9 @@ def _lexical_floor(
             if token_name not in {"ENDMARKER", "ENCODING"}:
                 zero_width.append(f"{token_name}@{start}")
             continue
-        spelling = source[start:end]
+        recognition_start = source_index.recognition_line_starts[item.start[0] - 1] + item.start[1]
+        recognition_end = source_index.recognition_line_starts[item.end[0] - 1] + item.end[1]
+        spelling = source_index.recognition_source[recognition_start:recognition_end]
         if spelling != item.string:
             unresolved.append(
                 f"tokenizer spelling mismatch at {start}:{end}; witness={item.string!r} source={spelling!r}"
@@ -651,7 +678,7 @@ def _grammar_root(
 ) -> tuple[ClosedGonol | None, tuple[str, ...]]:
     try:
         tree = ast.parse(
-            source,
+            source_index.recognition_source,
             filename=source_id,
             mode="exec",
             type_comments=True,
@@ -664,13 +691,12 @@ def _grammar_root(
             detail = f"grammar: {exc.__class__.__name__}: {exc}"
         return None, (detail,)
 
-    node_order = {id(node): index for index, node in enumerate(ast.walk(tree))}
+    nodes = list(ast.walk(tree))
+    node_order = {id(node): index for index, node in enumerate(nodes)}
     span_memo: dict[int, tuple[int, int] | None] = {}
 
-    def node_span(node: ast.AST) -> tuple[int, int] | None:
+    for node in reversed(nodes):
         key = id(node)
-        if key in span_memo:
-            return span_memo[key]
         spans: list[tuple[int, int]] = []
         if all(hasattr(node, name) for name in ("lineno", "col_offset", "end_lineno", "end_col_offset")):
             end_line = getattr(node, "end_lineno", None)
@@ -683,7 +709,7 @@ def _grammar_root(
                     )
                 )
         for child in ast.iter_child_nodes(node):
-            child_span = node_span(child)
+            child_span = span_memo.get(id(child))
             if child_span is not None:
                 spans.append(child_span)
         if isinstance(node, ast.Module):
@@ -712,16 +738,13 @@ def _grammar_root(
             if marker is not None and result is not None:
                 result = (min(marker.start, result[0]), result[1])
         span_memo[key] = result
-        return result
-
-    node_span(tree)
     built: dict[int, ClosedGonol] = {}
 
     def construct(node: ast.AST) -> ClosedGonol | None:
         key = id(node)
         if key in built:
             return built[key]
-        span = node_span(node)
+        span = span_memo.get(key)
         if span is None:
             return None
         start, end = span
@@ -730,7 +753,7 @@ def _grammar_root(
         spanless_properties: list[tuple[str, str]] = []
         for field, value in ast.iter_fields(node):
             if isinstance(value, ast.AST):
-                child = construct(value)
+                child = built.get(id(value))
                 if child is not None:
                     child_candidates.append(_MemberCandidate(field, child, 0))
                     child_ranges.append((child.span.start, child.span.end))
@@ -743,7 +766,7 @@ def _grammar_root(
                 for position, item in enumerate(value):
                     if not isinstance(item, ast.AST):
                         continue
-                    child = construct(item)
+                    child = built.get(id(item))
                     if child is not None:
                         child_candidates.append(_MemberCandidate(f"{field}[{position}]", child, 0))
                         child_ranges.append((child.span.start, child.span.end))
@@ -811,7 +834,21 @@ def _grammar_root(
         built[key] = value
         return value
 
-    return construct(tree), ()
+    for node in reversed(nodes):
+        construct(node)
+    return built.get(id(tree)), ()
+
+
+def _compiler_validation(source_index: _SourceIndex, source_id: str) -> tuple[str, ...]:
+    """Run CPython's non-executing file-input compiler checks after parsing."""
+
+    try:
+        compile(source_index.recognition_source, source_id, "exec", dont_inherit=True)
+    except (SyntaxError, ValueError, TypeError, MemoryError) as exc:
+        if isinstance(exc, SyntaxError):
+            return (f"compiler: {exc.msg}; line={exc.lineno!r}; offset={exc.offset!r}",)
+        return (f"compiler: {exc.__class__.__name__}: {exc}",)
+    return ()
 
 
 def _source_root_hmmm(
@@ -864,9 +901,10 @@ def _construct(
     geometry_authority: Any | None,
 ) -> PythonAffixiationReceipt:
     _require_source(source, source_id)
-    if sys.version_info[:2] != (3, 12):
+    if platform.python_implementation() != "CPython" or tuple(sys.version_info[:3]) != CPYTHON_VERSION:
         raise PythonGonolConstructionError(
-            f"{LANGUAGE_PROFILE} requires a Python 3.12 recognition witness; got {sys.version_info.major}.{sys.version_info.minor}"
+            f"{LANGUAGE_PROFILE} requires CPython 3.12.14; got "
+            f"{platform.python_implementation()} {platform.python_version()}"
         )
     source_index = _SourceIndex(source)
     registry = _Registry(source_id, source_index)
@@ -902,7 +940,8 @@ def _construct(
         enclosures,
         zero_width,
     )
-    syntax_hmmm = lexical_hmmm + delimiter_hmmm + grammar_hmmm
+    compiler_hmmm = _compiler_validation(source_index, source_id)
+    syntax_hmmm = lexical_hmmm + delimiter_hmmm + grammar_hmmm + compiler_hmmm
     if grammar_root is None or syntax_hmmm:
         root = _source_root_hmmm(
             source_id,
@@ -1100,6 +1139,19 @@ def replay_python_affixiation(receipt: PythonAffixiationReceipt) -> PythonAffixi
         or root.scale not in {"module", "source"}
     ):
         raise PythonGonolConstructionError("receipt root does not cover every source occurrence")
+    root_kind = root.relation.kind
+    if receipt.standing == STANDING:
+        if root.scale != "module" or root_kind != "python.grammar.Module":
+            raise PythonGonolConstructionError(
+                "implemented-candidate receipt must be rooted at a compiler-valid module"
+            )
+    elif receipt.standing == "hmmm":
+        if root.scale != "source" or root_kind != "python.source.hmmm":
+            raise PythonGonolConstructionError(
+                "hmmm receipt must be rooted at the source-hmmm construction"
+            )
+    else:
+        raise PythonGonolConstructionError(f"unsupported receipt standing: {receipt.standing!r}")
     if receipt.nonclaims != NONCLAIMS or not all(item in receipt.hmmm for item in BASE_HMMM):
         raise PythonGonolConstructionError("receipt nonclaim or hmmm boundary mismatch")
     if receipt.receipt_digest != _receipt_digest(replace(receipt, receipt_digest="")):

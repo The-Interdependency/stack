@@ -27,15 +27,15 @@ METAPAT                         affixiation semantics
             -> CPython          pinned recognition witness only
 ```
 
-The private `_recognition` module uses CPython 3.12 `tokenize` and `ast` after the source occurrence floor has been admitted. Its former public "letter" vocabulary is deprecated and removed from the public receipt: it is now only an internal recognition plan. Token, AST, compiler, and code objects never become gonols and never replace the source-built relation graph.
+The private `_recognition` module uses the pinned CPython 3.12.14 `tokenize`, `ast`, and non-executing compiler validation after the source occurrence floor has been admitted. Recognition normalizes CRLF and classic-Mac CR line boundaries while all gonol spans and reconstructed bytes remain bound to the original source. Its former public "letter" vocabulary is deprecated and removed from the public receipt: it is now only an internal recognition plan. Token, AST, compiler, and code objects never become gonols and never replace the source-built relation graph.
 
-Any valid Python 3.12 file-input source accepted by the pinned recognition witness is traversed recursively without a grammar-node whitelist. The broad Python 3.12 surface fixture remains a regression witness; exhaustive parity against CPython's complete grammar/test corpus remains `hmmm` rather than being claimed from that fixture alone.
+Any valid Python 3.12.14 file-input source accepted by the pinned recognition witness is traversed iteratively without a grammar-node whitelist. Compiler-invalid file inputs remain `hmmm` even when `ast.parse` accepts them. The broad Python 3.12 surface fixture remains a regression witness; exhaustive parity against CPython's complete grammar/test corpus remains `hmmm` rather than being claimed from that fixture alone.
 
 Standing: **implemented stack-local candidate; not canon and not an independent release**.
 
 ## Usage guidance
 
-Run from this directory with Python 3.12:
+Run from this directory with CPython 3.12.14:
 
 ```bash
 python -m python_gonol path/to/source.py --out source.gonol.json --pretty
