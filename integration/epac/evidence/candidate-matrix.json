@@ -1,0 +1,92 @@
+{
+  "authority_transfer": false,
+  "candidate_assets_sha256": {
+    "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+    "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+    "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+    "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+  },
+  "empirical_status_transfer": false,
+  "license_qualification": "MPL-2.0 recorded",
+  "release_qualification": "same candidate clean installs passed; prepublication Stack acceptance remains separate",
+  "runtimes": {
+    "3.10": {
+      "assets_sha256": {
+        "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+        "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+        "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+        "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+      },
+      "runs": {
+        "sdist": {
+          "artifact_sha256": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+          "receipt_sha256": "013423e7fec0e8c5cbd5a65d7eb236a9cf748abd7858502107733caeef8b4e25",
+          "skips": 0,
+          "tests": 209
+        },
+        "wheel": {
+          "artifact_sha256": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+          "receipt_sha256": "f329816a99bcb0247c563089137f1d0d80920ec8194c6d3a3f2a53a34ecbaff6",
+          "skips": 0,
+          "tests": 209
+        }
+      },
+      "source_files": 197,
+      "wheel_files": 64
+    },
+    "3.11": {
+      "assets_sha256": {
+        "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+        "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+        "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+        "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+      },
+      "runs": {
+        "sdist": {
+          "artifact_sha256": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+          "receipt_sha256": "27bb5cfda248ea7b54c73fbc536e794fbc32a8af4bb253463bbcf2b4c4567bc1",
+          "skips": 0,
+          "tests": 209
+        },
+        "wheel": {
+          "artifact_sha256": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+          "receipt_sha256": "60da7099330cb85331e2c394bf100f124264bb9ae6fb7f8fdcd8efb67a9d3dc7",
+          "skips": 0,
+          "tests": 209
+        }
+      },
+      "source_files": 197,
+      "wheel_files": 64
+    },
+    "3.12": {
+      "assets_sha256": {
+        "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+        "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+        "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+        "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+      },
+      "runs": {
+        "sdist": {
+          "artifact_sha256": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+          "receipt_sha256": "50d18d2f08a862312ce0fe0344f784eec86b8e3ac902d9ebd2e9a446c2f8ffa7",
+          "skips": 0,
+          "tests": 209
+        },
+        "wheel": {
+          "artifact_sha256": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+          "receipt_sha256": "917fbdb1d7892cf8a29b1cb98032bff03c9a474c6237f4aa34504e7174c63190",
+          "skips": 0,
+          "tests": 209
+        }
+      },
+      "source_files": 197,
+      "wheel_files": 64
+    }
+  },
+  "schema": "epac.release-candidate-evidence-acceptance",
+  "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
+  "source_tree": "8c9acb943ea05cbe3305fd0a10dd6a38b2fa684f",
+  "status": "passed",
+  "verifier_sha256": "4f95f90186f5fef2912230c0c073c093009b303c62d4d82473160b348d9d0517",
+  "version": 1
+}

@@ -1,0 +1,25 @@
+{
+  "archived_files": 197,
+  "artifacts_sha256": {
+    "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+    "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+    "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+    "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+  },
+  "clean_installation_matrix": "pending",
+  "git_files": 190,
+  "independent_verifier_sha256": "4f95f90186f5fef2912230c0c073c093009b303c62d4d82473160b348d9d0517",
+  "license_expression": "MPL-2.0",
+  "prepublication_stack_acceptance": "pending",
+  "publication_or_authority_transfer": false,
+  "schema": "epac.release-candidate-reproducibility",
+  "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
+  "source_tree": "8c9acb943ea05cbe3305fd0a10dd6a38b2fa684f",
+  "status": "passed",
+  "umasks": [
+    "022",
+    "077"
+  ],
+  "version": 1,
+  "wheel_files": 64
+}

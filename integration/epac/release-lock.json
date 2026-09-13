@@ -1,0 +1,30 @@
+{
+  "assets": {
+    "SHA256SUMS": {
+      "sha256": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+      "url": "https://github.com/The-Interdependency/epac/releases/download/v0.1.0/SHA256SUMS"
+    },
+    "interdependency_epac-0.1.0-py3-none-any.whl": {
+      "sha256": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+      "url": "https://github.com/The-Interdependency/epac/releases/download/v0.1.0/interdependency_epac-0.1.0-py3-none-any.whl"
+    },
+    "interdependency_epac-0.1.0.tar.gz": {
+      "sha256": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+      "url": "https://github.com/The-Interdependency/epac/releases/download/v0.1.0/interdependency_epac-0.1.0.tar.gz"
+    },
+    "release-manifest.json": {
+      "sha256": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e",
+      "url": "https://github.com/The-Interdependency/epac/releases/download/v0.1.0/release-manifest.json"
+    }
+  },
+  "phase": "graduated",
+  "release_tag": "v0.1.0",
+  "schema": "stack.epac-public-release-lock",
+  "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
+  "upstream": {
+    "authority_transfer": false,
+    "commit": "6eea1828a34ed8ec99879f8090ea5d48352d8c2d",
+    "repository": "The-Interdependency/ucns"
+  },
+  "version": 1
+}

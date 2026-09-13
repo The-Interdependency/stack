@@ -5,12 +5,13 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Source snapshot UTC: `2026-08-22T10:19:43Z` (initial participant snapshot)
 - Layout migration UTC: `2026-08-30T02:58:49Z`
 - PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
+- EPAC graduation UTC: `2026-09-12`; immutable `v0.1.0`, public reconsumption and scoped implementation/public-contract transition accepted.
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `482e9a4f70c18ad4888d1fab32e44a6ab550fe7486fabd2f1253876c266212eb`
+  `96f8809cedc76cf0a53bd358d2b0b5ef43aa6e888dabb3187a014843d0586489`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -42,7 +43,7 @@ meaning used by that repository.
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
 | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
-| `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | main | independent extracted candidate repository; implementation/public-contract authority transition incomplete | extracted repo exists; forge candidate remains `research/epac/` until release/reconsumption; `libs/epac/` remains unpopulated |
+| `The-Interdependency/epac` | `949cb1cb304927942966c9fb396caf6227120e7f` | v0.1.0 | independent implementation and public-contract authority for EPAC | immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated |
 
 ## Research-Only Composition Participants
 
@@ -52,6 +53,7 @@ release identity.
 
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
+| `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -89,9 +91,11 @@ extracted from as provenance while declaring a distinct `project` and stack-loca
 authority. Such a component must also appear in the stack research-participant graph;
 its source repository must stop claiming the separated responsibility at stack level.
 
-EPAC is currently an extraction-transition exception: the independent repository exists,
-but authority transfer is not complete, so the forge candidate remains in `research/epac/`
-and no `libs/epac/` canonical import is created yet.
+EPAC is consumed as an immutable release artifact through `integration/epac/`.
+`research/epac/` retains historical forge evidence at its explicit Stack BASE, with
+all Python implementation/test copies retired. A `libs/epac/` source mirror is not
+required for artifact consumption. The completed scoped authority transition is recorded in
+`integration/epac/authority-transition.json`.
 
 ## License status at pinned commits
 
@@ -103,7 +107,7 @@ and no `libs/epac/` canonical import is created yet.
 | edcm | MPL-2.0 (`LICENSE`) |
 | pcea | present (`LICENSE`) |
 | ptcna | present (`LICENSE`) |
-| epac | independent repository exists; no `LICENSE` yet — `hmmm` |
+| epac | MPL-2.0 (`LICENSE`); owner weak-copyleft instruction recorded in the release source |
 
 ## Non-transfer boundaries
 
@@ -133,10 +137,12 @@ repository, merge it there, then refresh the pinned view.
 
 ## Graduation boundary
 
-EPAC now has an independent extracted repository, but extraction is not graduation.
-Do not populate `libs/epac/`, replace the forge candidate, or assert implementation/public-contract
-authority transfer until EPAC completes its clean build/install, license/distribution,
-immutable release, downstream stack reconsumption, and authority-transition receipt gates.
+EPAC has passed its licensed candidate matrix, pre-publication Stack check, immutable
+publication and public Stack reconsumption. The historical implementation path is
+retired. The clean retired-source consumer gate passed, and the completed scoped
+authority-transition receipt records EPAC as graduated. See `integration/epac/` for the immutable
+release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec99879f8090ea5d48352d8c2d`;
+Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
 
 English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
 research component, not EDCM and not an independent canonical release.
@@ -148,7 +154,6 @@ transfers no semantic, geometric, measurement, or language-canon status.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- EPAC clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; `libs/epac/` stays unpopulated until graduation.
 - English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.

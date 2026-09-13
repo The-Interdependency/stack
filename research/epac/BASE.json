@@ -1,0 +1,18 @@
+{
+  "authority": "historical forge evidence only; active EPAC implementation resides in The-Interdependency/epac",
+  "authority_transfer": false,
+  "canon_path": null,
+  "note": "This BASE binds the retained historical documents and receipts to their actual Stack origin. It does not rebase them to the newer EPAC release. The scoped transition is recorded separately.",
+  "project": "epac",
+  "schema": "the-interdependency.stack-research-base",
+  "source_commit": "0e8384bbb60e4c2189016a212bdd0030d04aed7d",
+  "source_path": "research/epac/",
+  "source_repository": "The-Interdependency/stack",
+  "standing": "historical-forge-evidence",
+  "successor": {
+    "release_tag": "v0.1.0",
+    "repository": "The-Interdependency/epac",
+    "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f"
+  },
+  "version": "1.0.0"
+}

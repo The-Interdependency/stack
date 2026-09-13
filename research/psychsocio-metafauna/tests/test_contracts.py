@@ -229,9 +229,11 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
 
         self.assertIn("psychsocio-metafauna/ # proposed", root_readme)
         self.assertIn(
-            "EPAC and psychsocio metafauna are currently in this pre-graduation state.",
+            "Psychsocio metafauna and From Photons to the Macroverse remain stack-local\npre-graduation research.",
             root_readme,
         )
+        self.assertIn("EPAC is graduated", root_readme)
+        self.assertIn("integration/epac/authority-transition.json", root_readme)
 
 
 if __name__ == "__main__":

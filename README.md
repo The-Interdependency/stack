@@ -27,7 +27,6 @@ stack/
 │   ├── edcm/
 │   ├── pcea/
 │   ├── ptcna/
-│   ├── epac/                # canon slot unpopulated until EPAC graduates
 │   └── skill-lib/           # reserved; root skill-lib/ remains the operational special case
 ├── research/                # stack-local work; never source authority by location
 │   ├── metapat/             # current METAPAT research + BASE.json
@@ -37,9 +36,10 @@ stack/
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
-│   ├── epac/                # extracted candidate remains forge-side until graduation completes
+│   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
+├── integration/epac/        # immutable EPAC release lock and consumer verification
 ├── ahbg/                    # emerging composed benchmark/game workspace
 ├── backend/                 # PostgreSQL-backed durable fresh-making control plane
 ├── frontend/
@@ -114,11 +114,17 @@ English Gonol Construction is currently a distinct stack-local research componen
 separated from EDCM but not independently graduated.
 Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
 constructor is an implemented candidate, not stack or language canon.
-EPAC and psychsocio metafauna are currently in this pre-graduation state.
-EPAC is further along: it has an independent extracted repository, but extraction is not
-graduation, so its forge research remains here until EPAC completes its release,
-downstream reconsumption, and authority-transition gates. From Photons to the Macroverse
-is also stack-local pre-graduation research.
+Psychsocio metafauna and From Photons to the Macroverse remain stack-local
+pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
+release and has passed public Stack reconsumption. Its Python forge copy is retired;
+`research/epac/` preserves historical evidence. EPAC is graduated: implementation and public-contract authority belong to the
+independent repository, as recorded in
+[`integration/epac/authority-transition.json`](integration/epac/authority-transition.json).
+
+```bash
+python3 integration/epac/reconsume.py \
+  integration/epac/release-lock.json /tmp/epac-public-consumption python3.12
+```
 
 ### Make derived artifacts fresh without depending on hosted CI
 

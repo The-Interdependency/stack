@@ -1,0 +1,29 @@
+{
+  "immutable": true,
+  "public_assets_sha256": {
+    "SHA256SUMS": "c432e50b60a861992d36a89b3ceb5e4720a0d79f5da8f04a65c0b88dcd61618a",
+    "interdependency_epac-0.1.0-py3-none-any.whl": "e871ce7940e963b73664a276cdd8ceea7ac1a5db568c26838cd57217e00adf45",
+    "interdependency_epac-0.1.0.tar.gz": "fb31e05b55f5cf3bae76e2bd70332507cca1051e71b58bb49f25bae136853460",
+    "release-manifest.json": "caa7ef6103651786efd7c092421a7a9fd7daf535bc839d3e8dcb20ffa806c89e"
+  },
+  "qualification": {
+    "310-input-binding": "b579187e9071e78306df11effec033d30af6a05285774889751000cbb6d881df",
+    "310-sdist": "013423e7fec0e8c5cbd5a65d7eb236a9cf748abd7858502107733caeef8b4e25",
+    "310-wheel": "f329816a99bcb0247c563089137f1d0d80920ec8194c6d3a3f2a53a34ecbaff6",
+    "311-input-binding": "b579187e9071e78306df11effec033d30af6a05285774889751000cbb6d881df",
+    "311-sdist": "27bb5cfda248ea7b54c73fbc536e794fbc32a8af4bb253463bbcf2b4c4567bc1",
+    "311-wheel": "60da7099330cb85331e2c394bf100f124264bb9ae6fb7f8fdcd8efb67a9d3dc7",
+    "312-input-binding": "b579187e9071e78306df11effec033d30af6a05285774889751000cbb6d881df",
+    "312-sdist": "50d18d2f08a862312ce0fe0344f784eec86b8e3ac902d9ebd2e9a446c2f8ffa7",
+    "312-wheel": "917fbdb1d7892cf8a29b1cb98032bff03c9a474c6237f4aa34504e7174c63190",
+    "artifact_source_verifier_sha256": "4f95f90186f5fef2912230c0c073c093009b303c62d4d82473160b348d9d0517",
+    "prepublication_stack_receipt_sha256": "fb891326a7b81b0cda0ef8cc103a0f4b5c8c710b9f33a2079e5e2425b5456498"
+  },
+  "release_id": 387733545,
+  "release_url": "https://github.com/The-Interdependency/epac/releases/tag/v0.1.0",
+  "schema": "epac.public-release-verification",
+  "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
+  "status": "passed",
+  "verifier_sha256": "e6ec8ec144b2863de0ce53abc5058fdad07707def7dcd9e2b8b85870eb5e697a",
+  "version": 1
+}
