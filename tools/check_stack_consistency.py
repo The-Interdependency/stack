@@ -86,6 +86,8 @@ STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
+# Original completed EPAC event. Advancing release pins cannot reselect history.
+EPAC_TRANSITION_COMMIT = "c81d807142d3f0fe3968a6879888afa00352eaff"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -367,7 +369,8 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         expected_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json", "graduation-release-lock.json", "transition-before-manifest.json", "transition-after-manifest.json"}
         prefix = "integration/epac/evidence/"
         require(set(receipt["evidence"]) == {prefix + name for name in expected_evidence}, "complete evidence inventory required")
-        original_receipt = json.loads(committed_bytes(receipt["recorded_transition_source_commit"], "integration/epac/authority-transition.json"))
+        require(receipt["recorded_transition_source_commit"] == EPAC_TRANSITION_COMMIT, "original transition commit differs from independently pinned anchor")
+        original_receipt = json.loads(committed_bytes(EPAC_TRANSITION_COMMIT, "integration/epac/authority-transition.json"))
         historical_fields = ("schema", "version", "status", "lifecycle_state", "from", "to", "gates", "scope", "upstream", "retirement_source_commit", "retirement_source_tree", "before_work_graph_sha256", "after_work_graph_sha256", "release_lock_sha256")
         require(all(receipt[key] == original_receipt[key] for key in historical_fields), "historical transition facts differ from original committed receipt")
         records = {}
@@ -375,7 +378,7 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
             path = ROOT / prefix / name
             require(digest(path) == receipt["evidence"].get(prefix + name), f"evidence digest differs: {name}")
             if name in original_evidence:
-                require(path.read_bytes() == committed_bytes(receipt["recorded_transition_source_commit"], prefix + name), f"historical evidence differs from original committed bytes: {name}")
+                require(path.read_bytes() == committed_bytes(EPAC_TRANSITION_COMMIT, prefix + name), f"historical evidence differs from original committed bytes: {name}")
             records[name] = load_json(path)
         # Graduation evidence is immutable history, not the current release pin.
         require(receipt["graduation_release_lock"] == prefix + "graduation-release-lock.json", "unexpected historical release lock path")
