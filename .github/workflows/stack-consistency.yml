@@ -41,3 +41,5 @@ jobs:
           fetch-depth: 0
       - name: Verify stack authority and provenance projections
         run: python tools/check_stack_consistency.py
+      - name: Validate the repository-owned portfolio report
+        run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json

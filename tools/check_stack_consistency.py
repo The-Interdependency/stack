@@ -363,13 +363,19 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         history_root = ROOT / "research/epac"
         require(not history_root.is_symlink() and not any(path.is_symlink() for path in history_root.rglob("*")), "historical research path contains a symlink")
         require(not list(history_root.rglob("*.py")), "forge Python implementation has returned")
+        original_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json"}
         expected_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json", "graduation-release-lock.json", "transition-before-manifest.json", "transition-after-manifest.json"}
         prefix = "integration/epac/evidence/"
         require(set(receipt["evidence"]) == {prefix + name for name in expected_evidence}, "complete evidence inventory required")
+        original_receipt = json.loads(committed_bytes(receipt["recorded_transition_source_commit"], "integration/epac/authority-transition.json"))
+        historical_fields = ("schema", "version", "status", "lifecycle_state", "from", "to", "gates", "scope", "upstream", "retirement_source_commit", "retirement_source_tree", "before_work_graph_sha256", "after_work_graph_sha256", "release_lock_sha256")
+        require(all(receipt[key] == original_receipt[key] for key in historical_fields), "historical transition facts differ from original committed receipt")
         records = {}
         for name in sorted(expected_evidence):
             path = ROOT / prefix / name
             require(digest(path) == receipt["evidence"].get(prefix + name), f"evidence digest differs: {name}")
+            if name in original_evidence:
+                require(path.read_bytes() == committed_bytes(receipt["recorded_transition_source_commit"], prefix + name), f"historical evidence differs from original committed bytes: {name}")
             records[name] = load_json(path)
         # Graduation evidence is immutable history, not the current release pin.
         require(receipt["graduation_release_lock"] == prefix + "graduation-release-lock.json", "unexpected historical release lock path")
@@ -418,11 +424,19 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         for phase in ("candidate", "reconsumed", "graduated"):
             record = records[f"stack-{phase}.json"]
             require(record["status"] == "passed" and record["phase"] == phase and record["source_unchanged"] is True, f"invalid {phase} consumer evidence")
+            commit = record["source_commit"]
+            require(HEX40.fullmatch(commit) is not None, f"{phase} consumer source commit invalid")
+            if HEX40.fullmatch(commit) is None:
+                raise ValueError("invalid consumer source commit")
+            tree_result = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--verify", commit + "^{tree}"], capture_output=True, check=False)
+            require(tree_result.returncode == 0 and tree_result.stdout.decode().strip() == record["source_tree"], f"{phase} consumer tree differs from Git source")
+            require(hashlib.sha256(committed_bytes(commit, "integration/epac/verify_release.py")).hexdigest() == record["verifier_sha256"], f"{phase} consumer verifier differs from Git source")
             require(record["artifact_sha256"] == wheel_hash and record["ucns_source_commit"] == receipt["upstream"]["commit"], f"{phase} consumer artifact/dependency differs")
             require(record["empirical_status_transfer"] is False and record["comparison_standings"] == expected_standings, f"{phase} scientific boundary differs")
         require(records["stack-graduated.json"]["source_commit"] == receipt["retirement_source_commit"] and records["stack-graduated.json"]["source_tree"] == receipt["retirement_source_tree"], "retirement verification source differs")
         inventory = records["retirement-inventory.json"]
         require(inventory["epac_commit"] == lock["source_commit"] and len(inventory["proposed_python_retirements"]) == 37, "retirement source/inventory differs")
+        require(len(inventory["preserved_historical_files"]) == 28 and len({item["path"] for item in inventory["preserved_historical_files"]}) == 28, "complete 28-path historical inventory required")
         for item in inventory["preserved_historical_files"]:
             path = ROOT / item["path"]
             if item["path"] == "research/epac/README.md":

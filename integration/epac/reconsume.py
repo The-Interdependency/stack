@@ -44,6 +44,15 @@ from urllib.parse import urlsplit
 from urllib.request import urlopen
 
 
+def reject_duplicate_keys(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key: " + key)
+        result[key] = value
+    return result
+
+
 def main() -> None:
     lock_path, output = (Path(argument).resolve() for argument in sys.argv[1:3])
     runtime = sys.argv[3]
@@ -55,7 +64,7 @@ def main() -> None:
     if output.exists() or output.is_relative_to(stack):
         raise ValueError("output must be new and outside stack")
     lock_bytes = lock_path.read_bytes()
-    lock = json.loads(lock_bytes)
+    lock = json.loads(lock_bytes, object_pairs_hook=reject_duplicate_keys)
     if lock["phase"] not in {"reconsumed", "graduated"}:
         raise ValueError("public reconsumption phase required")
     output.mkdir(parents=True)
@@ -71,15 +80,20 @@ def main() -> None:
         if hashlib.sha256(payload).hexdigest() != identity["sha256"]:
             raise ValueError(f"public artifact digest mismatch: {name}")
         (output / name).write_bytes(payload)
-    manifest = json.loads((output / "release-manifest.json").read_text())
+    manifest = json.loads((output / "release-manifest.json").read_text(), object_pairs_hook=reject_duplicate_keys)
     if manifest["source_commit"] != lock["source_commit"]:
         raise ValueError("public source identity mismatch")
-    for name, digest in manifest["artifacts_sha256"].items():
-        if assets[name]["sha256"] != digest:
-            raise ValueError("release manifest differs from pinned artifact identity")
     wheels, sdists = list(output.glob("*.whl")), list(output.glob("*.tar.gz"))
     if len(wheels) != 1 or len(sdists) != 1:
         raise ValueError("exactly one wheel and source archive required")
+    expected_artifacts = {path.name: assets[path.name]["sha256"] for path in (wheels[0], sdists[0])}
+    if manifest["artifacts_sha256"] != expected_artifacts:
+        raise ValueError("release manifest must bind exactly the wheel and source archive")
+    if set(assets) != set(expected_artifacts) | {"release-manifest.json", "SHA256SUMS"}:
+        raise ValueError("release asset inventory differs from complete four-file set")
+    expected_sums = "".join(f'{assets[name]["sha256"]}  {name}\n' for name in sorted(set(assets) - {"SHA256SUMS"}))
+    if (output / "SHA256SUMS").read_bytes() != expected_sums.encode("ascii"):
+        raise ValueError("checksum file differs from complete pinned asset set")
     source = output / "source"
     source.mkdir()
     with tarfile.open(sdists[0]) as archive:
@@ -97,7 +111,7 @@ def main() -> None:
     upstream_bytes = (source_root / "data/ucns-source-lock.json").read_bytes()
     if hashlib.sha256(upstream_bytes).hexdigest() != manifest["ucns_source_lock_sha256"]:
         raise ValueError("producer UCNS source lock differs from release manifest")
-    producer_upstream = json.loads(upstream_bytes)
+    producer_upstream = json.loads(upstream_bytes, object_pairs_hook=reject_duplicate_keys)
     upstream = {"repository": producer_upstream["repository"],
                 "commit": producer_upstream["commit"], "authority_transfer": False}
     if "upstream" in lock and lock["upstream"] != upstream:
@@ -110,7 +124,7 @@ def main() -> None:
     subprocess.run(["uv", "pip", "sync", "--python", python, "--require-hashes", str(requirements)], check=True, env=child_env)
     subprocess.run(["uv", "pip", "install", "--python", python, "--no-deps", str(wheels[0])], check=True, env=child_env)
     subprocess.run([python, str(stack / "integration/epac/verify_release.py"), str(wheels[0]), str(output / "consumption.json"), "--phase", lock["phase"]], check=True, cwd=output, env=child_env)
-    consumption = json.loads((output / "consumption.json").read_text())
+    consumption = json.loads((output / "consumption.json").read_text(), object_pairs_hook=reject_duplicate_keys)
     if consumption["ucns_source_commit"] != upstream["commit"]:
         raise ValueError("installed consumer UCNS differs from release source lock")
     if lock_path.read_bytes() != lock_bytes:
