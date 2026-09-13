@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "96f8809cedc76cf0a53bd358d2b0b5ef43aa6e888dabb3187a014843d0586489",
+  "work_graph_sha256": "9ab3b3f75a32f5f73b5df68419148181fc632593babe4ec6adf4269d4f35badb",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -40,23 +40,10 @@
       "relation": "pinned canonical repository view at libs/ptcna/; stack-local work at research/ptcna/"
     },
     {
-      "authority": "independent implementation and public-contract authority for EPAC",
-      "commit": "949cb1cb304927942966c9fb396caf6227120e7f",
-      "lifecycle": "graduated",
-      "relation": "immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated",
-      "release": {
-        "lock": "integration/epac/release-lock.json",
-        "lock_sha256": "43e3750aa321e567ea1b7ff445ce8008a2936b9902e133e9bbe5ae6b22e4e11d",
-        "tag": "v0.1.0",
-        "url": "https://github.com/The-Interdependency/epac/releases/tag/v0.1.0"
-      },
       "repository": "The-Interdependency/epac",
-      "transition_receipt": "integration/epac/authority-transition.json",
-      "upstream": {
-        "authority_transfer": false,
-        "commit": "6eea1828a34ed8ec99879f8090ea5d48352d8c2d",
-        "repository": "The-Interdependency/ucns"
-      }
+      "commit": "d8868858b2e455381ce670797bdbe47189bdc496",
+      "authority": "independent extracted candidate repository; implementation/public-contract authority transition incomplete",
+      "relation": "extracted repository on main; stack forge candidate remains at research/epac/ until release and downstream reconsumption; libs/epac/ remains unpopulated"
     }
   ],
   "boundaries": {
@@ -67,7 +54,7 @@
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
-      "Python Gonol Construction remains stack-local research without independent repository or release authority",
+      "epac exists independently at d8868858b2e455381ce670797bdbe47189bdc496, but clean install, license, stable release, downstream reconsumption, and authority-transition receipt remain incomplete; libs/epac/ stays unpopulated until graduation",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
@@ -145,15 +132,6 @@
       "authority_transfer": false
     },
     {
-      "workspace": "research/python-gonol/",
-      "participant_id": "python-gonol",
-      "repository": "The-Interdependency/stack",
-      "commit": "0e8384bbb60e4c2189016a212bdd0030d04aed7d",
-      "relation": "stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
       "workspace": "research/ucns/",
       "participant_id": "ucns-source-base",
       "repository": "The-Interdependency/ucns",
@@ -161,15 +139,6 @@
       "relation": "explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned libs/ucns canonical view",
       "canonical_release": false,
       "authority_transfer": false
-    },
-    {
-      "authority_transfer": false,
-      "canonical_release": false,
-      "commit": "0e8384bbb60e4c2189016a212bdd0030d04aed7d",
-      "participant_id": "epac",
-      "relation": "historical forge documents and receipts; Python implementation retired in favor of the independent EPAC release",
-      "repository": "The-Interdependency/stack",
-      "workspace": "research/epac/"
     }
   ]
 }

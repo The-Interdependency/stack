@@ -13,9 +13,9 @@
 #   mutates: none
 #   cleanup: none
 #
-# id: suffix_exception_carried_by_suffix_gonol_check
-#   proves: suffix_exception_carried_by_suffix_gonol
-#   call: self::test_suffix_coupling_exception_is_carried_by_closed_suffix
+# id: character_behavior_resolved_during_suffixiation_check
+#   proves: character_behavior_resolved_during_suffixiation
+#   call: self::test_character_behavior_resolved_during_suffixiation
 #   timeout: 30
 #   mutates: none
 #   cleanup: none
@@ -60,6 +60,7 @@ from english_gonol.gonol import (
     construct_gonol,
     replay_gonol,
 )
+from english_gonol.language.suffixiation import suffixiate
 
 
 def _fake_public_gonol_authority() -> tuple[str, SimpleNamespace]:
@@ -144,59 +145,73 @@ class GonolConstructorTest(unittest.TestCase):
         self.assertNotIn("mandatory character-word-definition-recursive ladder", definition.receipt_digest)
         self.assertIn("not a mandatory character-word-definition-recursive ladder", definition.nonclaims)
 
-    def test_suffix_coupling_exception_is_carried_by_closed_suffix(self) -> None:
+    def test_character_behavior_resolved_during_suffixiation(self) -> None:
         base = construct_gonol(scale="word", source="try", source_id="fixture:try")
+        y_character = base.gonol.source_characters[-1]
+        self.assertEqual(y_character.source_units, ("y",))
+        construct_gonol(
+            scale="definition",
+            participants=(y_character,),
+            relation="orthographic-behavior:final-y-after-consonant",
+            source_id="fixture:y-orthographic",
+        )
         ing = construct_gonol(
             scale="suffix",
             source="ing",
             source_id="fixture:ing",
-            carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+            carried_options=(("suffix-coupling.vowel-initial", "true"),),
         )
-        coupling = construct_gonol(
-            scale="suffix-coupling",
-            participants=(base.gonol, ing.gonol),
-            source_id="fixture:trying",
-        )
+        trying = suffixiate(base.gonol, ing.gonol, source_id="fixture:trying")
 
-        self.assertEqual(coupling.option_set, SCALE_OPTION_SETS["suffix-coupling"])
-        self.assertEqual(coupling.gonol.relation, "suffix-coupling")
-        self.assertEqual(coupling.gonol.participants, (base.gonol, ing.gonol))
+        self.assertEqual(trying.coupling_receipt.option_set, SCALE_OPTION_SETS["suffix-coupling"])
+        self.assertEqual(trying.coupling_receipt.gonol.relation, "suffix-coupling")
+        self.assertEqual(trying.coupling_receipt.gonol.participants, (base.gonol, ing.gonol))
+        self.assertEqual(trying.y_realization, "preserve-y")
+        self.assertEqual(trying.suffix_vowel_initial, True)
         self.assertEqual(
-            coupling.gonol.participants[1].carried_options,
-            (("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+            ing.gonol.carried_options,
+            (("suffix-coupling.vowel-initial", "true"),),
         )
-        self.assertEqual(coupling.gonol.carried_options, ())
-        self.assertIn(("carried_option", "suffix-coupling.final-y-after-consonant=preserve-y"), ing.gonol.provenance)
+        self.assertNotIn("final-y-after-consonant", repr(ing.gonol.carried_options))
+        self.assertIn(("carried_option", "suffix-coupling.vowel-initial=true"), ing.gonol.provenance)
         self.assertNotIn("final-y-after-consonant", repr(SCALE_OPTION_SETS["suffix-coupling"]))
-        self.assertNotIn("preserve-y", repr(SCALE_OPTION_SETS["suffix-coupling"]))
 
-        replay = replay_gonol(receipt=coupling)
-        self.assertEqual(coupling.receipt_digest, replay.receipt_digest)
+        replay = replay_gonol(receipt=trying.coupling_receipt)
+        self.assertEqual(trying.coupling_receipt.receipt_digest, replay.receipt_digest)
+
+        ed = construct_gonol(
+            scale="suffix",
+            source="ed",
+            source_id="fixture:ed",
+            carried_options=(("suffix-coupling.vowel-initial", "true"),),
+        )
+        tried = suffixiate(base.gonol, ed.gonol, source_id="fixture:tried")
+        self.assertEqual(tried.y_realization, "y-to-i")
 
     def test_suffix_carried_options_are_part_of_identity_and_fail_closed(self) -> None:
         base = construct_gonol(scale="word", source="try", source_id="fixture:try")
-        ing_preserve = construct_gonol(
+        ing_vowel_initial = construct_gonol(
             scale="suffix",
             source="ing",
             source_id="fixture:ing",
-            carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+            carried_options=(("suffix-coupling.vowel-initial", "true"),),
         )
-        ing_change = construct_gonol(
+        ing_consonant_initial = construct_gonol(
             scale="suffix",
             source="ing",
             source_id="fixture:ing",
-            carried_options=(("suffix-coupling.final-y-after-consonant", "change-y-to-i"),),
+            carried_options=(("suffix-coupling.vowel-initial", "false"),),
         )
-        self.assertNotEqual(ing_preserve.gonol.atomic_id, ing_change.gonol.atomic_id)
+        self.assertNotEqual(ing_vowel_initial.gonol.atomic_id, ing_consonant_initial.gonol.atomic_id)
 
         preserved = construct_gonol(
             scale="suffix-coupling",
-            participants=(base.gonol, ing_preserve.gonol),
+            participants=(base.gonol, ing_vowel_initial.gonol),
             source_id="fixture:trying",
         )
         changed = construct_gonol(
             scale="suffix-coupling",
-            participants=(base.gonol, ing_change.gonol),
+            participants=(base.gonol, ing_consonant_initial.gonol),
             source_id="fixture:trying",
         )
         self.assertNotEqual(preserved.gonol.atomic_id, changed.gonol.atomic_id)
@@ -204,8 +219,8 @@ class GonolConstructorTest(unittest.TestCase):
         with self.assertRaisesRegex(GonolConstructionError, "carried by a closed suffix gonol"):
             construct_gonol(
                 scale="suffix-coupling",
-                participants=(base.gonol, ing_preserve.gonol),
-                carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+                participants=(base.gonol, ing_vowel_initial.gonol),
+                carried_options=(("suffix-coupling.vowel-initial", "true"),),
                 source_id="fixture:bad-carrier",
             )
 
@@ -214,13 +229,13 @@ class GonolConstructorTest(unittest.TestCase):
                 scale="word",
                 source="try",
                 source_id="fixture:bad-word-carrier",
-                carried_options=(("suffix-coupling.final-y-after-consonant", "preserve-y"),),
+                carried_options=(("suffix-coupling.vowel-initial", "true"),),
             )
 
         with self.assertRaisesRegex(GonolConstructionError, "closed base and closed suffix"):
             construct_gonol(
                 scale="suffix-coupling",
-                participants=(ing_preserve.gonol, base.gonol),
+                participants=(ing_vowel_initial.gonol, base.gonol),
                 source_id="fixture:bad-order",
             )
 

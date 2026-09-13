@@ -54,7 +54,8 @@ def main() -> None:
     stack = Path(__file__).resolve().parents[2]
     if output.exists() or output.is_relative_to(stack):
         raise ValueError("output must be new and outside stack")
-    lock = json.loads(lock_path.read_text())
+    lock_bytes = lock_path.read_bytes()
+    lock = json.loads(lock_bytes)
     if lock["phase"] not in {"reconsumed", "graduated"}:
         raise ValueError("public reconsumption phase required")
     output.mkdir(parents=True)
@@ -93,6 +94,14 @@ def main() -> None:
     if len(roots) != 1 or not roots[0].is_dir():
         raise ValueError("source archive root mismatch")
     source_root = roots[0]
+    upstream_bytes = (source_root / "data/ucns-source-lock.json").read_bytes()
+    if hashlib.sha256(upstream_bytes).hexdigest() != manifest["ucns_source_lock_sha256"]:
+        raise ValueError("producer UCNS source lock differs from release manifest")
+    producer_upstream = json.loads(upstream_bytes)
+    upstream = {"repository": producer_upstream["repository"],
+                "commit": producer_upstream["commit"], "authority_transfer": False}
+    if "upstream" in lock and lock["upstream"] != upstream:
+        raise ValueError("consumer UCNS pin differs from producer source lock")
     requirements = output / "dependencies.txt"
     subprocess.run(["uv", "export", "--project", str(source_root), "--locked", "--no-emit-project", "--no-dev", "--format", "requirements.txt", "--output-file", str(requirements)], check=True, env=child_env)
     environment = output / "venv"
@@ -101,7 +110,12 @@ def main() -> None:
     subprocess.run(["uv", "pip", "sync", "--python", python, "--require-hashes", str(requirements)], check=True, env=child_env)
     subprocess.run(["uv", "pip", "install", "--python", python, "--no-deps", str(wheels[0])], check=True, env=child_env)
     subprocess.run([python, str(stack / "integration/epac/verify_release.py"), str(wheels[0]), str(output / "consumption.json"), "--phase", lock["phase"]], check=True, cwd=output, env=child_env)
-    (output / "release-lock.json").write_bytes(lock_path.read_bytes())
+    consumption = json.loads((output / "consumption.json").read_text())
+    if consumption["ucns_source_commit"] != upstream["commit"]:
+        raise ValueError("installed consumer UCNS differs from release source lock")
+    if lock_path.read_bytes() != lock_bytes:
+        raise ValueError("release lock changed during reconsumption")
+    (output / "release-lock.json").write_bytes(lock_bytes)
 
 
 if __name__ == "__main__":

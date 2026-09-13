@@ -51,12 +51,24 @@ Python import paths and user-site imports for its child environments.
 After publishing those verified bytes, record a release lock with:
 
 - `release_tag` and exact `source_commit`;
+- `upstream`, binding the UCNS repository and exact commit with `authority_transfer: false`;
 - `assets`, mapping each filename to its public GitHub release URL and SHA-256;
 - `phase`, first `reconsumed`, then `graduated` only after retiring the forge copy.
 
 The public asset set contains the wheel, source archive, `release-manifest.json`,
 and `SHA256SUMS`. The lock is repository-owned acceptance evidence once its public
-bytes have been independently verified. The accepted `release-lock.json` binds the published v0.1.0 assets. Qualification and public-consumption evidence is retained in `evidence/`.
+bytes have been independently verified. The current `release-lock.json` binds the selected public assets and upstream.
+The checker compares it with the current EPAC manifest entry, and the launcher
+compares its UCNS pin with the producer's hash-bound source lock before install.
+
+The graduation event remains separately bound to the archived
+`evidence/graduation-release-lock.json` and byte-exact before/after manifest
+snapshots, including their source commit and Git blob identities. Its qualification
+and consumer receipts describe the original v0.1.0 transition. Later participant
+graph changes or accepted EPAC release updates do not rewrite that history;
+current public-consumer CI must pass at the new Stack source before accepting a
+new pin. The structural checker verifies local identities, not producer signatures
+or current public availability.
 
 ```bash
 python3 integration/epac/reconsume.py \

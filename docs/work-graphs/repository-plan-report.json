@@ -10,9 +10,9 @@
   },
   "source": {
     "branch": "graduate/epac-release-20260912",
-    "commit": "89ed78e68c11c394d29e4a49e8b23c5dee5303b1",
+    "commit": "c81d807142d3f0fe3968a6879888afa00352eaff",
     "generated_at": "2026-09-12",
-    "note": "Validated retirement source. The subsequent receipt/projection commit records the completed scoped EPAC event and adds the native archive extraction filter; final PR CI reconsumes the same public release at that exact final source."
+    "note": "Completed EPAC lifecycle documentation source. The current receipt preserves that original event using byte-exact manifest snapshots; subsequent Stack changes and release pins are checked separately."
   },
   "authority": {
     "owns": [

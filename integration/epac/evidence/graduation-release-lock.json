@@ -21,10 +21,5 @@
   "release_tag": "v0.1.0",
   "schema": "stack.epac-public-release-lock",
   "source_commit": "949cb1cb304927942966c9fb396caf6227120e7f",
-  "upstream": {
-    "authority_transfer": false,
-    "commit": "6eea1828a34ed8ec99879f8090ea5d48352d8c2d",
-    "repository": "The-Interdependency/ucns"
-  },
   "version": 1
 }

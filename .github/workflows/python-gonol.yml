@@ -1,0 +1,41 @@
+name: python-gonol
+
+on:
+  pull_request:
+    paths:
+      - "research/python-gonol/**"
+      - "libs/ucns/**"
+      - "README.md"
+      - "AGENTS.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
+      - ".github/workflows/python-gonol.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/python-gonol/**"
+      - "libs/ucns/**"
+      - "README.md"
+      - "AGENTS.md"
+      - "STACK_MANIFEST.md"
+      - "stack-manifest.json"
+      - ".github/workflows/python-gonol.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install pytest
+        run: python -m pip install pytest
+      - name: Stack structural consistency
+        run: python tools/check_stack_consistency.py
+      - name: Python Gonol construction tests
+        working-directory: research/python-gonol
+        run: python -m pytest -q tests

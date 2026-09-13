@@ -32,6 +32,7 @@ stack/
 │   ├── metapat/             # current METAPAT research + BASE.json
 │   ├── ucns/                # current UCNS research + BASE.json
 │   ├── english-gonol/       # English lexical/gonol construction; distinct from EDCM
+│   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
@@ -77,6 +78,14 @@ English Gonol Construction is a separated stack-local component at
 English text-domain construction candidate. EDCM may evaluate those outputs but does
 not define the construction.
 
+Python Gonol Construction is a separate stack-local component at
+`research/python-gonol/`. It admits every exact Python source occurrence as a character
+gonol, closes the occurrence's applicable character-definition gonols, then affixiates
+lexical forms, delimiters, grammar constructions, and the module from already-closed
+participants. METAPAT owns affixiation semantics; UCNS owns optional consumed geometry;
+Python Gonol owns Python source construction. Tokens and AST nodes are recognition
+witnesses, never gonol substitutes.
+
 ### Change stack structure
 
 Any change that alters a participant, pin, authority, relation, research workspace,
@@ -103,6 +112,8 @@ stack-local implementation.
 
 English Gonol Construction is currently a distinct stack-local research component,
 separated from EDCM but not independently graduated.
+Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
+constructor is an implemented candidate, not stack or language canon.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -183,6 +194,8 @@ merge.
   is not yet implemented.
 - English Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary.
+- Python Gonol Construction has distinct stack-local authority but has not yet gained an
+  independent repository/release authority boundary; UCNS affixiation geometry remains unresolved.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the

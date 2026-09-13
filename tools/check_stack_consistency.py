@@ -321,19 +321,34 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         require(epac["transition_receipt"] == "integration/epac/authority-transition.json", "unexpected transition receipt path")
         require(epac["release"]["lock"] == "integration/epac/release-lock.json", "unexpected release lock path")
         lock_path = ROOT / "integration/epac/release-lock.json"
-        lock = load_json(lock_path)
-        receipt = load_json(ROOT / "integration/epac/authority-transition.json")
+        current_lock = load_json(lock_path)
+        receipt = load_json(receipt_path)
         require(receipt["schema"] == "the-interdependency.scoped-authority-transition" and receipt["status"] == "completed" and receipt["lifecycle_state"] == "graduated", "completed scoped transition required")
-        require(receipt["to"]["repository"] == epac["repository"] and receipt["to"]["source_commit"] == epac["commit"] == lock["source_commit"], "release source identity differs")
-        require(receipt["to"]["release_tag"] == epac["release"]["tag"] == lock["release_tag"], "release tag differs")
-        require(lock["phase"] == "graduated", "graduated consumer phase required")
-        require(digest(lock_path) == epac["release"]["lock_sha256"] == receipt["release_lock_sha256"], "release lock digest differs")
-        require(receipt["after_work_graph_sha256"] == manifest["work_graph_sha256"], "transition graph differs")
+        require(receipt["to"]["repository"] == epac["repository"], "graduated repository differs")
+        require(current_lock["schema"] == "stack.epac-public-release-lock" and current_lock["version"] == 1, "current release lock schema differs")
+        require(current_lock["source_commit"] == epac["commit"] and HEX40.fullmatch(epac["commit"]) is not None, "current release source identity differs")
+        require(current_lock["release_tag"] == epac["release"]["tag"], "current release tag differs")
+        require(current_lock["phase"] == "graduated", "graduated consumer phase required")
+        require(digest(lock_path) == epac["release"]["lock_sha256"], "current release lock digest differs")
+        require(current_lock["upstream"] == epac["upstream"], "current release upstream differs from manifest")
+        for upstream in (current_lock["upstream"], receipt["upstream"]):
+            require(upstream["repository"] == "The-Interdependency/ucns" and HEX40.fullmatch(upstream["commit"]) is not None and upstream["authority_transfer"] is False, "UCNS provenance or non-transfer boundary differs")
+        assets = current_lock["assets"]
+        wheels = [name for name in assets if name.endswith(".whl")]
+        sdists = [name for name in assets if name.endswith(".tar.gz")]
+        require(len(wheels) == len(sdists) == 1 and set(assets) == set(wheels + sdists + ["release-manifest.json", "SHA256SUMS"]), "current release asset inventory differs")
+        for name, asset in assets.items():
+            require(Path(name).name == name and name not in {"", ".", ".."}, "release asset filename invalid")
+            require(re.fullmatch(r"[0-9a-f]{64}", asset["sha256"]) is not None, "release asset digest invalid")
+            require(asset["url"] == f'https://github.com/The-Interdependency/epac/releases/download/{current_lock["release_tag"]}/{name}', "current public asset URL differs")
+        mirror = ROOT / "libs/epac"
+        if "unpopulated" in epac["relation"]:
+            require(not mirror.is_symlink() and (not mirror.exists() or (mirror.is_dir() and not any(mirror.iterdir()))), "unpopulated libs/epac contains files or a symlink")
         required_gates = {"public_api", "independent_tests", "clean_build_install", "license_distribution_rights", "release_ownership_authority", "provenance_preserved", "exact_candidate_forge_verification", "stable_release", "downstream_reconsumption", "forge_implementation_retired", "clean_retired_source_verification"}
         require(set(receipt["gates"]) == required_gates and set(receipt["gates"].values()) == {"pass"}, "complete passed graduation gates required")
         require(receipt["scope"] == {"implementation_authority_transfer": True, "public_contract_authority_transfer": True, "semantic_status_transfer": False, "theorem_status_transfer": False, "proof_status_transfer": False, "certification_status_transfer": False, "measurement_status_transfer": False, "empirical_status_transfer": False, "upstream_license_transfer": False, "freshness_authority_transfer": False}, "authority scope differs")
         require(not list((ROOT / "research/epac").rglob("*.py")), "forge Python implementation has returned")
-        expected_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json"}
+        expected_evidence = {"public-release.json", "candidate-matrix.json", "reproducibility.json", "stack-candidate.json", "stack-reconsumed.json", "stack-graduated.json", "retirement-inventory.json", "graduation-release-lock.json", "transition-before-manifest.json", "transition-after-manifest.json"}
         prefix = "integration/epac/evidence/"
         require(set(receipt["evidence"]) == {prefix + name for name in expected_evidence}, "complete evidence inventory required")
         records = {}
@@ -341,24 +356,50 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
             path = ROOT / prefix / name
             require(digest(path) == receipt["evidence"].get(prefix + name), f"evidence digest differs: {name}")
             records[name] = load_json(path)
+        # Graduation evidence is immutable history, not the current release pin.
+        require(receipt["graduation_release_lock"] == prefix + "graduation-release-lock.json", "unexpected historical release lock path")
+        lock = records["graduation-release-lock.json"]
+        require(digest(ROOT / receipt["graduation_release_lock"]) == receipt["release_lock_sha256"], "historical release lock digest differs")
+        require(lock["source_commit"] == receipt["to"]["source_commit"] and lock["release_tag"] == receipt["to"]["release_tag"] and lock["phase"] == "graduated", "historical release identity differs")
+        require(set(receipt["transition_manifests"]) == {"before", "after"}, "both historical manifest identities required")
+        snapshots = {}
+        for phase in ("before", "after"):
+            name = f"transition-{phase}-manifest.json"
+            identity = receipt["transition_manifests"][phase]
+            snapshot = records[name]
+            require(identity["path"] == prefix + name and identity["source_repository"] == "The-Interdependency/stack" and identity["source_path"] == "stack-manifest.json", f"{phase} historical manifest location differs")
+            require(HEX40.fullmatch(identity["source_commit"]) is not None and HEX40.fullmatch(identity["source_blob_sha"]) is not None, f"{phase} historical Git identity invalid")
+            require(git_blob_sha((ROOT / prefix / name).read_bytes()) == identity["source_blob_sha"], f"{phase} historical manifest blob differs")
+            require(manifest_digest(snapshot) == snapshot["work_graph_sha256"] == receipt[f"{phase}_work_graph_sha256"], f"{phase} historical graph differs")
+            snapshots[phase] = snapshot
+        require(receipt["transition_manifests"]["before"]["source_commit"] == receipt["from"]["source_commit"], "starting manifest source differs from forge source")
+        require(receipt["transition_manifests"]["after"]["source_commit"] == receipt["recorded_transition_source_commit"], "completed manifest source differs from recorded transition")
+        historical_epac = next(r for r in snapshots["after"]["repositories"] if r["repository"] == epac["repository"])
+        require(historical_epac["commit"] == lock["source_commit"] and historical_epac["release"]["tag"] == lock["release_tag"] and historical_epac["release"]["lock_sha256"] == receipt["release_lock_sha256"], "completed manifest release differs from historical lock")
+        require(historical_epac["authority"] == receipt["to"]["authority"] == epac["authority"], "historical authority scope differs")
+        require(receipt["upstream"] == historical_epac["upstream"], "historical receipt upstream differs from completed manifest")
+        other_repositories = [[r for r in snapshots[phase]["repositories"] if r["repository"] != epac["repository"]] for phase in ("before", "after")]
+        require(other_repositories[0] == other_repositories[1], "EPAC transition altered another canonical repository pin or authority")
         public = records["public-release.json"]
-        require(public["status"] == "passed" and public["immutable"] is True and public["source_commit"] == epac["commit"], "immutable public release evidence differs")
+        require(public["status"] == "passed" and public["immutable"] is True and public["source_commit"] == lock["source_commit"], "immutable public release evidence differs")
         require({name: item["sha256"] for name, item in lock["assets"].items()} == public["public_assets_sha256"], "public assets differ from lock")
         matrix = records["candidate-matrix.json"]
-        require(matrix["status"] == "passed" and matrix["source_commit"] == epac["commit"] and set(matrix["runtimes"]) == {"3.10", "3.11", "3.12"}, "candidate matrix identity differs")
+        require(matrix["status"] == "passed" and matrix["source_commit"] == lock["source_commit"] and set(matrix["runtimes"]) == {"3.10", "3.11", "3.12"}, "candidate matrix identity differs")
         for runtime in matrix["runtimes"].values():
             require(set(runtime["runs"]) == {"wheel", "sdist"}, "both installed artifacts required")
             require(all(run["tests"] == 209 and run["skips"] == 0 for run in runtime["runs"].values()), "complete clean-install tests required")
             require(runtime["assets_sha256"] == public["public_assets_sha256"], "matrix candidate bytes differ from publication")
+        reproducibility = records["reproducibility.json"]
+        require(reproducibility["status"] == "passed" and reproducibility["source_commit"] == lock["source_commit"] and reproducibility["artifacts_sha256"] == public["public_assets_sha256"] and set(reproducibility["umasks"]) == {"022", "077"}, "historical reproducible candidate differs")
         wheel_hash = lock["assets"]["interdependency_epac-0.1.0-py3-none-any.whl"]["sha256"]
         for phase in ("candidate", "reconsumed", "graduated"):
             record = records[f"stack-{phase}.json"]
             require(record["status"] == "passed" and record["phase"] == phase and record["source_unchanged"] is True, f"invalid {phase} consumer evidence")
-            require(record["artifact_sha256"] == wheel_hash and record["ucns_source_commit"] == epac["upstream"]["commit"], f"{phase} consumer artifact/dependency differs")
+            require(record["artifact_sha256"] == wheel_hash and record["ucns_source_commit"] == receipt["upstream"]["commit"], f"{phase} consumer artifact/dependency differs")
             require(record["empirical_status_transfer"] is False and len(record["comparison_standings"]) == 14 and set(record["comparison_standings"].values()) == {"FALSIFIED"}, f"{phase} scientific boundary differs")
         require(records["stack-graduated.json"]["source_commit"] == receipt["retirement_source_commit"] and records["stack-graduated.json"]["source_tree"] == receipt["retirement_source_tree"], "retirement verification source differs")
         inventory = records["retirement-inventory.json"]
-        require(inventory["epac_commit"] == epac["commit"] and len(inventory["proposed_python_retirements"]) == 37, "retirement source/inventory differs")
+        require(inventory["epac_commit"] == lock["source_commit"] and len(inventory["proposed_python_retirements"]) == 37, "retirement source/inventory differs")
         for item in inventory["preserved_historical_files"]:
             path = ROOT / item["path"]
             if item["path"] == "research/epac/README.md":
@@ -366,7 +407,7 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
             require(digest(path) == item["sha256"], f"retained historical bytes differ: {path.relative_to(ROOT)}")
         base = load_json(ROOT / "research/epac/BASE.json")
         require(base["source_repository"] == receipt["from"]["repository"] and base["source_commit"] == receipt["from"]["source_commit"] and base["standing"] == "historical-forge-evidence", "historical forge BASE differs")
-    except (KeyError, TypeError, ValueError, OSError) as exc:
+    except (KeyError, TypeError, ValueError, OSError, StopIteration) as exc:
         error(findings, "epac.graduation", f"invalid or missing transition evidence: {exc}")
 
 
