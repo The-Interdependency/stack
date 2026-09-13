@@ -65,3 +65,45 @@ def test_final_y_realization_uses_y_definition_space() -> None:
     assert layer.final_y_realization("y", "a", "ing", True) is None
     assert layer.final_y_realization("x", "r", "ing", True) is None
     assert layer.final_y_realization("y", None, "ing", True) is None
+
+
+def test_every_public_gonol_glyph_has_a_definition() -> None:
+    from english_gonol.language.character_definitions import (
+        PUBLIC_GONOL_157,
+        PUBLIC_GONOL_SHA256,
+    )
+
+    assert len(PUBLIC_GONOL_157) == 157
+    assert len(set(PUBLIC_GONOL_157)) == 157
+    layer = build_character_definition_layer()
+
+    # Every one of the 157 Public Gonol glyphs has a closed character gonol.
+    for glyph in PUBLIC_GONOL_157:
+        assert glyph in layer.character_gonols
+        assert glyph in layer.entries
+
+    # Every one of them has at least one definition gonol sharing it as origin.
+    definitions_by_origin: dict[str, list] = {}
+    for receipt in layer.definitions:
+        if receipt.gonol.scale != "definition":
+            continue
+        origin = receipt.gonol.participants[0]
+        definitions_by_origin.setdefault(origin.source_units[0], []).append(receipt)
+    for glyph in PUBLIC_GONOL_157:
+        assert definitions_by_origin.get(glyph), f"Public Gonol glyph {glyph!r} lacks a definition"
+
+    # Glyphs without curated definitions carry an explicit hmmm definition.
+    hmmm_origins = {
+        receipt.gonol.participants[0].source_units[0]
+        for receipt in layer.definitions
+        if receipt.gonol.relation == "definition:hmmm"
+    }
+    curated = {entry.char for entry in layer.entries.values() if not entry.hmmm}
+    for glyph in PUBLIC_GONOL_157:
+        if glyph not in curated:
+            assert glyph in hmmm_origins, f"Public Gonol glyph {glyph!r} lacks its hmmm definition"
+
+    record = character_layer_record(layer)
+    assert record["public_gonol_sha256"] == PUBLIC_GONOL_SHA256
+    assert record["public_gonol_glyph_count"] == 157
+    assert record["public_gonol_glyph_definition_coverage"] == "complete"

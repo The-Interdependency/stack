@@ -87,12 +87,27 @@ definitions available recursively.
 
 - Module: `english_gonol.primitive_layer_run`
 - Receipt: `experiments/primitive-layer-v0.json`
-  - character layer: 55 entries, 179 definition receipts,
-    `receipt_digest = 8f0931a15865600fba6a11a995f6331d1081317c2bb8c86593fae83d57d93933`
+  - character layer: 157 entries, 383 definition receipts,
+    `receipt_digest = 0371835d6d51d1b613584417061bd44cb38d5221d6ed05b87c739ee4f8a7284e`
+  - Public Gonol coverage: 157/157 glyphs defined
+    (`public_gonol_glyph_definition_coverage = complete`), 102 glyphs with
+    explicit `definition:hmmm`
   - `primitive:trying` -> `y_realization = preserve-y`
   - `primitive:tried` -> `y_realization = y-to-i`
 - Replay:
   `python -m english_gonol.primitive_layer_run --out experiments/primitive-layer-v0.json`
+
+## Public Gonol glyph definitions
+
+Every glyph on the exact 157-position Public Gonol carrier must have a
+definition, even if only `hmmm`. The character definition layer closes a
+character gonol for every Public Gonol glyph; the carrier identity is held as
+a frozen copy whose digest is verified against the pinned constructor
+authority `55d10c84…`. Curated glyphs (letters, digits, operators, and
+punctuation already in the character definition table) keep their curated
+definitions; every remaining Public Gonol glyph receives one explicit
+`definition:hmmm` gonol sharing that glyph's character gonol as origin. No
+meaning is invented for unresolved glyphs.
 
 ## Preserved, not rebuilt
 

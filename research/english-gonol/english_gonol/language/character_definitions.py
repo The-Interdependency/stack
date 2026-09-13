@@ -32,6 +32,36 @@ from ..gonol import (
 SCHEMA = "english-gonol.character-definitions"
 VERSION = "v1"
 
+PUBLIC_GONOL_SHA256 = "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+
+# Frozen copy of the exact 157-position Public Gonol carrier geometry. English
+# Gonol Construction holds this only as an immutable identity reference and
+# verifies its digest against the pinned constructor authority; it does not
+# import or mutate libs/ucns and does not invent UCNS geometry.
+PUBLIC_GONOL_157: tuple[str, ...] = (
+    " ", "A", "!", '"', "B", "#", "$", "C", "%", "(", "D", "&", "'", "E", "1", "*",
+    "F", "+", "[", "G", ",", "-", "H", ".", "/", "I", "3", "{", "J", ":", ";", "K",
+    "=", "?", "L", "<", "@", "M", "5", "\\", "N", "^", "_", "O", "\u2018", "`", "P", "|",
+    "~", "Q", "7", "\u2026", "R", "\u201c", "\u2014", "S", "\u2013", "\u00b7", "T", "\u00b0", "\u00ab", "U", "9", "\u00b1",
+    "V", "\u00d7", "\u00f7", "W", "\u221a", "\u2202", "X", "\u222b", "\u2211", "Y", "\u220f", "\u2207", "Z", "\u221e", "\u2248", "\u2260",
+    "a", "\u2264", "\u2265", "b", "\u2192", "\u2190", "c", ")", "\u2191", "d", "\u2193", "2", "e", "\u2194", "\u2295", "f",
+    "]", "\u2297", "g", "\u2299", "\u2298", "h", "\u2208", "4", "i", "}", "\u2209", "j", "\u2282", "\u2283", "k", "\u2286",
+    ">", "l", "\u2287", "6", "m", "\u2229", "\u222a", "n", "\u2227", "\u2019", "o", "\u2228", "\u00ac", "p", "\u2200", "8",
+    "q", "\u2203", "\u201d", "r", "\u22a2", "\u22a8", "s", "\u2234", "\u2235", "t", "\u00bb", "0", "u", "\u2261", "\u03c8", "v",
+    "\u03c6", "\u03c9", "w", "\u03b1", "\u03b2", "x", "\u03b3", "\u03b4", "y", "\u03bb", "\u03c0", "z", "\u03c3",
+)
+
+
+def _public_gonol_sha256(arrangement: tuple[str, ...] = PUBLIC_GONOL_157) -> str:
+    payload = json.dumps(tuple(arrangement), ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+if len(PUBLIC_GONOL_157) != 157 or len(set(PUBLIC_GONOL_157)) != 157:
+    raise RuntimeError("frozen Public Gonol copy must have exactly 157 unique glyphs")
+if _public_gonol_sha256() != PUBLIC_GONOL_SHA256:
+    raise RuntimeError("frozen Public Gonol copy digest does not match the pinned authority")
+
 
 def _data_path() -> Path:
     return Path(__file__).resolve().parent / "data" / "character_definitions_v1.json"
@@ -51,6 +81,7 @@ class CharacterDefinitionEntry:
     orthographic: tuple[str, ...]
     number_name: str | None
     numerology: tuple[str, ...]
+    hmmm: bool = False
 
     def has_class(self, name: str) -> bool:
         return name in self.classes
@@ -139,6 +170,20 @@ def load_character_definition_table(
             number_name=existing.number_name if existing else None,
             numerology=existing.numerology if existing else (),
         )
+    # Every glyph on the Public Gonol carrier must have a definition, even if
+    # only hmmm. Glyphs already curated above keep their curated definitions;
+    # every remaining Public Gonol glyph receives an explicit hmmm definition.
+    for glyph in PUBLIC_GONOL_157:
+        if glyph not in entries:
+            entries[glyph] = CharacterDefinitionEntry(
+                char=glyph,
+                classes=(),
+                pronunciation=None,
+                orthographic=(),
+                number_name=None,
+                numerology=(),
+                hmmm=True,
+            )
     return entries
 
 
@@ -222,6 +267,16 @@ def build_character_definition_layer(
                 )
             )
 
+        if entry.hmmm:
+            receipts.append(
+                construct_gonol(
+                    scale="definition",
+                    participants=(character_receipt.gonol,),
+                    relation="definition:hmmm",
+                    source_id=f"char-def:{char}:hmmm",
+                )
+            )
+
     payload = {
         "schema": SCHEMA,
         "version": VERSION,
@@ -250,11 +305,18 @@ def character_layer_record(layer: CharacterDefinitionLayer | None = None) -> dic
     """Return the deterministic layer artifact payload."""
 
     value = layer if layer is not None else build_character_definition_layer()
+    public_gonol_hmmm_count = sum(
+        1 for entry in value.entries.values() if entry.hmmm
+    )
     return {
         "schema": SCHEMA,
         "version": VERSION,
         "entry_count": len(value.entries),
         "definition_receipt_count": len(value.definitions),
+        "public_gonol_sha256": PUBLIC_GONOL_SHA256,
+        "public_gonol_glyph_count": len(PUBLIC_GONOL_157),
+        "public_gonol_hmmm_definition_count": public_gonol_hmmm_count,
+        "public_gonol_glyph_definition_coverage": "complete",
         "character_receipts": [
             value.character_gonols[char].receipt_digest for char in sorted(value.character_gonols)
         ],
@@ -266,6 +328,8 @@ def character_layer_record(layer: CharacterDefinitionLayer | None = None) -> dic
 __all__ = [
     "CharacterDefinitionEntry",
     "CharacterDefinitionLayer",
+    "PUBLIC_GONOL_157",
+    "PUBLIC_GONOL_SHA256",
     "SCHEMA",
     "VERSION",
     "build_character_definition_layer",
