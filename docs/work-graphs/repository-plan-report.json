@@ -10,9 +10,9 @@
   },
   "source": {
     "branch": "graduate/epac-release-20260912",
-    "commit": "c81d807142d3f0fe3968a6879888afa00352eaff",
-    "generated_at": "2026-09-12",
-    "note": "Completed EPAC lifecycle documentation source. The current receipt preserves that original event using byte-exact manifest snapshots; subsequent Stack changes and release pins are checked separately."
+    "commit": "1c6ec9fb85d2ead58b13d806a5c4a9bc3803c936",
+    "generated_at": "2026-09-13",
+    "note": "Post-merge repository state includes the independent EPAC consumer and Python/English Gonol workspaces. The historical EPAC event remains separately pinned in its receipt."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol source-affixiation and English Gonol character-floor construction are current Stack research workspaces; their inclusion transfers no language, semantic, geometry or release authority."
   },
   "delivered": [
     {
@@ -62,12 +62,18 @@
       "surface": "EPAC immutable release consumption and scoped graduation",
       "status": "accepted public bytes, retired forge Python implementation, preserved history and completed authority receipt",
       "boundary": "No scientific, semantic, proof, measurement, upstream-license or freshness status transfers."
+    },
+    {
+      "surface": "research/python-gonol/ and research/english-gonol/",
+      "status": "Python source-affixiation and English character-floor constructions integrated from main f0376a839bb8849f05b4cb89751d36a6aaf075bb",
+      "boundary": "Stack-local research with declared provenance; no independent repository/release authority or language-authority transfer."
     }
   ],
   "active_frontier": [
     "refresh pinned repository views when owners advance and a stack experiment needs the newer state",
     "register organization aggregate and website projection derivations in the fresh-making control plane",
-    "maintain EPAC as a hash-pinned independent release consumer"
+    "maintain EPAC as a hash-pinned independent release consumer",
+    "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities."
   ],
   "next_actions": [],
   "blocked": [],
@@ -117,11 +123,14 @@
     "operator_cli": "frontend/cli/README.md",
     "epac_release_consumer": "integration/epac/reconsume.py",
     "epac_release_lock": "integration/epac/release-lock.json",
-    "epac_authority_transition": "integration/epac/authority-transition.json"
+    "epac_authority_transition": "integration/epac/authority-transition.json",
+    "python_gonol": "research/python-gonol/README.md",
+    "english_gonol": "research/english-gonol/README.md"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
     "skill-lib remains a special operational root snapshot rather than the normal libs/research pair",
-    "EPAC retains 14 FALSIFIED comparisons; geometry ratification and unmeasured operation effects remain unresolved research"
+    "EPAC geometry ratification and unmeasured operation effects remain unresolved research",
+    "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved."
   ]
 }

@@ -63,7 +63,9 @@ compares its UCNS pin with the producer's hash-bound source lock before install.
 
 The graduation event remains separately bound to the archived
 `evidence/graduation-release-lock.json` and byte-exact before/after manifest
-snapshots, including their source commit and Git blob identities. Its qualification
+snapshots, including their source commit and Git blob identities. The checker reads the
+actual files from those Git commits; use a full-history checkout (`git fetch
+--unshallow` for a shallow clone). CI fetches the required history. Its qualification
 and consumer receipts describe the original v0.1.0 transition. Later participant
 graph changes or accepted EPAC release updates do not rewrite that history;
 current public-consumer CI must pass at the new Stack source before accepting a
