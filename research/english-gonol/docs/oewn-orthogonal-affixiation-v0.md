@@ -33,24 +33,28 @@ experiment; it supplies no placement rules to this run.
 1. Load the pinned OEWN 2025 YAML tree
    (`globalwordnet/english-wordnet@dc343f2683279ecbb13fab4e2fd778d7b162d287`,
    tag `2025-edition`, 73 files, verified counts).
-2. Collect every surface used by the corpus: lemmas, lemma token splits,
-   forms, form token splits, and every whitespace token of every definition.
-   Single-token surfaces become word gonols; multiword surfaces are
-   compositions, not word gonols.
-3. Close each single-token surface exactly once:
-   `construct_gonol(scale="word", source=surface, source_id="oewn:surface:<surface>")`.
-4. Reuse that one word gonol everywhere the surface appears. Multiword lemmas
-   that own senses are composed from their ordered constituent word gonols
-   through the existing recursive scale
-   (`scale="recursive"`, `relation="oewn:lemma:<lemma>:<pos>"`).
+2. Collect every surface used by the corpus: lemmas, forms, and every
+   non-whitespace run of every definition. Whitespace scalars appearing in
+   definitions are collected separately as exact character-gonol sources.
+3. Close each word surface exactly once:
+   `construct_gonol(scale="word", source=surface, source_id="oewn:surface:<surface>")`,
+   preserving exact whitespace inside the surface.
+4. Close each whitespace scalar exactly once as a character gonol
+   (`source_id="oewn:whitespace:<ord>"`). Whitespace is not a destructive
+   parsing boundary.
 5. For every sense of every lexeme, for every definition of its synset, close
-   a definition gonol from the definition's ordered constituent word gonols:
-   `construct_gonol(scale="definition", participants=(G(w_1),...,G(w_m)),
-   relation="oewn:sense:<sense_id>", source_id="oewn:def:<sense_id>:<index>")`.
-6. Order each word's definition gonols and record the requested affixiation
-   sequence `G(w); affixiate; D_1 ⊥ D_2 ⊥ ... ⊥ D_n` with
-   `geometry_state = hmmm` and the UCNS boundary reason. No substitute
-   geometry is implemented.
+   a definition gonol from the definition's exact ordered run sequence of
+   word gonols and whitespace character gonols:
+   `construct_gonol(scale="definition", participants=(...), relation="oewn:sense:<sense_id>",
+   source_id="oewn:def:<sense_id>:<index>")`.
+6. Order each word's definition gonols and record both required affixiation
+   structures with `geometry_state = hmmm` and the UCNS boundary reason:
+
+   - sequential chain `G(w) -> D_1 -> D_2 -> ... -> D_n`;
+   - direct word bindings `G(w) -> D_1, G(w) -> D_2, ..., G(w) -> D_n`.
+
+   No substitute geometry is implemented, and recording both structures does
+   not select or geometrically resolve their relationship.
 7. Persist word identity, sense identity, constituent identities, definition
    order, orthogonal affixiation order, provenance digests, corpus hashes,
    constructor and UCNS authority identities, and a deterministic replay
@@ -59,13 +63,19 @@ experiment; it supplies no placement rules to this run.
 ## Frozen run
 
 - Module: `english_gonol.definition_affixiation_run`
-- Manifest: `experiments/oewn-affixiation-v0/manifest.json` (committed)
+- Manifest: `experiments/oewn-affixiation-v0/manifest.json` (the committed
+  v0.1 single-structure manifest was retired by the v0.2 whitespace contract;
+  the current runner writes a v0.3 manifest with both affixiation structures)
 - Records: `experiments/oewn-affixiation-v0/records.jsonl` (545,890 lines,
   ~265 MB; local persisted state, not committed, bound by `records_sha256`)
 - Replay:
   `python -m english_gonol.definition_affixiation_run --source-root /path/to/oewn-2025/src/yaml --out-dir experiments/oewn-affixiation-v0 --workers 2`
 
 ## Results
+
+The table below is the superseded v0.1 single-structure run; a fresh v0.3 run
+would double the affixiation record count (one chain record and one direct
+record per definition gonol).
 
 | quantity | value |
 |---|---|
@@ -96,28 +106,35 @@ experiment; it supplies no placement rules to this run.
 Constructed and persisted (existing authority):
 
 - the complete closed word gonol registry for the corpus;
-- recursive compositions for every multiword lemma that owns senses;
 - a definition gonol for every sense-definition, composed from the exact
-  ordered constituent word gonols;
-- per-word ordered affixiation sequences.
+  ordered constituent word and whitespace gonols;
+- per-word ordered affixiation records for both required structures:
+  the sequential chain `G(w) -> D_1 -> D_2 -> ... -> D_n` and the direct
+  word bindings `G(w) -> D_1, G(w) -> D_2, ..., G(w) -> D_n`.
 
 Boundary-exposed, not implemented:
 
-- the geometric realization of `D_1 ⊥ D_2 ⊥ ... ⊥ D_n`. The exact UCNS
-  orthogonal-affixiation geometry is unresolved, so every affixiation record
-  carries `geometry_state = hmmm` and the reason string. No orthogonal axis
-  was invented and no placement was substituted.
+- the geometric realization of `D_1 ⊥ D_2 ⊥ ... ⊥ D_n` and of the direct
+  word-to-definition bindings. The exact UCNS orthogonal-affixiation geometry
+  is unresolved, so every affixiation record carries `geometry_state = hmmm`
+  and the reason string. No orthogonal axis was invented and no placement was
+  substituted.
 
 The resulting persisted structure is therefore the full recursive
-word -> definition -> constituent word gonol graph, with the orthogonal
-affixiation geometry explicitly pending UCNS authority.
+word -> definition -> constituent word gonol graph with both the sequential
+chain and the direct word-to-each-definition affixiation topology recorded,
+and the orthogonal affixiation geometry explicitly pending UCNS authority.
 
 ## hmmm
 
 - Emergent-relationship analysis is deferred until after construction, as
   instructed; it has not been performed here.
 - The exact UCNS orthogonal-affixiation geometry remains unresolved; until it
-  is bound, `D_1 ⊥ D_2 ⊥ ... ⊥ D_n` cannot be geometrically realized.
+  is bound, neither `D_1 ⊥ D_2 ⊥ ... ⊥ D_n` nor the direct word bindings can
+  be geometrically realized.
+- The geometric relationship between the sequential-chain and direct-binding
+  definition topologies remains unresolved; recording both does not select
+  one.
 - Whether definition gonols should bind the raw definition text as a source
   unit (rather than as a receipt field only) is an open construction decision.
 - The word surface registry is surface-keyed; exact homograph/part-of-speech

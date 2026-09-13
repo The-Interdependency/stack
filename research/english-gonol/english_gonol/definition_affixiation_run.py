@@ -1,4 +1,4 @@
-"""Full-corpus English Gonol definition re-affixiation run (experimental, v0.2).
+"""Full-corpus English Gonol definition re-affixiation run (experimental, v0.3).
 
 Runs the complete pinned OEWN 2025 corpus through English Gonol Construction
 while reusing every already-closed word gonol. This runner is not the earlier
@@ -12,6 +12,19 @@ their exact source including whitespace, and every definition closes over the
 exact ordered run sequence of its text: each non-whitespace run reuses its
 already-closed word gonol and each whitespace scalar is a closed character
 gonol participating in the definition in its exact position and multiplicity.
+
+Definition topology contract
+----------------------------
+For each owning word with ordered definitions D1..Dn, both structures are
+recorded:
+
+- sequential chain: word -> D1 -> D2 -> ... -> Dn
+- direct word bindings: word -> D1, word -> D2, ..., word -> Dn
+
+Every affixiation record carries ``structure`` (``chain`` or ``direct``) and
+exposes the unresolved UCNS orthogonal-affixiation geometry as
+``geometry_state = hmmm``. Neither structure invents geometry, and recording
+both does not select or geometrically resolve their relationship.
 
 Boundary contract implemented by this runner
 --------------------------------------------
@@ -59,7 +72,7 @@ from english_gonol.language.source import (
 )
 
 SCHEMA = "english-gonol.oewn-orthogonal-affixiation"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 GEOMETRY_STATE = "hmmm"
 GEOMETRY_REASON = (
     "exact UCNS orthogonal-affixiation geometry is unresolved; "
@@ -100,6 +113,7 @@ class DefinitionRecord:
 @dataclass(frozen=True, slots=True)
 class AffixiationRecord:
     type: str
+    structure: str
     word_source_id: str
     sense_id: str
     definition_source_id: str
@@ -313,12 +327,20 @@ def _affixiation_records(
     word_source_id: str,
     definitions: Sequence[DefinitionRecord],
 ) -> tuple[AffixiationRecord, ...]:
+    """Record both required definition topologies with geometry hmmm.
+
+    Sequential chain: word -> D1 -> D2 -> ... -> Dn. Direct bindings:
+    word -> D1, word -> D2, ..., word -> Dn. Neither structure invents UCNS
+    geometry; both carry the unresolved orthogonal-affixiation boundary.
+    """
+
     records: list[AffixiationRecord] = []
     previous = word_source_id
     for index, definition in enumerate(definitions, start=1):
         records.append(
             AffixiationRecord(
                 type="affixiation",
+                structure="chain",
                 word_source_id=word_source_id,
                 sense_id=definition.sense_id,
                 definition_source_id=definition.definition_source_id,
@@ -329,6 +351,20 @@ def _affixiation_records(
             )
         )
         previous = definition.definition_source_id
+    for index, definition in enumerate(definitions, start=1):
+        records.append(
+            AffixiationRecord(
+                type="affixiation",
+                structure="direct",
+                word_source_id=word_source_id,
+                sense_id=definition.sense_id,
+                definition_source_id=definition.definition_source_id,
+                order=index,
+                orthogonal_to=word_source_id,
+                geometry_state=GEOMETRY_STATE,
+                reason=GEOMETRY_REASON,
+            )
+        )
     return tuple(records)
 
 
@@ -356,7 +392,8 @@ def _worker_process_tasks(
         grouped.setdefault(record.word_source_id, []).append(record)
 
     definition_count = 0
-    affixiation_count = 0
+    chain_affixiation_count = 0
+    direct_affixiation_count = 0
     with open(output_path, "w", encoding="utf-8") as handle:
         for word_source_id, records in grouped.items():
             for index, record in enumerate(records, start=1):
@@ -369,10 +406,15 @@ def _worker_process_tasks(
                 handle.write(
                     json.dumps(asdict(affixiation), ensure_ascii=False, sort_keys=True) + "\n"
                 )
-                affixiation_count += 1
+                if affixiation.structure == "chain":
+                    chain_affixiation_count += 1
+                else:
+                    direct_affixiation_count += 1
     return {
         "definitions": definition_count,
-        "affixiations": affixiation_count,
+        "affixiations": chain_affixiation_count + direct_affixiation_count,
+        "chain_affixiations": chain_affixiation_count,
+        "direct_affixiations": direct_affixiation_count,
     }
 
 
@@ -387,6 +429,37 @@ def _worker_initializer(
     global _WORKER_REGISTRY, _WORKER_WHITESPACE_REGISTRY
     _WORKER_REGISTRY = dict(registry)
     _WORKER_WHITESPACE_REGISTRY = dict(whitespace_registry)
+
+
+def _task_chunks_by_word(
+    tasks: Sequence[dict[str, Any]],
+    worker_count: int,
+) -> list[list[dict[str, Any]]]:
+    """Chunk tasks without splitting a word's definition group.
+
+    Tasks are sorted by ``word_source_id``, so each word's tasks are
+    contiguous. Chunks are contiguous ranges of whole word groups so per-word
+    definition order and affixiation topology are computed exactly once and
+    the multi-worker merge order matches the single-worker order.
+    """
+
+    groups: list[list[dict[str, Any]]] = []
+    current_word: str | None = None
+    for task in tasks:
+        word = str(task["word_source_id"])
+        if word != current_word:
+            groups.append([])
+            current_word = word
+        groups[-1].append(task)
+
+    target = (len(groups) + worker_count - 1) // worker_count
+    chunks: list[list[dict[str, Any]]] = []
+    for start in range(0, len(groups), target):
+        chunk: list[dict[str, Any]] = []
+        for group in groups[start : start + target]:
+            chunk.extend(group)
+        chunks.append(chunk)
+    return chunks
 
 
 def run(
@@ -415,25 +488,29 @@ def run(
         _worker_initializer(registry, whitespace_registry)
         summary = _worker_process_tasks(tasks, str(partial_paths[0]))
     else:
-        chunk_size = (len(tasks) + worker_count - 1) // worker_count
-        partial_paths = [output / f"records.worker-{index}.jsonl" for index in range(worker_count)]
+        chunks = _task_chunks_by_word(tasks, worker_count)
+        partial_paths = [
+            output / f"records.worker-{index}.jsonl" for index in range(len(chunks))
+        ]
         context = multiprocessing.get_context("fork")
         with context.Pool(
-            processes=worker_count,
+            processes=len(chunks),
             initializer=_worker_initializer,
             initargs=(registry, whitespace_registry),
         ) as pool:
             results = [
                 pool.apply_async(
                     _worker_process_tasks,
-                    (tasks[start : start + chunk_size], str(partial_paths[index])),
+                    (chunk, str(partial_paths[index])),
                 )
-                for index, start in enumerate(range(0, len(tasks), chunk_size))
+                for index, chunk in enumerate(chunks)
             ]
             summaries = [result.get() for result in results]
         summary = {
             "definitions": sum(item["definitions"] for item in summaries),
             "affixiations": sum(item["affixiations"] for item in summaries),
+            "chain_affixiations": sum(item["chain_affixiations"] for item in summaries),
+            "direct_affixiations": sum(item["direct_affixiations"] for item in summaries),
         }
 
     # Merge word + whitespace + worker partial records into one records file.
@@ -502,6 +579,8 @@ def run(
             "word_gonols": len(word_records),
             "definition_gonols": summary["definitions"],
             "affixiation_records": summary["affixiations"],
+            "chain_affixiations": summary["chain_affixiations"],
+            "direct_affixiations": summary["direct_affixiations"],
         },
         "records_file": "records.jsonl",
         "records_sha256": records_sha256,
@@ -511,10 +590,12 @@ def run(
             "not UCNS geometry canon",
             "not an English lexical truth claim",
             "not a measurement of semantic quality",
+            "recording both chain and direct affixiation structures does not select or geometrically resolve their relationship",
         ],
         "hmmm": [
             "exact UCNS orthogonal-affixiation geometry remains unresolved",
             "affixiation records expose the unresolved geometry boundary without a substitute",
+            "the geometric relationship between the chain and direct definition affixiation structures remains unresolved",
             "emergent-relationship analysis is deferred until after construction",
         ],
     }

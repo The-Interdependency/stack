@@ -35,6 +35,16 @@ def _snapshot() -> WordnetSnapshot:
                 (),
                 (SenseRecord("ice_cream%1", "ice-cream-n", ()),),
             ),
+            LexemeRecord(
+                "trio",
+                "n",
+                (),
+                (
+                    SenseRecord("trio%1", "trio-1-n", ()),
+                    SenseRecord("trio%2", "trio-2-n", ()),
+                    SenseRecord("trio%3", "trio-3-n", ()),
+                ),
+            ),
         ),
         synsets=(
             SynsetRecord(
@@ -49,6 +59,27 @@ def _snapshot() -> WordnetSnapshot:
                 "n",
                 ("ice cream",),
                 ("a frozen dessert made from cream",),
+                (),
+            ),
+            SynsetRecord(
+                "trio-1-n",
+                "n",
+                ("trio",),
+                ("first definition",),
+                (),
+            ),
+            SynsetRecord(
+                "trio-2-n",
+                "n",
+                ("trio",),
+                ("second definition",),
+                (),
+            ),
+            SynsetRecord(
+                "trio-3-n",
+                "n",
+                ("trio",),
+                ("third definition",),
                 (),
             ),
         ),
@@ -71,9 +102,9 @@ def test_full_fixture_run_persists_and_replays(tmp_path: Path) -> None:
     affixiations = [record for record in records if record["type"] == "affixiation"]
 
     # No sampling: every sense and every definition is processed.
-    assert manifest["counts"]["definition_gonols"] == 2
-    assert len(definitions) == 2
-    assert len(affixiations) == 2
+    assert manifest["counts"]["definition_gonols"] == 5
+    assert len(definitions) == 5
+    assert len(affixiations) == 10
     # Whitespace is construction, not parsing.
     assert manifest["whitespace"]["preserved"] is True
     assert manifest["whitespace"]["whitespace_gonols"] >= 1
@@ -116,6 +147,44 @@ def test_full_fixture_run_persists_and_replays(tmp_path: Path) -> None:
         assert "UCNS orthogonal-affixiation geometry is unresolved" in record["reason"]
     assert manifest["ucns"]["orthogonal_affixiation_geometry"] == GEOMETRY_STATE
     assert manifest["ucns"]["orthogonal_affixiation_reason"] == GEOMETRY_REASON
+
+    # Definition topology: both the sequential chain and the direct
+    # word-to-each-definition structure are recorded for the same word.
+    trio_word = "oewn:surface:trio"
+    trio_definitions = sorted(
+        (record for record in definitions if record["word_source_id"] == trio_word),
+        key=lambda record: record["order"],
+    )
+    assert [record["definition_source_id"] for record in trio_definitions] == [
+        "oewn:def:trio%1:0",
+        "oewn:def:trio%2:0",
+        "oewn:def:trio%3:0",
+    ]
+    assert [record["order"] for record in trio_definitions] == [1, 2, 3]
+
+    trio_chain = [
+        record
+        for record in affixiations
+        if record["word_source_id"] == trio_word and record["structure"] == "chain"
+    ]
+    trio_direct = [
+        record
+        for record in affixiations
+        if record["word_source_id"] == trio_word and record["structure"] == "direct"
+    ]
+    assert [(record["order"], record["orthogonal_to"], record["definition_source_id"]) for record in trio_chain] == [
+        (1, trio_word, "oewn:def:trio%1:0"),
+        (2, "oewn:def:trio%1:0", "oewn:def:trio%2:0"),
+        (3, "oewn:def:trio%2:0", "oewn:def:trio%3:0"),
+    ]
+    assert [(record["order"], record["orthogonal_to"], record["definition_source_id"]) for record in trio_direct] == [
+        (1, trio_word, "oewn:def:trio%1:0"),
+        (2, trio_word, "oewn:def:trio%2:0"),
+        (3, trio_word, "oewn:def:trio%3:0"),
+    ]
+    assert manifest["counts"]["chain_affixiations"] == 5
+    assert manifest["counts"]["direct_affixiations"] == 5
+    assert manifest["counts"]["affixiation_records"] == 10
 
     # Per-word definition order is sequential and starts at 1.
     assert [record["order"] for record in definitions if record["word_source_id"].endswith("kind")] == [1]
