@@ -14,14 +14,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.12"]
+        python-version: ["3.10", "3.11", "3.12"]
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Checkout pinned skill-lib authority
         uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/skill-lib
-          ref: a1c6a7124af537ee9937b6fc6084940091982fe5
+          ref: 5e7239b52dc5403d8d01fbc63341fe397719ec3f
           path: .skill-lib-canon
           sparse-checkout: |
             msdmd
@@ -40,22 +42,74 @@ jobs:
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install verification dependencies
-        run: python -m pip install --upgrade pip pytest build twine
-      - name: Install package
-        run: python -m pip install -e ".[test]"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.15.0"
+      - name: Install verification prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmpfr6
+          python -m pip install uv==0.11.18
+      - name: Check lock and install verification dependencies
+        run: |
+          uv lock --check
+          uv sync --locked --python python --extra test --extra build
       - name: Check vendored skill-lib drift
         run: >-
           python .skill-lib-canon/tools/check_consumer_drift.py .
           --canon-root .skill-lib-canon
-          --sha a1c6a7124af537ee9937b6fc6084940091982fe5
+          --sha 5e7239b52dc5403d8d01fbc63341fe397719ec3f
           --strict-sha
           --require-vendored
       - name: Audit skill-lib contract graph
-        run: python tools/verify_skill_lib_contracts.py .
+        run: .venv/bin/python tools/verify_skill_lib_contracts.py .
       - name: Run geometry tests
-        run: python -m pytest
-      - name: Build package
-        run: python -m build
+        env:
+          PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          .venv/bin/python - <<'PY'
+          from pathlib import Path
+          from tools._boundary_pytest import run_suite
+          raise SystemExit(run_suite(["tests", "-c", "pyproject.toml", "--noconftest", "--strict-config"], Path.cwd()))
+          PY
+      - name: Build package from clean exact Git source
+        env:
+          EXPECTED_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SOURCE_COMMIT"
+          mkdir /tmp/ucns-build-source
+          git archive "$EXPECTED_SOURCE_COMMIT" | tar -x -C /tmp/ucns-build-source
+          .venv/bin/python -m build --outdir "$PWD/dist" /tmp/ucns-build-source
       - name: Check distributions
-        run: python -m twine check dist/*
+        run: |
+          .venv/bin/python -m twine check dist/*
+          .venv/bin/python tools/verify_distributions.py . dist
+      - name: Replay exact wheel and source distribution in clean environments
+        run: bash tools/replay_distributions.sh . dist /tmp/ucns-replay python
+      - name: Collect exact artifact replay evidence
+        env:
+          EXPECTED_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p /tmp/ucns-evidence/artifacts /tmp/ucns-evidence/replay
+          cp dist/*.whl dist/*.tar.gz /tmp/ucns-evidence/artifacts/
+          (cd /tmp/ucns-evidence/artifacts; sha256sum -c /tmp/ucns-replay/archives.sha256)
+          cp /tmp/ucns-replay/*.json /tmp/ucns-replay/*.xml /tmp/ucns-replay/archives.sha256 /tmp/ucns-replay/dependencies.txt /tmp/ucns-evidence/replay/
+          python - <<'PY'
+          import json, os, pathlib, subprocess, sys
+          def git(*args):
+              return subprocess.check_output(["git", *args], text=True).strip()
+          if git("status", "--porcelain", "--untracked-files=all"):
+              raise SystemExit("checkout changed before provenance capture")
+          if git("rev-parse", "HEAD") != os.environ["EXPECTED_SOURCE_COMMIT"]:
+              raise SystemExit("checkout no longer matches the selected source commit")
+          record = {"source_commit": git("rev-parse", "HEAD"), "source_tree": git("rev-parse", "HEAD^{tree}"), "python": sys.version, "node": subprocess.check_output(["node", "--version"], text=True).strip(), "authority": "execution evidence; independent receipt and source verification required"}
+          pathlib.Path("/tmp/ucns-evidence/source.json").write_text(json.dumps(record, indent=2) + "\n")
+          PY
+      - name: Retain artifacts and replay receipts
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: ucns-evidence-${{ matrix.python-version }}
+          path: /tmp/ucns-evidence/
+          if-no-files-found: error

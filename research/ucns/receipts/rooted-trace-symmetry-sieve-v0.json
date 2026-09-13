@@ -51,13 +51,13 @@
     "not permission to break symmetry toward the observed target",
     "not a PCEA runtime, entropy, hardness, or authenticity claim"
   ],
-  "receipt_sha256": "00aade4e906b55f65854f4623a52820268b07b66752185576db77cc1353adfbf",
+  "receipt_sha256": "346084221e8940e058f33e0d5369648375988a6a75e4961d2a6657dea9aca070",
   "schema_id": "the-interdependency.stack-research.ucns.rooted-trace-symmetry-sieve",
   "schema_version": "0.1.0",
   "source": {
     "event_trace_producer_path": "research/ucns/event_trace_lift_candidate.py",
     "event_trace_producer_sha256": "d1cb1e301de8d081653c0cc8f07730ae09afac652867236c266c3c9b67d7b9b4",
-    "event_trace_receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+    "event_trace_receipt_sha256": "fa46cc04ce7a71300050a898403d9769e7242027f3920894851cd6605c80e392",
     "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
   },
   "standing": "stack-local-post-observation-falsification-sieve",

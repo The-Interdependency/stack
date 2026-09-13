@@ -7,3 +7,6 @@ dist/
 *.egg-info/
 
 .skill-lib-canon/
+
+# Local secrets
+.env

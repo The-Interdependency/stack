@@ -29,21 +29,27 @@ Propagation PRs should cite this repository and the source commit SHA.
 * `canon/` — canonical-source and doctrine maintenance
 * `domain-claims/` — domain-first lexical standing, collision checks, and semantic provenance gating
 * `visitor-intro/` — onboarding tour for newcomers landing at any org repo
-* `char-compress/` — bone/flesh context compression for handoffs and skill writing
+* `char-compress/` — skill-lib-owned bone/flesh context compression for handoffs and skill writing; historical notation is not current UCNS mathematics
 * `agent-instantiation/` — a0/a0ucns agent spawn/fork/merge lifecycle methodology
 * `a0p-instancing/` — a0-betatest (a0p) per-user CRUD + native-ZFAE instancing methodology
 * `manifest/` — living-spec generation
 * `llms-build/` — root llms.txt generation from LLMS blocks
 * `typed-meta-frontend/` — TypeScript self-building frontend generation from backend module metadata
 * `plain-lens/` — plain-language, multi-lens companion views of dense canonical text
+* `thought-lens/` — raw-thought to audience-legible translation with claim-kernel fidelity and back-translation checks
 * `meta/` — consultation router for current METAPAT authority; no frozen doctrine copy
-* `gonol-build/` — UCNS gonol construction, closure, atomic promotion, explicit function application, complete replay, and honest continuation boundaries
+* `gonol-build/` — UCNS gonol objects/constructors/geometry + Stack language-construction research, closure, atomic participation, replay, and honest continuation boundaries; EDCM is measurement/evaluation only
 * `ucns-option-selection/` — fail-closed scoped UCNS option comparison, selection, ratification, non-transfer, rollback, and decision receipts
+* `epac-selection-display/` — exact provisional EPAC target and representation selection with receipt-backed display, status preservation, and a read-only WebMCP handoff boundary
 * `the-interdependency/` — org-wide workflow protocol and usage-guidance doctrine for The Interdependency projects
 * `interdependent-work-graph/` — cross-repository identity, authority, coordination, and shared stack-manifest doctrine
+* `stack-update/` — fail-closed structural stack update protocol; keeps authority, relation, lifecycle, provenance, manifests, BASE records, and work-graph identity coherent in one transaction
+* `project-incubation-graduation/` — incubation, qualification, extraction, release, reconsumption, and implementation-authority graduation doctrine
 * `distributed-publication/` — provenance-bearing materialization of one ordered publication from independently owned source units
 * `loop-eng/` — closed-loop engineering doctrine for repeatable Discover→Plan→Execute→Verify→Iterate workflows
+* `fresh-making/` — deterministic derivation freshness, minimal affected rebuild closure, executor-independent restoration, verification, and receipts
 * `action-calibration/` — action sizing doctrine for minimal decisive experiments, maximal coherent programs, prerequisite repair, and immediate containment
+* `repo-audit-repair/` — evidence-led repository audit, classified findings, authorized repair, and terminal verification
 * `skill-build/` — skill authoring, compliance, and individualized test-suite question workflow
 * `skill-usage/` — evidence-bearing local invocation counts and maturity designations
 * `ssh-automation/` — fail-closed SSH scripting and copy-paste automation doctrine
@@ -72,6 +78,9 @@ detector (`.github/workflows/consumer-drift.yml`) checks:
 * `The-Interdependency/a0-betatest`
 * `The-Interdependency/metapat`
 * `The-Interdependency/ptcna`
+* `The-Interdependency/pubskill-lib`
+* `The-Interdependency/epac`
+* `The-Interdependency/stack`
 
 **Targets not in the drift matrix** (do not vendor a top-level subset yet, so
 `--require-vendored` would fail them):
@@ -79,6 +88,7 @@ detector (`.github/workflows/consumer-drift.yml`) checks:
 * `The-Interdependency/a0ucns` — an aggregator that embeds whole copies of other
   repos rather than vendoring a top-level `.agents/skills/` subset. Its nested
   embeds carry their own copies; re-sync those from their source repos.
+
 **Archived or superseded** — not active drift consumers:
 
 * `The-Interdependency/edcmbone` — archived; maintained EDCM work lives in `edcm`
@@ -119,6 +129,27 @@ Before assigning a stack-level task to one repository, agents should read:
 
 Resolve the exact participating repository and evidence-source identities first. Repository boundaries remain authority and provenance boundaries, not agent-attention boundaries.
 
+Before changing the structure of `The-Interdependency/stack` — including participant,
+pin, authority, relation, workspace, BASE, extraction/graduation, or architecture
+projections — agents should read:
+
+```text
+.agents/skills/stack-update/SKILL.md
+```
+
+Load `interdependent-work-graph` with it. Treat the mutation as one coherent
+transaction: update every affected authority/provenance projection, remove superseded
+claims, recompute the work-graph digest, and require the stack consistency checker to
+pass before merge.
+
+Before deciding whether a component born inside a stack, integration, laboratory, or incubator repository should become an independent repository/package, or before extracting, publishing, reconsuming, or declaring such a component graduated, agents should read:
+
+```text
+.agents/skills/project-incubation-graduation/SKILL.md
+```
+
+Load `interdependent-work-graph` once the transition crosses repository boundaries. Graduation transfers implementation/public-contract authority only after qualification, release, and downstream reconsumption; it does not transfer semantic, proof, theorem, measurement, certification, or empirical status.
+
 Before assembling one textbook, report, standard, corpus, archive, or public reading sequence from source-owned units distributed across repositories or independently owned files, agents should read:
 
 ```text
@@ -145,6 +176,19 @@ Before creating or maintaining a root `llms.txt`, agents should read:
 
 Root LLM instructions should be declared in source `LLMS` blocks and generated
 with the llms-build runner, not hand-maintained as separate doctrine.
+
+Before translating raw, recursive, context-heavy, fragmentary, coined, or
+private-language thought for another human audience or public surface, agents
+should read:
+
+```text
+.agents/skills/thought-lens/SKILL.md
+```
+
+Recover and freeze the claim kernel before changing vocabulary. Reduce the
+context required from the reader without strengthening, flattening, or silently
+completing the thought; use `hmmm` where a bridge remains unresolved. Use
+`plain-lens` instead when the source is already a stable dense document.
 
 Before promoting a word or phrase into canon, a theorem, schema, ontology, encoding,
 or other semantic control surface, agents should read:
@@ -176,6 +220,18 @@ Freeze scope, candidates, hard gates, evidence, policies, authority, and
 ratification before outcome comparison. Do not let scores compensate for failed gates
 or transfer a scoped result into universal UCNS canon.
 
+Before selecting an EPAC artifact and representation for a human-facing or
+WebMCP display, agents should read:
+
+```text
+.agents/skills/epac-selection-display/SKILL.md
+```
+
+Pin the provisional EPAC source, exact target, receipt, and available renderer;
+preserve research standings, nonclaims, sealed-comparison boundaries, and `hmmm`;
+and keep the WebMCP server a read-only registry/handoff rather than an EPAC
+executor.
+
 Before choosing between the smallest decisive action and a maximal coherent program,
 selecting the highest-leverage next step under constrained time, attention, money,
 compute, or coordination, or deciding whether a bounded falsifier should precede a
@@ -188,6 +244,17 @@ full build, agents should read:
 Name the decision, preserve load-bearing invariants, compare complete cost vectors,
 freeze outcome-conditioned escalation rules, and let `loop-eng` execute the selected
 bounded loop.
+
+Before auditing or auditing and repairing an existing repository, agents should read:
+
+```text
+.agents/skills/repo-audit-repair/SKILL.md
+```
+
+Resolve exact repository identity and authority first; select checks from actual
+repository claims; classify defects separately from environment, external service,
+policy, and `hmmm`; repair only the owning layer under the user's authorization; and
+verify merge, release, and deployment as distinct terminal states when applicable.
 
 Before writing, reviewing, or troubleshooting repeatable SSH automation or a
 large terminal paste that contains SSH, agents should read:

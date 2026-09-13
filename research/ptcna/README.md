@@ -1,6 +1,8 @@
 # PTCNA research workspace
 
-Stack-local research against the pinned canonical PTCNA view in [`../../libs/ptcna/`](../../libs/ptcna/).
+Stack-local research retains its exact historical source in [`BASE.json`](BASE.json).
+The current canonical PTCNA view is [`../../libs/ptcna/`](../../libs/ptcna/);
+its 2026-09-13 refresh does not rebase this workspace or regenerate its receipts.
 
 Standing: **research, not canon**. Canonical PTCNA authority remains `The-Interdependency/ptcna` at the exact commit recorded in [`BASE.json`](BASE.json) and the root stack manifest.
 

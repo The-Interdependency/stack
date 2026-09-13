@@ -1,0 +1,171 @@
+{
+  "schema": "the-interdependency.repository-plan-report",
+  "version": "1.0.0",
+  "repository": "The-Interdependency/ucns",
+  "contract": {
+    "repository": "The-Interdependency/skill-lib",
+    "path": "interdependent-work-graph/repository-plan-report.schema.json",
+    "version": "1.0.0",
+    "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
+  },
+  "source": {
+    "branch": "evidence/clean-install-final-20260912",
+    "commit": "61d329b851952bbc0fec5eca782c8fd05dcc82d2",
+    "generated_at": "2026-09-12",
+    "note": "Describes the exact implementation commit preceding this report-only refresh. Artifact acceptance requires inspecting the hash-bound replay bundle for the selected source identity; job success alone is not acceptance. No scientific or deployment authority is transferred."
+  },
+  "authority": {
+    "owns": [
+      "geometry constructions and exact geometric carriers implemented in UCNS",
+      "UCNS-local mathematical representation candidates and their proof/status evidence",
+      "Public Gonol carrier geometry and native M\u00f6bius geometric state"
+    ],
+    "does_not_own": [
+      "lexical, semantic, morphological, NLP, EDCM measurement, PTCNA runtime, PCEA security, or external-physics truth claims"
+    ],
+    "non_transfer": [
+      "executability does not ratify a candidate geometry",
+      "downstream use does not transfer downstream semantic or empirical status into UCNS",
+      "finite modular traces do not select a privileged continuum lift or external physical meaning"
+    ]
+  },
+  "portfolio_role": {
+    "summary": "Own the geometry and mathematical-representation layer consumed by other Interdependency projects without absorbing their semantics or empirical claims.",
+    "reports_to": {
+      "repository": "The-Interdependency/skill-lib",
+      "skill": "interdependent-work-graph",
+      "relation": "repo-owned report consumed by the deterministic portfolio projection"
+    }
+  },
+  "status": {
+    "state": "active geometry repository with an exact artifact replay chain",
+    "current_claim": "UCNS retains exact geometric carriers and candidate modular/wave relations. Local repairs harden immutable/exact inputs, MPFR NaN ordering, no-exec contract auditing, selected-check receipts, and replayable distributions; no candidate is ratified by those repairs."
+  },
+  "delivered": [
+    {
+      "surface": "Public Gonol carrier",
+      "status": "implemented exact 157-position carrier",
+      "boundary": "glyph function meaning is not inferred from Unicode or lexical semantics"
+    },
+    {
+      "surface": "native M\u00f6bius geometry",
+      "status": "implemented exact framed 360\u00b0 visible / 720\u00b0 complete return",
+      "boundary": "display equivalence does not collapse complete-state identity"
+    },
+    {
+      "surface": "modular orbit and continuum boundary trace",
+      "status": "implemented candidate exact relation",
+      "boundary": "candidate status; no privileged lift, modulus, carrier, or physical meaning is selected"
+    },
+    {
+      "surface": "Exact modular/trace and MPFR input boundaries",
+      "status": "implemented with negative regression checks",
+      "boundary": "non-Boolean integer and immutable record admission; NaN cannot supply ordered interval evidence; valid geometric laws unchanged"
+    },
+    {
+      "surface": "Contract audit and selected-check receipt schema 2.1",
+      "status": "implemented fail-closed declaration bindings, actual pytest outcomes, bound descendant imports and lifetime, per-check snapshots, and Linux source-write observation",
+      "boundary": "skips, empty evidence, and source mutation do not pass; selected checks do not establish whole-repository, theorem, freshness, or canon standing"
+    },
+    {
+      "surface": "Source distribution replay inputs and artifact gate",
+      "status": "implemented exact wheel/sdist metadata and directory validation with pinned build backend and source replay inputs",
+      "boundary": "archive presence and matching bytes are packaging evidence; archived certificates are not thereby recomputed"
+    },
+    {
+      "surface": "Clean wheel and source-install evidence chain",
+      "status": "implemented 159-test artifact replay on Python 3.10, 3.11, and 3.12 with hash-locked dependencies, full source snapshots, complete installed-distribution inventories and retained installer metadata, archived-source exact-input receipts, and portable CI bundles",
+      "boundary": "each receipt binds its own exact artifact and source identity; Python/Node execution and passing packaging evidence do not ratify geometry or grant publication/freshness standing"
+    }
+  ],
+  "active_frontier": [
+    "inspect and accept the exact artifact replay bundle for each selected source identity across supported Python versions",
+    "reconcile the intrinsic/extrinsic Structural Null representation before constructing an origin attachment",
+    "derive the complete visible-circle wave trace into the native frame-bearing M\u00f6bius carrier",
+    "ratify or reject modular-orbit / continuum-boundary-trace candidates under explicit falsifiers",
+    "resolve higher-dimensional recursive-scale laws and geometric operations for unresolved Public Gonol positions"
+  ],
+  "next_actions": [
+    {
+      "action": "Verify artifact hashes, source maps, dependency exports, and selected receipt identities from each supported runtime bundle before accepting the evidence chain",
+      "owner": "The-Interdependency/ucns evidence maintainers",
+      "dependency": "accepted exact source and skill-lib pins; no acceptance from Actions status alone"
+    },
+    {
+      "action": "Correct stale stack research claims about PR #220 and reconcile its exact research base before consuming results",
+      "owner": "The-Interdependency/stack research maintainers",
+      "dependency": "PR #220 merged with candidate-only wording; preserve existing dirty research and no automatic repin"
+    },
+    {
+      "action": "Reconcile Structural Null representation, then derive or refute an explicit ambient origin attachment",
+      "owner": "The-Interdependency/ucns geometry",
+      "dependency": "geometric evidence and falsifier; coordinate defaults do not supply attachment authority"
+    },
+    {
+      "action": "After attachment, evaluate direction, rotation system, marked outgoing dart, and closure in the stack-local constructor experiment",
+      "owner": "The-Interdependency/ucns geometry and The-Interdependency/stack research",
+      "dependency": "exact accepted attachment; this dependency order is a research contract, not ratified UCNS geometry"
+    },
+    {
+      "action": "Propose a complete native M\u00f6bius wave lift with 360/720-degree and continuum-degree counterexample checks",
+      "owner": "The-Interdependency/ucns geometry",
+      "dependency": "explicit frame-bearing construction and candidate selection protocol"
+    },
+    {
+      "action": "Recover the hash-bound source attachment and independently replay expensive P7/P5 certificates before stronger claims",
+      "owner": "The-Interdependency/ucns evidence maintainers",
+      "dependency": "exact source bytes, preregistrations, adequate resources, and owner review"
+    }
+  ],
+  "blocked": [
+    "Origin attachment and recursive traversal cannot be supplied by numerical defaults or downstream interpretations."
+  ],
+  "cross_repository_relations": [
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "relation": "consumer of canonical build/evidence and work-graph doctrine",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "relation": "canonical source for stack-pinned UCNS views and stack-local UCNS research",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "relation": "geometry producer for downstream text-domain gonol construction; EDCM retains text/measurement authority",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/pcea",
+      "relation": "forward arithmetic/geometric substrate may be consumed by PCEA without transferring security claims",
+      "authority_transfer": false
+    },
+    {
+      "repository": "The-Interdependency/epac",
+      "relation": "geometry dependency for EPAC candidate constructions; external physics/chemistry standing does not transfer",
+      "authority_transfer": false
+    }
+  ],
+  "machine_entrypoints": {
+    "repo_report": "docs/work-graphs/repository-plan-report.json",
+    "system_overview": "README.md",
+    "package_source": "src/ucns/",
+    "public_gonol": "src/ucns/public_gonol.py",
+    "continuum_trace": "src/ucns/gonal_boundary_trace.py",
+    "continuum_trace_docs": "docs/modular-orbit-wave-trace.md",
+    "contract_audit": "tools/verify_skill_lib_contracts.py",
+    "selected_check_runner": "tools/run_skill_lib_boundaries.py",
+    "distribution_gate": "tools/verify_distributions.py",
+    "build_and_usage": "README.md#build"
+  },
+  "hmmm": [
+    "Structural Null executable representation and candidate documentation remain unreconciled.",
+    "Origin attachment, recursive-scale transitions, and unresolved Public Gonol operations lack selecting geometric laws.",
+    "Modular-orbit / continuum-boundary-trace ratification and complete native M\u00f6bius lift remain unresolved.",
+    "The exact cited M\u00f6bius Strips and Quantum Geometry.txt source attachment is absent from the inspected owning tree.",
+    "A passing default suite includes archived receipt checks, not a newly executed full independent Gr\u00f6bner replay.",
+    "Final-head remote CI, merge, release, cross-repository repinning, and proof-assistant verification remain separate observations.",
+    "Pre-existing ratio coverage gaps and large-module decomposition remain incremental maintenance work."
+  ]
+}

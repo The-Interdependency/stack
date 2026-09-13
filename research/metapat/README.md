@@ -1,6 +1,8 @@
 # METAPAT research workspace
 
-Stack-local research against the pinned canonical METAPAT view in [`../../libs/metapat/`](../../libs/metapat/).
+Stack-local research retains its exact historical source in [`BASE.json`](BASE.json).
+The current canonical METAPAT view is [`../../libs/metapat/`](../../libs/metapat/);
+its 2026-09-13 refresh does not rebase this workspace or regenerate its receipts.
 
 Standing: **research, not canon**. Canonical METAPAT authority remains `The-Interdependency/metapat` at the exact commit recorded in [`BASE.json`](BASE.json) and the root stack manifest.
 

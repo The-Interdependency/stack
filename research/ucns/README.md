@@ -1,6 +1,8 @@
 # UCNS research workspace
 
-Stack-local research against the pinned canonical UCNS view in [`../../libs/ucns/`](../../libs/ucns/).
+Stack-local research retains its exact historical source in [`BASE.json`](BASE.json).
+The current canonical UCNS view is [`../../libs/ucns/`](../../libs/ucns/);
+its 2026-09-13 refresh does not rebase this workspace or regenerate its receipts.
 
 Standing: **research, not canon**. Canonical UCNS authority remains `The-Interdependency/ucns` at the exact commit recorded in [`BASE.json`](BASE.json) and the root stack manifest.
 

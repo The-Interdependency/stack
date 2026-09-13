@@ -113,7 +113,7 @@ benchmarks/
   bench.py        Throughput/latency benchmark across codec → kdf → element → seed → state → instance
 
 .github/workflows/
-  contract-boundary.yml   CI gate running tests/test_contract_spec.py on PRs + pushes to main
+  contract-boundary.yml   Full pytest matrix + built-wheel release-artifact smoke gate on PRs + pushes to main
 
 .agents/skills/   meta-module-build / msdmd / test-build agent skill docs
 
@@ -132,11 +132,14 @@ pip install -e ".[dev]"
 # Runtime install only (no test deps)
 pip install .
 
-# Run the full test suite (pyproject sets testpaths = ["tests"])
-pytest
+# Run the same repository test surface exercised by the CI matrix
+PYTHONPATH=. python -m pytest -q
 
-# Run only the CI contract-boundary gate (mirrors the workflow)
+# Run only the narrower PCEA↔UCNS contract test when debugging that boundary
 PYTHONPATH=. python -m pytest -q tests/test_contract_spec.py
+
+# Build the release wheel locally; CI additionally installs it outside the source tree
+python -m pip wheel . --no-deps --wheel-dir dist
 
 # Run the performance benchmark
 python benchmarks/bench.py
@@ -201,7 +204,9 @@ assert dec.decrypt(e1) == [seed(99)]
   line 1, header on line 2).
 - **PCEA↔UCNS contract (Option A)** — PCEA decrypts/inverts via keys, never via
   UCNS inverse/catalogue APIs. `contract.py` holds the canonical constants and the
-  list of `FORBIDDEN_UCNS_SYMBOLS`. `tests/test_contract_spec.py` is the release gate.
+  list of `FORBIDDEN_UCNS_SYMBOLS`. `tests/test_contract_spec.py` is the focused
+  executable witness for that boundary; release readiness is the full CI suite plus
+  the built-wheel artifact smoke check.
 - `cipher.py`, `codec.py`, and `kdf.py` are security-critical — treat changes with
   extra scrutiny. Do not ship machine-generated crypto without independent review.
 
@@ -209,18 +214,20 @@ assert dec.decrypt(e1) == [seed(99)]
 
 ## Gotchas
 
-- **`tests/test_contract_spec.py` is the release gate.** It (and the whole
-  suite) is green today — a plain `pytest -q` passes (91 passed, 21 skipped at
-  time of writing; re-derive the exact count rather than trusting it here). An
-  earlier revision of this file carried an unresolved merge conflict
-  (`RUNTIME_FILES` vs `RUNTIME_MODULES`) that broke collection; that is resolved.
-  The intended logic lives in `pcea/contract.py` (`RUNTIME_MODULES`,
-  `FORBIDDEN_UCNS_SYMBOLS`).
+- **`tests/test_contract_spec.py` is one release-critical contract witness, not the
+  whole CI release gate.** The active `contract-boundary.yml` workflow runs the full
+  pytest suite on Python 3.9, 3.11, and 3.13 and separately builds a wheel, installs
+  it into a clean environment outside the source tree, verifies package metadata,
+  and smoke-tests the public API. An earlier revision of `test_contract_spec.py`
+  carried an unresolved merge conflict (`RUNTIME_FILES` vs `RUNTIME_MODULES`) that
+  broke collection; that is resolved. The intended boundary logic lives in
+  `pcea/contract.py` (`RUNTIME_MODULES`, `FORBIDDEN_UCNS_SYMBOLS`).
 - **`tests/test_metadata_headers.py` globs `pcea/*.py` and `tests/*.py`** and
   enforces the `# ratios:` seal on line 1 and the provenance header on line 2 of
   every runtime/test module — so any new file under `pcea/` or `tests/` must
   carry both, or that test fails.
-- CI (`contract-boundary.yml`) runs `test_contract_spec.py` as the release gate.
+- CI (`contract-boundary.yml`) is authoritative for repository release readiness:
+  full pytest matrix plus the built-wheel release-artifact smoke check.
 
 ---
 

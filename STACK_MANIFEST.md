@@ -5,13 +5,14 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Source snapshot UTC: `2026-08-22T10:19:43Z` (initial participant snapshot)
 - Layout migration UTC: `2026-08-30T02:58:49Z`
 - PCEA canonical refresh UTC: `2026-08-31T07:49:28Z` at `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9`
+- Canonical tool/library refresh UTC: `2026-09-13`; exact upstream commits and validation in [`docs/updates/2026-09-13-tools.md`](docs/updates/2026-09-13-tools.md).
 - EPAC graduation UTC: `2026-09-12`; immutable `v0.1.0`, public reconsumption and scoped implementation/public-contract transition accepted.
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `96f8809cedc76cf0a53bd358d2b0b5ef43aa6e888dabb3187a014843d0586489`
+  `7c2721fee05a4bd961ee5e51aeb41b5581d7eb7c272c2a7b19a9e5ccc5c2bf62`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -37,12 +38,12 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
-| `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
-| `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
-| `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
-| `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
-| `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
+| `The-Interdependency/skill-lib` | `22c2c5702d14fb4b0faeb717777ecab2665770a1` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/metapat` | `510e0171f4ecc6d1889e66bb66a8734c49c3b1fa` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
+| `The-Interdependency/ucns` | `31bb761e49307b04a7c7dd7c7c2059ea35fdc089` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
+| `The-Interdependency/edcm` | `ddc89a97ebbcf0a5863dad6e633b01b520e9bccf` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
+| `The-Interdependency/pcea` | `75d2ea68e4a4a3256b324f039cb1712d196d323d` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
+| `The-Interdependency/ptcna` | `a06a049cd8722adaad32dbc9c36d9c87b0204236` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
 | `The-Interdependency/epac` | `949cb1cb304927942966c9fb396caf6227120e7f` | v0.1.0 | independent implementation and public-contract authority for EPAC | immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated |
 
 ## Research-Only Composition Participants
@@ -55,7 +56,12 @@ release identity.
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `030022948fb7c749961ae65743a4448c4bb6cbbe` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/english-gonol/` | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | preserved extraction source; English construction remains Stack-local | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
+| `research/metapat/` | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | preserved research source base; canonical snapshot refresh does not rebase research | no |
+| `research/edcm/` | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | preserved research source base; canonical snapshot refresh does not rebase research | no |
+| `research/pcea/` | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | preserved research source base; canonical snapshot refresh does not rebase research | no |
+| `research/ptcna/` | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | preserved research source base; canonical snapshot refresh does not rebase research | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/skill-lib` | `61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32` | audit, domain-claim, work-graph, and hmmm doctrine | no |
@@ -81,10 +87,11 @@ Each established `research/<repo>/` workspace carries a `BASE.json` with:
 
 When `BASE.json.source_commit` differs from the repository's manifest-pinned `libs/`
 commit, the workspace must carry an explicit matching `research_participants` identity.
-That record preserves the newer/different research input without pretending `libs/` was
-refreshed. `research/ucns/` currently uses this form: its exact source base is UCNS
-`1975fe70cf4e0826a8020c2da3047569e277af64`, while `libs/ucns/` remains pinned at
-`828c0b8bbcfc267efb5701da714191c1f73a81ff`.
+These records preserve historical research inputs while canonical snapshots advance.
+The 2026-09-13 refresh leaves all research BASE commits intact and records the
+METAPAT, UCNS, EDCM, PCEA, and PTCNA source bases explicitly. `research/ucns/`
+retains UCNS `1975fe70cf4e0826a8020c2da3047569e277af64`; `libs/ucns/` now pins
+`31bb761e49307b04a7c7dd7c7c2059ea35fdc089`.
 
 A newly separated stack-local component may instead preserve the repository it was
 extracted from as provenance while declaring a distinct `project` and stack-local
@@ -103,7 +110,7 @@ required for artifact consumption. The completed scoped authority transition is 
 |---|---|
 | skill-lib | MPL-2.0 (`LICENSE`) |
 | metapat | MPL-2.0 (`LICENSE`) |
-| ucns | none at `828c0b8` — `hmmm` |
+| ucns | MPL-2.0 (`LICENSE`) at the refreshed commit; historical snapshots retain their original license status |
 | edcm | MPL-2.0 (`LICENSE`) |
 | pcea | present (`LICENSE`) |
 | ptcna | present (`LICENSE`) |
@@ -120,20 +127,23 @@ required for artifact consumption. The completed scoped authority transition is 
 
 ## Refresh procedure
 
-For each pinned repository, from a clean checkout at the desired commit:
+Resolve the exact owning repository commit first. Replace the complete imported
+Git tree, including tracked dotfiles and executable modes, and remove obsolete
+files. See the [2026-09-13 refresh record](docs/updates/2026-09-13-tools.md) for
+source identities and a reproducible Git-tree verification command.
+
+Update both manifests and recompute the work-graph digest. A canonical snapshot
+refresh does not by itself rebase research: retain the historical `BASE.json`
+and add a matching `research_participants` record when it differs from the new
+canonical pin. Change a research base only as part of a separately verified rebase.
+
+Follow `.agents/skills/stack-update/SKILL.md` and run:
 
 ```bash
-rm -rf libs/<name>/*
-git -C <checkout> archive <commit> | tar -x -C libs/<name>/
+python3 tools/check_stack_consistency.py
 ```
 
-Then update this file, `stack-manifest.json`, and the matching
-`research/<name>/BASE.json`; recompute the work-graph digest; and commit with the new
-source commit SHA. Structural ownership/relation changes must additionally follow the
-`stack-update` skill and pass `python tools/check_stack_consistency.py`.
-
-Do not edit `libs/<name>/` to create a canonical change. Route the change to the owning
-repository, merge it there, then refresh the pinned view.
+Canonical source edits belong in the owning repository before importing its tree.
 
 ## Graduation boundary
 
@@ -142,7 +152,8 @@ publication and public Stack reconsumption. The historical implementation path i
 retired. The clean retired-source consumer gate passed, and the completed scoped
 authority-transition receipt records EPAC as graduated. See `integration/epac/` for the immutable
 release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec99879f8090ea5d48352d8c2d`;
-Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
+That release-specific UCNS identity is independent of Stack's refreshed `libs/ucns/`
+and preserved research UCNS base.
 
 English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
 research component, not EDCM and not an independent canonical release.
@@ -153,7 +164,8 @@ transfers no semantic, geometric, measurement, or language-canon status.
 
 ## hmmm
 
-- UCNS has no `LICENSE` file at pinned commit `828c0b8`.
+- EDCM docs/GONOL_LANGUAGE_BOUNDARY.md at the refreshed source still claims language-construction ownership; Stack retains its declared English/Python construction authority and records this upstream documentation discrepancy without rewriting the imported source.
+
 - English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.

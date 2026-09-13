@@ -74,8 +74,8 @@ Frozen identities:
 ```text
 event_pair_quotient_candidate.py sha256 = 42289230971ec3d47081b22254d19a1cf26b12537b3ed0f241702ec3057b71bc
 test module sha256                       = f94880ecdfb7c00930f7452b28876401078889e59ab890816364189a80242d09
-canonical receipt payload sha256         = 330581ff3edbb3b3b99021e9c026e585dc4619c0ae60e9f1d1425c350c834482
-formatted receipt file sha256            = 12e3355220d843ba3ae67422b06921f0468709721d8b56738d8b0c540e7ca2a0
+canonical receipt payload sha256         = 209eccd83f6aa280a76a5f38700ee760e13e754568dc25c79f9f05e2ffd92d91
+formatted receipt file sha256            = 680bac02213f032cbb18251e4be0484ffa0c61ee9597b4d131daa0f622c806b5
 ```
 
 ## hmmm

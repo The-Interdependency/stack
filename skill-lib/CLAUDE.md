@@ -11,6 +11,7 @@ AI-assistant guidance for `The-Interdependency/skill-lib`.
 - Entry points: `README.md`, `AGENTS.md`, `skills.json`, `ORG_DISTRIBUTION.md`, `llms.txt`, each `<skill>/SKILL.md`.
 - CI workflows: `.github/workflows/hygiene.yml` guards against tracked Python bytecode, `.github/workflows/ci.yml` runs the editorial/helper verification stack, and `.github/workflows/consumer-drift.yml` is a scheduled/dispatch detector that runs `tools/check_consumer_drift.py` against each consumer repo (the consumer repos are public, so it uses the default `GITHUB_TOKEN`).
 - Validation here is editorial plus pure-stdlib helper scripts in `tools/`, `ratios/`, `llms/`, and the RepoLOTO check module.
+- `tools/ai.sh` is the canonical Termux-side SSH/tmux launcher for the `a0` VM; `tools/install_ai.sh` installs `ai.sh` into the caller PATH (Termux `$PREFIX/bin`, otherwise `~/.local/bin`).
 - The `llms/` package exists only to expose the stdlib `python -m llms.build` runner for `llms-build`.
 
 ## Layout
@@ -42,25 +43,29 @@ llms/                  # python -m llms.build reference runner
 | `test-build/` | metadata-block | `msdmd` | Self-declaring contract evidence. Source modules declare behavior obligations in `# === CONTRACTS ===`; test modules declare executable witnesses in `# === CHECKS ===`; audit reconciles the witness list against the obligation list. |
 | `meta-module-build/` | metadata-block | `msdmd` | Metadata-first module scaffolding. Each module declares a `# === MODULE_BUILD ===` block (manifest: surfaces, boundaries, tests, rollout, rollback) before implementation. New module work in any org repo is expected to start here. |
 | `risk-boundary-build/` | metadata-block | `msdmd`, `meta-module-build` | Runtime risk and permission boundaries. Existing modules declare `# === BOUNDARIES ===` blocks for auth, storage, network, user-data, admin, and operational effects. |
-| `ratios/` | metadata-block | `msdmd` | Self-declaring module composition ratios for executable source files. Each module records `loc_comments`, `imports_exports`, and `calls_definitions` in a single `ratios:` line on the file's first and last line (not a fenced block); this is not for `json` or `.md` files. The reference `ratios_check.py` recomputes values, fails on drift or misplacement, and reports visible gaps. |
+| `ratios/` | metadata-block | `msdmd` | Self-declaring module composition ratios for executable source files. Each computer-covered module records `loc_comments`, `imports_exports`, and `calls_definitions` at its opening and closing source boundaries (not a fenced block); a valid line-1 shebang may precede opening RATIOS. The reference `ratios_check.py` recomputes Python values, fails on drift or misplacement, and reports visible gaps without applying Python semantics to other languages. |
 | `manifest/` | metadata-block | `msdmd` | Living-spec generator. Derives observable repo facts from `pyproject.toml` + the file tree and splices them into a machine-owned marked block in `CLAUDE.md`, with a CI `--check` drift gate. |
 | `llms-build/` | metadata-block | `msdmd` | Root LLM instruction generation. Modules or central files declare `# === LLMS ===` blocks; `python -m llms.build` aggregates them into canonical root `llms.txt` and reports drift. |
 | `typed-meta-frontend/` | metadata-block | `msdmd`, `meta-module-build`, `doc-build` | TypeScript self-building frontend generation from backend-owned module metadata. Modules declare `# === FRONTEND_META ===` blocks or equivalent backend metadata; the UI renders every module living spec, exposes every editable field, preserves read-only reasons and `hmmm`, and tests metadata-to-field coverage. |
 | `canon/` | procedural | — | Canonical-source and doctrine maintenance. Helps agents distinguish source-backed canon, proposed canon, repo-local practice, and `hmmm`. No metadata block. |
 | `domain-claims/` | procedural | — | Domain-first lexical and semantic governance. Establishes the domain-qualified sense, scope, exclusions, collision result, and standing that must precede a canonical definition, conversational provenance, or structural encoding. No metadata block. |
 | `visitor-intro/` | procedural | — | Onboarding tour. Lets any agent give a coherent, repo-aware orientation to newcomers at any org repo without inventing org-level facts. No metadata block. |
-| `char-compress/` | procedural | — | Unit Circle Number System-derived bone/flesh context compression. Carry flesh, frozen bones, transforms, and `hmmm`; drop only safely regenerable scaffold. Do not claim unearned theorem/status support or edcmbone metric status. |
+| `char-compress/` | procedural | — | Skill-lib-owned bone/flesh context compression; historical notation is not current UCNS mathematics. Carry flesh, frozen bones, transforms, and `hmmm`; drop only safely regenerable scaffold. Do not claim unearned theorem/status support or edcmbone metric status. |
 | `agent-instantiation/` | procedural | — | a0/a0ucns agent lifecycle methodology. Spawn sub-agents via the `sub_agent_spawn` tool → spawn executor; fork/merge `PCNAEngine` instances via `InstanceMerge` (fork/absorb/converge); compose identities per the canonical `username(a0(energy)auditor)` grammar; honor spawn caps + write-route gating. Canonical source is `a0`; `a0-betatest` diverged (per-user native-ZFAE) and is out of scope. Repo-specific runtime doctrine (no theorem transfer). |
 | `a0p-instancing/` | procedural | — | Peer for a0-betatest (a0p): agents are per-user CRUD `AgentInstance` + `CharacterSheet`, each owning a trained native ZFAE weight bank (three 157-seed cores); no `sub_agent_spawn`/executor/`InstanceMerge` — only volatile `MemoryCore.spawn_sub/merge_sub`. Sequence: create→distill-train→readiness gate→mode inference→sentinel/pending-override→safetensors checkpoint. Canonical source is `a0-betatest`. |
 | `plain-lens/` | procedural | — | Plain-language, multi-lens companion views of dense canonical text. Build easier on-ramps (domain/audience/role lens selectors, progressive disclosure) that never replace or talk down to the source, keep a static fallback under any dynamic layer, preserve operators/negations/quantifiers, and report an EDCM-style body-vs-footnote tension reading as an illustrative heuristic (not an edcmbone metric runtime). |
-| `gonol-build/` | procedural | — | UCNS gonol construction discipline. Resolve current UCNS authority; preserve intrinsic relations, closure, atomic promotion, occurrence identity, explicit punctuation-function plans, full-source receipts, and independent replay. Refuses superseded omega/phi/psi, bone/flesh, and carrier-LCM language doctrine. |
+| `gonol-build/` | procedural | — | UCNS gonol objects/constructors/geometry + Stack language-construction research discipline. Resolve the owning Stack workspace, preserve closure, atomic participation, occurrence identity, constitutive relations, provenance, and required replay; EDCM is measurement/evaluation only. |
 | `ucns-option-selection/` | procedural | — | Fail-closed scoped UCNS option selection. Freezes candidates, authority, gates, evidence, and policies; requires complete evaluation, replay, purpose-relative comparison, explicit ratification, rollback, and non-transfer. Hard-gate failures cannot be compensated by scores. |
+| `epac-selection-display/` | procedural | — | Evidence-bound EPAC display selection. Resolves an exact provisional source, target, receipt, and available representation; preserves status, nonclaims, sealed-comparison boundaries, and `hmmm`; and keeps WebMCP as a read-only handoff rather than a research-code executor. |
 | `meta/` | procedural | — | Meta Energy Theory axioms. Extract and preserve Energy Theory axioms from resonances among small network architectures, with formula-backed examples and overlap grids; keep Energy Theory distinct from EDCMBONE flesh/bone and FLAR implementation detail. |
 | `the-interdependency/` | procedural | — | Workflow protocol for The Interdependency org: code/research/GitHub maintenance, EDCMBONE transcript assembly and analysis, and mandatory usage-guidance + structure-preservation doctrine across artifacts. |
 | `interdependent-work-graph/` | procedural | — | Cross-repository coordination. Resolves exact participant identities, authority roles, relations, non-transfer boundaries, shared graph manifests, and validation/materialization order before selecting edit locations. Related doctrine: `the-interdependency`, `canon`. |
+| `stack-update/` | procedural | — | Fail-closed structural update protocol for `The-Interdependency/stack`. Structural changes to participants, pins, authorities, relations, workspaces, BASE records, or lifecycle standing must update all affected projections, recompute the work-graph identity, and pass the deterministic stack checker as one transaction. |
+| `project-incubation-graduation/` | procedural | — | Lifecycle doctrine for emergent components born inside a forge/incubator. Requires qualification before extraction, provenance-preserving repository creation, explicit implementation-authority transfer, released distribution, and successful reconsumption by the former forge before graduation is complete. |
 | `distributed-publication/` | procedural | — | Provenance-bearing publication from distributed source owners. Preserves exact source identities, source-local licenses and statuses, correction routing, fail-closed retrieval, explicit fallback, and publication build provenance. Loads with `interdependent-work-graph`. |
 | `loop-eng/` | procedural | — | Loop engineering doctrine for closed feedback cycles (Discover→Plan→Execute→Verify→Iterate), maker/checker subagent separation, and autonomous verify-iterate workflows integrated with a0p/AIMMH and EDCMBONE Verify stages. |
 | `action-calibration/` | procedural | — | Action sizing and escalation doctrine for choosing a smallest decisive experiment, maximal coherent program, prerequisite repair, or containment after preflighting scarce resources. |
+| `repo-audit-repair/` | procedural | — | Evidence-led repository audit and authorized repair from exact starting identity through applicable checks, classified findings, owning-layer fixes, and authoritative terminal verification. |
 | `skill-build/` | procedural | — | Skill authoring and compliance workflow. Provides the required question set for creating/revising skills, choosing metadata-block vs procedural shape, designing individualized skill test suites, and bringing existing skills into compliance. |
 | `skill-usage/` | procedural | — | Evidence-bearing local usage maturity. Counts material invocations, preserves unobserved outcomes as `hmmm`, and separates nominal exposure thresholds from quality-capped effective maturity. |
 | `ssh-automation/` | procedural | — | Fail-closed SSH automation and copy-paste delivery. Preserves verified endpoint identity, explicit authentication, local/remote shell and stdin boundaries, bounded retries, idempotent activation and rollback, and child-shell containment for bulk terminal pastes. |
@@ -100,7 +105,7 @@ Two kinds:
   example; `doc-build/`, `cap-build/`, `deps-build/`, `owner-build/`,
   `risk-boundary-build/`, `ratios/`, `manifest/`, `llms-build/`, and `typed-meta-frontend/` define adjacent applications. `msdmd` itself is the foundation.
 - **Procedural skills** define an agent behaviour with no msdmd block. They state the doctrine
-  they enforce and the output shape they produce. `canon/`, `domain-claims/`, `visitor-intro/`, `char-compress/`, `agent-instantiation/`, `a0p-instancing/`, `plain-lens/`, `gonol-build/`, `ucns-option-selection/`, `meta/`, `the-interdependency/`, `interdependent-work-graph/`, `loop-eng/`, `action-calibration/`, `skill-build/`, `skill-usage/`, `ssh-automation/`, `vm-mcp/`, `sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/` are the examples.
+  they enforce and the output shape they produce. `canon/`, `domain-claims/`, `visitor-intro/`, `char-compress/`, `agent-instantiation/`, `a0p-instancing/`, `plain-lens/`, `thought-lens/`, `gonol-build/`, `ucns-option-selection/`, `epac-selection-display/`, `meta/`, `the-interdependency/`, `interdependent-work-graph/`, `stack-update/`, `project-incubation-graduation/`, `loop-eng/`, `fresh-making/`, `action-calibration/`, `repo-audit-repair/`, `skill-build/`, `skill-usage/`, `ssh-automation/`, `vm-mcp/`, `sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/` are the examples.
 
 ## msdmd block syntax
 
@@ -112,8 +117,10 @@ Two kinds:
 # === END <BLOCK_NAME> ===
 ```
 
-- The comment marker (`#`, `//`, `--`) is whatever is idiomatic for the file's language; the
-  fence text and field structure are identical across languages.
+- The comment marker is whatever is idiomatic for the file's language; the
+  reference registry covers `#`, `//`, `--`, `%`, `;`, `!`, `'`, and `*>`
+  line-comment families. Fence text and field structure are identical across
+  languages; ambiguous extensions are not guessed.
 - `BLOCK_NAME` is uppercase snake case. Every entry begins with `id:` (unique within the block,
   stable across refactors). Field lines are indented one level beneath the id.
 - A file may contain multiple blocks of the same or different types; parsers concatenate entries.
@@ -123,8 +130,8 @@ Two kinds:
 
 | File | Public API | Notes |
 |---|---|---|
-| `universal.py` | `parse_text(text, block_name, marker="#")`, `parse_file(path, block_name)`, `walk_tree(root, block_name, *, skip=None, extensions=None)`, `marker_for(path)` | Pure Python stdlib. `walk_tree` returns `(annotated, untested)` so coverage gaps stay observable. |
-| `universal.ts` | `parseText`, `parseFile`, `walkTree`, `markerFor`, `Entry`, `WalkOptions` | Pure Node stdlib (`node:fs`, `node:path`). TypeScript counterpart. |
+| `universal.py` | `parse_text(text, block_name, marker="#")`, `parse_file(path, block_name)`, `walk_tree(root, block_name, *, skip=None, extensions=None)`, `marker_for(path)`, `COMMENT_MARKERS` | Pure Python stdlib. `walk_tree` returns `(annotated, untested)` so coverage gaps stay observable. |
+| `universal.ts` | `parseText`, `parseFile`, `walkTree`, `markerFor`, `COMMENT_MARKERS`, `Entry`, `WalkOptions` | Pure Node stdlib (`node:fs`, `node:path`). TypeScript counterpart; its extension registry is regression-checked against Python. |
 | `__init__.py` | — | Package marker / docstring. |
 
 `msdmd/collection.ts` defines the TypeScript shapes for generated repo-level
@@ -184,8 +191,9 @@ blocks first; do not hand-edit `llms.txt` as independent doctrine.
 
 ```bash
 python -m unittest discover -s tests
-python tools/check_skill_lib_drift.py
-python tools/check_skill_compliance.py
+bash tools/check_gonol_authority.sh
+python tools/check_skill_lib_drift.py --warnings-fail
+python tools/check_skill_compliance.py --warnings-fail
 python ratios/ratios_check.py --strict
 python -m llms.build --root . --out llms.txt --check
 python tests/test_repo_loto.py --audit
@@ -205,11 +213,15 @@ There is a small stdlib Python editorial test suite. There is still no `package.
   skills.json semantics, per-skill spec coverage, SKILL.md frontmatter, README
   index coverage, collection-point schema/generator/visualizer coverage, universal parser
   behavior, llms-build behavior, and parser ratio bookends.
+- `tools/ai.sh` is the canonical Termux-side controller for the remote `a0` tmux coding-agent session; `tools/install_ai.sh` installs `ai.sh` into caller PATH, preferring Termux `$PREFIX/bin`.
 - The parsers are reference implementations; the test suite covers core parser
   behavior and library integration, not every consuming-runner contract.
+- `check_gonol_authority.sh` fails closed when active skill-lib surfaces restore EDCM construction ownership.
 - `check_skill_lib_drift.py` checks editorial agreement among skill directories, `skills.json`, `README.md`, `ORG_DISTRIBUTION.md`, `AGENTS.md`, `CLAUDE.md`, and generated `llms.txt`.
 - `check_skill_compliance.py` checks baseline `skill-build` invariants for each `SKILL.md`.
-- `ratios_check.py --strict` verifies first/last ratios seals for covered executable source files.
+- `ratios_check.py --strict` verifies opening/closing ratios seals for
+  Python files, including the shebang-safe opening exception; other
+  parser-supported languages remain visible outside the Python computer scope.
 - `tests/test_repo_loto.py --audit` reconciles RepoLOTO source `CONTRACTS` against test `CHECKS`; `tests/test_repo_loto.py` executes those checks.
 - `char_compress_check.py` runs preservation fixtures from `char-compress/fixtures.json`; it is not the full Unit Circle Number System compression engine.
 - `propagate_skills.py` copies canonical skill directories into a checked-out target repo, and carries any shared `doctrine/<file>` docs the propagated skills link to into `.agents/skills/doctrine/`; it does not commit, push, open pull requests, or contact GitHub.
@@ -241,12 +253,15 @@ There is a small stdlib Python editorial test suite. There is still no `package.
 7. Do not fork parser dialects; propose an `msdmd` extension instead.
 8. Do not invent undeclared package/build commands for this repo.
 9. Apply `char-compress` when compressing repo context: carry flesh, frozen bones, transforms, and hmmm; drop only safely regenerable scaffold.
-10. Treat `char-compress` as Unit Circle Number System-derived compression doctrine, but do not claim unearned theorem/status support or edcmbone metric status.
+10. Treat `char-compress` as a skill-lib-owned compression procedure, but do not claim unearned theorem/status support or edcmbone metric status.
 11. Before promoting a word into canon, a theorem term, ontology primitive, schema field, encoding label, or cross-domain mapping, apply `domain-claims`: establish the domain-qualified sense and resolve collisions before attaching provenance; then apply `canon` to assess authority.
-12. Before constructing, reviewing, replaying, or extending UCNS gonols, apply `gonol-build`: resolve current UCNS authority, preserve closure and atomic promotion, require explicit occurrence-addressed function plans, and keep incomplete constructors visible as `hmmm`.
+12. Before constructing, reviewing, replaying, or extending language-gonol research, apply `gonol-build`: resolve current UCNS gonol-object/constructor/geometry authority and the exact owning Stack research workspace; EDCM is measurement/evaluation only. Preserve closure and atomic participation, require declared constitutive relations, and keep incomplete geometry visible as `hmmm`.
 13. Before selecting among UCNS options, apply `ucns-option-selection`: freeze the scoped decision boundary, enforce noncompensable eligibility and evidence gates, require explicit ratification, and preserve non-transfer, rollback, negative evidence, and `hmmm`.
-14. For LLM instructions, edit `LLMS` source blocks and regenerate `llms.txt` with `python -m llms.build --root . --out llms.txt --apply`.
-15. For SSH automation and large terminal pastes containing SSH, apply `ssh-automation`: verify endpoint identity and host trust, preserve local and remote interpreter boundaries, make retries and rollback explicit, and contain option/trap/exit effects inside a child shell.
+14. Before selecting and displaying an EPAC artifact, apply `epac-selection-display`: pin the provisional source, exact target, receipt, and available renderer; preserve status, nonclaims, sealed comparison, and `hmmm`; and keep WebMCP read-only.
+15. Before mutating `The-Interdependency/stack` structure, apply `stack-update` with `interdependent-work-graph`; update every affected authority/provenance projection, remove superseded claims, recompute the work-graph digest, and require the deterministic stack checker before merge.
+16. For LLM instructions, edit `LLMS` source blocks and regenerate `llms.txt` with `python -m llms.build --root . --out llms.txt --apply`.
+17. For SSH automation and large terminal pastes containing SSH, apply `ssh-automation`: verify endpoint identity and host trust, preserve local and remote interpreter boundaries, make retries and rollback explicit, and contain option/trap/exit effects inside a child shell.
+18. When an emergent component is incubated inside a forge and may become independently authoritative, apply `project-incubation-graduation`: qualify it before extraction, preserve provenance, publish from the new authority, require downstream reconsumption, then sever the incubated implementation path before declaring graduation.
 
 ## hmmm
 

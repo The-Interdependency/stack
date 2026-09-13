@@ -1,0 +1,68 @@
+{
+  "version": "prime-arity-v0.1-placement",
+  "standing": "INCUBATING_UNRESOLVED",
+  "canon": false,
+  "relations": [
+    {
+      "source": "origin",
+      "relation": "invokes",
+      "target": "invocation_field"
+    },
+    {
+      "source": "base_arity_primes",
+      "relation": "constrain",
+      "target": "invocation_field"
+    },
+    {
+      "source": "invocation_field",
+      "relation": "generates",
+      "target": "arity_load"
+    },
+    {
+      "source": "arity_load",
+      "relation": "carries",
+      "target": "cardinal"
+    },
+    {
+      "source": "invocation_field",
+      "relation": "contains",
+      "target": "ordinal_invocation"
+    },
+    {
+      "source": "projection_law",
+      "relation": "collapses_preserving_declared_structure",
+      "target": "readout"
+    },
+    {
+      "source": "prime_readout",
+      "relation": "heads",
+      "target": "composite_family"
+    },
+    {
+      "source": "epoch_capture",
+      "relation": "stabilizes",
+      "target": "prime_epoch_candidate"
+    },
+    {
+      "source": "twin_prime_coupling",
+      "relation": "couples",
+      "target": "prime_family_heads"
+    },
+    {
+      "source": "multiplicity_of_convergence",
+      "relation": "scores",
+      "target": "epoch_candidate"
+    },
+    {
+      "source": "prime_prefix_projection",
+      "relation": "assigns_external_epoch_coordinate",
+      "target": "prime_readout"
+    },
+    {
+      "source": "finite_zeta_epoch",
+      "relation": "aggregates",
+      "target": "composite_family_shadows"
+    }
+  ],
+  "hmmm": "METAPAT relation grammar is placed; no relation is ratified as theorem or canon."
+}

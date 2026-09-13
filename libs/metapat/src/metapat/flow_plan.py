@@ -24,7 +24,7 @@ are declarations of responsibility, not runtime execution or empirical proof.
 #   rollback: restore prior architecture declarations
 #   requires: metapat_module_envelope, metapat_ucns_adapter
 #   since: 2026-07-12
-#   unresolved: EDCM consumer implementation and shared-stack result envelope until merged cross-repository
+#   unresolved: question-to-measurement design constructor remains hmmm; EDCM semantic-envelope consumer exists
 # === END MODULE_BUILD ===
 
 # === CAPABILITIES ===
@@ -67,7 +67,9 @@ are declarations of responsibility, not runtime execution or empirical proof.
 
 AUTHORITY_FLOW = """METAPAT canon
     |
+    +-- determines which bounded questions and distinctions matter
     +-- constrains terms, interpretation, allowed derivations, and claim status
+    +-- measurable questions seed EDCM measurement design
     v
 UCNS adapters and EDCM consumers"""
 
@@ -86,8 +88,9 @@ UCNS_SIDE_STATUS = (
     "METAPAT statements remain external provenance; no local UCNS algebra"
 )
 EDCM_SIDE_STATUS = (
-    "hmmm: immutable MetapatModuleEnvelope is implemented; EDCM consumer and "
-    "shared-stack fixture must be merged in The-Interdependency/edcm"
+    "implemented: EDCM owns the canonical METAPAT semantic-envelope consumer; "
+    "hmmm: a constructor that turns METAPAT-bounded measurable questions into "
+    "an EDCM measurement design is not yet implemented"
 )
 
 __all__ = [

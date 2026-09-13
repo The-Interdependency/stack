@@ -1,0 +1,45 @@
+{
+  "version": "prime-arity-v0.1-placement",
+  "standing": "INCUBATING_UNRESOLVED",
+  "canon": false,
+  "evidence_object": "multiplicity_of_convergence",
+  "metrics": {
+    "path_convergence": "log-scaled count of distinct arity invocations projecting to the same cardinal load",
+    "stage_convergence": "shared recursive stage evidence among coupled candidates",
+    "family_convergence": "visibility of depth+1 composite-family members and arity-offspring composites",
+    "residue_convergence": "projection convergence under declared modulus, used for placement not proof",
+    "twin_convergence": "dyadic coupled prime-family head evidence",
+    "metric_convergence": "count of independent declared metrics identifying the same candidate",
+    "prefix_convergence": "prime-prefix projection structure, including remainder r at epoch boundary",
+    "zeta_family_alignment": "finite Euler-product and finite prime-power detector context at prefix depth"
+  },
+  "projection_jobs": {
+    "placement": "final_residue_mod_2880",
+    "identity": "final_cardinal plus family/twin role",
+    "evidence": "convergence_node"
+  },
+  "required_controls": [
+    "shuffle_arity_addresses",
+    "shuffle_prime_labels",
+    "alternate_recursion_laws",
+    "random_cardinal_loads",
+    "mod_2880_residue_controls",
+    "size_depth_matched_primes",
+    "depth_n_against_depth_n_plus_1_family_shadows",
+    "projection_over_merging_penalty"
+  ],
+  "standing_labels": [
+    "SURVIVED",
+    "FALSIFIED",
+    "UNRESOLVED",
+    "BLOCKED",
+    "DEPRECATED"
+  ],
+  "non_transfer": [
+    "metric survival is not theorem status",
+    "metric survival is not UCNS canon",
+    "metric survival is not zeta-zero evidence",
+    "metric survival does not select a universal projection law"
+  ],
+  "hmmm": "The scoring weights and projection law remain unresolved until independently replayed against preregistered controls."
+}

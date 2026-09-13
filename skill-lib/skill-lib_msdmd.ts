@@ -1,4 +1,4 @@
-// ratios: loc_comments=196:0 imports_exports=1:0 calls_definitions=1:0
+// ratios: loc_comments=hmmm imports_exports=hmmm calls_definitions=hmmm
 import { defineMsdmdCollection } from "./msdmd/collection";
 
 // skill-lib is the canonical source of the msdmd family, not a normal consumer.
@@ -9,6 +9,33 @@ import { defineMsdmdCollection } from "./msdmd/collection";
 export default defineMsdmdCollection({
   repo: "The-Interdependency/skill-lib",
   declarations: [
+    {
+      file: "tools/check_gonol_authority.sh",
+      block: "MODULE_BUILD",
+      id: "gonol_authority_gate",
+      fields: {
+        source: "tools/check_gonol_authority.sh",
+        summary: "Guards active gonol authority: UCNS owns gonol objects/constructors/geometry, Stack owns active construction research, EDCM owns measurement/evaluation only",
+      },
+    },
+    {
+      file: "tools/ai.sh",
+      block: "MODULE_BUILD",
+      id: "skill_lib_ai_launcher",
+      fields: {
+        source: "tools/ai.sh",
+        summary: "Canonical Termux-side SSH/tmux launcher for a0 VM coding-agent CLIs with pane health, explicit restart, key propagation, remain-on-exit, and persistent remote logs",
+      },
+    },
+    {
+      file: "tools/install_ai.sh",
+      block: "MODULE_BUILD",
+      id: "skill_lib_ai_installer",
+      fields: {
+        source: "tools/install_ai.sh",
+        summary: "Installs canonical ai.sh into caller PATH, preferring Termux $PREFIX/bin and otherwise ~/.local/bin",
+      },
+    },
     {
       file: "msdmd/SKILL.md",
       block: "DOCS",
@@ -112,7 +139,7 @@ export default defineMsdmdCollection({
       block: "CONTRACTS",
       id: "skill_index_drift_gate",
       fields: {
-        call: "python tools/check_skill_lib_drift.py",
+        call: "python tools/check_skill_lib_drift.py --warnings-fail",
         summary: "Checks README, AGENTS, CLAUDE, ORG_DISTRIBUTION, skills.json, and generated llms.txt drift",
       },
     },
@@ -121,7 +148,7 @@ export default defineMsdmdCollection({
       block: "CONTRACTS",
       id: "skill_spec_compliance_gate",
       fields: {
-        call: "python tools/check_skill_compliance.py",
+        call: "python tools/check_skill_compliance.py --warnings-fail",
         summary: "Checks SKILL.md frontmatter, triggers, hmmm boundaries, and index registration",
       },
     },
@@ -197,4 +224,4 @@ export default defineMsdmdCollection({
     },
   ],
 });
-// ratios: loc_comments=196:0 imports_exports=1:0 calls_definitions=1:0
+// ratios: loc_comments=hmmm imports_exports=hmmm calls_definitions=hmmm

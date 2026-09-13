@@ -25,8 +25,8 @@ projects may later graduate into their own repositories.
 - `STACK_MANIFEST.md` and `stack-manifest.json` own stack-level participant provenance.
 - `backend/` is the durable stack orchestration/fresh-making control plane.
 - `frontend/cli/` is the replaceable human/operator surface for that backend.
-- `skill-lib/` is the currently pinned operational skill snapshot; exact newer doctrine
-  may be bound separately only when its provenance and non-transfer boundary are explicit.
+- `skill-lib/` is the currently pinned operational skill snapshot; separately bound
+  runtime doctrine retains its exact provenance and non-transfer boundary.
 
 ## Structural update gate
 
@@ -121,6 +121,6 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
-- The complete root `skill-lib/` snapshot refresh remains separate because the current
-  provenance-bound fresh-making doctrine is newer than the local generator snapshot.
+- The 2026-09-13 root `skill-lib/` refresh changes the MSDMD generator identity.
+  Re-register and verify affected derivations before accepting existing outputs as fresh.
 - Project graduation automation remains unimplemented.

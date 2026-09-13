@@ -16,12 +16,17 @@ jobs:
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: "3.x"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.15.0"
       - name: Unit tests
         run: python -m unittest discover -s tests
+      - name: Gonol authority gate
+        run: bash tools/check_gonol_authority.sh
       - name: Skill library drift
-        run: python tools/check_skill_lib_drift.py
+        run: python tools/check_skill_lib_drift.py --warnings-fail
       - name: Skill compliance
-        run: python tools/check_skill_compliance.py
+        run: python tools/check_skill_compliance.py --warnings-fail
       - name: Codex plugin adapter drift
         run: python tools/build_codex_plugin_skills.py --check
       - name: Ratios strict gate

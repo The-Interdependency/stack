@@ -71,7 +71,8 @@ cat research/ucns/BASE.json
 ```
 
 If the result changes UCNS itself, prepare the change for `The-Interdependency/ucns`.
-After upstream merge, refresh `libs/ucns/` and update `research/ucns/BASE.json`.
+After upstream merge, refresh `libs/ucns/`; update `research/ucns/BASE.json` only
+after separately verifying the research rebase.
 
 English Gonol Construction is a separated stack-local component at
 `research/english-gonol/`. UCNS owns its consumed geometry. English Gonol owns the
@@ -157,17 +158,23 @@ and [`frontend/cli/README.md`](frontend/cli/README.md) for operator commands.
 
 ## Refreshing a canonical view
 
-From a clean checkout of the owning repository at the desired commit:
+Resolve the exact owning repository commit first. Replace the complete imported
+Git tree, including tracked dotfiles and executable modes, and remove obsolete
+files. See the [2026-09-13 refresh record](docs/updates/2026-09-13-tools.md) for
+source identities and a reproducible Git-tree verification command.
+
+Update both manifests and recompute the work-graph digest. A canonical snapshot
+refresh does not by itself rebase research: retain the historical `BASE.json`
+and add a matching `research_participants` record when it differs from the new
+canonical pin. Change a research base only as part of a separately verified rebase.
+
+Follow `.agents/skills/stack-update/SKILL.md` and run:
 
 ```bash
-rm -rf libs/<name>/*
-git -C <checkout> archive <commit> | tar -x -C libs/<name>/
+python3 tools/check_stack_consistency.py
 ```
 
-Then update `STACK_MANIFEST.md`, `stack-manifest.json`, and the matching
-`research/<name>/BASE.json`; recompute the work-graph digest; and commit with the exact
-source commit in the message. Run `python tools/check_stack_consistency.py` before
-merge.
+Canonical source edits belong in the owning repository before importing its tree.
 
 ## Boundaries
 
@@ -201,6 +208,6 @@ merge.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the
   resilience baseline.
 - Organization aggregate and website-projection derivation specs are not yet registered.
-- The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
-  pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
-  snapshot refresh would also import unrelated doctrine changes.
+- The root `skill-lib/` snapshot was refreshed on 2026-09-13. Runtime doctrine and
+  generator identities are recorded separately in `backend/fresh-making-provenance.json`;
+  existing generated collections need verification under the changed generator identity.

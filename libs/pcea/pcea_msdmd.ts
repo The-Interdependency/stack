@@ -1,4 +1,3 @@
-// ratios: loc_comments=428:0 imports_exports=1:0 calls_definitions=1:0
 import { defineMsdmdCollection } from "./.agents/skills/msdmd/collection";
 
 export default defineMsdmdCollection({
@@ -425,7 +424,5 @@ export default defineMsdmdCollection({
     }
   ],
   "gaps": [],
-  "repo": "pcea",
-  "source_commit": "7a5cda8354859db21c01645d792589e650dd62f6"
+  "repo": "pcea"
 });
-// ratios: loc_comments=428:0 imports_exports=1:0 calls_definitions=1:0

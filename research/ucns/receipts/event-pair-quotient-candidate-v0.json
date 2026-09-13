@@ -44,13 +44,13 @@
     "not a recovered recursive-scale transition law",
     "not a PCEA runtime, entropy, hardness, or authenticity claim"
   ],
-  "receipt_sha256": "330581ff3edbb3b3b99021e9c026e585dc4619c0ae60e9f1d1425c350c834482",
+  "receipt_sha256": "209eccd83f6aa280a76a5f38700ee760e13e754568dc25c79f9f05e2ffd92d91",
   "schema_id": "the-interdependency.stack-research.ucns.event-pair-quotient",
   "schema_version": "0.1.0",
   "source": {
     "event_trace_producer_path": "research/ucns/event_trace_lift_candidate.py",
     "event_trace_producer_sha256": "d1cb1e301de8d081653c0cc8f07730ae09afac652867236c266c3c9b67d7b9b4",
-    "event_trace_receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+    "event_trace_receipt_sha256": "fa46cc04ce7a71300050a898403d9769e7242027f3920894851cd6605c80e392",
     "ucns_base_commit": "1975fe70cf4e0826a8020c2da3047569e277af64"
   },
   "standing": "stack-local-post-observation-falsified-candidate"

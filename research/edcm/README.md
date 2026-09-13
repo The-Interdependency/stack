@@ -1,6 +1,8 @@
 # EDCM research workspace
 
-Stack-local research against the pinned canonical EDCM view in [`../../libs/edcm/`](../../libs/edcm/).
+Stack-local research retains its exact historical source in [`BASE.json`](BASE.json).
+The current canonical EDCM view is [`../../libs/edcm/`](../../libs/edcm/);
+its 2026-09-13 refresh does not rebase this workspace or regenerate its receipts.
 
 Standing: **research, not canon**. Canonical EDCM authority remains `The-Interdependency/edcm` at the exact commit recorded in [`BASE.json`](BASE.json) and the root stack manifest.
 

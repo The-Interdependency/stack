@@ -1,0 +1,44 @@
+{
+  "id": "prime_arity_thirteen_layer_map_v0",
+  "status": "INCUBATING_UNRESOLVED",
+  "standing": "calibration_scaffold",
+  "base_arity_carriers": [2, 3, 5, 7],
+  "recursion_layers": [
+    {"index": 0, "name": "Origin", "preserves": "Origin remains non-numeric."},
+    {"index": 1, "name": "Distinction", "preserves": "Distinction remains prior to count/order."},
+    {"index": 2, "name": "Dyadic constraint", "preserves": "Dyadic constraint is structural, not merely the numeral 2."},
+    {"index": 3, "name": "Triadic relation", "preserves": "Triadic relation is structural, not merely the numeral 3."},
+    {"index": 4, "name": "Base-carry formation", "preserves": "Carry is explicitly defined and replayable."},
+    {"index": 5, "name": "First closure / readout layer", "preserves": "Closure/readout is measured, not assumed."},
+    {"index": 6, "name": "Composite-family shadow", "preserves": "Composite-family shadow stays distinct from arity offspring."},
+    {"index": 7, "name": "Heptadic boundary / base completion", "preserves": "Heptadic boundary does not replace the base set."},
+    {"index": 8, "name": "Projection contract", "preserves": "Projection declares what it preserves and collapses."},
+    {"index": 9, "name": "Cardinal collision", "preserves": "Cardinal collision preserves exact contributing paths/loads."},
+    {"index": 10, "name": "Multiplicity of convergence", "preserves": "Multiplicity of convergence remains an evidence object."},
+    {"index": 11, "name": "Twin / coupled-family relation", "preserves": "Twin coupling is compared against non-twin controls."},
+    {"index": 12, "name": "Zeta-family ledger", "preserves": "Zeta-family ledger remains finite Euler-product context, not a zeta-zero claim."},
+    {"index": 13, "name": "Epoch-capture candidate", "preserves": "Epoch capture remains a candidate until falsifiers/replay pass."}
+  ],
+  "calibration_reason": {
+    "post_base_prime": true,
+    "closure_form": "12 + 1",
+    "prime_prefix_projection": "13 = (2 + 3 + 5) + 3",
+    "base_remainder": 3,
+    "boundary_prime": 7
+  },
+  "not": [
+    "canon",
+    "theorem",
+    "selected_projection_law",
+    "new_base_arity_set"
+  ],
+  "failure_conditions": [
+    "13 is treated as a new root arity.",
+    "The map is used as proof rather than a scaffold.",
+    "Any layer is renamed after seeing desired outputs.",
+    "Projection law Pi remains implicit while claims are made from results.",
+    "Zeta-family context is promoted to a zeta-zero explanation.",
+    "Twin coupling is not checked against matched non-twin controls."
+  ],
+  "hmmm": "The exact projection law remains unresolved."
+}

@@ -67,7 +67,7 @@
     "not evidence that source-declared boundary events are physical contacts",
     "not a PCEA runtime, entropy, hardness, or authenticity claim"
   ],
-  "receipt_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+  "receipt_sha256": "fa46cc04ce7a71300050a898403d9769e7242027f3920894851cd6605c80e392",
   "schema_id": "the-interdependency.stack-research.ucns.event-trace-lift",
   "schema_version": "0.1.0",
   "seed_geometry": {
@@ -88,7 +88,7 @@
       },
       {
         "path": "libs/ucns/CANON.md",
-        "sha256": "bf675898b95cf393ffc8f6c16d5f42ccf1d323990556ce624d94f3c98507c487"
+        "sha256": "24977f0dfa7af56d59705cb131c6506c2b551832358bee57b592266be7599f33"
       },
       {
         "path": "libs/ucns/docs/GEOMETRY.md",

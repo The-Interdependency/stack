@@ -9,19 +9,21 @@
   },
   "local_generator_snapshot": {
     "repository": "The-Interdependency/skill-lib",
-    "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+    "commit": "22c2c5702d14fb4b0faeb717777ecab2665770a1",
     "path": "skill-lib/",
     "relation": "stack-local pinned snapshot used by the default MSDMD generator root"
   },
   "evidence": {
-    "skill_lib_compare": "fb3b53a7629f7f03ecf255167d52c13abef1a979..891dc0d13ee9d98d8ee6de3bf6ad5c309364bf92",
-    "msdmd_generator_changed_in_range": false
+    "skill_lib_compare": "fb3b53a7629f7f03ecf255167d52c13abef1a979..22c2c5702d14fb4b0faeb717777ecab2665770a1",
+    "msdmd_generator_changed_in_range": true,
+    "doctrine_content_changed": false,
+    "refresh_record": "docs/updates/2026-09-13-tools.md"
   },
   "boundaries": {
     "authority_transfer": false,
     "doctrine_identity_transfer": false,
     "hmmm": [
-      "the complete root skill-lib snapshot refresh is intentionally separate because the 12-commit range contains unrelated doctrine changes"
+      "existing production derivation specs and accepted receipts require re-registration and verification under the refreshed generator; no production freshness is asserted by this source refresh"
     ]
   }
 }

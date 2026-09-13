@@ -92,13 +92,18 @@ PYTHONDONTWRITEBYTECODE=1 python3 research/ucns/rooted_trace_symmetry_sieve.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest research/ucns/tests/test_rooted_trace_symmetry_sieve.py -v
 ```
 
-Frozen producer identities:
+Frozen producer identities after the 2026-09-13 canonical snapshot refresh:
+
+Only source hashes and derived receipt identities changed; the research results,
+standing, nonclaims, and unresolved boundaries are identical. The historical
+research BASE remains fixed. The original receipt is recoverable at Stack
+`85d6839` before this refresh; see the [refresh record](../../../docs/updates/2026-09-13-tools.md).
 
 ```text
 rooted_trace_symmetry_sieve.py sha256 = 2f4cea88bef33f2883127495f0283501589a00361c359f384fc2688803200b55
 test module sha256                       = 0bba86aab3c07b23cf79f9fcac08e3bfa361474ed06867b03bea5b10eb14550a
-canonical receipt payload sha256         = 00aade4e906b55f65854f4623a52820268b07b66752185576db77cc1353adfbf
-formatted receipt file sha256            = 866aa32f50a846d0c9a93e9f6a6b874da8d9bf958289b515a14b6fbc270067ed
+canonical receipt payload sha256         = 346084221e8940e058f33e0d5369648375988a6a75e4961d2a6657dea9aca070
+formatted receipt file sha256            = d326f9c965d0dc66f8b9737f0b1ff1ea61e51b71da43edabfe07a3239786dc27
 ```
 
 ## hmmm

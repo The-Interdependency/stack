@@ -12,4 +12,4 @@
 - Preserve exact arithmetic where exactness is load-bearing; lossy renderings remain explicitly secondary.
 - Use `hmmm` for unresolved geometric constraints. Never fill a missing geometric law with semantic machinery or implementation convenience.
 - Every behavior-bearing source module owns skill-lib `MODULE_BUILD` and `CONTRACTS`; executable tests own resolving `CHECKS`.
-- Before claiming test-backed status run the complete geometry test suite, `python tools/verify_skill_lib_contracts.py .`, build, and Twine checks.
+- Before claiming test-backed status run the complete geometry suite through the outcome gate documented in README, `.venv/bin/python tools/verify_skill_lib_contracts.py .`, build, and Twine checks. Use the project interpreter populated by `uv sync --locked --extra test --extra build` for these checks.

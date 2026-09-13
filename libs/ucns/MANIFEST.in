@@ -1,0 +1,9 @@
+include AGENTS.md CANON.md CLAUDE.md uv.lock
+recursive-include src/ucns *
+recursive-include tools *
+recursive-include tests *
+recursive-include docs *
+recursive-include generated *
+recursive-include .agents/skills *
+recursive-include .github/workflows *
+global-exclude *.py[cod]

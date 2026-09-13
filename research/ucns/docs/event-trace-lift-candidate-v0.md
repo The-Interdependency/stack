@@ -123,13 +123,18 @@ PYTHONDONTWRITEBYTECODE=1 python3 research/ucns/event_trace_lift_candidate.py
 PYTHONDONTWRITEBYTECODE=1 python3 -m unittest research/ucns/tests/test_event_trace_lift_candidate.py -v
 ```
 
-Frozen producer identities:
+Frozen producer identities after the 2026-09-13 canonical snapshot refresh:
+
+Only source hashes and derived receipt identities changed; the research results,
+standing, nonclaims, and unresolved boundaries are identical. The historical
+research BASE remains fixed. The original receipt is recoverable at Stack
+`85d6839` before this refresh; see the [refresh record](../../../docs/updates/2026-09-13-tools.md).
 
 ```text
 event_trace_lift_candidate.py sha256 = d1cb1e301de8d081653c0cc8f07730ae09afac652867236c266c3c9b67d7b9b4
 test module sha256                   = 986ef143e271acad8560e0c0fa1381a92ea05a219d8b2770ab79e4a361026dfd
-canonical receipt payload sha256     = cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2
-formatted receipt file sha256        = dae0a676d36f5f8f3ff284e608e6589090537b305f84b10d3f1e2259f3c6b5a7
+canonical receipt payload sha256     = fa46cc04ce7a71300050a898403d9769e7242027f3920894851cd6605c80e392
+formatted receipt file sha256        = 9694627a14441c3377e7987b9b369664422e9ce57f48cff678bc781ebc22f04a
 ```
 
 ## hmmm

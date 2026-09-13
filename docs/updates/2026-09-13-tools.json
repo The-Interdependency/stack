@@ -1,0 +1,169 @@
+{
+  "stack_start_commit": "85d68392e298e2237d4240af88f711109d14f13e",
+  "mutation": [
+    "pin",
+    "projection"
+  ],
+  "sources": [
+    {
+      "name": "skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "old": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "new": "22c2c5702d14fb4b0faeb717777ecab2665770a1",
+      "path": "skill-lib",
+      "files": 205,
+      "tree": "6e483e484d5682e638de5f0957224d37993643dd",
+      "git_blobs_and_modes_verified": true
+    },
+    {
+      "name": "metapat",
+      "repository": "The-Interdependency/metapat",
+      "old": "34d954aa1e2092e615b03a180500f6b6977f501e",
+      "new": "510e0171f4ecc6d1889e66bb66a8734c49c3b1fa",
+      "path": "libs/metapat",
+      "files": 114,
+      "tree": "b3c501add92dc011e2227ac1c485a8f215f794bc",
+      "git_blobs_and_modes_verified": true
+    },
+    {
+      "name": "ucns",
+      "repository": "The-Interdependency/ucns",
+      "old": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "new": "31bb761e49307b04a7c7dd7c7c2059ea35fdc089",
+      "path": "libs/ucns",
+      "files": 141,
+      "tree": "41a5207600b8b5eaeef907199e48d841362cc934",
+      "git_blobs_and_modes_verified": true
+    },
+    {
+      "name": "edcm",
+      "repository": "The-Interdependency/edcm",
+      "old": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
+      "new": "ddc89a97ebbcf0a5863dad6e633b01b520e9bccf",
+      "path": "libs/edcm",
+      "files": 262,
+      "tree": "9323b935187a58d5648705cab63fc5bf2c69bbde",
+      "git_blobs_and_modes_verified": true
+    },
+    {
+      "name": "pcea",
+      "repository": "The-Interdependency/pcea",
+      "old": "91ffa8c7249dfb810ca64a0bbc500481c0bd12a9",
+      "new": "75d2ea68e4a4a3256b324f039cb1712d196d323d",
+      "path": "libs/pcea",
+      "files": 43,
+      "tree": "93a145ae85b143478e9ccbea91d6980730aacb04",
+      "git_blobs_and_modes_verified": true
+    },
+    {
+      "name": "ptcna",
+      "repository": "The-Interdependency/ptcna",
+      "old": "97abdd1bbda61a68e0aac8595a32a3cb0ce73487",
+      "new": "a06a049cd8722adaad32dbc9c36d9c87b0204236",
+      "path": "libs/ptcna",
+      "files": 117,
+      "tree": "129702edfe5ca278ae43671cecc4386af6af4ad0",
+      "git_blobs_and_modes_verified": true
+    }
+  ],
+  "receipt_refresh": [
+    {
+      "receipt": "research/ucns/receipts/event-trace-lift-candidate-v0.json",
+      "previous_payload_sha256": "cf2baa0c7814070e62cad3c9eb461ef76066862c5db343066c4561675152d3f2",
+      "current_payload_sha256": "fa46cc04ce7a71300050a898403d9769e7242027f3920894851cd6605c80e392",
+      "previous_file_sha256": "dae0a676d36f5f8f3ff284e608e6589090537b305f84b10d3f1e2259f3c6b5a7",
+      "current_file_sha256": "9694627a14441c3377e7987b9b369664422e9ce57f48cff678bc781ebc22f04a",
+      "research_results_unchanged": true,
+      "independent_replay_matches": true
+    },
+    {
+      "receipt": "research/ucns/receipts/event-pair-quotient-candidate-v0.json",
+      "previous_payload_sha256": "330581ff3edbb3b3b99021e9c026e585dc4619c0ae60e9f1d1425c350c834482",
+      "current_payload_sha256": "209eccd83f6aa280a76a5f38700ee760e13e754568dc25c79f9f05e2ffd92d91",
+      "previous_file_sha256": "12e3355220d843ba3ae67422b06921f0468709721d8b56738d8b0c540e7ca2a0",
+      "current_file_sha256": "680bac02213f032cbb18251e4be0484ffa0c61ee9597b4d131daa0f622c806b5",
+      "research_results_unchanged": true,
+      "independent_replay_matches": true
+    },
+    {
+      "receipt": "research/ucns/receipts/rooted-trace-symmetry-sieve-v0.json",
+      "previous_payload_sha256": "00aade4e906b55f65854f4623a52820268b07b66752185576db77cc1353adfbf",
+      "current_payload_sha256": "346084221e8940e058f33e0d5369648375988a6a75e4961d2a6657dea9aca070",
+      "previous_file_sha256": "866aa32f50a846d0c9a93e9f6a6b874da8d9bf958289b515a14b6fbc270067ed",
+      "current_file_sha256": "d326f9c965d0dc66f8b9737f0b1ff1ea61e51b71da43edabfe07a3239786dc27",
+      "research_results_unchanged": true,
+      "independent_replay_matches": true
+    }
+  ],
+  "generator_verification": {
+    "old_generator": "sha256:bc845860efa0f2cde71f55ed21fbd107c31cbe992ce59542013d9d408e7ecf1f",
+    "new_generator": "sha256:f25937594aaebb0088f3cbe2c2d107c43948b77b22cba1dedf4c4fcbc234f952",
+    "old_receipt_rejected": true,
+    "new_generation_verified": true,
+    "idempotent_noop": true
+  },
+  "validation": {
+    "stack_consistency": "pass: 7 repositories, 16 research identities",
+    "snapshot_git_blobs_and_modes": 882,
+    "skill_lib_parser_and_reporting_tests": 27,
+    "skill_lib_editorial_and_consumer_drift": "pass",
+    "backend_tests": {
+      "passed": 15,
+      "skipped_postgresql": 2
+    },
+    "english_gonol_tests": {
+      "passed": 62,
+      "producer_commit": "d7c6f51304ed6c32d48badf63132bea6de8af497"
+    },
+    "python_gonol_tests": 11,
+    "ahbg_runtime_tests": 12,
+    "grok_tests": 16,
+    "grok_corpus_scenarios_replayed": 35,
+    "ucns_pcea_research": {
+      "baseline_passed": 113,
+      "updated_passed": 113,
+      "baseline_failed": 23,
+      "updated_failed": 23,
+      "identical_failure_set": true,
+      "failure_ids": [
+        "research.pcea.tests.test_gonol_successor_mechanics.GonolSuccessorMechanicsTest::test_mechanics_snapshot_binds_pinned_public_gonol",
+        "research.pcea.tests.test_gonol_transition_candidates.GonolTransitionCandidateTest::test_candidate_receipt_uses_only_observed_sequence_and_base_identity",
+        "research.ucns.tests.test_based_traversal_constructor_contract.BasedTraversalConstructorContractTest::test_exact_authority_and_predecessor_receipts_are_bound",
+        "research.ucns.tests.test_based_traversal_constructor_contract.BasedTraversalConstructorContractTest::test_first_missing_field_stops_all_downstream_evaluation",
+        "research.ucns.tests.test_based_traversal_constructor_contract.BasedTraversalConstructorContractTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_based_traversal_provenance_history_audit.BasedTraversalProvenanceHistoryAuditTest::test_constructor_stops_with_all_outputs_null",
+        "research.ucns.tests.test_based_traversal_provenance_history_audit.BasedTraversalProvenanceHistoryAuditTest::test_pcea_interpolation_control_is_unresolved",
+        "research.ucns.tests.test_based_traversal_provenance_history_audit.BasedTraversalProvenanceHistoryAuditTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_based_traversal_provenance_history_audit.BasedTraversalProvenanceHistoryAuditTest::test_repository_history_snapshots_are_exact",
+        "research.ucns.tests.test_complete_return_relation_extension.CompleteReturnRelationExtensionTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_complete_return_relation_rank_experiment.CompleteReturnRelationRankExperimentTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_composed_successor_constructor.ComposedSuccessorConstructorTest::test_freezes_exact_mechanic_hashes_before_gate",
+        "research.ucns.tests.test_geometry_selected_based_traversal_audit.GeometrySelectedBasedTraversalAuditTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_ordered_complete_return_groupoid.OrderedCompleteReturnGroupoidTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_ordered_return_invariant_audit.OrderedReturnInvariantAuditTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_origin_attachment_basepoint_symmetry.OriginAttachmentBasepointSymmetryTest::test_exact_authority_and_predecessor_receipts_are_bound",
+        "research.ucns.tests.test_origin_attachment_basepoint_symmetry.OriginAttachmentBasepointSymmetryTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_origin_attachment_basepoint_symmetry.OriginAttachmentBasepointSymmetryTest::test_transitive_outcome_emits_no_iota_or_downstream_evaluation",
+        "research.ucns.tests.test_origin_attachment_canon_gap.OriginAttachmentCanonGapTest::test_audit_stops_without_downstream_evaluation",
+        "research.ucns.tests.test_origin_attachment_canon_gap.OriginAttachmentCanonGapTest::test_exact_authority_sources_and_predecessors_are_bound",
+        "research.ucns.tests.test_origin_attachment_canon_gap.OriginAttachmentCanonGapTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_relation_factor_bridge_obstructions.RelationFactorBridgeObstructionsTest::test_receipt_replays_byte_identically",
+        "research.ucns.tests.test_squarefree_divisor_lattice_control.SquarefreeDivisorLatticeControlTest::test_receipt_replays_byte_identically"
+      ]
+    },
+    "grok_smoke_scenarios_replayed": 4
+  },
+  "boundaries": {
+    "authority_transfer": false,
+    "research_bases_rebased": false,
+    "epac_release_changed": false,
+    "production_freshness_asserted": false
+  },
+  "hmmm": [
+    "23 pre-existing historical UCNS/PCEA research failures remain; the exact same test identities fail before and after refresh",
+    "PostgreSQL integration tests require an explicitly disposable database",
+    "Production derivation re-registration and receipt acceptance remain unobserved",
+    "EDCM docs/GONOL_LANGUAGE_BOUNDARY.md at the refreshed source still claims language-construction ownership; Stack retains its declared English/Python construction authority and records this upstream documentation discrepancy without rewriting the imported source"
+  ],
+  "usage": "Read the paired Markdown record for replay commands; Git source tree identities and source-file modes must match the pinned owning repositories."
+}

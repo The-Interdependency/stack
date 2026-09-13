@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1070" width="1600" height="1070">
+  <rect width="1600" height="1070" fill="#050505"/>
+  <g fill="none" stroke="#c9a46a" stroke-width="1.2">
+    <rect x="28" y="28" width="1544" height="1014" rx="6"/>
+  </g>
+  <text x="800" y="78" text-anchor="middle" fill="#f4ead6" font-family="Georgia, serif" font-size="36" letter-spacing="6">UCNS — GEOMETRY REPOSITORY</text>
+  <line x1="220" y1="98" x2="1380" y2="98" stroke="#c9a46a" stroke-width="0.8"/>
+  <text x="800" y="124" text-anchor="middle" fill="#c9a46a" font-family="Georgia, serif" font-size="16" font-style="italic">the unit circle is a Möbius disk with recursive epicycles</text>
+  <rect x="48" y="160" width="320" height="230" fill="none" stroke="#c9a46a" stroke-width="1"/>
+  <text x="208" y="188" text-anchor="middle" fill="#f4ead6" font-size="15" font-family="Georgia, serif">MÖBIUS VESICA</text>
+  <text x="208" y="208" text-anchor="middle" fill="#c9a46a" font-size="11" font-family="Georgia, serif">double cover · orientation reversal</text>
+  <ellipse cx="158" cy="285" rx="78" ry="52" fill="none" stroke="#d6c08a" stroke-width="1.4"/>
+  <ellipse cx="258" cy="285" rx="78" ry="52" fill="none" stroke="#d6c08a" stroke-width="1.4"/>
+  <circle cx="208" cy="285" r="3" fill="#f4ead6"/>
+  <circle cx="80" cy="285" r="2.4" fill="#f4ead6"/>
+  <circle cx="336" cy="285" r="2.4" fill="#f4ead6"/>
+  <text x="118" y="248" text-anchor="middle" fill="#ddd" font-size="11">cover 1</text>
+  <text x="298" y="248" text-anchor="middle" fill="#ddd" font-size="11">cover 2</text>
+  <text x="208" y="362" text-anchor="middle" fill="#c9a46a" font-size="11">local frame reversed · phase preserved</text>
+  <rect x="48" y="410" width="320" height="250" fill="none" stroke="#c9a46a" stroke-width="1"/>
+  <text x="208" y="438" text-anchor="middle" fill="#f4ead6" font-size="14" font-family="Georgia, serif">SEED-OF-LIFE CERTIFICATE</text>
+  <text x="208" y="456" text-anchor="middle" fill="#c9a46a" font-size="11">UCNS owns geometry and certification, not meaning</text>
+  <g transform="translate(208,545)" stroke="#d6c08a" fill="none" stroke-width="1.1">
+    <circle r="62"/>
+    <circle cx="31" cy="-18" r="31"/>
+    <circle cx="-31" cy="-18" r="31"/>
+    <circle cx="31" cy="18" r="31"/>
+    <circle cx="-31" cy="18" r="31"/>
+    <circle cx="0" cy="-36" r="31"/>
+    <circle cx="0" cy="36" r="31"/>
+  </g>
+  <rect x="78" y="620" width="200" height="22" fill="none" stroke="#c9a46a"/>
+  <text x="178" y="635" text-anchor="middle" fill="#c9a46a" font-size="10">CERTIFIED CONSTRUCTION</text>
+  <rect x="1232" y="160" width="320" height="230" fill="none" stroke="#c9a46a" stroke-width="1"/>
+  <text x="1392" y="188" text-anchor="middle" fill="#f4ead6" font-size="14" font-family="Georgia, serif">PRIME-INDEXED RIBBON</text>
+  <text x="1392" y="206" text-anchor="middle" fill="#c9a46a" font-size="11">primes index non-contractible turns</text>
+  <path d="M1270 270 C1310 230,1330 310,1370 270 C1410 230,1430 310,1470 270 C1510 230,1530 310,1538 280" stroke="#d6c08a" fill="none" stroke-width="6"/>
+  <path d="M1270 270 C1310 310,1330 230,1370 270 C1410 310,1430 230,1470 270 C1510 310,1530 230,1538 260" stroke="#8a7a55" fill="none" stroke-width="3"/>
+  <text x="1392" y="350" text-anchor="middle" fill="#ddd" font-size="12">2  3  5  7  11  13  17  19  23  …</text>
+  <text x="1392" y="372" text-anchor="middle" fill="#c9a46a" font-size="12">p prime → winding class [(-1)^p]</text>
+  <rect x="1232" y="410" width="320" height="250" fill="none" stroke="#c9a46a" stroke-width="1"/>
+  <text x="1392" y="438" text-anchor="middle" fill="#f4ead6" font-size="14" font-family="Georgia, serif">LINK TOPOLOGY</text>
+  <text x="1392" y="456" text-anchor="middle" fill="#c9a46a" font-size="11">carrier links and orbit bundles</text>
+  <circle cx="1355" cy="545" r="58" stroke="#d6c08a" fill="none"/>
+  <circle cx="1430" cy="545" r="58" stroke="#d6c08a" fill="none"/>
+  <circle cx="1392" cy="500" r="48" stroke="#8a7a55" fill="none"/>
+  <circle cx="1330" cy="545" r="4" fill="#d6c08a"/>
+  <circle cx="1455" cy="545" r="4" fill="#d6c08a"/>
+  <circle cx="1392" cy="575" r="4" fill="#d6c08a"/>
+  <text x="1392" y="638" text-anchor="middle" fill="#c9a46a" font-size="12">linking number ∈ ℤ · recursive embedding</text>
+  <g transform="translate(800,520)">
+    <circle r="330" stroke="#c9a46a" fill="none" stroke-width="1.6"/>
+    <circle r="292" stroke="#8a7a55" fill="none" stroke-width="0.7" stroke-dasharray="3 6"/>
+    <circle r="250" stroke="#c9a46a" fill="none" stroke-width="0.8"/>
+    <circle r="210" stroke="#8a7a55" fill="none" stroke-width="0.6"/>
+    <circle r="168" stroke="#c9a46a" fill="none" stroke-width="0.7"/>
+    <circle r="126" stroke="#8a7a55" fill="none" stroke-width="0.6"/>
+    <circle r="84" stroke="#c9a46a" fill="none" stroke-width="0.7"/>
+    <circle r="42" stroke="#8a7a55" fill="none" stroke-width="0.6"/>
+    <circle r="3" fill="#f4ead6"/>
+    <line x1="-330" y1="0" x2="330" y2="0" stroke="#c9a46a" stroke-width="0.5"/>
+    <line x1="0" y1="-330" x2="0" y2="330" stroke="#c9a46a" stroke-width="0.5"/>
+    <g stroke="#e6d3a3" fill="none" stroke-width="1.05">
+      <circle cx="-70" cy="0" r="70"/>
+      <circle cx="70" cy="0" r="70"/>
+      <circle cx="0" cy="-70" r="70"/>
+      <circle cx="0" cy="70" r="70"/>
+      <circle cx="50" cy="50" r="70"/>
+      <circle cx="-50" cy="50" r="70"/>
+      <circle cx="50" cy="-50" r="70"/>
+      <circle cx="-50" cy="-50" r="70"/>
+    </g>
+    <text y="-250" text-anchor="middle" fill="#f4ead6" font-size="13">ONE VISIBLE 360° TURN</text>
+    <text y="-232" text-anchor="middle" fill="#c9a46a" font-size="11">preserves phase · reverses the local frame</text>
+    <text y="248" text-anchor="middle" fill="#f4ead6" font-size="13">720° COMPLETE RETURN</text>
+    <text y="266" text-anchor="middle" fill="#c9a46a" font-size="11">restores identity</text>
+    <text y="312" text-anchor="middle" fill="#f4ead6" font-size="16">157</text>
+    <text y="-312" text-anchor="middle" fill="#f4ead6" font-size="14">0</text>
+    <text x="-312" y="6" text-anchor="middle" fill="#f4ead6" font-size="14">9</text>
+    <text x="312" y="6" text-anchor="middle" fill="#f4ead6" font-size="14">0</text>
+  </g>
+  <rect x="690" y="500" width="220" height="44" fill="#050505" stroke="#c9a46a"/>
+  <text x="800" y="518" text-anchor="middle" fill="#f4ead6" font-size="12">MÖBIUS QUOTIENT</text>
+  <text x="800" y="536" text-anchor="middle" fill="#c9a46a" font-size="12">(t, ε) ~ (t + n, (-1)^n ε)</text>
+  <rect x="48" y="690" width="320" height="90" fill="none" stroke="#6d6248" stroke-dasharray="4 4"/>
+  <text x="68" y="720" fill="#c9a46a" font-size="13">hmmm</text>
+  <text x="68" y="740" fill="#bbb" font-size="12">unresolved operations</text>
+  <text x="68" y="756" fill="#bbb" font-size="12">incomplete higher-dim construction</text>
+  <text x="68" y="772" fill="#bbb" font-size="12">open geometric questions</text>
+  <rect x="1232" y="690" width="320" height="90" fill="none" stroke="#6d6248" stroke-dasharray="4 4"/>
+  <text x="1252" y="720" fill="#c9a46a" font-size="13">hmmm</text>
+  <text x="1252" y="740" fill="#bbb" font-size="12">unresolved operations</text>
+  <text x="1252" y="756" fill="#bbb" font-size="12">incomplete higher-dim construction</text>
+  <text x="1252" y="772" fill="#bbb" font-size="12">open geometric questions</text>
+  <line x1="80" y1="820" x2="1520" y2="820" stroke="#c9a46a" stroke-width="1"/>
+  <circle cx="110" cy="850" r="12" fill="none" stroke="#c9a46a"/>
+  <line x1="104" y1="844" x2="116" y2="856" stroke="#c9a46a"/>
+  <line x1="116" y1="844" x2="104" y2="856" stroke="#c9a46a"/>
+  <text x="800" y="856" text-anchor="middle" fill="#c9a46a" font-size="16" letter-spacing="4">SEMANTICS OUTSIDE ACTIVE DOMAIN</text>
+  <text x="800" y="886" text-anchor="middle" fill="#888" font-size="13">no interpretation · no meaning · no external reference</text>
+</svg>

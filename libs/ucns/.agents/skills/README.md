@@ -3,16 +3,12 @@
 This directory contains repo-local copies of canonical skills from
 `The-Interdependency/skill-lib`.
 
-Source commit: `a1c6a7124af537ee9937b6fc6084940091982fe5`
+Source commit: `5e7239b52dc5403d8d01fbc63341fe397719ec3f`
 
 Repo-local copies are not the source of truth. Edit `skill-lib` first,
 then propagate from the canonical source.
 
-Binding doctrine carried beside the vendored skills:
-
-- `RESOURCE_RUN_INVARIANT.md`
-
-Installed skills:
+Skills refreshed from the source commit above:
 
 - `canon/`
 - `domain-claims/`

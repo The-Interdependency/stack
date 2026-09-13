@@ -1,3 +1,4 @@
+# ratios: loc_comments=374:65 imports_exports=7:9 calls_definitions=179:48
 # === MODULE_BUILD ===
 # id: ucns_mpfr_interval
 #   module_name: mpfr_interval
@@ -31,6 +32,16 @@
 #   then: both prime candidates retain lower endpoints above the declared centerline margin
 #   class: evidence
 #   since: 2026-08-11
+#
+# id: mpfr_rejects_nan_ordering
+#   given: a NaN or uninitialized MPFR value reaches an interval, comparison, or sign query
+#   then: MPFRError is raised before unordered values can be used as certificate evidence
+#   class: safety
+#
+# id: mpfr_rational_inputs_are_exact
+#   given: a rational interval or MPFR rational number is requested
+#   then: only nonboolean integers and exact Fractions are accepted without implicit float or string conversion
+#   class: correctness
 # === END CONTRACTS ===
 
 """Minimal outward-rounded interval arithmetic backed directly by system MPFR.
@@ -38,6 +49,10 @@
 This module deliberately avoids ``mpmath.iv``.  It calls ``libmpfr`` through
 ``ctypes`` and passes an explicit directed rounding mode to every primitive
 operation used by the P7/P5 separation replay.
+
+Usage: ``MPInterval.rational(Fraction(1, 3))`` encloses an exact rational;
+``MPInterval.decimal("0.1")`` encloses explicit decimal text. NaN is never
+ordered evidence, including MPFR's initially unassigned number state.
 """
 
 from __future__ import annotations
@@ -101,6 +116,7 @@ _mpfr_cos = _bind("mpfr_cos", ctypes.c_int, _PTR, _PTR, ctypes.c_int)
 _mpfr_atan2 = _bind("mpfr_atan2", ctypes.c_int, _PTR, _PTR, _PTR, ctypes.c_int)
 _mpfr_const_pi = _bind("mpfr_const_pi", ctypes.c_int, _PTR, ctypes.c_int)
 _mpfr_cmp = _bind("mpfr_cmp", ctypes.c_int, _PTR, _PTR)
+_mpfr_nan_p = _bind("mpfr_nan_p", ctypes.c_int, _PTR)
 _mpfr_sgn = _bind("mpfr_sgn", ctypes.c_int, _PTR)
 _mpfr_get_d = _bind("mpfr_get_d", ctypes.c_double, _PTR, ctypes.c_int)
 _mpfr_get_str = _bind(
@@ -168,6 +184,8 @@ class MPNumber:
         precision: int = DEFAULT_PRECISION_BITS,
         rounding: int,
     ) -> "MPNumber":
+        if isinstance(value, bool) or not isinstance(value, (int, Fraction)):
+            raise MPFRError("rational input must be a nonboolean int or exact Fraction")
         item = value if isinstance(value, Fraction) else Fraction(value)
         numerator = cls.integer(item.numerator, precision=precision)
         denominator = cls.integer(item.denominator, precision=precision)
@@ -186,6 +204,7 @@ class MPNumber:
         out = cls(precision)
         if _mpfr_set_str(out.ptr, value.encode("ascii"), 10, rounding) != 0:
             raise MPFRError(f"invalid MPFR decimal input: {value!r}")
+        out._require_ordered()
         return out
 
     @classmethod
@@ -195,10 +214,17 @@ class MPNumber:
         return out
 
     def compare(self, other: "MPNumber") -> int:
+        self._require_ordered()
+        other._require_ordered()
         return int(_mpfr_cmp(self.ptr, other.ptr))
+
+    def _require_ordered(self) -> None:
+        if _mpfr_nan_p(self.ptr):
+            raise MPFRError("NaN cannot supply ordered interval evidence")
 
     @property
     def sign(self) -> int:
+        self._require_ordered()
         return int(_mpfr_sgn(self.ptr))
 
     def to_float(self, rounding: int = MPFR_RNDN) -> float:
@@ -491,3 +517,4 @@ def atan2_interval(y: MPInterval, x: MPInterval) -> MPInterval:
             down.append(lower)
             up.append(upper)
     return MPInterval(_minimum(down), _maximum(up))
+# ratios: loc_comments=374:65 imports_exports=7:9 calls_definitions=179:48

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "skill": "stack-update",
   "source_repository": "The-Interdependency/skill-lib",
-  "source_commit": "a7b95f891d2e88c62e61524dc52a2e1577c9983d",
+  "source_commit": "22c2c5702d14fb4b0faeb717777ecab2665770a1",
   "source_path": "stack-update/SKILL.md",
   "source_blob_sha": "a1e914893fa047e28d039050395937a1cf6e0138",
   "authority_transfer": false,

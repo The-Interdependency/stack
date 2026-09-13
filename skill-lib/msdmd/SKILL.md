@@ -48,16 +48,24 @@ claims to prove those obligations. See
 - **Fence**: `=== <BLOCK_NAME> ===` opens, `=== END <BLOCK_NAME> ===`
   closes. Block name is uppercase snake_case (e.g. `CONTRACTS`,
   `CHECKS`, `DOCS`, `CAPABILITIES`, `OWNERS`).
-- **Comment marker**: whatever is idiomatic for the file's language.
-  `#` for Python / Ruby / Elixir / shell. `//` for TS / JS / Rust / Go /
-  Java / C / C++ / Swift. `--` for SQL / Lua / Haskell. The marker
-  appears at the start of every line inside the block.
+- **Comment marker**: whatever is idiomatic for the file's language. The
+  reference parsers auto-detect these line-comment families by extension:
+  `#` for Python, Ruby, Elixir, shell, Perl, R, Julia, PowerShell, Tcl, and
+  Raku; `//` for TypeScript/JavaScript, Rust, Go, Java, C, C++ (including
+  `.c+`, `.c++`, `.cxx`, and header variants), Swift, Kotlin, C#,
+  Objective-C++, Scala, Dart, Zig, Groovy, and PHP; `--` for SQL, Lua,
+  Haskell, Ada, VHDL, and Lean; `%` for Erlang and Prolog; `;` for
+  Clojure/Lisp/Scheme/Racket; `!` for Fortran; `'` for Visual Basic; and
+  `*>` for COBOL. The marker appears at the start of every line in the block.
+  `COMMENT_MARKERS` in both universal parsers is the exact extension registry.
 - **Entry boundary**: every entry begins with `id:`. The id must be
   unique within its block and stable across refactors (so it can be
   referenced from external tooling).
 - **Field lines**: indented one level beneath the id (two spaces of
   visible indent inside the comment). Field names are lowercase
-  snake_case followed by `:` and a value.
+  snake_case followed by `:` and a value. Digits are allowed after the first
+  character, so `evidence_sha256` is valid; the first character must be a
+  lowercase letter or underscore.
 - **Multiple blocks per file**: a module may declare more than one
   block, of the same or different types. The parser concatenates
   entries.
@@ -137,6 +145,24 @@ A reference implementation in pure stdlib Python lives at
 `parsers/universal.py`; the TypeScript equivalent at `parsers/universal.ts`.
 Both commit to zero non-stdlib dependencies so you can copy them into
 any project.
+
+The Python and TypeScript reference helpers each own `MODULE_BUILD` and
+field-preservation `CONTRACTS` beside their implementations. A consumer that
+executes or updates a vendored helper should reconcile its exact dependency
+declarations and provide a local resolving `CHECKS` witness. The dependency's canonical owner
+and exact source identity remain explicit; local execution does not transfer
+parser ownership to the consumer.
+
+Extension detection refuses ambiguous suffixes rather than sniffing content.
+For example, `.m` can mean Objective-C or MATLAB/Octave and therefore has no
+automatic marker. A caller that already knows the language may still call
+`parse_text` / `parseText` with an explicit marker. Languages that cannot carry
+the msdmd shape as repeated line comments need a future versioned syntax
+extension; they are not approximated with an invalid fence.
+
+The paired RATIOS helper preserves the interpreter boundary: a non-empty
+line-1 shebang may precede opening RATIOS, which must then occupy line 2 with no
+gap. See [`ratios/SKILL.md`](../ratios/SKILL.md) for the complete seal contract.
 
 ## Repo collection point and visualizer
 
@@ -219,9 +245,9 @@ Implementation rules every runner MUST follow:
 1. **Walk the source tree** under a configurable root, skipping
    conventional non-source paths (`__pycache__`, `node_modules`,
    `.git`, build outputs, the runner's own test directory).
-2. **Detect comment marker by extension**, not by content sniffing.
-   `.py / .rb / .ex / .sh → #`. `.ts / .js / .tsx / .jsx / .rs / .go /
-   .java / .c / .cpp / .swift → //`. `.sql / .lua / .hs → --`.
+2. **Detect comment marker by extension**, not by content sniffing. Consume the
+   parser's `COMMENT_MARKERS` registry rather than maintaining a runner-local
+   language list. Python and TypeScript registries must remain identical.
 3. **Parse all matching blocks** in each file. Multiple blocks of the
    same type concatenate; entries from different blocks are
    distinguishable only by id, not by source block.
