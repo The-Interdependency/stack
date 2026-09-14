@@ -35,11 +35,12 @@ UCNS owns gonol geometry, the native Möbius/Public Gonol carrier, and
 geometrically established operations. English Gonol Construction consumes UCNS
 geometry only from explicit authorities and never invents UCNS operations.
 
-- Exact UCNS relational producer used by the lexical floor:
+- Exact UCNS relational producer used by the historical lexical floor:
   `The-Interdependency/ucns@d7c6f51304ed6c32d48badf63132bea6de8af497`
   (module SHA-256 `b839d29c79b43d29faf6f5d9a39b7a1485f39a0f071b525fd1848cf18f061cdd`).
-- Public Gonol geometry is consumed lazily from the installed `ucns` package
-  when an explicit matching authority is supplied.
+- The current full construct pins the cleaned Public Gonol authority and
+  consumes only the established 157-position carrier lookup. It does not
+  restore the removed singleton-axis/closure/tangency machinery.
 
 ## Architectural boundary from EDCM
 
@@ -59,8 +60,34 @@ For active English Gonol text construction:
 every admitted character is a gonol
 ```
 
-Once closed, a gonol is atomic at any scale. Closed gonols may participate
-directly at any admissible scale without reopening.
+The full construct additionally enforces one shared identity for each exact
+character scalar and one shared identity for each exact word surface. Corpus
+occurrences, sense ids, synset ids, and definition records are evidence about
+those identities; they are not promoted into independent gonols.
+
+## Full-construct contract
+
+`english_gonol.full_construct_run` is the current full-corpus construction
+builder. Its fixed boundary is:
+
+```text
+one exact scalar -> one character identity
+one exact surface -> one word identity
+word -> exact ordered/multiplicity-preserving character references
+word origin -> ordered definitions
+ordinal evidence + semantic evidence + ordered sentence context
+-> preponderance relative to the rest of the sentence
+-> hmmm until UCNS establishes the exact geometric displacement law
+```
+
+The builder does **not** create sentence, sense, synset, n-gram, occurrence,
+closure, relation-circle, tangency, attention-frame, or Mobius-frame objects.
+It does not synthesize weights, vectors, coordinates, centers, radii, motion,
+or tangency. Those quantities may only appear when established geometry derives
+them.
+
+The materialized output is normalized once in `construct.db` with a small
+`manifest.json`. It is not duplicated into a giant canonical JSON artifact.
 
 ## Layout
 
@@ -70,25 +97,28 @@ research/english-gonol/
 ├── README.md
 ├── english_gonol/
 │   ├── gonol.py                  # unified candidate constructor (identity edcm.gonol)
-│   ├── definition_affixiation_run.py  # full-corpus definition re-affixiation
-│   ├── orthogonal_carrier_sweep.py  # 1-7 carrier experimental sweep (control)
+│   ├── full_construct_run.py     # normalized full-corpus construct
+│   ├── definition_affixiation_run.py  # earlier full-corpus definition experiment
+│   ├── orthogonal_carrier_sweep.py    # 1-7 carrier experimental sweep (control)
 │   ├── primitive_layer_run.py    # character definitions + corrected suffixiation
 │   └── language/
-│       ├── character_definitions.py  # primitive character definition-space
-│       ├── suffixiation.py       # closed-gonol affixiation for suffixes
-│       └── data/                 # affix + character definition tables
+│       ├── source.py             # OEWN 2025 ingestion; preserves source sense order
+│       ├── character_definitions.py
+│       ├── suffixiation.py
+│       └── data/
 ├── tools/build_oewn2025_embeddings.py
 ├── tests/
 ├── docs/
 │   ├── GONOL_LANGUAGE_BOUNDARY.md
+│   ├── full-construct-v1.md
 │   ├── orthogonal-carrier-sweep-v0.md
 │   ├── oewn-orthogonal-affixiation-v0.md
 │   └── primitive-layer-correction-v0.md
 └── experiments/
-    ├── lexical/                  # frozen lexical-floor run artifacts
+    ├── lexical/
     ├── orthogonal-carrier-sweep-v0.json
     ├── primitive-layer-v0.json
-    └── oewn-affixiation-v0/      # full-corpus manifest (records local-only)
+    └── oewn-affixiation-v0/
 ```
 
 ## Entry points
@@ -101,7 +131,19 @@ python -m pytest -q tests
 python -m unittest discover -s tests -p 'test_gonol_constructor.py'
 ```
 
-The gonol constructor is importable directly:
+The current full construct:
+
+```bash
+python -m english_gonol.full_construct_run \
+  --source-root /path/to/oewn-2025/src/yaml \
+  --ucns-source-root /path/to/ucns \
+  --out-dir experiments/full-construct-v1
+```
+
+This writes only `construct.db` and `manifest.json`. See
+[`docs/full-construct-v1.md`](docs/full-construct-v1.md).
+
+The gonol candidate constructor is importable directly:
 
 ```python
 from english_gonol.gonol import construct_gonol, replay_gonol
@@ -119,17 +161,15 @@ python tools/build_oewn2025_embeddings.py \
   --output /path/to/output --acquire --resume
 ```
 
-The orthogonal unit-circle carrier sweep (experimental, meaning-agnostic):
+The orthogonal unit-circle carrier sweep remains a meaning-agnostic control:
 
 ```bash
 python -m english_gonol.orthogonal_carrier_sweep \
   --out experiments/orthogonal-carrier-sweep-v0.json
 ```
 
-See [`docs/orthogonal-carrier-sweep-v0.md`](docs/orthogonal-carrier-sweep-v0.md).
-
-The full-corpus definition re-affixiation run (no sampling, no hash
-placement, no carrier buckets; reuses each closed word gonol once):
+The earlier full-corpus definition re-affixiation experiment remains separate
+historical research and supplies no placement law to the current construct:
 
 ```bash
 python -m english_gonol.definition_affixiation_run \
@@ -137,31 +177,24 @@ python -m english_gonol.definition_affixiation_run \
   --out-dir experiments/oewn-affixiation-v0 --workers 2
 ```
 
-See [`docs/oewn-orthogonal-affixiation-v0.md`](docs/oewn-orthogonal-affixiation-v0.md).
-The large `records.jsonl` is local persisted state and is not committed; the
-committed `manifest.json` binds it via `records_sha256`.
-
-The primitive-layer correction and extension (character definitions, digit
-number names, corrected suffixiation):
+The primitive-layer correction and extension:
 
 ```bash
 python -m english_gonol.primitive_layer_run \
   --out experiments/primitive-layer-v0.json
 ```
 
-See [`docs/primitive-layer-correction-v0.md`](docs/primitive-layer-correction-v0.md).
-
 ## Research status
 
-Standing: **stack-local research, not canon**. The construction is an
-implemented candidate; no scale option set or relation is selected canon, and
-construction does not activate measurement. See
-[`docs/GONOL_LANGUAGE_BOUNDARY.md`](docs/GONOL_LANGUAGE_BOUNDARY.md) for the
-governing boundary and [`BASE.json`](BASE.json) for provenance.
+Standing: **stack-local research, not canon**. The full construct now preserves
+the specified identity and evidence structure without promoting corpus
+bookkeeping into geometry. Construction does not activate EDCM measurement.
 
 ## hmmm
 
-- exact UCNS geometric operation of Public Gonol function positions;
+- the exact UCNS law mapping ordinal + semantic + sentence-context evidence to
+  geometric displacement;
+- exact UCNS geometric operation of Public Gonol function positions beyond the
+  established carrier identity;
 - UCNS Möbius-carrier affixiation/coupling law;
-- source-supported complete English morphology law;
-- which scales and relations, if any, are later selected.
+- source-supported complete English morphology law.
