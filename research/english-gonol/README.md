@@ -2,203 +2,108 @@
 
 Stack-local research component for English lexical/gonol construction.
 
-## Purpose
-
-English Gonol Construction owns the English text-domain gonol construction
-concern:
-
-- English lexical/gonol construction through declared scale option sets;
-- relational carrier construction (direct-atomic and molecular OEWN branches);
-- recursive / epicyclic carrier experiments;
-- attachment and composition rules (affix inventory, rendering, morphology);
-- reconstruction and collision tests;
-- English → UCNS representation mapping.
-
-The code was moved out of `libs/edcm/` into `research/english-gonol/` without
-redesign. Frozen constructor/schema/commit identities are retained for receipt
-continuity: the candidate constructor identity remains `edcm.gonol`, while the
-Python import path is now `english_gonol.gonol`.
-
-## UCNS prerequisite
-
-Dependency direction:
+## Authority
 
 ```text
-UCNS
-  ↓
-English Gonol Construction
-  ↓
-EDCM / later consumers
+METAPAT  -> affixiation semantics
+UCNS     -> gonol / Möbius / Public Gonol geometry
+English  -> text admission and linguistic/semantic construction
+EDCM     -> measurement/evaluation only
 ```
 
-UCNS owns gonol geometry, the native Möbius/Public Gonol carrier, and
-geometrically established operations. English Gonol Construction consumes UCNS
-geometry only from explicit authorities and never invents UCNS operations.
+English construction consumes UCNS geometry; it does not invent geometry or
+move English semantics into UCNS.
 
-- Exact UCNS relational producer used by the historical lexical floor:
-  `The-Interdependency/ucns@d7c6f51304ed6c32d48badf63132bea6de8af497`
-  (module SHA-256 `b839d29c79b43d29faf6f5d9a39b7a1485f39a0f071b525fd1848cf18f061cdd`).
-- The current full construct pins the cleaned Public Gonol authority and
-  consumes only the established 157-position carrier lookup. It does not
-  restore the removed singleton-axis/closure/tangency machinery.
-
-## Architectural boundary from EDCM
-
-English Gonol Construction is not EDCM.
-
-- METAPAT defines affixiation semantics.
-- UCNS owns any exact geometric realization.
-- English Gonol Construction applies affixiation to text-domain gonols and
-  owns text-domain admission and linguistic/semantic gonol construction.
-- EDCM may evaluate English Gonol outputs but must not define the construction.
-  English Gonol construction does not validate EDCM measurement, and English
-  Gonol construction and EDCM measurement remain separate.
-
-For active English Gonol text construction:
+## Active invariants
 
 ```text
 every admitted character is a gonol
+one exact scalar  -> one shared character identity
+one exact surface -> one shared word identity
 ```
 
-Once closed, a gonol is atomic at any scale. Closed gonols may participate at
-an admissible consuming scale without reopening, while their internal identity,
-order, multiplicity, relation, and provenance remain recoverable.
+Once closed, a gonol is atomic at an admissible consuming scale. Reuse preserves
+identity while order, multiplicity, relation, source position, and provenance
+remain recoverable.
 
-The full construct additionally enforces one shared identity for each exact
-character scalar and one shared identity for each exact word surface. Corpus
-occurrences, sense ids, synset ids, and definition records are evidence about
-those identities; they are not promoted into independent gonols.
+Corpus occurrences, sense ids, and synset ids are evidence/provenance, not
+independent gonols. Definitions are word-anchored constructions: each retains
+the shared word origin, exact ordered constituent word/whitespace-character
+identities, source ordinal, direct binding, and chain predecessor.
 
-## Full-construct contract
+## Full construct v2
 
-`english_gonol.full_construct_run` is the current full-corpus construction
-builder. Its fixed boundary is:
+`english_gonol.full_construct_run` builds the complete pinned OEWN 2025 corpus
+without promoting bookkeeping into geometry.
 
 ```text
-one exact scalar -> one character identity
-one exact surface -> one word identity
-word -> exact ordered/multiplicity-preserving character references
-word origin -> ordered definitions
-ordinal evidence + semantic evidence + ordered sentence context
--> preponderance relative to the rest of the sentence
--> hmmm until UCNS establishes the exact geometric displacement law
+word origin -> D1 -> D2 -> ... -> Dn     # chain topology
+word origin -> D1, D2, ... Dn            # direct topology
+
+ordinal evidence
++ semantic evidence
++ exact sentence-context evidence
+-> preponderance relative to the rest of the sentence in which the word appears
+-> hmmm until UCNS derives the displacement geometry
 ```
 
-The builder does **not** create sentence, sense, synset, n-gram, occurrence,
-closure, relation-circle, tangency, attention-frame, or Mobius-frame objects.
-It does not synthesize weights, vectors, coordinates, centers, radii, motion,
-or tangency. Those quantities may only appear when established geometry derives
-them.
+Definitions preserve their source exactly: every maximal non-whitespace run
+reuses one shared word identity and every whitespace scalar reuses one shared
+character identity. No normalization is applied.
 
-The materialized output is normalized once in `construct.db` with a small
-`manifest.json`. It is not duplicated into a giant canonical JSON artifact.
+The builder does not create sentence/sense/synset/n-gram singleton objects,
+occurrence-object ledgers, closure graphs, synthetic relation circles,
+tangencies, attention frames, or duplicate JSON copies of the database. It does
+not synthesize weights, vectors, coordinates, centers, radii, motion, or
+tangency.
 
-## Layout
+### Verified full-corpus result
 
-```text
-research/english-gonol/
-├── BASE.json
-├── README.md
-├── english_gonol/
-│   ├── gonol.py                  # unified candidate constructor (identity edcm.gonol)
-│   ├── full_construct_run.py     # normalized full-corpus construct
-│   ├── definition_affixiation_run.py  # earlier full-corpus definition experiment
-│   ├── orthogonal_carrier_sweep.py    # 1-7 carrier experimental sweep (control)
-│   ├── primitive_layer_run.py    # character definitions + corrected suffixiation
-│   └── language/
-│       ├── source.py             # OEWN 2025 ingestion; preserves source sense order
-│       ├── character_definitions.py
-│       ├── suffixiation.py
-│       └── data/
-├── tools/build_oewn2025_embeddings.py
-├── tests/
-├── docs/
-│   ├── GONOL_LANGUAGE_BOUNDARY.md
-│   ├── full-construct-v1.md
-│   ├── orthogonal-carrier-sweep-v0.md
-│   ├── oewn-orthogonal-affixiation-v0.md
-│   └── primitive-layer-correction-v0.md
-└── experiments/
-    ├── lexical/
-    ├── orthogonal-carrier-sweep-v0.json
-    ├── primitive-layer-v0.json
-    └── oewn-affixiation-v0/
-```
+Evidence is committed in `experiments/full-construct-v2/`.
 
-## Entry points
+- 118 shared character identities
+- 164,864 shared word identities
+- 1,739,949 ordered word-character references
+- 185,155 word-anchored definitions
+- 3,535,375 exact ordered definition components
+- 866,183 resolved semantic evidence rows
+- 0 unresolved semantic evidence rows
+- SQLite integrity: `ok`
+- logical receipt: `12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57`
+- generated database: 306,331,648 bytes
+- build wall time: 1:34.79
+- peak RSS: 286,692 KiB
 
-Tests (run from `research/english-gonol/`):
+The database itself remains generated state; the compact manifest, integrity
+receipt, and resource receipt are committed.
 
-```bash
-python -m pytest -q tests
-# or, for the unittest-only constructor suite:
-python -m unittest discover -s tests -p 'test_gonol_constructor.py'
-```
-
-The current full construct:
+## Run
 
 ```bash
 python -m english_gonol.full_construct_run \
   --source-root /path/to/oewn-2025/src/yaml \
   --ucns-source-root /path/to/ucns \
-  --out-dir experiments/full-construct-v1
+  --out-dir experiments/full-construct-v2
 ```
 
-This writes only `construct.db` and `manifest.json`. See
-[`docs/full-construct-v1.md`](docs/full-construct-v1.md).
-
-The gonol candidate constructor is importable directly:
-
-```python
-from english_gonol.gonol import construct_gonol, replay_gonol
-
-word = construct_gonol(scale="word", source="try", source_id="example:try")
-assert word.receipt_digest == replay_gonol(receipt=word).receipt_digest
-```
-
-The historical lexical-floor builder (requires PyYAML and exact checkouts):
+Tests:
 
 ```bash
-python tools/build_oewn2025_embeddings.py \
-  --source-repo /path/to/oewn-2025-checkout \
-  --ucns-source-root /path/to/ucns-at-d7c6f51304ed6c32d48badf63132bea6de8af497 \
-  --output /path/to/output --acquire --resume
+python -m pytest -q tests
 ```
 
-The orthogonal unit-circle carrier sweep remains a meaning-agnostic control:
+See [`docs/full-construct-v2.md`](docs/full-construct-v2.md).
 
-```bash
-python -m english_gonol.orthogonal_carrier_sweep \
-  --out experiments/orthogonal-carrier-sweep-v0.json
-```
+## Historical research
 
-The earlier full-corpus definition re-affixiation experiment remains separate
-historical research and supplies no placement law to the current construct:
-
-```bash
-python -m english_gonol.definition_affixiation_run \
-  --source-root /path/to/oewn-2025/src/yaml \
-  --out-dir experiments/oewn-affixiation-v0 --workers 2
-```
-
-The primitive-layer correction and extension:
-
-```bash
-python -m english_gonol.primitive_layer_run \
-  --out experiments/primitive-layer-v0.json
-```
-
-## Research status
-
-Standing: **stack-local research, not canon**. The full construct now preserves
-the specified identity and evidence structure without promoting corpus
-bookkeeping into geometry. Construction does not activate EDCM measurement.
+The orthogonal-carrier sweep and earlier definition-affixiation run remain
+separate experiments and supply no placement law to v2. The falsified
+`full_singleton_run.py` architecture and its UCNS singleton-axis support were
+deleted rather than retained as an active precedent.
 
 ## hmmm
 
-- the exact UCNS law mapping ordinal + semantic + sentence-context evidence to
-  geometric displacement;
-- exact UCNS geometric operation of Public Gonol function positions beyond the
-  established carrier identity;
-- UCNS Möbius-carrier affixiation/coupling law;
-- source-supported complete English morphology law.
+The exact UCNS law mapping ordinal + semantic + sentence-context evidence to
+geometric displacement remains unresolved. No English-layer rule may fill that
+boundary with invented weights, directions, distances, vectors, coordinates,
+centers, radii, tangencies, or motion.

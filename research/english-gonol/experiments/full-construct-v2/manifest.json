@@ -13,23 +13,27 @@
   },
   "counts": {
     "characters": 118,
-    "definition_words": 1861794,
+    "definition_components": 3535375,
     "definitions": 185155,
     "semantic_evidence": 866183,
     "unresolved_semantic_evidence": 0,
-    "word_characters": 1591995,
-    "words": 146696
+    "word_characters": 1739949,
+    "words": 164864
   },
-  "definition_word_admission": "exact maximal Unicode letter/number spans, with apostrophe or hyphen connectors admitted only when flanked by letter/number characters; no normalization",
+  "definition_component_rule": "exact ordered source: each maximal non-whitespace run reuses one shared word identity; each whitespace scalar reuses one shared character identity; no normalization",
+  "definition_topologies": [
+    "direct",
+    "chain"
+  ],
   "evidence_channels": [
     "ordinal",
     "semantic",
     "sentence-context"
   ],
   "geometry_state": "hmmm",
-  "hmmm": "the exact UCNS law mapping ordinal + semantic + sentence-context evidence to geometric displacement is unresolved; no weight, direction, distance, radius, tangency, motion, or substitute geometry is synthesized",
+  "hmmm": "the exact UCNS law mapping ordinal + semantic + sentence-context evidence to geometric displacement is unresolved; no weight, direction, distance, vector, coordinate, center, radius, tangency, motion, or substitute geometry is synthesized",
   "invented_geometry": false,
-  "receipt_sha256": "0edfaf411f039c932cf33edc30510e4767302218464c1bfa14ff770c5852be0e",
+  "receipt_sha256": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
   "resolution_rule": "preponderance relative to the rest of the sentence in which the word appears",
   "schema": "english-gonol.full-construct",
   "ucns": {
@@ -37,5 +41,5 @@
     "public_gonol_module_sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
     "public_gonol_sha256": "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
   },
-  "version": "1.0.0"
+  "version": "2.0.0"
 }
