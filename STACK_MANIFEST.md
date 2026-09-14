@@ -9,10 +9,11 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - EPAC extraction reconciliation UTC: `2026-09-05` at `d8868858b2e455381ce670797bdbe47189bdc496`
 - English Gonol separation reconciliation UTC: `2026-09-12` at `030022948fb7c749961ae65743a4448c4bb6cbbe`
 - English Gonol definition-topology repair UTC: `2026-09-13` at `c1900403b540835bdefa9a1274038b2f806be897`
+- English Gonol full-construct v2 verification UTC: `2026-09-14` at `99b3598b02a6e683b3c84184d8ea443b12fc0e1a`
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `f9e4b5695be13098f67740a5977828f3e24069c5897170d04d445a4a29628592`
+  `a570f3c39a7329babd758a5a18107c8aaaf0023f2ecace3e11b163829ae70195`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -55,7 +56,7 @@ release identity.
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
-| `research/english-gonol/` | `The-Interdependency/stack` | `c1900403b540835bdefa9a1274038b2f806be897` | stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
@@ -145,8 +146,10 @@ authority-transition receipt records EPAC as graduated. See `integration/epac/` 
 release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec99879f8090ea5d48352d8c2d`;
 Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
 
-English Gonol Construction is earlier in that lifecycle: it is a distinct stack-local
-research component, not EDCM and not an independent canonical release.
+English Gonol Construction remains stack-local research, not EDCM and not an independent
+canonical release. Its v2 full pinned-corpus construction/replay survived with compact
+committed evidence; that result establishes the construction/replay only, not semantic
+quality, geometry canon, or measurement validity.
 
 Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
@@ -155,6 +158,6 @@ transfers no semantic, geometric, measurement, or language-canon status.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- English Gonol Construction remains stack-local research; independent repository/release authority has not been established.
+- English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "f9e4b5695be13098f67740a5977828f3e24069c5897170d04d445a4a29628592",
+  "work_graph_sha256": "a570f3c39a7329babd758a5a18107c8aaaf0023f2ecace3e11b163829ae70195",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -139,7 +139,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "english-gonol",
       "repository": "The-Interdependency/stack",
-      "commit": "c1900403b540835bdefa9a1274038b2f806be897",
+      "commit": "99b3598b02a6e683b3c84184d8ea443b12fc0e1a",
       "relation": "stack-local English lexical/gonol construction separated from EDCM; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction",
       "canonical_release": false,
       "authority_transfer": false
