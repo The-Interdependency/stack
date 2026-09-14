@@ -60,6 +60,10 @@ For active English Gonol text construction:
 every admitted character is a gonol
 ```
 
+Once closed, a gonol is atomic at any scale. Closed gonols may participate at
+an admissible consuming scale without reopening, while their internal identity,
+order, multiplicity, relation, and provenance remain recoverable.
+
 The full construct additionally enforces one shared identity for each exact
 character scalar and one shared identity for each exact word surface. Corpus
 occurrences, sense ids, synset ids, and definition records are evidence about
