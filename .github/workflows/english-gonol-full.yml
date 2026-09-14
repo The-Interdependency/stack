@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "research/english-gonol/english_gonol/__init__.py"
       - "research/english-gonol/english_gonol/full_construct_run.py"
       - "research/english-gonol/english_gonol/language/source.py"
       - ".github/workflows/english-gonol-full.yml"
