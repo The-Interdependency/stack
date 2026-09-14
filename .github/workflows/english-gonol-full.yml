@@ -80,12 +80,15 @@ jobs:
         working-directory: research/english-gonol
         shell: bash
         run: |
-          set -euo pipefail
+          set +e
           /usr/bin/time -v python -m english_gonol.full_construct_run \
             --source-root ../../_deps/oewn/src/yaml \
             --ucns-source-root ../../_deps/ucns \
             --out-dir experiments/full-construct-v1 \
             --overwrite 2> experiments/full-construct-v1.time.txt
+          status=$?
+          cat experiments/full-construct-v1.time.txt
+          exit "$status"
 
       - name: Verify logical replay and SQLite integrity
         working-directory: research/english-gonol
@@ -102,7 +105,11 @@ jobs:
           out = Path("experiments/full-construct-v1")
           manifest = verify_replay(out)
           db_path = out / "construct.db"
-          db_sha = hashlib.sha256(db_path.read_bytes()).hexdigest()
+          digest = hashlib.sha256()
+          with db_path.open("rb") as handle:
+              for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                  digest.update(chunk)
+          db_sha = digest.hexdigest()
           db_size = db_path.stat().st_size
           db = sqlite3.connect(db_path)
           try:
