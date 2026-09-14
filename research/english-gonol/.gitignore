@@ -7,3 +7,11 @@ __pycache__/
 # is committed; the records file itself is reproduced with the runner.
 experiments/oewn-affixiation-v0/records.jsonl
 experiments/oewn-affixiation-v0/records.worker-*.jsonl
+
+# Current full construct: normalized database is generated locally. The small
+# manifest may be committed after a completed verified full run.
+experiments/full-construct-v1/construct.db
+
+# Removed falsified singleton-atlas experiment. Keep any surviving local copy
+# from being accidentally recommitted; it should be deleted from the VM.
+experiments/full-singleton-v0/
