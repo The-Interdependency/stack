@@ -2,7 +2,7 @@
 # id: check_oewn_source_preserves_sense_order
 #   proves: oewn_source_preserves_sense_order
 #   call: self::test_loader_preserves_source_sense_order
-#   requires: python3, pyyaml
+#   requires: python3
 #   timeout: 30
 #   mutates: filesystem
 #   cleanup: tempdir_teardown
@@ -21,33 +21,41 @@ def test_loader_preserves_source_sense_order(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    pytest.importorskip("yaml")
-
     # The identifiers are intentionally reverse-lexicographic. Sorting them
     # would silently destroy the source ordinal evidence used by construction.
-    (tmp_path / "frames.yaml").write_text("{}\n", encoding="utf-8")
-    (tmp_path / "entries-test.yaml").write_text(
-        "word:\n"
-        "  n:\n"
-        "    sense:\n"
-        "      - id: z-sense\n"
-        "        synset: s-z\n"
-        "      - id: a-sense\n"
-        "        synset: s-a\n",
-        encoding="utf-8",
-    )
-    (tmp_path / "noun.test.yaml").write_text(
-        "s-z:\n"
-        "  partOfSpeech: n\n"
-        "  members: [word]\n"
-        "  definition: [first definition]\n"
-        "s-a:\n"
-        "  partOfSpeech: n\n"
-        "  members: [word]\n"
-        "  definition: [second definition]\n",
-        encoding="utf-8",
-    )
+    for name in ("frames.yaml", "entries-test.yaml", "noun.test.yaml"):
+        (tmp_path / name).write_text("fixture\n", encoding="utf-8")
 
+    documents = {
+        "frames.yaml": {},
+        "entries-test.yaml": {
+            "word": {
+                "n": {
+                    "sense": [
+                        {"id": "z-sense", "synset": "s-z"},
+                        {"id": "a-sense", "synset": "s-a"},
+                    ]
+                }
+            }
+        },
+        "noun.test.yaml": {
+            "s-z": {
+                "partOfSpeech": "n",
+                "members": ["word"],
+                "definition": ["first definition"],
+            },
+            "s-a": {
+                "partOfSpeech": "n",
+                "members": ["word"],
+                "definition": ["second definition"],
+            },
+        },
+    }
+
+    def fake_load_yaml(path: Path):
+        return documents[path.name]
+
+    monkeypatch.setattr(source, "_load_yaml", fake_load_yaml)
     monkeypatch.setattr(source, "OEWN_EXPECTED_WORD_COUNT", 1)
     monkeypatch.setattr(source, "OEWN_EXPECTED_SYNSET_COUNT", 2)
 
