@@ -1,0 +1,14 @@
+Command: python -m english_gonol.full_construct_run --source-root ../../_deps/oewn/src/yaml --ucns-source-root ../../_deps/ucns --out-dir experiments/full-construct-v1 --overwrite
+User time (seconds): 101.18
+System time (seconds): 5.40
+CPU: 99%
+Elapsed wall time: 1:46.69
+Maximum resident set size (kbytes): 288708
+Major page faults: 1
+Minor page faults: 101150
+Voluntary context switches: 154
+Involuntary context switches: 930
+Swaps: 0
+File system inputs: 16
+File system outputs: 348144
+Exit status: 0
