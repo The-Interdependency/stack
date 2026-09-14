@@ -3,13 +3,16 @@
 The full dataset is never inferred from a moving branch. Builders must check out
 ``globalwordnet/english-wordnet`` at the exact release tag and commit declared
 below, then pass the ``src/yaml`` directory to :func:`load_oewn_2025`.
+
+Sense order is source evidence. The loader therefore preserves the order of the
+OEWN ``sense`` list exactly rather than sorting senses by identifier.
 """
 
 # === MODULE_BUILD ===
 # id: edcm_language_oewn_source
 #   module_name: source
 #   module_kind: adapter
-#   summary: loads the exact Open English WordNet 2025 YAML release into deterministic lemma, sense, synset, and relation records and computes a source-tree digest
+#   summary: loads the exact Open English WordNet 2025 YAML release while preserving source sense and definition order, deterministic lemma/synset indexing, relation records, and source-tree digest
 #   owner: Erin Spencer
 #   public_surface: OEWN_REPOSITORY, OEWN_TAG, OEWN_COMMIT, OEWN_LICENSE, LexemeRecord, SenseRecord, SynsetRecord, WordnetSnapshot, load_oewn_2025
 #   internal_surface: _load_yaml, _source_tree_digest, _relation_values
@@ -18,13 +21,21 @@ below, then pass the ``src/yaml`` directory to :func:`load_oewn_2025`.
 #   network_boundary: none
 #   user_data_boundary: none
 #   admin_only: false
-#   tests: tests.test_language_full_run
+#   tests: tests.test_language_full_run, tests.test_source_order
 #   rollout: builder_only
 #   rollback: remove loader and generated artifacts before publishing another source manifest
 #   requires: PyYAML only during artifact construction
 #   since: 2026-07-13
 #   unresolved: none
 # === END MODULE_BUILD ===
+
+# === CONTRACTS ===
+# id: oewn_source_preserves_sense_order
+#   given: a lexical entry with an ordered OEWN sense list
+#   then: LexemeRecord.senses preserves that source order exactly rather than sorting by sense id
+#   class: correctness
+#   since: 2026-09-14
+# === END CONTRACTS ===
 
 from __future__ import annotations
 
@@ -89,7 +100,12 @@ class SynsetRecord:
 
 @dataclass(frozen=True, slots=True)
 class WordnetSnapshot:
-    """Deterministically ordered, dictionary-bounded source snapshot."""
+    """Deterministically indexed, dictionary-bounded source snapshot.
+
+    Lexeme and synset containers are sorted for deterministic lookup, while
+    order-bearing source sequences inside records (notably senses and
+    definitions) retain their source order.
+    """
 
     lexemes: tuple[LexemeRecord, ...]
     synsets: tuple[SynsetRecord, ...]
@@ -242,7 +258,7 @@ def load_oewn_2025(source_root: str | Path) -> WordnetSnapshot:
                         lemma=lemma,
                         part_of_speech=str(raw_pos),
                         forms=forms,
-                        senses=tuple(sorted(senses, key=lambda item: item.sense_id)),
+                        senses=tuple(senses),
                     )
                 )
 
