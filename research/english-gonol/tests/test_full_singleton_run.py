@@ -4,8 +4,8 @@
 #   call: self::test_full_construct_builds_deterministically
 #   requires: python3
 #   timeout: 30
-#   mutates: none
-#   cleanup: none
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
 #
 # id: check_full_singleton_construct_run_and_replay
 #   proves: full_singleton_construct_replays_byte_identically, full_singleton_construct_preserves_occurrence_ordinals_and_provenance
@@ -20,10 +20,11 @@
 #   call: self::test_full_construct_tangency_verdicts_are_hmmm
 #   requires: python3
 #   timeout: 30
-#   mutates: none
-#   cleanup: none
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
 # === END CHECKS ===
 
+import json
 import os
 from pathlib import Path
 
@@ -31,7 +32,6 @@ import pytest
 
 from english_gonol.full_singleton_run import (
     FullSingletonError,
-    UCNS_SINGLETON_GEOMETRY_COMMIT,
     build_full_construct,
     run,
     verify_replay,
@@ -49,22 +49,21 @@ def _ucns_source_root() -> Path | None:
 _ucns_available = _ucns_source_root() is not None
 
 
-def test_full_construct_builds_deterministically() -> None:
+def test_full_construct_builds_deterministically(tmp_path: Path) -> None:
     if not _ucns_available:
         pytest.skip("pinned UCNS singleton-geometry checkout is unavailable")
     root = _ucns_source_root()
     assert root is not None
 
-    first, first_counts = build_full_construct(_snapshot(), ucns_source_root=root)
-    second, second_counts = build_full_construct(_snapshot(), ucns_source_root=root)
+    first = build_full_construct(_snapshot(), state_dir=tmp_path / "first", ucns_source_root=root)
+    second = build_full_construct(_snapshot(), state_dir=tmp_path / "second", ucns_source_root=root)
 
-    assert first_counts == second_counts
-    assert first.receipt_sha256() == second.receipt_sha256()
-    assert first.replay_equals(second)
-    assert first_counts["characters"] >= 1
-    assert first_counts["words"] >= 1
-    assert first_counts["sentences"] >= 1
-    assert first_counts["higher"] >= 1
+    assert first.counts == second.counts
+    assert first.receipt_sha256 == second.receipt_sha256
+    assert first.counts["characters"] >= 1
+    assert first.counts["words"] >= 1
+    assert first.counts["sentences"] >= 1
+    assert first.counts["higher"] >= 1
 
 
 def test_full_construct_run_and_replay(tmp_path: Path) -> None:
@@ -86,15 +85,16 @@ def test_full_construct_run_and_replay(tmp_path: Path) -> None:
         verify_replay(tmp_path)
 
 
-def test_full_construct_tangency_verdicts_are_hmmm() -> None:
+def test_full_construct_tangency_verdicts_are_hmmm(tmp_path: Path) -> None:
     if not _ucns_available:
         pytest.skip("pinned UCNS singleton-geometry checkout is unavailable")
     root = _ucns_source_root()
     assert root is not None
 
-    construct, _counts = build_full_construct(_snapshot(), ucns_source_root=root)
-    tangencies = construct.tangencies
+    run(_snapshot(), out_dir=tmp_path, ucns_source_root=root)
+    construct = json.loads((tmp_path / "construct.json").read_bytes().rstrip(b"\n"))
+    tangencies = construct["tangencies"]
     assert tangencies
-    assert all(record.status == "hmmm" for record in tangencies)
-    assert all(record.center_distance_turns is None for record in tangencies)
-    assert all("undeclared" in record.reason for record in tangencies)
+    assert all(record["status"] == "hmmm" for record in tangencies)
+    assert all(record["center_distance_turns"] is None for record in tangencies)
+    assert all("undeclared" in record["reason"] for record in tangencies)

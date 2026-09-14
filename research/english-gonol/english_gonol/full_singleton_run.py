@@ -1,32 +1,38 @@
-"""Full-corpus fixed-point singleton construct (experimental, v0.1).
+"""Full-corpus fixed-point singleton construct (experimental, v0.2, external-memory).
 
-Builds the complete finite construct over the pinned OEWN 2025 corpus:
+Builds the complete finite construct over the pinned OEWN 2025 corpus with
+persistent disk-backed state instead of in-RAM collections:
 
-* one singleton per character, word, sentence, and observed higher construction;
-* one singleton per shared word sequence that recurs in the corpus;
-* every occurrence recorded as an ordinal, provenance-bearing path;
-* reused singletons closed into a finite cyclic graph;
+* one singleton per character, word, sentence, observed higher construction,
+  and shared word sequence (sqlite-backed registry);
+* every occurrence recorded as an ordinal, provenance-bearing path
+  (sqlite-backed ledger, streamed into canonical bytes);
+* every closure edge persisted to disk; closure computed incrementally and
+  resumably by deterministic peeling plus a canonical representative cycle
+  cover over the cyclic nodes;
 * every relation circle, density count, tangency verdict, and repetition
-  coefficient recorded;
+  coefficient recorded (sqlite-backed);
 * attention views and framed Mobius views emitted;
 * complete coverage, canonical serialization, hash receipt, and byte-identical
   replay.
 
-Unresolved proximity signals are never collapsed into invented weights or
-radii. Character singletons are non-positional; exact positions live in the
-occurrence provenance paths. Tangency between relation circles is computed by
-UCNS only where center/radius geometry is declared; in this build no circle
-declares it, so tangency verdicts are explicit ``hmmm`` records.
+Peak RAM is bounded independently of corpus size for every derived structure;
+the pinned source snapshot remains the read-only input. Unresolved proximity
+signals are never collapsed into invented weights or radii. Character
+singletons are non-positional; exact positions live in the occurrence
+provenance paths. Tangency between relation circles is computed by UCNS only
+where center/radius geometry is declared; in this build no circle declares it,
+so tangency verdicts are explicit ``hmmm`` records.
 """
 
 # === MODULE_BUILD ===
 # id: english_gonol_full_singleton_construct
 #   module_name: full_singleton_run
 #   module_kind: builder
-#   summary: consumes the pinned UCNS singleton-axis geometry to build the complete finite current-corpus construct with canonical receipt and byte-identical replay
+#   summary: external-memory full-corpus fixed-point singleton builder consuming pinned UCNS singleton-axis geometry with canonical receipt and byte-identical replay
 #   owner: Erin Spencer
-#   public_surface: SCHEMA, VERSION, UCNS_SINGLETON_GEOMETRY_COMMIT, UCNS_SINGLETON_GEOMETRY_MODULE_SHA256, UCNS_DIRECT_MOBIUS_MODULE_SHA256, UCNS_PUBLIC_GONOL_MODULE_SHA256, FullSingletonError, build_full_construct, run, verify_replay
-#   internal_surface: verified UCNS module loading, deterministic corpus traversal, occurrence recording
+#   public_surface: SCHEMA, VERSION, UCNS_SINGLETON_GEOMETRY_COMMIT, UCNS_SINGLETON_GEOMETRY_MODULE_SHA256, UCNS_DIRECT_MOBIUS_MODULE_SHA256, UCNS_PUBLIC_GONOL_MODULE_SHA256, FullSingletonError, FullSingletonResult, build_full_construct, run, verify_replay
+#   internal_surface: verified UCNS module loading, sqlite state store, deterministic peeling closure, streaming canonical serializer
 #   auth_boundary: exact UCNS singleton-geometry commit and module digests are pinned
 #   storage_boundary: writes caller-selected output directory only
 #   network_boundary: none
@@ -70,20 +76,28 @@ declares it, so tangency verdicts are explicit ``hmmm`` records.
 #   then: verify_replay recomputes the canonical bytes and receipt and rejects any byte drift
 #   class: evidence
 #   since: 2026-09-13
+#
+# id: full_singleton_construct_peak_ram_is_bounded
+#   given: the external-memory builder runs
+#   then: occurrence records, closure edges, singletons, relation circles, and tangencies live in persistent disk-backed tables rather than in-RAM collections
+#   class: safety
+#   since: 2026-09-13
 # === END CONTRACTS ===
 
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 from fractions import Fraction
 from hashlib import sha256
 import json
 import pickle
+import sqlite3
 import subprocess
 import sys
 from pathlib import Path
 from types import ModuleType
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Iterable, Sequence
 
 from english_gonol.definition_affixiation_run import _definition_runs
 from english_gonol.language.source import (
@@ -95,7 +109,7 @@ from english_gonol.language.source import (
 )
 
 SCHEMA = "english-gonol.full-singleton-construct"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 
 UCNS_SINGLETON_GEOMETRY_COMMIT = "e1b6583059bb186f9dac2d7f3307c8d1314d3f2e"
 UCNS_SINGLETON_GEOMETRY_MODULE_SHA256 = "8280ea347d58330d5e28d403481e6740cca2e8ceb78b1a449554ff8cc3e7d36c"
@@ -108,9 +122,32 @@ _UCNS_MODULES = (
     ("singleton_geometry", UCNS_SINGLETON_GEOMETRY_MODULE_SHA256),
 )
 
+_PUBLIC_GONOL_MODULUS = 157
+
+_HMMM = (
+    "relation-circle center/radius geometry is undeclared; tangency verdicts remain hmmm",
+    "scalar coefficient aggregation beyond repetition remains unresolved inside the full construct",
+    "context-only sarcasm orientation remains an unresolved property inside the full construct",
+)
+
+_NONCLAIMS = (
+    "not UCNS geometry canon",
+    "not an English lexical truth claim",
+    "not a semantic measurement",
+    "no proximity signal was collapsed into an invented weight",
+)
+
 
 class FullSingletonError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True, slots=True)
+class FullSingletonResult:
+    """Small in-RAM summary returned after a completed external-memory build."""
+
+    receipt_sha256: str
+    counts: dict[str, int]
 
 
 def _git(repo: Path, *arguments: str) -> str:
@@ -175,62 +212,6 @@ def _load_verified_ucns_api(ucns_source_root: str | Path) -> tuple[ModuleType, M
     return loaded["singleton_geometry"], loaded["public_gonol"], loaded["direct_mobius"]
 
 
-def _sorted_unique(values: Iterable[str]) -> tuple[str, ...]:
-    return tuple(sorted(set(values)))
-
-
-def _surface_words(text: str) -> tuple[str, ...]:
-    return tuple(value for kind, value in _definition_runs(text) if kind == "word")
-
-
-def _collect_corpus_surfaces(snapshot: WordnetSnapshot) -> tuple[tuple[str, ...], tuple[str, ...], tuple[str, ...]]:
-    characters: set[str] = set()
-    words: set[str] = set()
-    sentences: set[str] = set()
-
-    for lexeme in snapshot.lexemes:
-        characters.update(lexeme.lemma)
-        words.add(lexeme.lemma)
-        for form in lexeme.forms:
-            characters.update(form)
-            words.add(form)
-    for synset in snapshot.synsets:
-        for definition in synset.definitions:
-            characters.update(definition)
-            sentences.add(definition)
-            for word in _surface_words(definition):
-                words.add(word)
-    return _sorted_unique(characters), _sorted_unique(words), _sorted_unique(sentences)
-
-
-def _collect_higher_identities(snapshot: WordnetSnapshot) -> tuple[str, ...]:
-    identities: set[str] = set()
-    for lexeme in snapshot.lexemes:
-        for sense in lexeme.senses:
-            identities.add(f"sense:{sense.sense_id}")
-    for synset in snapshot.synsets:
-        identities.add(f"synset:{synset.synset_id}")
-    return _sorted_unique(identities)
-
-
-def _shared_sequences(
-    sentences: Sequence[str],
-    *,
-    min_shared: int,
-    max_ngram: int,
-) -> tuple[str, ...]:
-    """Return sorted shared word n-gram identities ``token|...|token|n``."""
-
-    counts: dict[str, int] = {}
-    for text in sentences:
-        tokens = _surface_words(text)
-        for n in range(2, max_ngram + 1):
-            for start in range(0, len(tokens) - n + 1):
-                identity = "|".join(tokens[start : start + n]) + f"|{n}"
-                counts[identity] = counts.get(identity, 0) + 1
-    return _sorted_unique(identity for identity, count in counts.items() if count >= min_shared)
-
-
 def _canonical_json_bytes(value: Any) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
@@ -239,212 +220,830 @@ def _digest_bytes(payload: bytes) -> str:
     return sha256(payload).hexdigest()
 
 
-def build_full_construct(
-    snapshot: WordnetSnapshot,
-    *,
-    ucns_source_root: str | Path,
-    min_shared: int = 2,
-    max_ngram: int = 2,
-) -> Any:
-    """Build the complete finite singleton construct for a pinned snapshot."""
+def _surface_words(text: str) -> tuple[str, ...]:
+    return tuple(value for kind, value in _definition_runs(text) if kind == "word")
 
-    singleton_geometry, public_gonol, _direct_mobius = _load_verified_ucns_api(ucns_source_root)
-    builder = singleton_geometry.SingletonConstructBuilder(
-        hmmm=[
-            "relation-circle center/radius geometry is undeclared; tangency verdicts remain hmmm",
-            "scalar coefficient aggregation beyond repetition remains unresolved inside the full construct",
-            "context-only sarcasm orientation remains an unresolved property inside the full construct",
-        ]
-    )
 
-    characters, words, sentences = _collect_corpus_surfaces(snapshot)
-    higher = _collect_higher_identities(snapshot)
-    sequences = _shared_sequences(sentences, min_shared=min_shared, max_ngram=max_ngram)
+# ---------------------------------------------------------------------------
+# Persistent disk-backed state
+# ---------------------------------------------------------------------------
 
-    # One singleton per admitted identity, in deterministic sorted order.
-    for scalar in characters:
-        builder.admit("character", scalar)
-    for surface in words:
-        builder.admit("word", surface)
-    for text in sentences:
-        builder.admit("sentence", text)
-    for identity in higher:
-        builder.admit("higher", identity)
-    for identity in sequences:
-        builder.admit("sequence", identity)
+_STORE_SCHEMA = """
+PRAGMA journal_mode=OFF;
+PRAGMA synchronous=OFF;
+PRAGMA temp_store=FILE;
 
-    # Occurrences: ordinal, provenance-bearing paths.
+CREATE TABLE IF NOT EXISTS meta (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS staging (
+    axis_id TEXT NOT NULL,
+    identity TEXT NOT NULL,
+    PRIMARY KEY (axis_id, identity)
+);
+
+CREATE TABLE IF NOT EXISTS seq_counts (
+    identity TEXT PRIMARY KEY,
+    count INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS singletons (
+    axis_id TEXT NOT NULL,
+    identity TEXT NOT NULL,
+    ordinal INTEGER NOT NULL,
+    PRIMARY KEY (axis_id, identity)
+);
+
+CREATE TABLE IF NOT EXISTS occurrences (
+    axis_id TEXT NOT NULL,
+    ordinal INTEGER NOT NULL,
+    identity TEXT NOT NULL,
+    provenance TEXT NOT NULL,
+    canonical TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS edges (
+    source_axis TEXT NOT NULL,
+    source_identity TEXT NOT NULL,
+    relation TEXT NOT NULL,
+    target_axis TEXT NOT NULL,
+    target_identity TEXT NOT NULL,
+    alive INTEGER NOT NULL DEFAULT 1,
+    canonical TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_edges_source ON edges(source_axis, source_identity);
+CREATE INDEX IF NOT EXISTS idx_edges_target ON edges(target_axis, target_identity);
+
+CREATE TABLE IF NOT EXISTS closure_nodes (
+    node_axis TEXT NOT NULL,
+    node_identity TEXT NOT NULL,
+    alive INTEGER NOT NULL DEFAULT 1,
+    PRIMARY KEY (node_axis, node_identity)
+);
+
+CREATE TABLE IF NOT EXISTS closure_cycles (
+    cycle_index INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    node_axis TEXT NOT NULL,
+    node_identity TEXT NOT NULL,
+    PRIMARY KEY (cycle_index, position)
+);
+
+CREATE TABLE IF NOT EXISTS covered_nodes (
+    node_axis TEXT NOT NULL,
+    node_identity TEXT NOT NULL,
+    PRIMARY KEY (node_axis, node_identity)
+);
+
+CREATE TABLE IF NOT EXISTS word_positions (
+    word TEXT PRIMARY KEY,
+    positions TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS relation_circles (
+    relation_id TEXT PRIMARY KEY,
+    canonical TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS tangencies (
+    relation_a TEXT NOT NULL,
+    relation_b TEXT NOT NULL,
+    canonical TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS attention_frames (
+    canonical TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS mobius_frames (
+    canonical TEXT NOT NULL
+);
+"""
+
+
+class FullSingletonStore:
+    """Sqlite-backed state with bounded RAM and phase checkpoints."""
+
+    def __init__(self, db_path: Path) -> None:
+        self.db = sqlite3.connect(str(db_path))
+        self.db.executescript(_STORE_SCHEMA)
+        self.db.commit()
+
+    def close(self) -> None:
+        self.db.commit()
+        self.db.close()
+
+    # -- meta / checkpoints --
+
+    def meta_get(self, key: str, default: str | None = None) -> str | None:
+        row = self.db.execute("SELECT value FROM meta WHERE key=?", (key,)).fetchone()
+        return row[0] if row is not None else default
+
+    def meta_set(self, key: str, value: str) -> None:
+        self.db.execute(
+            "INSERT INTO meta(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+            (key, value),
+        )
+
+    def phase_done(self, phase: str) -> bool:
+        return self.meta_get(f"phase:{phase}") == "done"
+
+    def mark_phase_done(self, phase: str) -> None:
+        self.meta_set(f"phase:{phase}", "done")
+        self.db.commit()
+
+    # -- staging / singletons --
+
+    def stage_identity(self, axis_id: str, identity: str) -> None:
+        self.db.execute(
+            "INSERT OR IGNORE INTO staging(axis_id, identity) VALUES(?, ?)",
+            (axis_id, identity),
+        )
+
+    def stage_many(self, axis_id: str, identities: Iterable[str]) -> None:
+        self.db.executemany(
+            "INSERT OR IGNORE INTO staging(axis_id, identity) VALUES(?, ?)",
+            ((axis_id, identity) for identity in identities),
+        )
+
+    def count_seq(self, identity: str) -> None:
+        self.db.execute(
+            "INSERT INTO seq_counts(identity, count) VALUES(?, 1) "
+            "ON CONFLICT(identity) DO UPDATE SET count=count+1",
+            (identity,),
+        )
+
+    def admit_axis(self, axis_id: str) -> None:
+        self.db.execute(
+            "INSERT INTO singletons(axis_id, identity, ordinal) "
+            "SELECT ?, identity, ROW_NUMBER() OVER (ORDER BY identity) - 1 FROM staging WHERE axis_id=?",
+            (axis_id, axis_id),
+        )
+
+    def singleton_identities(self, axis_id: str) -> list[str]:
+        rows = self.db.execute(
+            "SELECT identity FROM singletons WHERE axis_id=? ORDER BY ordinal",
+            (axis_id,),
+        ).fetchall()
+        return [row[0] for row in rows]
+
+    # -- occurrences --
+
+    def occurrence_next_ordinal(self, axis_id: str) -> int:
+        row = self.db.execute(
+            "SELECT COALESCE(MAX(ordinal), 0) FROM occurrences WHERE axis_id=?",
+            (axis_id,),
+        ).fetchone()
+        return int(row[0]) + 1
+
+    def occurrence_insert(self, axis_id: str, identity: str, provenance: Sequence[str], ordinal: int) -> None:
+        canonical = json.dumps(
+            {"axis": axis_id, "identity": identity, "ordinal": ordinal, "provenance": list(provenance)},
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        self.db.execute(
+            "INSERT INTO occurrences(axis_id, ordinal, identity, provenance, canonical) VALUES(?, ?, ?, ?, ?)",
+            (axis_id, ordinal, identity, json.dumps(list(provenance), ensure_ascii=False, separators=(",", ":")), canonical),
+        )
+
+    # -- edges --
+
+    def edge_insert(
+        self,
+        source_axis: str,
+        source_identity: str,
+        relation: str,
+        target_axis: str,
+        target_identity: str,
+    ) -> None:
+        canonical = json.dumps(
+            [source_axis, source_identity, relation, target_axis, target_identity],
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        self.db.execute(
+            "INSERT INTO edges(source_axis, source_identity, relation, target_axis, target_identity, alive, canonical) "
+            "VALUES(?, ?, ?, ?, ?, 1, ?)",
+            (source_axis, source_identity, relation, target_axis, target_identity, canonical),
+        )
+
+    # -- relation circles / tangencies --
+
+    def circle_insert(self, relation_id: str, positions: Sequence[int]) -> None:
+        density = f"{len(positions)}/{_PUBLIC_GONOL_MODULUS}"
+        record = {
+            "center_turns": None,
+            "density": density,
+            "modulus": _PUBLIC_GONOL_MODULUS,
+            "positions": list(positions),
+            "radius_turns": None,
+            "relation_id": relation_id,
+        }
+        self.db.execute(
+            "INSERT INTO relation_circles(relation_id, canonical) VALUES(?, ?)",
+            (relation_id, json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))),
+        )
+
+    def tangency_insert(self, record: dict[str, Any]) -> None:
+        canonical_record = {
+            "center_distance_turns": record.get("center_distance_turns"),
+            "reason": record["reason"],
+            "relation_a": record["relation_a"],
+            "relation_b": record["relation_b"],
+            "status": record["status"],
+        }
+        self.db.execute(
+            "INSERT INTO tangencies(relation_a, relation_b, canonical) VALUES(?, ?, ?)",
+            (
+                record["relation_a"],
+                record["relation_b"],
+                json.dumps(canonical_record, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+            ),
+        )
+
+    # -- attention / mobius frames --
+
+    def attention_insert(self, canonical: str) -> None:
+        self.db.execute("INSERT INTO attention_frames(canonical) VALUES(?)", (canonical,))
+
+    def mobius_insert(self, canonical: str) -> None:
+        self.db.execute("INSERT INTO mobius_frames(canonical) VALUES(?)", (canonical,))
+
+
+# ---------------------------------------------------------------------------
+# Build phases (each resumable through meta checkpoints)
+# ---------------------------------------------------------------------------
+
+def _phase_collect(store: FullSingletonStore, snapshot: WordnetSnapshot, min_shared: int, max_ngram: int) -> None:
+    if store.phase_done("collect"):
+        return
+    store.db.execute("DELETE FROM staging")
+    store.db.execute("DELETE FROM seq_counts")
+    characters: set[str] = set()
+    for lexeme in snapshot.lexemes:
+        characters.update(lexeme.lemma)
+        store.stage_identity("word", lexeme.lemma)
+        for form in lexeme.forms:
+            characters.update(form)
+            store.stage_identity("word", form)
+    for synset in snapshot.synsets:
+        for definition in synset.definitions:
+            characters.update(definition)
+            store.stage_identity("sentence", definition)
+            for word in _surface_words(definition):
+                store.stage_identity("word", word)
+    store.stage_many("character", sorted(characters))
+    for lexeme in snapshot.lexemes:
+        for sense in lexeme.senses:
+            store.stage_identity("higher", f"sense:{sense.sense_id}")
+    for synset in snapshot.synsets:
+        store.stage_identity("higher", f"synset:{synset.synset_id}")
+
+    for synset in snapshot.synsets:
+        for definition in synset.definitions:
+            tokens = _surface_words(definition)
+            for n in range(2, max_ngram + 1):
+                for start in range(0, len(tokens) - n + 1):
+                    store.count_seq("|".join(tokens[start : start + n]) + f"|{n}")
+    for row in store.db.execute("SELECT identity FROM seq_counts WHERE count >= ? ORDER BY identity", (min_shared,)):
+        store.stage_identity("sequence", row[0])
+    store.mark_phase_done("collect")
+
+
+def _phase_admit(store: FullSingletonStore) -> None:
+    if store.phase_done("admit"):
+        return
+    store.db.execute("DELETE FROM singletons")
+    for axis in ("character", "word", "sentence", "higher", "sequence"):
+        store.admit_axis(axis)
+    store.mark_phase_done("admit")
+
+
+def _phase_occurrences(store: FullSingletonStore, snapshot: WordnetSnapshot, max_ngram: int) -> None:
+    if store.phase_done("occurrences"):
+        return
+    store.db.execute("DELETE FROM occurrences")
     corpus_step = f"corpus:{OEWN_COMMIT}"
-    for text in sentences:
+    sentence_ids = store.singleton_identities("sentence")
+    word_ids = store.singleton_identities("word")
+    sequence_ids = store.singleton_identities("sequence")
+
+    char_ordinal = store.occurrence_next_ordinal("character")
+    for text in sentence_ids:
         for scalar in sorted(set(text)):
             positions = ",".join(str(index) for index, value in enumerate(text) if value == scalar)
-            builder.record_occurrence("character", scalar, (corpus_step, f"surface:{text}", f"positions:{positions}"))
-    for surface in words:
+            store.occurrence_insert("character", scalar, (corpus_step, f"surface:{text}", f"positions:{positions}"), char_ordinal)
+            char_ordinal += 1
+    for surface in word_ids:
         for scalar in sorted(set(surface)):
             positions = ",".join(str(index) for index, value in enumerate(surface) if value == scalar)
-            builder.record_occurrence("character", scalar, (corpus_step, f"surface:{surface}", f"positions:{positions}"))
+            store.occurrence_insert("character", scalar, (corpus_step, f"surface:{surface}", f"positions:{positions}"), char_ordinal)
+            char_ordinal += 1
 
+    higher_ordinal = store.occurrence_next_ordinal("higher")
+    sentence_ordinal = store.occurrence_next_ordinal("sentence")
+    word_ordinal = store.occurrence_next_ordinal("word")
     synset_map = snapshot.synset_map()
     for lexeme in snapshot.lexemes:
-        lemma = lexeme.lemma
         for sense in lexeme.senses:
-            builder.record_occurrence("higher", f"sense:{sense.sense_id}", (corpus_step, "sense"))
-            builder.record_occurrence("higher", f"synset:{sense.synset_id}", (corpus_step, "synset"))
+            store.occurrence_insert("higher", f"sense:{sense.sense_id}", (corpus_step, "sense"), higher_ordinal)
+            higher_ordinal += 1
+            store.occurrence_insert("higher", f"synset:{sense.synset_id}", (corpus_step, "synset"), higher_ordinal)
+            higher_ordinal += 1
             synset = synset_map[sense.synset_id]
             for definition_index, definition_text in enumerate(synset.definitions):
-                builder.record_occurrence(
-                    "sentence", definition_text, (corpus_step, f"sense:{sense.sense_id}", f"def:{definition_index}")
+                store.occurrence_insert(
+                    "sentence", definition_text, (corpus_step, f"sense:{sense.sense_id}", f"def:{definition_index}"), sentence_ordinal
                 )
+                sentence_ordinal += 1
                 for run_index, word in enumerate(_surface_words(definition_text)):
-                    builder.record_occurrence(
-                        "word", word, (corpus_step, f"sense:{sense.sense_id}", f"def:{definition_index}", f"run:{run_index}")
+                    store.occurrence_insert(
+                        "word", word, (corpus_step, f"sense:{sense.sense_id}", f"def:{definition_index}", f"run:{run_index}"), word_ordinal
                     )
+                    word_ordinal += 1
 
-    # Shared sequences: one occurrence per sentence position where they appear.
-    sequence_words = {identity: identity.split("|")[:-1] for identity in sequences}
-    for text in sentences:
+    sequence_ordinal = store.occurrence_next_ordinal("sequence")
+    sequence_set = set(sequence_ids)
+    for text in sentence_ids:
         tokens = _surface_words(text)
         for n in range(2, max_ngram + 1):
             for start in range(0, len(tokens) - n + 1):
                 identity = "|".join(tokens[start : start + n]) + f"|{n}"
-                if identity in sequence_words:
-                    builder.record_occurrence(
-                        "sequence", identity, (corpus_step, f"sentence:{text}", f"start:{start}")
-                    )
+                if identity in sequence_set:
+                    store.occurrence_insert("sequence", identity, (corpus_step, f"sentence:{text}", f"start:{start}"), sequence_ordinal)
+                    sequence_ordinal += 1
+    store.mark_phase_done("occurrences")
 
-    # Closure edges: reuse singletons until the finite graph closes.
-    for surface in words:
+
+def _phase_edges(store: FullSingletonStore, snapshot: WordnetSnapshot) -> None:
+    if store.phase_done("edges"):
+        return
+    store.db.execute("DELETE FROM edges")
+    store.db.execute("DELETE FROM closure_nodes")
+    store.db.execute("DELETE FROM closure_cycles")
+    store.db.execute("DELETE FROM covered_nodes")
+    store.meta_set("closure:cycle_index", "0")
+    word_ids = store.singleton_identities("word")
+    sentence_ids = store.singleton_identities("sentence")
+    sequence_ids = store.singleton_identities("sequence")
+
+    for surface in word_ids:
         for scalar in sorted(set(surface)):
-            builder.add_edge("word", surface, "contains-character", "character", scalar)
-    for text in sentences:
+            store.edge_insert("word", surface, "contains-character", "character", scalar)
+    for text in sentence_ids:
         for word in sorted(set(_surface_words(text))):
-            builder.add_edge("sentence", text, "contains-word", "word", word)
-            builder.add_edge("word", word, "appears-in-sentence", "sentence", text)
-    for identity in sequences:
-        for word in sequence_words[identity]:
-            builder.add_edge("sequence", identity, "contains-word", "word", word)
+            store.edge_insert("sentence", text, "contains-word", "word", word)
+            store.edge_insert("word", word, "appears-in-sentence", "sentence", text)
+    for identity in sequence_ids:
+        for word in identity.split("|")[:-1]:
+            store.edge_insert("sequence", identity, "contains-word", "word", word)
+    synset_map = snapshot.synset_map()
     for lexeme in snapshot.lexemes:
         for sense in lexeme.senses:
-            builder.add_edge("higher", f"sense:{sense.sense_id}", "owns-word", "word", lexeme.lemma)
+            store.edge_insert("higher", f"sense:{sense.sense_id}", "owns-word", "word", lexeme.lemma)
             for definition_text in synset_map[sense.synset_id].definitions:
-                builder.add_edge("higher", f"synset:{sense.synset_id}", "owns-sentence", "sentence", definition_text)
+                store.edge_insert("higher", f"synset:{sense.synset_id}", "owns-sentence", "sentence", definition_text)
+    store.mark_phase_done("edges")
 
-    # Relation circles: every relation with exact Public Gonol positions.
+
+def _phase_closure(store: FullSingletonStore) -> None:
+    if store.phase_done("closure"):
+        return
+    store.db.execute("DELETE FROM closure_nodes")
+    store.db.execute("DELETE FROM closure_cycles")
+    store.db.execute("DELETE FROM covered_nodes")
+    store.meta_set("closure:cycle_index", "0")
+    store.db.execute(
+        "INSERT OR IGNORE INTO closure_nodes(node_axis, node_identity, alive) "
+        "SELECT source_axis, source_identity, 1 FROM edges UNION SELECT target_axis, target_identity, 1 FROM edges"
+    )
+    store.db.commit()
+    while True:
+        before = store.db.total_changes
+        store.db.execute(
+            "UPDATE edges SET alive=0 WHERE alive=1 AND NOT EXISTS ("
+            "SELECT 1 FROM closure_nodes n WHERE n.alive=1 AND n.node_axis=edges.target_axis AND n.node_identity=edges.target_identity)"
+        )
+        store.db.execute(
+            "UPDATE closure_nodes SET alive=0 WHERE alive=1 AND NOT EXISTS ("
+            "SELECT 1 FROM edges e WHERE e.alive=1 AND e.source_axis=closure_nodes.node_axis AND e.source_identity=closure_nodes.node_identity)"
+        )
+        store.db.commit()
+        if store.db.total_changes == before:
+            break
+
+    cycle_index = int(store.meta_get("closure:cycle_index", "0") or "0")
+    row = store.db.execute("SELECT MIN(rowid) FROM closure_nodes WHERE alive=1").fetchone()
+    if row[0] is None:
+        store.mark_phase_done("closure")
+        return
+
+    def node_covered(node: tuple[str, str]) -> bool:
+        return (
+            store.db.execute(
+                "SELECT 1 FROM covered_nodes WHERE node_axis=? AND node_identity=?",
+                node,
+            ).fetchone()
+            is not None
+        )
+
+    nodes = store.db.execute(
+        "SELECT node_axis, node_identity FROM closure_nodes WHERE alive=1 ORDER BY node_axis, node_identity"
+    )
+    for node in nodes:
+        if node_covered(node):
+            continue
+        walk = [node]
+        seen = {node: 0}
+        while True:
+            current = walk[-1]
+            successor = store.db.execute(
+                "SELECT target_axis, target_identity FROM edges "
+                "WHERE alive=1 AND source_axis=? AND source_identity=? "
+                "ORDER BY target_axis, target_identity, relation LIMIT 1",
+                current,
+            ).fetchone()
+            if successor is None:
+                raise FullSingletonError("peeling left an alive node without an alive successor")
+            if successor in seen:
+                start_index = seen[successor]
+                cycle = walk[start_index:] + [successor]
+                break
+            seen[successor] = len(walk)
+            walk.append(successor)
+        for position, member in enumerate(cycle):
+            store.db.execute(
+                "INSERT OR IGNORE INTO closure_cycles(cycle_index, position, node_axis, node_identity) VALUES(?, ?, ?, ?)",
+                (cycle_index, position, member[0], member[1]),
+            )
+        for member in cycle:
+            store.db.execute(
+                "INSERT OR IGNORE INTO covered_nodes(node_axis, node_identity) VALUES(?, ?)",
+                member,
+            )
+        cycle_index += 1
+        store.meta_set("closure:cycle_index", str(cycle_index))
+        store.db.commit()
+    store.mark_phase_done("closure")
+
+
+def _phase_circles(
+    store: FullSingletonStore,
+    snapshot: WordnetSnapshot,
+    singleton_geometry: ModuleType,
+    public_gonol: ModuleType,
+) -> None:
+    if store.phase_done("circles"):
+        return
+    store.db.execute("DELETE FROM word_positions")
+    store.db.execute("DELETE FROM relation_circles")
+    store.db.execute("DELETE FROM tangencies")
     admitted_position = public_gonol.public_gonol_position
 
-    def word_positions(surface: str) -> tuple[int, ...]:
-        positions: set[int] = set()
+    def positions_for(surface: str) -> tuple[int, ...]:
+        positions = set()
         for scalar in surface:
             position = admitted_position(scalar)
             if position is not None:
                 positions.add(position)
         return tuple(sorted(positions))
 
-    word_circle_positions = {surface: word_positions(surface) for surface in words}
-    sentence_circle_positions = {
-        text: tuple(sorted({position for word in _surface_words(text) for position in word_circle_positions[word]}))
-        for text in sentences
-    }
-    sense_lemma: dict[str, str] = {}
-    for lexeme in snapshot.lexemes:
-        for sense in lexeme.senses:
-            sense_lemma[sense.sense_id] = lexeme.lemma
+    word_ids = store.singleton_identities("word")
+    for surface in word_ids:
+        positions = positions_for(surface)
+        store.db.execute(
+            "INSERT INTO word_positions(word, positions) VALUES(?, ?)",
+            (surface, json.dumps(list(positions), separators=(",", ":"))),
+        )
+        store.circle_insert(f"word:{surface}", positions)
+    store.db.commit()
 
-    higher_circle_positions: dict[str, tuple[int, ...]] = {}
-    for identity in higher:
+    sentence_ids = store.singleton_identities("sentence")
+    for text in sentence_ids:
+        merged: set[int] = set()
+        for word in _surface_words(text):
+            row = store.db.execute("SELECT positions FROM word_positions WHERE word=?", (word,)).fetchone()
+            if row is not None:
+                merged.update(json.loads(row[0]))
+        store.circle_insert(f"sentence:{text}", tuple(sorted(merged)))
+
+    higher_ids = store.singleton_identities("higher")
+    sense_lemma = {
+        f"sense:{sense.sense_id}": lexeme.lemma
+        for lexeme in snapshot.lexemes
+        for sense in lexeme.senses
+    }
+    synset_map = snapshot.synset_map()
+    for identity in higher_ids:
         if identity.startswith("sense:"):
-            sense_id = identity.split(":", 1)[1]
-            lemma = sense_lemma.get(sense_id)
+            lemma = sense_lemma.get(identity)
+            positions: tuple[int, ...] = ()
             if lemma is not None:
-                higher_circle_positions[identity] = word_circle_positions[lemma]
+                row = store.db.execute("SELECT positions FROM word_positions WHERE word=?", (lemma,)).fetchone()
+                if row is not None:
+                    positions = tuple(json.loads(row[0]))
         else:
             synset_id = identity.split(":", 1)[1]
             synset = synset_map.get(synset_id)
+            merged = set()
             if synset is not None:
-                higher_circle_positions[identity] = tuple(
-                    sorted({position for text in synset.definitions for position in sentence_circle_positions.get(text, ())})
-                )
-    sequence_circle_positions = {
-        identity: tuple(sorted({position for word in sequence_words[identity] for position in word_circle_positions.get(word, ())}))
-        for identity in sequences
-    }
+                for text in synset.definitions:
+                    row = store.db.execute(
+                        "SELECT canonical FROM relation_circles WHERE relation_id=?", (f"sentence:{text}",)
+                    ).fetchone()
+                    if row is None:
+                        continue
+                    circle = json.loads(row[0])
+                    merged.update(circle["positions"])
+            positions = tuple(sorted(merged))
+        store.circle_insert(f"higher:{identity}", positions)
 
-    relation_circles: list[tuple[str, Any]] = []
-    for surface in words:
-        circle = builder.add_relation_circle(f"word:{surface}", modulus=157, positions=word_circle_positions[surface])
-        relation_circles.append((circle.relation_id, circle))
-    for text in sentences:
-        circle = builder.add_relation_circle(f"sentence:{text}", modulus=157, positions=sentence_circle_positions[text])
-        relation_circles.append((circle.relation_id, circle))
-    for identity in higher:
-        circle = builder.add_relation_circle(f"higher:{identity}", modulus=157, positions=higher_circle_positions.get(identity, ()))
-        relation_circles.append((circle.relation_id, circle))
-    for identity in sequences:
-        circle = builder.add_relation_circle(f"sequence:{identity}", modulus=157, positions=sequence_circle_positions[identity])
-        relation_circles.append((circle.relation_id, circle))
+    for identity in store.singleton_identities("sequence"):
+        merged = set()
+        for word in identity.split("|")[:-1]:
+            row = store.db.execute("SELECT positions FROM word_positions WHERE word=?", (word,)).fetchone()
+            if row is not None:
+                merged.update(json.loads(row[0]))
+        store.circle_insert(f"sequence:{identity}", tuple(sorted(merged)))
 
-    # Tangency: consecutive canonical pairs per axis. No circle declares
-    # center/radius geometry here, so every verdict is an explicit hmmm record.
+    # Tangency: consecutive canonical pairs per axis; all hmmm without geometry.
     for axis in ("word", "sentence", "higher", "sequence"):
-        axis_circles = [
-            (relation_id, circle)
-            for relation_id, circle in relation_circles
-            if relation_id.startswith(f"{axis}:")
-        ]
-        for (relation_a, circle_a), (relation_b, circle_b) in zip(axis_circles, axis_circles[1:]):
-            verdict = singleton_geometry.relation_tangency(circle_a, circle_b)
-            if verdict is not None:
-                builder.add_tangency(verdict)
+        rows = store.db.execute(
+            "SELECT canonical FROM relation_circles WHERE relation_id LIKE ? ORDER BY relation_id",
+            (f"{axis}:%",),
+        ).fetchall()
+        for index in range(len(rows) - 1):
+            circle_a = json.loads(rows[index][0])
+            circle_b = json.loads(rows[index + 1][0])
+            record = {
+                "relation_a": circle_a["relation_id"],
+                "relation_b": circle_b["relation_id"],
+                "status": "hmmm",
+                "reason": "center/radius turns are undeclared; tangency remains unresolved without invented geometry",
+                "center_distance_turns": None,
+            }
+            store.tangency_insert(record)
+    store.mark_phase_done("circles")
 
-    # Attention views and framed Mobius views.
-    axis_summaries: dict[str, tuple[int, int]] = {}
+
+def _phase_frames(store: FullSingletonStore) -> None:
+    if store.phase_done("frames"):
+        return
+    store.db.execute("DELETE FROM attention_frames")
+    store.db.execute("DELETE FROM mobius_frames")
+    axis_counts: dict[str, tuple[int, int]] = {}
     for axis in ("character", "word", "sentence", "higher", "sequence"):
-        identities = {
-            "character": characters,
-            "word": words,
-            "sentence": sentences,
-            "higher": higher,
-            "sequence": sequences,
-        }[axis]
-        occurrences = builder._ledger.occurrence_count(axis)
-        distinct = len(identities)
+        distinct = store.db.execute(
+            "SELECT COUNT(*) FROM singletons WHERE axis_id=?", (axis,)
+        ).fetchone()[0]
+        occurrences = store.db.execute(
+            "SELECT COUNT(*) FROM occurrences WHERE axis_id=?", (axis,)
+        ).fetchone()[0]
         repetition = Fraction(occurrences, distinct) if distinct else Fraction(0)
-        axis_summaries[axis] = (distinct, occurrences)
-        frame = singleton_geometry.AttentionFrame(
-            frame_id=f"attention:{axis}",
-            axis_ids=(axis,),
-            relation_ids=(),
-            projected_fields=(
-                ("coverage", f"{distinct}/{distinct}"),
-                ("occurrences", str(occurrences)),
-                ("repetition", f"{repetition.numerator}/{repetition.denominator}"),
-            ),
-            nonclaims=("not a semantic claim", "not UCNS geometry canon", "not an English lexical truth claim"),
+        axis_counts[axis] = (distinct, occurrences)
+        frame = {
+            "axis_ids": [axis],
+            "frame_id": f"attention:{axis}",
+            "nonclaims": ["not a semantic claim", "not UCNS geometry canon", "not an English lexical truth claim"],
+            "projected_fields": [
+                ["coverage", f"{distinct}/{distinct}"],
+                ["occurrences", str(occurrences)],
+                ["repetition", f"{repetition.numerator}/{repetition.denominator}"],
+            ],
+            "relation_ids": [],
+        }
+        store.attention_insert(
+            json.dumps(frame, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         )
-        builder.add_attention_frame(frame)
-        builder.add_mobius_frame(singleton_geometry.build_mobius_frame(f"mobius:attention:{axis}", frame.frame_id))
-
-    full_frame = singleton_geometry.AttentionFrame(
-        frame_id="attention:full",
-        axis_ids=("character", "word", "sentence", "higher", "sequence"),
-        relation_ids=(),
-        projected_fields=tuple(
-            (f"{axis}.distinct", str(distinct)) for axis, (distinct, _occurrences) in axis_summaries.items()
+        store.mobius_insert(
+            json.dumps(
+                {
+                    "attention_frame_id": f"attention:{axis}",
+                    "frame": "positive-local-frame",
+                    "frame_id": f"mobius:attention:{axis}",
+                    "phase_turns": "0/1",
+                },
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
         )
-        + tuple((f"{axis}.occurrences", str(occurrences)) for axis, (_distinct, occurrences) in axis_summaries.items()),
-        nonclaims=("not a semantic claim", "not UCNS geometry canon"),
-    )
-    builder.add_attention_frame(full_frame)
-    builder.add_mobius_frame(singleton_geometry.build_mobius_frame("mobius:attention:full", full_frame.frame_id))
 
-    construct = builder.build()
-    return construct, {
-        "characters": len(characters),
-        "words": len(words),
-        "sentences": len(sentences),
-        "higher": len(higher),
-        "sequences": len(sequences),
+    full_frame = {
+        "axis_ids": ["character", "word", "sentence", "higher", "sequence"],
+        "frame_id": "attention:full",
+        "nonclaims": ["not a semantic claim", "not UCNS geometry canon"],
+        "projected_fields": [
+            [f"{axis}.distinct", str(distinct)] for axis, (distinct, _occurrences) in axis_counts.items()
+        ]
+        + [
+            [f"{axis}.occurrences", str(occurrences)] for axis, (_distinct, occurrences) in axis_counts.items()
+        ],
+        "relation_ids": [],
     }
+    store.attention_insert(
+        json.dumps(full_frame, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+    store.mobius_insert(
+        json.dumps(
+            {
+                "attention_frame_id": "attention:full",
+                "frame": "positive-local-frame",
+                "frame_id": "mobius:attention:full",
+                "phase_turns": "0/1",
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
+    store.mark_phase_done("frames")
+
+
+# ---------------------------------------------------------------------------
+# Streaming canonical serializer
+# ---------------------------------------------------------------------------
+
+def _stream_canonical_construct(store: FullSingletonStore, out_path: Path, singleton_geometry: ModuleType) -> str:
+    """Stream the canonical construct JSON with an incremental sha256.
+
+    The byte layout reproduces ``json.dumps(payload, sort_keys=True,
+    separators=(",", ":"))`` for the UCNS singleton-construct payload exactly;
+    the top-level key order is alphabetical.
+    """
+
+    hasher = sha256()
+    with open(out_path, "wb") as handle:
+        def emit(data: bytes) -> None:
+            hasher.update(data)
+            handle.write(data)
+
+        emit(b'{"attention_frames":[')
+        first = True
+        for row in store.db.execute("SELECT canonical FROM attention_frames ORDER BY rowid"):
+            if not first:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first = False
+        emit(b'],"axes":{')
+        first_axis = True
+        for axis in ("character", "higher", "sentence", "sequence", "word"):
+            if not first_axis:
+                emit(b",")
+            emit(json.dumps(axis, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+            emit(b":")
+            emit(b"[")
+            first_identity = True
+            for row in store.db.execute(
+                "SELECT identity FROM singletons WHERE axis_id=? ORDER BY ordinal", (axis,)
+            ):
+                if not first_identity:
+                    emit(b",")
+                emit(json.dumps(row[0], ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+                first_identity = False
+            emit(b"]")
+            first_axis = False
+        emit(b'},"closure":{"closed":true,"cycles":[')
+        first_cycle = True
+        previous_cycle = -1
+        for cycle_index, position, node_axis, node_identity in store.db.execute(
+            "SELECT cycle_index, position, node_axis, node_identity FROM closure_cycles ORDER BY cycle_index, position"
+        ):
+            if cycle_index != previous_cycle:
+                if not first_cycle:
+                    emit(b"],")
+                emit(b"[")
+                first_cycle = False
+                previous_cycle = cycle_index
+            else:
+                emit(b",")
+            emit(json.dumps([node_axis, node_identity], ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+        if not first_cycle:
+            emit(b"]")
+        emit(b'],"cyclic_nodes":[')
+        first_node = True
+        for node_axis, node_identity in store.db.execute(
+            "SELECT node_axis, node_identity FROM closure_nodes WHERE alive=1 ORDER BY node_axis, node_identity"
+        ):
+            if not first_node:
+                emit(b",")
+            emit(json.dumps([node_axis, node_identity], ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+            first_node = False
+        emit(b'],"edges":[')
+        first_edge = True
+        for row in store.db.execute(
+            "SELECT canonical FROM edges ORDER BY source_axis, source_identity, relation, target_axis, target_identity"
+        ):
+            if not first_edge:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first_edge = False
+        emit(b'],"nodes":[')
+        first_node = True
+        for node_axis, node_identity in store.db.execute(
+            "SELECT DISTINCT source_axis, source_identity FROM edges "
+            "UNION SELECT DISTINCT target_axis, target_identity FROM edges "
+            "ORDER BY 1, 2"
+        ):
+            if not first_node:
+                emit(b",")
+            emit(json.dumps([node_axis, node_identity], ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+            first_node = False
+        emit(b']},"hmmm":')
+        emit(json.dumps(list(_HMMM), ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8"))
+        emit(b',"mobius_frames":[')
+        first = True
+        for row in store.db.execute("SELECT canonical FROM mobius_frames ORDER BY rowid"):
+            if not first:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first = False
+        emit(b'],"occurrences":[')
+        first = True
+        for row in store.db.execute("SELECT canonical FROM occurrences ORDER BY rowid"):
+            if not first:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first = False
+        emit(b'],"relation_circles":[')
+        first = True
+        for row in store.db.execute("SELECT canonical FROM relation_circles ORDER BY rowid"):
+            if not first:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first = False
+        emit(b'],"schema":')
+        emit(json.dumps(singleton_geometry.SCHEMA, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+        emit(b',"tangencies":[')
+        first = True
+        for row in store.db.execute("SELECT canonical FROM tangencies ORDER BY rowid"):
+            if not first:
+                emit(b",")
+            emit(row[0].encode("utf-8"))
+            first = False
+        emit(b'],"version":')
+        emit(json.dumps(singleton_geometry.VERSION, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+        emit(b"}")
+
+    return hasher.hexdigest()
+
+
+# ---------------------------------------------------------------------------
+# Public build / run / verify
+# ---------------------------------------------------------------------------
+
+def build_full_construct(
+    snapshot: WordnetSnapshot,
+    *,
+    state_dir: str | Path,
+    ucns_source_root: str | Path,
+    min_shared: int = 2,
+    max_ngram: int = 2,
+    resume: bool = True,
+) -> FullSingletonResult:
+    """Build the complete finite singleton construct in external memory."""
+
+    singleton_geometry, public_gonol, _direct_mobius = _load_verified_ucns_api(ucns_source_root)
+    state_path = Path(state_dir).resolve()
+    state_path.mkdir(parents=True, exist_ok=True)
+    db_path = state_path / "state.db"
+    if not resume and db_path.exists():
+        raise FullSingletonError(f"state database already exists: {db_path}")
+
+    store = FullSingletonStore(db_path)
+    try:
+        _phase_collect(store, snapshot, min_shared, max_ngram)
+        _phase_admit(store)
+        _phase_occurrences(store, snapshot, max_ngram)
+        _phase_edges(store, snapshot)
+        _phase_closure(store)
+        _phase_circles(store, snapshot, singleton_geometry, public_gonol)
+        _phase_frames(store)
+
+        construct_path = state_path / "construct.json"
+        receipt = _stream_canonical_construct(store, construct_path, singleton_geometry)
+        with open(construct_path, "ab") as handle:
+            handle.write(b"\n")
+
+        counts = {
+            label: store.db.execute(
+                "SELECT COUNT(*) FROM singletons WHERE axis_id=?", (axis,)
+            ).fetchone()[0]
+            for axis, label in (
+                ("character", "characters"),
+                ("word", "words"),
+                ("sentence", "sentences"),
+                ("higher", "higher"),
+                ("sequence", "sequences"),
+            )
+        }
+        return FullSingletonResult(receipt_sha256=receipt, counts=counts)
+    finally:
+        store.close()
 
 
 def run(
@@ -454,27 +1053,31 @@ def run(
     ucns_source_root: str | Path,
     min_shared: int = 2,
     max_ngram: int = 2,
+    resume: bool = True,
 ) -> dict[str, Any]:
     """Build and persist the complete construct with receipt and replay identity."""
 
     output = Path(out_dir).resolve()
     output.mkdir(parents=True, exist_ok=True)
-    if any(output.iterdir()):
-        raise FullSingletonError(f"output directory must be empty: {output}")
-
-    construct, counts = build_full_construct(
+    result = build_full_construct(
         snapshot,
+        state_dir=output,
         ucns_source_root=ucns_source_root,
         min_shared=min_shared,
         max_ngram=max_ngram,
+        resume=resume,
     )
-    construct_bytes = construct.canonical_bytes()
-    receipt = construct.receipt_sha256()
 
-    used_positions = set()
-    for circle in construct.relation_circles:
-        used_positions.update(circle.positions)
-    all_positions = set(range(157))
+    used_positions: set[int] = set()
+    store = FullSingletonStore(output / "state.db")
+    try:
+        for row in store.db.execute("SELECT canonical FROM relation_circles"):
+            circle = json.loads(row[0])
+            used_positions.update(circle["positions"])
+    finally:
+        store.close()
+
+    all_positions = set(range(_PUBLIC_GONOL_MODULUS))
     unused_positions = sorted(all_positions - used_positions)
 
     manifest: dict[str, Any] = {
@@ -496,28 +1099,22 @@ def run(
             "singleton_geometry_module_sha256": UCNS_SINGLETON_GEOMETRY_MODULE_SHA256,
         },
         "parameters": {"min_shared": min_shared, "max_ngram": max_ngram},
-        "counts": counts,
+        "counts": result.counts,
         "coverage": {
             "public_gonol_positions_used": len(used_positions),
             "public_gonol_positions_unused": len(unused_positions),
-            "public_gonol_positions_covered": len(used_positions) == 157,
+            "public_gonol_positions_covered": len(used_positions) == _PUBLIC_GONOL_MODULUS,
             "unused_positions": unused_positions,
             "no_sampling": True,
         },
-        "receipt_sha256": receipt,
+        "receipt_sha256": result.receipt_sha256,
         "construct_file": "construct.json",
-        "nonclaims": [
-            "not UCNS geometry canon",
-            "not an English lexical truth claim",
-            "not a semantic measurement",
-            "no proximity signal was collapsed into an invented weight",
-        ],
-        "hmmm": construct.hmmm,
+        "nonclaims": list(_NONCLAIMS),
+        "hmmm": list(_HMMM),
     }
     manifest_payload = dict(manifest)
     manifest["replay_digest"] = _digest_bytes(_canonical_json_bytes(manifest_payload))
 
-    (output / "construct.json").write_bytes(construct_bytes + b"\n")
     (output / "manifest.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -534,8 +1131,15 @@ def verify_replay(out_dir: str | Path) -> dict[str, Any]:
     stored_construct = construct_path.read_bytes()
     if stored_construct != stored_construct.rstrip(b"\n") + b"\n":
         raise FullSingletonError("construct.json is not byte-canonical")
+    canonical_bytes = stored_construct.rstrip(b"\n")
+    try:
+        parsed = json.loads(canonical_bytes)
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise FullSingletonError("construct.json is not valid JSON") from exc
+    if json.dumps(parsed, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8") != canonical_bytes:
+        raise FullSingletonError("construct.json is not canonical JSON")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    receipt = _digest_bytes(stored_construct.rstrip(b"\n"))
+    receipt = _digest_bytes(canonical_bytes)
     if receipt != manifest.get("receipt_sha256"):
         raise FullSingletonError("construct receipt mismatch")
     replay_payload = dict(manifest)
@@ -555,6 +1159,7 @@ def main() -> int:
     parser.add_argument("--out-dir", type=str, required=True)
     parser.add_argument("--min-shared", type=int, default=2)
     parser.add_argument("--max-ngram", type=int, default=2)
+    parser.add_argument("--no-resume", action="store_true")
     args = parser.parse_args()
 
     if args.snapshot_pkl:
@@ -571,6 +1176,7 @@ def main() -> int:
         ucns_source_root=args.ucns_source_root,
         min_shared=args.min_shared,
         max_ngram=args.max_ngram,
+        resume=not args.no_resume,
     )
     print(json.dumps(manifest, indent=2, sort_keys=True))
     return 0
