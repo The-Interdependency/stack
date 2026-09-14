@@ -5,9 +5,10 @@ on:
   push:
     branches: [main]
     paths:
-      - "research/english-gonol/english_gonol/__init__.py"
       - "research/english-gonol/english_gonol/full_construct_run.py"
       - "research/english-gonol/english_gonol/language/source.py"
+      - "research/english-gonol/tests/test_full_construct_run.py"
+      - "research/english-gonol/tests/test_source_order.py"
       - ".github/workflows/english-gonol-full.yml"
 
 permissions:
@@ -82,13 +83,14 @@ jobs:
         shell: bash
         run: |
           set +e
+          mkdir -p experiments/full-construct-v2
           /usr/bin/time -v python -m english_gonol.full_construct_run \
             --source-root ../../_deps/oewn/src/yaml \
             --ucns-source-root ../../_deps/ucns \
-            --out-dir experiments/full-construct-v1 \
-            --overwrite 2> experiments/full-construct-v1.time.txt
+            --out-dir experiments/full-construct-v2 \
+            --overwrite 2> experiments/full-construct-v2.time.txt
           status=$?
-          cat experiments/full-construct-v1.time.txt
+          cat experiments/full-construct-v2.time.txt
           exit "$status"
 
       - name: Verify logical replay and SQLite integrity
@@ -103,7 +105,7 @@ jobs:
           from pathlib import Path
           from english_gonol.full_construct_run import verify_replay
 
-          out = Path("experiments/full-construct-v1")
+          out = Path("experiments/full-construct-v2")
           manifest = verify_replay(out)
           db_path = out / "construct.db"
           digest = hashlib.sha256()
@@ -122,7 +124,7 @@ jobs:
                   "words",
                   "word_characters",
                   "definitions",
-                  "definition_words",
+                  "definition_components",
                   "semantic_evidence",
                   "unresolved_semantic_evidence",
               ]
@@ -141,6 +143,8 @@ jobs:
               "construct_db_bytes": db_size,
               "sqlite_integrity": integrity,
               "counts": counts,
+              "definition_topologies": manifest["definition_topologies"],
+              "definition_component_rule": manifest["definition_component_rule"],
               "geometry_state": manifest["geometry_state"],
               "invented_geometry": manifest["invented_geometry"],
               "hmmm": manifest["hmmm"],
@@ -158,25 +162,25 @@ jobs:
         run: |
           set -euo pipefail
           {
-            echo "## English Gonol full construct"
+            echo "## English Gonol full construct v2"
             echo
             echo '```json'
-            cat experiments/full-construct-v1/evidence.json
+            cat experiments/full-construct-v2/evidence.json
             echo '```'
             echo
             echo "### Resource receipt"
             echo '```text'
-            cat experiments/full-construct-v1.time.txt
+            cat experiments/full-construct-v2.time.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Retain compact replay evidence
         uses: actions/upload-artifact@v4
         with:
-          name: english-gonol-full-construct-evidence
+          name: english-gonol-full-construct-v2-evidence
           retention-days: 30
           if-no-files-found: error
           path: |
-            research/english-gonol/experiments/full-construct-v1/manifest.json
-            research/english-gonol/experiments/full-construct-v1/evidence.json
-            research/english-gonol/experiments/full-construct-v1.time.txt
+            research/english-gonol/experiments/full-construct-v2/manifest.json
+            research/english-gonol/experiments/full-construct-v2/evidence.json
+            research/english-gonol/experiments/full-construct-v2.time.txt

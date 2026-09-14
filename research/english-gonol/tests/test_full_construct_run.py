@@ -7,9 +7,17 @@
 #   mutates: filesystem
 #   cleanup: tempdir_teardown
 #
-# id: check_full_construct_definition_origin_and_evidence
-#   proves: full_construct_definitions_share_word_origin, full_construct_keeps_probability_evidence_distinct
-#   call: self::test_definitions_share_origin_and_preserve_distinct_evidence
+# id: check_full_construct_definition_topology
+#   proves: full_construct_definitions_share_word_origin, full_construct_preserves_both_definition_topologies
+#   call: self::test_definitions_share_origin_and_preserve_direct_and_chain_topology
+#   requires: python3
+#   timeout: 30
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
+#
+# id: check_full_construct_exact_components
+#   proves: full_construct_preserves_exact_definition_components, full_construct_keeps_probability_evidence_distinct
+#   call: self::test_definition_components_reconstruct_exact_source_and_keep_evidence_distinct
 #   requires: python3
 #   timeout: 30
 #   mutates: filesystem
@@ -41,6 +49,7 @@ from pathlib import Path
 import pytest
 
 from english_gonol.full_construct_run import (
+    DEFINITION_COMPONENT_RULE,
     GEOMETRY_STATE,
     HMMM,
     RESOLUTION_RULE,
@@ -97,7 +106,7 @@ def _snapshot() -> WordnetSnapshot:
                 synset_id="s-a",
                 part_of_speech="n",
                 members=("alpha",),
-                definitions=("second alpha",),
+                definitions=("second\talpha",),
                 relations=(),
             ),
             SynsetRecord(
@@ -121,8 +130,7 @@ def _snapshot() -> WordnetSnapshot:
 
 
 def _public_position(scalar: str) -> int | None:
-    # Deterministic fixture only; this test is about English construction,
-    # not the production UCNS authority verification performed by run().
+    # Fixture only; production run verifies exact UCNS carrier authority.
     return ord(scalar) % 157
 
 
@@ -143,35 +151,46 @@ def _table_names(db: sqlite3.Connection) -> set[str]:
     }
 
 
+def _component_text(db: sqlite3.Connection, definition_id: int) -> str:
+    parts: list[str] = []
+    rows = db.execute(
+        "SELECT dc.kind, dc.word_id, dc.character_id "
+        "FROM definition_components dc WHERE dc.definition_id=? ORDER BY dc.ordinal",
+        (definition_id,),
+    )
+    for kind, word_id, character_id in rows:
+        if kind == "word":
+            parts.append(
+                db.execute("SELECT surface FROM words WHERE id=?", (word_id,)).fetchone()[0]
+            )
+        else:
+            parts.append(
+                db.execute("SELECT scalar FROM characters WHERE id=?", (character_id,)).fetchone()[0]
+            )
+    return "".join(parts)
+
+
 def test_one_character_and_one_word_identity_are_reused(tmp_path: Path) -> None:
     db_path = tmp_path / "construct.db"
     _build(db_path)
     db = sqlite3.connect(db_path)
     try:
-        alpha_id = db.execute(
-            "SELECT id FROM words WHERE surface='alpha'"
-        ).fetchone()[0]
-        assert db.execute(
-            "SELECT COUNT(*) FROM words WHERE surface='alpha'"
-        ).fetchone()[0] == 1
-
-        # The same alpha word is both the definition origin and a participant
-        # in its own sentence context; no occurrence-specific word is minted.
-        origin_ids = {
+        alpha_id = db.execute("SELECT id FROM words WHERE surface='alpha'").fetchone()[0]
+        assert db.execute("SELECT COUNT(*) FROM words WHERE surface='alpha'").fetchone()[0] == 1
+        assert {
             row[0]
             for row in db.execute(
-                "SELECT DISTINCT origin_word_id FROM definitions WHERE sense_id IN ('z-sense','a-sense')"
+                "SELECT DISTINCT origin_word_id FROM definitions "
+                "WHERE sense_id IN ('z-sense','a-sense')"
             )
-        }
-        assert origin_ids == {alpha_id}
+        } == {alpha_id}
         assert db.execute(
-            "SELECT COUNT(*) FROM definition_words WHERE word_id=?",
+            "SELECT COUNT(*) FROM definition_components "
+            "WHERE kind='word' AND word_id=?",
             (alpha_id,),
-        ).fetchone()[0] >= 3
+        ).fetchone()[0] >= 2
 
-        letter_id = db.execute(
-            "SELECT id FROM words WHERE surface='letter'"
-        ).fetchone()[0]
+        letter_id = db.execute("SELECT id FROM words WHERE surface='letter'").fetchone()[0]
         character_ids = [
             row[0]
             for row in db.execute(
@@ -179,26 +198,21 @@ def test_one_character_and_one_word_identity_are_reused(tmp_path: Path) -> None:
                 (letter_id,),
             )
         ]
-        # l e t t e r: repeated e and t positions reuse one character identity.
         assert character_ids[1] == character_ids[4]
         assert character_ids[2] == character_ids[3]
-        assert db.execute(
-            "SELECT COUNT(*) FROM characters WHERE scalar='t'"
-        ).fetchone()[0] == 1
+        assert db.execute("SELECT COUNT(*) FROM characters WHERE scalar='t'").fetchone()[0] == 1
     finally:
         db.close()
 
 
-def test_definitions_share_origin_and_preserve_distinct_evidence(tmp_path: Path) -> None:
+def test_definitions_share_origin_and_preserve_direct_and_chain_topology(tmp_path: Path) -> None:
     db_path = tmp_path / "construct.db"
     _build(db_path)
     db = sqlite3.connect(db_path)
     try:
-        alpha_id = db.execute(
-            "SELECT id FROM words WHERE surface='alpha'"
-        ).fetchone()[0]
+        alpha_id = db.execute("SELECT id FROM words WHERE surface='alpha'").fetchone()[0]
         definitions = db.execute(
-            "SELECT id, origin_word_id, ordinal, sense_id, text "
+            "SELECT id, origin_word_id, ordinal, sense_id, previous_definition_id "
             "FROM definitions WHERE origin_word_id=? ORDER BY ordinal",
             (alpha_id,),
         ).fetchall()
@@ -207,27 +221,53 @@ def test_definitions_share_origin_and_preserve_distinct_evidence(tmp_path: Path)
             (2, "a-sense"),
         ]
         assert all(row[1] == alpha_id for row in definitions)
+        assert definitions[0][4] is None
+        assert definitions[1][4] == definitions[0][0]
+    finally:
+        db.close()
 
-        first_id = definitions[0][0]
-        spans = db.execute(
-            "SELECT ordinal, w.surface, start_offset, end_offset "
-            "FROM definition_words dw JOIN words w ON w.id=dw.word_id "
-            "WHERE definition_id=? ORDER BY ordinal",
-            (first_id,),
+
+def test_definition_components_reconstruct_exact_source_and_keep_evidence_distinct(tmp_path: Path) -> None:
+    db_path = tmp_path / "construct.db"
+    _build(db_path)
+    db = sqlite3.connect(db_path)
+    try:
+        first = db.execute(
+            "SELECT id, text FROM definitions WHERE sense_id='z-sense'"
+        ).fetchone()
+        assert _component_text(db, first[0]) == first[1] == "alpha letter alpha."
+        rows = db.execute(
+            "SELECT dc.kind, w.surface, c.scalar, dc.start_offset, dc.end_offset "
+            "FROM definition_components dc "
+            "LEFT JOIN words w ON w.id=dc.word_id "
+            "LEFT JOIN characters c ON c.id=dc.character_id "
+            "WHERE dc.definition_id=? ORDER BY dc.ordinal",
+            (first[0],),
         ).fetchall()
-        assert spans == [
-            (1, "alpha", 0, 5),
-            (2, "letter", 6, 12),
-            (3, "alpha", 13, 18),
+        assert rows == [
+            ("word", "alpha", None, 0, 5),
+            ("character", None, " ", 5, 6),
+            ("word", "letter", None, 6, 12),
+            ("character", None, " ", 12, 13),
+            ("word", "alpha.", None, 13, 19),
         ]
 
-        other_id = db.execute(
-            "SELECT id FROM words WHERE surface='other'"
-        ).fetchone()[0]
+        second = db.execute(
+            "SELECT id, text FROM definitions WHERE sense_id='a-sense'"
+        ).fetchone()
+        assert _component_text(db, second[0]) == second[1] == "second\talpha"
+        tab_id = db.execute("SELECT id FROM characters WHERE scalar=?", ("\t",)).fetchone()[0]
+        assert db.execute(
+            "SELECT COUNT(*) FROM definition_components "
+            "WHERE definition_id=? AND kind='character' AND character_id=?",
+            (second[0], tab_id),
+        ).fetchone()[0] == 1
+
+        other_id = db.execute("SELECT id FROM words WHERE surface='other'").fetchone()[0]
         evidence = db.execute(
             "SELECT channel, relation, target_word_id, target_ref "
-            "FROM semantic_evidence WHERE definition_id=? ORDER BY source_ordinal, target_word_id",
-            (first_id,),
+            "FROM semantic_evidence WHERE definition_id=? ORDER BY id",
+            (first[0],),
         ).fetchall()
         assert ("sense", "also", other_id, "other-sense") in evidence
         assert ("synset", "similar", other_id, "s-other") in evidence
@@ -236,6 +276,8 @@ def test_definitions_share_origin_and_preserve_distinct_evidence(tmp_path: Path)
         meta = dict(db.execute("SELECT key, value FROM meta"))
         assert meta["geometry_state"] == GEOMETRY_STATE
         assert meta["resolution_rule"] == RESOLUTION_RULE
+        assert meta["definition_component_rule"] == DEFINITION_COMPONENT_RULE
+        assert json.loads(meta["definition_topologies"]) == ["direct", "chain"]
         assert json.loads(meta["evidence_channels"]) == [
             "ordinal",
             "semantic",
@@ -257,7 +299,7 @@ def test_no_old_singleton_atlas_or_invented_geometry_exists(tmp_path: Path) -> N
             "words",
             "word_characters",
             "definitions",
-            "definition_words",
+            "definition_components",
             "semantic_evidence",
             "unresolved_semantic_evidence",
         }
@@ -280,15 +322,15 @@ def test_no_old_singleton_atlas_or_invented_geometry_exists(tmp_path: Path) -> N
                 for column in columns
                 for fragment in forbidden_fragments
             )
-
-        # Sense and synset identifiers are provenance fields on definitions;
-        # they never become independent object tables.
-        assert "senses" not in _table_names(db)
-        assert "synsets" not in _table_names(db)
-        assert "sentences" not in _table_names(db)
-        assert "occurrences" not in _table_names(db)
-        assert "relation_circles" not in _table_names(db)
-        assert "tangencies" not in _table_names(db)
+        for forbidden in (
+            "senses",
+            "synsets",
+            "sentences",
+            "occurrences",
+            "relation_circles",
+            "tangencies",
+        ):
+            assert forbidden not in _table_names(db)
     finally:
         db.close()
 

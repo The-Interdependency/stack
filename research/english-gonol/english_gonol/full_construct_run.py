@@ -1,21 +1,27 @@
-"""Full-corpus English gonol construction evidence builder.
+"""Full-corpus English gonol construction, normalized and geometry-honest.
 
-This builder implements only the construction that is already specified:
+This builder implements only the construction already specified:
 
-* one exact character identity for each admitted Unicode scalar;
-* one exact word identity for each admitted surface;
-* words reference those character identities in exact order and multiplicity;
-* every definition is anchored to the one shared origin word;
-* definition ordinal evidence and OEWN semantic evidence remain distinct;
-* the ordered words of the definition are retained as sentence-context evidence;
-* resolution is by preponderance relative to that sentence context;
-* no weight, direction, distance, radius, tangency, motion, closure graph,
-  sentence singleton, sense singleton, synset singleton, or n-gram singleton
-  is invented.
+* one shared identity for each exact admitted character scalar;
+* one shared identity for each exact admitted word surface;
+* words reuse those character identities in exact order and multiplicity;
+* every definition is a word-anchored construction with that word as origin;
+* both required definition topologies are preserved: direct word->Dn bindings
+  and the sequential word->D1->D2->... chain;
+* definition source characters are preserved exactly as ordered components:
+  non-whitespace runs reuse shared word identities, while every whitespace
+  scalar reuses its shared character identity;
+* ordinal evidence, semantic evidence, and exact sentence context remain
+  distinct inputs;
+* resolution is by preponderance relative to the rest of the sentence in which
+  the word appears;
+* no weight, direction, distance, vector, coordinate, radius, tangency, motion,
+  closure graph, sentence singleton, sense singleton, synset singleton, or
+  n-gram singleton is invented.
 
-The corpus is evidence. Sense and synset identifiers are provenance locators,
-not gonols. The exact UCNS law that turns the admitted evidence into spatial
-displacement is still unresolved; that boundary is recorded as ``hmmm``.
+OEWN senses and synsets are evidence/provenance, not gonols. The exact UCNS law
+that turns the admitted evidence into spatial displacement remains unresolved;
+that boundary is recorded as ``hmmm``.
 
 The materialized artifact is one normalized SQLite database plus a small
 manifest. It is never duplicated into a giant JSON serialization.
@@ -25,7 +31,7 @@ manifest. It is never duplicated into a giant JSON serialization.
 # id: english_gonol_full_construct
 #   module_name: full_construct_run
 #   module_kind: builder
-#   summary: full-corpus normalized English gonol construction evidence with one character identity, one word identity, word-origin definitions, ordinal and semantic evidence, and no invented geometry
+#   summary: full-corpus normalized English gonol construction with shared character/word identities, word-anchored definition constructions, direct+chain topology, exact source components, distinct ordinal/semantic/context evidence, and no invented geometry
 #   owner: Erin Spencer
 #   public_surface: SCHEMA, VERSION, UCNS_PUBLIC_GONOL_COMMIT, FullConstructError, build_construct, run, verify_replay
 #   internal_surface: exact source admission, normalized sqlite construction, deterministic logical receipt, verified Public Gonol lookup
@@ -45,19 +51,31 @@ manifest. It is never duplicated into a giant JSON serialization.
 # === CONTRACTS ===
 # id: full_construct_has_one_character_identity
 #   given: the admitted corpus characters
-#   then: each exact Unicode scalar occurs once in characters and every word reuses its character id
+#   then: each exact Unicode scalar occurs once in characters and every word/component reuses its character id
 #   class: correctness
 #   since: 2026-09-14
 #
 # id: full_construct_has_one_word_identity
 #   given: the admitted corpus word surfaces
-#   then: each exact surface occurs once in words and every definition reuses its word id
+#   then: each exact surface occurs once in words and every definition component reuses its word id
 #   class: correctness
 #   since: 2026-09-14
 #
 # id: full_construct_definitions_share_word_origin
 #   given: all definitions for one word
 #   then: every definition references that single word id as origin and carries source ordinal separately
+#   class: correctness
+#   since: 2026-09-14
+#
+# id: full_construct_preserves_both_definition_topologies
+#   given: ordered definitions D1..Dn of one word
+#   then: each Dn binds directly to the word origin and each Dn records the immediately previous definition, with D1 rooted directly at the word
+#   class: correctness
+#   since: 2026-09-14
+#
+# id: full_construct_preserves_exact_definition_components
+#   given: a source definition
+#   then: its ordered components reconstruct the exact source text byte-for-text, with non-whitespace runs reusing word ids and whitespace scalars reusing character ids
 #   class: correctness
 #   since: 2026-09-14
 #
@@ -68,7 +86,7 @@ manifest. It is never duplicated into a giant JSON serialization.
 #   since: 2026-09-14
 #
 # id: full_construct_does_not_promote_evidence_to_gonols
-#   given: OEWN senses, synsets, definitions, and occurrences
+#   given: OEWN senses, synsets, and corpus occurrences
 #   then: no sentence, sense, synset, ngram, closure, attention, tangency, or relation-circle object is created
 #   class: safety
 #   since: 2026-09-14
@@ -93,9 +111,9 @@ from hashlib import sha256
 import json
 import sqlite3
 import subprocess
+import sys
 from pathlib import Path
 from types import ModuleType
-import unicodedata
 from typing import Any, Callable, Iterator
 
 from english_gonol.language.source import (
@@ -107,7 +125,7 @@ from english_gonol.language.source import (
 )
 
 SCHEMA = "english-gonol.full-construct"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 
 UCNS_PUBLIC_GONOL_COMMIT = "4f863ad37096b7baab8f62820ad5cb937b62a3a7"
 UCNS_PUBLIC_GONOL_MODULE_SHA256 = (
@@ -119,12 +137,14 @@ GEOMETRY_STATE = "hmmm"
 HMMM = (
     "the exact UCNS law mapping ordinal + semantic + sentence-context evidence "
     "to geometric displacement is unresolved; no weight, direction, distance, "
-    "radius, tangency, motion, or substitute geometry is synthesized"
+    "vector, coordinate, center, radius, tangency, motion, or substitute "
+    "geometry is synthesized"
 )
 RESOLUTION_RULE = "preponderance relative to the rest of the sentence in which the word appears"
-WORD_ADMISSION_RULE = (
-    "exact maximal Unicode letter/number spans, with apostrophe or hyphen "
-    "connectors admitted only when flanked by letter/number characters; no normalization"
+DEFINITION_COMPONENT_RULE = (
+    "exact ordered source: each maximal non-whitespace run reuses one shared "
+    "word identity; each whitespace scalar reuses one shared character identity; "
+    "no normalization"
 )
 
 _FORBIDDEN_TABLES = frozenset(
@@ -183,39 +203,48 @@ CREATE TABLE definitions (
     synset_id TEXT NOT NULL,
     definition_index INTEGER NOT NULL,
     text TEXT NOT NULL,
-    UNIQUE (origin_word_id, part_of_speech, ordinal)
+    previous_definition_id INTEGER REFERENCES definitions(id),
+    UNIQUE (origin_word_id, ordinal)
 );
 
-CREATE TABLE definition_words (
+CREATE TABLE definition_components (
     definition_id INTEGER NOT NULL REFERENCES definitions(id),
     ordinal INTEGER NOT NULL,
-    word_id INTEGER NOT NULL REFERENCES words(id),
+    kind TEXT NOT NULL CHECK(kind IN ('word', 'character')),
+    word_id INTEGER REFERENCES words(id),
+    character_id INTEGER REFERENCES characters(id),
     start_offset INTEGER NOT NULL,
     end_offset INTEGER NOT NULL,
-    PRIMARY KEY (definition_id, ordinal)
+    PRIMARY KEY (definition_id, ordinal),
+    CHECK(
+        (kind='word' AND word_id IS NOT NULL AND character_id IS NULL)
+        OR
+        (kind='character' AND word_id IS NULL AND character_id IS NOT NULL)
+    )
 ) WITHOUT ROWID;
 
 CREATE TABLE semantic_evidence (
+    id INTEGER PRIMARY KEY,
     definition_id INTEGER NOT NULL REFERENCES definitions(id),
     source_ordinal INTEGER NOT NULL,
     channel TEXT NOT NULL,
     relation TEXT NOT NULL,
     target_word_id INTEGER NOT NULL REFERENCES words(id),
-    target_ref TEXT NOT NULL,
-    PRIMARY KEY (definition_id, source_ordinal, target_word_id)
-) WITHOUT ROWID;
+    target_ref TEXT NOT NULL
+);
 
 CREATE TABLE unresolved_semantic_evidence (
+    id INTEGER PRIMARY KEY,
     definition_id INTEGER NOT NULL REFERENCES definitions(id),
     source_ordinal INTEGER NOT NULL,
     channel TEXT NOT NULL,
     relation TEXT NOT NULL,
-    target_ref TEXT NOT NULL,
-    PRIMARY KEY (definition_id, source_ordinal, target_ref)
-) WITHOUT ROWID;
+    target_ref TEXT NOT NULL
+);
 
-CREATE INDEX idx_definitions_origin ON definitions(origin_word_id, part_of_speech, ordinal);
-CREATE INDEX idx_definition_words_word ON definition_words(word_id, definition_id);
+CREATE INDEX idx_definitions_origin ON definitions(origin_word_id, ordinal);
+CREATE INDEX idx_components_word ON definition_components(word_id, definition_id);
+CREATE INDEX idx_components_character ON definition_components(character_id, definition_id);
 CREATE INDEX idx_semantic_target ON semantic_evidence(target_word_id, definition_id);
 """
 
@@ -258,48 +287,38 @@ def _load_verified_public_gonol(ucns_source_root: str | Path) -> ModuleType:
     if sha256(committed).hexdigest() != UCNS_PUBLIC_GONOL_MODULE_SHA256:
         raise FullConstructError("UCNS public_gonol.py module digest mismatch")
 
-    module = ModuleType("_english_gonol_verified_public_gonol")
+    module_name = "_english_gonol_verified_public_gonol"
+    module = ModuleType(module_name)
     module.__file__ = str(path)
-    exec(compile(committed, str(path), "exec"), module.__dict__)
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        exec(compile(committed, str(path), "exec"), module.__dict__)
+    except Exception:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+        raise
     if module.PUBLIC_GONOL_SHA256 != PUBLIC_GONOL_SHA256:
         raise FullConstructError("Public Gonol arrangement digest mismatch")
     return module
 
 
-def _is_word_core(character: str) -> bool:
-    category = unicodedata.category(character)
-    return category.startswith("L") or category.startswith("N")
+def _definition_runs(text: str) -> Iterator[tuple[str, str, int, int]]:
+    """Yield exact ordered non-whitespace word runs and whitespace scalars."""
 
-
-_CONNECTORS = frozenset({"'", "’", "-", "‐", "‑"})
-
-
-def _word_spans(text: str) -> Iterator[tuple[int, int, str]]:
-    """Yield exact orthographic word evidence without normalizing source text."""
-
-    index = 0
-    length = len(text)
-    while index < length:
-        if not _is_word_core(text[index]):
-            index += 1
-            continue
-        start = index
-        index += 1
-        while index < length:
-            character = text[index]
-            if _is_word_core(character):
-                index += 1
-                continue
-            if (
-                character in _CONNECTORS
-                and index + 1 < length
-                and _is_word_core(text[index - 1])
-                and _is_word_core(text[index + 1])
-            ):
-                index += 1
-                continue
-            break
-        yield start, index, text[start:index]
+    start: int | None = None
+    for index, character in enumerate(text):
+        if character.isspace():
+            if start is not None:
+                yield "word", text[start:index], start, index
+                start = None
+            yield "character", character, index, index + 1
+        elif start is None:
+            start = index
+    if start is not None:
+        yield "word", text[start:], start, len(text)
 
 
 def _collect_surfaces(snapshot: WordnetSnapshot) -> tuple[tuple[str, ...], tuple[str, ...]]:
@@ -314,8 +333,9 @@ def _collect_surfaces(snapshot: WordnetSnapshot) -> tuple[tuple[str, ...], tuple
         words.update(synset.members)
         for definition in synset.definitions:
             characters.update(definition)
-            for _start, _end, surface in _word_spans(definition):
-                words.add(surface)
+            for kind, value, _start, _end in _definition_runs(definition):
+                if kind == "word":
+                    words.add(value)
 
     for surface in words:
         characters.update(surface)
@@ -391,6 +411,7 @@ def _semantic_target_word_ids(
 def _insert_definitions(
     db: sqlite3.Connection,
     snapshot: WordnetSnapshot,
+    character_ids: dict[str, int],
     word_ids: dict[str, int],
 ) -> None:
     synset_map = snapshot.synset_map()
@@ -413,15 +434,20 @@ def _insert_definitions(
             )
         )
 
-    next_definition_id = 1
     grouped: dict[str, list[Any]] = {}
     for lexeme in snapshot.lexemes:
         grouped.setdefault(lexeme.lemma, []).append(lexeme)
 
+    next_definition_id = 1
+    next_semantic_id = 1
+    next_unresolved_id = 1
+
     for lemma in sorted(grouped):
         origin_word_id = word_ids[lemma]
-        for lexeme in sorted(grouped[lemma], key=lambda record: record.part_of_speech):
-            definition_ordinal = 0
+        definition_ordinal = 0
+        previous_definition_id: int | None = None
+
+        for lexeme in grouped[lemma]:
             for sense in lexeme.senses:
                 synset = synset_map.get(sense.synset_id)
                 if synset is None:
@@ -435,8 +461,8 @@ def _insert_definitions(
                     db.execute(
                         "INSERT INTO definitions("
                         "id, origin_word_id, part_of_speech, ordinal, sense_id, "
-                        "synset_id, definition_index, text"
-                        ") VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+                        "synset_id, definition_index, text, previous_definition_id"
+                        ") VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (
                             definition_id,
                             origin_word_id,
@@ -446,33 +472,52 @@ def _insert_definitions(
                             sense.synset_id,
                             definition_index,
                             text,
+                            previous_definition_id,
                         ),
                     )
 
-                    for word_ordinal, (start, end, surface) in enumerate(
-                        _word_spans(text), start=1
+                    reconstructed: list[str] = []
+                    for component_ordinal, (kind, value, start, end) in enumerate(
+                        _definition_runs(text), start=1
                     ):
-                        db.execute(
-                            "INSERT INTO definition_words("
-                            "definition_id, ordinal, word_id, start_offset, end_offset"
-                            ") VALUES(?, ?, ?, ?, ?)",
-                            (
-                                definition_id,
-                                word_ordinal,
-                                word_ids[surface],
-                                start,
-                                end,
-                            ),
+                        reconstructed.append(value)
+                        if kind == "word":
+                            db.execute(
+                                "INSERT INTO definition_components("
+                                "definition_id, ordinal, kind, word_id, character_id, "
+                                "start_offset, end_offset"
+                                ") VALUES(?, ?, 'word', ?, NULL, ?, ?)",
+                                (
+                                    definition_id,
+                                    component_ordinal,
+                                    word_ids[value],
+                                    start,
+                                    end,
+                                ),
+                            )
+                        else:
+                            db.execute(
+                                "INSERT INTO definition_components("
+                                "definition_id, ordinal, kind, word_id, character_id, "
+                                "start_offset, end_offset"
+                                ") VALUES(?, ?, 'character', NULL, ?, ?, ?)",
+                                (
+                                    definition_id,
+                                    component_ordinal,
+                                    character_ids[value],
+                                    start,
+                                    end,
+                                ),
+                            )
+                    if "".join(reconstructed) != text:
+                        raise FullConstructError(
+                            f"definition component reconstruction failed: {sense.sense_id}:{definition_index}"
                         )
 
                     source_ordinal = 0
 
-                    def add_evidence(
-                        channel: str,
-                        relation: str,
-                        target_ref: str,
-                    ) -> None:
-                        nonlocal source_ordinal
+                    def add_evidence(channel: str, relation: str, target_ref: str) -> None:
+                        nonlocal source_ordinal, next_semantic_id, next_unresolved_id
                         source_ordinal += 1
                         targets = _semantic_target_word_ids(
                             target_ref,
@@ -483,9 +528,10 @@ def _insert_definitions(
                         if not targets:
                             db.execute(
                                 "INSERT INTO unresolved_semantic_evidence("
-                                "definition_id, source_ordinal, channel, relation, target_ref"
-                                ") VALUES(?, ?, ?, ?, ?)",
+                                "id, definition_id, source_ordinal, channel, relation, target_ref"
+                                ") VALUES(?, ?, ?, ?, ?, ?)",
                                 (
+                                    next_unresolved_id,
                                     definition_id,
                                     source_ordinal,
                                     channel,
@@ -493,14 +539,16 @@ def _insert_definitions(
                                     target_ref,
                                 ),
                             )
+                            next_unresolved_id += 1
                             return
                         for target_word_id in targets:
                             db.execute(
                                 "INSERT INTO semantic_evidence("
-                                "definition_id, source_ordinal, channel, relation, "
+                                "id, definition_id, source_ordinal, channel, relation, "
                                 "target_word_id, target_ref"
-                                ") VALUES(?, ?, ?, ?, ?, ?)",
+                                ") VALUES(?, ?, ?, ?, ?, ?, ?)",
                                 (
+                                    next_semantic_id,
                                     definition_id,
                                     source_ordinal,
                                     channel,
@@ -509,6 +557,7 @@ def _insert_definitions(
                                     target_ref,
                                 ),
                             )
+                            next_semantic_id += 1
 
                     for relation, targets in sense.relations:
                         for target_ref in targets:
@@ -523,40 +572,36 @@ def _insert_definitions(
                             continue
                         add_evidence("synset-membership", "co-member", member)
 
+                    previous_definition_id = definition_id
+
 
 _TABLE_QUERIES: tuple[tuple[str, str], ...] = (
     ("meta", "SELECT key, value FROM meta ORDER BY key"),
-    (
-        "characters",
-        "SELECT id, scalar, public_position FROM characters ORDER BY id",
-    ),
+    ("characters", "SELECT id, scalar, public_position FROM characters ORDER BY id"),
     ("words", "SELECT id, surface FROM words ORDER BY id"),
     (
         "word_characters",
-        "SELECT word_id, ordinal, character_id FROM word_characters "
-        "ORDER BY word_id, ordinal",
+        "SELECT word_id, ordinal, character_id FROM word_characters ORDER BY word_id, ordinal",
     ),
     (
         "definitions",
-        "SELECT id, origin_word_id, part_of_speech, ordinal, sense_id, "
-        "synset_id, definition_index, text FROM definitions ORDER BY id",
+        "SELECT id, origin_word_id, part_of_speech, ordinal, sense_id, synset_id, "
+        "definition_index, text, previous_definition_id FROM definitions ORDER BY id",
     ),
     (
-        "definition_words",
-        "SELECT definition_id, ordinal, word_id, start_offset, end_offset "
-        "FROM definition_words ORDER BY definition_id, ordinal",
+        "definition_components",
+        "SELECT definition_id, ordinal, kind, word_id, character_id, start_offset, end_offset "
+        "FROM definition_components ORDER BY definition_id, ordinal",
     ),
     (
         "semantic_evidence",
-        "SELECT definition_id, source_ordinal, channel, relation, target_word_id, target_ref "
-        "FROM semantic_evidence "
-        "ORDER BY definition_id, source_ordinal, target_word_id",
+        "SELECT id, definition_id, source_ordinal, channel, relation, target_word_id, target_ref "
+        "FROM semantic_evidence ORDER BY id",
     ),
     (
         "unresolved_semantic_evidence",
-        "SELECT definition_id, source_ordinal, channel, relation, target_ref "
-        "FROM unresolved_semantic_evidence "
-        "ORDER BY definition_id, source_ordinal, target_ref",
+        "SELECT id, definition_id, source_ordinal, channel, relation, target_ref "
+        "FROM unresolved_semantic_evidence ORDER BY id",
     ),
 )
 
@@ -600,7 +645,7 @@ def build_construct(
     public_gonol_sha256: str = PUBLIC_GONOL_SHA256,
     overwrite: bool = False,
 ) -> dict[str, Any]:
-    """Build the normalized construction without inventing the missing geometry."""
+    """Build the normalized construction without inventing missing geometry."""
 
     target = Path(db_path).resolve()
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -621,7 +666,8 @@ def build_construct(
         _set_meta(db, "ucns_public_gonol_sha256", public_gonol_sha256)
         _set_meta(db, "geometry_state", GEOMETRY_STATE)
         _set_meta(db, "hmmm", HMMM)
-        _set_meta(db, "definition_word_admission", WORD_ADMISSION_RULE)
+        _set_meta(db, "definition_component_rule", DEFINITION_COMPONENT_RULE)
+        _set_meta(db, "definition_topologies", ["direct", "chain"])
         _set_meta(db, "evidence_channels", ["ordinal", "semantic", "sentence-context"])
         _set_meta(db, "resolution_rule", RESOLUTION_RULE)
         _set_meta(db, "character_identity", "one exact scalar -> one character id")
@@ -629,10 +675,8 @@ def build_construct(
         _set_meta(db, "normalization", "none")
         _set_meta(db, "invented_geometry", "false")
 
-        _character_ids, word_ids = _insert_identities(
-            db, snapshot, public_position
-        )
-        _insert_definitions(db, snapshot, word_ids)
+        character_ids, word_ids = _insert_identities(db, snapshot, public_position)
+        _insert_definitions(db, snapshot, character_ids, word_ids)
         db.commit()
         _assert_schema_boundary(db)
         receipt = _logical_receipt(db)
@@ -644,7 +688,7 @@ def build_construct(
                 "words",
                 "word_characters",
                 "definitions",
-                "definition_words",
+                "definition_components",
                 "semantic_evidence",
                 "unresolved_semantic_evidence",
             )
@@ -704,9 +748,10 @@ def run(
         "receipt_sha256": result["receipt_sha256"],
         "counts": result["counts"],
         "geometry_state": GEOMETRY_STATE,
+        "definition_component_rule": DEFINITION_COMPONENT_RULE,
+        "definition_topologies": ["direct", "chain"],
         "evidence_channels": ["ordinal", "semantic", "sentence-context"],
         "resolution_rule": RESOLUTION_RULE,
-        "definition_word_admission": WORD_ADMISSION_RULE,
         "invented_geometry": False,
         "hmmm": HMMM,
     }
