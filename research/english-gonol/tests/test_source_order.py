@@ -27,26 +27,24 @@ def test_loader_preserves_source_sense_order(
     # would silently destroy the source ordinal evidence used by construction.
     (tmp_path / "frames.yaml").write_text("{}\n", encoding="utf-8")
     (tmp_path / "entries-test.yaml").write_text(
-        """word:\n"
+        "word:\n"
         "  n:\n"
         "    sense:\n"
         "      - id: z-sense\n"
         "        synset: s-z\n"
         "      - id: a-sense\n"
-        "        synset: s-a\n"
-        """,
+        "        synset: s-a\n",
         encoding="utf-8",
     )
     (tmp_path / "noun.test.yaml").write_text(
-        """s-z:\n"
+        "s-z:\n"
         "  partOfSpeech: n\n"
         "  members: [word]\n"
         "  definition: [first definition]\n"
         "s-a:\n"
         "  partOfSpeech: n\n"
         "  members: [word]\n"
-        "  definition: [second definition]\n"
-        """,
+        "  definition: [second definition]\n",
         encoding="utf-8",
     )
 
