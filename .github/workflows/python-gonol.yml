@@ -38,6 +38,15 @@ jobs:
         run: python -m pip install pytest
       - name: Stack structural consistency
         run: python tools/check_stack_consistency.py
+      - name: Checkout pinned UCNS Public Gonol authority
+        uses: actions/checkout@v6
+        with:
+          repository: The-Interdependency/ucns
+          ref: 62e08ee1cf3b5d7b6e48c927b1047509e6328b5c
+          path: .ci/ucns
+          persist-credentials: false
       - name: Python Gonol construction tests
         working-directory: research/python-gonol
+        env:
+          UCNS_SOURCE_ROOT: ${{ github.workspace }}/.ci/ucns
         run: python -m pytest -q tests
