@@ -2,47 +2,32 @@
 
 Usage guidance::
 
-    python -m python_gonol source.py --out source.gonol.json
-    python -m python_gonol --verify source.gonol.json
+    python -m python_gonol source.py --out-dir construct --ucns-source-root ~/src/ucns
+    python -m python_gonol --verify construct --ucns-source-root ~/src/ucns
 
-The construction command exits 2 when source syntax remains ``hmmm``. The
-receipt is still written so admitted character, definition, and lexical
-closures survive.
+The construct is one compact SQLite database plus a small manifest.
 """
 
 # === MODULE_BUILD ===
 # id: python_gonol_cli
 #   module_name: python_gonol.__main__
 #   module_kind: adapter
-#   summary: provides file-to-receipt character-first construction and receipt verification commands
+#   summary: provides file-to-construct and construct verification commands
 #   owner: Python Gonol Construction (stack-local research)
 #   public_surface: python -m python_gonol
 #   internal_surface: main
 #   auth_boundary: none
-#   storage_boundary: reads source or receipt files and writes an explicitly named receipt file or stdout
+#   storage_boundary: reads source or construct files and writes an explicitly named construct directory
 #   network_boundary: none
 #   user_data_boundary: read and write at caller-selected paths
 #   admin_only: false
-#   tests: tests.test_affixiation
+#   tests: tests.test_construct
 #   rollout: explicit command only
 #   rollback: remove the CLI while retaining the importable constructor
-#   requires: python_gonol_affixiation, python_gonol_model
-#   since: 2026-09-12
-#   unresolved: streaming receipts for very large sources remain hmmm
+#   requires: python_gonol_construct
+#   since: 2026-09-15
+#   unresolved: streaming constructs for very large sources remain hmmm
 # === END MODULE_BUILD ===
-
-# === BOUNDARIES ===
-# id: python_gonol_cli_file_boundary
-#   summary: reads one caller-selected local source or receipt and writes only the explicit output path
-#   auth_boundary: none
-#   storage_boundary: write
-#   network_boundary: none
-#   user_data_boundary: read
-#   admin_only: false
-#   pii: possible
-#   secrets: read
-#   owner: caller
-# === END BOUNDARIES ===
 
 from __future__ import annotations
 
@@ -50,52 +35,56 @@ import argparse
 from pathlib import Path
 import sys
 
-from .affixiation import (
+from .construct import (
+    PythonGonolConstructionError,
     affixiate_python_bytes,
-    reconstruct_source,
-    replay_python_affixiation,
+    verify_construct,
 )
-from .model import PythonAffixiationReceipt
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Affixiate Python 3.12 source into gonols from characters upward."
+        description="Construct Python 3.12 source with the English method."
     )
     parser.add_argument("source", nargs="?", help="Python source file")
-    parser.add_argument("--out", help="receipt path; omit for stdout")
-    parser.add_argument("--verify", metavar="RECEIPT", help="verify an existing receipt")
-    parser.add_argument("--pretty", action="store_true", help="pretty-print JSON")
+    parser.add_argument("--out-dir", help="construct directory; required unless --verify")
+    parser.add_argument("--ucns-source-root", required=True, help="UCNS checkout path")
+    parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--verify", metavar="CONSTRUCT_DIR", help="verify an existing construct")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     if args.verify:
-        if args.source or args.out:
-            raise SystemExit("--verify does not accept source or --out")
-        receipt = PythonAffixiationReceipt.from_json(
-            Path(args.verify).read_text(encoding="utf-8")
-        )
-        replay_python_affixiation(receipt)
-        print(
-            f"verified {receipt.receipt_digest} source={receipt.source_id} standing={receipt.standing}"
-        )
+        if args.source or args.out_dir:
+            raise SystemExit("--verify does not accept source or --out-dir")
+        try:
+            receipt = verify_construct(Path(args.verify), args.ucns_source_root)
+        except PythonGonolConstructionError as exc:
+            print(f"verify failed: {exc}", file=sys.stderr)
+            return 1
+        print(f"verified {receipt}")
         return 0
-    if not args.source:
-        raise SystemExit("source is required unless --verify is used")
-    path = Path(args.source)
-    receipt = affixiate_python_bytes(path.read_bytes(), source_id=path.as_posix())
-    rendered = receipt.to_json(pretty=args.pretty)
-    if args.out:
-        Path(args.out).write_text(rendered, encoding="utf-8")
-    else:
-        sys.stdout.write(rendered)
-    if receipt.standing == "hmmm":
-        for item in receipt.hmmm:
-            if item.startswith(("tokenizer:", "grammar:", "unmatched", "delimiter mismatch")):
-                print(f"hmmm: {item}", file=sys.stderr)
-        return 2
+    if not args.source or not args.out_dir:
+        raise SystemExit("source and --out-dir are required unless --verify is used")
+    try:
+        result = affixiate_python_bytes(
+            Path(args.source).read_bytes(),
+            source_id=Path(args.source).as_posix(),
+            ucns_source_root=args.ucns_source_root,
+            state_dir=Path(args.out_dir),
+            overwrite=args.overwrite,
+        )
+    except PythonGonolConstructionError as exc:
+        print(f"construction failed: {exc}", file=sys.stderr)
+        return 1
+    print(
+        f"constructed {result.source_id} receipt={result.receipt_sha256} "
+        f"occurrences={result.occurrence_count} characters={result.character_count} "
+        f"controls={result.control_count} newlines={result.newline_count} "
+        f"not_on_carrier={list(result.not_on_pinned_carrier)}"
+    )
     return 0
 
 

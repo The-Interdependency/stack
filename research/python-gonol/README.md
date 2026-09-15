@@ -1,67 +1,90 @@
 # Python Gonol Construction
 
-Stack-local research implementation for affixiating Python source into gonols from its lowest admitted source units upward.
+Stack-local research implementation that affixiates Python 3.12 source into
+gonols using the exact construction method used by English Gonol.
 
 ## Construction
 
 ```text
 exact decoded source occurrences
-    -> character gonols
-    -> character-definition gonols sharing each character origin
-    -> Python lexical-form gonols from closed character occurrences
-    -> matched delimiter gonols
-    -> recursive Python grammar-construction gonols
-    -> module gonol
+    -> one shared identity per pinned Public Gonol glyph
+    -> ordered occurrence references (address, line, column, provenance)
+    -> control constructions: TAB, LF, FF, CR
+    -> logical newlines: LF, CR, CR+LF
 ```
 
-Every source occurrence remains independently addressable. Every character may close multiple definition gonols without changing the character's identity: Unicode category/name, Python identifier eligibility, exact-token membership, layout role, quote/comment introducer role, and other profile-backed definitions may coexist. Lexical forms consume the already-closed character occurrences atomically; larger constructions consume already-closed lexical or construction gonols atomically.
+Every source occurrence remains independently addressable. Every admitted
+glyph has one shared character identity; occurrences reference it in exact
+order and multiplicity. Tokens and AST nodes verify construction; they never
+substitute for it.
 
-`character` means one exact decoded Unicode scalar occurrence. Spaces, newlines, digits, operators, delimiters, letters, and punctuation are all character gonols. Nothing is normalized, deduplicated, trimmed, or silently discarded.
+## Carrier boundary
 
-## Recognition boundary
+UCNS owns geometry and the exact 157-position Public Gonol carrier. This
+builder consumes the pinned carrier (`ucns@62e08ee`) and its digest; it never
+copies, extends, or reinterprets it. The four control scalars
+(`U+0009`, `U+000A`, `U+000C`, `U+000D`) are constructed from the carrier
+glyphs of their Unicode names and code points:
 
 ```text
-METAPAT                         affixiation semantics
-    -> UCNS                     geometry and Public Gonol positions
-        -> Python Gonol         Python source admission and construction
-            -> CPython          pinned recognition witness only
+CHARACTER TABULATION + U+0009 -> TAB
+LINE FEED          + U+000A -> LF
+FORM FEED          + U+000C -> FF
+CARRIAGE RETURN    + U+000D -> CR
 ```
 
-The private `_recognition` module uses CPython 3.12 `tokenize` and `ast` after the source occurrence floor has been admitted. Its former public "letter" vocabulary is deprecated and removed from the public receipt: it is now only an internal recognition plan. Token, AST, compiler, and code objects never become gonols and never replace the source-built relation graph.
+Names and code points are constitutive participants, not metadata. TAB
+affixiates with enough SPACE gonols to reach the next eight-column stop. CR,
+LF, and CR+LF construct logical newlines while preserving their exact source
+constituents and remaining source-distinct. Any other off-carrier source
+scalar is recorded as hmmm with its exact address, never assigned an invented
+position.
 
-Any valid Python 3.12 file-input source accepted by the pinned recognition witness is traversed recursively without a grammar-node whitelist. The broad Python 3.12 surface fixture remains a regression witness; exhaustive parity against CPython's complete grammar/test corpus remains `hmmm` rather than being claimed from that fixture alone.
+## Artifacts
 
-Standing: **implemented stack-local candidate; not canon and not an independent release**.
+One compact SQLite construct plus a small manifest:
 
-## Usage guidance
+```text
+construct.db   characters, occurrences, control_identities, controls, newlines, meta
+manifest.json  schema, source digests, counts, carrier pin, receipt_sha256, hmmm
+```
 
-Run from this directory with Python 3.12:
+No giant JSON receipt.
+
+## Usage
 
 ```bash
-python -m python_gonol path/to/source.py --out source.gonol.json --pretty
-python -m python_gonol --verify source.gonol.json
+python -m python_gonol source.py --out-dir construct --ucns-source-root ~/src/ucns
+python -m python_gonol --verify construct --ucns-source-root ~/src/ucns
 python -m pytest -q tests
 ```
 
-Use the bytes entry point for files so an encoding declaration and exact original bytes remain bound:
+Python API:
 
 ```python
 from pathlib import Path
-from python_gonol import affixiate_python_bytes, replay_python_affixiation
+from python_gonol import affixiate_python_bytes, verify_construct
 
-path = Path("example.py")
-receipt = affixiate_python_bytes(path.read_bytes(), source_id=path.as_posix())
-replay_python_affixiation(receipt)
+result = affixiate_python_bytes(
+    Path("example.py").read_bytes(),
+    source_id="example.py",
+    ucns_source_root="/home/wayseer_interdependentway_org/src/ucns",
+    state_dir=Path("construct"),
+)
+verify_construct(Path("construct"), "/home/wayseer_interdependentway_org/src/ucns")
 ```
 
-For invalid or unfinished source, the constructor retains every admitted character, character-definition, lexical, and matched-delimiter closure available beneath the failure, closes a `python.source.hmmm` root, records the exact tokenizer/delimiter/grammar boundary, and the CLI exits `2`. A missing end parenthesis therefore remains visible without discarding prior construction.
+## Acceptance gates
 
-See [`docs/PYTHON_AFFIXIATION_BOUNDARY.md`](docs/PYTHON_AFFIXIATION_BOUNDARY.md) for the contract and [`WORK_GRAPH.json`](WORK_GRAPH.json) for exact inputs.
+- `x=1\n` produces no not-on-pinned-carrier.
+- LF replays as exact `U+000A`.
+- TAB preserves `U+0009` and expands correctly at every starting column.
+- LF, CR, and CR+LF remain source-distinct.
+- Tampering with identity, relation, order, or provenance fails replay.
+- The declared corpus completes within preflighted storage limits.
 
 ## hmmm
 
-- exact UCNS geometric operation of Public Gonol function positions;
-- exact UCNS Möbius-carrier affixiation/coupling law;
-- exhaustive parity replay against the complete CPython 3.12 grammar/test corpus;
-- Python language profiles after Python 3.12 file input;
-- streaming/checkpointed receipt materialization for unusually large source trees.
+- deeper geometric functions of Public Gonol positions remain unresolved;
+- admission of arbitrary Unicode source characters remains unresolved and is
+  preserved without invention.
