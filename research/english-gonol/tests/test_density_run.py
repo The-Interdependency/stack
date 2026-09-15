@@ -47,6 +47,22 @@
 #   mutates: none
 #   cleanup: none
 #
+# id: check_density_relational_scales_are_determinable_not_stored
+#   proves: density_relational_scales_are_determinable_not_stored
+#   call: self::test_relational_scales_are_determinable_not_stored
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
+# id: check_density_relational_receipt_is_compact
+#   proves: density_relational_receipt_is_compact
+#   call: self::test_relational_receipt_is_compact
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
 # id: check_density_stays_outside_the_construct
 #   proves: density_stays_outside_the_construct
 #   call: self::test_density_stays_outside_the_construct
@@ -78,6 +94,9 @@ from english_gonol.density_run import (
     VERSION,
     DensityError,
     build_density,
+    iter_characters_in_word_to_characters_in_definitions,
+    iter_word_to_words_in_definitions,
+    relational_receipt,
     run,
 )
 
@@ -112,7 +131,13 @@ def _make_construct(tmp_path: Path) -> tuple[Path, Path]:
         "CREATE TABLE characters (id INTEGER PRIMARY KEY, scalar TEXT NOT NULL, public_position INTEGER)"
     )
     connection.execute(
+        "CREATE TABLE words (id INTEGER PRIMARY KEY, surface TEXT NOT NULL)"
+    )
+    connection.execute(
         "CREATE TABLE word_characters (word_id INTEGER NOT NULL, ordinal INTEGER NOT NULL, character_id INTEGER NOT NULL, PRIMARY KEY(word_id, ordinal))"
+    )
+    connection.execute(
+        "CREATE TABLE definitions (id INTEGER PRIMARY KEY, origin_word_id INTEGER NOT NULL, part_of_speech TEXT NOT NULL, ordinal INTEGER NOT NULL, sense_id TEXT NOT NULL, synset_id TEXT NOT NULL, definition_index INTEGER NOT NULL, text TEXT NOT NULL, previous_definition_id INTEGER)"
     )
     connection.execute(
         "CREATE TABLE definition_components (definition_id INTEGER NOT NULL, ordinal INTEGER NOT NULL, kind TEXT NOT NULL, word_id INTEGER, character_id INTEGER, start_offset INTEGER NOT NULL, end_offset INTEGER NOT NULL, PRIMARY KEY(definition_id, ordinal))"
@@ -124,21 +149,31 @@ def _make_construct(tmp_path: Path) -> tuple[Path, Path]:
         "INSERT INTO characters(id, scalar, public_position) VALUES(?, ?, ?)",
         [(1, "a", 0), (2, "b", 1), (3, " ", None)],
     )
-    # word 10 = a,b,a ; word 11 = b,b
+    # word 10 = 'ab' ; word 11 = 'bb'
+    connection.executemany(
+        "INSERT INTO words(id, surface) VALUES(?, ?)",
+        [(10, "ab"), (11, "bb")],
+    )
     connection.executemany(
         "INSERT INTO word_characters(word_id, ordinal, character_id) VALUES(?, ?, ?)",
-        [(10, 1, 1), (10, 2, 2), (10, 3, 1), (11, 1, 2), (11, 2, 2)],
+        [(10, 1, 1), (10, 2, 2), (11, 1, 2), (11, 2, 2)],
     )
-    # definition 100 = word 10, whitespace scalar, word 11
+    connection.executemany(
+        "INSERT INTO definitions(id, origin_word_id, part_of_speech, ordinal, sense_id, synset_id, definition_index, text, previous_definition_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+            (100, 10, "n", 0, "s-100", "syn-100", 0, "bb ", None),
+            (101, 11, "n", 0, "s-101", "syn-101", 0, "ab", None),
+        ],
+    )
+    # definition 100 of word 10 = target word 11 + whitespace; definition 101 of word 11 = target word 10
     connection.executemany(
         "INSERT INTO definition_components(definition_id, ordinal, kind, word_id, character_id, start_offset, end_offset) VALUES(?, ?, ?, ?, ?, ?, ?)",
         [
-            (100, 1, "word", 10, None, 0, 3),
-            (100, 2, "whitespace", None, 3, 3, 4),
-            (100, 3, "word", 11, None, 4, 6),
+            (100, 1, "word", 11, None, 0, 2),
+            (100, 2, "whitespace", None, 3, 2, 3),
+            (101, 1, "word", 10, None, 0, 2),
         ],
     )
-    # semantic evidence points at target words 10 and 11
     connection.executemany(
         "INSERT INTO semantic_evidence(id, definition_id, source_ordinal, channel, relation, target_word_id, target_ref) VALUES(?, ?, ?, ?, ?, ?, ?)",
         [
@@ -163,10 +198,10 @@ def test_counts_come_from_constructed_occurrence_relations(tmp_path: Path) -> No
     result = build_density(db_path, manifest_path)
 
     word_counts = _counts(result, "word")
-    assert word_counts["a"] == 2
+    assert word_counts["a"] == 1
     assert word_counts["b"] == 3
     assert word_counts[" "] == 0
-    assert result.scales["word"]["total"] == 5
+    assert result.scales["word"]["total"] == 4
 
 
 def test_density_is_determinable_at_every_scale(tmp_path: Path) -> None:
@@ -176,11 +211,11 @@ def test_density_is_determinable_at_every_scale(tmp_path: Path) -> None:
     assert set(result.scales) == {"character", "word", "definition", "semantic"}
     assert result.scales["character"]["total"] == 3
     assert _counts(result, "character") == {"a": 1, "b": 1, " ": 1}
-    assert result.scales["word"]["total"] == 5
-    assert result.scales["definition"]["total"] == 6
-    assert _counts(result, "definition") == {"a": 2, "b": 3, " ": 1}
-    assert result.scales["semantic"]["total"] == 5
-    assert _counts(result, "semantic") == {"a": 2, "b": 3, " ": 0}
+    assert result.scales["word"]["total"] == 4
+    assert result.scales["definition"]["total"] == 5
+    assert _counts(result, "definition") == {"a": 1, "b": 3, " ": 1}
+    assert result.scales["semantic"]["total"] == 4
+    assert _counts(result, "semantic") == {"a": 1, "b": 3, " ": 0}
 
 
 def test_fractions_are_exact_reduced(tmp_path: Path) -> None:
@@ -191,8 +226,8 @@ def test_fractions_are_exact_reduced(tmp_path: Path) -> None:
         letter["scalar"]: letter["frequency_fraction"]
         for letter in result.scales["word"]["letters"]
     }
-    assert fractions["a"] == "2/5"
-    assert fractions["b"] == "3/5"
+    assert fractions["a"] == "1/4"
+    assert fractions["b"] == "3/4"
     assert fractions[" "] == "0/1"
 
 
@@ -204,8 +239,8 @@ def test_ratios_are_reduced_between_letters(tmp_path: Path) -> None:
         (ratio["a"], ratio["b"]): ratio["reduced_ratio"]
         for ratio in result.scales["word"]["ratios"]
     }
-    assert ratios[("a", "b")] == "2/3"
-    assert ratios[("a", " ")] == "2/0"
+    assert ratios[("a", "b")] == "1/3"
+    assert ratios[("a", " ")] == "1/0"
     assert ratios[("b", " ")] == "3/0"
 
 
@@ -233,10 +268,66 @@ def test_counts_are_semantic_valuation_inputs(tmp_path: Path) -> None:
     result = build_density(db_path, manifest_path)
 
     valuation = result.semantic_valuation
-    assert valuation["determinable_at_scales"] == ["character", "word", "definition", "semantic"]
-    assert valuation["scale_totals"] == {"character": 3, "word": 5, "definition": 6, "semantic": 5}
+    assert valuation["determinable_at_scales"] == [
+        "character",
+        "word",
+        "definition",
+        "semantic",
+        "word_to_words_in_definitions",
+        "characters_in_word_to_characters_in_definitions",
+    ]
+    assert valuation["scale_totals"] == {
+        "character": 3,
+        "word": 4,
+        "definition": 5,
+        "semantic": 4,
+    }
     assert valuation["valuation_weight"] is None
     assert "geometrically" in valuation["hmmm"]
+
+
+def test_relational_scales_are_determinable_not_stored(tmp_path: Path) -> None:
+    db_path, manifest_path = _make_construct(tmp_path)
+    result = build_density(db_path, manifest_path)
+
+    assert set(result.relational_scales) == {
+        "word_to_words_in_definitions",
+        "characters_in_word_to_characters_in_definitions",
+    }
+    for record in result.relational_scales.values():
+        assert record["stored"] is False
+        assert record["determinable"] is True
+
+    word_rows = {
+        (row["word_id"], row["target_word_id"]): row["count"]
+        for row in iter_word_to_words_in_definitions(db_path)
+    }
+    assert word_rows[(10, 11)] == 1
+    assert word_rows[(11, 10)] == 1
+
+    char_rows = {
+        (row["word_id"], row["scalar"]): row["count"]
+        for row in iter_characters_in_word_to_characters_in_definitions(db_path)
+    }
+    assert char_rows[(10, "b")] == 2
+    assert char_rows[(10, " ")] == 1
+    assert char_rows[(11, "a")] == 1
+    assert char_rows[(11, "b")] == 1
+
+
+def test_relational_receipt_is_compact(tmp_path: Path) -> None:
+    db_path, manifest_path = _make_construct(tmp_path)
+    receipt = relational_receipt(db_path, "word_to_words_in_definitions")
+
+    assert receipt["stored"] is False
+    assert receipt["rows"] == 2
+    assert len(receipt["sha256"]) == 64
+
+    again = relational_receipt(db_path, "word_to_words_in_definitions")
+    assert again == receipt
+
+    with pytest.raises(DensityError):
+        relational_receipt(db_path, "not-a-scale")
 
 
 def test_density_stays_outside_the_construct(tmp_path: Path) -> None:
@@ -253,6 +344,7 @@ def test_density_stays_outside_the_construct(tmp_path: Path) -> None:
     markdown = (out_dir / "density.md").read_text(encoding="utf-8")
     assert "outside the construct" in markdown
     assert "Semantic valuation" in markdown
+    assert "Relational scales" in markdown
 
 
 def test_fails_closed_on_wrong_construct_schema(tmp_path: Path) -> None:

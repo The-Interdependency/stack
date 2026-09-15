@@ -4,7 +4,7 @@
 #   module_kind: measurement
 #   summary: exact per-scalar occurrence counts through every constructed occurrence relation of the verified v2 construct, recorded as semantic-valuation inputs at every scale
 #   owner: Erin Spencer
-#   public_surface: SCHEMA, VERSION, DensityError, DensityResult, build_density, run
+#   public_surface: SCHEMA, VERSION, DensityError, DensityResult, build_density, run, iter_word_to_words_in_definitions, iter_characters_in_word_to_characters_in_definitions, relational_receipt
 #   internal_surface: read-only construct inspection, exact Fraction arithmetic, canonical receipt serialization
 #   auth_boundary: measures the already-constructed English Gonol v2 database; does not retokenize, normalize, or re-admit corpus text; supplies no geometry
 #   storage_boundary: one caller-selected out directory with density.json and density.md
@@ -56,6 +56,18 @@
 #   class: doctrine
 #   since: 2026-09-15
 #
+# id: density_relational_scales_are_determinable_not_stored
+#   given: word-to-words-in-definitions and characters-in-word-to-characters-in-definitions scales
+#   then: each is streamed on demand from the construct and recorded as determinable with stored=false, never materialized into the density table
+#   class: correctness
+#   since: 2026-09-15
+#
+# id: density_relational_receipt_is_compact
+#   given: one relational scale
+#   then: streaming its rows yields a compact row count and sha256 digest without storing the rows
+#   class: correctness
+#   since: 2026-09-15
+#
 # id: density_stays_outside_the_construct
 #   given: a density result
 #   then: it is a separate measurement table that modifies no construct table and invents no geometry
@@ -103,10 +115,10 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import sqlite3
-from typing import Any
+from typing import Any, Iterator
 
 SCHEMA = "english-gonol.corpus-native-density"
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 CONSTRUCT_SCHEMA = "english-gonol.full-construct"
 
 _HMMM = (
@@ -115,6 +127,18 @@ _HMMM = (
 )
 
 _SCALES = ("character", "word", "definition", "semantic")
+
+_RELATIONAL_SCALES: dict[str, str] = {
+    "word_to_words_in_definitions": (
+        "for each origin word, exact counts of word identities appearing in "
+        "its definitions through definition_components word references"
+    ),
+    "characters_in_word_to_characters_in_definitions": (
+        "for each origin word, exact counts of character identities appearing "
+        "in its definitions through definition_components (word references "
+        "expanded through word_characters plus whitespace character references)"
+    ),
+}
 
 
 class DensityError(ValueError):
@@ -129,6 +153,7 @@ class DensityResult:
     builder: dict[str, Any]
     semantic_valuation: dict[str, Any]
     scales: dict[str, dict[str, Any]]
+    relational_scales: dict[str, dict[str, Any]]
     hmmm: str
     receipt_sha256: str
 
@@ -140,6 +165,7 @@ class DensityResult:
             "builder": self.builder,
             "semantic_valuation": self.semantic_valuation,
             "scales": self.scales,
+            "relational_scales": self.relational_scales,
             "hmmm": self.hmmm,
             "receipt_sha256": self.receipt_sha256,
         }
@@ -303,6 +329,114 @@ ORDER BY c.id
 """
 
 
+def _open_construct(construct_db: Path) -> sqlite3.Connection:
+    return sqlite3.connect(f"file:{construct_db}?mode=ro", uri=True)
+
+
+def iter_word_to_words_in_definitions(
+    construct_db: Path,
+) -> Iterator[dict[str, Any]]:
+    """Stream exact word-to-word definition counts on demand.
+
+    One row per ``(origin word, target word)`` pair: the exact count of
+    target word identities inside the origin word's definitions, taken only
+    from ``definitions`` + ``definition_components`` word references.
+    """
+
+    connection = _open_construct(construct_db)
+    try:
+        cursor = connection.execute(
+            """
+            SELECT w.id AS word_id, w.surface AS surface,
+                   dc.word_id AS target_word_id, COUNT(*) AS count
+            FROM words AS w
+            JOIN definitions AS d ON d.origin_word_id = w.id
+            JOIN definition_components AS dc
+              ON dc.definition_id = d.id AND dc.word_id IS NOT NULL
+            GROUP BY w.id, dc.word_id
+            ORDER BY w.id, dc.word_id
+            """
+        )
+        for word_id, surface, target_word_id, count in cursor:
+            yield {
+                "word_id": word_id,
+                "surface": surface,
+                "target_word_id": target_word_id,
+                "count": count,
+            }
+    finally:
+        connection.close()
+
+
+def iter_characters_in_word_to_characters_in_definitions(
+    construct_db: Path,
+) -> Iterator[dict[str, Any]]:
+    """Stream exact character-to-character definition counts on demand.
+
+    One row per ``(origin word, character scalar)`` pair: the exact count of
+    character identities inside the origin word's definitions, taken only
+    from ``definition_components`` — word references expanded through
+    ``word_characters`` and whitespace character references taken directly.
+    """
+
+    connection = _open_construct(construct_db)
+    try:
+        cursor = connection.execute(
+            """
+            SELECT x.wid AS word_id, c.scalar AS scalar, SUM(x.cnt) AS count
+            FROM (
+                SELECT w.id AS wid, wc.character_id AS cid, COUNT(*) AS cnt
+                FROM words AS w
+                JOIN definitions AS d ON d.origin_word_id = w.id
+                JOIN definition_components AS dc ON dc.definition_id = d.id
+                JOIN word_characters AS wc ON wc.word_id = dc.word_id
+                WHERE dc.word_id IS NOT NULL
+                GROUP BY w.id, wc.character_id
+                UNION ALL
+                SELECT w.id AS wid, dc.character_id AS cid, COUNT(*) AS cnt
+                FROM words AS w
+                JOIN definitions AS d ON d.origin_word_id = w.id
+                JOIN definition_components AS dc ON dc.definition_id = d.id
+                WHERE dc.character_id IS NOT NULL
+                GROUP BY w.id, dc.character_id
+            ) AS x
+            JOIN characters AS c ON c.id = x.cid
+            GROUP BY x.wid, c.scalar
+            ORDER BY x.wid, c.id
+            """
+        )
+        for word_id, scalar, count in cursor:
+            yield {"word_id": word_id, "scalar": scalar, "count": count}
+    finally:
+        connection.close()
+
+
+def relational_receipt(construct_db: Path, scale: str) -> dict[str, Any]:
+    """Stream one relational scale and return a compact digest, without storing it."""
+
+    if scale not in _RELATIONAL_SCALES:
+        raise DensityError(f"unknown relational scale: {scale}")
+    if scale == "word_to_words_in_definitions":
+        iterator = iter_word_to_words_in_definitions(construct_db)
+    else:
+        iterator = iter_characters_in_word_to_characters_in_definitions(construct_db)
+
+    digest = sha256()
+    rows = 0
+    for row in iterator:
+        digest.update(
+            json.dumps(row, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        )
+        rows += 1
+    return {
+        "scale": scale,
+        "description": _RELATIONAL_SCALES[scale],
+        "stored": False,
+        "rows": rows,
+        "sha256": digest.hexdigest(),
+    }
+
+
 def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult:
     """Measure per-scale letter density through the constructed relations only."""
 
@@ -351,12 +485,26 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
         ),
     }
 
+    relational_scales = {
+        name: {
+            "description": description,
+            "stored": False,
+            "determinable": True,
+            "iterator": (
+                "iter_word_to_words_in_definitions"
+                if name == "word_to_words_in_definitions"
+                else "iter_characters_in_word_to_characters_in_definitions"
+            ),
+        }
+        for name, description in _RELATIONAL_SCALES.items()
+    }
+
     semantic_valuation = {
         "counts_are": (
             "exact per-scalar occurrence counts through the constructed "
             "occurrence relations at every scale"
         ),
-        "determinable_at_scales": list(_SCALES),
+        "determinable_at_scales": list(_SCALES) + list(_RELATIONAL_SCALES),
         "scale_totals": {
             "character": character_total,
             "word": word_total,
@@ -381,6 +529,7 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
         },
         "semantic_valuation": semantic_valuation,
         "scales": scales,
+        "relational_scales": relational_scales,
         "hmmm": _HMMM,
     }
     receipt = sha256(
@@ -394,6 +543,7 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
         builder=payload["builder"],
         semantic_valuation=semantic_valuation,
         scales=scales,
+        relational_scales=relational_scales,
         hmmm=_HMMM,
         receipt_sha256=receipt,
     )
@@ -429,6 +579,20 @@ def _render_markdown(result: DensityResult) -> str:
     ]
     for scale in _SCALES:
         lines.append(f"| {scale} | {result.scales[scale]['total']} |")
+    lines.extend(
+        [
+            "",
+            "## Relational scales (determinable, not stored)",
+            "",
+        ]
+    )
+    for name, record in result.relational_scales.items():
+        lines.extend(
+            [
+                f"- {name}: {record['description']}",
+                f"  stored: {record['stored']}, determinable: {record['determinable']}",
+            ]
+        )
     for scale in _SCALES:
         record = result.scales[scale]
         lines.extend(

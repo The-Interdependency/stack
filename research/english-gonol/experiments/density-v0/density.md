@@ -11,12 +11,12 @@ semantic-valuation inputs, determinable at any and every scale.
 - construct version: 2.0.0
 - construct receipt: 12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57
 - construct database sha256: af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b
-- density receipt: ba0abf4a3043a6487d49042d0504432e3d4ba10788a67dad90e845f46c022f6a
+- density receipt: 6f54b5fc379a2ae7188603accf5d0ff9ae78e90452bcc5438a3815c80cdeb1a5
 
 ## Semantic valuation
 
 - counts: exact per-scalar occurrence counts through the constructed occurrence relations at every scale
-- determinable at scales: character, word, definition, semantic
+- determinable at scales: character, word, definition, semantic, word_to_words_in_definitions, characters_in_word_to_characters_in_definitions
 - valuation weight: None
 
 ## Scale totals
@@ -27,6 +27,13 @@ semantic-valuation inputs, determinable at any and every scale.
 | word | 1739949 |
 | definition | 11085231 |
 | semantic | 7924690 |
+
+## Relational scales (determinable, not stored)
+
+- word_to_words_in_definitions: for each origin word, exact counts of word identities appearing in its definitions through definition_components word references
+  stored: False, determinable: True
+- characters_in_word_to_characters_in_definitions: for each origin word, exact counts of character identities appearing in its definitions through definition_components (word references expanded through word_characters plus whitespace character references)
+  stored: False, determinable: True
 
 ## Character scale counts
 
