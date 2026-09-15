@@ -1,6 +1,7 @@
-# English Gonol corpus-native letter density
+# English Gonol corpus-native per-scale letter density
 
-Generic measurement table outside the construct.
+Generic measurement table outside the construct. Per-scalar counts are
+semantic-valuation inputs, determinable at any and every scale.
 
 ## Provenance
 
@@ -10,136 +11,530 @@ Generic measurement table outside the construct.
 - construct version: 2.0.0
 - construct receipt: 12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57
 - construct database sha256: af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b
-- density receipt: 9e9f55ea6b9cffe86142383209d511ea13462c56193c789b09284c17e4046569
+- density receipt: ba0abf4a3043a6487d49042d0504432e3d4ba10788a67dad90e845f46c022f6a
 
-Total admitted character occurrences: 1739949
+## Semantic valuation
 
-## Per-letter counts and exact frequency fractions
+- counts: exact per-scalar occurrence counts through the constructed occurrence relations at every scale
+- determinable at scales: character, word, definition, semantic
+- valuation weight: None
+
+## Scale totals
+
+| scale | total |
+|---|---:|
+| character | 118 |
+| word | 1739949 |
+| definition | 11085231 |
+| semantic | 7924690 |
+
+## Character scale counts
+
+Relation: characters identity: each admitted scalar exists once
 
 | scalar | public_position | count | frequency_fraction |
 |---|---:|---:|---|
-| ` ` | 0 | 60959 | 60959/1739949 |
-| ! | 2 | 5 | 5/1739949 |
-| " | 3 | 2 | 2/1739949 |
-| $ | 6 | 5 | 5/1739949 |
-| % | 8 | 30 | 10/579983 |
-| & | 11 | 2 | 2/1739949 |
-| ' | 12 | 1748 | 1748/1739949 |
-| ( | 9 | 2045 | 2045/1739949 |
-| ) | 87 | 5900 | 5900/1739949 |
-| * | 15 | 1 | 1/1739949 |
-| + | 17 | 12 | 4/579983 |
-| , | 20 | 4164 | 1388/579983 |
-| - | 21 | 9178 | 9178/1739949 |
-| . | 23 | 1843 | 1843/1739949 |
-| / | 24 | 128 | 128/1739949 |
-| 0 | 139 | 735 | 245/579983 |
-| 1 | 14 | 974 | 974/1739949 |
-| 2 | 91 | 499 | 499/1739949 |
-| 3 | 26 | 349 | 349/1739949 |
-| 4 | 103 | 336 | 112/579983 |
-| 5 | 38 | 345 | 115/579983 |
-| 6 | 115 | 307 | 307/1739949 |
-| 7 | 50 | 280 | 280/1739949 |
-| 8 | 127 | 292 | 292/1739949 |
-| 9 | 62 | 381 | 127/579983 |
-| : | 29 | 234 | 78/579983 |
-| ; | 30 | 6237 | 2079/579983 |
-| < | 35 | 1 | 1/1739949 |
-| = | 32 | 11 | 11/1739949 |
-| > | 112 | 1 | 1/1739949 |
-| ? | 33 | 2 | 2/1739949 |
-| A | 1 | 2728 | 2728/1739949 |
-| B | 4 | 1409 | 1409/1739949 |
-| C | 7 | 3033 | 1011/579983 |
-| D | 10 | 1120 | 1120/1739949 |
-| E | 13 | 1251 | 417/579983 |
-| F | 16 | 810 | 270/579983 |
-| G | 19 | 996 | 332/579983 |
-| H | 22 | 1092 | 364/579983 |
-| I | 25 | 1005 | 335/579983 |
-| J | 28 | 526 | 526/1739949 |
-| K | 31 | 528 | 176/579983 |
-| L | 34 | 1220 | 1220/1739949 |
-| M | 37 | 1752 | 584/579983 |
-| N | 40 | 1000 | 1000/1739949 |
-| O | 43 | 778 | 778/1739949 |
-| P | 46 | 2023 | 2023/1739949 |
-| Q | 49 | 144 | 48/579983 |
-| R | 52 | 957 | 319/579983 |
-| S | 55 | 2565 | 855/579983 |
-| T | 58 | 1260 | 420/579983 |
-| U | 61 | 414 | 138/579983 |
-| V | 64 | 535 | 535/1739949 |
-| W | 67 | 545 | 545/1739949 |
-| X | 70 | 144 | 48/579983 |
-| Y | 73 | 160 | 160/1739949 |
-| Z | 76 | 185 | 185/1739949 |
-| [ | 18 | 4 | 4/1739949 |
-| ] | 96 | 4 | 4/1739949 |
-| ^ | 41 | 26 | 26/1739949 |
-| _ | 42 | 2 | 2/1739949 |
-| a | 80 | 144786 | 48262/579983 |
-| b | 83 | 29978 | 29978/1739949 |
-| c | 86 | 72165 | 24055/579983 |
-| d | 89 | 53123 | 53123/1739949 |
-| e | 92 | 176846 | 176846/1739949 |
-| f | 95 | 23953 | 23953/1739949 |
-| g | 98 | 40609 | 40609/1739949 |
-| h | 101 | 41627 | 41627/1739949 |
-| i | 104 | 136751 | 136751/1739949 |
-| j | 107 | 2387 | 2387/1739949 |
-| k | 110 | 14334 | 4778/579983 |
-| l | 113 | 91385 | 91385/1739949 |
-| m | 116 | 48145 | 48145/1739949 |
-| n | 119 | 111526 | 111526/1739949 |
-| o | 122 | 111871 | 111871/1739949 |
-| p | 125 | 47942 | 47942/1739949 |
-| q | 128 | 2427 | 809/579983 |
-| r | 131 | 119213 | 119213/1739949 |
-| s | 134 | 106635 | 35545/579983 |
-| t | 137 | 110331 | 36777/579983 |
-| u | 140 | 58108 | 58108/1739949 |
-| v | 143 | 15810 | 5270/579983 |
-| w | 146 | 15085 | 15085/1739949 |
-| x | 149 | 5186 | 5186/1739949 |
-| y | 152 | 29439 | 9813/579983 |
-| z | 155 | 4105 | 4105/1739949 |
-| { | 27 | 1 | 1/1739949 |
-| } | 105 | 1 | 1/1739949 |
-| ~ | 48 | 1 | 1/1739949 |
-| ° | 59 | 2 | 2/1739949 |
-| · | 57 | 1 | 1/1739949 |
-| ½ | None | 1 | 1/1739949 |
-| × | 65 | 1 | 1/1739949 |
-| á | None | 2 | 2/1739949 |
-| ä | None | 4 | 4/1739949 |
-| ç | None | 3 | 1/579983 |
-| é | None | 9 | 3/579983 |
-| ê | None | 2 | 2/1739949 |
-| ë | None | 1 | 1/1739949 |
-| ð | None | 1 | 1/1739949 |
-| ñ | None | 3 | 1/579983 |
-| ò | None | 2 | 2/1739949 |
-| š | None | 2 | 2/1739949 |
-| ʰ | None | 1 | 1/1739949 |
-| α | 147 | 1 | 1/1739949 |
-| θ | None | 1 | 1/1739949 |
-| Ъ | None | 1 | 1/1739949 |
-| Ь | None | 1 | 1/1739949 |
-| ъ | None | 1 | 1/1739949 |
-| ь | None | 1 | 1/1739949 |
-| — | 54 | 1 | 1/1739949 |
-| ‘ | 44 | 435 | 145/579983 |
-| ’ | 121 | 475 | 475/1739949 |
-| … | 51 | 2 | 2/1739949 |
-| ⁓ | None | 1 | 1/1739949 |
-| ™ | None | 1 | 1/1739949 |
-| − | None | 1 | 1/1739949 |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
 
-## Reduced ratios between letters
+Reduced pairwise ratios (6903 pairs) are in `density.json`.
 
-Full pairwise reduced ratios (6903 pairs) are in `density.json`.
+## Word scale counts
+
+Relation: word_characters: ordered character references inside word surfaces
+
+| scalar | public_position | count | frequency_fraction |
+|---|---:|---:|---|
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+
+Reduced pairwise ratios (6903 pairs) are in `density.json`.
+
+## Definition scale counts
+
+Relation: definition_components: word references expanded through word_characters plus whitespace character references
+
+| scalar | public_position | count | frequency_fraction |
+|---|---:|---:|---|
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+
+Reduced pairwise ratios (6903 pairs) are in `density.json`.
+
+## Semantic scale counts
+
+Relation: semantic_evidence: target word references expanded through word_characters
+
+| scalar | public_position | count | frequency_fraction |
+|---|---:|---:|---|
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+| scalar | public_position | count | frequency_fraction |
+
+Reduced pairwise ratios (6903 pairs) are in `density.json`.
 
 ## hmmm
 

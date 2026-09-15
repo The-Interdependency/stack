@@ -2,7 +2,7 @@
 # id: english_gonol_corpus_native_density
 #   module_name: density_run
 #   module_kind: measurement
-#   summary: counts exact admitted character occurrences through the constructed word-character occurrence relations and records corpus-native frequency density with full provenance
+#   summary: exact per-scalar occurrence counts through every constructed occurrence relation of the verified v2 construct, recorded as semantic-valuation inputs at every scale
 #   owner: Erin Spencer
 #   public_surface: SCHEMA, VERSION, DensityError, DensityResult, build_density, run
 #   internal_surface: read-only construct inspection, exact Fraction arithmetic, canonical receipt serialization
@@ -22,18 +22,24 @@
 # === CONTRACTS ===
 # id: density_counts_constructed_occurrence_relations
 #   given: a verified English Gonol v2 construct.db
-#   then: every letter count is taken from the constructed word_characters occurrence relations joined to shared character identities, never by retokenizing or normalizing source text
+#   then: every letter count is taken from the constructed occurrence relations joined to shared character identities, never by retokenizing or normalizing source text
+#   class: correctness
+#   since: 2026-09-15
+#
+# id: density_is_determinable_at_every_scale
+#   given: the v2 construct materializes character, word, definition, and semantic scales
+#   then: the same per-scalar count is measured at every one of those scales through its own constructed occurrence relation
 #   class: correctness
 #   since: 2026-09-15
 #
 # id: density_fractions_are_exact
-#   given: exact integer per-letter counts and an exact total
-#   then: every frequency is recorded as an exact reduced Fraction of the total
+#   given: exact integer per-letter counts and an exact per-scale total
+#   then: every frequency is recorded as an exact reduced Fraction of that scale's total
 #   class: correctness
 #   since: 2026-09-15
 #
 # id: density_ratios_are_reduced
-#   given: any pair of letters with exact integer counts
+#   given: any pair of letters with exact integer counts at one scale
 #   then: the ratio between their counts is recorded reduced to lowest terms
 #   class: correctness
 #   since: 2026-09-15
@@ -42,6 +48,12 @@
 #   given: a construct manifest and measured database hash
 #   then: corpus and builder hashes, the construct receipt, and a canonical density receipt are all recorded
 #   class: correctness
+#   since: 2026-09-15
+#
+# id: density_counts_are_semantic_valuation_inputs
+#   given: a density result
+#   then: the per-scale counts are recorded as exact semantic-valuation inputs without inventing a valuation weight, direction, or geometry
+#   class: doctrine
 #   since: 2026-09-15
 #
 # id: density_stays_outside_the_construct
@@ -57,20 +69,27 @@
 #   since: 2026-09-15
 # === END CONTRACTS ===
 
-"""Corpus-native letter density from the constructed occurrence relations.
+"""Corpus-native per-scale letter density from the constructed relations.
 
 The English Gonol v2 construct materializes one shared identity per exact
-character scalar and one ``word_characters`` occurrence relation per ordered
-character reference inside a word. This measurement reads only those
-constructed relations::
+character scalar and a constructed occurrence relation at every scale::
 
-    characters -> id, scalar, public_position
-    word_characters -> word_id, ordinal, character_id
+    character scale   -> characters identity (each admitted scalar exists once)
+    word scale        -> word_characters ordered character references
+    definition scale  -> definition_components word references plus whitespace
+                         character references
+    semantic scale    -> semantic_evidence target word references expanded
+                         through their word_characters
 
-Each admitted character scalar gets an exact integer occurrence count, an
-exact frequency fraction of the total, and exact reduced pairwise ratios
-between scalars. Nothing is retokenized, case-folded, normalized, or
-re-admitted; the generic density table stays outside the construct.
+This measurement reads only those constructed relations. Each admitted
+character scalar gets an exact integer occurrence count at every scale, an
+exact frequency fraction of that scale's total, and exact reduced pairwise
+ratios between scalars at that scale. The per-scale counts are semantic
+valuation inputs: they are determinable at any and every scale, with no
+invented weight, direction, or geometry.
+
+Nothing is retokenized, case-folded, normalized, or re-admitted; the generic
+density table stays outside the construct.
 
 hmmm: frequency becomes measured; what density does geometrically remains
 unresolved.
@@ -87,13 +106,15 @@ import sqlite3
 from typing import Any
 
 SCHEMA = "english-gonol.corpus-native-density"
-VERSION = "1.0.0"
+VERSION = "2.0.0"
 CONSTRUCT_SCHEMA = "english-gonol.full-construct"
 
 _HMMM = (
     "frequency becomes measured; "
     "what density does geometrically remains unresolved"
 )
+
+_SCALES = ("character", "word", "definition", "semantic")
 
 
 class DensityError(ValueError):
@@ -106,9 +127,8 @@ class DensityResult:
     version: str
     corpus: dict[str, Any]
     builder: dict[str, Any]
-    total: int
-    letters: tuple[tuple[str, int | None, int, str], ...]
-    ratios: tuple[tuple[str, str, str], ...]
+    semantic_valuation: dict[str, Any]
+    scales: dict[str, dict[str, Any]]
     hmmm: str
     receipt_sha256: str
 
@@ -118,20 +138,8 @@ class DensityResult:
             "version": self.version,
             "corpus": self.corpus,
             "builder": self.builder,
-            "total": self.total,
-            "letters": [
-                {
-                    "scalar": scalar,
-                    "public_position": public_position,
-                    "count": count,
-                    "frequency_fraction": fraction,
-                }
-                for scalar, public_position, count, fraction in self.letters
-            ],
-            "ratios": [
-                {"a": a, "b": b, "reduced_ratio": ratio}
-                for a, b, ratio in self.ratios
-            ],
+            "semantic_valuation": self.semantic_valuation,
+            "scales": self.scales,
             "hmmm": self.hmmm,
             "receipt_sha256": self.receipt_sha256,
         }
@@ -151,9 +159,7 @@ def _load_manifest(path: Path) -> dict[str, Any]:
     except (OSError, json.JSONDecodeError) as exc:
         raise DensityError(f"construct manifest is not readable JSON: {path}") from exc
     if manifest.get("schema") != CONSTRUCT_SCHEMA:
-        raise DensityError(
-            f"construct manifest schema must be {CONSTRUCT_SCHEMA}"
-        )
+        raise DensityError(f"construct manifest schema must be {CONSTRUCT_SCHEMA}")
     return manifest
 
 
@@ -168,8 +174,137 @@ def _hash_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _reduced_ratio_text(a_count: int, b_count: int) -> str:
+    if b_count == 0:
+        return f"{a_count}/0"
+    if a_count == 0:
+        return f"0/{b_count}"
+    ratio = Fraction(a_count, b_count)
+    return f"{ratio.numerator}/{ratio.denominator}"
+
+
+def _letters_from_counts(
+    connection: sqlite3.Connection,
+    counts_sql: str,
+) -> tuple[list[tuple[str, int | None, int, str]], int]:
+    """Run a per-character count query and return letter rows plus total.
+
+    ``counts_sql`` must select ``c.scalar, c.public_position, COALESCE(x.cnt, 0)``
+    ordered by ``c.id``.
+    """
+
+    rows = connection.execute(counts_sql).fetchall()
+    if not rows:
+        raise DensityError("constructed occurrence relations are empty")
+    total = sum(count for _, _, count in rows)
+    if total <= 0:
+        raise DensityError("scale total must be positive")
+    letters = [
+        (
+            scalar,
+            public_position,
+            count,
+            f"{Fraction(count, total).numerator}/{Fraction(count, total).denominator}",
+        )
+        for scalar, public_position, count in rows
+    ]
+    return letters, total
+
+
+def _ratios_for(
+    letters: list[tuple[str, int | None, int, str]],
+) -> list[tuple[str, str, str]]:
+    ratios: list[tuple[str, str, str]] = []
+    for left in range(len(letters)):
+        for right in range(left + 1, len(letters)):
+            ratios.append(
+                (
+                    letters[left][0],
+                    letters[right][0],
+                    _reduced_ratio_text(letters[left][2], letters[right][2]),
+                )
+            )
+    return ratios
+
+
+def _scale_record(
+    relation: str,
+    letters: list[tuple[str, int | None, int, str]],
+    total: int,
+) -> dict[str, Any]:
+    return {
+        "relation": relation,
+        "total": total,
+        "letters": [
+            {
+                "scalar": scalar,
+                "public_position": public_position,
+                "count": count,
+                "frequency_fraction": fraction,
+            }
+            for scalar, public_position, count, fraction in letters
+        ],
+        "ratios": [
+            {"a": a, "b": b, "reduced_ratio": ratio}
+            for a, b, ratio in _ratios_for(letters)
+        ],
+    }
+
+
+_CHARACTER_SCALE_SQL = """
+SELECT c.scalar, c.public_position, 1 AS cnt
+FROM characters AS c
+ORDER BY c.id
+"""
+
+_WORD_SCALE_SQL = """
+SELECT c.scalar, c.public_position, COALESCE(x.cnt, 0)
+FROM characters AS c
+LEFT JOIN (
+    SELECT wc.character_id AS cid, COUNT(*) AS cnt
+    FROM word_characters AS wc
+    GROUP BY wc.character_id
+) AS x ON x.cid = c.id
+ORDER BY c.id
+"""
+
+_DEFINITION_SCALE_SQL = """
+SELECT c.scalar, c.public_position, COALESCE(x.cnt, 0)
+FROM characters AS c
+LEFT JOIN (
+    SELECT cid, SUM(cnt) AS cnt
+    FROM (
+        SELECT dc.character_id AS cid, COUNT(*) AS cnt
+        FROM definition_components AS dc
+        WHERE dc.character_id IS NOT NULL
+        GROUP BY dc.character_id
+        UNION ALL
+        SELECT wc.character_id AS cid, COUNT(*) AS cnt
+        FROM definition_components AS dc
+        JOIN word_characters AS wc ON wc.word_id = dc.word_id
+        WHERE dc.word_id IS NOT NULL
+        GROUP BY wc.character_id
+    )
+    GROUP BY cid
+) AS x ON x.cid = c.id
+ORDER BY c.id
+"""
+
+_SEMANTIC_SCALE_SQL = """
+SELECT c.scalar, c.public_position, COALESCE(x.cnt, 0)
+FROM characters AS c
+LEFT JOIN (
+    SELECT wc.character_id AS cid, COUNT(*) AS cnt
+    FROM semantic_evidence AS se
+    JOIN word_characters AS wc ON wc.word_id = se.target_word_id
+    GROUP BY wc.character_id
+) AS x ON x.cid = c.id
+ORDER BY c.id
+"""
+
+
 def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult:
-    """Measure corpus-native letter density through the constructed relations only."""
+    """Measure per-scale letter density through the constructed relations only."""
 
     manifest = _load_manifest(construct_manifest)
     if not construct_db.is_file():
@@ -178,54 +313,59 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
     construct_db_sha256 = _hash_file(construct_db)
     connection = sqlite3.connect(f"file:{construct_db}?mode=ro", uri=True)
     try:
-        rows = connection.execute(
-            """
-            SELECT c.scalar, c.public_position, COUNT(wc.character_id)
-            FROM characters AS c
-            LEFT JOIN word_characters AS wc ON wc.character_id = c.id
-            GROUP BY c.id, c.scalar, c.public_position
-            ORDER BY c.id
-            """
-        ).fetchall()
+        character_letters, character_total = _letters_from_counts(
+            connection, _CHARACTER_SCALE_SQL
+        )
+        word_letters, word_total = _letters_from_counts(connection, _WORD_SCALE_SQL)
+        definition_letters, definition_total = _letters_from_counts(
+            connection, _DEFINITION_SCALE_SQL
+        )
+        semantic_letters, semantic_total = _letters_from_counts(
+            connection, _SEMANTIC_SCALE_SQL
+        )
     except sqlite3.Error as exc:
         raise DensityError(f"construct database is not readable: {exc}") from exc
     finally:
         connection.close()
 
-    if not rows:
-        raise DensityError("word_characters occurrence relations are empty")
+    scales = {
+        "character": _scale_record(
+            "characters identity: each admitted scalar exists once",
+            character_letters,
+            character_total,
+        ),
+        "word": _scale_record(
+            "word_characters: ordered character references inside word surfaces",
+            word_letters,
+            word_total,
+        ),
+        "definition": _scale_record(
+            "definition_components: word references expanded through word_characters plus whitespace character references",
+            definition_letters,
+            definition_total,
+        ),
+        "semantic": _scale_record(
+            "semantic_evidence: target word references expanded through word_characters",
+            semantic_letters,
+            semantic_total,
+        ),
+    }
 
-    total = sum(count for _, _, count in rows)
-    if total <= 0:
-        raise DensityError("total admitted character occurrences must be positive")
-
-    letters: list[tuple[str, int | None, int, str]] = []
-    for scalar, public_position, count in rows:
-        fraction = Fraction(count, total)
-        letters.append(
-            (
-                scalar,
-                public_position,
-                count,
-                f"{fraction.numerator}/{fraction.denominator}",
-            )
-        )
-
-    ratios: list[tuple[str, str, str]] = []
-    for left in range(len(letters)):
-        for right in range(left + 1, len(letters)):
-            a_scalar = letters[left][0]
-            b_scalar = letters[right][0]
-            a_count = letters[left][2]
-            b_count = letters[right][2]
-            if b_count == 0:
-                ratio_text = f"{a_count}/0"
-            elif a_count == 0:
-                ratio_text = f"0/{b_count}"
-            else:
-                ratio = Fraction(a_count, b_count)
-                ratio_text = f"{ratio.numerator}/{ratio.denominator}"
-            ratios.append((a_scalar, b_scalar, ratio_text))
+    semantic_valuation = {
+        "counts_are": (
+            "exact per-scalar occurrence counts through the constructed "
+            "occurrence relations at every scale"
+        ),
+        "determinable_at_scales": list(_SCALES),
+        "scale_totals": {
+            "character": character_total,
+            "word": word_total,
+            "definition": definition_total,
+            "semantic": semantic_total,
+        },
+        "valuation_weight": None,
+        "hmmm": _HMMM,
+    }
 
     payload: dict[str, Any] = {
         "schema": SCHEMA,
@@ -239,20 +379,8 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
             "ucns_commit": manifest.get("ucns", {}).get("commit"),
             "public_gonol_sha256": manifest.get("ucns", {}).get("public_gonol_sha256"),
         },
-        "total": total,
-        "letters": [
-            {
-                "scalar": scalar,
-                "public_position": public_position,
-                "count": count,
-                "frequency_fraction": fraction,
-            }
-            for scalar, public_position, count, fraction in letters
-        ],
-        "ratios": [
-            {"a": a, "b": b, "reduced_ratio": ratio}
-            for a, b, ratio in ratios
-        ],
+        "semantic_valuation": semantic_valuation,
+        "scales": scales,
         "hmmm": _HMMM,
     }
     receipt = sha256(
@@ -264,9 +392,8 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
         version=VERSION,
         corpus=manifest["corpus"],
         builder=payload["builder"],
-        total=total,
-        letters=tuple(letters),
-        ratios=tuple(ratios),
+        semantic_valuation=semantic_valuation,
+        scales=scales,
         hmmm=_HMMM,
         receipt_sha256=receipt,
     )
@@ -274,9 +401,10 @@ def build_density(construct_db: Path, construct_manifest: Path) -> DensityResult
 
 def _render_markdown(result: DensityResult) -> str:
     lines = [
-        "# English Gonol corpus-native letter density",
+        "# English Gonol corpus-native per-scale letter density",
         "",
-        "Generic measurement table outside the construct.",
+        "Generic measurement table outside the construct. Per-scalar counts are",
+        "semantic-valuation inputs, determinable at any and every scale.",
         "",
         "## Provenance",
         "",
@@ -288,24 +416,44 @@ def _render_markdown(result: DensityResult) -> str:
         f"- construct database sha256: {result.builder.get('construct_db_sha256')}",
         f"- density receipt: {result.receipt_sha256}",
         "",
-        f"Total admitted character occurrences: {result.total}",
+        "## Semantic valuation",
         "",
-        "## Per-letter counts and exact frequency fractions",
+        f"- counts: {result.semantic_valuation.get('counts_are')}",
+        f"- determinable at scales: {', '.join(result.semantic_valuation.get('determinable_at_scales', []))}",
+        f"- valuation weight: {result.semantic_valuation.get('valuation_weight')}",
         "",
-        "| scalar | public_position | count | frequency_fraction |",
-        "|---|---:|---:|---|",
+        "## Scale totals",
+        "",
+        "| scale | total |",
+        "|---|---:|",
     ]
-    for scalar, public_position, count, fraction in result.letters:
-        display = scalar if scalar != " " else "` `"
-        lines.append(
-            f"| {display} | {public_position} | {count} | {fraction} |"
+    for scale in _SCALES:
+        lines.append(f"| {scale} | {result.scales[scale]['total']} |")
+    for scale in _SCALES:
+        record = result.scales[scale]
+        lines.extend(
+            [
+                "",
+                f"## {scale.capitalize()} scale counts",
+                "",
+                f"Relation: {record['relation']}",
+                "",
+                "| scalar | public_position | count | frequency_fraction |",
+                "|---|---:|---:|---|",
+            ]
+        )
+        for letter in record["letters"]:
+            scalar, public_position, count, fraction = letter
+            display = scalar if scalar != " " else "` `"
+            lines.append(f"| {display} | {public_position} | {count} | {fraction} |")
+        lines.extend(
+            [
+                "",
+                f"Reduced pairwise ratios ({len(record['ratios'])} pairs) are in `density.json`.",
+            ]
         )
     lines.extend(
         [
-            "",
-            "## Reduced ratios between letters",
-            "",
-            f"Full pairwise reduced ratios ({len(result.ratios)} pairs) are in `density.json`.",
             "",
             "## hmmm",
             "",
@@ -363,9 +511,7 @@ def main(argv: list[str] | None = None) -> int:
         {
             "schema": result.schema,
             "version": result.version,
-            "total": result.total,
-            "letters": len(result.letters),
-            "ratios": len(result.ratios),
+            "scale_totals": result.semantic_valuation["scale_totals"],
             "receipt_sha256": result.receipt_sha256,
             "hmmm": result.hmmm,
         },
