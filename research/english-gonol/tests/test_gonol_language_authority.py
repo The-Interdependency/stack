@@ -27,10 +27,12 @@ def test_live_surfaces_route_gonol_authority_consistently() -> None:
     assert "METAPAT defines affixiation" in boundary
     assert "UCNS owns any exact geometric realization" in boundary
     assert "English Gonol Construction applies affixiation to text-domain gonols" in boundary
-    for text in (boundary, readme):
-        assert "scale option sets" in text
-        assert "edcm.gonol" in text
-        assert "Once closed, a gonol is atomic at any scale" in text
+    assert "scale option sets" in boundary
+    assert "edcm.gonol" in boundary
+    assert "Once closed, a gonol is atomic at any scale" in boundary
+    assert "one exact scalar -> one shared character identity" in readme
+    assert "one exact surface -> one shared word identity" in readme
+    assert "Once closed, a gonol is atomic at an admissible consuming scale" in readme
     assert "mandatory adjacent-scale ladder" in boundary
     assert "Closed gonols may participate directly at any admissible scale" in boundary
     assert "does not mutate `sys.path`" in boundary
@@ -61,4 +63,4 @@ def test_measurement_does_not_activate_from_construction() -> None:
     readme = _compact(ROOT / "README.md")
     boundary = _compact(ROOT / "docs" / "GONOL_LANGUAGE_BOUNDARY.md")
     assert "English Gonol construction does not validate EDCM measurement" in boundary
-    assert "English Gonol construction and EDCM measurement remain separate" in readme
+    assert "EDCM -> measurement/evaluation only" in readme
