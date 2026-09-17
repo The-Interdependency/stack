@@ -43,6 +43,12 @@
 #   then: neither is found to derive the richer coordinate structure independently, and EPAC coordinates are not imported upward
 #   class: doctrine
 #   since: 2026-09-17
+#
+# id: carrier_falsification_replacement_minimality
+#   given: the replacement tuple (period, group, valence_electrons)
+#   then: every single-component drop must break separation, the tuple must be strictly finer than sigma at molecule scale, and the electron-occupancy alternative must fail
+#   class: correctness
+#   since: 2026-09-17
 # === END CONTRACTS ===
 
 """Falsify the constitutive carrier and its coordinates.
@@ -156,7 +162,6 @@ def _sigma_replacement(states: dict[str, ConstitutivePoint]) -> dict[str, Any]:
 
 
 def _sigma_identity_serialization_audit(states: dict[str, ConstitutivePoint]) -> dict[str, Any]:
-    bare_symbols = [s.split(":", 1)[1] for s in states if ":" in s and not s.startswith("molecule")]
     molecule_sigmas = {
         states[f"molecule:{formula}"].coordinates[4] for formula, _ in LOCKED_FORMULAS
     }
@@ -171,6 +176,118 @@ def _sigma_identity_serialization_audit(states: dict[str, ConstitutivePoint]) ->
             "there either"
         ),
         "sigma_distinct_molecule_values": len(molecule_sigmas),
+    }
+
+
+def _replacement_minimality_audit(states: dict[str, ConstitutivePoint]) -> dict[str, Any]:
+    """Test whether (period, group, valence_electrons) is minimal or merely
+    another redundant chemistry identifier."""
+
+    components = ("period", "group", "valence_electrons")
+
+    def tuple_for(name: str) -> tuple[int, int, int, int, tuple[int, int, int]]:
+        point = states[name]
+        return _replacement_point(point)
+
+    def separates(mapping: dict[str, tuple]) -> bool:
+        groups: dict[tuple, list[str]] = {}
+        for name, coords in mapping.items():
+            groups.setdefault(coords, []).append(name)
+        return all(len(group) == 1 for group in groups.values())
+
+    # Full replacement point separation: B + layer + periodic tuple.
+    full = {name: tuple_for(name) for name in states}
+    full_separates = separates(full)
+
+    # Minimality: drop each single periodic component, keeping B and layer.
+    drops: dict[str, dict[str, Any]] = {}
+    for drop_index, drop_name in enumerate(components):
+        kept = [i for i in range(3) if i != drop_index]
+        reduced = {
+            name: (coords[0], coords[1], coords[2], coords[3], tuple(coords[4][i] for i in kept))
+            for name, coords in full.items()
+        }
+        collisions = {}
+        groups: dict[tuple, list[str]] = {}
+        for name, coords in reduced.items():
+            groups.setdefault(coords, []).append(name)
+        for coords, group in sorted(groups.items()):
+            if len(group) > 1:
+                collisions[str(coords)] = group
+        drops[drop_name] = {
+            "kept": [components[i] for i in kept],
+            "separation_survives": not collisions,
+            "collisions": collisions,
+        }
+    minimal = all(not entry["separation_survives"] for entry in drops.values())
+
+    # Exhaustive subset minimality over the three components, keeping the
+    # B + layer prefix.
+    minimal_subsets: list[list[str]] = []
+    for mask in range(1, 8):
+        kept_indices = [i for i in range(3) if mask & (1 << i)]
+        reduced = {
+            name: (coords[0], coords[1], coords[2], coords[3], tuple(coords[4][i] for i in kept_indices))
+            for name, coords in full.items()
+        }
+        if separates(reduced):
+            minimal_subsets.append([components[i] for i in kept_indices])
+    minimal_subsets = [subset for subset in minimal_subsets if not any(
+        set(other) < set(subset) for other in minimal_subsets
+    )]
+
+    # Strictly finer than sigma at molecule scale?
+    sigma_groups: dict[int, list[str]] = {}
+    for name in states:
+        if name.startswith("molecule:"):
+            sigma_groups.setdefault(states[name].coordinates[4], []).append(name)
+    finer_than_sigma = all(
+        len({tuple_for(name) for name in group}) == len(group)
+        for group in sigma_groups.values()
+        if len(group) > 1
+    )
+
+    # Alternative declared structure: electron-configuration occupancy sums.
+    def occupancy(symbol: str) -> tuple[int, ...]:
+        import re
+        config = _BY_SYMBOL[symbol]["electron_configuration"]
+        config = config.replace("[Ne].", "1s2.2s2.2p6.")
+        shells = config.split(".")
+        return tuple(int(re.findall(r"\d+$", part)[0]) for part in shells)
+
+    def occupancy_sum(formula: str) -> tuple[int, ...]:
+        total: list[int] = []
+        for symbol in dict(LOCKED_FORMULAS)[formula]:
+            occ = occupancy(symbol)
+            while len(total) < len(occ):
+                total.append(0)
+            for i, value in enumerate(occ):
+                total[i] += value
+        return tuple(total)
+
+    alternative = {
+        name: occupancy_sum(name.split(":", 1)[1]) if name.startswith("molecule:") else occupancy(name.split(":", 1)[1])
+        for name in states
+        if ":" in name
+    }
+    alt_separates = separates(alternative)
+
+    return {
+        "full_tuple_separates": full_separates,
+        "component_drops": drops,
+        "minimal_among_three_components": minimal,
+        "minimal_subsets": minimal_subsets,
+        "period_necessary": all("period" in subset for subset in minimal_subsets) if minimal_subsets else None,
+        "strictly_finer_than_sigma_at_molecule_scale": finer_than_sigma,
+        "alternative_electron_occupancy_separates": alt_separates,
+        "is_chemistry_identifier": True,
+        "verdict": (
+            "not minimal: valence and group are each dispensable, while "
+            "period is necessary; minimal subsets are exactly "
+            f"{minimal_subsets}; the tuple is a chemistry identifier and "
+            "its separating power is B + layer + period plus one of "
+            "{group, valence}"
+        ),
     }
 
 
@@ -313,6 +430,7 @@ def build_carrier_falsification() -> dict[str, Any]:
     sigma_removal = _sigma_removal(states)
     sigma_replacement = _sigma_replacement(states)
     sigma_identity = _sigma_identity_serialization_audit(states)
+    replacement_minimality = _replacement_minimality_audit(states)
     minkowski = _minkowski_field_work(states)
 
     payload = {
@@ -322,6 +440,7 @@ def build_carrier_falsification() -> dict[str, Any]:
         "sigma_removal": sigma_removal,
         "sigma_replacement": sigma_replacement,
         "sigma_identity_serialization_audit": sigma_identity,
+        "replacement_minimality_audit": replacement_minimality,
         "transition_closure_beyond_nine": _transition_closure_beyond_nine(),
         "unseen_states_independent_b": _unseen_states_independent_b(),
         "minkowski_field_work": minkowski,

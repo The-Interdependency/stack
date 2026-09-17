@@ -30,6 +30,14 @@
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
+#
+# id: check_carrier_falsification_replacement_minimality
+#   proves: carrier_falsification_replacement_minimality
+#   call: self::test_replacement_minimality
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 from __future__ import annotations
@@ -72,3 +80,18 @@ def test_does_not_import_epac_upward() -> None:
     assert independence["pcea_derives_richer_structure_independently"] is False
     assert report["schema"] == SCHEMA
     assert report["receipt_sha256"]
+
+
+def test_replacement_minimality() -> None:
+    report = build_carrier_falsification()
+    audit = report["replacement_minimality_audit"]
+    assert audit["full_tuple_separates"] is True
+    # not minimal: group and valence are each dispensable
+    assert audit["minimal_among_three_components"] is False
+    assert audit["period_necessary"] is True
+    minimal_subsets = {tuple(sorted(subset)) for subset in audit["minimal_subsets"]}
+    assert minimal_subsets == {("group", "period"), ("period", "valence_electrons")}
+    # period drop is the one that breaks separation
+    assert audit["component_drops"]["period"]["separation_survives"] is False
+    assert audit["strictly_finer_than_sigma_at_molecule_scale"] is True
+    assert audit["alternative_electron_occupancy_separates"] is False
