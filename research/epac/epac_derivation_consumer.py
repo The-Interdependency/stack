@@ -64,10 +64,10 @@ from epac_lattice_carrier import (
 SCHEMA = "epac.derived-constitutive-carrier"
 VERSION = "0.1.0"
 
-EPAC_REPO_COMMIT = "c7fb4905f3ac888461e4c8130aeaf94d5f5be15e"
+EPAC_REPO_COMMIT = "7acad4d0838f6b9b2144c35a35d0317302a35a25"
 EPAC_ATOMIC_MODULE_SHA256 = "539a07c33c56de24bcae9f6ba270eb76b82de887f38b4f42ffa60b3ffb760d62"
 EPAC_ATOMIC_DERIVATION_MODULE_SHA256 = "8d6a7830c79f86b0aad1055039500f95ed254d204abab6b0c4747db95faf2451"
-EPAC_B_DERIVATION_MODULE_SHA256 = "909abfdca410dff434711329a5e95926ada92a552b17abe0e0caa4b6e907f72e"
+EPAC_B_DERIVATION_MODULE_SHA256 = "7e73abd5bd35d44ba099eb3192386381551c5e3430a5cddef5db3675a56a07b3"
 
 
 class DerivedCarrierError(ValueError):
@@ -217,15 +217,15 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
     b_spec.loader.exec_module(b_module)
     b_report = b_module.freeze_b_derivation()
     locked_reproduced = all(
-        entry["matches"] for entry in b_report["locked_formula_reproduction"]
+        entry["matches"] for entry in b_report["locked_formula_b_evaluations"]
     )
     held_out_statuses = {
         entry["formula"]: entry["status"]
-        for entry in b_report["held_out_molecule_predictions"]
+        for entry in b_report["held_out_molecule_b_evaluations"]
     }
     transition_failure = b_report["transition_metal_failure"]
     generative = locked_reproduced and all(
-        status == "prediction-only" for status in held_out_statuses.values()
+        status == "evaluation-only" for status in held_out_statuses.values()
     ) and not transition_failure
 
     payload = {
@@ -258,6 +258,7 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
         },
         "generative_gate": {
             "frozen_rule_reproduces_nine": locked_reproduced,
+            "supported_domain": b_report["supported_domain"],
             "held_out_statuses": held_out_statuses,
             "transition_metal_failure_recorded": bool(transition_failure),
             "decision": "PROMOTE-GENERATIVE" if generative else "RETAIN-BOUNDED",
@@ -267,7 +268,9 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
                 else "bounded constitutive carrier"
             ),
             "missing_state_variable": (
-                None if not transition_failure else "(n-1)d valence participation"
+                None
+                if not transition_failure
+                else "bond-context active-orbital set (may include (n-1)d)"
             ),
         },
         "hmmm": (
