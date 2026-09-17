@@ -64,10 +64,10 @@ from epac_lattice_carrier import (
 SCHEMA = "epac.derived-constitutive-carrier"
 VERSION = "0.1.0"
 
-EPAC_REPO_COMMIT = "db3e1585e8176f3b2864532a8138dc0b5ca2f45f"
+EPAC_REPO_COMMIT = "7b3d99af9a456d2587e0489d7400e6f8b58c8a82"
 EPAC_ATOMIC_MODULE_SHA256 = "539a07c33c56de24bcae9f6ba270eb76b82de887f38b4f42ffa60b3ffb760d62"
 EPAC_ATOMIC_DERIVATION_MODULE_SHA256 = "8d6a7830c79f86b0aad1055039500f95ed254d204abab6b0c4747db95faf2451"
-EPAC_B_DERIVATION_MODULE_SHA256 = "60dbccecc50fdd950096a8673ae789e2db5f971f5b258c193f40e1b3c9183c92"
+EPAC_B_DERIVATION_MODULE_SHA256 = "ee36f45af6354947f35980e8ac3e033bb32fecb937a13e3704a6614b3b882d55"
 
 
 class DerivedCarrierError(ValueError):
@@ -264,9 +264,11 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
             "transition_metal_failure_recorded": bool(transition_failure),
             "transition_metal_topology_evaluations": topology_evaluations,
             "active_orbital_set_derived_for_supplied_topologies": all(
-                entry["ligand_count_within_center_capacity"]
+                entry["center_active_orbital_set"]["kind"] == "transition-metal"
                 for entry in topology_evaluations
             ),
+            "coordination_capacity": "UNRESOLVED",
+            "capacity_rule_status": b_report["capacity_rule_status"],
             "topology_formation": "downstream, not tested here",
             "decision": "PROMOTE-GENERATIVE" if generative else "RETAIN-BOUNDED",
             "standing": (

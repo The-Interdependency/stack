@@ -46,7 +46,7 @@ EPAC_SOURCE_ROOT = Path(
 
 def test_binds_exact_epac_source() -> None:
     report = build_derived_carrier(EPAC_SOURCE_ROOT)
-    assert report["epac_source_commit"].startswith("db3e158")
+    assert report["epac_source_commit"].startswith("7b3d99a")
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -79,13 +79,20 @@ def test_generative_gate_retains_bounded() -> None:
     assert gate["held_out_statuses"]["NH4+"] == "evaluation-only"
     # active-orbital set derived for supplied transition-metal topologies
     assert gate["active_orbital_set_derived_for_supplied_topologies"] is True
+    assert gate["coordination_capacity"] == "UNRESOLVED"
+    assert gate["capacity_rule_status"] == "FALSIFIED"
     assert gate["topology_formation"] == "downstream, not tested here"
     by_topology = {
         entry["topology"]: entry
         for entry in gate["transition_metal_topology_evaluations"]
     }
     assert by_topology["ScCl3"]["b_value"] == [3, 4, 3]
-    assert by_topology["ScCl3"]["center_active_orbital_set"]["subshells"] == ["4s", "3d"]
+    sc_active = by_topology["ScCl3"]["center_active_orbital_set"]
+    assert [sub["subshell"] for sub in sc_active["subshells"]] == ["4s", "3d"]
+    assert sc_active["coordination_capacity"] == "UNRESOLVED"
+    # Zn2+ regression: d10 has zero unpaired electrons
+    zn_active = by_topology["ZnCl2"]["center_active_orbital_set"]
+    assert zn_active["unpaired_electrons"] == 0
 
 
 def test_uses_construction_not_lookup() -> None:
