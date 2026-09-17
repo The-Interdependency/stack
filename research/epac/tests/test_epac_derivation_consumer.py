@@ -46,7 +46,7 @@ EPAC_SOURCE_ROOT = Path(
 
 def test_binds_exact_epac_source() -> None:
     report = build_derived_carrier(EPAC_SOURCE_ROOT)
-    assert report["epac_source_commit"].startswith("07126ba")
+    assert report["epac_source_commit"].startswith("c7fb490")
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -57,6 +57,18 @@ def test_binds_exact_epac_source() -> None:
     tampered[40] ^= 0x01
     with pytest.raises(DerivedCarrierError):
         replay_derived_carrier(bytes(tampered), EPAC_SOURCE_ROOT)
+
+
+def test_generative_gate_retains_bounded() -> None:
+    report = build_derived_carrier(EPAC_SOURCE_ROOT)
+    gate = report["generative_gate"]
+    assert gate["frozen_rule_reproduces_nine"] is True
+    assert gate["transition_metal_failure_recorded"] is True
+    assert gate["missing_state_variable"] == "(n-1)d valence participation"
+    assert gate["decision"] == "RETAIN-BOUNDED"
+    assert gate["standing"] == "bounded constitutive carrier"
+    # symmetric multi-center held-out molecules are rule-inapplicable
+    assert "rule-inapplicable" in gate["held_out_statuses"]["C2H2"]
 
 
 def test_uses_construction_not_lookup() -> None:

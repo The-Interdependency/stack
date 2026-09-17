@@ -64,9 +64,10 @@ from epac_lattice_carrier import (
 SCHEMA = "epac.derived-constitutive-carrier"
 VERSION = "0.1.0"
 
-EPAC_REPO_COMMIT = "07126bad9a862701ea9d6135e432706b20440389"
-EPAC_ATOMIC_MODULE_SHA256 = "1ef464df3e984320499c1a421d49d3b5c36e0d5bcdfc93176394d34cd71c59fb"
+EPAC_REPO_COMMIT = "c7fb4905f3ac888461e4c8130aeaf94d5f5be15e"
+EPAC_ATOMIC_MODULE_SHA256 = "539a07c33c56de24bcae9f6ba270eb76b82de887f38b4f42ffa60b3ffb760d62"
 EPAC_ATOMIC_DERIVATION_MODULE_SHA256 = "8d6a7830c79f86b0aad1055039500f95ed254d204abab6b0c4747db95faf2451"
+EPAC_B_DERIVATION_MODULE_SHA256 = "909abfdca410dff434711329a5e95926ada92a552b17abe0e0caa4b6e907f72e"
 
 
 class DerivedCarrierError(ValueError):
@@ -81,12 +82,15 @@ def _verify_epac_source(epac_source_root: Path) -> Path:
     root = Path(epac_source_root)
     atomic = root / "epac_atomic.py"
     derivation = root / "epac_atomic_derivation.py"
-    if not atomic.exists() or not derivation.exists():
+    b_derivation = root / "epac_b_derivation.py"
+    if not atomic.exists() or not derivation.exists() or not b_derivation.exists():
         raise DerivedCarrierError(f"epac source modules missing under {root}")
     if _sha256(atomic) != EPAC_ATOMIC_MODULE_SHA256:
         raise DerivedCarrierError("epac_atomic.py bytes do not match the pinned commit")
     if _sha256(derivation) != EPAC_ATOMIC_DERIVATION_MODULE_SHA256:
         raise DerivedCarrierError("epac_atomic_derivation.py bytes do not match the pinned commit")
+    if _sha256(b_derivation) != EPAC_B_DERIVATION_MODULE_SHA256:
+        raise DerivedCarrierError("epac_b_derivation.py bytes do not match the pinned commit")
     try:
         subprocess.run(
             ["git", "-C", str(root), "merge-base", "--is-ancestor", EPAC_REPO_COMMIT, "HEAD"],
@@ -201,12 +205,36 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
             }
         )
 
+    # Generative promotion gate: load the verified frozen B derivation rule
+    # and record its held-out predictions and the transition-metal failure.
+    b_spec = importlib.util.spec_from_file_location("epac_b_derivation", root / "epac_b_derivation.py")
+    if b_spec is None or b_spec.loader is None:
+        raise DerivedCarrierError("cannot load epac_b_derivation module")
+    b_module = importlib.util.module_from_spec(b_spec)
+    import sys as _sys
+
+    _sys.modules["epac_b_derivation"] = b_module
+    b_spec.loader.exec_module(b_module)
+    b_report = b_module.freeze_b_derivation()
+    locked_reproduced = all(
+        entry["matches"] for entry in b_report["locked_formula_reproduction"]
+    )
+    held_out_statuses = {
+        entry["formula"]: entry["status"]
+        for entry in b_report["held_out_molecule_predictions"]
+    }
+    transition_failure = b_report["transition_metal_failure"]
+    generative = locked_reproduced and all(
+        status == "prediction-only" for status in held_out_statuses.values()
+    ) and not transition_failure
+
     payload = {
         "schema": SCHEMA,
         "version": VERSION,
         "epac_source_commit": EPAC_REPO_COMMIT,
         "epac_atomic_module_sha256": EPAC_ATOMIC_MODULE_SHA256,
         "epac_atomic_derivation_module_sha256": EPAC_ATOMIC_DERIVATION_MODULE_SHA256,
+        "epac_b_derivation_module_sha256": EPAC_B_DERIVATION_MODULE_SHA256,
         "source_bytes_verified": True,
         "lookup_used": False,
         "derived_period_valence": derived,
@@ -227,6 +255,20 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
                 else "chemistry-assisted serialization"
             ),
             "remaining_unresolved": "B for unseen states is not yet derived",
+        },
+        "generative_gate": {
+            "frozen_rule_reproduces_nine": locked_reproduced,
+            "held_out_statuses": held_out_statuses,
+            "transition_metal_failure_recorded": bool(transition_failure),
+            "decision": "PROMOTE-GENERATIVE" if generative else "RETAIN-BOUNDED",
+            "standing": (
+                "generative constitutive carrier"
+                if generative
+                else "bounded constitutive carrier"
+            ),
+            "missing_state_variable": (
+                None if not transition_failure else "(n-1)d valence participation"
+            ),
         },
         "hmmm": (
             "period and valence now derive from epac_atomic construction; "
