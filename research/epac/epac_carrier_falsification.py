@@ -49,6 +49,12 @@
 #   then: every single-component drop must break separation, the tuple must be strictly finer than sigma at molecule scale, and the electron-occupancy alternative must fail
 #   class: correctness
 #   since: 2026-09-17
+#
+# id: carrier_falsification_pair_primitive
+#   given: the interchangeable {group, valence} pair
+#   then: both coordinates collapse to one declared primitive, the outermost-shell electron count, and the collapsed coordinate separates the frozen surface
+#   class: correctness
+#   since: 2026-09-17
 # === END CONTRACTS ===
 
 """Falsify the constitutive carrier and its coordinates.
@@ -291,6 +297,88 @@ def _replacement_minimality_audit(states: dict[str, ConstitutivePoint]) -> dict[
     }
 
 
+def _pair_primitive_audit(states: dict[str, ConstitutivePoint]) -> dict[str, Any]:
+    """Determine whether the interchangeable {group, valence} pair wears a
+    single more primitive EPAC hat: the main-group column index (outermost
+    shell electron count)."""
+
+    import re
+
+    def outermost_shell_count(symbol: str) -> int:
+        import re
+        config = _BY_SYMBOL[symbol]["electron_configuration"]
+        config = config.replace("[Ne].", "1s2.2s2.2p6.")
+        totals: dict[int, int] = {}
+        for part in config.split("."):
+            shell = int(re.match(r"\d+", part).group())
+            occ = int(re.findall(r"\d+$", part)[0])
+            totals[shell] = totals.get(shell, 0) + occ
+        return totals[max(totals)]
+
+    column = {symbol: outermost_shell_count(symbol) for symbol in ATOMIC_NUMBER}
+    valence_matches = all(
+        _BY_SYMBOL[symbol]["valence_electrons"] == column[symbol]
+        for symbol in ATOMIC_NUMBER
+    )
+    group_relation = {}
+    for symbol in ATOMIC_NUMBER:
+        entry = _BY_SYMBOL[symbol]
+        if entry["period"] >= 2:
+            group_relation[symbol] = {
+                "group": entry["group"],
+                "column_plus_ten": column[symbol] + 10,
+                "matches": entry["group"] == column[symbol] + 10,
+            }
+        else:
+            group_relation[symbol] = {
+                "group": entry["group"],
+                "column_plus_ten": None,
+                "matches": None,
+                "note": "H is the 1s exception: group 1 equals column 1",
+            }
+
+    def column_for(name: str) -> int:
+        point = states[name]
+        if name.startswith("molecule:"):
+            formula = name.split(":", 1)[1]
+            return sum(column[s] for s in dict(LOCKED_FORMULAS)[formula])
+        return column[name.split(":", 1)[1]]
+
+    def period_for(name: str) -> int:
+        if name.startswith("molecule:"):
+            formula = name.split(":", 1)[1]
+            return sum(_BY_SYMBOL[s]["period"] for s in dict(LOCKED_FORMULAS)[formula])
+        return _BY_SYMBOL[name.split(":", 1)[1]]["period"]
+
+    def collapsed_point(name: str) -> tuple:
+        point = states[name]
+        return point.b_projection() + (point.coordinates[3], period_for(name), column_for(name))
+
+    collapsed = {name: collapsed_point(name) for name in states}
+    groups: dict[tuple, list[str]] = {}
+    for name, coords in collapsed.items():
+        groups.setdefault(coords, []).append(name)
+    collisions = {str(k): v for k, v in sorted(groups.items()) if len(v) > 1}
+
+    return {
+        "hat": "main-group column index (outermost-shell electron count)",
+        "column_equals_declared_valence_electrons": valence_matches,
+        "group_is_column_plus_ten_for_p_block": all(
+            entry["matches"] is not False for entry in group_relation.values()
+        ),
+        "group_relation": group_relation,
+        "collapsed_coordinate_separates": not collisions,
+        "collapsed_collisions": collisions,
+        "verdict": (
+            "the interchangeable pair wears one hat: the outermost-shell "
+            "electron count (main-group column). group is column + 10 for "
+            "p-block elements (H is the 1s exception), so both coordinates "
+            "collapse to the single declared primitive valence_electrons; "
+            "the minimal carrier is (B, layer, period, column)"
+        ),
+    }
+
+
 def _transition_closure_beyond_nine() -> dict[str, Any]:
     return {
         "status": "UNRESOLVED",
@@ -431,6 +519,7 @@ def build_carrier_falsification() -> dict[str, Any]:
     sigma_replacement = _sigma_replacement(states)
     sigma_identity = _sigma_identity_serialization_audit(states)
     replacement_minimality = _replacement_minimality_audit(states)
+    pair_primitive = _pair_primitive_audit(states)
     minkowski = _minkowski_field_work(states)
 
     payload = {
@@ -441,6 +530,7 @@ def build_carrier_falsification() -> dict[str, Any]:
         "sigma_replacement": sigma_replacement,
         "sigma_identity_serialization_audit": sigma_identity,
         "replacement_minimality_audit": replacement_minimality,
+        "pair_primitive_audit": pair_primitive,
         "transition_closure_beyond_nine": _transition_closure_beyond_nine(),
         "unseen_states_independent_b": _unseen_states_independent_b(),
         "minkowski_field_work": minkowski,

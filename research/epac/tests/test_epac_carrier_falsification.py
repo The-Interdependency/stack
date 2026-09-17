@@ -38,6 +38,14 @@
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
+#
+# id: check_carrier_falsification_pair_primitive
+#   proves: carrier_falsification_pair_primitive
+#   call: self::test_pair_primitive
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 from __future__ import annotations
@@ -95,3 +103,13 @@ def test_replacement_minimality() -> None:
     assert audit["component_drops"]["period"]["separation_survives"] is False
     assert audit["strictly_finer_than_sigma_at_molecule_scale"] is True
     assert audit["alternative_electron_occupancy_separates"] is False
+
+
+def test_pair_primitive() -> None:
+    report = build_carrier_falsification()
+    audit = report["pair_primitive_audit"]
+    assert audit["column_equals_declared_valence_electrons"] is True
+    assert audit["group_is_column_plus_ten_for_p_block"] is True
+    assert audit["collapsed_coordinate_separates"] is True
+    assert audit["collapsed_collisions"] == {}
+    assert "outermost-shell" in audit["hat"]
