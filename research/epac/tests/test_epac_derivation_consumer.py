@@ -46,7 +46,7 @@ EPAC_SOURCE_ROOT = Path(
 
 def test_binds_exact_epac_source() -> None:
     report = build_derived_carrier(EPAC_SOURCE_ROOT)
-    assert report["epac_source_commit"].startswith("7acad4d")
+    assert report["epac_source_commit"].startswith("db3e158")
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -77,6 +77,15 @@ def test_generative_gate_retains_bounded() -> None:
     assert "outside-supported-domain" in gate["held_out_statuses"]["C2H2"]
     # NH4+ counts ligand K only and evaluates to (3,5,4), not 7
     assert gate["held_out_statuses"]["NH4+"] == "evaluation-only"
+    # active-orbital set derived for supplied transition-metal topologies
+    assert gate["active_orbital_set_derived_for_supplied_topologies"] is True
+    assert gate["topology_formation"] == "downstream, not tested here"
+    by_topology = {
+        entry["topology"]: entry
+        for entry in gate["transition_metal_topology_evaluations"]
+    }
+    assert by_topology["ScCl3"]["b_value"] == [3, 4, 3]
+    assert by_topology["ScCl3"]["center_active_orbital_set"]["subshells"] == ["4s", "3d"]
 
 
 def test_uses_construction_not_lookup() -> None:
