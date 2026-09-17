@@ -46,6 +46,14 @@
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
+#
+# id: check_carrier_falsification_period_valence_derivation
+#   proves: carrier_falsification_period_valence_derivation
+#   call: self::test_period_valence_derivation
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 from __future__ import annotations
@@ -103,6 +111,17 @@ def test_replacement_minimality() -> None:
     assert audit["component_drops"]["period"]["separation_survives"] is False
     assert audit["strictly_finer_than_sigma_at_molecule_scale"] is True
     assert audit["alternative_electron_occupancy_separates"] is False
+
+
+def test_period_valence_derivation() -> None:
+    report = build_carrier_falsification()
+    audit = report["period_valence_derivation_audit"]
+    assert audit["Z_derivable_from_construction"] is True
+    assert audit["period_derivable_from_stack_local_construction"] is False
+    assert audit["valence_derivable_from_stack_local_construction"] is False
+    assert audit["generating_receipts_location"].startswith("The-Interdependency/epac")
+    assert "imported" in audit["verdict"]
+    assert "UNRESOLVED" in audit["verdict"]
 
 
 def test_pair_primitive() -> None:

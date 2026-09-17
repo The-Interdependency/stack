@@ -55,6 +55,12 @@
 #   then: both coordinates collapse to one declared primitive, the outermost-shell electron count, and the collapsed coordinate separates the frozen surface
 #   class: correctness
 #   since: 2026-09-17
+#
+# id: carrier_falsification_period_valence_derivation
+#   given: the stack-local EPAC subatomic and element gonol receipts
+#   then: Z is derivable from proton glyphs while period and valence are only carried options, so chemistry remains imported here and generation is unresolved
+#   class: correctness
+#   since: 2026-09-17
 # === END CONTRACTS ===
 
 """Falsify the constitutive carrier and its coordinates.
@@ -494,6 +500,79 @@ def _minkowski_field_work(states: dict[str, ConstitutivePoint]) -> dict[str, Any
     }
 
 
+def _period_valence_derivation_audit() -> dict[str, Any]:
+    """Test whether period and valence derive from EPAC construction receipts
+    rather than periodic-table lookup."""
+
+    receipts_dir = Path(__file__).resolve().parent / "subatomic" / "receipts"
+    nucleus_receipts = ("h.json", "c.json", "he.json", "li.json")
+    gonol_receipts = ("gonol_h.json", "gonol_c.json", "gonol_he.json", "gonol_li.json")
+
+    findings = []
+    z_derivable = []
+    for name in nucleus_receipts:
+        data = json.loads((receipts_dir / name).read_text())
+        protons = data.get("proton_glyphs", [])
+        neutrons = data.get("neutron_glyphs", [])
+        z = data.get("Z")
+        a = data.get("A")
+        shell_keys = [key for key in data if "shell" in key or "electron" in key]
+        derivable = z is not None and len(protons) == z
+        z_derivable.append(derivable)
+        findings.append(
+            {
+                "receipt": name,
+                "Z": z,
+                "A": a,
+                "proton_count": len(protons),
+                "neutron_count": len(neutrons),
+                "Z_derivable_from_proton_glyphs": derivable,
+                "A_derivable": a == len(protons) + len(neutrons),
+                "shell_or_electron_fields": shell_keys,
+            }
+        )
+
+    carried = []
+    for name in gonol_receipts:
+        data = json.loads((receipts_dir / name).read_text())
+        options = dict(data.get("carried_options", []))
+        carried.append(
+            {
+                "receipt": name,
+                "period_carried": options.get("period"),
+                "valence_carried": options.get("valence-electrons"),
+                "configuration_carried": options.get("electron-configuration"),
+            }
+        )
+
+    period_derivable = any(
+        finding["shell_or_electron_fields"] for finding in findings
+    )
+    valence_derivable = period_derivable
+
+    return {
+        "subatomic_nucleus_receipts": findings,
+        "element_gonol_receipts_carrying_options": carried,
+        "Z_derivable_from_construction": all(z_derivable),
+        "period_derivable_from_stack_local_construction": period_derivable,
+        "valence_derivable_from_stack_local_construction": valence_derivable,
+        "generating_layer_declared": (
+            "epac_atomic quantum participants: n, l, m_l, m_s, shell, "
+            "subshell, hydrogenic angular id, radial nodes, Slater Z_eff, "
+            "Rydberg energy"
+        ),
+        "generating_receipts_location": "The-Interdependency/epac (outside this research directory)",
+        "verdict": (
+            "period and valence are NOT derivable from the stack-local EPAC "
+            "construction receipts; they enter the frozen surface as carried "
+            "element-closure options whose generating quantum-shell receipts "
+            "live in the separate epac repository. Chemistry is imported "
+            "here, not generated. The generate-vs-import question remains "
+            "UNRESOLVED pending those receipts."
+        ),
+    }
+
+
 def _ucns_pcea_independence() -> dict[str, Any]:
     return {
         "ucns_derives_richer_structure_independently": False,
@@ -535,6 +614,7 @@ def build_carrier_falsification() -> dict[str, Any]:
         "unseen_states_independent_b": _unseen_states_independent_b(),
         "minkowski_field_work": minkowski,
         "ucns_pcea_independence": _ucns_pcea_independence(),
+        "period_valence_derivation_audit": _period_valence_derivation_audit(),
         "hmmm": (
             "sigma is falsified as a privileged coordinate; the Minkowski "
             "backend is deprecated unless field structure adds measurable "
