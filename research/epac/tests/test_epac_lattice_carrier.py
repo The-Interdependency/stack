@@ -1,38 +1,46 @@
 # === CHECKS ===
-# id: check_epac_lattice_uses_abstract_ucns_lattice
-#   proves: epac_lattice_uses_abstract_ucns_lattice
-#   call: self::test_uses_abstract_ucns_lattice
+# id: check_epac_carrier_is_constitutive_discrete
+#   proves: epac_carrier_is_constitutive_discrete
+#   call: self::test_is_constitutive_discrete
 #   requires: python3
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
 #
-# id: check_epac_lattice_b_is_projection
-#   proves: epac_lattice_b_is_projection
+# id: check_epac_carrier_b_is_projection
+#   proves: epac_carrier_b_is_projection
 #   call: self::test_b_is_projection
 #   requires: python3
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
 #
-# id: check_epac_lattice_separates_known_collisions
-#   proves: epac_lattice_separates_known_collisions
+# id: check_epac_carrier_separates_known_collisions
+#   proves: epac_carrier_separates_known_collisions
 #   call: self::test_separates_known_collisions
 #   requires: python3
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
 #
-# id: check_epac_lattice_preserves_transitions_and_provenance
-#   proves: epac_lattice_preserves_transitions_and_provenance
+# id: check_epac_carrier_preserves_transitions_and_provenance
+#   proves: epac_carrier_preserves_transitions_and_provenance
 #   call: self::test_preserves_transitions_and_provenance
 #   requires: python3
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
 #
-# id: check_epac_lattice_remains_candidate
-#   proves: epac_lattice_remains_candidate
+# id: check_epac_carrier_does_not_invent_unseen_states
+#   proves: epac_carrier_does_not_invent_unseen_states
+#   call: self::test_does_not_invent_unseen_states
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
+# id: check_epac_carrier_remains_candidate
+#   proves: epac_carrier_remains_candidate
 #   call: self::test_remains_candidate
 #   requires: python3
 #   timeout: 10
@@ -42,27 +50,24 @@
 
 from __future__ import annotations
 
-import json
-
-import pytest
-
 from epac_lattice_carrier import (
     SCHEMA,
+    SCHEMA_MINKOWSKI,
     LOCKED_FORMULAS,
-    build_epac_lattice_carrier,
+    build_constitutive_discrete_carrier,
+    build_minkowski_backend,
 )
 
 
-def test_uses_abstract_ucns_lattice() -> None:
-    report = build_epac_lattice_carrier()
+def test_is_constitutive_discrete() -> None:
+    report = build_constitutive_discrete_carrier()
     assert report["schema"] == SCHEMA
-    assert report["basis"] == [
-        "1", "sqrt2", "sqrt3", "sqrt5", "sqrt6", "sqrt10", "sqrt15", "sqrt30",
-    ]
+    for state in report["states"]:
+        assert len(state["coordinates"]) == 5, state
 
 
 def test_b_is_projection() -> None:
-    report = build_epac_lattice_carrier()
+    report = build_constitutive_discrete_carrier()
     documented_b = {
         "subatomic:H": [3, 2, 0],
         "subatomic:B": [3, 3, 0],
@@ -99,7 +104,7 @@ def test_b_is_projection() -> None:
 
 
 def test_separates_known_collisions() -> None:
-    report = build_epac_lattice_carrier()
+    report = build_constitutive_discrete_carrier()
     assert report["collisions_separated"] is True
     assert report["b_classes"] == 16
     for group in report["collision_groups"].values():
@@ -108,12 +113,12 @@ def test_separates_known_collisions() -> None:
 
 
 def test_preserves_transitions_and_provenance() -> None:
-    report = build_epac_lattice_carrier()
+    report = build_constitutive_discrete_carrier()
     assert report["transitions_preserved"] is True
     assert len(report["locked_transitions"]) == 9
     by_state = {state["state"]: state for state in report["states"]}
     for transition in report["locked_transitions"]:
-        constituent_sum = [0] * 8
+        constituent_sum = [0] * 5
         for symbol in transition["constituents"]:
             element = by_state[f"element:{symbol}"]
             constituent_sum = [
@@ -129,7 +134,22 @@ def test_preserves_transitions_and_provenance() -> None:
         assert transition["provenance_preserved"] is True
 
 
+def test_does_not_invent_unseen_states() -> None:
+    report = build_constitutive_discrete_carrier()
+    generalization = report["generalization_audit"]
+    assert generalization["unseen_states_declined"] == 18
+    for entry in generalization["declined"]:
+        assert entry["declined"] is True
+    sigma = report["sigma_audit"]
+    assert sigma["epac_internal"] is True
+    assert sigma["bare_scale_is_name"] is True
+    assert sigma["molecule_scale_is_compositional"] is True
+
+
 def test_remains_candidate() -> None:
-    report = build_epac_lattice_carrier()
+    report = build_constitutive_discrete_carrier()
     assert "hmmm" in report["hmmm"]
-    assert report["receipt_sha256"] == report["receipt_sha256"]
+    backend = build_minkowski_backend()
+    assert backend["schema"] == SCHEMA_MINKOWSKI
+    assert backend["separation_relevance"] == "none; field structure contributes nothing"
+    assert report["receipt_sha256"]
