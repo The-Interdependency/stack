@@ -1,0 +1,74 @@
+# === CHECKS ===
+# id: check_carrier_falsification_finds_identical_sigma_states
+#   proves: carrier_falsification_finds_identical_sigma_states
+#   call: self::test_finds_identical_sigma_states
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
+# id: check_carrier_falsification_kills_sigma_if_replaceable
+#   proves: carrier_falsification_kills_sigma_if_replaceable
+#   call: self::test_kills_sigma_if_replaceable
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
+# id: check_carrier_falsification_deprecates_minkowski_without_field_work
+#   proves: carrier_falsification_deprecates_minkowski_without_field_work
+#   call: self::test_deprecates_minkowski_without_field_work
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+#
+# id: check_carrier_falsification_does_not_import_epac_upward
+#   proves: carrier_falsification_does_not_import_epac_upward
+#   call: self::test_does_not_import_epac_upward
+#   requires: python3
+#   timeout: 10
+#   mutates: none
+#   cleanup: none
+# === END CHECKS ===
+
+from __future__ import annotations
+
+from epac_carrier_falsification import SCHEMA, build_carrier_falsification
+
+
+def test_finds_identical_sigma_states() -> None:
+    report = build_carrier_falsification()
+    search = report["identical_sigma_search"]
+    assert search["sigma_is_an_identity"] is False
+    assert search["distinct_states_sharing_identical_sigma"] > 0
+    # subatomic:H and element:H share sigma 1
+    assert any("subatomic:H" in names and "element:H" in names for names in search["groups"].values())
+
+
+def test_kills_sigma_if_replaceable() -> None:
+    report = build_carrier_falsification()
+    removal = report["sigma_removal"]
+    assert removal["separation_survives_without_sigma"] is False
+    replacement = report["sigma_replacement"]
+    assert replacement["separation_survives_with_replacement"] is True
+    assert replacement["collisions"] == {}
+    identity = report["sigma_identity_serialization_audit"]
+    assert "identity serialization" in identity["bare_scale_contribution"]
+
+
+def test_deprecates_minkowski_without_field_work() -> None:
+    report = build_carrier_falsification()
+    minkowski = report["minkowski_field_work"]
+    assert minkowski["plain_coordinate_classes"] == minkowski["field_norm_classes"]
+    assert minkowski["field_structure_adds_measurable_distinction"] is False
+    assert minkowski["verdict"] == "DEPRECATE"
+
+
+def test_does_not_import_epac_upward() -> None:
+    report = build_carrier_falsification()
+    independence = report["ucns_pcea_independence"]
+    assert independence["ucns_derives_richer_structure_independently"] is False
+    assert independence["pcea_derives_richer_structure_independently"] is False
+    assert report["schema"] == SCHEMA
+    assert report["receipt_sha256"]
