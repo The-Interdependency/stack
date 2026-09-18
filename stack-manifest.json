@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "a570f3c39a7329babd758a5a18107c8aaaf0023f2ecace3e11b163829ae70195",
+  "work_graph_sha256": "2453a88009be151d872a439d086ae1d4b6d0696fa55747b4fe487ef9cabd8197",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -170,6 +170,15 @@
       "relation": "historical forge documents and receipts; Python implementation retired in favor of the independent EPAC release",
       "repository": "The-Interdependency/stack",
       "workspace": "research/epac/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "participant_id": "epac-derived-carrier",
+      "relation": "active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer",
+      "repository": "The-Interdependency/stack",
+      "workspace": "research/epac-derived-carrier/"
     }
   ]
 }

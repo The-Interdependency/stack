@@ -2,7 +2,7 @@
 # id: epac_constitutive_discrete_carrier
 #   module_name: epac_lattice_carrier
 #   module_kind: candidate
-#   summary: constitutive discrete carrier for frozen EPAC states; B(R)=(3,d,c) is a projection, and the separating coordinates are existing EPAC structure (layer, atomic number/sum)
+#   summary: stack-local constitutive discrete carrier for frozen EPAC states; B(R)=(3,d,c) is a projection, and the separating coordinates are existing EPAC structure (layer, atomic number/sum)
 #   owner: Erin Spencer
 #   public_surface: SCHEMA, SCHEMA_MINKOWSKI, VERSION, BASIS, EPACLatticeError, ConstitutivePoint, build_constitutive_discrete_carrier, embed_minkowski, build_minkowski_backend
 #   internal_surface: frozen-state carrier assignment, B projection, locked-formula transitions, collision separation, generalization audit, Minkowski backend embedding

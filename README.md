@@ -37,6 +37,7 @@ stack/
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── epac/                # historical forge evidence; active implementation is independent
+│   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
 │   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── integration/epac/        # immutable EPAC release lock and consumer verification
@@ -85,6 +86,12 @@ lexical forms, delimiters, grammar constructions, and the module from already-cl
 participants. METAPAT owns affixiation semantics; UCNS owns optional consumed geometry;
 Python Gonol owns Python source construction. Tokens and AST nodes are recognition
 witnesses, never gonol substitutes.
+
+EPAC-derived carrier research is a separate stack-local audit at
+`research/epac-derived-carrier/`. It consumes exact EPAC source bytes without
+restoring implementation code to the sealed historical `research/epac/` path.
+EPAC retains implementation and public-contract authority; Stack owns only the
+local carrier audit and its bounded receipts.
 
 ### Change stack structure
 

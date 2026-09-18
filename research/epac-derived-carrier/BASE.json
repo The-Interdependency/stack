@@ -1,0 +1,17 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "epac-derived-carrier",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+  "source_path": "research/epac/",
+  "canon_path": null,
+  "authority": "stack-local derived-carrier audit; EPAC retains implementation and public-contract authority",
+  "standing": "stack-local-research",
+  "note": "The active audit was separated from research/epac so the graduated EPAC forge path remains immutable historical evidence. No implementation, public-contract, scientific, proof, measurement, or empirical authority transfers to Stack.",
+  "epac_source": {
+    "repository": "The-Interdependency/epac",
+    "commit": "94abf4092e6c7f039a0c5df533e0bdbccae229f5",
+    "authority_transfer": false
+  }
+}

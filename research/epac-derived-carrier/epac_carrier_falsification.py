@@ -2,7 +2,7 @@
 # id: epac_carrier_falsification
 #   module_name: epac_carrier_falsification
 #   module_kind: instrument
-#   summary: falsifies the constitutive carrier coordinates, the sigma coordinate, and the Minkowski backend, and records whether UCNS/PCEA derives the richer structure independently
+#   summary: stack-local audit that falsifies the constitutive carrier coordinates, the sigma coordinate, and the Minkowski backend, and records whether UCNS/PCEA derives the richer structure independently
 #   owner: Erin Spencer
 #   public_surface: SCHEMA, VERSION, CarrierFalsificationError, build_carrier_falsification
 #   internal_surface: identical-sigma search, sigma removal and replacement, transition closure beyond the nine, Minkowski field-norm comparison, UCNS/PCEA independence check
@@ -87,8 +87,10 @@ from epac_lattice_carrier import (
 SCHEMA = "epac.carrier-falsification"
 VERSION = "0.1.0"
 
+_HISTORICAL_EPAC_ROOT = Path(__file__).resolve().parent.parent / "epac"
+
 _PERIODIC_TABLE = json.loads(
-    (Path(__file__).resolve().parent / "data" / "periodic_table_z1_18.json").read_text()
+    (_HISTORICAL_EPAC_ROOT / "data" / "periodic_table_z1_18.json").read_text()
 )
 _BY_SYMBOL = {e["symbol"]: e for e in _PERIODIC_TABLE["elements"]}
 
@@ -162,7 +164,10 @@ def _sigma_replacement(states: dict[str, ConstitutivePoint]) -> dict[str, Any]:
         groups.setdefault(coords, []).append(name)
     collisions = {str(k): v for k, v in sorted(groups.items()) if len(v) > 1}
     return {
-        "replacement": "(period, group, valence_electrons) from data/periodic_table_z1_18.json",
+        "replacement": (
+            "(period, group, valence_electrons) from sealed historical "
+            "research/epac/data/periodic_table_z1_18.json"
+        ),
         "separation_survives_with_replacement": not collisions,
         "collisions": collisions,
         "verdict": (
@@ -504,7 +509,7 @@ def _period_valence_derivation_audit() -> dict[str, Any]:
     """Test whether period and valence derive from EPAC construction receipts
     rather than periodic-table lookup."""
 
-    receipts_dir = Path(__file__).resolve().parent / "subatomic" / "receipts"
+    receipts_dir = _HISTORICAL_EPAC_ROOT / "subatomic" / "receipts"
     nucleus_receipts = ("h.json", "c.json", "he.json", "li.json")
     gonol_receipts = ("gonol_h.json", "gonol_c.json", "gonol_he.json", "gonol_li.json")
 

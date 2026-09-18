@@ -1,3 +1,4 @@
+# Stack-local EPAC-derived-carrier checks; not EPAC implementation tests.
 # === CHECKS ===
 # id: check_epac_carrier_is_constitutive_discrete
 #   proves: epac_carrier_is_constitutive_discrete

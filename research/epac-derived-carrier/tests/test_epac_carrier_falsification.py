@@ -1,3 +1,4 @@
+# Stack-local EPAC-derived-carrier checks; not EPAC implementation tests.
 # === CHECKS ===
 # id: check_carrier_falsification_finds_identical_sigma_states
 #   proves: carrier_falsification_finds_identical_sigma_states

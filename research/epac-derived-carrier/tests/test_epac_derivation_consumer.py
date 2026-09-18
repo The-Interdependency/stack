@@ -1,3 +1,4 @@
+# Stack-local EPAC-derived-carrier checks; not EPAC implementation tests.
 # === CHECKS ===
 # id: check_derived_carrier_binds_exact_epac_source
 #   proves: derived_carrier_binds_exact_epac_source
@@ -18,6 +19,14 @@
 # id: check_derived_carrier_reruns_collision_transition_provenance_generalization
 #   proves: derived_carrier_reruns_collision_transition_provenance_generalization
 #   call: self::test_reruns_collision_transition_provenance_generalization
+#   requires: python3, git
+#   timeout: 30
+#   mutates: none
+#   cleanup: none
+#
+# id: check_derived_carrier_preserves_bounded_ligand_field_controls
+#   proves: derived_carrier_preserves_bounded_ligand_field_controls
+#   call: self::test_generative_gate_retains_bounded
 #   requires: python3, git
 #   timeout: 30
 #   mutates: none
@@ -46,7 +55,7 @@ EPAC_SOURCE_ROOT = Path(
 
 def test_binds_exact_epac_source() -> None:
     report = build_derived_carrier(EPAC_SOURCE_ROOT)
-    assert report["epac_source_commit"].startswith("7b3d99a")
+    assert report["epac_source_commit"] == "94abf4092e6c7f039a0c5df533e0bdbccae229f5"
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -64,7 +73,6 @@ def test_generative_gate_retains_bounded() -> None:
     gate = report["generative_gate"]
     assert gate["frozen_rule_reproduces_nine"] is True
     assert gate["transition_metal_failure_recorded"] is True
-    assert gate["missing_state_variable"] == "bond-context active-orbital set (may include (n-1)d)"
     assert gate["decision"] == "RETAIN-BOUNDED"
     assert gate["standing"] == "bounded constitutive carrier"
     assert gate["supported_domain"] == [
@@ -73,12 +81,14 @@ def test_generative_gate_retains_bounded() -> None:
         "diatomics",
         "singleton-center star topologies",
     ]
-    # symmetric multi-center held-out molecules are outside the supported domain
+    # Multi-center topologies outside the declared domain remain declined.
     assert "outside-supported-domain" in gate["held_out_statuses"]["C2H2"]
     # NH4+ counts ligand K only and evaluates to (3,5,4), not 7
     assert gate["held_out_statuses"]["NH4+"] == "evaluation-only"
-    # active-orbital set derived for supplied transition-metal topologies
-    assert gate["active_orbital_set_derived_for_supplied_topologies"] is True
+    # The construction supplies a 4s/3d/4p basis, but bond-context
+    # participation and coordination capacity remain explicitly unresolved.
+    assert gate["active_orbital_basis_constructed_for_supplied_topologies"] is True
+    assert gate["bond_context_orbital_participation"] == "UNRESOLVED"
     assert gate["coordination_capacity"] == "UNRESOLVED"
     assert gate["capacity_rule_status"] == "FALSIFIED"
     assert gate["topology_formation"] == "downstream, not tested here"
@@ -88,11 +98,31 @@ def test_generative_gate_retains_bounded() -> None:
     }
     assert by_topology["ScCl3"]["b_value"] == [3, 4, 3]
     sc_active = by_topology["ScCl3"]["center_active_orbital_set"]
-    assert [sub["subshell"] for sub in sc_active["subshells"]] == ["4s", "3d"]
+    assert [sub["subshell"] for sub in sc_active["subshells"]] == ["4s", "3d", "4p"]
     assert sc_active["coordination_capacity"] == "UNRESOLVED"
     # Zn2+ regression: d10 has zero unpaired electrons
     zn_active = by_topology["ZnCl2"]["center_active_orbital_set"]
     assert zn_active["unpaired_electrons"] == 0
+    zn_subshells = {sub["subshell"]: sub for sub in zn_active["subshells"]}
+    assert zn_subshells["3d"]["electrons"] == 10
+    assert zn_subshells["4p"]["electrons"] == 0
+
+    # High/low-spin behavior is a supplied control, not a ligand-identity
+    # lookup or a derived field-regime claim.
+    controls = {
+        entry["spin_regime_input"]: entry
+        for entry in gate["ligand_field_spin_controls"]
+    }
+    assert controls["high"]["unpaired_electrons"] == 5
+    assert controls["low"]["unpaired_electrons"] == 1
+    assert gate["ligand_field_regime_derivation"] == "UNRESOLVED"
+    assert gate["spectrochemical_lookup_used"] is False
+    assert gate["remaining_unresolved"] == [
+        "bond-context orbital participation (including 4p)",
+        "ligand-field regime derivation",
+        "coordination capacity",
+        "topology formation",
+    ]
 
 
 def test_uses_construction_not_lookup() -> None:
