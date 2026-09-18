@@ -16,7 +16,7 @@ The [work graph](pcea-current-research-v1.work-graph.json) binds these identitie
 |---|---|---|
 | PCEA | `1595842abd1a5b443c6a601a2afe935b60c4adf7` | Stable runtime |
 | UCNS | `d8f0c505e6f5132e9711de0e7c24e4718e77e51a` | Geometry and incubating prime-arity research |
-| Stack | `545e135e2efbbcf29f033ab5530ac4876a68b718` | Candidate mechanics, successor experiments, and PCEA research |
+| Stack | `57e3f047c092a6df5435ed4f502347664513a0ff` | PR #42 research base; candidate mechanics, successor experiments, and PCEA research |
 | METAPAT | `e4165b0cac9eca41daef9c2f941881028ca55d48` | Semantic and domain-restraint doctrine |
 | skill-lib | `dd5027d99516831c0dcb83a176a67140d3819b66` | Build and evidence discipline |
 
@@ -82,6 +82,7 @@ The algorithm has no authentication tag or replay ledger.
 | Ordered return layer | Fox and degree-two Magnus data distinguish six based words that share one homology vector | Preserve ordered words; a rank or scalar cannot replace them |
 | Prime-arity coefficients | Exact update and unordered-multiset preservation; scalar collisions | Keep coefficient layers plus relations and provenance |
 | Recursive successor | No surviving constructor in the pinned experiments | Do not replace the 53-prime table with an asserted derived ladder |
+| Rooted ribbon completion | Five fields execute under explicit assumptions; paired and sign-block rotations disagree | Preserve the constructor as Stack research; do not promote an assumed attachment or select a rotation post-hoc |
 | Displacement selection | Current correction selects no candidate | Do not import the withdrawn selection as a settled geometric law |
 
 Sources:
@@ -89,6 +90,7 @@ Sources:
 [ordered coupling](https://github.com/The-Interdependency/stack/blob/545e135e2efbbcf29f033ab5530ac4876a68b718/research/ucns/docs/affinization-coupling-geometry-v0.md),
 [atomic promotion](https://github.com/The-Interdependency/stack/blob/545e135e2efbbcf29f033ab5530ac4876a68b718/research/ucns/docs/recursive-scale-transition-v0.md),
 [ordered return audit](https://github.com/The-Interdependency/stack/blob/545e135e2efbbcf29f033ab5530ac4876a68b718/research/ucns/docs/ordered-return-invariant-audit-v0.md),
+[current rooted rotation/closure audit](../../ucns/docs/rooted-rotation-closure-audit-v0.md),
 [prime-arity audit](https://github.com/The-Interdependency/ucns/blob/d8f0c505e6f5132e9711de0e7c24e4718e77e51a/docs/prime-arity/audit_coefficient_breadth.py),
 [displacement correction](https://github.com/The-Interdependency/ucns/blob/d8f0c505e6f5132e9711de0e7c24e4718e77e51a/docs/displacement-law/DECISION_2026-09-17_CORRECTION.md).
 
@@ -148,7 +150,14 @@ system; marked outgoing dart; closure rule. The remaining fields are
 dependency-blocked, not disproven. The current UCNS canon still describes
 origin representation and higher recursive transitions as candidate-scoped or
 unresolved; this update does not claim that the old Stack audit has been
-re-executed against current UCNS.
+re-executed against current UCNS. The follow-on rooted rotation/closure audit
+now performs that recheck. It confirms that the canonical attachment remains
+missing, then supplies every field only as an explicit candidate assumption.
+Two valid rank-two rotations preserve the same earlier fields while producing
+different face closures and genus, so current retained structure does not
+select the rotation. Both frozen candidates derive cellular order `1` from the
+one-role state and are falsified by the first `2881` comparator; neither is
+recursed on the second observation.
 
 Sources:
 [constructor contract](https://github.com/The-Interdependency/stack/blob/545e135e2efbbcf29f033ab5530ac4876a68b718/research/ucns/docs/based-traversal-constructor-contract-v0.md),
@@ -216,8 +225,9 @@ See [verification receipt](pcea-current-research-v1.verification.json).
 - Checked the work-graph digest and documentation references.
 
 Stack geometry results above are reported from their pinned source records.
-The geometry suites, complete package suites, and cryptographic attack harness
-were not rerun for this documentation update.
+The follow-on audit independently replayed 14 rooted-constructor/adversarial
+tests, the exact six-test crypto-audit commit `0b49672`, and the unpublished
+ten-test trapdoor-lift audit. Complete package suites were not rerun.
 
 ## Usage guidance
 
@@ -230,9 +240,11 @@ the recorded commit:
 python docs/prime-arity/audit_coefficient_breadth.py
 ```
 
-The next dependency-complete research action is to rebind the five-field
-traversal audit to current UCNS and resolve or preserve its first missing
-geometric attachment. Keep subsequent fields unevaluated until admitted.
+The five-field audit has now been rebound in the linked follow-on audit. The
+next dependency-complete action is the frozen native attachment-target
+stabilizer comparison: visible phase basepoint, `C2`-invariant two-lift fiber,
+and a singly framed lift as a stronger control. Keep subsequent fields
+unpromoted until one target is intrinsically selected.
 For any independent bounded cipher experiment, declare a separate candidate
 and explicit supplied geometry rather than bypassing this recursive lane's
 gate.
@@ -242,12 +254,13 @@ gate.
 - The exact recursive successor and next-scale placement remain unresolved.
 - The complete geometry-selected traversal certificate remains unavailable in
   the inspected sources.
-- The operator reported a separate crypto-audit local commit `0b49672`.
-  GitHub could not resolve it during this update. Its attack results remain
-  operator-reported here, not an independently replayed source receipt.
-- The reported trapdoor-lift audit and any later VM-only work are outside this
-  source-bound snapshot; their exact sources must be retrieved before they
-  change this specification.
+- Local Git object `0b49672862a30cec0a0ee24e39a34241c9626f27`
+  is now independently replayed: its PCEA cryptographic verdict is
+  `FALSIFIED`. A local equivalence-threshold extension reaches the same result
+  across eight failed parity criteria but remains unpublished working-tree
+  evidence.
+- The unpublished trapdoor-lift audit is now source-hashed and replayed. Its
+  existing-UCNS trapdoor standing is `UNRESOLVED_NOT_RECONSTRUCTED`; the
+  minimal fourth-power candidate is `FALSIFIED`.
 - New key derivation, encryption, authentication, state evolution, and quantum
   security remain construction-specific research obligations.
-

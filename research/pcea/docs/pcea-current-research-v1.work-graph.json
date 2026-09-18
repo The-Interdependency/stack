@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "188278732e899a99dec46490ba7df06a57035b769340a60a180ca116ad2c0421",
+  "work_graph_sha256": "b548be6927b0994d84ecf84b78531626509372c41d14ef5f1517331dfec951d7",
   "repositories": [
     {
       "repository": "The-Interdependency/metapat",
@@ -23,7 +23,7 @@
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "commit": "57e3f047c092a6df5435ed4f502347664513a0ff",
       "authority": "Stack-local PCEA and UCNS candidate research; no upstream canon authority",
       "relation": "research evidence source and edit owner"
     },
@@ -42,9 +42,10 @@
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
       "Stack's historical experiment pins are retained; this record does not refresh libs/ or BASE.json.",
-      "No completed recursive successor, geometry-selected traversal certificate, or UCNS-derived encryption construction is selected by this update.",
-      "The operator-reported Stack crypto-audit commit 0b49672 could not be retrieved from GitHub; its findings remain reported rather than independently replayed here.",
-      "Post-quantum security, authentication, replay protection, forward secrecy, and compromise recovery require construction-specific evidence."
+      "No completed recursive successor, canon-selected traversal certificate, or UCNS-derived encryption construction is selected by this update.",
+      "Local Stack crypto-audit commit 0b49672862a30cec0a0ee24e39a34241c9626f27 and the unpublished trapdoor-lift files were independently replayed and are bound separately by content digest in the follow-on receipt.",
+      "The rooted ribbon constructor closes only under explicit assumptions; current UCNS still does not select the origin attachment, rotation, marked dart, torsion presentation, or prime successor.",
+      "Post-quantum security, authentication, replay protection, forward secrecy, and compromise recovery require construction-specific evidence; current PCEA fails the tested security-equivalence gate."
     ]
   }
 }

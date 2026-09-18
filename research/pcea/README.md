@@ -66,6 +66,7 @@ or quantum-resistance standing.
 ## Current content
 
 - [Current research algorithm specification v1](docs/pcea-current-research-v1.md), [work graph](docs/pcea-current-research-v1.work-graph.json), and [verification receipt](docs/pcea-current-research-v1.verification.json) - source-bound update, including the unchanged runtime baseline and explicit research incompletion.
+- [Rooted rotation/closure audit](../ucns/docs/rooted-rotation-closure-audit-v0.md) - current-source recheck of the five-field traversal stop, explicit-assumption ribbon constructors, competing-rotation counterexample, post-freeze successor falsification, and unchanged separate cryptographic standing.
 - [`docs/provenance-tracker-v0.md`](docs/provenance-tracker-v0.md) - Actor A stack-local candidate note for using PCEA as a lineage/provenance tracker, with public authenticity and security claims explicitly out of scope.
 - [`docs/recursive-gonol-transition-candidates-v0.md`](docs/recursive-gonol-transition-candidates-v0.md) - Stack-local transition-family falsification and interpolation control from the observed `157 -> 2881 -> 54837698421` chain; no UCNS constructor or PCEA runtime claim.
 - [`gonol_transition_candidates.py`](gonol_transition_candidates.py) - Executable candidate registry, falsification checks, and deterministic receipt bytes.
@@ -80,4 +81,3 @@ or quantum-resistance standing.
 - Public Gonol projection may be useful as a public vocabulary/indexing layer, but no Public Gonol position operation or authenticity property is inferred here.
 - The actual UCNS recursive gonol geometry remains unresolved. The interpolation-control prediction `164513086777` has status `UNRESOLVED`: no independent UCNS constructor has produced a comparison value, so it is neither `SURVIVED` nor `FALSIFIED`.
 - Executable candidate carrier operations, ordered coupling, and atomic promotion exist, but their selected geometric realization, origin attachment, next-scale placement, recursive successor, and completed 2881-gonol structure remain unresolved. Historical candidate records retain the source identities and standings of their original runs.
-

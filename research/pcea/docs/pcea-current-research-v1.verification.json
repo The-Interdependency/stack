@@ -73,14 +73,52 @@
   "date": "2026-09-18",
   "documentation_validation": {
     "broken_links": 0,
-    "local_links_checked": 13,
-    "pinned_external_source_links_checked": 13,
+    "files_checked": 4,
+    "local_links_checked": 51,
+    "pinned_external_source_links_checked": 14,
     "structural_stack_change": false,
     "work_graph_digest_recomputed": true
   },
   "hmmm": [
-    "Source consistency and coefficient replay do not establish cryptographic security."
+    "Geometric replay does not establish cryptographic security.",
+    "The complete Stack consistency gate has a pre-existing epac.graduation failure on both current main and PR #42.",
+    "Canonical origin attachment, selected rotation, torsion presentation, and successor selector remain unresolved."
   ],
+  "follow_on_audit": {
+    "contract_graph": {
+      "checks": 12,
+      "contracts": 12,
+      "no_exec_resolution": "CLOSED"
+    },
+    "inherited_related_suite": {
+      "errors": 9,
+      "failures": 4,
+      "passes": 56,
+      "reason": "historical receipt identity drift plus deliberate fail-closed detection of UCNS commits 5d79bc2 and f6b5fd0 introducing exact origin-attachment terminology; manual review finds no callable attachment",
+      "tests": 69
+    },
+    "constructor": {
+      "adversarial_tests": 14,
+      "freeze_sha256": "86741937e58af2cc22c7e78692ac3e0d036c2c431f5062ee32b9305234d0a5e6",
+      "receipt_sha256": "2ea191b08fb6f37e085f8ea2a241fbea6eb99f2aed1d7fa53dfbe6089c3641cd",
+      "result": "SURVIVED_LOCALLY_UNDER_EXPLICIT_ASSUMPTIONS",
+      "successor_candidates": {
+        "rooted-ribbon.paired-germs.v0": "FALSIFIED",
+        "rooted-ribbon.sign-blocks.v0": "FALSIFIED"
+      }
+    },
+    "pcea_crypto_audit": {
+      "commit": "0b49672862a30cec0a0ee24e39a34241c9626f27",
+      "tests": 6,
+      "verdict": "FALSIFIED"
+    },
+    "trapdoor_lift_audit": {
+      "canonical_receipt_sha256": "4d8ae8cbe68344c6f4847fefd6659f228a3112e3810ee997af1dfa807eeaed7f",
+      "minimal_fourth_power_candidate": "FALSIFIED",
+      "overall": "UNRESOLVED_NOT_RECONSTRUCTED",
+      "tests": 10
+    }
+  },
   "input_sources": [
     {
       "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
@@ -147,15 +185,21 @@
     }
   ],
   "not_executed": [
-    "Stack geometry and successor suites",
-    "PCEA security audit",
-    "complete PCEA or UCNS package suites"
+    "complete Stack geometry suite",
+    "complete PCEA or UCNS package suites",
+    "performance and bandwidth after cryptographic falsification"
   ],
   "output_sha256": {
     "research/pcea/ASYNC_GONOL_KEYS.md": "99dc5b69f7c9052f774edcc59bef2ea5de35ccb3f76c12c3121e421ded6df18d",
-    "research/pcea/README.md": "d0a99ac18a5df147e1d04802225597f1932786a0cf9c680241b2987ce2b04510",
-    "research/pcea/docs/pcea-current-research-v1.md": "042726028494144eaad7eb876644953ac2034c927176d76e17ce48069fd89078",
-    "research/pcea/docs/pcea-current-research-v1.work-graph.json": "6b2c04005ddcf4ff4686d1761b91fc1f99d1da9fbd71fa380413da9c8343023b"
+    "research/pcea/README.md": "57fa6c75780dd29208ad56a62d7996881fd553ee7a1cd005112e4a11ec9e1ac2",
+    "research/pcea/docs/pcea-current-research-v1.md": "b3d12b2a558130ee37872f4ef1aca44fec3d850e6cf7254a014e1d45669a0cb4",
+    "research/pcea/docs/pcea-current-research-v1.work-graph.json": "1cf97ab555571a97630c96805a14f348c03a4d62574f5605059d50fe310b9215",
+    "research/ucns/docs/rooted-rotation-closure-audit-v0.md": "e0ade49e78307fade0bc311c243ced16d02a7af56fcc9331ed9ba925d02f1fc8",
+    "research/ucns/receipts/rooted-rotation-successor-gate-v0.json": "496487176cc7099d488a83ae15374860e89d436eee94ec3e99ee75beeb11e4b0",
+    "research/ucns/receipts/rooted-rotation-successor-gate-v0.md": "253f52dfc76dfddcdd1e2d3c88e2b75c24a5bc7f3f925a44d29011a56ba086ca",
+    "research/ucns/rooted_rotation_closure_constructor.py": "42a2062469f96f048bcf3bdf3a8d3fe2afb1666ff710c66c55569826b3c9b6af",
+    "research/ucns/rooted_rotation_successor_gate.py": "f764190338d58815157a94f3ea9184458869c709cad666d90f8fb8684879de85",
+    "research/ucns/tests/test_rooted_rotation_closure_constructor.py": "6feec88582169aef86cab26efcfcefe2a0a55caf46ded758bfa21efa26a69e7b"
   },
   "runtime_comparison": {
     "after_commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
@@ -167,7 +211,7 @@
     "other_package_blob_identities_unchanged": true
   },
   "schema": "the-interdependency.stack-research.pcea.research-update-verification",
-  "standing": "bounded-source-and-algebra-verification",
-  "version": "0.1.0",
-  "work_graph_sha256": "188278732e899a99dec46490ba7df06a57035b769340a60a180ca116ad2c0421"
+  "standing": "bounded-source-algebra-and-explicit-assumption-verification",
+  "version": "0.2.0",
+  "work_graph_sha256": "b548be6927b0994d84ecf84b78531626509372c41d14ef5f1517331dfec951d7"
 }
