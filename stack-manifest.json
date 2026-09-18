@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "a570f3c39a7329babd758a5a18107c8aaaf0023f2ecace3e11b163829ae70195",
+  "work_graph_sha256": "ca8d15ea5fb1da99353d64ee59d07aa210437002c0ac92785b915c1d36d50f96",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -170,6 +170,24 @@
       "relation": "historical forge documents and receipts; Python implementation retired in favor of the independent EPAC release",
       "repository": "The-Interdependency/stack",
       "workspace": "research/epac/"
+    },
+    {
+      "workspace": "research/epac-carrier/",
+      "participant_id": "epac-carrier",
+      "repository": "The-Interdependency/stack",
+      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "relation": "Stack-local carrier construction and falsification relocated from research/epac/; historical fixtures retain their original paths and identities",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/epac-carrier/",
+      "participant_id": "epac-source",
+      "repository": "The-Interdependency/epac",
+      "commit": "7b3d99af9a456d2587e0489d7400e6f8b58c8a82",
+      "relation": "verified atomic derivation source consumed by bounded carrier research; separate from the immutable v0.1.0 public release lock",
+      "canonical_release": false,
+      "authority_transfer": false
     }
   ]
 }

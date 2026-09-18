@@ -37,6 +37,7 @@ stack/
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── epac/                # historical forge evidence; active implementation is independent
+│   ├── epac-carrier/        # bounded carrier experiments and pinned EPAC source consumer
 │   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── integration/epac/        # immutable EPAC release lock and consumer verification
@@ -85,6 +86,13 @@ lexical forms, delimiters, grammar constructions, and the module from already-cl
 participants. METAPAT owns affixiation semantics; UCNS owns optional consumed geometry;
 Python Gonol owns Python source construction. Tokens and AST nodes are recognition
 witnesses, never gonol substitutes.
+
+EPAC carrier construction and falsification experiments live at
+`research/epac-carrier/`. They consume explicit pinned independent EPAC source
+and read preserved fixtures from `research/epac/`. The workspace owns these
+Stack-local experiments only; EPAC implementation and public-contract authority
+remain in the independent repository. The public release consumer remains at
+`integration/epac/`.
 
 ### Change stack structure
 

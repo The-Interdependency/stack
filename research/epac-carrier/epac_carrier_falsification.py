@@ -87,8 +87,11 @@ from epac_lattice_carrier import (
 SCHEMA = "epac.carrier-falsification"
 VERSION = "0.1.0"
 
+# Fixtures and relative source labels in reports retain their historical origin.
+# Resolve from this module so callers need no particular working directory.
+HISTORICAL_EPAC_ROOT = Path(__file__).resolve().parent.parent / "epac"
 _PERIODIC_TABLE = json.loads(
-    (Path(__file__).resolve().parent / "data" / "periodic_table_z1_18.json").read_text()
+    (HISTORICAL_EPAC_ROOT / "data" / "periodic_table_z1_18.json").read_text()
 )
 _BY_SYMBOL = {e["symbol"]: e for e in _PERIODIC_TABLE["elements"]}
 
@@ -504,7 +507,7 @@ def _period_valence_derivation_audit() -> dict[str, Any]:
     """Test whether period and valence derive from EPAC construction receipts
     rather than periodic-table lookup."""
 
-    receipts_dir = Path(__file__).resolve().parent / "subatomic" / "receipts"
+    receipts_dir = HISTORICAL_EPAC_ROOT / "subatomic" / "receipts"
     nucleus_receipts = ("h.json", "c.json", "he.json", "li.json")
     gonol_receipts = ("gonol_h.json", "gonol_c.json", "gonol_he.json", "gonol_li.json")
 

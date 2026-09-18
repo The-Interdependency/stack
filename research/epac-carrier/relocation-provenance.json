@@ -1,0 +1,66 @@
+{
+  "schema": "the-interdependency.stack-research-relocation",
+  "version": "1.0.0",
+  "recorded_at": "2026-09-18",
+  "start_commit": "9f47b8a982051509f4cbd1f856fca2654369ca65",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+  "mutation": [
+    "placement",
+    "relation",
+    "projection"
+  ],
+  "standing": "stack-local-research",
+  "authority_transfer": false,
+  "moves": [
+    {
+      "source_path": "research/epac/epac_carrier_falsification.py",
+      "destination_path": "research/epac-carrier/epac_carrier_falsification.py",
+      "source_sha256": "c6870832c9585d93c4ebc01207c8e6fd03a85d06a3c083291aef3e34f22814d2",
+      "source_blob_sha": "d58aac738190f13465260cea1d59ed2edb5d330e"
+    },
+    {
+      "source_path": "research/epac/epac_derivation_consumer.py",
+      "destination_path": "research/epac-carrier/epac_derivation_consumer.py",
+      "source_sha256": "c961c6609c9df26b1b5712dff96b6ddd5deb44efca20a5f1fda70e96aa70d22b",
+      "source_blob_sha": "1ad87e685f9f553679351b6803e6ba804f284f21"
+    },
+    {
+      "source_path": "research/epac/epac_lattice_carrier.py",
+      "destination_path": "research/epac-carrier/epac_lattice_carrier.py",
+      "source_sha256": "aa17cb8c931aec60685d441190747f37b1762b65795a20b0b16d866c56afa7cd",
+      "source_blob_sha": "70ce39d2bfc9ae6def11de1f16661f53a9f493fd"
+    },
+    {
+      "source_path": "research/epac/tests/test_epac_carrier_falsification.py",
+      "destination_path": "research/epac-carrier/tests/test_epac_carrier_falsification.py",
+      "source_sha256": "ca0fc1799bd85bd0b5b2a71a723a5028873931177423685a5dd3418b2767540a",
+      "source_blob_sha": "00a06c17b3c47d3f72eadb74f788fb522451f187"
+    },
+    {
+      "source_path": "research/epac/tests/test_epac_derivation_consumer.py",
+      "destination_path": "research/epac-carrier/tests/test_epac_derivation_consumer.py",
+      "source_sha256": "611321942d9f0beaa2e7783ee32205cf510f84ae5e9326cdced87184ef0b37b3",
+      "source_blob_sha": "2d8246a4459c332c0f6138772289a9af512d177d"
+    },
+    {
+      "source_path": "research/epac/tests/test_epac_lattice_carrier.py",
+      "destination_path": "research/epac-carrier/tests/test_epac_lattice_carrier.py",
+      "source_sha256": "bc8a215be02ca80d7eec5c37197769d8ed2174aa1979cea03d11c8c6db71566a",
+      "source_blob_sha": "b57cd0966fc2dec5b5de680b4c79f0247a0ed06a"
+    }
+  ],
+  "historical_fixture_root": "research/epac/",
+  "historical_fixture_inventory": "integration/epac/evidence/retirement-inventory.json",
+  "note": "Only the active carrier experiments and tests move. Protected forge evidence and the immutable release consumer retain their identities. Relative data/ and subatomic/ labels inside reports describe the historical fixture root.",
+  "baseline_report_sha256": {
+    "constitutive": "459c418c76534b8c1b66ac23c575982b22a633d7fc5c9d4147cd88fa7ebaf9b7",
+    "derived": "8d97b7958683a1fac408519642a1f6c5a17bc14ff1f0193f8a4b564f34d61d83",
+    "falsification": "6aaade682b05af185b6f8d8f1fbc09782e58f1fb71560c37ba425fc12a492d20",
+    "minkowski": "0e414996324e4d21a1d8d32d74862985a0f8bd415d5e1aa07c35b843c3606f00"
+  },
+  "report_digest_encoding": "UTF-8 JSON, sorted keys, separators comma and colon, no trailing newline",
+  "hmmm": [
+    "Carrier coverage and physical validity are unchanged by relocation; existing FALSIFIED and UNRESOLVED findings remain."
+  ]
+}

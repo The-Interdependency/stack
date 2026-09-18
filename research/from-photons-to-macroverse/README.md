@@ -40,6 +40,12 @@ The original paper explicitly presents itself as a candidate theory with a metap
 
 ## First research action
 
+Related research: [first principles and a UCNS composition option set](../metapat/composition-option-set-v0.md)
+records a separate proposed representation program spanning subatomic through cosmic
+scales, with the [Tensored Human as application scaffolding](../metapat/tensored-human-scaffold.md).
+This discovery link transfers no evidence or claim status and does not change this
+package's frozen paper, source receipts, or synthetic protocol.
+
 Run only the frozen synthetic model-recovery protocol in `PREREGISTRATION.md`. It compares direct arity and recursion against equal-budget lower-, adjacent-, arbitrary-, cut-feedback, wrong-tree, unnested, label-shuffled, feed-forward, and capacity-only controls.
 
 A surviving synthetic result would show only structural identifiability inside the frozen systems. It would not establish P0, a Möbius substrate, prime arity, a human heptad, or consciousness in any tested system.
