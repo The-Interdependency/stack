@@ -32,9 +32,27 @@ Do not edit `migrated/` as though it were current canon. Materialize a lane, the
 
 ## Current frontier
 
-The current candidate line is asynchronous PCEA key orchestration over gonol state. The observed `157 -> 2881 -> 54837698421` progression is research evidence, not yet a cryptographic hardness claim or UCNS recursive-scale law. Before implementation, bind the exact UCNS authority and independently replay the transition constructor.
+The [current research algorithm specification](docs/pcea-current-research-v1.md)
+binds the stable runtime and current UCNS/Stack evidence. It records the complete
+baseline, the explicit partial successor algorithm, and the outstanding gates.
 
-PCEA keys must still derive from real secret entropy; gonol state may organize, address, ratchet, or synchronize that entropy but must not be credited with entropy merely because the address space is large.
+The current candidate line is asynchronous PCEA key orchestration over gonol
+state, with a possible new UCNS-derived encryption construction remaining a
+research goal. Executable candidate carrier operations, ordered coupling, and
+recursive atomic promotion now exist in Stack. They do not yet select a
+recursive successor or geometry-selected traversal. The pinned traversal
+contract stops at `STOP_MISSING_ORIGIN_ATTACHMENT`; later fields are
+dependency-blocked.
+
+The observed `157 -> 2881 -> 54837698421` progression remains unreconstructed
+by a surviving constructor. The current prime-arity coefficient audit proves
+the supplied-role update and unordered-multiset preservation, while falsifying
+scalar `C(1)` as an injective structure encoding. Its full record retains
+relations and provenance; it does not discover the next prime role.
+
+PCEA keys must derive from actual secret input. Gonol size, public addressability,
+scalar breadth, and surviving algebraic checks confer no cryptographic entropy
+or quantum-resistance standing.
 
 ## Usage guidance
 
@@ -47,6 +65,7 @@ PCEA keys must still derive from real secret entropy; gonol state may organize, 
 
 ## Current content
 
+- [Current research algorithm specification v1](docs/pcea-current-research-v1.md), [work graph](docs/pcea-current-research-v1.work-graph.json), and [verification receipt](docs/pcea-current-research-v1.verification.json) - source-bound update, including the unchanged runtime baseline and explicit research incompletion.
 - [`docs/provenance-tracker-v0.md`](docs/provenance-tracker-v0.md) - Actor A stack-local candidate note for using PCEA as a lineage/provenance tracker, with public authenticity and security claims explicitly out of scope.
 - [`docs/recursive-gonol-transition-candidates-v0.md`](docs/recursive-gonol-transition-candidates-v0.md) - Stack-local transition-family falsification and interpolation control from the observed `157 -> 2881 -> 54837698421` chain; no UCNS constructor or PCEA runtime claim.
 - [`gonol_transition_candidates.py`](gonol_transition_candidates.py) - Executable candidate registry, falsification checks, and deterministic receipt bytes.
@@ -60,4 +79,5 @@ PCEA keys must still derive from real secret entropy; gonol state may organize, 
 - Public authenticity receipts remain unimplemented and must be supplied by a separate signature/transparency/verifier layer before any public proof claim.
 - Public Gonol projection may be useful as a public vocabulary/indexing layer, but no Public Gonol position operation or authenticity property is inferred here.
 - The actual UCNS recursive gonol geometry remains unresolved. The interpolation-control prediction `164513086777` has status `UNRESOLVED`: no independent UCNS constructor has produced a comparison value, so it is neither `SURVIVED` nor `FALSIFIED`.
-- Current mechanics-derived successor candidates do not produce `2881` from the pinned 157-gonol; Public Gonol position operation, affixiation/coupling geometry, recursive-scale transition, and completed 2881-gonol structure remain unresolved.
+- Executable candidate carrier operations, ordered coupling, and atomic promotion exist, but their selected geometric realization, origin attachment, next-scale placement, recursive successor, and completed 2881-gonol structure remain unresolved. Historical candidate records retain the source identities and standings of their original runs.
+
