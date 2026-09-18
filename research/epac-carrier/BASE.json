@@ -1,0 +1,24 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "epac-carrier",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+  "source_path": "research/epac/",
+  "canon_path": null,
+  "authority": "stack-local carrier construction, falsification, and pinned EPAC source consumption only",
+  "standing": "stack-local-research",
+  "authority_transfer": false,
+  "epac_prerequisite": {
+    "repository": "The-Interdependency/epac",
+    "commit": "7b3d99af9a456d2587e0489d7400e6f8b58c8a82",
+    "relation": "EPAC owns atomic derivations; Stack consumes verified source bytes for bounded carrier experiments. This source pin does not replace the independent v0.1.0 release lock.",
+    "module_sha256": {
+      "epac_atomic.py": "539a07c33c56de24bcae9f6ba270eb76b82de887f38b4f42ffa60b3ffb760d62",
+      "epac_atomic_derivation.py": "8d6a7830c79f86b0aad1055039500f95ed254d204abab6b0c4747db95faf2451",
+      "epac_b_derivation.py": "ee36f45af6354947f35980e8ac3e033bb32fecb937a13e3704a6614b3b882d55"
+    }
+  },
+  "historical_fixtures": "research/epac/",
+  "relocation_provenance": "relocation-provenance.json"
+}

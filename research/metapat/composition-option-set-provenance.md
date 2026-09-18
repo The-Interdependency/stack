@@ -75,17 +75,21 @@ Local verification for this update:
 | Repository portfolio report validation | PASS |
 | Git whitespace check | PASS |
 | Equation renderer | hmmm: KaTeX unavailable in the verification environment |
-| Full-history root stack consistency | FAIL, same pre-existing EPAC finding before and after the update |
+| Full-history root stack consistency | PASS after the separately requested EPAC placement repair; the initial document-only baseline failed |
 
 The root stack consistency checker at the starting commit, after fetching full
 history, reports this pre-existing error:
 
 > epac.graduation: forge Python implementation has returned
 
-Python files are present under `research/epac/`, whose current graduation contract
-requires that location to retain historical documents and receipts only. Resolving
-that placement/authority inconsistency is separate from this document update.
-Do not report the repository gate as passing while that finding remains live.
+The user subsequently requested "repair epac placement". The six active carrier
+experiment/test files now live in [`research/epac-carrier/`](../epac-carrier/),
+with explicit Stack provenance and pinned independent EPAC source consumption.
+Historical fixtures and retirement evidence remain byte-identical. The root
+consistency gate and all 17 relocated research tests pass; all four report
+outputs match their pre-move canonical bytes. The root manifests, authority
+projections and EPAC workflow describe the repaired placement. The original
+consultation graph still records the true failure at its pinned starting commit.
 
 ## Usage guidance
 
@@ -112,7 +116,6 @@ record consistency, not authenticity or scientific validity.
 
 ## hmmm
 
-- The baseline EPAC retirement/placement gate is failing independently of these notes.
 - An externally immutable conversation transcript identity is unavailable.
 - The wider source pins remain exactly as declared by the root stack manifest.
 - Candidate first principles, admission laws, physical coverage, and UCNS

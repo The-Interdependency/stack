@@ -1,16 +1,40 @@
-name: EPAC release consumption
+name: EPAC release consumption and carrier research
 
 on:
   pull_request:
-    paths: ["integration/epac/**", "research/epac/**", "stack-manifest.json", "STACK_MANIFEST.md", ".github/workflows/epac.yml"]
+    paths: ["integration/epac/**", "research/epac/**", "research/epac-carrier/**", "stack-manifest.json", "STACK_MANIFEST.md", ".github/workflows/epac.yml"]
   push:
     branches: [main]
-    paths: ["integration/epac/**", "research/epac/**", "stack-manifest.json", "STACK_MANIFEST.md", ".github/workflows/epac.yml"]
+    paths: ["integration/epac/**", "research/epac/**", "research/epac-carrier/**", "stack-manifest.json", "STACK_MANIFEST.md", ".github/workflows/epac.yml"]
 
 permissions:
   contents: read
 
 jobs:
+  carrier-research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          repository: The-Interdependency/epac
+          ref: 7b3d99af9a456d2587e0489d7400e6f8b58c8a82
+          path: _upstream/epac
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the research test dependency
+        run: python -m pip install pytest==8.4.2
+      - name: Test bounded carrier research against pinned EPAC source
+        working-directory: research/epac-carrier
+        env:
+          EPAC_SOURCE_ROOT: ${{ github.workspace }}/_upstream/epac
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -m pytest -q tests
   released-artifact:
     runs-on: ubuntu-latest
     steps:

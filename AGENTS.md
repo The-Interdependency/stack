@@ -20,6 +20,10 @@ projects may later graduate into their own repositories.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
+- `research/epac-carrier/` owns Stack-local carrier construction and falsification
+  experiments. Its `BASE.json` pins the independent EPAC source consumer separately
+  from the public release. Read historical fixtures from `research/epac/` without
+  changing their preserved bytes or adding Python files there.
 - root-level emerging projects such as `ahbg/` may be close to external repo-hood; root
   placement does not transfer authority from their inputs.
 - `STACK_MANIFEST.md` and `stack-manifest.json` own stack-level participant provenance.

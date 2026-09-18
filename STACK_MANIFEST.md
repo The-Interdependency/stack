@@ -13,7 +13,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `a570f3c39a7329babd758a5a18107c8aaaf0023f2ecace3e11b163829ae70195`
+  `ca8d15ea5fb1da99353d64ee59d07aa210437002c0ac92785b915c1d36d50f96`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -56,6 +56,8 @@ release identity.
 | Workspace | Participant | Exact commit | Relation | Canonical release |
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
+| `research/epac-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | Stack-local carrier construction and falsification relocated from the historical forge path; preserved fixtures retain their identities | no |
+| `research/epac-carrier/` | `The-Interdependency/epac` | `7b3d99af9a456d2587e0489d7400e6f8b58c8a82` | verified atomic derivation source for bounded carrier research; separate from the immutable public release lock | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -98,6 +100,12 @@ EPAC is consumed as an immutable release artifact through `integration/epac/`.
 all Python implementation/test copies retired. A `libs/epac/` source mirror is not
 required for artifact consumption. The completed scoped authority transition is recorded in
 `integration/epac/authority-transition.json`.
+
+The active Stack carrier experiments are separately declared at
+`research/epac-carrier/`. Their BASE and relocation provenance preserve the Stack
+source identity; the source consumer verifies the independent EPAC commit and
+module hashes. This placement repair restores the historical-directory contract
+without changing EPAC graduation, the public release lock or scientific standing.
 
 ## License status at pinned commits
 

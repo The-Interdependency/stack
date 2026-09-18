@@ -11,6 +11,11 @@ binds that origin; it does not claim the historical findings describe today's
 EPAC implementation. [`README.forge-history.md`](README.forge-history.md) preserves
 the former instructions as history. Its local import commands are retired.
 
+Active Stack carrier experiments and their tests live separately in
+[`research/epac-carrier/`](../epac-carrier/). They read the preserved fixtures
+here and consume explicitly pinned independent EPAC source. This historical
+directory remains free of Python implementation and test files.
+
 ## Usage guidance
 
 Run the supported release consumer from the Stack root:

@@ -39,28 +39,31 @@ from epac_derivation_consumer import (
     replay_derived_carrier,
 )
 
-EPAC_SOURCE_ROOT = Path(
-    os.environ.get("EPAC_SOURCE_ROOT", "/tmp/epac-quantum")
-)
+@pytest.fixture(scope="module")
+def epac_source_root() -> Path:
+    source = os.environ.get("EPAC_SOURCE_ROOT")
+    if not source:
+        pytest.fail("Set EPAC_SOURCE_ROOT to the pinned EPAC checkout; see ../README.md")
+    return Path(source)
 
 
-def test_binds_exact_epac_source() -> None:
-    report = build_derived_carrier(EPAC_SOURCE_ROOT)
+def test_binds_exact_epac_source(epac_source_root: Path) -> None:
+    report = build_derived_carrier(epac_source_root)
     assert report["epac_source_commit"].startswith("7b3d99a")
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
-    replayed = replay_derived_carrier(data, EPAC_SOURCE_ROOT)
+    replayed = replay_derived_carrier(data, epac_source_root)
     assert replayed["receipt_sha256"] == report["receipt_sha256"]
 
     tampered = bytearray(data)
     tampered[40] ^= 0x01
     with pytest.raises(DerivedCarrierError):
-        replay_derived_carrier(bytes(tampered), EPAC_SOURCE_ROOT)
+        replay_derived_carrier(bytes(tampered), epac_source_root)
 
 
-def test_generative_gate_retains_bounded() -> None:
-    report = build_derived_carrier(EPAC_SOURCE_ROOT)
+def test_generative_gate_retains_bounded(epac_source_root: Path) -> None:
+    report = build_derived_carrier(epac_source_root)
     gate = report["generative_gate"]
     assert gate["frozen_rule_reproduces_nine"] is True
     assert gate["transition_metal_failure_recorded"] is True
@@ -95,8 +98,8 @@ def test_generative_gate_retains_bounded() -> None:
     assert zn_active["unpaired_electrons"] == 0
 
 
-def test_uses_construction_not_lookup() -> None:
-    report = build_derived_carrier(EPAC_SOURCE_ROOT)
+def test_uses_construction_not_lookup(epac_source_root: Path) -> None:
+    report = build_derived_carrier(epac_source_root)
     assert report["lookup_used"] is False
     for symbol, entry in report["derived_period_valence"].items():
         assert entry["lookup_used"] is False
@@ -104,8 +107,8 @@ def test_uses_construction_not_lookup() -> None:
         assert entry["valence_electrons"] > 0
 
 
-def test_reruns_collision_transition_provenance_generalization() -> None:
-    report = build_derived_carrier(EPAC_SOURCE_ROOT)
+def test_reruns_collision_transition_provenance_generalization(epac_source_root: Path) -> None:
+    report = build_derived_carrier(epac_source_root)
     assert report["schema"] == SCHEMA
     assert report["b_classes"] == 16
     assert report["collisions_separated"] is True

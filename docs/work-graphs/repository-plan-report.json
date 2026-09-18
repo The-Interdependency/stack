@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "graduate/epac-release-20260912",
-    "commit": "745ff5e54dff52089889a7f9ca2ba87cb39bbd0f",
-    "generated_at": "2026-09-13",
-    "note": "Post-merge repository state includes the independent EPAC consumer and Python/English Gonol workspaces. The historical EPAC event remains separately pinned in its receipt."
+    "branch": "docs/composition-option-set-20260918",
+    "commit": "9f47b8a982051509f4cbd1f856fca2654369ca65",
+    "generated_at": "2026-09-18",
+    "note": "Starting identity for the EPAC placement repair. This report includes the relocation recorded in research/epac-carrier/relocation-provenance.json. The historical EPAC graduation event remains separately pinned in its receipt."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol source-affixiation and English Gonol character-floor construction are current Stack research workspaces; their inclusion transfers no language, semantic, geometry or release authority."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol source-affixiation and English Gonol character-floor construction are current Stack research workspaces; their inclusion transfers no language, semantic, geometry or release authority. Active Stack carrier experiments and their tests are separately declared at research/epac-carrier/, consuming independent EPAC source 7b3d99af9a456d2587e0489d7400e6f8b58c8a82. Historical forge data and the v0.1.0 release lock retain their identities."
   },
   "delivered": [
     {
@@ -67,13 +67,19 @@
       "surface": "research/python-gonol/ and research/english-gonol/",
       "status": "Python source-affixiation and English character-floor constructions integrated from main f0376a839bb8849f05b4cb89751d36a6aaf075bb",
       "boundary": "Stack-local research with declared provenance; no independent repository/release authority or language-authority transfer."
+    },
+    {
+      "surface": "research/epac-carrier/",
+      "status": "relocated bounded carrier experiments, falsification audits and pinned source-consumer tests from the historical forge directory",
+      "boundary": "Stack owns these experiments only; independent EPAC retains implementation/public-contract authority; scientific standings and release pins are unchanged."
     }
   ],
   "active_frontier": [
     "refresh pinned repository views when owners advance and a stack experiment needs the newer state",
     "register organization aggregate and website projection derivations in the fresh-making control plane",
     "maintain EPAC as a hash-pinned independent release consumer",
-    "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities."
+    "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
+    "Maintain bounded carrier experiments and exact EPAC source consumption in research/epac-carrier/ while keeping research/epac/ historical-only."
   ],
   "next_actions": [],
   "blocked": [],
@@ -110,7 +116,7 @@
     },
     {
       "repository": "The-Interdependency/epac",
-      "relation": "independent EPAC implementation/public-contract owner; Stack consumes immutable v0.1.0; scoped transition in integration/epac/authority-transition.json",
+      "relation": "independent EPAC implementation/public-contract owner; Stack consumes immutable v0.1.0; scoped transition in integration/epac/authority-transition.json; research/epac-carrier/ separately consumes verified source 7b3d99af9a456d2587e0489d7400e6f8b58c8a82 for bounded experiments",
       "authority_transfer": false
     }
   ],
@@ -125,7 +131,9 @@
     "epac_release_lock": "integration/epac/release-lock.json",
     "epac_authority_transition": "integration/epac/authority-transition.json",
     "python_gonol": "research/python-gonol/README.md",
-    "english_gonol": "research/english-gonol/README.md"
+    "english_gonol": "research/english-gonol/README.md",
+    "epac_carrier_research": "research/epac-carrier/BASE.json",
+    "epac_carrier_relocation": "research/epac-carrier/relocation-provenance.json"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
