@@ -24,8 +24,8 @@
 #   mutates: none
 #   cleanup: none
 #
-# id: check_derived_carrier_preserves_bounded_ligand_field_controls
-#   proves: derived_carrier_preserves_bounded_ligand_field_controls
+# id: check_derived_carrier_preserves_bounded_ligand_field_energy_selection
+#   proves: derived_carrier_preserves_bounded_ligand_field_energy_selection
 #   call: self::test_generative_gate_retains_bounded
 #   requires: python3, git
 #   timeout: 30
@@ -55,7 +55,7 @@ EPAC_SOURCE_ROOT = Path(
 
 def test_binds_exact_epac_source() -> None:
     report = build_derived_carrier(EPAC_SOURCE_ROOT)
-    assert report["epac_source_commit"] == "94abf4092e6c7f039a0c5df533e0bdbccae229f5"
+    assert report["epac_source_commit"] == "efa2079db4a431092808b21643654ebe56140348"
     assert report["source_bytes_verified"] is True
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -107,19 +107,30 @@ def test_generative_gate_retains_bounded() -> None:
     assert zn_subshells["3d"]["electrons"] == 10
     assert zn_subshells["4p"]["electrons"] == 0
 
-    # High/low-spin behavior is a supplied control, not a ligand-identity
-    # lookup or a derived field-regime claim.
+    # High/low-spin behavior now follows exact model-energy minimization,
+    # while equal-energy distinct candidates fail closed as unresolved.
     controls = {
-        entry["spin_regime_input"]: entry
-        for entry in gate["ligand_field_spin_controls"]
+        (entry["delta_o_input"], entry["pairing_energy_input"]): entry
+        for entry in gate["ligand_field_energy_controls"]
     }
-    assert controls["high"]["unpaired_electrons"] == 5
-    assert controls["low"]["unpaired_electrons"] == 1
-    assert gate["ligand_field_regime_derivation"] == "UNRESOLVED"
+    assert controls[("1", "2")]["selected_regime"] == "high"
+    assert controls[("1", "2")]["unpaired_electrons"] == 5
+    assert controls[("2", "1")]["selected_regime"] == "low"
+    assert controls[("2", "1")]["unpaired_electrons"] == 1
+    assert (
+        controls[("1", "1")]["ligand_field_regime_derivation"]
+        == "UNRESOLVED_DEGENERATE"
+    )
+    assert controls[("1", "1")]["unpaired_electrons"] is None
+    assert gate["ligand_field_regime_derivation"] == "CONDITIONAL_ON_SUPPLIED_ENERGIES"
+    assert gate["ligand_field_energy_inputs_derivation"] == "UNRESOLVED"
+    assert gate["spin_regime_input_used"] is False
+    assert "not an empirical ground-state predictor" in gate["ligand_field_model_scope"]
     assert gate["spectrochemical_lookup_used"] is False
+    assert gate["topology_formation_derived"] is False
     assert gate["remaining_unresolved"] == [
         "bond-context orbital participation (including 4p)",
-        "ligand-field regime derivation",
+        "delta_o and pairing-energy derivation from bond context",
         "coordination capacity",
         "topology formation",
     ]

@@ -2,7 +2,7 @@
 # id: epac_derivation_consumer
 #   module_name: epac_derivation_consumer
 #   module_kind: stack-local-audit
-#   summary: consumes the pinned epac quantum-shell and B derivations to rebuild the (B, layer, period, valence) carrier, preserve subshell-resolved ligand-field controls, and rebind receipts to the exact epac source commit and bytes
+#   summary: consumes the pinned epac quantum-shell and B derivations to rebuild the (B, layer, period, valence) carrier, preserve exact idealized ligand-field energy selection, and rebind receipts to the exact epac source commit and bytes
 #   owner: Erin Spencer
 #   public_surface: SCHEMA, VERSION, EPAC_REPO_COMMIT, EPAC_ATOMIC_MODULE_SHA256, EPAC_ATOMIC_DERIVATION_MODULE_SHA256, EPAC_B_DERIVATION_MODULE_SHA256, DerivedCarrierError, build_derived_carrier, replay_derived_carrier
 #   internal_surface: verified epac source loading, derived period/valence, carrier rerun, canonical receipt
@@ -16,7 +16,7 @@
 #   rollback: remove this module and its tests
 #   requires: epac_atomic_derivation (pinned), epac_atomic (pinned), epac_lattice_carrier, epac_carrier_falsification
 #   since: 2026-09-17
-#   unresolved: B for unseen states, bond-context orbital participation, ligand-field regime, coordination capacity, and topology formation remain unresolved
+#   unresolved: B for unseen states, bond-context orbital participation, ligand-field energy inputs, coordination capacity, and topology formation remain unresolved
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -38,11 +38,11 @@
 #   class: correctness
 #   since: 2026-09-17
 #
-# id: derived_carrier_preserves_bounded_ligand_field_controls
+# id: derived_carrier_preserves_bounded_ligand_field_energy_selection
 #   given: the pinned EPAC B derivation
-#   then: the consumer preserves the 4s/3d/4p basis and explicit high-/low-spin controls without claiming ligand-field regime, coordination capacity, or topology formation are derived
+#   then: the consumer preserves the 4s/3d/4p basis and exact lower-energy octahedral occupancy selection without claiming the supplied energies, coordination capacity, or topology formation are derived
 #   class: doctrine
-#   since: 2026-09-18
+#   since: 2026-09-19
 # === END CONTRACTS ===
 
 """Consume the pinned epac quantum-shell derivation into the carrier.
@@ -68,12 +68,12 @@ from epac_lattice_carrier import (
 )
 
 SCHEMA = "epac.derived-constitutive-carrier"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
-EPAC_REPO_COMMIT = "94abf4092e6c7f039a0c5df533e0bdbccae229f5"
+EPAC_REPO_COMMIT = "efa2079db4a431092808b21643654ebe56140348"
 EPAC_ATOMIC_MODULE_SHA256 = "539a07c33c56de24bcae9f6ba270eb76b82de887f38b4f42ffa60b3ffb760d62"
 EPAC_ATOMIC_DERIVATION_MODULE_SHA256 = "8d6a7830c79f86b0aad1055039500f95ed254d204abab6b0c4747db95faf2451"
-EPAC_B_DERIVATION_MODULE_SHA256 = "e19e30eb181c827a71110adaa3969b5194c85a1b94ebf263376b21d6ba206382"
+EPAC_B_DERIVATION_MODULE_SHA256 = "4166bc2f48a8044ec90f2313310005f829399c8a529ee94fb2413282a5fc6cc1"
 
 
 class DerivedCarrierError(ValueError):
@@ -231,7 +231,7 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
     }
     transition_failure = b_report["transition_metal_failure"]
     topology_evaluations = b_report["transition_metal_topology_evaluations"]
-    spin_controls = b_report["ligand_field_spin_controls"]
+    energy_controls = b_report["ligand_field_energy_controls"]
     active_basis_constructed = all(
         entry["center_active_orbital_set"]["kind"] == "transition-metal"
         and [
@@ -241,10 +241,15 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
         == ["4s", "3d", "4p"]
         for entry in topology_evaluations
     )
-    generative = locked_reproduced and all(
-        status == "evaluation-only" for status in held_out_statuses.values()
-    ) and not transition_failure and (
-        b_report["ligand_field_regime_derivation"] != "UNRESOLVED"
+    topology_formation_derived = False
+    generative = (
+        locked_reproduced
+        and all(status == "evaluation-only" for status in held_out_statuses.values())
+        and not transition_failure
+        and active_basis_constructed
+        and b_report["ligand_field_energy_inputs_derivation"] != "UNRESOLVED"
+        and b_report["capacity_rule_status"] != "FALSIFIED"
+        and topology_formation_derived
     )
 
     payload = {
@@ -287,15 +292,21 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
             "bond_context_orbital_participation": "UNRESOLVED",
             "coordination_capacity": "UNRESOLVED",
             "capacity_rule_status": b_report["capacity_rule_status"],
-            "ligand_field_spin_controls": spin_controls,
+            "ligand_field_energy_controls": energy_controls,
             "ligand_field_regime_derivation": b_report[
                 "ligand_field_regime_derivation"
             ],
+            "ligand_field_energy_inputs_derivation": b_report[
+                "ligand_field_energy_inputs_derivation"
+            ],
+            "ligand_field_model_scope": b_report["ligand_field_model_scope"],
+            "spin_regime_input_used": b_report["spin_regime_input_used"],
             "spectrochemical_lookup_used": b_report[
                 "spectrochemical_lookup_used"
             ],
             "epac_b_derivation_receipt_sha256": b_report["receipt_sha256"],
             "topology_formation": "downstream, not tested here",
+            "topology_formation_derived": topology_formation_derived,
             "decision": "PROMOTE-GENERATIVE" if generative else "RETAIN-BOUNDED",
             "standing": (
                 "generative constitutive carrier"
@@ -304,7 +315,7 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
             ),
             "remaining_unresolved": [
                 "bond-context orbital participation (including 4p)",
-                "ligand-field regime derivation",
+                "delta_o and pairing-energy derivation from bond context",
                 "coordination capacity",
                 "topology formation",
             ],
@@ -313,9 +324,12 @@ def build_derived_carrier(epac_source_root: Path) -> dict[str, Any]:
             ],
         },
         "hmmm": (
-            "period and valence now derive from epac_atomic construction; "
-            "B for unseen states is not yet derived, so full generalization "
-            "beyond the nine remains unresolved"
+            "period and valence derive from epac_atomic construction. The "
+            "idealized octahedral selector now chooses the lower-energy "
+            "occupancy from exact supplied delta_o and pairing energy, but "
+            "EPAC does not yet derive those energies, bond-context orbital "
+            "participation, coordination capacity, or topology formation. "
+            "B for unseen states also remains unresolved"
         ),
     }
     payload["receipt_sha256"] = hashlib.sha256(
