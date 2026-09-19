@@ -1,0 +1,32 @@
+{
+  "status": "SURVIVED",
+  "receipt": {
+    "counts": {
+      "ast_false": 6,
+      "constructed": 1049,
+      "off_carrier_files": 113,
+      "rejected_encoding": 3,
+      "tokenize_false": 0
+    },
+    "cpython": "2abcf904b8dac8c999d2b3aac76681abb333798a",
+    "hmmm": [
+      "off-carrier glyph admission",
+      "deeper geometry",
+      "grammar/runtime equivalence is outside source-floor qualification"
+    ],
+    "implementation_sha256": {
+      "research/python-gonol/python_gonol/__init__.py": "93ce032c0d9438c424d76f2c8e2dabaa0bb7eb5e4dda5f4942e6bb0792885f06",
+      "research/python-gonol/python_gonol/__main__.py": "80279c9acef41aa8bab806219b4d219b83d52c94e4bd98b225d580e0b49347cf",
+      "research/python-gonol/python_gonol/construct.py": "c777345b9202888974ad2a93d64633d102e3e69a62d0efea06976da80056a71a",
+      "tools/qualify_language_gonols.py": "0f5beda48b52a30ab0efe152aa27f4b8df137b900d0ff5f5ed0046846e4300a4"
+    },
+    "input_bytes": 20732440,
+    "input_files": 1052,
+    "inventory_sha256": "1dd99a2c8e27e10c669dfd46a29b2e0107da15279f18aac94eb5453052bb41e1",
+    "outcomes_sha256": "5a38fb2ff50c0ab0cae636a5d8e57110506e263a775f0c17b7b56baa0c6e4bf1",
+    "python": "3.12.14",
+    "schema": "language-gonol.python-qualification",
+    "ucns": "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c",
+    "version": 1
+  }
+}

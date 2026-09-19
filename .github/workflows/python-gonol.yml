@@ -13,6 +13,8 @@ on:
       - "tools/qualify_language_gonols.py"
       - "tools/tests/test_language_qualification.py"
       - "requirements-language-tests.txt"
+      - "docs/language-gonol-qualification.md"
+      - "docs/evidence/language-gonol-*/**"
   push:
     branches: [main]
     paths:
@@ -26,6 +28,8 @@ on:
       - "tools/qualify_language_gonols.py"
       - "tools/tests/test_language_qualification.py"
       - "requirements-language-tests.txt"
+      - "docs/language-gonol-qualification.md"
+      - "docs/evidence/language-gonol-*/**"
 
 permissions:
   contents: read
