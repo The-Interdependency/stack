@@ -1,5 +1,26 @@
-# ratios: loc_comments=155:53 imports_exports=7:7 calls_definitions=64:10
+# ratios: loc_comments=195:74 imports_exports=10:10 calls_definitions=87:13
 # === CHECKS ===
+# id: check_python_complete_constitutive_replay
+#   proves: python_construct_replay_fails_closed_on_tamper
+#   call: self::test_complete_replay_rejects_constitutive_tamper
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_original_source_bytes
+#   proves: python_construct_preserves_source_bytes
+#   call: self::test_replay_preserves_original_bytes
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_legacy_receipt_rejection
+#   proves: python_construct_replay_fails_closed_on_tamper
+#   call: self::test_replay_rejects_legacy_version
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
 # id: check_python_tabs_match_python_expansion
 #   proves: python_construct_controls_are_constitutive
 #   call: self::test_tabs_match_python_expansion
@@ -50,6 +71,8 @@
 from __future__ import annotations
 
 import os
+import json
+from hashlib import sha256
 import sqlite3
 from pathlib import Path
 
@@ -239,4 +262,48 @@ def test_physical_source_addresses(tmp_path: Path, source: str, expected: list) 
     assert positions == expected
     assert reconstruct_source(state_dir) == source
     assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
-# ratios: loc_comments=155:53 imports_exports=7:7 calls_definitions=64:10
+
+
+@pytest.mark.parametrize("statement", [
+    "UPDATE control_identities SET member_ids='[]' WHERE kind='TAB'",
+    "UPDATE characters SET public_position=900 WHERE scalar='Z'",
+    "UPDATE occurrences SET control_kind='TAB' WHERE scalar='x'",
+    "UPDATE meta SET value='wrong' WHERE key='source_bytes_sha256'",
+    "DELETE FROM occurrences",
+])
+@pytest.mark.parametrize("rebind", [False, True])
+def test_complete_replay_rejects_constitutive_tamper(tmp_path: Path, statement: str, rebind: bool) -> None:
+    from python_gonol.construct import _logical_sha256
+    state_dir, _ = _build(tmp_path, "\tx=1\n")
+    manifest_path = state_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    with sqlite3.connect(state_dir / "construct.db") as db:
+        db.execute(statement)
+        if rebind:
+            manifest["construct_sha256"] = _logical_sha256(db)
+            manifest.pop("receipt_sha256")
+            digest = sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            manifest["receipt_sha256"] = digest
+            db.execute("UPDATE meta SET value=? WHERE key='receipt_sha256'", (digest,))
+            manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(PythonGonolConstructionError):
+        verify_construct(state_dir, UCNS_SOURCE_ROOT)
+
+
+@pytest.mark.parametrize("raw", [b"", b"\xef\xbb\xbfx=1\r\n", b"# coding: latin-1\n# caf\xe9\n"])
+def test_replay_preserves_original_bytes(tmp_path: Path, raw: bytes) -> None:
+    state_dir = tmp_path / "raw"
+    result = affixiate_python_bytes(raw, source_id="raw.py", state_dir=state_dir, ucns_source_root=UCNS_SOURCE_ROOT)
+    with sqlite3.connect(state_dir / "construct.db") as db:
+        assert db.execute("SELECT data FROM source_bytes").fetchall() == [(raw,)]
+    assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+def test_replay_rejects_legacy_version(tmp_path: Path) -> None:
+    state_dir, _ = _build(tmp_path, "x=1\n")
+    path = state_dir / "manifest.json"
+    data = json.loads(path.read_text()); data["version"] = "1.0.0"
+    path.write_text(json.dumps(data))
+    with pytest.raises(PythonGonolConstructionError, match="version"):
+        verify_construct(state_dir, UCNS_SOURCE_ROOT)
+# ratios: loc_comments=195:74 imports_exports=10:10 calls_definitions=87:13
