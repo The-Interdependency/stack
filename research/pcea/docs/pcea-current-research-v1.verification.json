@@ -145,7 +145,7 @@
   },
   "hmmm": [
     "Geometric replay does not establish cryptographic security.",
-    "The Stack consistency gate still fails on this branch with the inherited epac.graduation duplicate-forge finding; this research change does not reopen EPAC graduation.",
+    "The branch-only local checkout predates current main EPAC retirement and therefore reports the inherited epac.graduation duplicate-forge finding; the PR merge commit with current main passes Stack consistency, and this research change does not reopen EPAC graduation.",
     "Canonical origin attachment, selected rotation, torsion presentation, and successor selector remain unresolved.",
     "A visible phase and its full two-lift fiber are the same pointed information; a single lift still retains exact reflection, so current geometry needs an oriented incidence rather than a time field."
   ],
