@@ -20,10 +20,10 @@ Standing: **research, not canon**. Canonical UCNS authority remains `The-Interde
   intrinsic/extrinsic jurisdiction and carrier attachment candidate-scoped;
   the draft's `RATIFIED` / `open and unmerged` status is superseded. Attachment
   remains `UNRESOLVED`: `iota` is only a research placeholder, its codomain and
-  target are `hmmm`, and no pointing, residual-symmetry consequence,
-  implementation, or evidence is claimed. The next comparison remains
-  restricted to the native visible phase basepoint, its `C2`-invariant
-  two-lift fiber, and a singly framed lift as an explicitly stronger control.
+  target are `hmmm`, and no canonical pointing is claimed. The bounded native
+  target comparison has now executed: visible phase and full two-lift fiber
+  collide, a single lift retains reflection, and a directed germ is the
+  smallest locally rigid explicit control.
 - The [origin-attachment basepoint symmetry audit](docs/origin-attachment-basepoint-symmetry-v0.md)
   analyzes the smallest pinned-canon traversable candidate before any canon
   ratification. With frame forgotten, the native exact root loop is the
@@ -69,6 +69,14 @@ Standing: **research, not canon**. Canonical UCNS authority remains `The-Interde
   recursive gate is not executed. Canonical attachment/selection and the
   successor selector remain `UNRESOLVED`; PCEA security remains separately
   `FALSIFIED`. [Deterministic receipt](receipts/rooted-rotation-successor-gate-v0.json).
+- The [native attachment target stabilizer audit](docs/native-attachment-target-stabilizer-v0.md)
+  executes the next comparison on the exact complete-state carrier `Q/2Z`. A
+  visible phase and its unordered two-lift fiber are the same subset with the
+  same order-four signed-turn-isometry stabilizer. One framed lift removes deck swap but
+  retains exact reflection. A directed local germ is the smallest tested
+  refinement with trivial signed-turn-isometry stabilizer and `SURVIVED_LOCALLY` as an explicit
+  constructor; intrinsic selection remains `UNRESOLVED`. No successor gate is
+  opened. [Deterministic receipts](receipts/native-attachment-target-stabilizer-v0.json).
 - The [based-traversal provenance history audit](docs/based-traversal-provenance-history-audit-v0.md)
   searched all local refs in UCNS and the exact A0 source-provenance repository,
   binding 3160 unique reachable commits, the exact ref sets, broad semantic

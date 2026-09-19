@@ -227,7 +227,10 @@ See [verification receipt](pcea-current-research-v1.verification.json).
 Stack geometry results above are reported from their pinned source records.
 The follow-on audit independently replayed 14 rooted-constructor/adversarial
 tests, the exact six-test crypto-audit commit `0b49672`, and the unpublished
-ten-test trapdoor-lift audit. Complete package suites were not rerun.
+ten-test trapdoor-lift audit. The native target follow-on adds nine adversarial
+tests, including exact agreement with the pinned `NativeMobiusState.advance`
+implementation and nonzero rational controls. Complete package suites were not
+rerun.
 
 ## Usage guidance
 
@@ -240,11 +243,15 @@ the recorded commit:
 python docs/prime-arity/audit_coefficient_breadth.py
 ```
 
-The five-field audit has now been rebound in the linked follow-on audit. The
-next dependency-complete action is the frozen native attachment-target
-stabilizer comparison: visible phase basepoint, `C2`-invariant two-lift fiber,
-and a singly framed lift as a stronger control. Keep subsequent fields
-unpromoted until one target is intrinsically selected.
+The five-field audit has now been rebound and the frozen native attachment-
+target comparison has executed. A visible phase and its complete two-lift
+fiber collide exactly. Selecting one complete lift removes the deck swap but
+retains reflection; one directed local germ is the smallest tested refinement
+with trivial stabilizer in the declared signed-turn isometry group. This explicit
+constructor `SURVIVED_LOCALLY`,
+but its intrinsic UCNS selection remains `UNRESOLVED`. The next resolving test
+is the [Public-origin to native-germ incidence sieve](../../ucns/docs/native-attachment-target-stabilizer-v0.md),
+frozen before any successor comparator.
 For any independent bounded cipher experiment, declare a separate candidate
 and explicit supplied geometry rather than bypassing this recursive lane's
 gate.
@@ -254,6 +261,9 @@ gate.
 - The exact recursive successor and next-scale placement remain unresolved.
 - The complete geometry-selected traversal certificate remains unavailable in
   the inspected sources.
+- Visible phase and the unordered two-lift fiber are equivalent attachment
+  targets; one lift still retains a direction-reversing reflection. A geometry-
+  owned oriented incidence is the first remaining irreducible assumption.
 - Local Git object `0b49672862a30cec0a0ee24e39a34241c9626f27`
   is now independently replayed: its PCEA cryptographic verdict is
   `FALSIFIED`. A local equivalence-threshold extension reaches the same result
