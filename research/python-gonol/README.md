@@ -76,6 +76,14 @@ verify_construct(Path("construct"), "/home/wayseer_interdependentway_org/src/ucn
 
 ## Acceptance gates
 
+Version 1.1.0 corrects tab expansion and CR-only physical addresses. Rebuild
+1.0.0 constructs from their original sources; replay rejects the old version.
+Occurrence columns and `controls.start_column` are one-based source-scalar
+addresses. TAB widths use a separate zero-based expanded column, advancing
+through earlier tabs. LF, CR, and CRLF reset that expanded column; FF resets
+the indentation column. CRLF retains both source scalars on the preceding
+physical line and advances the next scalar to line + 1, column 1.
+
 - `x=1\n` produces no not-on-pinned-carrier.
 - LF replays as exact `U+000A`.
 - TAB preserves `U+0009` and expands correctly at every starting column.

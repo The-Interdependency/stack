@@ -1,3 +1,4 @@
+# ratios: loc_comments=605:105 imports_exports=13:10 calls_definitions=154:16
 # === MODULE_BUILD ===
 # id: python_gonol_construct
 #   module_name: python_gonol.construct
@@ -20,6 +21,11 @@
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
+# id: python_construct_physical_addresses
+#   given: exact decoded source with LF, CR, and CRLF physical line endings
+#   then: one-based scalar columns preserve both CRLF constituents and advance to the next physical line exactly once
+#   class: construction
+#
 # id: python_construct_consumes_pinned_public_gonol_exactly
 #   given: a UCNS checkout at the pinned commit
 #   then: the exact 157-position Public Gonol carrier and its digest are consumed; the builder never copies, extends, or reinterprets the carrier
@@ -94,7 +100,7 @@ from types import ModuleType
 from typing import Any
 
 SCHEMA = "python-gonol.full-construct"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 UCNS_PUBLIC_GONOL_COMMIT = "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c"
 UCNS_PUBLIC_GONOL_MODULE_SHA256 = (
@@ -264,11 +270,19 @@ def _address(source_id: str, ordinal: int) -> str:
     return f"{source_id}#character:{ordinal}"
 
 
-def _line_column(source: str, index: int) -> tuple[int, int]:
-    line = source.count("\n", 0, index) + 1
-    previous = source.rfind("\n", 0, index)
-    column = index - previous
-    return line, column
+def _source_positions(source: str):
+    """Yield one-based physical addresses; CRLF retains both source scalars."""
+
+    line = column = 1
+    for index, scalar in enumerate(source):
+        yield line, column
+        if scalar == "\n" or (
+            scalar == "\r" and source[index + 1:index + 2] != "\n"
+        ):
+            line += 1
+            column = 1
+        else:
+            column += 1
 
 
 def _control_identity_rows(
@@ -300,11 +314,13 @@ def _build_control_rows(
     index = 0
     length = len(source)
     space_character_id = character_id_by_scalar.get(" ")
+    expanded_column = 0
 
     while index < length:
         scalar = source[index]
         control = _CONTROLS.get(scalar)
         if control is None:
+            expanded_column += 1
             index += 1
             continue
         kind, _name, _code_point = control
@@ -312,7 +328,8 @@ def _build_control_rows(
         column = occurrence["column"]
 
         if kind == "TAB":
-            spaces = 8 - (column % 8)
+            spaces = 8 - (expanded_column % 8)
+            expanded_column += spaces
             control_rows.append(
                 (
                     occurrence["id"],
@@ -324,6 +341,7 @@ def _build_control_rows(
             )
             index += 1
         elif kind == "CR":
+            expanded_column = 0
             control_rows.append(
                 (
                     occurrence["id"],
@@ -352,6 +370,7 @@ def _build_control_rows(
                 newline_rows.append(("CR", json.dumps([occurrence["id"]], separators=(",", ":"))))
                 index += 1
         else:
+            expanded_column = 0
             control_rows.append(
                 (
                     occurrence["id"],
@@ -424,7 +443,7 @@ def build_construct(
     not_on_carrier: list[str] = []
     seen_not_on_carrier: set[str] = set()
 
-    for ordinal, scalar in enumerate(source):
+    for ordinal, (scalar, (line, column)) in enumerate(zip(source, _source_positions(source))):
         if scalar in carrier_set:
             character_id = character_id_by_scalar[scalar]
         else:
@@ -432,7 +451,6 @@ def build_construct(
             if scalar not in _CONTROLS and scalar not in seen_not_on_carrier:
                 seen_not_on_carrier.add(scalar)
                 not_on_carrier.append(scalar)
-        line, column = _line_column(source, ordinal)
         occurrences.append(
             {
                 "id": ordinal + 1,
@@ -702,7 +720,7 @@ def verify_construct(
     if decoded_expected != meta.get("decoded_source_sha256"):
         raise PythonGonolConstructionError("decoded source digest mismatch")
 
-    for index, row in enumerate(occurrences):
+    for index, (row, expected_position) in enumerate(zip(occurrences, _source_positions(source))):
         (occurrence_id, ordinal, scalar, character_id, control_kind, address, start, end, line, column) = row
         if occurrence_id != ordinal + 1:
             raise PythonGonolConstructionError("occurrence identity or order drift")
@@ -710,7 +728,7 @@ def verify_construct(
             raise PythonGonolConstructionError("occurrence address drift")
         if start != ordinal or end != ordinal + 1:
             raise PythonGonolConstructionError("occurrence span drift")
-        expected_line, expected_column = _line_column(source, ordinal)
+        expected_line, expected_column = expected_position
         if line != expected_line or column != expected_column:
             raise PythonGonolConstructionError("occurrence line/column drift")
         if scalar in carrier_set:
@@ -780,3 +798,4 @@ __all__ = [
     "reconstruct_source",
     "load_verified_public_gonol",
 ]
+# ratios: loc_comments=605:105 imports_exports=13:10 calls_definitions=154:16
