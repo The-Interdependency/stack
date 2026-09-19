@@ -1,0 +1,285 @@
+{
+  "candidate_diagnostics": [
+    {
+      "assumption_id": "rooted-ribbon.paired-germs.v0",
+      "scale_diagnostics_not_recursive_predictions": [
+        {
+          "cellular_boundary_rank": 1,
+          "certificate_sha256": "3619f780df4726b627725167435d8686b5f485b7eaf9905ba0c6a790484a51e3",
+          "coefficients": [
+            1,
+            157
+          ],
+          "complete_product": 157,
+          "face_count": 2,
+          "finite_cokernel_order": 1,
+          "genus": 0,
+          "input_cardinality": 157,
+          "retained_structure_sha256": "aefb783c7f80e70e44eee315156dcf5e835f30e6476f9824b8b3e930ed677e9d",
+          "scale": 1,
+          "successor_prime_selector": null
+        },
+        {
+          "cellular_boundary_rank": 2,
+          "certificate_sha256": "8833f6266208998d07244262e6e29fd417f848cf85498b119ed5a123c222e716",
+          "coefficients": [
+            1,
+            110,
+            2881
+          ],
+          "complete_product": 2881,
+          "face_count": 3,
+          "finite_cokernel_order": 1,
+          "genus": 0,
+          "input_cardinality": 2881,
+          "retained_structure_sha256": "c606a0a22535f9fca2a0ab6982bc9568152bf69030b513fddf391fb6e7b0029a",
+          "scale": 2,
+          "successor_prime_selector": null
+        },
+        {
+          "cellular_boundary_rank": 3,
+          "certificate_sha256": "3c101b290d0093c9507651d974de107ae8dcd5bff565fb68fe1978fb966941ca",
+          "coefficients": [
+            1,
+            1661748451,
+            23264478151,
+            54837698421
+          ],
+          "complete_product": 54837698421,
+          "face_count": 4,
+          "finite_cokernel_order": 1,
+          "genus": 0,
+          "input_cardinality": 54837698421,
+          "retained_structure_sha256": "9a3e6d8562286c3f3f15fdfbcb216af6cec45f360fdc21efd80f6cd81f930314",
+          "scale": 3,
+          "successor_prime_selector": null
+        }
+      ]
+    },
+    {
+      "assumption_id": "rooted-ribbon.sign-blocks.v0",
+      "scale_diagnostics_not_recursive_predictions": [
+        {
+          "cellular_boundary_rank": 1,
+          "certificate_sha256": "04dd32732be39f19025ff181e3250326866c43b6df4c834f1b0c4f216f38e33e",
+          "coefficients": [
+            1,
+            157
+          ],
+          "complete_product": 157,
+          "face_count": 2,
+          "finite_cokernel_order": 1,
+          "genus": 0,
+          "input_cardinality": 157,
+          "retained_structure_sha256": "aefb783c7f80e70e44eee315156dcf5e835f30e6476f9824b8b3e930ed677e9d",
+          "scale": 1,
+          "successor_prime_selector": null
+        },
+        {
+          "cellular_boundary_rank": 0,
+          "certificate_sha256": "4e7b10077fc3c968ad06c4829b87a8627021e9f7db45cc2dedd682c0cc7783d9",
+          "coefficients": [
+            1,
+            110,
+            2881
+          ],
+          "complete_product": 2881,
+          "face_count": 1,
+          "finite_cokernel_order": null,
+          "genus": 1,
+          "input_cardinality": 2881,
+          "retained_structure_sha256": "c606a0a22535f9fca2a0ab6982bc9568152bf69030b513fddf391fb6e7b0029a",
+          "scale": 2,
+          "successor_prime_selector": null
+        },
+        {
+          "cellular_boundary_rank": 1,
+          "certificate_sha256": "1936a45848ae823316e908a91bb83b1712f86f87db06dd3dd75b09eb7e84e8ca",
+          "coefficients": [
+            1,
+            1661748451,
+            23264478151,
+            54837698421
+          ],
+          "complete_product": 54837698421,
+          "face_count": 2,
+          "finite_cokernel_order": null,
+          "genus": 1,
+          "input_cardinality": 54837698421,
+          "retained_structure_sha256": "9a3e6d8562286c3f3f15fdfbcb216af6cec45f360fdc21efd80f6cd81f930314",
+          "scale": 3,
+          "successor_prime_selector": null
+        }
+      ]
+    }
+  ],
+  "dependency_audit": [
+    {
+      "candidate_status": "SUPPLIED_EXPLICITLY_NOT_SELECTED",
+      "current_status": "MATHEMATICAL_OBSTRUCTION_ON_UNFRAMED_Q_MOD_Z_PLUS_MISSING_CANON_OPERATION",
+      "field": "origin_attachment",
+      "necessity": "chooses a target object for Structural Null; an address or model basepoint is not a morphism"
+    },
+    {
+      "candidate_status": "SUPPLIED_EXPLICITLY_USING_EXISTING_NATIVE_TRACE",
+      "current_status": "MISSING_SELECTION_UNDER_REVERSAL_SYMMETRY",
+      "field": "directed_tangent_or_chirality",
+      "necessity": "distinguishes a word from its reversal while preserving the native one-turn frame flip and two-turn return"
+    },
+    {
+      "candidate_status": "IMPLEMENTED_TWO_COMPETING_ASSUMPTIONS",
+      "current_status": "MISSING_SELECTION_WITH_EXACT_COMPETING_ROTATIONS",
+      "field": "rotation_system",
+      "necessity": "orders incident return germs cyclically; graph incidence and linear provenance do not determine a ribbon embedding"
+    },
+    {
+      "candidate_status": "FIRST_DECLARED_OCCURRENCE_ASSUMPTION",
+      "current_status": "MISSING_SELECTION_UNDER_CYCLIC_START_SYMMETRY",
+      "field": "marked_outgoing_dart",
+      "necessity": "turns cyclic closure into a based word rather than a cyclic-conjugacy class"
+    },
+    {
+      "candidate_status": "ALL_FACE_ORBITS_FILLED_BY_EXPLICIT_ASSUMPTION",
+      "current_status": "MISSING_TOPOLOGICAL_SELECTION; FACE_ORBIT_IMPLEMENTATION_EXISTS_ONCE_ALPHA_AND_SIGMA_ARE_SUPPLIED",
+      "field": "closure_rule",
+      "necessity": "declares which orbit is complete and whether it is traversed only or attached as a filled relation"
+    }
+  ],
+  "first_remaining_irreducible_assumption": {
+    "name": "geometry-owned pointed origin attachment",
+    "statement": "UCNS must add or derive one carrier-owned incidence from singular Structural Null to a native traversable object; the homogeneous unframed Q/Z candidate has no equivariant point selector",
+    "why_irreducible_now": "current canon supplies neither the attachment morphism nor an invariant singularity, and provenance or coordinate zero cannot manufacture one"
+  },
+  "freeze": {
+    "constructor_path": "research/ucns/rooted_rotation_closure_constructor.py",
+    "constructor_receipt_sha256": "d8ce28b8e183123f0c5ecc2cd04a5783fb6c476524b6491665bba85c3d67de89",
+    "constructor_sha256": "42a2062469f96f048bcf3bdf3a8d3fe2afb1666ff710c66c55569826b3c9b6af",
+    "frozen_assumptions": [
+      {
+        "assumption_id": "rooted-ribbon.paired-germs.v0",
+        "chirality": 1,
+        "closure_policy": "fill-all-oriented-ribbon-face-orbits",
+        "direction": "native-two-turn-positive-trace",
+        "marked_dart_policy": "first-declared-role-positive-germ",
+        "origin_attachment": "structural-null-to-model-positive-base-object",
+        "rotation_policy": "paired-germs",
+        "selection_basis": "explicit candidate assumptions; not canon-derived"
+      },
+      {
+        "assumption_id": "rooted-ribbon.sign-blocks.v0",
+        "chirality": 1,
+        "closure_policy": "fill-all-oriented-ribbon-face-orbits",
+        "direction": "native-two-turn-positive-trace",
+        "marked_dart_policy": "first-declared-role-positive-germ",
+        "origin_attachment": "structural-null-to-model-positive-base-object",
+        "rotation_policy": "sign-blocks",
+        "selection_basis": "explicit candidate assumptions; not canon-derived"
+      }
+    ],
+    "observed_factors": null,
+    "observed_values": null
+  },
+  "freeze_sha256": "86741937e58af2cc22c7e78692ac3e0d036c2c431f5062ee32b9305234d0a5e6",
+  "next_experiment": {
+    "falsifier": "if every native target retains a transitive or reversal symmetry and no current incidence fixes one target, origin attachment remains unresolved; no downstream field is promoted",
+    "inputs": [
+      "visible phase basepoint as an unframed target",
+      "the C2-invariant two-lift fiber as a set-valued target",
+      "a singly framed lift only as an explicitly stronger control"
+    ],
+    "name": "native attachment target stabilizer comparison",
+    "survival_gate": "one target must be well-typed, carrier-owned, invariantly distinguished, and replayable without source order, hashes, observed gonols, or PCEA expectations"
+  },
+  "nonclaims": [
+    "not UCNS canon or a canon-authorized origin attachment",
+    "not a geometry-selected chirality, rotation system, or marked dart",
+    "not a prime-role or successor selector",
+    "not a cryptographic primitive or security result",
+    "not permission to infer geometry from hashes, ordinals, or observed cardinalities"
+  ],
+  "observations_applied_after_freeze": [
+    {
+      "cardinality": 157,
+      "factors": [
+        157
+      ],
+      "scale": 1
+    },
+    {
+      "cardinality": 2881,
+      "factors": [
+        43,
+        67
+      ],
+      "scale": 2
+    },
+    {
+      "cardinality": 54837698421,
+      "factors": [
+        3,
+        11,
+        1661748437
+      ],
+      "scale": 3
+    }
+  ],
+  "recursive_successor_gate": [
+    {
+      "assumption_id": "rooted-ribbon.paired-germs.v0",
+      "derived_cellular_order": 1,
+      "expected_comparator": 2881,
+      "input": 157,
+      "next_prediction": null,
+      "second_recursive_transition_executed": false,
+      "verdict": "FALSIFIED"
+    },
+    {
+      "assumption_id": "rooted-ribbon.sign-blocks.v0",
+      "derived_cellular_order": 1,
+      "expected_comparator": 2881,
+      "input": 157,
+      "next_prediction": null,
+      "second_recursive_transition_executed": false,
+      "verdict": "FALSIFIED"
+    }
+  ],
+  "schema_id": "the-interdependency.stack-research.ucns.rooted-rotation-successor-gate",
+  "schema_version": "0.1.0",
+  "source_identities": {
+    "metapat": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+    "pcea": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+    "pcea_crypto_audit_commit": "0b49672862a30cec0a0ee24e39a34241c9626f27",
+    "skill_lib": "dd5027d99516831c0dcb83a176a67140d3819b66",
+    "stack_pr_42_head": "57e3f047c092a6df5435ed4f502347664513a0ff",
+    "trapdoor_audit_stack_base": "82dc5e39f1e0c3f162138c2e7b642814df14dd98",
+    "ucns": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a"
+  },
+  "standing": "stack-local-post-freeze-falsification",
+  "structural_consequence": "even after the five explicit assumptions, ordinary orientable ribbon-face closure yields only a trivial or non-finite abelian cellular readout here; a separate geometry-derived torsion/monodromy presentation is required before any prime successor can exist",
+  "unpublished_evidence": {
+    "pcea_crypto_audit": {
+      "original_receipt_sha256": "402980af924b89ae7b7dde10e8cc8f6d7d423994c13739ea7a5230217b1e3e72",
+      "replay": "6 tests passed against exact PCEA PR 41 source; local parity extension also passed 6 tests and retained FALSIFIED across eight failed criteria",
+      "source": "local Git object 0b49672862a30cec0a0ee24e39a34241c9626f27",
+      "verdict": "FALSIFIED"
+    },
+    "trapdoor_lift_falsification_v0": {
+      "canonical_receipt_sha256": "4d8ae8cbe68344c6f4847fefd6659f228a3112e3810ee997af1dfa807eeaed7f",
+      "minimal_fourth_power_candidate": "FALSIFIED",
+      "overall": "UNRESOLVED_NOT_RECONSTRUCTED",
+      "producer_sha256": "9039d55c3d6230327338fd6c1d004a351ed5f9084f22ac546d675151ecfd8903",
+      "replay": "10 tests passed including exhaustive unit-domain fiber profile",
+      "source": "unpublished files over Stack base 82dc5e39f1e0c3f162138c2e7b642814df14dd98",
+      "test_sha256": "d129cc090b06893f412bc05e31320838578a4b9d9f22d073a027b64d054f12f8"
+    }
+  },
+  "verdicts": {
+    "canonical_ucns_based_traversal": "UNRESOLVED",
+    "explicit_assumption_ribbon_constructor": "SURVIVED_LOCALLY",
+    "minimal_fourth_power_trapdoor": "FALSIFIED",
+    "paired_germs_as_successor_law": "FALSIFIED",
+    "pcea_cryptographic_security": "FALSIFIED",
+    "sign_blocks_as_successor_law": "FALSIFIED",
+    "ucns_prime_successor_selector": "UNRESOLVED"
+  }
+}
