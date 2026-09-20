@@ -78,8 +78,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 4f88f16928d6d8ef972557a44ab1a42209f192c5410514f6e79e41a26982202e
-File SHA-256: bad589bddc707b4db6b70c20473d2d14b69549555449d8c16368c0343c19111a
+Receipt payload digest (`receipt_sha256`): fcc1d049105ba46b055c28e8ab3428bd3cb40a68791b860fe2f5f20817fa2e3e
+File SHA-256: 29734a8c78e2e41a0acac69d356fe795df7f710bfc4a1e4fd71fc114b7685c66
 ```
 
 ## Usage guidance
@@ -137,8 +137,10 @@ The generator fails before importing producer code when a required producer
 checkout has the wrong commit or any tracked changes.
 
 The METAPAT import is isolated from the ambient module cache, its resolved file
-must be inside the verified checkout at the expected path, and the prior cache is
-restored afterward.
+must be inside the verified checkout at the expected path, and the prior cache
+is restored afterward. METAPAT and UCNS producer loaders compile the verified
+source bytes directly; the regression suite proves that same-size,
+same-timestamp poisoned bytecode is not executed.
 
 ## Promotion gates
 

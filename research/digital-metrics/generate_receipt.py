@@ -49,6 +49,11 @@ from __future__ import annotations
 #   then: generation loads the module from the verified checkout, confirms its origin, and restores the prior cache afterward
 #   class: provenance
 #
+# id: digital_metric_generator_bypasses_cached_bytecode
+#   given: timestamp-valid stale bytecode exists beside a verified METAPAT or UCNS source file
+#   then: the producer loader compiles the verified source bytes directly and never executes the cached bytecode
+#   class: provenance
+#
 # id: digital_metric_metapat_binding_is_constraint_only
 #   given: the affixiation-harmonics application is bound into a receipt
 #   then: its exact identity and digest are retained while authority and measurement-status transfer remain false
@@ -65,12 +70,14 @@ from contextlib import contextmanager
 from fractions import Fraction
 import hashlib
 import importlib
+import importlib.abc
 import importlib.util
 import json
 from pathlib import Path
 import re
 import subprocess
 import sys
+from types import ModuleType
 from typing import Any, Iterator, Mapping
 
 from metric_protocol import (
@@ -182,19 +189,64 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
             raise ProducerIdentityError(f"producer file differs from committed bytes: {relative}")
 
 
-@contextmanager
-def _temporary_sys_path(path: Path) -> Iterator[None]:
-    text = str(path)
-    sys.path.insert(0, text)
-    try:
-        yield
-    finally:
-        if text in sys.path:
-            sys.path.remove(text)
+class _SourceBytesLoader(importlib.abc.Loader):
+    def __init__(self, source_path: Path, *, is_package: bool) -> None:
+        self.source_path = source_path
+        self.is_package = is_package
+
+    def exec_module(self, module: ModuleType) -> None:
+        source = self.source_path.read_bytes()
+        module.__file__ = str(self.source_path)
+        module.__cached__ = None
+        if self.is_package:
+            module.__path__ = [str(self.source_path.parent)]  # type: ignore[attr-defined]
+        code = compile(source, str(self.source_path), "exec", dont_inherit=True)
+        exec(code, module.__dict__)
+
+
+class _SourceTreeFinder(importlib.abc.MetaPathFinder):
+    def __init__(self, package: str, package_root: Path) -> None:
+        self.package = package
+        self.package_root = package_root.resolve()
+
+    def find_spec(
+        self,
+        fullname: str,
+        path: object = None,
+        target: ModuleType | None = None,
+    ) -> object:
+        prefix = f"{self.package}."
+        if fullname == self.package:
+            relative_parts: tuple[str, ...] = ()
+        elif fullname.startswith(prefix):
+            relative_parts = tuple(fullname[len(prefix):].split("."))
+        else:
+            return None
+
+        base = self.package_root.joinpath(*relative_parts)
+        package_source = base / "__init__.py"
+        module_source = base.with_suffix(".py")
+        if package_source.is_file():
+            source_path = package_source.resolve()
+            is_package = True
+        elif relative_parts and module_source.is_file():
+            source_path = module_source.resolve()
+            is_package = False
+        else:
+            raise ModuleNotFoundError(
+                f"verified source tree has no module {fullname!r}"
+            )
+        loader = _SourceBytesLoader(source_path, is_package=is_package)
+        return importlib.util.spec_from_loader(
+            fullname,
+            loader,
+            origin=str(source_path),
+            is_package=is_package,
+        )
 
 
 @contextmanager
-def _isolated_package_import(package: str, source_root: Path) -> Iterator[None]:
+def _isolated_source_package_import(package: str, package_root: Path) -> Iterator[None]:
     prefix = f"{package}."
     saved = {
         name: module
@@ -203,11 +255,14 @@ def _isolated_package_import(package: str, source_root: Path) -> Iterator[None]:
     }
     for name in saved:
         sys.modules.pop(name, None)
+    finder = _SourceTreeFinder(package, package_root)
+    sys.meta_path.insert(0, finder)
     try:
-        with _temporary_sys_path(source_root):
-            importlib.invalidate_caches()
-            yield
+        importlib.invalidate_caches()
+        yield
     finally:
+        if finder in sys.meta_path:
+            sys.meta_path.remove(finder)
         for name in tuple(sys.modules):
             if name == package or name.startswith(prefix):
                 sys.modules.pop(name, None)
@@ -218,7 +273,7 @@ def _isolated_package_import(package: str, source_root: Path) -> Iterator[None]:
 def _load_metapat_application(root: Path) -> tuple[Any, str]:
     document_path = root / "docs/applications/affixiation-harmonics.md"
     expected_module_path = (root / "src/metapat/affixiation_harmonics.py").resolve()
-    with _isolated_package_import("metapat", root / "src"):
+    with _isolated_source_package_import("metapat", root / "src/metapat"):
         module = importlib.import_module("metapat.affixiation_harmonics")
         actual_module_path = Path(module.__file__).resolve()
         if actual_module_path != expected_module_path:
@@ -236,18 +291,20 @@ def _load_metapat_application(root: Path) -> tuple[Any, str]:
 
 
 def _load_ucns_native_module(root: Path) -> tuple[Any, str]:
-    source_path = root / "src/ucns/direct_mobius.py"
+    source_path = (root / "src/ucns/direct_mobius.py").resolve()
+    source = source_path.read_bytes()
     module_name = "_stack_metric_ucns_direct_mobius"
-    spec = importlib.util.spec_from_file_location(module_name, source_path)
-    if spec is None or spec.loader is None:
-        raise ProducerIdentityError("cannot load UCNS direct_mobius producer")
-    module = importlib.util.module_from_spec(spec)
+    module = ModuleType(module_name)
+    module.__file__ = str(source_path)
+    module.__cached__ = None
+    module.__package__ = ""
     sys.modules[module_name] = module
     try:
-        spec.loader.exec_module(module)
+        code = compile(source, str(source_path), "exec", dont_inherit=True)
+        exec(code, module.__dict__)
     finally:
         sys.modules.pop(module_name, None)
-    return module, _sha256_file(source_path)
+    return module, _sha256_bytes(source)
 
 
 def _state_record(state: Any, law_id: str, law_version: str) -> dict[str, Any]:

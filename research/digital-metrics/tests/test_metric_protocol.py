@@ -75,6 +75,12 @@ from __future__ import annotations
 #   mutates: temporary directory and process import cache
 #   cleanup: automatic temporary-directory cleanup and explicit cache restoration
 #
+# id: check_digital_metric_bytecode_bypass
+#   proves: digital_metric_generator_bypasses_cached_bytecode
+#   call: self::test_producer_loaders_ignore_matching_stale_bytecode
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_metapat_binding
 #   proves: digital_metric_metapat_binding_is_constraint_only
 #   call: self::test_frozen_receipt_preserves_metapat_nontransfer
@@ -90,10 +96,13 @@ from __future__ import annotations
 
 from copy import deepcopy
 from fractions import Fraction
+from importlib.util import cache_from_source
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import ModuleType
 import json
+import os
+import py_compile
 import sys
 import unittest
 from unittest.mock import patch
@@ -119,7 +128,12 @@ from metric_protocol import (  # noqa: E402
 
 
 import verify_receipt as receipt_replay  # noqa: E402
-from generate_receipt import ProducerIdentityError, _load_metapat_application, verify_checkout  # noqa: E402
+from generate_receipt import (  # noqa: E402
+    ProducerIdentityError,
+    _load_metapat_application,
+    _load_ucns_native_module,
+    verify_checkout,
+)
 SHA_A = "a" * 64
 SHA_B = "b" * 64
 SHA_C = "c" * 64
@@ -197,6 +211,30 @@ def structure(
 
 
 class MetricProtocolTests(unittest.TestCase):
+    @staticmethod
+    def _install_timestamp_valid_stale_bytecode(
+        source_path: Path,
+        *,
+        poisoned_source: str,
+        verified_source: str,
+    ) -> Path:
+        if len(poisoned_source.encode("utf-8")) != len(verified_source.encode("utf-8")):
+            raise AssertionError("matched bytecode fixture sources must have equal byte length")
+        fixed_timestamp = 1_700_000_000
+        source_path.write_text(poisoned_source, encoding="utf-8")
+        os.utime(source_path, (fixed_timestamp, fixed_timestamp))
+        bytecode_path = Path(cache_from_source(str(source_path)))
+        bytecode_path.parent.mkdir(parents=True, exist_ok=True)
+        py_compile.compile(
+            str(source_path),
+            cfile=str(bytecode_path),
+            doraise=True,
+            invalidation_mode=py_compile.PycInvalidationMode.TIMESTAMP,
+        )
+        source_path.write_text(verified_source, encoding="utf-8")
+        os.utime(source_path, (fixed_timestamp, fixed_timestamp))
+        return bytecode_path
+
     def test_missing_value_field_is_rejected_before_any_default(self) -> None:
         defn = definition()
         record = observed(defn, boolean_value(False))
@@ -498,6 +536,51 @@ class MetricProtocolTests(unittest.TestCase):
                     sys.modules["metapat.affixiation_harmonics"],
                     cached_module,
                 )
+
+    def test_producer_loaders_ignore_matching_stale_bytecode(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            metapat_package = root / "metapat/src/metapat"
+            metapat_documents = root / "metapat/docs/applications"
+            metapat_package.mkdir(parents=True)
+            metapat_documents.mkdir(parents=True)
+            (metapat_package / "__init__.py").write_text("", encoding="utf-8")
+            metapat_module = metapat_package / "affixiation_harmonics.py"
+            metapat_template = (
+                "class _Application:\n"
+                "    application_id = 'metapat.application.affixiation_harmonics'\n"
+                "    application_version = 'affixiation-harmonics-application-v4'\n"
+                "    measurement_validity_claim = False\n"
+                "    ucns_theorem_status_transfer = False\n"
+                "    marker = {marker!r}\n"
+                "\n"
+                "def affixiation_harmonics_application_module():\n"
+                "    return _Application()\n"
+            )
+            metapat_bytecode = self._install_timestamp_valid_stale_bytecode(
+                metapat_module,
+                poisoned_source=metapat_template.format(marker="cached"),
+                verified_source=metapat_template.format(marker="source"),
+            )
+            (metapat_documents / "affixiation-harmonics.md").write_text(
+                "verified fixture\n",
+                encoding="utf-8",
+            )
+            application, _digest = _load_metapat_application(root / "metapat")
+            self.assertTrue(metapat_bytecode.is_file())
+            self.assertEqual(application.marker, "source")
+
+            ucns_package = root / "ucns/src/ucns"
+            ucns_package.mkdir(parents=True)
+            ucns_module = ucns_package / "direct_mobius.py"
+            ucns_bytecode = self._install_timestamp_valid_stale_bytecode(
+                ucns_module,
+                poisoned_source="VALUE = 'cached'\n",
+                verified_source="VALUE = 'source'\n",
+            )
+            module, _digest = _load_ucns_native_module(root / "ucns")
+            self.assertTrue(ucns_bytecode.is_file())
+            self.assertEqual(module.VALUE, "source")
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"
