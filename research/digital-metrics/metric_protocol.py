@@ -26,8 +26,8 @@ from __future__ import annotations
 #   module_kind: schema
 #   summary: strict candidate metric definitions, observations, retained structures, and deterministic receipts for cross-repository research
 #   owner: The-Interdependency/stack
-#   public_surface: canonical_json,sha256_json,make_metric_definition,validate_metric_definition,make_observation,validate_observation,seal_structure,validate_structure,retention_definitions,measure_retention,seal_receipt,verify_receipt
-#   internal_surface: strict field, scalar, digest, rational, provenance, and uncertainty validators
+#   public_surface: canonical_json,sha256_json,integer_value,rational_value,make_metric_definition,validate_metric_definition,make_observation,validate_observation,seal_structure,validate_structure,retention_definitions,measure_retention,seal_receipt,verify_receipt
+#   internal_surface: strict field, scalar, digest, integer, rational, provenance, and uncertainty validators
 #   auth_boundary: none
 #   storage_boundary: serialization-only
 #   network_boundary: none
@@ -206,6 +206,10 @@ def rational_value(value: Fraction | int) -> dict[str, Any]:
     return {"kind": "rational", "numerator": fraction.numerator, "denominator": fraction.denominator}
 
 
+def integer_value(value: int) -> dict[str, Any]:
+    return {"kind": "integer", "value": _integer(value, "integer value")}
+
+
 def boolean_value(value: bool) -> dict[str, Any]:
     return {"kind": "boolean", "value": _boolean(value, "boolean value")}
 
@@ -222,6 +226,14 @@ def _validate_rational_wire(value: Any, label: str) -> Fraction:
     return Fraction(numerator, denominator)
 
 
+def _validate_integer_wire(value: Any, label: str) -> int:
+    record = _mapping(value, label)
+    _exact_fields(record, ("kind", "value"), label)
+    if record["kind"] != "integer":
+        raise MetricProtocolError(f"{label}.kind must be 'integer'")
+    return _integer(record["value"], f"{label}.value")
+
+
 def _validate_value_contract(value: Any) -> dict[str, Any]:
     record = _mapping(value, "metric definition value_contract")
     _exact_fields(record, ("kind", "unit", "minimum", "maximum"), "metric definition value_contract")
@@ -229,7 +241,15 @@ def _validate_value_contract(value: Any) -> dict[str, Any]:
     if kind not in VALUE_KINDS:
         raise MetricProtocolError(f"unsupported value kind {kind!r}")
     _text(record["unit"], "value_contract.unit")
-    if kind in {"integer", "rational"}:
+    if kind == "integer":
+        if record["minimum"] is not None:
+            _validate_integer_wire(record["minimum"], "value_contract.minimum")
+        if record["maximum"] is not None:
+            _validate_integer_wire(record["maximum"], "value_contract.maximum")
+        if record["minimum"] is not None and record["maximum"] is not None:
+            if _validate_integer_wire(record["minimum"], "value_contract.minimum") > _validate_integer_wire(record["maximum"], "value_contract.maximum"):
+                raise MetricProtocolError("value_contract minimum exceeds maximum")
+    elif kind == "rational":
         if record["minimum"] is not None:
             _validate_rational_wire(record["minimum"], "value_contract.minimum")
         if record["maximum"] is not None:
@@ -270,8 +290,12 @@ def make_metric_definition(
         "value_contract": {
             "kind": value_kind,
             "unit": unit,
-            "minimum": rational_value(minimum) if minimum is not None else None,
-            "maximum": rational_value(maximum) if maximum is not None else None,
+            "minimum": (
+                integer_value(minimum) if value_kind == "integer" else rational_value(minimum)
+            ) if minimum is not None else None,
+            "maximum": (
+                integer_value(maximum) if value_kind == "integer" else rational_value(maximum)
+            ) if maximum is not None else None,
         },
         "computation": {"id": computation_id, "sha256": computation_sha256},
         "interpretation": interpretation,
@@ -302,7 +326,7 @@ def validate_metric_definition(value: Any) -> dict[str, Any]:
         raise MetricProtocolError("unsupported metric definition schema/version")
     for field in ("metric_id", "metric_version", "owner_repository", "construct", "subject_kind", "interpretation"):
         _text(record[field], f"metric definition {field}")
-    value_contract = _validate_value_contract(record["value_contract"])
+    _validate_value_contract(record["value_contract"])
     computation = _mapping(record["computation"], "metric definition computation")
     _exact_fields(computation, ("id", "sha256"), "metric definition computation")
     _text(computation["id"], "computation.id")
@@ -323,11 +347,6 @@ def validate_metric_definition(value: Any) -> dict[str, Any]:
             raise MetricProtocolError(f"missingness.{field} must be true")
     normalized = deepcopy(record)
     _reject_unsupported_scalars(normalized, "metric definition")
-    if value_contract["kind"] == "integer":
-        for bound_name in ("minimum", "maximum"):
-            bound = value_contract[bound_name]
-            if bound is not None and _validate_rational_wire(bound, f"value_contract.{bound_name}").denominator != 1:
-                raise MetricProtocolError("integer metric bounds must be integers")
     return normalized
 
 
@@ -344,10 +363,17 @@ def _validate_metric_value(value: Any, contract: Mapping[str, Any], label: str) 
             raise MetricProtocolError(f"{label}.kind must be 'boolean'")
         _boolean(record["value"], f"{label}.value")
         return
-    if kind in {"integer", "rational"}:
+    if kind == "integer":
+        integer = _validate_integer_wire(value, label)
+        minimum = contract["minimum"]
+        maximum = contract["maximum"]
+        if minimum is not None and integer < _validate_integer_wire(minimum, "value_contract.minimum"):
+            raise MetricProtocolError(f"{label} falls below metric minimum")
+        if maximum is not None and integer > _validate_integer_wire(maximum, "value_contract.maximum"):
+            raise MetricProtocolError(f"{label} exceeds metric maximum")
+        return
+    if kind == "rational":
         fraction = _validate_rational_wire(value, label)
-        if kind == "integer" and fraction.denominator != 1:
-            raise MetricProtocolError(f"{label} must encode an integer")
         minimum = contract["minimum"]
         maximum = contract["maximum"]
         if minimum is not None and fraction < _validate_rational_wire(minimum, "value_contract.minimum"):
@@ -781,6 +807,7 @@ def verify_receipt(value: Any) -> dict[str, Any]:
 
 __all__ = [
     "MetricProtocolError",
+    "integer_value",
     "boolean_value",
     "canonical_json",
     "make_metric_definition",

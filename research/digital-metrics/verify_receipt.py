@@ -51,14 +51,24 @@ from __future__ import annotations
 #   given: timestamp-valid stale bytecode exists for the Stack protocol or generator module
 #   then: the verifier compiles both modules from their recorded source bytes before replay
 #   class: provenance
+#
+# id: digital_metric_replay_binds_executing_source_bytes
+#   given: Stack protocol, generator, or verifier files change after their modules are loaded
+#   then: replay records the digests of the exact source bytes compiled for execution
+#   class: provenance
 # === END CONTRACTS ===
 
 import argparse
 from copy import deepcopy
+import hashlib
 import json
 from pathlib import Path
 import sys
 from types import ModuleType
+
+_LOADED_VERIFIER_SHA256 = globals().get("__source_sha256__")
+if _LOADED_VERIFIER_SHA256 is None:
+    _LOADED_VERIFIER_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 
 def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
@@ -68,6 +78,7 @@ def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
     module.__file__ = str(source_path)
     module.__cached__ = None
     module.__package__ = ""
+    module.__source_sha256__ = hashlib.sha256(source).hexdigest()
     previous = sys.modules.get(module_name)
     sys.modules[module_name] = module
     try:
@@ -90,6 +101,9 @@ _GENERATOR = _load_source_module(
     "_stack_digital_metric_generator_verifier",
     _WORKSPACE / "generate_receipt.py",
 )
+if _METRIC_PROTOCOL.__source_sha256__ != _GENERATOR._LOADED_PROTOCOL_SHA256:
+    raise RuntimeError("verifier and generator loaded different protocol source bytes")
+
 MetricProtocolError = _METRIC_PROTOCOL.MetricProtocolError
 canonical_json = _METRIC_PROTOCOL.canonical_json
 sha256_json = _METRIC_PROTOCOL.sha256_json
@@ -126,6 +140,7 @@ def verify_and_replay(
         metapat_root=metapat_root,
         ucns_root=ucns_root,
         work_graph_path=work_graph_path,
+        verifier_sha256=_LOADED_VERIFIER_SHA256,
     )
     if candidate["verification"]["result"] != "pending":
         raise MetricProtocolError("generator must emit a pending receipt")

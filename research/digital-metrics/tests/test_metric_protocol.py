@@ -116,6 +116,25 @@ from __future__ import annotations
 #   call: self::test_frozen_receipt_records_native_ucns_transition
 #   mutates: none
 #   cleanup: none
+#
+# id: check_digital_metric_committed_blob_only
+#   proves: digital_metric_generator_loads_committed_sources_only
+#   call: self::test_metapat_loader_uses_committed_dependency_blob
+#   mutates: temporary Git repository only
+#   cleanup: automatic temporary-directory cleanup
+#
+# id: check_digital_metric_loaded_digest_binding
+#   proves: digital_metric_replay_binds_executing_source_bytes
+#   call: self::test_replay_digests_bind_loaded_source_bytes
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
+# id: check_digital_metric_discoverable_test_gate
+#   proves: digital_metric_contract_audit_requires_discoverable_tests
+#   call: self::test_contract_audit_rejects_undiscoverable_check_targets
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # === END CHECKS ===
 
 from copy import deepcopy
@@ -125,6 +144,7 @@ from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
 from types import ModuleType
+import hashlib
 import json
 import os
 import py_compile
@@ -135,7 +155,7 @@ from unittest.mock import patch
 
 WORKSPACE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WORKSPACE))
-
+sys.path.insert(0, str(WORKSPACE.parents[1] / "skill-lib"))
 from metric_protocol import (  # noqa: E402
     MetricProtocolError,
     boolean_value,
@@ -144,12 +164,14 @@ from metric_protocol import (  # noqa: E402
     make_observation,
     measure_retention,
     rational_value,
+    integer_value,
     seal_receipt,
     seal_structure,
     sha256_json,
     validate_observation,
     verify_receipt,
 )
+import audit_contracts as contract_audit  # noqa: E402
 
 
 import verify_receipt as receipt_replay  # noqa: E402
@@ -322,8 +344,23 @@ class MetricProtocolTests(unittest.TestCase):
     def test_boolean_and_integer_encodings_do_not_alias(self) -> None:
         with self.assertRaisesRegex(MetricProtocolError, "must be a boolean"):
             boolean_value(1)  # type: ignore[arg-type]
+        with self.assertRaisesRegex(MetricProtocolError, "must be an integer"):
+            integer_value(True)  # type: ignore[arg-type]
         with self.assertRaisesRegex(MetricProtocolError, "exact Fraction or integer"):
             rational_value(True)
+
+        integer_definition = definition(kind="integer")
+        self.assertEqual(integer_definition["value_contract"]["minimum"], integer_value(0))
+        integer_record = observed(integer_definition, integer_value(1))
+        self.assertEqual(integer_record["value"], {"kind": "integer", "value": 1})
+
+        wrong_integer = deepcopy(integer_record)
+        wrong_integer["value"] = {"kind": "rational", "value": 1}
+        wrong_integer["observation_sha256"] = sha256_json(
+            {key: value for key, value in wrong_integer.items() if key != "observation_sha256"}
+        )
+        with self.assertRaisesRegex(MetricProtocolError, "kind must be 'integer'"):
+            validate_observation(wrong_integer, integer_definition)
 
         defn = definition()
         wrong = observed(defn, boolean_value(True))
@@ -694,6 +731,8 @@ class MetricProtocolTests(unittest.TestCase):
             ucns_package = root / "ucns/src/ucns"
             ucns_package.mkdir(parents=True)
             ucns_module = ucns_package / "direct_mobius.py"
+            ucns_module.write_text("VALUE = 'source'\n", encoding="utf-8")
+            self._commit_fixture_repo(root / "ucns")
             ucns_bytecode = self._install_timestamp_valid_stale_bytecode(
                 ucns_module,
                 poisoned_source="VALUE = 'cached'\n",
@@ -761,6 +800,139 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertEqual(loaded_verifier.canonical_json(None), "source")
             with self.assertRaises(TypeError):
                 loaded_verifier.build_receipt()
+
+    def test_metapat_loader_uses_committed_dependency_blob(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "src/metapat"
+            documents = root / "docs/applications"
+            package.mkdir(parents=True)
+            documents.mkdir(parents=True)
+            (package / "__init__.py").write_text("", encoding="utf-8")
+            dependency = package / "catalog_data.py"
+            dependency.write_text("MARKER = 'committed'\n", encoding="utf-8")
+            (package / "affixiation_harmonics.py").write_text(
+                "from .catalog_data import MARKER\n"
+                "class _Application:\n"
+                "    application_id = 'metapat.application.affixiation_harmonics'\n"
+                "    application_version = 'affixiation-harmonics-application-v4'\n"
+                "    measurement_validity_claim = False\n"
+                "    ucns_theorem_status_transfer = False\n"
+                "    marker = MARKER\n"
+                "\n"
+                "def affixiation_harmonics_application_module():\n"
+                "    return _Application()\n",
+                encoding="utf-8",
+            )
+            (documents / "affixiation-harmonics.md").write_text(
+                "verified fixture\n",
+                encoding="utf-8",
+            )
+            self._commit_fixture_repo(root)
+            subprocess.run(
+                [
+                    "git", "-C", str(root), "update-index", "--assume-unchanged",
+                    "src/metapat/catalog_data.py",
+                ],
+                check=True,
+            )
+            dependency.write_text("MARKER = 'altered'\n", encoding="utf-8")
+            status = subprocess.run(
+                ["git", "-C", str(root), "status", "--porcelain", "--untracked-files=no"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(status.stdout, "")
+            application, _digest = _load_metapat_application(root)
+            self.assertEqual(application.marker, "committed")
+
+    def test_replay_digests_bind_loaded_source_bytes(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = {
+                name: root / name
+                for name in ("metric_protocol.py", "generate_receipt.py", "verify_receipt.py")
+            }
+            for name, path in paths.items():
+                path.write_bytes((WORKSPACE / name).read_bytes())
+            expected = {
+                name: hashlib.sha256(path.read_bytes()).hexdigest()
+                for name, path in paths.items()
+            }
+            loaded = receipt_replay._load_source_module(
+                "_test_stack_metric_verifier_digest_binding",
+                paths["verify_receipt.py"],
+            )
+            self.assertEqual(
+                loaded._METRIC_PROTOCOL.__source_sha256__,
+                loaded._GENERATOR._LOADED_PROTOCOL_SHA256,
+            )
+            for path in paths.values():
+                path.write_text("# changed after load\n", encoding="utf-8")
+            actual = loaded._GENERATOR._execution_source_digests(
+                verifier_path=paths["verify_receipt.py"],
+                verifier_sha256=loaded._LOADED_VERIFIER_SHA256,
+            )
+            self.assertEqual(
+                actual,
+                {
+                    "generator": expected["generate_receipt.py"],
+                    "protocol": expected["metric_protocol.py"],
+                    "verifier": expected["verify_receipt.py"],
+                },
+            )
+            self.assertNotEqual(
+                hashlib.sha256(paths["generate_receipt.py"].read_bytes()).hexdigest(),
+                actual["generator"],
+            )
+
+    def test_contract_audit_rejects_undiscoverable_check_targets(self) -> None:
+        source_text = (
+            "# === CONTRACTS ===\n"
+            "# id: fixture_contract\n"
+            "#   given: a fixture\n"
+            "#   then: it is witnessed\n"
+            "#   class: provenance\n"
+            "# === END CONTRACTS ===\n"
+        )
+        check_header = (
+            "# === CHECKS ===\n"
+            "# id: fixture_check\n"
+            "#   proves: fixture_contract\n"
+            "#   call: self::test_hidden\n"
+            "#   mutates: none\n"
+            "#   cleanup: none\n"
+            "# === END CHECKS ===\n"
+        )
+        hidden_forms = (
+            "def test_hidden():\n    pass\n",
+            "class Helper:\n    def test_hidden(self):\n        pass\n",
+            (
+                "import unittest\n"
+                "def outer():\n"
+                "    class Hidden(unittest.TestCase):\n"
+                "        def test_hidden(self):\n"
+                "            pass\n"
+                "    return Hidden\n"
+            ),
+        )
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_path = root / "source.py"
+            test_path = root / "test_fixture.py"
+            source_path.write_text(source_text, encoding="utf-8")
+            for hidden in hidden_forms:
+                with self.subTest(hidden=hidden.splitlines()[0]):
+                    test_path.write_text(check_header + hidden, encoding="utf-8")
+                    with patch.object(contract_audit, "SOURCE_FILES", (source_path,)), patch.object(
+                        contract_audit, "TEST_FILES", (test_path,)
+                    ):
+                        report = contract_audit.audit()
+                    self.assertFalse(report["passed"])
+                    self.assertTrue(
+                        any("not a discoverable unittest" in item for item in report["findings"])
+                    )
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"

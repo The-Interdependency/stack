@@ -50,8 +50,8 @@ from __future__ import annotations
 #   class: provenance
 #
 # id: digital_metric_generator_loads_committed_sources_only
-#   given: an untracked package path could shadow a committed METAPAT module
-#   then: the source finder ignores the uncommitted path and loads only Python sources named by the pinned Git tree
+#   given: an untracked shadow or altered working-tree dependency differs from the pinned METAPAT commit
+#   then: the source finder executes only Python blobs read directly from the pinned Git tree
 #   class: provenance
 #
 # id: digital_metric_generator_imports_verified_metapat
@@ -90,6 +90,10 @@ import sys
 from types import ModuleType
 from typing import Any, Iterator, Mapping
 
+_LOADED_GENERATOR_SHA256 = globals().get("__source_sha256__")
+if _LOADED_GENERATOR_SHA256 is None:
+    _LOADED_GENERATOR_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+
 
 def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
     source_path = source_path.resolve()
@@ -98,6 +102,7 @@ def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
     module.__file__ = str(source_path)
     module.__cached__ = None
     module.__package__ = ""
+    module.__source_sha256__ = hashlib.sha256(source).hexdigest()
     previous = sys.modules.get(module_name)
     sys.modules[module_name] = module
     try:
@@ -123,6 +128,7 @@ measure_retention = _METRIC_PROTOCOL.measure_retention
 seal_receipt = _METRIC_PROTOCOL.seal_receipt
 seal_structure = _METRIC_PROTOCOL.seal_structure
 sha256_json = _METRIC_PROTOCOL.sha256_json
+_LOADED_PROTOCOL_SHA256 = _METRIC_PROTOCOL.__source_sha256__
 
 
 WORK_GRAPH_SCHEMA = "the-interdependency.digital-metric-work-graph"
@@ -146,6 +152,22 @@ def _sha256_bytes(data: bytes) -> str:
 
 def _sha256_file(path: Path) -> str:
     return _sha256_bytes(path.read_bytes())
+
+
+def _execution_source_digests(
+    *,
+    verifier_path: Path,
+    verifier_sha256: str | None = None,
+) -> dict[str, str]:
+    if verifier_sha256 is None:
+        verifier_sha256 = _sha256_file(verifier_path)
+    elif re.fullmatch(r"[0-9a-f]{64}", verifier_sha256) is None:
+        raise ProducerIdentityError("executing verifier digest must be a lowercase SHA-256")
+    return {
+        "generator": _LOADED_GENERATOR_SHA256,
+        "protocol": _LOADED_PROTOCOL_SHA256,
+        "verifier": verifier_sha256,
+    }
 
 
 def _git(root: Path, *args: str) -> str:
@@ -239,7 +261,19 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
             raise ProducerIdentityError(f"producer file differs from committed bytes: {relative}")
 
 
-def _committed_python_sources(root: Path, relative_root: str) -> frozenset[Path]:
+def _git_blob(root: Path, relative: str) -> bytes:
+    result = subprocess.run(
+        ["git", "-C", str(root.resolve()), "show", f"HEAD:{relative}"],
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        raise ProducerIdentityError(f"cannot read committed producer blob {relative}: {detail}")
+    return result.stdout
+
+
+def _committed_python_sources(root: Path, relative_root: str) -> dict[Path, bytes]:
     root = root.resolve()
     names = _git(
         root,
@@ -250,21 +284,25 @@ def _committed_python_sources(root: Path, relative_root: str) -> frozenset[Path]
         "--",
         relative_root,
     ).splitlines()
-    return frozenset(root / name for name in names if name.endswith(".py"))
+    return {
+        root / name: _git_blob(root, name)
+        for name in names
+        if name.endswith(".py")
+    }
 
 
 class _SourceBytesLoader(importlib.abc.Loader):
-    def __init__(self, source_path: Path, *, is_package: bool) -> None:
+    def __init__(self, source_path: Path, source: bytes, *, is_package: bool) -> None:
         self.source_path = source_path
+        self.source = source
         self.is_package = is_package
 
     def exec_module(self, module: ModuleType) -> None:
-        source = self.source_path.read_bytes()
         module.__file__ = str(self.source_path)
         module.__cached__ = None
         if self.is_package:
             module.__path__ = [str(self.source_path.parent)]  # type: ignore[attr-defined]
-        code = compile(source, str(self.source_path), "exec", dont_inherit=True)
+        code = compile(self.source, str(self.source_path), "exec", dont_inherit=True)
         exec(code, module.__dict__)
 
 
@@ -273,7 +311,7 @@ class _SourceTreeFinder(importlib.abc.MetaPathFinder):
         self,
         package: str,
         package_root: Path,
-        allowed_sources: frozenset[Path],
+        allowed_sources: Mapping[Path, bytes],
     ) -> None:
         self.package = package
         self.package_root = package_root.resolve()
@@ -306,7 +344,11 @@ class _SourceTreeFinder(importlib.abc.MetaPathFinder):
             raise ModuleNotFoundError(
                 f"pinned Git tree has no committed module {fullname!r}"
             )
-        loader = _SourceBytesLoader(source_path, is_package=is_package)
+        loader = _SourceBytesLoader(
+            source_path,
+            self.allowed_sources[source_path],
+            is_package=is_package,
+        )
         return importlib.util.spec_from_loader(
             fullname,
             loader,
@@ -319,7 +361,7 @@ class _SourceTreeFinder(importlib.abc.MetaPathFinder):
 def _isolated_source_package_import(
     package: str,
     package_root: Path,
-    allowed_sources: frozenset[Path],
+    allowed_sources: Mapping[Path, bytes],
 ) -> Iterator[None]:
     prefix = f"{package}."
     saved = {
@@ -345,7 +387,6 @@ def _isolated_source_package_import(
 
 
 def _load_metapat_application(root: Path) -> tuple[Any, str]:
-    document_path = root / "docs/applications/affixiation-harmonics.md"
     expected_module_path = (root / "src/metapat/affixiation_harmonics.py").resolve()
     allowed_sources = _committed_python_sources(root, "src/metapat")
     with _isolated_source_package_import(
@@ -366,12 +407,12 @@ def _load_metapat_application(root: Path) -> tuple[Any, str]:
         raise ProducerIdentityError("unexpected METAPAT affixiation application version")
     if application.measurement_validity_claim is not False or application.ucns_theorem_status_transfer is not False:
         raise ProducerIdentityError("METAPAT application improperly transfers downstream status")
-    return application, _sha256_file(document_path)
+    return application, _sha256_bytes(_git_blob(root, "docs/applications/affixiation-harmonics.md"))
 
 
 def _load_ucns_native_module(root: Path) -> tuple[Any, str]:
     source_path = (root / "src/ucns/direct_mobius.py").resolve()
-    source = source_path.read_bytes()
+    source = _git_blob(root, "src/ucns/direct_mobius.py")
     module_name = "_stack_metric_ucns_direct_mobius"
     module = ModuleType(module_name)
     module.__file__ = str(source_path)
@@ -425,14 +466,14 @@ def build_receipt(
     metapat_root: Path,
     ucns_root: Path,
     work_graph_path: Path,
-    protocol_path: Path | None = None,
-    generator_path: Path | None = None,
     verifier_path: Path | None = None,
+    verifier_sha256: str | None = None,
 ) -> dict[str, Any]:
     workspace = Path(__file__).resolve().parent
-    protocol_path = (protocol_path or workspace / "metric_protocol.py").resolve()
-    generator_path = (generator_path or Path(__file__)).resolve()
-    verifier_path = (verifier_path or workspace / "verify_receipt.py").resolve()
+    source_digests = _execution_source_digests(
+        verifier_path=(verifier_path or workspace / "verify_receipt.py").resolve(),
+        verifier_sha256=verifier_sha256,
+    )
     work_graph = load_work_graph(work_graph_path.resolve())
     metapat_participant = _participant(work_graph, "The-Interdependency/metapat")
     ucns_participant = _participant(work_graph, "The-Interdependency/ucns")
@@ -466,9 +507,9 @@ def build_receipt(
         "inverse_round_trip": _state_record(inverse, ucns.NATIVE_MOBIUS_LAW_ID, ucns.NATIVE_MOBIUS_LAW_VERSION),
     }
     state_bundle_sha256 = sha256_json(state_bundle)
-    generator_sha256 = _sha256_file(generator_path)
-    protocol_sha256 = _sha256_file(protocol_path)
-    verifier_sha256 = _sha256_file(verifier_path)
+    generator_sha256 = source_digests["generator"]
+    protocol_sha256 = source_digests["protocol"]
+    verifier_sha256 = source_digests["verifier"]
     work_graph_sha256 = work_graph["work_graph_sha256"]
 
     ucns_provenance = {

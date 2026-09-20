@@ -41,12 +41,14 @@ and EDCM participant sequence; a recomputed digest cannot authorize omissions.
 - deterministic receipts.
 
 The protocol rejects missing and unknown fields, floating-point values, boolean
-and integer aliasing, noncanonical rationals, stale digests, and status transfer.
-Every observation carries `value`. A non-observed status requires explicit
-`null`, a reason, and `not_quantified` uncertainty; absence never becomes zero.
-Committed producers use typed `git-commit` revisions. A pre-commit Stack
-artifact uses `candidate-content`, whose revision digest must equal its artifact
-digest; it never claims to exist at the baseline commit.
+and integer aliasing, integer/rational wire-kind mismatches, noncanonical
+rationals, stale digests, and status transfer. Integer values use an `integer`
+wire tag; rationals use a distinct reduced numerator/denominator form. Every
+observation carries `value`. A non-observed status requires explicit `null`, a
+reason, and `not_quantified` uncertainty; absence never becomes zero. Committed
+producers use typed `git-commit` revisions. A pre-commit Stack artifact uses
+`candidate-content`, whose revision digest must equal its artifact digest; it
+never claims to exist at the baseline commit.
 
 ## Frozen first slice
 
@@ -80,8 +82,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 1c6072058edf9b51e45f73b4da32c982d140a6117b93b93a595ea6180d4b63e4
-File SHA-256: fe2953c93376353f88d3e085176cb87ddb9c536625e621771219b0ffe284ed56
+Receipt payload digest (`receipt_sha256`): b0a3148537d12d77544527da51e488f6f75f06dd072b3358b68191cbe836371b
+File SHA-256: 509f27872f8062b20495d8637f427dec05cb265b1b0251dee77751cf3c196b06
 ```
 
 ## Usage guidance
@@ -141,11 +143,11 @@ has the wrong commit or any tracked changes.
 
 The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache
-is restored afterward. Every METAPAT Python dependency must occupy a path named
-by the pinned Git tree, so untracked package shadows are not executable.
-METAPAT, UCNS, and Stack's protocol/generator replay modules compile their source
-bytes directly; the regression suite proves that same-size, same-timestamp
-poisoned bytecode is not executed.
+is restored afterward. Every METAPAT dependency executes from the exact blob in
+the pinned Git tree, so untracked shadows and hidden working-tree changes are
+not executable. METAPAT, UCNS, and Stack replay modules compile source bytes
+directly, bind receipt digests to those loaded bytes, and ignore poisoned
+bytecode.
 
 ## Promotion gates
 
