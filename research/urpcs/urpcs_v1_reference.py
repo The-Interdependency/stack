@@ -19,7 +19,7 @@ wire law so package version changes cannot silently change fixture bytes.
 Limitations
 -----------
 The harness accepts at most one input byte and depth one.  The state-slot CAS
-test models the host obligation in memory; it is not a durable-storage proof.
+uses a process-local lock; it is not a durable-storage proof.
 """
 
 # === MODULE_BUILD ===
@@ -78,6 +78,7 @@ import hashlib
 import hmac
 import json
 import struct
+import threading
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Sequence
@@ -570,6 +571,7 @@ def unframe(ciphertext: bytes) -> tuple[bytes, bytes]:
     require(magic == FRAME_MAGIC and version == 1 and header_len == FRAME_HEADER_LEN,
             "frame identity")
     require(tag_len == TAG_LEN and flags == 0, "frame fields")
+    require(length <= MAX_C0, "C0 cap")
     require(length <= len(ciphertext) - FRAME_HEADER_LEN - TAG_LEN, "frame length overflow")
     require(len(ciphertext) == FRAME_HEADER_LEN + length + TAG_LEN, "frame exact length")
     return (ciphertext[FRAME_HEADER_LEN:FRAME_HEADER_LEN + length],
@@ -752,6 +754,7 @@ def decode_witness(beta: bytes, state: KState) -> tuple[list[Any], dict[str, Any
     require(a_rows == _row_sort(expected_a), "shape reconstruction")
     return witness, {
         "origins": origins,
+        "region_keys": region_keys,
         "occurrences": occurrences,
         "by_origin": by_origin,
         "gonols": expected_gonols,
@@ -851,6 +854,12 @@ def decrypt(ciphertext: bytes, state: KState, ad: bytes) -> DecryptResult:
             current = deserialize_layer(plaintext, layer_ix - 1)
             layers_reversed.append(current)
     layers = list(reversed(layers_reversed))
+    decoded_region_keys = {
+        (n_value(layer[0]), n_value(raw_region[0]))
+        for layer in layers
+        for raw_region in layer[2]
+    }
+    require(decoded_region_keys == index["region_keys"], "origin/region completeness")
     q = receipt(witness, layers)
     next_state = advance(state, ciphertext, q)
     return DecryptResult(plaintext, next_state, q, beta,
@@ -862,12 +871,14 @@ class StateSlot:
 
     def __init__(self, state: KState):
         self.state = state
+        self._lock = threading.Lock()
 
     def commit(self, expected: KState, replacement: KState) -> bool:
-        if self.state != expected:
-            return False
-        self.state = replacement
-        return True
+        with self._lock:
+            if self.state != expected:
+                return False
+            self.state = replacement
+            return True
 
 
 def _state_hex(state: KState) -> dict[str, Any]:
