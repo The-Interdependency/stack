@@ -74,7 +74,7 @@ jobs:
       - name: Generate pending, attest after replay, and match frozen receipt
         working-directory: stack
         run: |
-          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt.py \
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt_cli.py \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
             --output /tmp/native-mobius-v0.pending.json

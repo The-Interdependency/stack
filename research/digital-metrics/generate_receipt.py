@@ -4,7 +4,7 @@ Usage guidance
 --------------
 Run only with clean checkouts at the commits pinned by ``WORK_GRAPH.json``::
 
-    python3 research/digital-metrics/generate_receipt.py \
+    python3 research/digital-metrics/generate_receipt_cli.py \
       --metapat-root /path/to/metapat \
       --ucns-root /path/to/ucns \
       --output /tmp/digital-metrics-receipt.json
@@ -39,6 +39,11 @@ from __future__ import annotations
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
+# id: digital_metric_generator_requires_source_bound_entry
+#   given: the current generator implementation is entered without a source digest binding
+#   then: receipt generation rejects before resolving any producer
+#   class: provenance
+#
 # id: digital_metric_generator_requires_exact_clean_producers
 #   given: a producer root is not its Git top level, differs from the work-graph commit, or has tracked changes
 #   then: receipt generation fails before importing producer code
@@ -96,8 +101,6 @@ from types import ModuleType
 from typing import Any, Iterator, Mapping
 
 _LOADED_GENERATOR_SHA256 = globals().get("__source_sha256__")
-if _LOADED_GENERATOR_SHA256 is None:
-    _LOADED_GENERATOR_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 
 def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
@@ -164,6 +167,12 @@ def _execution_source_digests(
     verifier_path: Path,
     verifier_sha256: str | None = None,
 ) -> dict[str, str]:
+    if not isinstance(_LOADED_GENERATOR_SHA256, str) or re.fullmatch(
+        r"[0-9a-f]{64}", _LOADED_GENERATOR_SHA256
+    ) is None:
+        raise ProducerIdentityError(
+            "generator API must be source-loaded; use generate_receipt_cli.py"
+        )
     if verifier_sha256 is None:
         verifier_sha256 = _sha256_file(verifier_path)
     elif re.fullmatch(r"[0-9a-f]{64}", verifier_sha256) is None:
@@ -707,4 +716,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(
+        "run generate_receipt_cli.py so generator execution is source-bound"
+    )

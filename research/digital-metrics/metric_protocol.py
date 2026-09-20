@@ -152,7 +152,7 @@ def _exact_fields(record: Mapping[str, Any], expected: Iterable[str], label: str
 
 
 def _text(value: Any, label: str) -> str:
-    if not isinstance(value, str) or not value:
+    if not isinstance(value, str) or not value.strip():
         raise MetricProtocolError(f"{label} must be a non-empty string")
     return value
 

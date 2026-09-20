@@ -82,8 +82,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 1fa8440333ff2e789b5b12fa18cc1318d9f671ee0b353b90a215d2be249b7326
-File SHA-256: 168d7454eadf6838af396717955db5f0a51a2dfd99bcfd2b24ce2934266eb33e
+Receipt payload digest (`receipt_sha256`): bb760ac5befab7630b453bac10f58a0885a380ee90d22fec47151e06c3e4ed0c
+File SHA-256: 56454be1f8b2eecafa4d8a8e686b7d5f59395bc7df892ba619a6ad7eeec140ea
 ```
 
 ## Usage guidance
@@ -108,7 +108,7 @@ Generate a candidate receipt from clean checkouts at the exact commits in
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
-python3 research/digital-metrics/generate_receipt.py \
+python3 research/digital-metrics/generate_receipt_cli.py \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
   --output /tmp/native-mobius-v0.pending.json
@@ -145,10 +145,16 @@ The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache
 is restored afterward. Every METAPAT dependency executes from the exact blob in
 the participant commit object named by `WORK_GRAPH.json`; source loading never
-dereferences mutable `HEAD`. Untracked shadows and hidden working-tree changes
-are therefore not executable. METAPAT, UCNS, and Stack replay modules compile
-source bytes directly, bind receipt digests to those loaded bytes, and ignore
-poisoned bytecode.
+dereferences mutable `HEAD`, and every producer Git read disables replacement
+objects. Untracked shadows and hidden working-tree changes are therefore not
+executable. METAPAT, UCNS, and Stack replay modules compile source bytes
+directly, bind receipt digests to those loaded bytes, and ignore poisoned
+bytecode.
+
+The generator supports its source-loading CLI launcher and explicit
+source-loaded API only. The launcher reads `generate_receipt.py` once, hashes
+and compiles that same byte buffer, then invokes its `main`; direct execution or
+an ordinary import cannot generate a candidate.
 
 The verifier supports the source-loading CLI launcher and explicit
 source-loaded API only. The launcher reads `verify_receipt.py` once, hashes and

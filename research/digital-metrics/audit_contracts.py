@@ -35,8 +35,8 @@ from __future__ import annotations
 
 # === CONTRACTS ===
 # id: digital_metric_contract_audit_requires_discoverable_tests
-#   given: a CHECKS call names a top-level, nested, or non-TestCase test-like function
-#   then: the audit rejects it unless unittest discovery can execute the named method
+#   given: a CHECKS call names a top-level, nested, non-TestCase, skipped, or expected-failure test-like function
+#   then: the audit rejects it unless unittest can execute the named method as a passing witness
 #   class: provenance
 # === END CONTRACTS ===
 
@@ -53,6 +53,7 @@ SOURCE_FILES = (
     ROOT / "audit_contracts.py",
     ROOT / "metric_protocol.py",
     ROOT / "generate_receipt.py",
+    ROOT / "generate_receipt_cli.py",
     ROOT / "verify_receipt.py",
     ROOT / "verify_receipt_cli.py",
 )
@@ -68,11 +69,18 @@ def _dotted_name(node: ast.expr) -> str | None:
     return None
 
 
+def _decorator_name(node: ast.expr) -> str | None:
+    if isinstance(node, ast.Call):
+        node = node.func
+    return _dotted_name(node)
+
+
 def _discoverable_test_methods(path: Path) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     unittest_aliases = {"unittest"}
     testcase_aliases: set[str] = set()
     async_testcase_aliases: set[str] = set()
+    nonproof_decorator_aliases: set[str] = set()
     classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
     for node in tree.body:
         if isinstance(node, ast.Import):
@@ -87,7 +95,14 @@ def _discoverable_test_methods(path: Path) -> set[str]:
                     testcase_aliases.add(alias.asname or alias.name)
                 elif alias.name == "IsolatedAsyncioTestCase":
                     async_testcase_aliases.add(alias.asname or alias.name)
+                elif alias.name in {"skip", "skipIf", "skipUnless", "expectedFailure"}:
+                    nonproof_decorator_aliases.add(alias.asname or alias.name)
 
+    nonproof_decorators = nonproof_decorator_aliases | {
+        f"{alias}.{name}"
+        for alias in unittest_aliases
+        for name in ("skip", "skipIf", "skipUnless", "expectedFailure")
+    }
     direct_testcase_bases = testcase_aliases | {
         base
         for alias in unittest_aliases
@@ -103,6 +118,7 @@ def _discoverable_test_methods(path: Path) -> set[str]:
     }
     discoverable_classes: set[str] = set()
     async_classes: set[str] = set()
+    nonproof_classes: set[str] = set()
     changed = True
     while changed:
         changed = False
@@ -116,21 +132,33 @@ def _discoverable_test_methods(path: Path) -> set[str]:
                 or is_async
                 or any(base in discoverable_classes for base in bases)
             )
+            is_nonproof = any(
+                _decorator_name(decorator) in nonproof_decorators
+                for decorator in node.decorator_list
+            ) or any(base in nonproof_classes for base in bases)
             if is_discoverable and name not in discoverable_classes:
                 discoverable_classes.add(name)
                 changed = True
             if is_async and name not in async_classes:
                 async_classes.add(name)
                 changed = True
+            if is_nonproof and name not in nonproof_classes:
+                nonproof_classes.add(name)
+                changed = True
 
     methods: set[str] = set()
     for name, node in classes.items():
-        if name not in discoverable_classes:
+        if name not in discoverable_classes or name in nonproof_classes:
             continue
         for method in node.body:
             if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue
             if not method.name.startswith("test_"):
+                continue
+            if any(
+                _decorator_name(decorator) in nonproof_decorators
+                for decorator in method.decorator_list
+            ):
                 continue
             if isinstance(method, ast.FunctionDef):
                 methods.add(method.name)

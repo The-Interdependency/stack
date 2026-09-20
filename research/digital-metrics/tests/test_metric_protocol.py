@@ -69,6 +69,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_source_bound_generator_entry
+#   proves: digital_metric_generator_requires_source_bound_entry
+#   call: self::test_normal_imported_generator_cannot_generate
+#   mutates: none
+#   cleanup: none
+#
 # id: check_digital_metric_exact_producer_gate
 #   proves: digital_metric_generator_requires_exact_clean_producers
 #   call: self::test_generator_rejects_wrong_checkout_commit
@@ -130,7 +136,7 @@ from __future__ import annotations
 #   cleanup: automatic temporary-directory cleanup
 #
 # id: check_digital_metric_loaded_digest_binding
-#   proves: digital_metric_replay_binds_executing_source_bytes,digital_metric_cli_binds_loaded_verifier_bytes
+#   proves: digital_metric_replay_binds_executing_source_bytes,digital_metric_cli_binds_loaded_verifier_bytes,digital_metric_generator_cli_binds_loaded_bytes
 #   call: self::test_replay_digests_bind_loaded_source_bytes
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
@@ -210,6 +216,10 @@ from metric_protocol import (  # noqa: E402
 import audit_contracts as contract_audit  # noqa: E402
 
 
+generator_cli = _source_load_module(  # noqa: E402
+    "_test_stack_metric_generator_cli",
+    WORKSPACE / "generate_receipt_cli.py",
+)
 receipt_replay = _source_load_module(  # noqa: E402
     "_test_stack_metric_receipt_replay",
     WORKSPACE / "verify_receipt.py",
@@ -220,6 +230,7 @@ receipt_cli = _source_load_module(  # noqa: E402
 )
 from generate_receipt import (  # noqa: E402
     ProducerIdentityError,
+    _execution_source_digests,
     load_work_graph,
     _load_metapat_application,
     _load_ucns_native_module,
@@ -392,6 +403,18 @@ class MetricProtocolTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(MetricProtocolError, "must be explicit null"):
             validate_observation(wrong, defn)
+
+        whitespace_reason = deepcopy(unresolved)
+        whitespace_reason["reason"] = "   "
+        whitespace_reason["observation_sha256"] = sha256_json(
+            {
+                key: value
+                for key, value in whitespace_reason.items()
+                if key != "observation_sha256"
+            }
+        )
+        with self.assertRaisesRegex(MetricProtocolError, "non-empty string"):
+            validate_observation(whitespace_reason, defn)
 
     def test_boolean_and_integer_encodings_do_not_alias(self) -> None:
         with self.assertRaisesRegex(MetricProtocolError, "must be a boolean"):
@@ -861,10 +884,7 @@ class MetricProtocolTests(unittest.TestCase):
                 ),
                 verified_source=verified_verifier,
             )
-            loaded_generator = receipt_replay._load_source_module(
-                "_test_stack_metric_generator_source",
-                generator_path,
-            )
+            loaded_generator = generator_cli._load_generator(generator_path)
             self.assertEqual(loaded_generator.boolean_value(), "source")
             loaded_verifier = receipt_cli._load_verifier(verifier_path)
             self.assertTrue(protocol_bytecode.is_file())
@@ -997,7 +1017,14 @@ class MetricProtocolTests(unittest.TestCase):
                 name: hashlib.sha256(path.read_bytes()).hexdigest()
                 for name, path in paths.items()
             }
+            loaded_generator = generator_cli._load_generator(
+                paths["generate_receipt.py"]
+            )
             loaded = receipt_cli._load_verifier(paths["verify_receipt.py"])
+            self.assertEqual(
+                loaded_generator._LOADED_GENERATOR_SHA256,
+                expected["generate_receipt.py"],
+            )
             self.assertEqual(
                 loaded._METRIC_PROTOCOL.__source_sha256__,
                 loaded._GENERATOR._LOADED_PROTOCOL_SHA256,
@@ -1008,17 +1035,31 @@ class MetricProtocolTests(unittest.TestCase):
                 verifier_path=paths["verify_receipt.py"],
                 verifier_sha256=loaded._LOADED_VERIFIER_SHA256,
             )
+            expected_digests = {
+                "generator": expected["generate_receipt.py"],
+                "protocol": expected["metric_protocol.py"],
+                "verifier": expected["verify_receipt.py"],
+            }
+            self.assertEqual(actual, expected_digests)
             self.assertEqual(
-                actual,
-                {
-                    "generator": expected["generate_receipt.py"],
-                    "protocol": expected["metric_protocol.py"],
-                    "verifier": expected["verify_receipt.py"],
-                },
+                loaded_generator._execution_source_digests(
+                    verifier_path=paths["verify_receipt.py"],
+                    verifier_sha256=expected["verify_receipt.py"],
+                ),
+                expected_digests,
             )
             self.assertNotEqual(
                 hashlib.sha256(paths["generate_receipt.py"].read_bytes()).hexdigest(),
                 actual["generator"],
+            )
+
+    def test_normal_imported_generator_cannot_generate(self) -> None:
+        with self.assertRaisesRegex(
+            ProducerIdentityError,
+            "generator API must be source-loaded",
+        ):
+            _execution_source_digests(
+                verifier_path=WORKSPACE / "verify_receipt.py"
             )
 
     def test_normal_imported_verifier_cannot_attest(self) -> None:
@@ -1077,6 +1118,27 @@ class MetricProtocolTests(unittest.TestCase):
                 "class AsyncWrong(unittest.TestCase):\n"
                 "    async def test_hidden(self):\n"
                 "        pass\n"
+            ),
+            (
+                "import unittest\n"
+                "@unittest.skip('disabled')\n"
+                "class Skipped(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        pass\n"
+            ),
+            (
+                "import unittest\n"
+                "class SkippedMethod(unittest.TestCase):\n"
+                "    @unittest.skipIf(True, 'disabled')\n"
+                "    def test_hidden(self):\n"
+                "        pass\n"
+            ),
+            (
+                "from unittest import TestCase, expectedFailure as xfail\n"
+                "class Expected(TestCase):\n"
+                "    @xfail\n"
+                "    def test_hidden(self):\n"
+                "        raise AssertionError\n"
             ),
         )
         with TemporaryDirectory() as directory:
