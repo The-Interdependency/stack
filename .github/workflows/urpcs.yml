@@ -1,0 +1,28 @@
+name: urpcs
+
+on:
+  pull_request:
+    paths:
+      - "research/urpcs/**"
+      - ".github/workflows/urpcs.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/urpcs/**"
+      - ".github/workflows/urpcs.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Reference codec and committed-vector checks
+        run: python -m unittest discover -s research/urpcs/tests -p 'test*.py'
+      - name: Python syntax
+        run: python -m py_compile research/urpcs/urpcs_v1_reference.py

@@ -12,9 +12,10 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English Gonol full-construct v2 verification UTC: `2026-09-14` at `99b3598b02a6e683b3c84184d8ea443b12fc0e1a`
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
+- URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `2453a88009be151d872a439d086ae1d4b6d0696fa55747b4fe487ef9cabd8197`
+  `39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -58,6 +59,7 @@ release identity.
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
+| `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -105,6 +107,12 @@ Active post-graduation carrier research lives separately at
 `research/epac-derived-carrier/`. Its source verifier pins exact EPAC source
 bytes for audit purposes; it neither changes the accepted immutable release nor
 returns EPAC implementation authority to Stack.
+
+URPCS v1 lives separately at `research/urpcs/` as an authenticated recursive
+pairing codec experiment. Its accepted Laws 1–13, reference implementation, and
+byte-exact vectors establish bounded deterministic codec behavior only. The
+workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
+Stack supplies no confidentiality or production-security standing.
 
 ## License status at pinned commits
 
@@ -162,9 +170,14 @@ Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
 transfers no semantic, geometric, measurement, or language-canon status.
 
+URPCS is likewise stack-local and ungraduated. The reference implementation and
+fixtures are executable evidence for one bounded profile; an independent decoder,
+confidentiality model, durable host state, and production-security review remain open.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
+- URPCS remains stack-local research; independent interoperability, confidentiality, durable rollback resistance, and release authority remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.

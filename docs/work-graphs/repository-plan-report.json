@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "graduate/epac-release-20260912",
-    "commit": "745ff5e54dff52089889a7f9ca2ba87cb39bbd0f",
-    "generated_at": "2026-09-13",
-    "note": "Post-merge repository state includes the independent EPAC consumer and Python/English Gonol workspaces. The historical EPAC event remains separately pinned in its receipt."
+    "branch": "research/urpcs-v1-stack-workspace",
+    "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
+    "generated_at": "2026-09-20",
+    "note": "Transaction starts from exact Stack baseline a428a41 and adds the bounded URPCS workspace; the report commit identifies the pre-mutation source, while the PR diff owns the new workspace bytes."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol source-affixiation and English Gonol character-floor construction are current Stack research workspaces; their inclusion transfers no language, semantic, geometry or release authority."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol, English Gonol, and URPCS are current Stack research workspaces. URPCS supplies bounded authenticated-codec computation only; no confidentiality, PCEA compatibility, UCNS-gonol identity, or release authority transfers."
   },
   "delivered": [
     {
@@ -67,13 +67,19 @@
       "surface": "research/python-gonol/ and research/english-gonol/",
       "status": "Python source-affixiation and English character-floor constructions integrated from main f0376a839bb8849f05b4cb89751d36a6aaf075bb",
       "boundary": "Stack-local research with declared provenance; no independent repository/release authority or language-authority transfer."
+    },
+    {
+      "surface": "research/urpcs/",
+      "status": "Laws 1-13 freeze summary, reference encoder/decoder, eight named vectors, exhaustive one-byte depth-zero check, source receipt, and CI gate integrated",
+      "boundary": "Stack-local authenticated-codec computation only; confidentiality, PCEA compatibility, UCNS-gonol identity, independent interoperability, and release authority remain unclaimed."
     }
   ],
   "active_frontier": [
     "refresh pinned repository views when owners advance and a stack experiment needs the newer state",
     "register organization aggregate and website projection derivations in the fresh-making control plane",
     "maintain EPAC as a hash-pinned independent release consumer",
-    "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities."
+    "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
+    "Obtain an independently written URPCS decoder and a leakage/threat model before considering any confidentiality construction."
   ],
   "next_actions": [],
   "blocked": [],
@@ -125,12 +131,14 @@
     "epac_release_lock": "integration/epac/release-lock.json",
     "epac_authority_transition": "integration/epac/authority-transition.json",
     "python_gonol": "research/python-gonol/README.md",
-    "english_gonol": "research/english-gonol/README.md"
+    "english_gonol": "research/english-gonol/README.md",
+    "urpcs": "research/urpcs/README.md"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
     "skill-lib remains a special operational root snapshot rather than the normal libs/research pair",
     "EPAC geometry ratification and unmeasured operation effects remain unresolved research",
-    "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved."
+    "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved.",
+    "URPCS independent decoding, confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved."
   ]
 }

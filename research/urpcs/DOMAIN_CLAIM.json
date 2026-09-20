@@ -1,0 +1,87 @@
+{
+  "schema": "the-interdependency.domain-claim",
+  "version": "0.1.0",
+  "term_id": "urpcs.codec",
+  "surface_form": "URPCS",
+  "claiming_domain": "stack-local recursive pairing codec research",
+  "claimed_sense": "The v1 stateful authenticated recursive pairing codec profile defined by accepted Laws 1-13 and bounded by the committed reference harness.",
+  "scope": "research/urpcs/ and artifacts that explicitly cite this domain claim",
+  "claim_type": "provisional",
+  "claim_status": "stack-local research; not canon; not a confidentiality construction",
+  "handle": {
+    "kind": "acronym",
+    "identity_mode": "despecified",
+    "canonical_expansion": null,
+    "instance_expansions": [
+      {
+        "text": "unnamed recursive pairing codec skeleton",
+        "scope": "the Laws 1-13 design sequence",
+        "status": "instance-definition",
+        "provenance": "operator-ratified working specification"
+      }
+    ]
+  },
+  "authority_source": {
+    "kind": "operator-ratified research construction",
+    "author": "Erin Spencer",
+    "date": "2026-09-20",
+    "repository_record": "research/urpcs/",
+    "immutable_transcript_identity": "hmmm"
+  },
+  "included_uses": [
+    "the five-element v1 witness wire and Laws 1-13 framing/state-advance profile",
+    "the bounded reference implementation and deterministic fixtures",
+    "future independent interoperability and leakage tests that cite this exact profile"
+  ],
+  "excluded_uses": [
+    "a claim of confidentiality, IND-CPA, IND-CCA, post-compromise security, or production suitability",
+    "PCEA compatibility or PCEA implementation authority",
+    "UCNS-gonol identity, UCNS geometry, or UCNS constructor authority",
+    "a canonical lexical expansion of the URPCS handle",
+    "a claim that recursive size or combinatorial structure supplies entropy"
+  ],
+  "defined_terms": [
+    {
+      "term_id": "urpcs.codec-gonol",
+      "surface_form": "Gonol",
+      "sense": "A workspace-local serialized layer record containing a codec identifier, phase representative, and occurrence members; explicitly distinct from a UCNS gonol."
+    },
+    {
+      "term_id": "urpcs.witness",
+      "surface_form": "witness",
+      "sense": "The per-message five-field parse and relation record encoded in the authenticated bootstrap prefix."
+    }
+  ],
+  "neighboring_terms": [
+    {
+      "term": "PCEA",
+      "distinction": "An independently owned prime-circle encryption project; URPCS imports no PCEA construction and claims no compatibility."
+    },
+    {
+      "term": "UCNS gonol",
+      "distinction": "A UCNS-owned mathematical object/constructor identity; the URPCS codec-local record is only a namespaced wire object."
+    },
+    {
+      "term": "cipher",
+      "distinction": "A confidentiality construction; URPCS v1 presently establishes an authenticated reversible codec only."
+    }
+  ],
+  "known_collisions": [
+    {
+      "surface": "URPCs",
+      "boundary": "Published biomedical usage for urine renal progenitor cells is an unrelated domain sense.",
+      "source": "https://www.uniklinik-duesseldorf.de/fileadmin/Fuer-Patienten-und-Besucher/Kliniken-Zentren-Institute/Institute/Institut_fuer_Stammzellforschung_und_Regenerative_Medizin_ISRM/Publications/Adjaye_URINE_CELLs_GSCN2016.pdf"
+    },
+    {
+      "surface": "gonol",
+      "boundary": "UCNS owns its gonol object and geometry. URPCS v1 uses only the domain-qualified urpcs.codec-gonol record."
+    }
+  ],
+  "effective_version": "v1-research",
+  "hmmm": [
+    "Whether URPCS should ever receive a fixed lexical expansion.",
+    "Whether the codec-local Gonol field should be renamed in a future wire version to remove the namespace collision.",
+    "Whether independent decoding reproduces the accepted reference bytes.",
+    "Whether any future confidentiality construction can retain this recursive representation without unacceptable leakage and expansion."
+  ]
+}

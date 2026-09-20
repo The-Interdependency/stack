@@ -1,0 +1,10 @@
+{
+  "authority": "stack-local URPCS codec research",
+  "canon_path": null,
+  "project": "urpcs",
+  "source_commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
+  "source_repository": "The-Interdependency/stack",
+  "standing": "stack-local-research",
+  "version": "1.0.0",
+  "schema": "the-interdependency.stack-research-base"
+}

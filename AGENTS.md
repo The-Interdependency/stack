@@ -17,6 +17,9 @@ projects may later graduate into their own repositories.
   component. It owns Python source admission and bottom-up affixiation only; METAPAT owns
   affixiation semantics, UCNS owns consumed geometry, and parser objects are witnesses
   rather than gonol identities.
+- `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
+  experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
+  construction and has no confidentiality, production-security, or release standing.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
@@ -121,6 +124,8 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
+- URPCS has bounded deterministic codec evidence but lacks an independent decoder,
+  confidentiality model, durable host-state proof, and independent release authority.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
