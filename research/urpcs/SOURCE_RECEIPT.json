@@ -26,6 +26,7 @@
       "sha256": "6a37feb3541206051812fd70af2ee52e826e35681e2a0bddeaf97ed87f198141"
     }
   ],
+  "integrated_artifacts_scope": "Immutable PR #44 integration snapshot. These path hashes identify the bytes integrated at that boundary; subsequent reviewed repairs may change current path bytes without rewriting the historical source identity.",
   "integrated_artifacts": [
     {
       "path": "research/urpcs/docs/urpcs-v1-spec.md",
