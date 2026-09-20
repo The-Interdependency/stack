@@ -4,7 +4,7 @@
 #   module_kind: audit
 #   summary: consumes the pinned UCNS motion candidate and runs definition-walk motions over the English v2 compact construct on demand; determinable-not-stored with an aggregate receipt
 #   owner: Erin Spencer
-#   public_surface: SCHEMA, VERSION, UCNS_MOTION_COMMIT, UCNS_MOTION_MODULE_SHA256, UCNS_VISIBLE_DISPLACEMENT_MODULE_SHA256, MotionRunError, run_definition_walk_motions, verify_motion_replay
+#   public_surface: SCHEMA, VERSION, UCNS_MOTION_COMMIT, UCNS_MOTION_MODULE_SHA256, UCNS_LIFTED_DISPLACEMENT_MODULE_SHA256, MotionRunError, run_definition_walk_motions, verify_motion_replay
 #   internal_surface: verified ucns motion loading, definition-chain walk extraction, canonical aggregate receipt
 #   auth_boundary: none
 #   storage_boundary: aggregate receipt only; per-word motions are recomputed, never stored
@@ -32,11 +32,11 @@
 #   class: doctrine
 #   since: 2026-09-19
 #
-# id: motion_run_inherits_unselected_status
+# id: motion_run_inherits_scoped_selected_status
 #   given: the consumed ucns motion candidate
-#   then: the aggregate receipt records the unselected displacement status
+#   then: the aggregate receipt records the scoped-selection status of the lifted displacement
 #   class: doctrine
-#   since: 2026-09-19
+#   since: 2026-09-20
 # === END CONTRACTS ===
 
 """Run definition-walk motions over the English v2 construct.
@@ -62,9 +62,9 @@ from typing import Any
 SCHEMA = "english-gonol.definition-walk-motion"
 VERSION = "0.1.0"
 
-UCNS_MOTION_COMMIT = "65f92e744c0e420163e278f8b1d30a4086f0899e"
-UCNS_MOTION_MODULE_SHA256 = "60d69e69e09e0ba58b6436c525f5ab6d31d119931c6ca95b7f89eaec0358d50e"
-UCNS_VISIBLE_DISPLACEMENT_MODULE_SHA256 = "082a70ce3b18cac470f45ccf9ed0386c8ab7c517f6bdbcda2964602f5cc4cfff"
+UCNS_MOTION_COMMIT = "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc"
+UCNS_MOTION_MODULE_SHA256 = "5fc2b40967ab9da9cc805935d169d04a4b09594267c16df9959e9a566aa6b541"
+UCNS_LIFTED_DISPLACEMENT_MODULE_SHA256 = "670c4e41f130b2d6b2439ee17c65bc699985d18e36d4958edbdb06e445c2c037"
 
 
 class MotionRunError(ValueError):
@@ -78,13 +78,13 @@ def _sha256(path: Path) -> str:
 def _load_verified_motion(ucns_source_root: Path) -> Any:
     root = Path(ucns_source_root)
     motion = root / "src" / "ucns" / "motion.py"
-    visible = root / "src" / "ucns" / "visible_displacement.py"
-    if not motion.exists() or not visible.exists():
+    lifted = root / "src" / "ucns" / "lifted_displacement.py"
+    if not motion.exists() or not lifted.exists():
         raise MotionRunError(f"ucns motion modules missing under {root}")
     if _sha256(motion) != UCNS_MOTION_MODULE_SHA256:
         raise MotionRunError("ucns motion.py bytes do not match the pinned commit")
-    if _sha256(visible) != UCNS_VISIBLE_DISPLACEMENT_MODULE_SHA256:
-        raise MotionRunError("ucns visible_displacement.py bytes do not match the pinned commit")
+    if _sha256(lifted) != UCNS_LIFTED_DISPLACEMENT_MODULE_SHA256:
+        raise MotionRunError("ucns lifted_displacement.py bytes do not match the pinned commit")
     try:
         subprocess.run(
             ["git", "-C", str(root), "merge-base", "--is-ancestor", UCNS_MOTION_COMMIT, "HEAD"],
@@ -177,15 +177,16 @@ def run_definition_walk_motions(
         "version": VERSION,
         "ucns_motion_commit": UCNS_MOTION_COMMIT,
         "ucns_motion_module_sha256": UCNS_MOTION_MODULE_SHA256,
-        "ucns_visible_displacement_module_sha256": UCNS_VISIBLE_DISPLACEMENT_MODULE_SHA256,
-        "displacement_candidate": "ordered-concatenation",
-        "displacement_candidate_status": "unselected",
+        "ucns_lifted_displacement_module_sha256": UCNS_LIFTED_DISPLACEMENT_MODULE_SHA256,
+        "displacement_candidate": "lifted-ordered-concatenation",
+        "displacement_candidate_status": "selected-scoped",
         "words": words,
         "word_count": len(words),
         "limit": limit,
         "hmmm": (
-            "motion selection follows displacement selection, which remains "
-            "unresolved; per-word motions are recomputed, never stored"
+            "motion inherits the scoped selection of the lifted "
+            "ordered-concatenation displacement; the continuum lift-selection "
+            "law remains hmmm; per-word motions are recomputed, never stored"
         ),
     }
     payload["receipt_sha256"] = hashlib.sha256(
@@ -227,7 +228,7 @@ __all__ = [
     "VERSION",
     "UCNS_MOTION_COMMIT",
     "UCNS_MOTION_MODULE_SHA256",
-    "UCNS_VISIBLE_DISPLACEMENT_MODULE_SHA256",
+    "UCNS_LIFTED_DISPLACEMENT_MODULE_SHA256",
     "MotionRunError",
     "run_definition_walk_motions",
     "verify_motion_replay",

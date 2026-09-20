@@ -15,9 +15,9 @@
 #   mutates: none
 #   cleanup: none
 #
-# id: check_motion_run_inherits_unselected_status
-#   proves: motion_run_inherits_unselected_status
-#   call: self::test_inherits_unselected_status
+# id: check_motion_run_inherits_scoped_selected_status
+#   proves: motion_run_inherits_scoped_selected_status
+#   call: self::test_inherits_scoped_selected_status
 #   requires: python3, git
 #   timeout: 30
 #   mutates: none
@@ -96,7 +96,7 @@ def _fixture_state(tmp_path: Path) -> Path:
 def test_binds_exact_ucns_motion_source(tmp_path: Path) -> None:
     state_dir = _fixture_state(tmp_path)
     report = run_definition_walk_motions(state_dir, UCNS_SOURCE_ROOT)
-    assert report["ucns_motion_commit"].startswith("65f92e7")
+    assert report["ucns_motion_commit"].startswith("1cf10c2")
     assert report["word_count"] == 1
 
     data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
@@ -121,8 +121,9 @@ def test_recomputes_not_stores(tmp_path: Path) -> None:
         assert "motion_receipt" in word
 
 
-def test_inherits_unselected_status(tmp_path: Path) -> None:
+def test_inherits_scoped_selected_status(tmp_path: Path) -> None:
     state_dir = _fixture_state(tmp_path)
     report = run_definition_walk_motions(state_dir, UCNS_SOURCE_ROOT)
-    assert report["displacement_candidate_status"] == "unselected"
-    assert "unresolved" in report["hmmm"]
+    assert report["displacement_candidate"] == "lifted-ordered-concatenation"
+    assert report["displacement_candidate_status"] == "selected-scoped"
+    assert "hmmm" in report["hmmm"]
