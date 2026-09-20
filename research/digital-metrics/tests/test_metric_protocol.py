@@ -15,6 +15,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_missing_observation
+#   proves: digital_metric_missing_never_becomes_zero
+#   call: self::test_receipt_requires_observation_for_every_definition
+#   mutates: none
+#   cleanup: none
+#
 # id: check_digital_metric_boolean_integer_separation
 #   proves: digital_metric_types_are_exact
 #   call: self::test_boolean_and_integer_encodings_do_not_alias
@@ -431,6 +437,53 @@ class MetricProtocolTests(unittest.TestCase):
         )
         with self.assertRaisesRegex(MetricProtocolError, "non-empty string"):
             validate_observation(whitespace_reason, defn)
+
+    def test_receipt_requires_observation_for_every_definition(self) -> None:
+        first_definition = definition()
+        second_definition = deepcopy(first_definition)
+        second_definition["metric_id"] = "stack.test.second"
+        first_observation = observed(first_definition, boolean_value(True))
+        second_observation = observed(second_definition, boolean_value(False))
+        binding = {
+            "kind": "test-binding",
+            "identity": "test",
+            "version": "0.1.0",
+            "repository": "The-Interdependency/stack",
+            "commit": COMMIT_A,
+            "artifact_sha256": SHA_A,
+            "record_digest": SHA_B,
+            "authority_transfer": False,
+            "measurement_status_transfer": False,
+        }
+        kwargs = {
+            "work_graph_sha256": WORK_GRAPH_SHA,
+            "definitions": [first_definition, second_definition],
+            "bindings": [binding],
+            "inputs": [{"identity": "fixture", "sha256": SHA_C}],
+            "verifier_id": "stack.test.verifier",
+            "verifier_sha256": SHA_A,
+            "hmmm": [],
+        }
+        with self.assertRaisesRegex(
+            MetricProtocolError,
+            "definitions without observations",
+        ):
+            seal_receipt(observations=[first_observation], **kwargs)
+
+        complete = seal_receipt(
+            observations=[first_observation, second_observation],
+            **kwargs,
+        )
+        incomplete = deepcopy(complete)
+        incomplete["observations"].pop()
+        incomplete["receipt_sha256"] = sha256_json(
+            {key: value for key, value in incomplete.items() if key != "receipt_sha256"}
+        )
+        with self.assertRaisesRegex(
+            MetricProtocolError,
+            "definitions without observations",
+        ):
+            verify_receipt(incomplete)
 
     def test_boolean_and_integer_encodings_do_not_alias(self) -> None:
         with self.assertRaisesRegex(MetricProtocolError, "must be a boolean"):
@@ -1225,6 +1278,42 @@ class MetricProtocolTests(unittest.TestCase):
             ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
                 report = contract_audit.audit()
             self.assertTrue(report["passed"], report["findings"])
+
+            dependency_path = root / "metric_protocol.py"
+            verified_dependency = "MARKER = 'source'\n"
+            self._install_timestamp_valid_stale_bytecode(
+                dependency_path,
+                poisoned_source="MARKER = 'poison'\n",
+                verified_source=verified_dependency,
+            )
+            test_path.write_text(
+                "import metric_protocol\n"
+                "import unittest\n"
+                "class SourceBound(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.assertEqual(metric_protocol.MARKER, 'source')\n",
+                encoding="utf-8",
+            )
+            cached_dependency = ModuleType("metric_protocol")
+            cached_dependency.MARKER = "cached"  # type: ignore[attr-defined]
+            with patch.object(
+                contract_audit,
+                "AUDITED_IMPORT_ORDER",
+                (("metric_protocol", dependency_path),),
+            ), patch.dict(
+                sys.modules,
+                {"metric_protocol": cached_dependency},
+                clear=False,
+            ):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden"},
+                    test_path.read_bytes(),
+                    {dependency_path: verified_dependency.encode("utf-8")},
+                )
+                self.assertTrue(clean, output)
+                self.assertEqual(tests_run, 1)
+                self.assertIs(sys.modules["metric_protocol"], cached_dependency)
 
     def test_contract_audit_rejects_unpinned_parser_bytes(self) -> None:
         with TemporaryDirectory() as directory:

@@ -74,6 +74,14 @@ SOURCE_FILES = (
     ROOT / "verify_receipt_cli.py",
 )
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
+AUDITED_IMPORT_ORDER = (
+    ("metric_protocol", ROOT / "metric_protocol.py"),
+    ("audit_contracts", ROOT / "audit_contracts.py"),
+    ("generate_receipt", ROOT / "generate_receipt.py"),
+    ("generate_receipt_cli", ROOT / "generate_receipt_cli.py"),
+    ("verify_receipt", ROOT / "verify_receipt.py"),
+    ("verify_receipt_cli", ROOT / "verify_receipt_cli.py"),
+)
 
 
 class AuditIdentityError(ValueError):
@@ -85,7 +93,7 @@ def _canonical_sha256(value: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _load_pinned_parse_file():
+def _load_pinned_parser() -> ModuleType:
     """Source-load the exact parser bound by the work graph and Stack manifest."""
     graph = json.loads(WORK_GRAPH_PATH.read_text(encoding="utf-8"))
     payload = {
@@ -148,27 +156,50 @@ def _load_pinned_parse_file():
     module.__cached__ = None
     module.__package__ = ""
     exec(compile(source, str(PARSER_PATH), "exec", dont_inherit=True), module.__dict__)
-    parse_file = getattr(module, "parse_file", None)
-    if not callable(parse_file):
-        raise AuditIdentityError("pinned msdmd parser does not expose parse_file")
-    return parse_file
+    if not callable(getattr(module, "parse_text", None)) or not callable(
+        getattr(module, "marker_for", None)
+    ):
+        raise AuditIdentityError("pinned msdmd parser does not expose parse_text/marker_for")
+    return module
 
 
 def _run_unittest_witnesses(
     path: Path,
     admitted_methods: set[str],
+    test_source: bytes,
+    audited_sources: dict[Path, bytes],
 ) -> tuple[bool, str, int]:
     """Execute a witness module and reject skips and all non-clean outcomes."""
-    source = path.read_bytes()
-    module_name = f"_digital_metric_witness_{hashlib.sha256(source).hexdigest()}"
+    module_name = f"_digital_metric_witness_{hashlib.sha256(test_source).hexdigest()}"
     module = ModuleType(module_name)
     module.__file__ = str(path)
     module.__cached__ = None
     module.__package__ = ""
-    previous = sys.modules.get(module_name)
+    missing = object()
+    previous = {
+        name: sys.modules.get(name, missing)
+        for name, _dependency_path in AUDITED_IMPORT_ORDER
+    }
+    previous[module_name] = sys.modules.get(module_name, missing)
     sys.modules[module_name] = module
     try:
-        exec(compile(source, str(path), "exec", dont_inherit=True), module.__dict__)
+        for dependency_name, dependency_path in AUDITED_IMPORT_ORDER:
+            dependency_source = audited_sources[dependency_path]
+            dependency = ModuleType(dependency_name)
+            dependency.__file__ = str(dependency_path)
+            dependency.__cached__ = None
+            dependency.__package__ = ""
+            sys.modules[dependency_name] = dependency
+            exec(
+                compile(
+                    dependency_source,
+                    str(dependency_path),
+                    "exec",
+                    dont_inherit=True,
+                ),
+                dependency.__dict__,
+            )
+        exec(compile(test_source, str(path), "exec", dont_inherit=True), module.__dict__)
         discovered = unittest.defaultTestLoader.loadTestsFromModule(module)
 
         def iter_cases(suite: unittest.TestSuite):
@@ -185,10 +216,11 @@ def _run_unittest_witnesses(
         stream = io.StringIO()
         result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
     finally:
-        if previous is None:
-            sys.modules.pop(module_name, None)
-        else:
-            sys.modules[module_name] = previous
+        for name, prior in reversed(tuple(previous.items())):
+            if prior is missing:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = prior
     clean = (
         result.wasSuccessful()
         and not result.skipped
@@ -213,8 +245,8 @@ def _decorator_name(node: ast.expr) -> str | None:
     return _dotted_name(node)
 
 
-def _discoverable_test_methods(path: Path) -> set[str]:
-    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+def _discoverable_test_methods(path: Path, source: bytes) -> set[str]:
+    tree = ast.parse(source.decode("utf-8"), filename=str(path))
     unittest_aliases = {"unittest"}
     testcase_aliases: set[str] = set()
     async_testcase_aliases: set[str] = set()
@@ -311,8 +343,21 @@ def audit() -> dict[str, object]:
     findings: list[str] = []
 
     try:
-        parse_file = _load_pinned_parse_file()
-    except (AuditIdentityError, OSError, KeyError, TypeError, json.JSONDecodeError, SyntaxError) as exc:
+        parser = _load_pinned_parser()
+        snapshot_paths = dict.fromkeys(
+            (*SOURCE_FILES, *(path for _name, path in AUDITED_IMPORT_ORDER))
+        )
+        source_snapshots = {path: path.read_bytes() for path in snapshot_paths}
+        test_snapshots = {path: path.read_bytes() for path in TEST_FILES}
+    except (
+        AuditIdentityError,
+        OSError,
+        KeyError,
+        TypeError,
+        UnicodeDecodeError,
+        json.JSONDecodeError,
+        SyntaxError,
+    ) as exc:
         findings.append(f"GAP pinned msdmd parser unavailable: {exc}")
         return {
             "schema": "the-interdependency.digital-metric-contract-audit",
@@ -323,8 +368,14 @@ def audit() -> dict[str, object]:
             "passed": False,
         }
 
+    def parse_snapshot(path: Path, block_name: str, source: bytes):
+        marker = parser.marker_for(path)
+        if marker is None:
+            return []
+        return parser.parse_text(source.decode("utf-8"), block_name, marker)
+
     for path in SOURCE_FILES:
-        for entry in parse_file(path, "CONTRACTS"):
+        for entry in parse_snapshot(path, "CONTRACTS", source_snapshots[path]):
             contract_id = entry.get("id", "")
             if not contract_id:
                 findings.append(f"GAP {path.name} CONTRACTS entry has no id")
@@ -336,12 +387,14 @@ def audit() -> dict[str, object]:
     declared_calls: set[tuple[Path, str]] = set()
     proved: set[str] = set()
     for path in TEST_FILES:
-        discoverable = _discoverable_test_methods(path)
+        discoverable = _discoverable_test_methods(path, test_snapshots[path])
         runtime_clean = False
         try:
             suite_clean, _suite_output, tests_run = _run_unittest_witnesses(
                 path,
                 discoverable,
+                test_snapshots[path],
+                source_snapshots,
             )
             runtime_clean = suite_clean and tests_run == len(discoverable)
             if tests_run != len(discoverable):
@@ -356,7 +409,7 @@ def audit() -> dict[str, object]:
                 )
         except Exception as exc:
             findings.append(f"GAP {path.name} witness suite could not execute: {exc}")
-        for entry in parse_file(path, "CHECKS"):
+        for entry in parse_snapshot(path, "CHECKS", test_snapshots[path]):
             check_id = entry.get("id", "")
             proves = entry.get("proves", "")
             call = entry.get("call", "")

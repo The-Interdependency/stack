@@ -45,7 +45,9 @@ and integer aliasing, integer/rational wire-kind mismatches, noncanonical
 rationals, stale digests, and status transfer. Integer values use an `integer`
 wire tag; rationals use a distinct reduced numerator/denominator form. Every
 observation carries `value`. A non-observed status requires explicit `null`, a
-reason, and `not_quantified` uncertainty; absence never becomes zero. Committed
+reason, and `not_quantified` uncertainty; absence never becomes zero. Every
+receipt definition must have at least one explicit matching observation;
+dropping an entire observation cannot bypass missingness. Committed
 producers use typed `git-commit` revisions. A pre-commit Stack artifact uses
 `candidate-content`, whose revision digest must equal its artifact digest; it
 never claims to exist at the baseline commit.
@@ -82,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): bb760ac5befab7630b453bac10f58a0885a380ee90d22fec47151e06c3e4ed0c
-File SHA-256: 56454be1f8b2eecafa4d8a8e686b7d5f59395bc7df892ba619a6ad7eeec140ea
+Receipt payload digest (`receipt_sha256`): 9aac639c255736e3f7a4373d268ac4ac9f5a36f32a3cb88a04abe85a7158b169
+File SHA-256: 41559be153b61585755bbcf79b6ac96102256a613aaa437b884ba8579ecb37a4
 ```
 
 ## Usage guidance

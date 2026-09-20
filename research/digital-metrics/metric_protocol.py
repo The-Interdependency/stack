@@ -43,7 +43,7 @@ from __future__ import annotations
 
 # === CONTRACTS ===
 # id: digital_metric_missing_never_becomes_zero
-#   given: an observation omits value or uses a non-observed status
+#   given: an observation field or a definition's entire observation is omitted, or a non-observed status is used
 #   then: omission is rejected and non-observed status requires explicit null plus a non-empty reason
 #   class: correctness
 #
@@ -723,12 +723,19 @@ def seal_receipt(
     if len(definition_index) != len(definition_list):
         raise MetricProtocolError("receipt contains duplicate metric definitions")
     observation_list = []
+    observed_definition_keys: set[tuple[str, str]] = set()
     for item in observations:
         record = _mapping(item, "receipt observation")
         key = (record.get("metric_id"), record.get("metric_version"))
         if key not in definition_index:
             raise MetricProtocolError(f"receipt observation has no matching definition: {key!r}")
         observation_list.append(validate_observation(record, definition_index[key]))
+        observed_definition_keys.add(key)
+    missing_observations = set(definition_index) - observed_definition_keys
+    if missing_observations:
+        raise MetricProtocolError(
+            f"receipt definitions without observations: {sorted(missing_observations)!r}"
+        )
     receipt: dict[str, Any] = {
         "schema": RECEIPT_SCHEMA,
         "version": RECEIPT_VERSION,
@@ -769,14 +776,21 @@ def verify_receipt(value: Any) -> dict[str, Any]:
         raise MetricProtocolError("receipt contains duplicate metric definitions")
     if not isinstance(record["observations"], list) or not record["observations"]:
         raise MetricProtocolError("receipt observations must be a non-empty array")
+    observed_definition_keys: set[tuple[str, str]] = set()
     for item in record["observations"]:
         observation = _mapping(item, "receipt observation")
         key = (observation.get("metric_id"), observation.get("metric_version"))
         if key not in definition_index:
             raise MetricProtocolError(f"receipt observation has no matching definition: {key!r}")
         validate_observation(observation, definition_index[key])
+        observed_definition_keys.add(key)
         if observation["provenance"]["work_graph_sha256"] != record["work_graph_sha256"]:
             raise MetricProtocolError("observation work-graph digest differs from receipt")
+    missing_observations = set(definition_index) - observed_definition_keys
+    if missing_observations:
+        raise MetricProtocolError(
+            f"receipt definitions without observations: {sorted(missing_observations)!r}"
+        )
     if not isinstance(record["bindings"], list) or not record["bindings"]:
         raise MetricProtocolError("receipt bindings must be a non-empty array")
     for index, item in enumerate(record["bindings"]):
