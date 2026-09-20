@@ -1,0 +1,32 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "1242de61073ee36ef1255cbac9d7835142c0f1712b4d1213ef6960b7832a4bcf",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
+      "authority": "stack-local URPCS workspace and reference implementation",
+      "relation": "implementation owner and integration target"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
+      "authority": "organization-wide build and evidence discipline",
+      "relation": "stack-update, work-graph, domain-claim, module, test, boundary, and usage discipline"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "external-provenance",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "independent decoder interoperability is untested",
+      "confidentiality and production security are unclaimed",
+      "the accepted conversation contains fuller law discussion than the committed freeze summary",
+      "URPCS codec-local Gonol records are not UCNS gonols"
+    ]
+  }
+}

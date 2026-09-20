@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "2453a88009be151d872a439d086ae1d4b6d0696fa55747b4fe487ef9cabd8197",
+  "work_graph_sha256": "39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -68,6 +68,7 @@
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
+      "URPCS remains an authenticated codec experiment without a confidentiality model, independent decoder, or release authority",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
@@ -179,6 +180,15 @@
       "relation": "active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer",
       "repository": "The-Interdependency/stack",
       "workspace": "research/epac-derived-carrier/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
+      "participant_id": "urpcs",
+      "relation": "stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer",
+      "repository": "The-Interdependency/stack",
+      "workspace": "research/urpcs/"
     }
   ]
 }

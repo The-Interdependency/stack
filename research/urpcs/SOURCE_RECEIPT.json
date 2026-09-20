@@ -1,0 +1,70 @@
+{
+  "schema": "the-interdependency.urpcs-source-receipt",
+  "version": "1.0.0",
+  "imported_at": "2026-09-20",
+  "source_kind": "operator-ratified working artifacts",
+  "source_standing": "Laws 1-13 accepted; bounded reference computation verified; confidentiality unclaimed",
+  "stack_base": {
+    "repository": "The-Interdependency/stack",
+    "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089"
+  },
+  "original_artifacts": [
+    {
+      "name": "urpcs-v1-spec-2.md",
+      "sha256": "45d9020545117926a80f6f2379ad8246e53e6ce1d41313c9718f3acbfaa139ce"
+    },
+    {
+      "name": "urpcs_v1_reference.py",
+      "sha256": "5052fa4b6706fe109924652aba0fc4450c7a3f24b9802b036d022c5421422493"
+    },
+    {
+      "name": "urpcs-v1-vectors.json",
+      "sha256": "1d96299a016feed6f2e0881a5d4d21c20229714dab5eaa9338008d5282c2dfe6"
+    },
+    {
+      "name": "URPCS-v1-vector-report.md",
+      "sha256": "6a37feb3541206051812fd70af2ee52e826e35681e2a0bddeaf97ed87f198141"
+    }
+  ],
+  "integrated_artifacts": [
+    {
+      "path": "research/urpcs/docs/urpcs-v1-spec.md",
+      "sha256": "45d9020545117926a80f6f2379ad8246e53e6ce1d41313c9718f3acbfaa139ce"
+    },
+    {
+      "path": "research/urpcs/urpcs_v1_reference.py",
+      "sha256": "3bcdfcd7a81ea3ce32b757b5912ffffcb5371ae63990f2e7146f03ce6e439650"
+    },
+    {
+      "path": "research/urpcs/vectors/urpcs-v1-vectors.json",
+      "sha256": "1d96299a016feed6f2e0881a5d4d21c20229714dab5eaa9338008d5282c2dfe6"
+    },
+    {
+      "path": "research/urpcs/docs/URPCS-v1-vector-report.md",
+      "sha256": "c13a0559fbdb0fee12452cf0be9a01da447cfa035a2a54a93c40a432c8463222"
+    }
+  ],
+  "integration_changes": [
+    "completed the supplemental MODULE_BUILD metadata and added source-owned CONTRACTS and BOUNDARIES declarations without changing executable behavior",
+    "updated the report's Python artifact digest to the integrated source bytes",
+    "added stack-local provenance, domain, work-graph, test, CI, and usage surfaces"
+  ],
+  "external_primitive_sources": [
+    {
+      "document": "NIST SP 800-185",
+      "published": "2016-12",
+      "url": "https://csrc.nist.gov/pubs/sp/800/185/final",
+      "use": "KMAC256 and cSHAKE definitions"
+    },
+    {
+      "document": "FIPS 202",
+      "published": "2015-08",
+      "url": "https://csrc.nist.gov/pubs/fips/202/final",
+      "use": "SHA-3/KECCAK permutation and SHAKE definitions"
+    }
+  ],
+  "hmmm": [
+    "The full accepted-law conversation does not yet have an immutable public transcript identity.",
+    "NIST announced revisions of SP 800-185 and FIPS 202 in 2025; URPCS v1 remains pinned to the listed final publications until an explicit new wire version changes that dependency."
+  ]
+}
