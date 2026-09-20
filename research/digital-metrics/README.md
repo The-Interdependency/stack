@@ -82,8 +82,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 97c23e71b82cf9747910a56b7964816bdf2a0185a640cd8b51fb71fe13de79ea
-File SHA-256: ee2ce4ac2e375d25455e9f40dc9305b15a62a7aefcb702485d765419a9cc1144
+Receipt payload digest (`receipt_sha256`): 1fa8440333ff2e789b5b12fa18cc1318d9f671ee0b353b90a215d2be249b7326
+File SHA-256: 168d7454eadf6838af396717955db5f0a51a2dfd99bcfd2b24ce2934266eb33e
 ```
 
 ## Usage guidance
@@ -120,7 +120,7 @@ candidate from the pinned producers:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
-python3 research/digital-metrics/verify_receipt.py \
+python3 research/digital-metrics/verify_receipt_cli.py \
   /tmp/native-mobius-v0.pending.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
@@ -131,7 +131,7 @@ Replay an already attested receipt byte-for-byte:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
-python3 research/digital-metrics/verify_receipt.py \
+python3 research/digital-metrics/verify_receipt_cli.py \
   research/digital-metrics/receipts/native-mobius-v0.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns
@@ -150,10 +150,11 @@ are therefore not executable. METAPAT, UCNS, and Stack replay modules compile
 source bytes directly, bind receipt digests to those loaded bytes, and ignore
 poisoned bytecode.
 
-The verifier supports the direct CLI and explicit source-loaded API only.
-`verify_and_replay` rejects an ordinary Python import because import machinery
-may select cached verifier bytecode whose executed bytes do not match the
-recorded source digest.
+The verifier supports the source-loading CLI launcher and explicit
+source-loaded API only. The launcher reads `verify_receipt.py` once, hashes and
+compiles that same byte buffer, then invokes its `main`. Direct execution of the
+implementation and ordinary Python imports are rejected because neither binds
+executed verifier bytes to the recorded digest.
 
 ## Promotion gates
 

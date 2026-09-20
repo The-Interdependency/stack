@@ -9,6 +9,7 @@ on:
       - 'AGENTS.md'
       - 'research/**'
       - 'libs/**'
+      - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
@@ -23,6 +24,7 @@ on:
       - 'AGENTS.md'
       - 'research/**'
       - 'libs/**'
+      - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
@@ -77,7 +79,7 @@ jobs:
             --ucns-root ../ucns \
             --output /tmp/native-mobius-v0.pending.json
           python3 -c 'import json; assert json.load(open("/tmp/native-mobius-v0.pending.json"))["verification"]["result"] == "pending"'
-          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt.py \
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
             /tmp/native-mobius-v0.pending.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
@@ -85,7 +87,7 @@ jobs:
           cmp \
             research/digital-metrics/receipts/native-mobius-v0.json \
             /tmp/native-mobius-v0.attested.json
-          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt.py \
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
             research/digital-metrics/receipts/native-mobius-v0.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns

@@ -54,6 +54,7 @@ SOURCE_FILES = (
     ROOT / "metric_protocol.py",
     ROOT / "generate_receipt.py",
     ROOT / "verify_receipt.py",
+    ROOT / "verify_receipt_cli.py",
 )
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
 

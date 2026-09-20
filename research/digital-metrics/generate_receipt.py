@@ -64,6 +64,11 @@ from __future__ import annotations
 #   then: the producer loader compiles the verified source bytes directly and never executes the cached bytecode
 #   class: provenance
 #
+# id: digital_metric_generator_ignores_git_replacements
+#   given: a producer checkout defines a Git replacement object for the pinned commit
+#   then: identity, tree, and blob reads resolve the original commit objects only
+#   class: provenance
+#
 # id: digital_metric_metapat_binding_is_constraint_only
 #   given: the affixiation-harmonics application is bound into a receipt
 #   then: its exact identity and digest are retained while authority and measurement-status transfer remain false
@@ -172,7 +177,7 @@ def _execution_source_digests(
 
 def _git(root: Path, *args: str) -> str:
     result = subprocess.run(
-        ["git", "-C", str(root), *args],
+        ["git", "--no-replace-objects", "-C", str(root), *args],
         check=False,
         capture_output=True,
         text=True,
@@ -253,7 +258,10 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
         if not path.is_file():
             raise ProducerIdentityError(f"missing required producer file: {path}")
         committed = subprocess.run(
-            ["git", "-C", str(root), "show", f"{participant['commit']}:{relative}"],
+            [
+                "git", "--no-replace-objects", "-C", str(root),
+                "show", f"{participant['commit']}:{relative}",
+            ],
             check=False,
             capture_output=True,
         )
@@ -263,7 +271,10 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
 
 def _git_blob(root: Path, commit: str, relative: str) -> bytes:
     result = subprocess.run(
-        ["git", "-C", str(root.resolve()), "show", f"{commit}:{relative}"],
+        [
+            "git", "--no-replace-objects", "-C", str(root.resolve()),
+            "show", f"{commit}:{relative}",
+        ],
         check=False,
         capture_output=True,
     )

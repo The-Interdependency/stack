@@ -2,14 +2,14 @@
 
 Usage guidance::
 
-    python3 research/digital-metrics/verify_receipt.py \
+    python3 research/digital-metrics/verify_receipt_cli.py \
       research/digital-metrics/receipts/native-mobius-v0.json \
       --metapat-root /path/to/metapat \
       --ucns-root /path/to/ucns
 
 To turn a generator-created pending candidate into an attested receipt::
 
-    python3 research/digital-metrics/verify_receipt.py pending.json \
+    python3 research/digital-metrics/verify_receipt_cli.py pending.json \
       --metapat-root /path/to/metapat --ucns-root /path/to/ucns \
       --attest-output attested.json
 
@@ -26,7 +26,7 @@ from __future__ import annotations
 #   module_kind: instrument
 #   summary: validates and byte-replays the Stack-local METAPAT/UCNS metric receipt from exact producer identities
 #   owner: The-Interdependency/stack
-#   public_surface: source-loaded verify_and_replay,CLI main
+#   public_surface: source-loaded verify_and_replay
 #   internal_surface: strict receipt load, canonical byte comparison, and post-replay attestation
 #   auth_boundary: none
 #   storage_boundary: read-only unless an explicit attestation output path is supplied
@@ -34,7 +34,7 @@ from __future__ import annotations
 #   user_data_boundary: public research fixtures only
 #   admin_only: false
 #   tests: research/digital-metrics/tests/test_metric_protocol.py
-#   rollout: direct CLI or explicit source-loaded API only
+#   rollout: source-loading CLI launcher or explicit source-loaded API only
 #   rollback: remove with the digital-metrics research workspace
 #   requires: stack_digital_metric_protocol,stack_digital_metric_receipt_generator
 #   since: 2026-09-20
@@ -72,8 +72,6 @@ import sys
 from types import ModuleType
 
 _LOADED_VERIFIER_SHA256 = globals().get("__source_sha256__")
-if _LOADED_VERIFIER_SHA256 is None and __name__ == "__main__":
-    _LOADED_VERIFIER_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 
 def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
@@ -204,4 +202,6 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(
+        "run verify_receipt_cli.py so verifier execution is source-bound"
+    )

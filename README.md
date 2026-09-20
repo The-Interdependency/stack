@@ -115,7 +115,7 @@ semantic, proof, measurement, or empirical status.
 ```bash
 PYTHONPATH=skill-lib python3 research/digital-metrics/audit_contracts.py
 python3 -m unittest discover -s research/digital-metrics/tests -p test*.py -v
-python3 research/digital-metrics/verify_receipt.py \
+python3 research/digital-metrics/verify_receipt_cli.py \
   research/digital-metrics/receipts/native-mobius-v0.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns

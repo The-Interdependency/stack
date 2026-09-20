@@ -105,6 +105,12 @@ from __future__ import annotations
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
+# id: check_digital_metric_git_replacement_bypass
+#   proves: digital_metric_generator_ignores_git_replacements
+#   call: self::test_producer_reads_ignore_git_replacement_objects
+#   mutates: temporary Git repository only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_metapat_binding
 #   proves: digital_metric_metapat_binding_is_constraint_only
 #   call: self::test_frozen_receipt_preserves_metapat_nontransfer
@@ -124,7 +130,7 @@ from __future__ import annotations
 #   cleanup: automatic temporary-directory cleanup
 #
 # id: check_digital_metric_loaded_digest_binding
-#   proves: digital_metric_replay_binds_executing_source_bytes
+#   proves: digital_metric_replay_binds_executing_source_bytes,digital_metric_cli_binds_loaded_verifier_bytes
 #   call: self::test_replay_digests_bind_loaded_source_bytes
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
@@ -207,6 +213,10 @@ import audit_contracts as contract_audit  # noqa: E402
 receipt_replay = _source_load_module(  # noqa: E402
     "_test_stack_metric_receipt_replay",
     WORKSPACE / "verify_receipt.py",
+)
+receipt_cli = _source_load_module(  # noqa: E402
+    "_test_stack_metric_receipt_cli",
+    WORKSPACE / "verify_receipt_cli.py",
 )
 from generate_receipt import (  # noqa: E402
     ProducerIdentityError,
@@ -856,10 +866,7 @@ class MetricProtocolTests(unittest.TestCase):
                 generator_path,
             )
             self.assertEqual(loaded_generator.boolean_value(), "source")
-            loaded_verifier = receipt_replay._load_source_module(
-                "_test_stack_metric_verifier_source",
-                verifier_path,
-            )
+            loaded_verifier = receipt_cli._load_verifier(verifier_path)
             self.assertTrue(protocol_bytecode.is_file())
             self.assertTrue(generator_bytecode.is_file())
             self.assertTrue(verifier_bytecode.is_file())
@@ -926,6 +933,57 @@ class MetricProtocolTests(unittest.TestCase):
             application, _digest = _load_metapat_application(root, pinned_commit)
             self.assertEqual(application.marker, "committed")
 
+    def test_producer_reads_ignore_git_replacement_objects(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "src/metapat"
+            documents = root / "docs/applications"
+            package.mkdir(parents=True)
+            documents.mkdir(parents=True)
+            (package / "__init__.py").write_text("", encoding="utf-8")
+            dependency = package / "catalog_data.py"
+            dependency.write_text("MARKER = 'original'\n", encoding="utf-8")
+            (package / "affixiation_harmonics.py").write_text(
+                "from .catalog_data import MARKER\n"
+                "class _Application:\n"
+                "    application_id = 'metapat.application.affixiation_harmonics'\n"
+                "    application_version = 'affixiation-harmonics-application-v4'\n"
+                "    measurement_validity_claim = False\n"
+                "    ucns_theorem_status_transfer = False\n"
+                "    marker = MARKER\n"
+                "    application_digest = 'a' * 64\n"
+                "    def to_dict(self): return {'marker': self.marker}\n"
+                "\n"
+                "def affixiation_harmonics_application_module():\n"
+                "    return _Application()\n",
+                encoding="utf-8",
+            )
+            (documents / "affixiation-harmonics.md").write_text(
+                "original fixture\n",
+                encoding="utf-8",
+            )
+            self._commit_fixture_repo(root)
+            pinned_commit = self._head(root)
+            dependency.write_text("MARKER = 'replaced'\n", encoding="utf-8")
+            self._commit_fixture_repo(root)
+            replacement_commit = self._head(root)
+            subprocess.run(
+                ["git", "-C", str(root), "replace", pinned_commit, replacement_commit],
+                check=True,
+            )
+            replaced_blob = subprocess.run(
+                [
+                    "git", "-C", str(root), "show",
+                    f"{pinned_commit}:src/metapat/catalog_data.py",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout
+            self.assertIn("replaced", replaced_blob)
+            application, _digest = _load_metapat_application(root, pinned_commit)
+            self.assertEqual(application.marker, "original")
+
     def test_replay_digests_bind_loaded_source_bytes(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -939,10 +997,7 @@ class MetricProtocolTests(unittest.TestCase):
                 name: hashlib.sha256(path.read_bytes()).hexdigest()
                 for name, path in paths.items()
             }
-            loaded = receipt_replay._load_source_module(
-                "_test_stack_metric_verifier_digest_binding",
-                paths["verify_receipt.py"],
-            )
+            loaded = receipt_cli._load_verifier(paths["verify_receipt.py"])
             self.assertEqual(
                 loaded._METRIC_PROTOCOL.__source_sha256__,
                 loaded._GENERATOR._LOADED_PROTOCOL_SHA256,
