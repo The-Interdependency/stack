@@ -40,7 +40,7 @@ from __future__ import annotations
 
 # === CONTRACTS ===
 # id: digital_metric_generator_requires_exact_clean_producers
-#   given: a METAPAT or UCNS checkout differs from the work-graph commit or has tracked changes
+#   given: a producer root is not its Git top level, differs from the work-graph commit, or has tracked changes
 #   then: receipt generation fails before importing producer code
 #   class: provenance
 #
