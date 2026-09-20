@@ -51,7 +51,7 @@ from __future__ import annotations
 #
 # id: digital_metric_generator_loads_committed_sources_only
 #   given: an untracked shadow or altered working-tree dependency differs from the pinned METAPAT commit
-#   then: the source finder executes only Python blobs read directly from the pinned Git tree
+#   then: the source finder executes only Python blobs read from the participant commit object
 #   class: provenance
 #
 # id: digital_metric_generator_imports_verified_metapat
@@ -253,7 +253,7 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
         if not path.is_file():
             raise ProducerIdentityError(f"missing required producer file: {path}")
         committed = subprocess.run(
-            ["git", "-C", str(root), "show", f"HEAD:{relative}"],
+            ["git", "-C", str(root), "show", f"{participant['commit']}:{relative}"],
             check=False,
             capture_output=True,
         )
@@ -261,9 +261,9 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
             raise ProducerIdentityError(f"producer file differs from committed bytes: {relative}")
 
 
-def _git_blob(root: Path, relative: str) -> bytes:
+def _git_blob(root: Path, commit: str, relative: str) -> bytes:
     result = subprocess.run(
-        ["git", "-C", str(root.resolve()), "show", f"HEAD:{relative}"],
+        ["git", "-C", str(root.resolve()), "show", f"{commit}:{relative}"],
         check=False,
         capture_output=True,
     )
@@ -273,19 +273,21 @@ def _git_blob(root: Path, relative: str) -> bytes:
     return result.stdout
 
 
-def _committed_python_sources(root: Path, relative_root: str) -> dict[Path, bytes]:
+def _committed_python_sources(
+    root: Path, commit: str, relative_root: str
+) -> dict[Path, bytes]:
     root = root.resolve()
     names = _git(
         root,
         "ls-tree",
         "-r",
         "--name-only",
-        "HEAD",
+        commit,
         "--",
         relative_root,
     ).splitlines()
     return {
-        root / name: _git_blob(root, name)
+        root / name: _git_blob(root, commit, name)
         for name in names
         if name.endswith(".py")
     }
@@ -386,9 +388,9 @@ def _isolated_source_package_import(
         importlib.invalidate_caches()
 
 
-def _load_metapat_application(root: Path) -> tuple[Any, str]:
+def _load_metapat_application(root: Path, commit: str) -> tuple[Any, str]:
     expected_module_path = (root / "src/metapat/affixiation_harmonics.py").resolve()
-    allowed_sources = _committed_python_sources(root, "src/metapat")
+    allowed_sources = _committed_python_sources(root, commit, "src/metapat")
     with _isolated_source_package_import(
         "metapat",
         root / "src/metapat",
@@ -407,12 +409,14 @@ def _load_metapat_application(root: Path) -> tuple[Any, str]:
         raise ProducerIdentityError("unexpected METAPAT affixiation application version")
     if application.measurement_validity_claim is not False or application.ucns_theorem_status_transfer is not False:
         raise ProducerIdentityError("METAPAT application improperly transfers downstream status")
-    return application, _sha256_bytes(_git_blob(root, "docs/applications/affixiation-harmonics.md"))
+    return application, _sha256_bytes(
+        _git_blob(root, commit, "docs/applications/affixiation-harmonics.md")
+    )
 
 
-def _load_ucns_native_module(root: Path) -> tuple[Any, str]:
+def _load_ucns_native_module(root: Path, commit: str) -> tuple[Any, str]:
     source_path = (root / "src/ucns/direct_mobius.py").resolve()
-    source = _git_blob(root, "src/ucns/direct_mobius.py")
+    source = _git_blob(root, commit, "src/ucns/direct_mobius.py")
     module_name = "_stack_metric_ucns_direct_mobius"
     module = ModuleType(module_name)
     module.__file__ = str(source_path)
@@ -494,8 +498,12 @@ def build_receipt(
         ("src/ucns/direct_mobius.py",),
     )
 
-    application, metapat_source_sha256 = _load_metapat_application(metapat_root)
-    ucns, ucns_source_sha256 = _load_ucns_native_module(ucns_root)
+    application, metapat_source_sha256 = _load_metapat_application(
+        metapat_root, metapat_participant["commit"]
+    )
+    ucns, ucns_source_sha256 = _load_ucns_native_module(
+        ucns_root, ucns_participant["commit"]
+    )
     origin = ucns.native_mobius_state()
     one_turn = origin.advance(1)
     two_turns = origin.advance(2)

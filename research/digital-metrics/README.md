@@ -82,8 +82,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): b0a3148537d12d77544527da51e488f6f75f06dd072b3358b68191cbe836371b
-File SHA-256: 509f27872f8062b20495d8637f427dec05cb265b1b0251dee77751cf3c196b06
+Receipt payload digest (`receipt_sha256`): 97c23e71b82cf9747910a56b7964816bdf2a0185a640cd8b51fb71fe13de79ea
+File SHA-256: ee2ce4ac2e375d25455e9f40dc9305b15a62a7aefcb702485d765419a9cc1144
 ```
 
 ## Usage guidance
@@ -144,10 +144,16 @@ has the wrong commit or any tracked changes.
 The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache
 is restored afterward. Every METAPAT dependency executes from the exact blob in
-the pinned Git tree, so untracked shadows and hidden working-tree changes are
-not executable. METAPAT, UCNS, and Stack replay modules compile source bytes
-directly, bind receipt digests to those loaded bytes, and ignore poisoned
-bytecode.
+the participant commit object named by `WORK_GRAPH.json`; source loading never
+dereferences mutable `HEAD`. Untracked shadows and hidden working-tree changes
+are therefore not executable. METAPAT, UCNS, and Stack replay modules compile
+source bytes directly, bind receipt digests to those loaded bytes, and ignore
+poisoned bytecode.
+
+The verifier supports the direct CLI and explicit source-loaded API only.
+`verify_and_replay` rejects an ordinary Python import because import machinery
+may select cached verifier bytecode whose executed bytes do not match the
+recorded source digest.
 
 ## Promotion gates
 

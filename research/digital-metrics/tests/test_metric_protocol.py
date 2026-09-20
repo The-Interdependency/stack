@@ -135,6 +135,12 @@ from __future__ import annotations
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
+# id: check_digital_metric_source_bound_verifier_entry
+#   proves: digital_metric_verifier_requires_source_bound_entry
+#   call: self::test_normal_imported_verifier_cannot_attest
+#   mutates: none
+#   cleanup: none
+#
 # === END CHECKS ===
 
 from copy import deepcopy
@@ -156,6 +162,30 @@ from unittest.mock import patch
 WORKSPACE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WORKSPACE))
 sys.path.insert(0, str(WORKSPACE.parents[1] / "skill-lib"))
+
+
+def _source_load_module(module_name: str, source_path: Path) -> ModuleType:
+    source = source_path.read_bytes()
+    module = ModuleType(module_name)
+    module.__file__ = str(source_path)
+    module.__cached__ = None
+    module.__package__ = ""
+    module.__source_sha256__ = hashlib.sha256(source).hexdigest()
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        exec(
+            compile(source, str(source_path), "exec", dont_inherit=True),
+            module.__dict__,
+        )
+    finally:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+    return module
+
+
 from metric_protocol import (  # noqa: E402
     MetricProtocolError,
     boolean_value,
@@ -174,7 +204,10 @@ from metric_protocol import (  # noqa: E402
 import audit_contracts as contract_audit  # noqa: E402
 
 
-import verify_receipt as receipt_replay  # noqa: E402
+receipt_replay = _source_load_module(  # noqa: E402
+    "_test_stack_metric_receipt_replay",
+    WORKSPACE / "verify_receipt.py",
+)
 from generate_receipt import (  # noqa: E402
     ProducerIdentityError,
     load_work_graph,
@@ -309,6 +342,15 @@ class MetricProtocolTests(unittest.TestCase):
             ],
             check=True,
         )
+
+    @staticmethod
+    def _head(root: Path) -> str:
+        return subprocess.run(
+            ["git", "-C", str(root), "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
 
     def test_missing_value_field_is_rejected_before_any_default(self) -> None:
         defn = definition()
@@ -629,6 +671,7 @@ class MetricProtocolTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self._commit_fixture_repo(root)
+            commit = self._head(root)
 
             cached_package = ModuleType("metapat")
             cached_package.__path__ = []  # type: ignore[attr-defined]
@@ -644,7 +687,7 @@ class MetricProtocolTests(unittest.TestCase):
                 },
                 clear=False,
             ):
-                application, document_sha256 = _load_metapat_application(root)
+                application, document_sha256 = _load_metapat_application(root, commit)
                 self.assertEqual(
                     application.application_id,
                     "metapat.application.affixiation_harmonics",
@@ -683,10 +726,11 @@ class MetricProtocolTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self._commit_fixture_repo(root)
+            commit = self._head(root)
             shadow = package / "application"
             shadow.mkdir()
             (shadow / "__init__.py").write_text("MARKER = 'cached'\n", encoding="utf-8")
-            application, _digest = _load_metapat_application(root)
+            application, _digest = _load_metapat_application(root, commit)
             self.assertTrue((shadow / "__init__.py").is_file())
             self.assertEqual(application.marker, "source")
 
@@ -719,12 +763,15 @@ class MetricProtocolTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self._commit_fixture_repo(root / "metapat")
+            metapat_commit = self._head(root / "metapat")
             metapat_bytecode = self._install_timestamp_valid_stale_bytecode(
                 metapat_module,
                 poisoned_source=metapat_template.format(marker="cached"),
                 verified_source=metapat_template.format(marker="source"),
             )
-            application, _digest = _load_metapat_application(root / "metapat")
+            application, _digest = _load_metapat_application(
+                root / "metapat", metapat_commit
+            )
             self.assertTrue(metapat_bytecode.is_file())
             self.assertEqual(application.marker, "source")
 
@@ -733,12 +780,13 @@ class MetricProtocolTests(unittest.TestCase):
             ucns_module = ucns_package / "direct_mobius.py"
             ucns_module.write_text("VALUE = 'source'\n", encoding="utf-8")
             self._commit_fixture_repo(root / "ucns")
+            ucns_commit = self._head(root / "ucns")
             ucns_bytecode = self._install_timestamp_valid_stale_bytecode(
                 ucns_module,
                 poisoned_source="VALUE = 'cached'\n",
                 verified_source="VALUE = 'source'\n",
             )
-            module, _digest = _load_ucns_native_module(root / "ucns")
+            module, _digest = _load_ucns_native_module(root / "ucns", ucns_commit)
             self.assertTrue(ucns_bytecode.is_file())
             self.assertEqual(module.VALUE, "source")
 
@@ -748,10 +796,10 @@ class MetricProtocolTests(unittest.TestCase):
             verifier_path = root / "verify_receipt.py"
             generator_path = root / "generate_receipt.py"
             protocol_path = root / "metric_protocol.py"
-            verifier_path.write_text(
-                (WORKSPACE / "verify_receipt.py").read_text(encoding="utf-8"),
-                encoding="utf-8",
+            verified_verifier = (WORKSPACE / "verify_receipt.py").read_text(
+                encoding="utf-8"
             )
+            verifier_path.write_text(verified_verifier, encoding="utf-8")
             verified_protocol = (
                 "class MetricProtocolError(ValueError):\n"
                 "    pass\n"
@@ -786,6 +834,23 @@ class MetricProtocolTests(unittest.TestCase):
                 poisoned_source=poison_generator,
                 verified_source=verified_generator,
             )
+            verifier_poison_prefix = (
+                "def verify_and_replay(*args, **kwargs):\n"
+                "    return 'cached'\n"
+            )
+            verifier_padding_size = (
+                len(verified_verifier.encode("utf-8"))
+                - len(verifier_poison_prefix.encode("utf-8"))
+                - 1
+            )
+            self.assertGreater(verifier_padding_size, 0)
+            verifier_bytecode = self._install_timestamp_valid_stale_bytecode(
+                verifier_path,
+                poisoned_source=(
+                    verifier_poison_prefix + ("#" * verifier_padding_size) + "\n"
+                ),
+                verified_source=verified_verifier,
+            )
             loaded_generator = receipt_replay._load_source_module(
                 "_test_stack_metric_generator_source",
                 generator_path,
@@ -797,6 +862,7 @@ class MetricProtocolTests(unittest.TestCase):
             )
             self.assertTrue(protocol_bytecode.is_file())
             self.assertTrue(generator_bytecode.is_file())
+            self.assertTrue(verifier_bytecode.is_file())
             self.assertEqual(loaded_verifier.canonical_json(None), "source")
             with self.assertRaises(TypeError):
                 loaded_verifier.build_receipt()
@@ -829,6 +895,7 @@ class MetricProtocolTests(unittest.TestCase):
                 encoding="utf-8",
             )
             self._commit_fixture_repo(root)
+            pinned_commit = self._head(root)
             subprocess.run(
                 [
                     "git", "-C", str(root), "update-index", "--assume-unchanged",
@@ -844,7 +911,19 @@ class MetricProtocolTests(unittest.TestCase):
                 text=True,
             )
             self.assertEqual(status.stdout, "")
-            application, _digest = _load_metapat_application(root)
+            application, _digest = _load_metapat_application(root, pinned_commit)
+            self.assertEqual(application.marker, "committed")
+
+            subprocess.run(
+                [
+                    "git", "-C", str(root), "update-index", "--no-assume-unchanged",
+                    "src/metapat/catalog_data.py",
+                ],
+                check=True,
+            )
+            self._commit_fixture_repo(root)
+            self.assertNotEqual(self._head(root), pinned_commit)
+            application, _digest = _load_metapat_application(root, pinned_commit)
             self.assertEqual(application.marker, "committed")
 
     def test_replay_digests_bind_loaded_source_bytes(self) -> None:
@@ -887,6 +966,28 @@ class MetricProtocolTests(unittest.TestCase):
                 actual["generator"],
             )
 
+    def test_normal_imported_verifier_cannot_attest(self) -> None:
+        source_path = WORKSPACE / "verify_receipt.py"
+        source = source_path.read_bytes()
+        module = ModuleType("_test_normal_imported_verifier")
+        module.__file__ = str(source_path)
+        module.__cached__ = None
+        module.__package__ = ""
+        exec(
+            compile(source, str(source_path), "exec", dont_inherit=True),
+            module.__dict__,
+        )
+        with self.assertRaisesRegex(
+            module.MetricProtocolError,
+            "verifier API must be source-loaded",
+        ):
+            module.verify_and_replay(
+                Path("missing"),
+                metapat_root=Path("."),
+                ucns_root=Path("."),
+                work_graph_path=WORKSPACE / "WORK_GRAPH.json",
+            )
+
     def test_contract_audit_rejects_undiscoverable_check_targets(self) -> None:
         source_text = (
             "# === CONTRACTS ===\n"
@@ -916,6 +1017,12 @@ class MetricProtocolTests(unittest.TestCase):
                 "            pass\n"
                 "    return Hidden\n"
             ),
+            (
+                "import unittest\n"
+                "class AsyncWrong(unittest.TestCase):\n"
+                "    async def test_hidden(self):\n"
+                "        pass\n"
+            ),
         )
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -933,6 +1040,20 @@ class MetricProtocolTests(unittest.TestCase):
                     self.assertTrue(
                         any("not a discoverable unittest" in item for item in report["findings"])
                     )
+
+            test_path.write_text(
+                check_header
+                + "import unittest\n"
+                + "class AsyncRight(unittest.IsolatedAsyncioTestCase):\n"
+                + "    async def test_hidden(self):\n"
+                + "        pass\n",
+                encoding="utf-8",
+            )
+            with patch.object(
+                contract_audit, "SOURCE_FILES", (source_path,)
+            ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
+                report = contract_audit.audit()
+            self.assertTrue(report["passed"], report["findings"])
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"

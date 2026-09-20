@@ -26,7 +26,7 @@ from __future__ import annotations
 #   module_kind: instrument
 #   summary: validates and byte-replays the Stack-local METAPAT/UCNS metric receipt from exact producer identities
 #   owner: The-Interdependency/stack
-#   public_surface: verify_and_replay,main
+#   public_surface: source-loaded verify_and_replay,CLI main
 #   internal_surface: strict receipt load, canonical byte comparison, and post-replay attestation
 #   auth_boundary: none
 #   storage_boundary: read-only unless an explicit attestation output path is supplied
@@ -34,7 +34,7 @@ from __future__ import annotations
 #   user_data_boundary: public research fixtures only
 #   admin_only: false
 #   tests: research/digital-metrics/tests/test_metric_protocol.py
-#   rollout: explicit verifier or post-replay attestation command only
+#   rollout: direct CLI or explicit source-loaded API only
 #   rollback: remove with the digital-metrics research workspace
 #   requires: stack_digital_metric_protocol,stack_digital_metric_receipt_generator
 #   since: 2026-09-20
@@ -48,13 +48,18 @@ from __future__ import annotations
 #   class: provenance
 #
 # id: digital_metric_verifier_bypasses_cached_bytecode
-#   given: timestamp-valid stale bytecode exists for the Stack protocol or generator module
-#   then: the verifier compiles both modules from their recorded source bytes before replay
+#   given: timestamp-valid stale bytecode exists for the verifier, protocol, or generator module
+#   then: the supported entry compiles all three modules from recorded source bytes before replay
 #   class: provenance
 #
 # id: digital_metric_replay_binds_executing_source_bytes
 #   given: Stack protocol, generator, or verifier files change after their modules are loaded
 #   then: replay records the digests of the exact source bytes compiled for execution
+#   class: provenance
+#
+# id: digital_metric_verifier_requires_source_bound_entry
+#   given: the current outer verifier implementation is entered without a source digest binding
+#   then: replay and attestation reject before reading or writing a receipt
 #   class: provenance
 # === END CONTRACTS ===
 
@@ -67,7 +72,7 @@ import sys
 from types import ModuleType
 
 _LOADED_VERIFIER_SHA256 = globals().get("__source_sha256__")
-if _LOADED_VERIFIER_SHA256 is None:
+if _LOADED_VERIFIER_SHA256 is None and __name__ == "__main__":
     _LOADED_VERIFIER_SHA256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 
 
@@ -111,6 +116,14 @@ verify_receipt = _METRIC_PROTOCOL.verify_receipt
 build_receipt = _GENERATOR.build_receipt
 
 
+def _require_source_bound_verifier() -> None:
+    if _LOADED_VERIFIER_SHA256 is None:
+        raise MetricProtocolError(
+            "verifier API must be source-loaded; use the direct CLI or source loader"
+        )
+
+
+
 def _attest_after_replay(candidate: dict) -> dict:
     attested = deepcopy(verify_receipt(candidate))
     if attested["verification"]["result"] != "pending":
@@ -129,6 +142,7 @@ def verify_and_replay(
     work_graph_path: Path,
     attest_output: Path | None = None,
 ) -> dict:
+    _require_source_bound_verifier()
     raw = receipt_path.read_bytes()
     if not raw.endswith(b"\n"):
         raise MetricProtocolError("receipt must end with exactly one canonical newline")

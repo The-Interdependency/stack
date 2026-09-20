@@ -71,44 +71,71 @@ def _discoverable_test_methods(path: Path) -> set[str]:
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     unittest_aliases = {"unittest"}
     testcase_aliases: set[str] = set()
+    async_testcase_aliases: set[str] = set()
     classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
     for node in tree.body:
         if isinstance(node, ast.Import):
             for alias in node.names:
                 if alias.name == "unittest":
                     unittest_aliases.add(alias.asname or alias.name)
-        elif isinstance(node, ast.ImportFrom) and node.module in {"unittest", "unittest.case"}:
+        elif isinstance(node, ast.ImportFrom) and node.module in {
+            "unittest", "unittest.case", "unittest.async_case",
+        }:
             for alias in node.names:
                 if alias.name == "TestCase":
                     testcase_aliases.add(alias.asname or alias.name)
+                elif alias.name == "IsolatedAsyncioTestCase":
+                    async_testcase_aliases.add(alias.asname or alias.name)
 
     direct_testcase_bases = testcase_aliases | {
         base
         for alias in unittest_aliases
         for base in (f"{alias}.TestCase", f"{alias}.case.TestCase")
     }
+    direct_async_bases = async_testcase_aliases | {
+        base
+        for alias in unittest_aliases
+        for base in (
+            f"{alias}.IsolatedAsyncioTestCase",
+            f"{alias}.async_case.IsolatedAsyncioTestCase",
+        )
+    }
     discoverable_classes: set[str] = set()
+    async_classes: set[str] = set()
     changed = True
     while changed:
         changed = False
         for name, node in classes.items():
-            if name in discoverable_classes:
-                continue
             bases = {_dotted_name(base) for base in node.bases}
-            direct = bool(bases & direct_testcase_bases)
-            inherited = any(base in discoverable_classes for base in bases)
-            if direct or inherited:
+            is_async = bool(bases & direct_async_bases) or any(
+                base in async_classes for base in bases
+            )
+            is_discoverable = (
+                bool(bases & direct_testcase_bases)
+                or is_async
+                or any(base in discoverable_classes for base in bases)
+            )
+            if is_discoverable and name not in discoverable_classes:
                 discoverable_classes.add(name)
                 changed = True
+            if is_async and name not in async_classes:
+                async_classes.add(name)
+                changed = True
 
-    return {
-        method.name
-        for name, node in classes.items()
-        if name in discoverable_classes
-        for method in node.body
-        if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef))
-        and method.name.startswith("test_")
-    }
+    methods: set[str] = set()
+    for name, node in classes.items():
+        if name not in discoverable_classes:
+            continue
+        for method in node.body:
+            if not isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                continue
+            if not method.name.startswith("test_"):
+                continue
+            if isinstance(method, ast.FunctionDef):
+                methods.add(method.name)
+            elif isinstance(method, ast.AsyncFunctionDef) and name in async_classes:
+                methods.add(method.name)
+    return methods
 
 
 def audit() -> dict[str, object]:
