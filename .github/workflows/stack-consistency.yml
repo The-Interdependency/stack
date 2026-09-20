@@ -43,3 +43,37 @@ jobs:
         run: python tools/check_stack_consistency.py
       - name: Validate the repository-owned portfolio report
         run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+
+  digital-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Stack
+        uses: actions/checkout@v4
+        with:
+          path: stack
+      - name: Check out exact METAPAT producer
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/metapat
+          ref: e4165b0cac9eca41daef9c2f941881028ca55d48
+          path: metapat
+      - name: Check out exact UCNS producer
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/ucns
+          ref: 1cf10c2df2541a332a77f2ed3feda0c6bef4abcc
+          path: ucns
+      - name: Audit metric contract witnesses
+        working-directory: stack
+        run: PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=skill-lib python3 research/digital-metrics/audit_contracts.py
+      - name: Run adversarial metric protocol tests
+        working-directory: stack
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s research/digital-metrics/tests -p 'test*.py' -v
+      - name: Replay the frozen receipt byte-identically
+        working-directory: stack
+        run: >-
+          PYTHONDONTWRITEBYTECODE=1
+          python3 research/digital-metrics/verify_receipt.py
+          research/digital-metrics/receipts/native-mobius-v0.json
+          --metapat-root ../metapat
+          --ucns-root ../ucns

@@ -20,6 +20,9 @@ projects may later graduate into their own repositories.
 - `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
   experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
   construction and has no confidentiality, production-security, or release standing.
+- `research/digital-metrics/` is strict Stack-local metric transport and structural
+  integrity research. METAPAT owns semantic constraints, UCNS owns geometry and proof
+  status, EDCM owns measurement, and Stack receipt success transfers none of them.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
@@ -90,6 +93,15 @@ Structural stack consistency:
 python tools/check_stack_consistency.py
 ```
 
+Digital-metrics protocol and deterministic replay (exact producer paths required):
+
+```bash
+PYTHONPATH=skill-lib python3 research/digital-metrics/audit_contracts.py
+python3 -m unittest discover -s research/digital-metrics/tests -p test*.py -v
+python3 research/digital-metrics/verify_receipt.py RECEIPT \
+  --metapat-root METAPAT_ROOT --ucns-root UCNS_ROOT
+```
+
 EPAC release integration (new output directory outside Stack):
 
 ```bash
@@ -119,6 +131,8 @@ coherence; it does not replace workspace behavioral tests.
 
 - Concrete VM PostgreSQL/auth/service-account/storage and backup-mount acceptance remains
   unobserved until checked on the VM.
+- Digital metrics v0 has no selected EDCM projection, empirical calibration, independent
+  verifier implementation, or producer signature contract.
 - Organization aggregate and website-projection derivation specs are not yet registered.
 - English Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary.

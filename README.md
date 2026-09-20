@@ -36,6 +36,7 @@ stack/
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── urpcs/               # authenticated recursive pairing codec research + exact vectors
+│   ├── digital-metrics/     # strict metric transport, structural observations, and receipts
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
@@ -104,6 +105,23 @@ python3 research/urpcs/urpcs_v1_reference.py --self-test
 python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
 ```
 
+Digital metrics v0 is an incubating cross-repository protocol at
+`research/digital-metrics/`. METAPAT supplies exact semantic constraints, UCNS
+supplies exact structural observations, EDCM retains future measurement authority,
+and Stack supplies strict transport, integrity projections, work-graph binding, and
+deterministic receipts. The v0 receipt invokes no EDCM measurement and transfers no
+semantic, proof, measurement, or empirical status.
+
+```bash
+PYTHONPATH=skill-lib python3 research/digital-metrics/audit_contracts.py
+python3 -m unittest discover -s research/digital-metrics/tests -p test*.py -v
+python3 research/digital-metrics/verify_receipt.py \
+  research/digital-metrics/receipts/native-mobius-v0.json \
+  --metapat-root /path/to/exact/metapat \
+  --ucns-root /path/to/exact/ucns
+```
+
+
 ### Change stack structure
 
 Any change that alters a participant, pin, authority, relation, research workspace,
@@ -134,6 +152,8 @@ Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.
 constructor is an implemented candidate, not stack or language canon.
 URPCS is stack-local and ungraduated; its verified reference vectors establish
 deterministic codec behavior, not encryption security.
+Digital metrics v0 is stack-local and ungraduated; its receipt establishes strict
+record/replay and exact structural observations, not EDCM measurement validity.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d",
+  "work_graph_sha256": "01a2c5e266297b325478e3bcf579d87400fab14dc075c9db27f7c2d9dfddf394",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -69,7 +69,8 @@
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "URPCS remains an authenticated codec experiment without a confidentiality model, independent decoder, or release authority",
-      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
+      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
+      "Digital metrics v0 remains Stack-local structural/integrity research without an EDCM projection, empirical calibration, or independent verifier"
     ]
   },
   "research_participants": [
@@ -189,6 +190,51 @@
       "relation": "stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer",
       "repository": "The-Interdependency/stack",
       "workspace": "research/urpcs/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "ca190204de25de240662bb438af80c8dc405cea6",
+      "participant_id": "digital-metrics",
+      "relation": "stack-local strict metric transport, retained-structure integrity projections, deterministic receipts, and replay; no semantic, proof, measurement, or empirical status transfer",
+      "repository": "The-Interdependency/stack",
+      "workspace": "research/digital-metrics/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "participant_id": "skill-lib",
+      "relation": "manifest-pinned build, evidence, work-graph, module, and test doctrine; supplies no metric result",
+      "repository": "The-Interdependency/skill-lib",
+      "workspace": "research/digital-metrics/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "participant_id": "metapat",
+      "relation": "exact affixiation-harmonics semantic constraint; labels remain external provenance and supply no calculated metric values",
+      "repository": "The-Interdependency/metapat",
+      "workspace": "research/digital-metrics/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
+      "participant_id": "ucns",
+      "relation": "exact native Mobius geometric producer for structural observations; proof status remains UCNS-owned",
+      "repository": "The-Interdependency/ucns",
+      "workspace": "research/digital-metrics/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "211ce860446d3576ae2930a101eefdd07d3e3dcc",
+      "participant_id": "edcm",
+      "relation": "merged fail-closed missing-metric decoder prerequisite and future measurement authority; v0 structural receipt invokes no EDCM measurement",
+      "repository": "The-Interdependency/edcm",
+      "workspace": "research/digital-metrics/"
     }
   ]
 }
