@@ -49,6 +49,12 @@
 #   then: provenance pins an immutable skill-lib commit and source blob, authority_transfer is false, and the local Git blob identity matches the declared source blob
 #   class: boundary
 #   since: 2026-09-12
+#
+# id: digital_metrics_graph_matches_stack_projection
+#   given: Stack carries a digital-metrics work graph plus machine and human manifest projections
+#   then: exact participants, commits, authority, relations, boundaries, and parser bytes agree across all projections
+#   class: evidence
+#   since: 2026-09-20
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -84,6 +90,8 @@ README_PATH = ROOT / "README.md"
 SKILLS_README_PATH = ROOT / ".agents" / "skills" / "README.md"
 STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.md"
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
+DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
+DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 # Original completed EPAC event. Advancing release pins cannot reselect history.
@@ -176,6 +184,109 @@ def check_research_participants(
         if commit and commit not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
     return keys, sources
+
+
+def check_digital_metrics_projection(
+    manifest: dict[str, Any],
+    human: str,
+    repositories: dict[str, dict[str, Any]],
+    findings: list[str],
+    work_graph_path: Path = DIGITAL_METRICS_GRAPH_PATH,
+) -> None:
+    """Require one exact machine/human projection of the digital-metrics graph."""
+    try:
+        graph = load_json(work_graph_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        error(findings, "digital_metrics.graph", f"cannot read work graph: {exc}")
+        return
+
+    if graph.get("schema") != "the-interdependency.digital-metric-work-graph":
+        error(findings, "digital_metrics.schema", "unexpected work-graph schema")
+        return
+    try:
+        graph_digest = hashlib.sha256(json.dumps(
+            {"participants": graph["participants"], "boundaries": graph["boundaries"]},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")).hexdigest()
+    except (KeyError, TypeError) as exc:
+        error(findings, "digital_metrics.shape", f"invalid work graph: {exc}")
+        return
+    if graph.get("work_graph_sha256") != graph_digest:
+        error(findings, "digital_metrics.digest", "work-graph digest does not reproduce")
+
+    graph_participants = graph.get("participants")
+    if not isinstance(graph_participants, list):
+        error(findings, "digital_metrics.participants", "work-graph participants must be an array")
+        return
+    projected = [
+        item for item in manifest.get("research_participants", [])
+        if item.get("workspace") == DIGITAL_METRICS_WORKSPACE
+    ]
+    graph_repositories = [item.get("repository") for item in graph_participants]
+    projected_repositories = [item.get("repository") for item in projected]
+    if projected_repositories != graph_repositories:
+        error(
+            findings,
+            "digital_metrics.participants",
+            f"manifest repositories {projected_repositories!r} differ from work graph {graph_repositories!r}",
+        )
+        return
+
+    for graph_entry, manifest_entry in zip(graph_participants, projected):
+        repository = str(graph_entry.get("repository", ""))
+        expected_id = "digital-metrics" if repository == "The-Interdependency/stack" else repository.rsplit("/", 1)[-1]
+        if manifest_entry.get("participant_id") != expected_id:
+            error(findings, "digital_metrics.participant_id", f"{repository}: expected participant_id {expected_id!r}")
+        for field in ("commit", "authority", "relation"):
+            if manifest_entry.get(field) != graph_entry.get(field):
+                error(findings, "digital_metrics.projection", f"{repository}: {field} differs from work graph")
+            value = graph_entry.get(field)
+            if isinstance(value, str) and value not in human:
+                error(findings, "digital_metrics.human", f"STACK_MANIFEST.md omits {repository} {field}")
+        if manifest_entry.get("authority_transfer") is not False or manifest_entry.get("canonical_release") is not False:
+            error(findings, "digital_metrics.status", f"{repository}: research projection must remain noncanonical and non-transferring")
+
+    owner = projected[0] if projected else {}
+    if owner.get("boundaries") != graph.get("boundaries"):
+        error(findings, "digital_metrics.boundaries", "manifest boundary projection differs from work graph")
+    boundary_projection = json.dumps(graph.get("boundaries"), sort_keys=True, separators=(",", ":"))
+    if boundary_projection not in human:
+        error(findings, "digital_metrics.human", "STACK_MANIFEST.md omits the exact boundary projection")
+
+    skill = repositories.get("The-Interdependency/skill-lib", {})
+    graph_skill = next(
+        (item for item in graph_participants if item.get("repository") == "The-Interdependency/skill-lib"),
+        {},
+    )
+    if skill.get("commit") != graph_skill.get("commit"):
+        error(findings, "digital_metrics.parser_commit", "parser authority commit differs from work graph")
+    artifacts = skill.get("operational_artifacts")
+    expected_identity = {
+        "source_path": "msdmd/parsers/universal.py",
+        "workspace_path": "skill-lib/msdmd/parsers/universal.py",
+    }
+    matches = [
+        item for item in artifacts if all(item.get(key) == value for key, value in expected_identity.items())
+    ] if isinstance(artifacts, list) else []
+    if len(matches) != 1:
+        error(findings, "digital_metrics.parser_identity", "manifest must carry exactly one msdmd parser artifact")
+        return
+    artifact = matches[0]
+    parser_path = ROOT / artifact["workspace_path"]
+    try:
+        parser_sha256 = hashlib.sha256(parser_path.read_bytes()).hexdigest()
+    except OSError as exc:
+        error(findings, "digital_metrics.parser_identity", f"cannot read parser artifact: {exc}")
+        return
+    if artifact.get("sha256") != parser_sha256:
+        error(findings, "digital_metrics.parser_identity", "vendored parser digest differs from manifest")
+    if artifact.get("git_blob_sha1") != git_blob_sha(parser_path.read_bytes()):
+        error(findings, "digital_metrics.parser_identity", "vendored parser Git blob differs from manifest")
+    for field in ("source_path", "workspace_path", "sha256", "git_blob_sha1"):
+        value = artifact.get(field)
+        if not isinstance(value, str) or value not in human:
+            error(findings, "digital_metrics.human", f"STACK_MANIFEST.md omits parser {field}")
 
 
 def check_base_records(
@@ -468,6 +579,7 @@ def main() -> int:
     check_digest(manifest, human, findings)
     repositories = check_repository_projection(manifest, human, findings)
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
+    check_digital_metrics_projection(manifest, human, repositories, findings)
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)

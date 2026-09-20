@@ -1,13 +1,21 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "01a2c5e266297b325478e3bcf579d87400fab14dc075c9db27f7c2d9dfddf394",
+  "work_graph_sha256": "f36e3b8b5437cd43033b15317b70420b70a3e48e2bcbbd25343b752203df75b5",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
       "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
       "authority": "organization-wide build and evidence doctrine",
-      "relation": "full operational snapshot at stack root skill-lib/"
+      "relation": "full operational snapshot at stack root skill-lib/",
+      "operational_artifacts": [
+        {
+          "source_path": "msdmd/parsers/universal.py",
+          "workspace_path": "skill-lib/msdmd/parsers/universal.py",
+          "sha256": "15b6d47628083db62428d52a9cecb50831c82a9903a1457c2270bf9878e34c4e",
+          "git_blob_sha1": "7bc86bf303083c5c0049393d6ce38a50908c4a00"
+        }
+      ]
     },
     {
       "repository": "The-Interdependency/metapat",
@@ -193,46 +201,63 @@
     },
     {
       "authority_transfer": false,
+      "authority": "composition, strict research protocol, deterministic receipt, and non-transfer boundaries",
+      "boundaries": {
+        "authority_transfer": false,
+        "proof_status_transfer": false,
+        "measurement_status_transfer": false,
+        "empirical_status_transfer": false,
+        "semantic_mapping": "external-provenance",
+        "hmmm": [
+          "EDCM projection selection and empirical calibration are not part of the v0 structural receipt.",
+          "Producer identities are content-bound but are not cryptographic producer signatures.",
+          "Independent implementation replay remains required before promotion beyond test-backed Stack research."
+        ]
+      },
       "canonical_release": false,
       "commit": "ca190204de25de240662bb438af80c8dc405cea6",
       "participant_id": "digital-metrics",
-      "relation": "stack-local strict metric transport, retained-structure integrity projections, deterministic receipts, and replay; no semantic, proof, measurement, or empirical status transfer",
+      "relation": "starting identity and owner of the noncanonical digital-metrics research workspace",
       "repository": "The-Interdependency/stack",
       "workspace": "research/digital-metrics/"
     },
     {
       "authority_transfer": false,
+      "authority": "organization-wide build and evidence doctrine",
       "canonical_release": false,
       "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
       "participant_id": "skill-lib",
-      "relation": "manifest-pinned build, evidence, work-graph, module, and test doctrine; supplies no metric result",
+      "relation": "manifest-pinned Stack operational doctrine; supplies no metric result",
       "repository": "The-Interdependency/skill-lib",
       "workspace": "research/digital-metrics/"
     },
     {
       "authority_transfer": false,
+      "authority": "semantic definitions, question forms, interpretation constraints, and claim status",
       "canonical_release": false,
       "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
       "participant_id": "metapat",
-      "relation": "exact affixiation-harmonics semantic constraint; labels remain external provenance and supply no calculated metric values",
+      "relation": "exact affixiation-harmonics semantic constraint; supplies no calculated metric value",
       "repository": "The-Interdependency/metapat",
       "workspace": "research/digital-metrics/"
     },
     {
       "authority_transfer": false,
+      "authority": "geometry, exact native Mobius transition law, and its own proof status",
       "canonical_release": false,
       "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
       "participant_id": "ucns",
-      "relation": "exact native Mobius geometric producer for structural observations; proof status remains UCNS-owned",
+      "relation": "exact geometric producer for one-turn and two-turn structural observations",
       "repository": "The-Interdependency/ucns",
       "workspace": "research/digital-metrics/"
     },
     {
       "authority_transfer": false,
+      "authority": "measurement projection and result contracts",
       "canonical_release": false,
       "commit": "211ce860446d3576ae2930a101eefdd07d3e3dcc",
       "participant_id": "edcm",
-      "relation": "merged fail-closed missing-metric decoder prerequisite and future measurement authority; v0 structural receipt invokes no EDCM measurement",
+      "relation": "merged fail-closed missing-metric decoder prerequisite; no EDCM measurement is invoked by the v0 structural receipt",
       "repository": "The-Interdependency/edcm",
       "workspace": "research/digital-metrics/"
     }

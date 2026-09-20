@@ -88,14 +88,16 @@ File SHA-256: 56454be1f8b2eecafa4d8a8e686b7d5f59395bc7df892ba619a6ad7eeec140ea
 
 ## Usage guidance
 
-Run adversarial protocol tests:
+Run the contract audit. It source-loads the exact manifest-bound msdmd parser,
+executes every statically admitted witness, and rejects skips, expected
+failures, unexpected successes, test failures, and static/runtime count drift:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=skill-lib \
+PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/audit_contracts.py
 ```
 
-Then run the adversarial witnesses:
+Then run the adversarial witnesses directly for verbose per-test output:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \

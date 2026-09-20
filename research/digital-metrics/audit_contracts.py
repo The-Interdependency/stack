@@ -38,17 +38,33 @@ from __future__ import annotations
 #   given: a CHECKS call names a top-level, nested, non-TestCase, skipped, or expected-failure test-like function
 #   then: the audit rejects it unless unittest can execute the named method as a passing witness
 #   class: provenance
+#
+# id: digital_metric_contract_audit_binds_parser_identity
+#   given: the contract audit parses evidence declarations with the vendored msdmd parser
+#   then: it source-loads only bytes whose digest and skill-lib commit match the exact Stack/work-graph pins
+#   class: provenance
+#
+# id: digital_metric_work_graph_matches_stack_manifest
+#   given: the digital-metrics work graph and Stack machine/human manifests project the same workspace
+#   then: participant commits, authority, relations, boundaries, and parser identity agree exactly
+#   class: provenance
 # === END CONTRACTS ===
 
 import ast
+import hashlib
+import io
 import json
 from pathlib import Path
 import sys
-
-from msdmd.parsers.universal import parse_file
+from types import ModuleType
+import unittest
 
 
 ROOT = Path(__file__).resolve().parent
+STACK_ROOT = ROOT.parents[1]
+WORK_GRAPH_PATH = ROOT / "WORK_GRAPH.json"
+STACK_MANIFEST_PATH = STACK_ROOT / "stack-manifest.json"
+PARSER_PATH = STACK_ROOT / "skill-lib/msdmd/parsers/universal.py"
 SOURCE_FILES = (
     ROOT / "audit_contracts.py",
     ROOT / "metric_protocol.py",
@@ -58,6 +74,128 @@ SOURCE_FILES = (
     ROOT / "verify_receipt_cli.py",
 )
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
+
+
+class AuditIdentityError(ValueError):
+    """Raised when an operational audit input is not exactly pinned."""
+
+
+def _canonical_sha256(value: object) -> str:
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _load_pinned_parse_file():
+    """Source-load the exact parser bound by the work graph and Stack manifest."""
+    graph = json.loads(WORK_GRAPH_PATH.read_text(encoding="utf-8"))
+    payload = {
+        "participants": graph["participants"],
+        "boundaries": graph["boundaries"],
+    }
+    if graph.get("work_graph_sha256") != _canonical_sha256(payload):
+        raise AuditIdentityError("digital-metrics work-graph digest mismatch")
+    graph_skills = [
+        item for item in graph["participants"]
+        if item.get("repository") == "The-Interdependency/skill-lib"
+    ]
+    if len(graph_skills) != 1:
+        raise AuditIdentityError("work graph must pin exactly one skill-lib participant")
+
+    manifest = json.loads(STACK_MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest_payload = {
+        key: manifest[key]
+        for key in ("repositories", "research_participants", "boundaries")
+    }
+    if manifest.get("work_graph_sha256") != _canonical_sha256(manifest_payload):
+        raise AuditIdentityError("Stack manifest digest mismatch")
+    manifest_skills = [
+        item for item in manifest["repositories"]
+        if item.get("repository") == "The-Interdependency/skill-lib"
+    ]
+    if len(manifest_skills) != 1:
+        raise AuditIdentityError("Stack manifest must pin exactly one skill-lib repository")
+    skill = manifest_skills[0]
+    if skill.get("commit") != graph_skills[0].get("commit"):
+        raise AuditIdentityError("skill-lib commit differs between work graph and Stack manifest")
+    artifacts = skill.get("operational_artifacts")
+    expected = {
+        "source_path": "msdmd/parsers/universal.py",
+        "workspace_path": "skill-lib/msdmd/parsers/universal.py",
+    }
+    matches = [
+        item for item in artifacts if all(item.get(key) == value for key, value in expected.items())
+    ] if isinstance(artifacts, list) else []
+    if len(matches) != 1:
+        raise AuditIdentityError("Stack manifest must pin the msdmd parser artifact exactly once")
+    source = PARSER_PATH.read_bytes()
+    actual_sha256 = hashlib.sha256(source).hexdigest()
+    actual_blob_sha1 = hashlib.sha1(
+        f"blob {len(source)}\0".encode("ascii") + source
+    ).hexdigest()
+    if matches[0].get("sha256") != actual_sha256:
+        raise AuditIdentityError(
+            f"msdmd parser digest mismatch: expected {matches[0].get('sha256')!r}, "
+            f"got {actual_sha256}"
+        )
+    if matches[0].get("git_blob_sha1") != actual_blob_sha1:
+        raise AuditIdentityError(
+            f"msdmd parser Git blob mismatch: expected {matches[0].get('git_blob_sha1')!r}, "
+            f"got {actual_blob_sha1}"
+        )
+
+    module = ModuleType("_stack_digital_metrics_pinned_msdmd_parser")
+    module.__file__ = str(PARSER_PATH)
+    module.__cached__ = None
+    module.__package__ = ""
+    exec(compile(source, str(PARSER_PATH), "exec", dont_inherit=True), module.__dict__)
+    parse_file = getattr(module, "parse_file", None)
+    if not callable(parse_file):
+        raise AuditIdentityError("pinned msdmd parser does not expose parse_file")
+    return parse_file
+
+
+def _run_unittest_witnesses(
+    path: Path,
+    admitted_methods: set[str],
+) -> tuple[bool, str, int]:
+    """Execute a witness module and reject skips and all non-clean outcomes."""
+    source = path.read_bytes()
+    module_name = f"_digital_metric_witness_{hashlib.sha256(source).hexdigest()}"
+    module = ModuleType(module_name)
+    module.__file__ = str(path)
+    module.__cached__ = None
+    module.__package__ = ""
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        exec(compile(source, str(path), "exec", dont_inherit=True), module.__dict__)
+        discovered = unittest.defaultTestLoader.loadTestsFromModule(module)
+
+        def iter_cases(suite: unittest.TestSuite):
+            for item in suite:
+                if isinstance(item, unittest.TestSuite):
+                    yield from iter_cases(item)
+                else:
+                    yield item
+
+        suite = unittest.TestSuite(
+            case for case in iter_cases(discovered)
+            if getattr(case, "_testMethodName", None) in admitted_methods
+        )
+        stream = io.StringIO()
+        result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
+    finally:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+    clean = (
+        result.wasSuccessful()
+        and not result.skipped
+        and not result.expectedFailures
+        and not result.unexpectedSuccesses
+    )
+    return clean, stream.getvalue().strip(), result.testsRun
 
 
 def _dotted_name(node: ast.expr) -> str | None:
@@ -172,6 +310,19 @@ def audit() -> dict[str, object]:
     checks: dict[str, tuple[str, str]] = {}
     findings: list[str] = []
 
+    try:
+        parse_file = _load_pinned_parse_file()
+    except (AuditIdentityError, OSError, KeyError, TypeError, json.JSONDecodeError, SyntaxError) as exc:
+        findings.append(f"GAP pinned msdmd parser unavailable: {exc}")
+        return {
+            "schema": "the-interdependency.digital-metric-contract-audit",
+            "version": "0.1.0",
+            "contracts": 0,
+            "checks": 0,
+            "findings": findings,
+            "passed": False,
+        }
+
     for path in SOURCE_FILES:
         for entry in parse_file(path, "CONTRACTS"):
             contract_id = entry.get("id", "")
@@ -186,6 +337,25 @@ def audit() -> dict[str, object]:
     proved: set[str] = set()
     for path in TEST_FILES:
         discoverable = _discoverable_test_methods(path)
+        runtime_clean = False
+        try:
+            suite_clean, _suite_output, tests_run = _run_unittest_witnesses(
+                path,
+                discoverable,
+            )
+            runtime_clean = suite_clean and tests_run == len(discoverable)
+            if tests_run != len(discoverable):
+                findings.append(
+                    f"GAP {path.name} runtime/static unittest count differs: "
+                    f"ran {tests_run}, accepted {len(discoverable)}"
+                )
+            if not suite_clean:
+                findings.append(
+                    f"GAP {path.name} witness suite did not pass with zero skips, "
+                    "expected failures, or unexpected successes"
+                )
+        except Exception as exc:
+            findings.append(f"GAP {path.name} witness suite could not execute: {exc}")
         for entry in parse_file(path, "CHECKS"):
             check_id = entry.get("id", "")
             proves = entry.get("proves", "")
@@ -210,7 +380,8 @@ def audit() -> dict[str, object]:
                 findings.append(f"GAP {check_id} call is not a discoverable unittest: {call}")
                 continue
             declared_calls.add((path, function_name))
-            proved.update(known_claims)
+            if runtime_clean:
+                proved.update(known_claims)
 
         for function_name in sorted(discoverable):
             if (path, function_name) not in declared_calls:

@@ -147,6 +147,18 @@ from __future__ import annotations
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
+# id: check_digital_metric_parser_identity_gate
+#   proves: digital_metric_contract_audit_binds_parser_identity
+#   call: self::test_contract_audit_rejects_unpinned_parser_bytes
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
+# id: check_digital_metric_manifest_projection_gate
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_stack_manifest_rejects_work_graph_drift
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_source_bound_verifier_entry
 #   proves: digital_metric_verifier_requires_source_bound_entry
 #   call: self::test_normal_imported_verifier_cannot_attest
@@ -227,6 +239,10 @@ receipt_replay = _source_load_module(  # noqa: E402
 receipt_cli = _source_load_module(  # noqa: E402
     "_test_stack_metric_receipt_cli",
     WORKSPACE / "verify_receipt_cli.py",
+)
+stack_consistency = _source_load_module(  # noqa: E402
+    "_test_stack_consistency",
+    WORKSPACE.parents[1] / "tools/check_stack_consistency.py",
 )
 from generate_receipt import (  # noqa: E402
     ProducerIdentityError,
@@ -1158,6 +1174,44 @@ class MetricProtocolTests(unittest.TestCase):
                         any("not a discoverable unittest" in item for item in report["findings"])
                     )
 
+            runtime_skip_forms = (
+                (
+                    "import unittest\n"
+                    "class RuntimeSkipped(unittest.TestCase):\n"
+                    "    def test_hidden(self):\n"
+                    "        self.skipTest('runtime unavailable')\n"
+                ),
+                (
+                    "import unittest\n"
+                    "class SetupSkipped(unittest.TestCase):\n"
+                    "    def setUp(self):\n"
+                    "        raise unittest.SkipTest('runtime unavailable')\n"
+                    "    def test_hidden(self):\n"
+                    "        pass\n"
+                ),
+                (
+                    "import unittest\n"
+                    "class SetupClassSkipped(unittest.TestCase):\n"
+                    "    @classmethod\n"
+                    "    def setUpClass(cls):\n"
+                    "        raise unittest.SkipTest('runtime unavailable')\n"
+                    "    def test_hidden(self):\n"
+                    "        pass\n"
+                ),
+            )
+            for skipped in runtime_skip_forms:
+                with self.subTest(runtime_skip=skipped.splitlines()[1]):
+                    test_path.write_text(check_header + skipped, encoding="utf-8")
+                    with patch.object(
+                        contract_audit, "SOURCE_FILES", (source_path,)
+                    ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
+                        report = contract_audit.audit()
+                    self.assertFalse(report["passed"])
+                    self.assertTrue(
+                        any("zero skips" in item for item in report["findings"]),
+                        report["findings"],
+                    )
+
             test_path.write_text(
                 check_header
                 + "import unittest\n"
@@ -1171,6 +1225,68 @@ class MetricProtocolTests(unittest.TestCase):
             ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
                 report = contract_audit.audit()
             self.assertTrue(report["passed"], report["findings"])
+
+    def test_contract_audit_rejects_unpinned_parser_bytes(self) -> None:
+        with TemporaryDirectory() as directory:
+            changed_parser = Path(directory) / "universal.py"
+            changed_parser.write_bytes(contract_audit.PARSER_PATH.read_bytes() + b"\n")
+            with patch.object(contract_audit, "PARSER_PATH", changed_parser):
+                report = contract_audit.audit()
+        self.assertFalse(report["passed"])
+        self.assertTrue(
+            any("msdmd parser digest mismatch" in item for item in report["findings"]),
+            report["findings"],
+        )
+
+    def test_stack_manifest_rejects_work_graph_drift(self) -> None:
+        manifest = json.loads(
+            (WORKSPACE.parents[1] / "stack-manifest.json").read_text(encoding="utf-8")
+        )
+        human = (WORKSPACE.parents[1] / "STACK_MANIFEST.md").read_text(encoding="utf-8")
+        repositories = {
+            item["repository"]: item for item in manifest["repositories"]
+        }
+        baseline_findings: list[str] = []
+        stack_consistency.check_digital_metrics_projection(
+            manifest,
+            human,
+            repositories,
+            baseline_findings,
+        )
+        self.assertEqual(baseline_findings, [])
+
+        baseline_graph = json.loads(
+            (WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8")
+        )
+        mutations = (
+            ("commit", lambda graph: graph["participants"][0].__setitem__("commit", "0" * 40), "commit differs"),
+            ("authority", lambda graph: graph["participants"][0].__setitem__("authority", "undeclared drift"), "authority differs"),
+            ("relation", lambda graph: graph["participants"][0].__setitem__("relation", "undeclared drift"), "relation differs"),
+            ("boundary", lambda graph: graph["boundaries"].__setitem__("semantic_mapping", "undeclared-drift"), "boundary projection differs"),
+            ("ordering", lambda graph: graph["participants"].reverse(), "manifest repositories"),
+        )
+        with TemporaryDirectory() as directory:
+            graph_path = Path(directory) / "WORK_GRAPH.json"
+            for label, mutate, expected in mutations:
+                with self.subTest(drift=label):
+                    graph = deepcopy(baseline_graph)
+                    mutate(graph)
+                    graph["work_graph_sha256"] = sha256_json(
+                        {"participants": graph["participants"], "boundaries": graph["boundaries"]}
+                    )
+                    graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+                    findings: list[str] = []
+                    stack_consistency.check_digital_metrics_projection(
+                        manifest,
+                        human,
+                        repositories,
+                        findings,
+                        graph_path,
+                    )
+                    self.assertTrue(
+                        any(expected in item for item in findings),
+                        findings,
+                    )
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"
