@@ -57,6 +57,12 @@ from __future__ import annotations
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
+# id: check_digital_metric_replay_bytecode_bypass
+#   proves: digital_metric_verifier_bypasses_cached_bytecode
+#   call: self::test_replay_modules_ignore_matching_stale_bytecode
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_nontransfer
 #   proves: digital_metric_status_does_not_transfer
 #   call: self::test_binding_status_transfer_must_remain_false
@@ -75,11 +81,23 @@ from __future__ import annotations
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
+# id: check_digital_metric_fixed_participant_set
+#   proves: digital_metric_work_graph_requires_fixed_participants
+#   call: self::test_work_graph_requires_complete_fixed_participant_set
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_metapat_import_origin
 #   proves: digital_metric_generator_imports_verified_metapat
 #   call: self::test_metapat_loader_ignores_and_restores_cached_module
 #   mutates: temporary directory and process import cache
 #   cleanup: automatic temporary-directory cleanup and explicit cache restoration
+#
+# id: check_digital_metric_committed_source_only
+#   proves: digital_metric_generator_loads_committed_sources_only
+#   call: self::test_metapat_loader_ignores_untracked_package_shadow
+#   mutates: temporary Git repository only
+#   cleanup: automatic temporary-directory cleanup
 #
 # id: check_digital_metric_bytecode_bypass
 #   proves: digital_metric_generator_bypasses_cached_bytecode
@@ -104,6 +122,7 @@ from copy import deepcopy
 from fractions import Fraction
 from importlib.util import cache_from_source
 from pathlib import Path
+import subprocess
 from tempfile import TemporaryDirectory
 from types import ModuleType
 import json
@@ -136,6 +155,7 @@ from metric_protocol import (  # noqa: E402
 import verify_receipt as receipt_replay  # noqa: E402
 from generate_receipt import (  # noqa: E402
     ProducerIdentityError,
+    load_work_graph,
     _load_metapat_application,
     _load_ucns_native_module,
     verify_checkout,
@@ -240,6 +260,33 @@ class MetricProtocolTests(unittest.TestCase):
         source_path.write_text(verified_source, encoding="utf-8")
         os.utime(source_path, (fixed_timestamp, fixed_timestamp))
         return bytecode_path
+
+    @staticmethod
+    def _commit_fixture_repo(root: Path) -> None:
+        subprocess.run(
+            ["git", "init", "-q", str(root)],
+            check=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(root), "add", "."],
+            check=True,
+        )
+        subprocess.run(
+            [
+                "git",
+                "-C",
+                str(root),
+                "-c",
+                "user.name=fixture",
+                "-c",
+                "user.email=fixture@example.invalid",
+                "commit",
+                "-q",
+                "-m",
+                "fixture",
+            ],
+            check=True,
+        )
 
     def test_missing_value_field_is_rejected_before_any_default(self) -> None:
         defn = definition()
@@ -449,7 +496,10 @@ class MetricProtocolTests(unittest.TestCase):
                     work_graph_path=root / "WORK_GRAPH.json",
                 )
                 self.assertEqual(replayed, attested)
-                with self.assertRaisesRegex(MetricProtocolError, "attestation input must be pending"):
+                with self.assertRaisesRegex(
+                    receipt_replay.MetricProtocolError,
+                    "attestation input must be pending",
+                ):
                     receipt_replay.verify_and_replay(
                         attested_path,
                         metapat_root=root,
@@ -503,6 +553,21 @@ class MetricProtocolTests(unittest.TestCase):
             with self.assertRaisesRegex(ProducerIdentityError, "not the Git top level"):
                 verify_checkout(Path(directory), participant, ())
 
+    def test_work_graph_requires_complete_fixed_participant_set(self) -> None:
+        graph = json.loads((WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8"))
+        graph["participants"] = graph["participants"][:-1]
+        graph["work_graph_sha256"] = sha256_json(
+            {
+                "participants": graph["participants"],
+                "boundaries": graph["boundaries"],
+            }
+        )
+        with TemporaryDirectory() as directory:
+            graph_path = Path(directory) / "WORK_GRAPH.json"
+            graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(ProducerIdentityError, "exact ordered v0 participant set"):
+                load_work_graph(graph_path)
+
     def test_metapat_loader_ignores_and_restores_cached_module(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -526,6 +591,7 @@ class MetricProtocolTests(unittest.TestCase):
                 "verified fixture\n",
                 encoding="utf-8",
             )
+            self._commit_fixture_repo(root)
 
             cached_package = ModuleType("metapat")
             cached_package.__path__ = []  # type: ignore[attr-defined]
@@ -553,6 +619,40 @@ class MetricProtocolTests(unittest.TestCase):
                     cached_module,
                 )
 
+    def test_metapat_loader_ignores_untracked_package_shadow(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "src/metapat"
+            documents = root / "docs/applications"
+            package.mkdir(parents=True)
+            documents.mkdir(parents=True)
+            (package / "__init__.py").write_text("", encoding="utf-8")
+            (package / "application.py").write_text("MARKER = 'source'\n", encoding="utf-8")
+            (package / "affixiation_harmonics.py").write_text(
+                "from .application import MARKER\n"
+                "class _Application:\n"
+                "    application_id = 'metapat.application.affixiation_harmonics'\n"
+                "    application_version = 'affixiation-harmonics-application-v4'\n"
+                "    measurement_validity_claim = False\n"
+                "    ucns_theorem_status_transfer = False\n"
+                "    marker = MARKER\n"
+                "\n"
+                "def affixiation_harmonics_application_module():\n"
+                "    return _Application()\n",
+                encoding="utf-8",
+            )
+            (documents / "affixiation-harmonics.md").write_text(
+                "verified fixture\n",
+                encoding="utf-8",
+            )
+            self._commit_fixture_repo(root)
+            shadow = package / "application"
+            shadow.mkdir()
+            (shadow / "__init__.py").write_text("MARKER = 'cached'\n", encoding="utf-8")
+            application, _digest = _load_metapat_application(root)
+            self.assertTrue((shadow / "__init__.py").is_file())
+            self.assertEqual(application.marker, "source")
+
     def test_producer_loaders_ignore_matching_stale_bytecode(self) -> None:
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -573,14 +673,19 @@ class MetricProtocolTests(unittest.TestCase):
                 "def affixiation_harmonics_application_module():\n"
                 "    return _Application()\n"
             )
-            metapat_bytecode = self._install_timestamp_valid_stale_bytecode(
-                metapat_module,
-                poisoned_source=metapat_template.format(marker="cached"),
-                verified_source=metapat_template.format(marker="source"),
+            metapat_module.write_text(
+                metapat_template.format(marker="source"),
+                encoding="utf-8",
             )
             (metapat_documents / "affixiation-harmonics.md").write_text(
                 "verified fixture\n",
                 encoding="utf-8",
+            )
+            self._commit_fixture_repo(root / "metapat")
+            metapat_bytecode = self._install_timestamp_valid_stale_bytecode(
+                metapat_module,
+                poisoned_source=metapat_template.format(marker="cached"),
+                verified_source=metapat_template.format(marker="source"),
             )
             application, _digest = _load_metapat_application(root / "metapat")
             self.assertTrue(metapat_bytecode.is_file())
@@ -597,6 +702,65 @@ class MetricProtocolTests(unittest.TestCase):
             module, _digest = _load_ucns_native_module(root / "ucns")
             self.assertTrue(ucns_bytecode.is_file())
             self.assertEqual(module.VALUE, "source")
+
+    def test_replay_modules_ignore_matching_stale_bytecode(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            verifier_path = root / "verify_receipt.py"
+            generator_path = root / "generate_receipt.py"
+            protocol_path = root / "metric_protocol.py"
+            verifier_path.write_text(
+                (WORKSPACE / "verify_receipt.py").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            verified_protocol = (
+                "class MetricProtocolError(ValueError):\n"
+                "    pass\n"
+                "\n"
+                "def _marker(*args, **kwargs):\n"
+                "    return 'source'\n"
+                "\n"
+                "boolean_value = _marker\n"
+                "canonical_json = _marker\n"
+                "make_metric_definition = _marker\n"
+                "make_observation = _marker\n"
+                "measure_retention = _marker\n"
+                "seal_receipt = _marker\n"
+                "seal_structure = _marker\n"
+                "sha256_json = _marker\n"
+                "verify_receipt = _marker\n"
+            )
+            protocol_bytecode = self._install_timestamp_valid_stale_bytecode(
+                protocol_path,
+                poisoned_source=verified_protocol.replace("'source'", "'cached'"),
+                verified_source=verified_protocol,
+            )
+            verified_generator = (WORKSPACE / "generate_receipt.py").read_text(
+                encoding="utf-8"
+            )
+            poison_prefix = "def build_receipt(*args, **kwargs):\n    return 'cached'\n"
+            padding_size = len(verified_generator.encode("utf-8")) - len(poison_prefix) - 1
+            self.assertGreater(padding_size, 0)
+            poison_generator = poison_prefix + ("#" * padding_size) + "\n"
+            generator_bytecode = self._install_timestamp_valid_stale_bytecode(
+                generator_path,
+                poisoned_source=poison_generator,
+                verified_source=verified_generator,
+            )
+            loaded_generator = receipt_replay._load_source_module(
+                "_test_stack_metric_generator_source",
+                generator_path,
+            )
+            self.assertEqual(loaded_generator.boolean_value(), "source")
+            loaded_verifier = receipt_replay._load_source_module(
+                "_test_stack_metric_verifier_source",
+                verifier_path,
+            )
+            self.assertTrue(protocol_bytecode.is_file())
+            self.assertTrue(generator_bytecode.is_file())
+            self.assertEqual(loaded_verifier.canonical_json(None), "source")
+            with self.assertRaises(TypeError):
+                loaded_verifier.build_receipt()
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"

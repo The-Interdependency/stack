@@ -46,15 +46,55 @@ from __future__ import annotations
 #   given: the generator emits a pending candidate and the named verifier is asked to attest it
 #   then: pass is written only after exact producer replay matches the candidate byte-for-byte
 #   class: provenance
+#
+# id: digital_metric_verifier_bypasses_cached_bytecode
+#   given: timestamp-valid stale bytecode exists for the Stack protocol or generator module
+#   then: the verifier compiles both modules from their recorded source bytes before replay
+#   class: provenance
 # === END CONTRACTS ===
 
 import argparse
 from copy import deepcopy
 import json
 from pathlib import Path
+import sys
+from types import ModuleType
 
-from generate_receipt import build_receipt
-from metric_protocol import MetricProtocolError, canonical_json, sha256_json, verify_receipt
+
+def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
+    source_path = source_path.resolve()
+    source = source_path.read_bytes()
+    module = ModuleType(module_name)
+    module.__file__ = str(source_path)
+    module.__cached__ = None
+    module.__package__ = ""
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        code = compile(source, str(source_path), "exec", dont_inherit=True)
+        exec(code, module.__dict__)
+    finally:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+    return module
+
+
+_WORKSPACE = Path(__file__).resolve().parent
+_METRIC_PROTOCOL = _load_source_module(
+    "_stack_digital_metric_protocol_verifier",
+    _WORKSPACE / "metric_protocol.py",
+)
+_GENERATOR = _load_source_module(
+    "_stack_digital_metric_generator_verifier",
+    _WORKSPACE / "generate_receipt.py",
+)
+MetricProtocolError = _METRIC_PROTOCOL.MetricProtocolError
+canonical_json = _METRIC_PROTOCOL.canonical_json
+sha256_json = _METRIC_PROTOCOL.sha256_json
+verify_receipt = _METRIC_PROTOCOL.verify_receipt
+build_receipt = _GENERATOR.build_receipt
 
 
 def _attest_after_replay(candidate: dict) -> dict:

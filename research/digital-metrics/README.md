@@ -27,6 +27,8 @@ METAPAT semantic constraint
   no authority, proof, measurement, or empirical status.
 
 Exact participants and remaining boundaries are in [`WORK_GRAPH.json`](WORK_GRAPH.json).
+The v0 validator requires its complete ordered Stack, skill-lib, METAPAT, UCNS,
+and EDCM participant sequence; a recomputed digest cannot authorize omissions.
 
 ## Wire guarantees
 
@@ -78,8 +80,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): e5552a9ae4e3e11e73ee9fe57ce0034a52dc5e62496beaa2883d9fcab9d72fa5
-File SHA-256: 3040a3df7973ff1e03ad5f77cbcf92ad93db8c703519a3c9e20f54318df149b3
+Receipt payload digest (`receipt_sha256`): 1c6072058edf9b51e45f73b4da32c982d140a6117b93b93a595ea6180d4b63e4
+File SHA-256: fe2953c93376353f88d3e085176cb87ddb9c536625e621771219b0ffe284ed56
 ```
 
 ## Usage guidance
@@ -139,9 +141,11 @@ has the wrong commit or any tracked changes.
 
 The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache
-is restored afterward. METAPAT and UCNS producer loaders compile the verified
-source bytes directly; the regression suite proves that same-size,
-same-timestamp poisoned bytecode is not executed.
+is restored afterward. Every METAPAT Python dependency must occupy a path named
+by the pinned Git tree, so untracked package shadows are not executable.
+METAPAT, UCNS, and Stack's protocol/generator replay modules compile their source
+bytes directly; the regression suite proves that same-size, same-timestamp
+poisoned bytecode is not executed.
 
 ## Promotion gates
 

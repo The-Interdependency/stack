@@ -44,6 +44,16 @@ from __future__ import annotations
 #   then: receipt generation fails before importing producer code
 #   class: provenance
 #
+# id: digital_metric_work_graph_requires_fixed_participants
+#   given: the v0 work graph omits, duplicates, adds, or reorders a declared participant
+#   then: generation rejects the graph before resolving any producer
+#   class: provenance
+#
+# id: digital_metric_generator_loads_committed_sources_only
+#   given: an untracked package path could shadow a committed METAPAT module
+#   then: the source finder ignores the uncommitted path and loads only Python sources named by the pinned Git tree
+#   class: provenance
+#
 # id: digital_metric_generator_imports_verified_metapat
 #   given: a different METAPAT package or module is already present in the Python import cache
 #   then: generation loads the module from the verified checkout, confirms its origin, and restores the prior cache afterward
@@ -80,20 +90,50 @@ import sys
 from types import ModuleType
 from typing import Any, Iterator, Mapping
 
-from metric_protocol import (
-    boolean_value,
-    canonical_json,
-    make_metric_definition,
-    make_observation,
-    measure_retention,
-    seal_receipt,
-    seal_structure,
-    sha256_json,
+
+def _load_source_module(module_name: str, source_path: Path) -> ModuleType:
+    source_path = source_path.resolve()
+    source = source_path.read_bytes()
+    module = ModuleType(module_name)
+    module.__file__ = str(source_path)
+    module.__cached__ = None
+    module.__package__ = ""
+    previous = sys.modules.get(module_name)
+    sys.modules[module_name] = module
+    try:
+        code = compile(source, str(source_path), "exec", dont_inherit=True)
+        exec(code, module.__dict__)
+    finally:
+        if previous is None:
+            sys.modules.pop(module_name, None)
+        else:
+            sys.modules[module_name] = previous
+    return module
+
+
+_METRIC_PROTOCOL = _load_source_module(
+    "_stack_digital_metric_protocol_generator",
+    Path(__file__).resolve().parent / "metric_protocol.py",
 )
+boolean_value = _METRIC_PROTOCOL.boolean_value
+canonical_json = _METRIC_PROTOCOL.canonical_json
+make_metric_definition = _METRIC_PROTOCOL.make_metric_definition
+make_observation = _METRIC_PROTOCOL.make_observation
+measure_retention = _METRIC_PROTOCOL.measure_retention
+seal_receipt = _METRIC_PROTOCOL.seal_receipt
+seal_structure = _METRIC_PROTOCOL.seal_structure
+sha256_json = _METRIC_PROTOCOL.sha256_json
 
 
 WORK_GRAPH_SCHEMA = "the-interdependency.digital-metric-work-graph"
 WORK_GRAPH_VERSION = "0.1.0"
+EXPECTED_PARTICIPANT_REPOSITORIES = (
+    "The-Interdependency/stack",
+    "The-Interdependency/skill-lib",
+    "The-Interdependency/metapat",
+    "The-Interdependency/ucns",
+    "The-Interdependency/edcm",
+)
 
 
 class ProducerIdentityError(ValueError):
@@ -144,6 +184,11 @@ def load_work_graph(path: Path) -> dict[str, Any]:
             raise ProducerIdentityError("work graph participant fields must be non-empty strings")
         if re.fullmatch(r"[0-9a-f]{40}", item["commit"]) is None:
             raise ProducerIdentityError("work graph participant commit must be exact")
+    repositories = tuple(item["repository"] for item in value["participants"])
+    if repositories != EXPECTED_PARTICIPANT_REPOSITORIES:
+        raise ProducerIdentityError(
+            "work graph must contain the exact ordered v0 participant set"
+        )
     boundaries = value["boundaries"]
     if not isinstance(boundaries, dict) or set(boundaries) != {
         "authority_transfer", "proof_status_transfer", "measurement_status_transfer",
@@ -194,6 +239,20 @@ def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: 
             raise ProducerIdentityError(f"producer file differs from committed bytes: {relative}")
 
 
+def _committed_python_sources(root: Path, relative_root: str) -> frozenset[Path]:
+    root = root.resolve()
+    names = _git(
+        root,
+        "ls-tree",
+        "-r",
+        "--name-only",
+        "HEAD",
+        "--",
+        relative_root,
+    ).splitlines()
+    return frozenset(root / name for name in names if name.endswith(".py"))
+
+
 class _SourceBytesLoader(importlib.abc.Loader):
     def __init__(self, source_path: Path, *, is_package: bool) -> None:
         self.source_path = source_path
@@ -210,9 +269,15 @@ class _SourceBytesLoader(importlib.abc.Loader):
 
 
 class _SourceTreeFinder(importlib.abc.MetaPathFinder):
-    def __init__(self, package: str, package_root: Path) -> None:
+    def __init__(
+        self,
+        package: str,
+        package_root: Path,
+        allowed_sources: frozenset[Path],
+    ) -> None:
         self.package = package
         self.package_root = package_root.resolve()
+        self.allowed_sources = allowed_sources
 
     def find_spec(
         self,
@@ -231,15 +296,15 @@ class _SourceTreeFinder(importlib.abc.MetaPathFinder):
         base = self.package_root.joinpath(*relative_parts)
         package_source = base / "__init__.py"
         module_source = base.with_suffix(".py")
-        if package_source.is_file():
-            source_path = package_source.resolve()
+        if package_source in self.allowed_sources:
+            source_path = package_source
             is_package = True
-        elif relative_parts and module_source.is_file():
-            source_path = module_source.resolve()
+        elif relative_parts and module_source in self.allowed_sources:
+            source_path = module_source
             is_package = False
         else:
             raise ModuleNotFoundError(
-                f"verified source tree has no module {fullname!r}"
+                f"pinned Git tree has no committed module {fullname!r}"
             )
         loader = _SourceBytesLoader(source_path, is_package=is_package)
         return importlib.util.spec_from_loader(
@@ -251,7 +316,11 @@ class _SourceTreeFinder(importlib.abc.MetaPathFinder):
 
 
 @contextmanager
-def _isolated_source_package_import(package: str, package_root: Path) -> Iterator[None]:
+def _isolated_source_package_import(
+    package: str,
+    package_root: Path,
+    allowed_sources: frozenset[Path],
+) -> Iterator[None]:
     prefix = f"{package}."
     saved = {
         name: module
@@ -260,7 +329,7 @@ def _isolated_source_package_import(package: str, package_root: Path) -> Iterato
     }
     for name in saved:
         sys.modules.pop(name, None)
-    finder = _SourceTreeFinder(package, package_root)
+    finder = _SourceTreeFinder(package, package_root, allowed_sources)
     sys.meta_path.insert(0, finder)
     try:
         importlib.invalidate_caches()
@@ -278,7 +347,12 @@ def _isolated_source_package_import(package: str, package_root: Path) -> Iterato
 def _load_metapat_application(root: Path) -> tuple[Any, str]:
     document_path = root / "docs/applications/affixiation-harmonics.md"
     expected_module_path = (root / "src/metapat/affixiation_harmonics.py").resolve()
-    with _isolated_source_package_import("metapat", root / "src/metapat"):
+    allowed_sources = _committed_python_sources(root, "src/metapat")
+    with _isolated_source_package_import(
+        "metapat",
+        root / "src/metapat",
+        allowed_sources,
+    ):
         module = importlib.import_module("metapat.affixiation_harmonics")
         actual_module_path = Path(module.__file__).resolve()
         if actual_module_path != expected_module_path:
