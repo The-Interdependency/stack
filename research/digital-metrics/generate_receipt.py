@@ -167,6 +167,11 @@ def load_work_graph(path: Path) -> dict[str, Any]:
 
 def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: tuple[str, ...]) -> None:
     root = root.resolve()
+    git_root = Path(_git(root, "rev-parse", "--show-toplevel")).resolve()
+    if git_root != root:
+        raise ProducerIdentityError(
+            f"{participant['repository']} producer root is not the Git top level: {root}"
+        )
     if _git(root, "rev-parse", "HEAD") != participant["commit"]:
         raise ProducerIdentityError(
             f"{participant['repository']} checkout is not at {participant['commit']}"

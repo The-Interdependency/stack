@@ -69,6 +69,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_exact_producer_root
+#   proves: digital_metric_generator_requires_exact_clean_producers
+#   call: self::test_generator_rejects_nested_producer_root
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_metapat_import_origin
 #   proves: digital_metric_generator_imports_verified_metapat
 #   call: self::test_metapat_loader_ignores_and_restores_cached_module
@@ -486,6 +492,16 @@ class MetricProtocolTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ProducerIdentityError, "checkout is not at"):
             verify_checkout(WORKSPACE.parents[1], participant, ("README.md",))
+
+    def test_generator_rejects_nested_producer_root(self) -> None:
+        repository_root = WORKSPACE.parents[1]
+        with TemporaryDirectory(dir=repository_root) as directory:
+            participant = {
+                "repository": "The-Interdependency/stack",
+                "commit": "0" * 40,
+            }
+            with self.assertRaisesRegex(ProducerIdentityError, "not the Git top level"):
+                verify_checkout(Path(directory), participant, ())
 
     def test_metapat_loader_ignores_and_restores_cached_module(self) -> None:
         with TemporaryDirectory() as directory:

@@ -78,8 +78,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): fcc1d049105ba46b055c28e8ab3428bd3cb40a68791b860fe2f5f20817fa2e3e
-File SHA-256: 29734a8c78e2e41a0acac69d356fe795df7f710bfc4a1e4fd71fc114b7685c66
+Receipt payload digest (`receipt_sha256`): b32771f2e15f0e02132a89de2650a8505dd9891bf54189b1cc493be24975d4d6
+File SHA-256: 199fb1dd6da16d228f6628cacbff058d39be7b10838ceca61ef7dcc6154d2f5d
 ```
 
 ## Usage guidance
@@ -133,8 +133,9 @@ python3 research/digital-metrics/verify_receipt.py \
   --ucns-root /path/to/exact/ucns
 ```
 
-The generator fails before importing producer code when a required producer
-checkout has the wrong commit or any tracked changes.
+The generator fails before importing producer code when a supplied root is not
+the repository's resolved Git top level, or when a required producer checkout
+has the wrong commit or any tracked changes.
 
 The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache
