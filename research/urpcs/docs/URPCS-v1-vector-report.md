@@ -58,11 +58,12 @@ fixture identity.
 
 ## Usage guidance
 
-Run the complete positive, negative, and post-merge regression suite:
+From `research/urpcs/`, run the complete positive, negative, and post-merge
+regression suite:
 
 ```bash
 python3 urpcs_v1_reference.py --self-test
-python3 -m unittest discover -s ../tests -p 'test*.py'
+python3 -m unittest discover -s tests -p 'test*.py'
 ```
 
 Regenerate the deterministic JSON:
