@@ -44,6 +44,11 @@ from __future__ import annotations
 #   then: receipt generation fails before importing producer code
 #   class: provenance
 #
+# id: digital_metric_generator_imports_verified_metapat
+#   given: a different METAPAT package or module is already present in the Python import cache
+#   then: generation loads the module from the verified checkout, confirms its origin, and restores the prior cache afterward
+#   class: provenance
+#
 # id: digital_metric_metapat_binding_is_constraint_only
 #   given: the affixiation-harmonics application is bound into a receipt
 #   then: its exact identity and digest are retained while authority and measurement-status transfer remain false
@@ -188,10 +193,38 @@ def _temporary_sys_path(path: Path) -> Iterator[None]:
             sys.path.remove(text)
 
 
+@contextmanager
+def _isolated_package_import(package: str, source_root: Path) -> Iterator[None]:
+    prefix = f"{package}."
+    saved = {
+        name: module
+        for name, module in tuple(sys.modules.items())
+        if name == package or name.startswith(prefix)
+    }
+    for name in saved:
+        sys.modules.pop(name, None)
+    try:
+        with _temporary_sys_path(source_root):
+            importlib.invalidate_caches()
+            yield
+    finally:
+        for name in tuple(sys.modules):
+            if name == package or name.startswith(prefix):
+                sys.modules.pop(name, None)
+        sys.modules.update(saved)
+        importlib.invalidate_caches()
+
+
 def _load_metapat_application(root: Path) -> tuple[Any, str]:
-    source_path = root / "docs/applications/affixiation-harmonics.md"
-    with _temporary_sys_path(root / "src"):
+    document_path = root / "docs/applications/affixiation-harmonics.md"
+    expected_module_path = (root / "src/metapat/affixiation_harmonics.py").resolve()
+    with _isolated_package_import("metapat", root / "src"):
         module = importlib.import_module("metapat.affixiation_harmonics")
+        actual_module_path = Path(module.__file__).resolve()
+        if actual_module_path != expected_module_path:
+            raise ProducerIdentityError(
+                f"METAPAT module origin differs from verified checkout: {actual_module_path}"
+            )
         application = module.affixiation_harmonics_application_module()
     if application.application_id != "metapat.application.affixiation_harmonics":
         raise ProducerIdentityError("unexpected METAPAT application identity")
@@ -199,7 +232,7 @@ def _load_metapat_application(root: Path) -> tuple[Any, str]:
         raise ProducerIdentityError("unexpected METAPAT affixiation application version")
     if application.measurement_validity_claim is not False or application.ucns_theorem_status_transfer is not False:
         raise ProducerIdentityError("METAPAT application improperly transfers downstream status")
-    return application, _sha256_file(source_path)
+    return application, _sha256_file(document_path)
 
 
 def _load_ucns_native_module(root: Path) -> tuple[Any, str]:
@@ -305,7 +338,7 @@ def build_receipt(
     ucns_provenance = {
         "work_graph_sha256": work_graph_sha256,
         "source_repository": ucns_participant["repository"],
-        "source_commit": ucns_participant["commit"],
+        "source_revision": {"kind": "git-commit", "value": ucns_participant["commit"]},
         "source_artifact_sha256": ucns_source_sha256,
         "generator_id": "stack.digital-metrics.ucns-native-mobius-v0",
         "generator_sha256": generator_sha256,
@@ -382,7 +415,7 @@ def build_receipt(
     retention_provenance = {
         "work_graph_sha256": work_graph_sha256,
         "source_repository": "The-Interdependency/stack",
-        "source_commit": _participant(work_graph, "The-Interdependency/stack")["commit"],
+        "source_revision": {"kind": "candidate-content", "value": protocol_sha256},
         "source_artifact_sha256": protocol_sha256,
         "generator_id": "stack.digital-metrics.retention-v0",
         "generator_sha256": protocol_sha256,

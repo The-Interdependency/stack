@@ -52,6 +52,11 @@ from __future__ import annotations
 #   then: each value is accepted only under its exact declared kind and floats are rejected
 #   class: correctness
 #
+# id: digital_metric_provenance_revision_is_typed
+#   given: an observation identifies a committed producer or a pre-commit local artifact
+#   then: its source revision is explicitly typed and candidate-content identity must equal the artifact digest
+#   class: provenance
+#
 # id: digital_metric_structure_preserves_order_multiplicity_provenance
 #   given: retained structures differ by participant provenance, relation order, or relation multiplicity
 #   then: the corresponding integrity observation changes rather than collapsing the structures
@@ -89,6 +94,7 @@ RECEIPT_VERSION = "0.1.0"
 OBSERVATION_STATUSES = frozenset({"observed", "not_applicable", "unresolved", "failed"})
 VALIDATION_STATUSES = frozenset({"candidate", "test-backed", "calibrated", "validated-for-scope"})
 VALUE_KINDS = frozenset({"boolean", "integer", "rational", "category"})
+REPLAY_RESULTS = frozenset({"pending", "pass"})
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
@@ -364,15 +370,27 @@ def _validate_provenance(value: Any) -> dict[str, Any]:
     _exact_fields(
         record,
         (
-            "work_graph_sha256", "source_repository", "source_commit",
+            "work_graph_sha256", "source_repository", "source_revision",
             "source_artifact_sha256", "generator_id", "generator_sha256",
         ),
         "observation provenance",
     )
     _sha256(record["work_graph_sha256"], "provenance.work_graph_sha256")
     _text(record["source_repository"], "provenance.source_repository")
-    _commit(record["source_commit"], "provenance.source_commit")
-    _sha256(record["source_artifact_sha256"], "provenance.source_artifact_sha256")
+    artifact_sha256 = _sha256(
+        record["source_artifact_sha256"], "provenance.source_artifact_sha256"
+    )
+    revision = _mapping(record["source_revision"], "provenance.source_revision")
+    _exact_fields(revision, ("kind", "value"), "provenance.source_revision")
+    revision_kind = _text(revision["kind"], "provenance.source_revision.kind")
+    if revision_kind == "git-commit":
+        _commit(revision["value"], "provenance.source_revision.value")
+    elif revision_kind == "candidate-content":
+        revision_value = _sha256(revision["value"], "provenance.source_revision.value")
+        if revision_value != artifact_sha256:
+            raise MetricProtocolError("candidate-content revision must equal source artifact digest")
+    else:
+        raise MetricProtocolError(f"unsupported provenance source revision kind {revision_kind!r}")
     _text(record["generator_id"], "provenance.generator_id")
     _sha256(record["generator_sha256"], "provenance.generator_sha256")
     return record
@@ -693,7 +711,11 @@ def seal_receipt(
         "observations": observation_list,
         "bindings": [dict(item) for item in bindings],
         "inputs": [dict(item) for item in inputs],
-        "verification": {"verifier_id": verifier_id, "verifier_sha256": verifier_sha256, "result": "pass"},
+        "verification": {
+            "verifier_id": verifier_id,
+            "verifier_sha256": verifier_sha256,
+            "result": "pending",
+        },
         "hmmm": list(hmmm),
     }
     receipt["receipt_sha256"] = sha256_json(receipt)
@@ -744,8 +766,9 @@ def verify_receipt(value: Any) -> dict[str, Any]:
     _exact_fields(verification, ("verifier_id", "verifier_sha256", "result"), "receipt verification")
     _text(verification["verifier_id"], "receipt verifier_id")
     _sha256(verification["verifier_sha256"], "receipt verifier_sha256")
-    if verification["result"] != "pass":
-        raise MetricProtocolError("receipt verification result must be pass")
+    result = _text(verification["result"], "receipt verification result")
+    if result not in REPLAY_RESULTS:
+        raise MetricProtocolError(f"unsupported receipt verification result {result!r}")
     _string_list(record["hmmm"], "receipt hmmm")
     digest = _sha256(record["receipt_sha256"], "receipt.receipt_sha256")
     payload = {key: deepcopy(item) for key, item in record.items() if key != "receipt_sha256"}

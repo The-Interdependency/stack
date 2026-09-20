@@ -42,6 +42,9 @@ The protocol rejects missing and unknown fields, floating-point values, boolean
 and integer aliasing, noncanonical rationals, stale digests, and status transfer.
 Every observation carries `value`. A non-observed status requires explicit
 `null`, a reason, and `not_quantified` uncertainty; absence never becomes zero.
+Committed producers use typed `git-commit` revisions. A pre-commit Stack
+artifact uses `candidate-content`, whose revision digest must equal its artifact
+digest; it never claims to exist at the baseline commit.
 
 ## Frozen first slice
 
@@ -75,8 +78,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 0f39bc72ce631193d8a53c0b9765c7fc11201f8466239f41a789320caa119283
-File SHA-256: 86666b1a001b54dee3c877498c2f51a6bfe4a5c3dd64f68fa7a3fadf3d477f17
+Receipt payload digest (`receipt_sha256`): 4f88f16928d6d8ef972557a44ab1a42209f192c5410514f6e79e41a26982202e
+File SHA-256: bad589bddc707b4db6b70c20473d2d14b69549555449d8c16368c0343c19111a
 ```
 
 ## Usage guidance
@@ -104,10 +107,23 @@ PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/generate_receipt.py \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
-  --output /tmp/native-mobius-v0.json
+  --output /tmp/native-mobius-v0.pending.json
 ```
 
-Replay the committed receipt byte-for-byte:
+The generator always records verification as `pending`. Replay that candidate
+and write a `pass` receipt only after the named verifier obtains the identical
+candidate from the pinned producers:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 \
+python3 research/digital-metrics/verify_receipt.py \
+  /tmp/native-mobius-v0.pending.json \
+  --metapat-root /path/to/exact/metapat \
+  --ucns-root /path/to/exact/ucns \
+  --attest-output /tmp/native-mobius-v0.attested.json
+```
+
+Replay an already attested receipt byte-for-byte:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
@@ -119,6 +135,10 @@ python3 research/digital-metrics/verify_receipt.py \
 
 The generator fails before importing producer code when a required producer
 checkout has the wrong commit or any tracked changes.
+
+The METAPAT import is isolated from the ambient module cache, its resolved file
+must be inside the verified checkout at the expected path, and the prior cache is
+restored afterward.
 
 ## Promotion gates
 

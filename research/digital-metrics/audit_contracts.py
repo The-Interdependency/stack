@@ -42,7 +42,7 @@ from msdmd.parsers.universal import parse_file
 
 
 ROOT = Path(__file__).resolve().parent
-SOURCE_FILES = (ROOT / "metric_protocol.py", ROOT / "generate_receipt.py")
+SOURCE_FILES = (ROOT / "metric_protocol.py", ROOT / "generate_receipt.py", ROOT / "verify_receipt.py")
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
 
 

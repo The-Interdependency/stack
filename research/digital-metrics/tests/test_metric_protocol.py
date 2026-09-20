@@ -27,6 +27,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_typed_source_revision
+#   proves: digital_metric_provenance_revision_is_typed
+#   call: self::test_candidate_content_revision_must_match_artifact
+#   mutates: none
+#   cleanup: none
+#
 # id: check_digital_metric_relation_fidelity
 #   proves: digital_metric_structure_preserves_order_multiplicity_provenance
 #   call: self::test_relation_order_and_multiplicity_are_measured
@@ -45,6 +51,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_replay_attestation
+#   proves: digital_metric_pass_requires_completed_replay
+#   call: self::test_pass_is_created_only_by_post_replay_attestation
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
 # id: check_digital_metric_nontransfer
 #   proves: digital_metric_status_does_not_transfer
 #   call: self::test_binding_status_transfer_must_remain_false
@@ -56,6 +68,12 @@ from __future__ import annotations
 #   call: self::test_generator_rejects_wrong_checkout_commit
 #   mutates: none
 #   cleanup: none
+#
+# id: check_digital_metric_metapat_import_origin
+#   proves: digital_metric_generator_imports_verified_metapat
+#   call: self::test_metapat_loader_ignores_and_restores_cached_module
+#   mutates: temporary directory and process import cache
+#   cleanup: automatic temporary-directory cleanup and explicit cache restoration
 #
 # id: check_digital_metric_metapat_binding
 #   proves: digital_metric_metapat_binding_is_constraint_only
@@ -73,9 +91,12 @@ from __future__ import annotations
 from copy import deepcopy
 from fractions import Fraction
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from types import ModuleType
 import json
 import sys
 import unittest
+from unittest.mock import patch
 
 
 WORKSPACE = Path(__file__).resolve().parents[1]
@@ -97,7 +118,8 @@ from metric_protocol import (  # noqa: E402
 )
 
 
-from generate_receipt import ProducerIdentityError, verify_checkout  # noqa: E402
+import verify_receipt as receipt_replay  # noqa: E402
+from generate_receipt import ProducerIdentityError, _load_metapat_application, verify_checkout  # noqa: E402
 SHA_A = "a" * 64
 SHA_B = "b" * 64
 SHA_C = "c" * 64
@@ -128,7 +150,7 @@ def provenance() -> dict:
     return {
         "work_graph_sha256": WORK_GRAPH_SHA,
         "source_repository": "The-Interdependency/stack",
-        "source_commit": COMMIT_A,
+        "source_revision": {"kind": "git-commit", "value": COMMIT_A},
         "source_artifact_sha256": SHA_B,
         "generator_id": "stack.test.metric",
         "generator_sha256": SHA_A,
@@ -230,6 +252,37 @@ class MetricProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(MetricProtocolError, "floating-point"):
             canonical_json({"value": 0.0})
 
+    def test_candidate_content_revision_must_match_artifact(self) -> None:
+        defn = definition()
+        candidate_provenance = provenance()
+        candidate_provenance["source_revision"] = {
+            "kind": "candidate-content",
+            "value": SHA_C,
+        }
+        with self.assertRaisesRegex(
+            MetricProtocolError,
+            "candidate-content revision must equal source artifact digest",
+        ):
+            make_observation(
+                definition=defn,
+                subject_id="fixture",
+                subject_sha256=SHA_C,
+                sequence_index=0,
+                status="observed",
+                value=boolean_value(True),
+                reason=None,
+                uncertainty_kind="exact",
+                provenance=candidate_provenance,
+            )
+
+        candidate_provenance["source_revision"]["value"] = SHA_B
+        record = observed(defn, boolean_value(True))
+        record["provenance"] = candidate_provenance
+        record["observation_sha256"] = sha256_json(
+            {key: value for key, value in record.items() if key != "observation_sha256"}
+        )
+        validate_observation(record, defn)
+
     def test_relation_order_and_multiplicity_are_measured(self) -> None:
         before = structure(structure_id="before")
         after = structure(
@@ -300,6 +353,67 @@ class MetricProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(MetricProtocolError, "observation digest mismatch"):
             verify_receipt(tampered)
 
+    def test_pass_is_created_only_by_post_replay_attestation(self) -> None:
+        defn = definition()
+        observation = observed(defn, boolean_value(True))
+        candidate = seal_receipt(
+            work_graph_sha256=WORK_GRAPH_SHA,
+            definitions=[defn],
+            observations=[observation],
+            bindings=[
+                {
+                    "kind": "test-binding",
+                    "identity": "test",
+                    "version": "0.1.0",
+                    "repository": "The-Interdependency/stack",
+                    "commit": COMMIT_A,
+                    "artifact_sha256": SHA_A,
+                    "record_digest": SHA_B,
+                    "authority_transfer": False,
+                    "measurement_status_transfer": False,
+                }
+            ],
+            inputs=[{"identity": "fixture", "sha256": SHA_C}],
+            verifier_id="stack.test.verifier",
+            verifier_sha256=SHA_A,
+            hmmm=[],
+        )
+        self.assertEqual(candidate["verification"]["result"], "pending")
+
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            pending_path = root / "pending.json"
+            attested_path = root / "attested.json"
+            pending_path.write_text(canonical_json(candidate) + "\n", encoding="utf-8")
+            with patch.object(receipt_replay, "build_receipt", return_value=candidate):
+                attested = receipt_replay.verify_and_replay(
+                    pending_path,
+                    metapat_root=root,
+                    ucns_root=root,
+                    work_graph_path=root / "WORK_GRAPH.json",
+                    attest_output=attested_path,
+                )
+                self.assertEqual(attested["verification"]["result"], "pass")
+                self.assertEqual(
+                    attested_path.read_text(encoding="utf-8"),
+                    canonical_json(attested) + "\n",
+                )
+                replayed = receipt_replay.verify_and_replay(
+                    attested_path,
+                    metapat_root=root,
+                    ucns_root=root,
+                    work_graph_path=root / "WORK_GRAPH.json",
+                )
+                self.assertEqual(replayed, attested)
+                with self.assertRaisesRegex(MetricProtocolError, "attestation input must be pending"):
+                    receipt_replay.verify_and_replay(
+                        attested_path,
+                        metapat_root=root,
+                        ucns_root=root,
+                        work_graph_path=root / "WORK_GRAPH.json",
+                        attest_output=root / "second.json",
+                    )
+
     def test_binding_status_transfer_must_remain_false(self) -> None:
         defn = definition()
         observation = observed(defn, boolean_value(True))
@@ -334,6 +448,56 @@ class MetricProtocolTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(ProducerIdentityError, "checkout is not at"):
             verify_checkout(WORKSPACE.parents[1], participant, ("README.md",))
+
+    def test_metapat_loader_ignores_and_restores_cached_module(self) -> None:
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            package = root / "src/metapat"
+            documents = root / "docs/applications"
+            package.mkdir(parents=True)
+            documents.mkdir(parents=True)
+            (package / "__init__.py").write_text("", encoding="utf-8")
+            (package / "affixiation_harmonics.py").write_text(
+                "class _Application:\n"
+                "    application_id = 'metapat.application.affixiation_harmonics'\n"
+                "    application_version = 'affixiation-harmonics-application-v4'\n"
+                "    measurement_validity_claim = False\n"
+                "    ucns_theorem_status_transfer = False\n"
+                "\n"
+                "def affixiation_harmonics_application_module():\n"
+                "    return _Application()\n",
+                encoding="utf-8",
+            )
+            (documents / "affixiation-harmonics.md").write_text(
+                "verified fixture\n",
+                encoding="utf-8",
+            )
+
+            cached_package = ModuleType("metapat")
+            cached_package.__path__ = []  # type: ignore[attr-defined]
+            cached_module = ModuleType("metapat.affixiation_harmonics")
+            cached_module.affixiation_harmonics_application_module = (  # type: ignore[attr-defined]
+                lambda: object()
+            )
+            with patch.dict(
+                sys.modules,
+                {
+                    "metapat": cached_package,
+                    "metapat.affixiation_harmonics": cached_module,
+                },
+                clear=False,
+            ):
+                application, document_sha256 = _load_metapat_application(root)
+                self.assertEqual(
+                    application.application_id,
+                    "metapat.application.affixiation_harmonics",
+                )
+                self.assertEqual(len(document_sha256), 64)
+                self.assertIs(sys.modules["metapat"], cached_package)
+                self.assertIs(
+                    sys.modules["metapat.affixiation_harmonics"],
+                    cached_module,
+                )
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"

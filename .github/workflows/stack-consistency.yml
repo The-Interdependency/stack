@@ -69,11 +69,23 @@ jobs:
       - name: Run adversarial metric protocol tests
         working-directory: stack
         run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s research/digital-metrics/tests -p 'test*.py' -v
-      - name: Replay the frozen receipt byte-identically
+      - name: Generate pending, attest after replay, and match frozen receipt
         working-directory: stack
-        run: >-
-          PYTHONDONTWRITEBYTECODE=1
-          python3 research/digital-metrics/verify_receipt.py
-          research/digital-metrics/receipts/native-mobius-v0.json
-          --metapat-root ../metapat
-          --ucns-root ../ucns
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt.py \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns \
+            --output /tmp/native-mobius-v0.pending.json
+          python3 -c 'import json; assert json.load(open("/tmp/native-mobius-v0.pending.json"))["verification"]["result"] == "pending"'
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt.py \
+            /tmp/native-mobius-v0.pending.json \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns \
+            --attest-output /tmp/native-mobius-v0.attested.json
+          cmp \
+            research/digital-metrics/receipts/native-mobius-v0.json \
+            /tmp/native-mobius-v0.attested.json
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt.py \
+            research/digital-metrics/receipts/native-mobius-v0.json \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns
