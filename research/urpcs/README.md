@@ -36,6 +36,8 @@ UCNS geometry, or UCNS-gonol identity.
   positive and negative fixtures.
 - [`docs/URPCS-v1-vector-report.md`](docs/URPCS-v1-vector-report.md) — measured
   results, artifact receipts, and claim boundary.
+- [`docs/URPCS-v1-independent-decoder-audit.md`](docs/URPCS-v1-independent-decoder-audit.md)
+  — frozen independent-decoder sufficiency audit and exact public-input identities.
 - [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json) — imported-artifact identities.
 
 ## Usage guidance
@@ -72,8 +74,9 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## Next gates
 
-1. An independently written decoder must consume the committed bytes without
-   importing this implementation.
+1. Amend the public specification with the missing framing, authentication,
+   layer-reversal, receipt, and state-advance laws enumerated by the independent
+   decoder audit; decoder work must not resume before that contract repair.
 2. A threat model and leakage model must precede any confidentiality claim.
 3. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
    fork policy require implementation and adversarial testing.
@@ -82,5 +85,7 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## hmmm
 
-One implementation now agrees exactly with itself. The next useful disagreement
-must come from a second implementation, not from renaming the first one security.
+The independent-decoder audit is `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED`: the
+committed public contract does not yet determine a decoder. The reference remains
+one implementation agreeing with itself; the specification needs a door before a
+second implementation can walk through it.
