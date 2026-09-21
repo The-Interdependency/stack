@@ -286,6 +286,7 @@ from generate_receipt import (  # noqa: E402
     _load_ucns_native_module,
     _require_repository_work_graph,
     _validate_repository_work_graph_projection,
+    _verify_stack_base,
     _verify_stack_participant,
     _verify_edcm_decoder_guard,
     verify_checkout,
@@ -879,6 +880,28 @@ class MetricProtocolTests(unittest.TestCase):
             ).hexdigest(),
         )
         _verify_stack_participant(baseline, WORKSPACE.parents[1])
+        base_sha256 = _verify_stack_base(baseline, WORKSPACE)
+        self.assertEqual(
+            base_sha256,
+            hashlib.sha256((WORKSPACE / "BASE.json").read_bytes()).hexdigest(),
+        )
+
+        with TemporaryDirectory() as directory:
+            base_path = Path(directory) / "BASE.json"
+            base = json.loads((WORKSPACE / "BASE.json").read_text(encoding="utf-8"))
+            base["source_commit"] = "0" * 40
+            base_path.write_text(canonical_json(base) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(
+                ProducerIdentityError,
+                "BASE.json source_commit differs from work graph",
+            ):
+                _verify_stack_base(baseline, WORKSPACE, base_path)
+            base_path.write_text("[]\n", encoding="utf-8")
+            with self.assertRaisesRegex(
+                ProducerIdentityError,
+                "BASE.json must contain an object",
+            ):
+                _verify_stack_base(baseline, WORKSPACE, base_path)
 
         nonexistent_stack = deepcopy(baseline)
         next(
@@ -1660,6 +1683,25 @@ class MetricProtocolTests(unittest.TestCase):
                         {},
                     )
 
+            precapture_method_override_source = (
+                "import unittest\n"
+                "class PreCaptureOverride(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+                "PreCaptureOverride.test_hidden = lambda self: None\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "differs from statically admitted body",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "PreCaptureOverride"},
+                        precapture_method_override_source,
+                        {},
+                    )
+
             setup_hook_bypass_source = (
                 "import unittest\n"
                 "class SetupHookBypass(unittest.TestCase):\n"
@@ -1669,14 +1711,49 @@ class MetricProtocolTests(unittest.TestCase):
                 "        self.fail('must execute')\n"
             ).encode("utf-8")
             with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "SetupHookBypass"},
+                    setup_hook_bypass_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("must execute", output)
+
+            manual_precall_source = (
+                "import unittest\n"
+                "class ManualPrecall(unittest.TestCase):\n"
+                "    def setUp(self):\n"
+                "        try:\n"
+                "            self.test_hidden()\n"
+                "        except AssertionError:\n"
+                "            pass\n"
+                "        self._callTestMethod = lambda method: None\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute through unittest')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "ManualPrecall"},
+                    manual_precall_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("must execute through unittest", output)
+
+            system_exit_source = b"raise SystemExit(0)\n"
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
                 with self.assertRaisesRegex(
                     contract_audit.AuditIdentityError,
-                    "admitted witness method did not execute",
+                    "attempted to terminate the audit: SystemExit",
                 ):
                     contract_audit._run_unittest_witnesses(
                         test_path,
-                        {"test_hidden": "SetupHookBypass"},
-                        setup_hook_bypass_source,
+                        {},
+                        system_exit_source,
                         {},
                     )
 
@@ -1749,6 +1826,7 @@ class MetricProtocolTests(unittest.TestCase):
                     contract_audit.WORK_GRAPH_PATH,
                     contract_audit.STACK_MANIFEST_PATH,
                     contract_audit.STACK_HUMAN_MANIFEST_PATH,
+                    contract_audit.BASE_PATH,
                     contract_audit.FROZEN_RECEIPT_PATH,
                     contract_audit.PARSER_PATH,
                 },
@@ -1919,6 +1997,55 @@ class MetricProtocolTests(unittest.TestCase):
                         any(expected in item for item in findings),
                         findings,
                     )
+
+            graph = deepcopy(baseline_graph)
+            graph["participants"][0]["authority"] = "research"
+            graph["participants"][0]["relation"] = "research"
+            graph["work_graph_sha256"] = sha256_json(
+                {"participants": graph["participants"], "boundaries": graph["boundaries"]}
+            )
+            drifted_manifest = deepcopy(manifest)
+            owner = next(
+                item for item in drifted_manifest["research_participants"]
+                if item.get("workspace") == "research/digital-metrics/"
+                and item.get("repository") == "The-Interdependency/stack"
+            )
+            owner["authority"] = "research"
+            owner["relation"] = "research"
+            graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                drifted_manifest,
+                human,
+                repositories,
+                findings,
+                graph_path,
+            )
+            self.assertTrue(
+                any("exactly one participant row" in item for item in findings),
+                findings,
+            )
+            self.assertTrue(
+                any("exactly one authority row" in item for item in findings),
+                findings,
+            )
+
+            base_path = Path(directory) / "BASE.json"
+            base = json.loads((WORKSPACE / "BASE.json").read_text(encoding="utf-8"))
+            base["source_commit"] = "0" * 40
+            base_path.write_text(canonical_json(base) + "\n", encoding="utf-8")
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                manifest,
+                human,
+                repositories,
+                findings,
+                base_path=base_path,
+            )
+            self.assertTrue(
+                any("BASE.json source_commit differs" in item for item in findings),
+                findings,
+            )
 
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"

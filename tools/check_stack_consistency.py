@@ -92,6 +92,7 @@ STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
+DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 # Original completed EPAC event. Advancing release pins cannot reselect history.
@@ -192,6 +193,7 @@ def check_digital_metrics_projection(
     repositories: dict[str, dict[str, Any]],
     findings: list[str],
     work_graph_path: Path = DIGITAL_METRICS_GRAPH_PATH,
+    base_path: Path = DIGITAL_METRICS_BASE_PATH,
 ) -> None:
     """Require one exact machine/human projection of the digital-metrics graph."""
     try:
@@ -241,9 +243,23 @@ def check_digital_metrics_projection(
         for field in ("commit", "authority", "relation"):
             if manifest_entry.get(field) != graph_entry.get(field):
                 error(findings, "digital_metrics.projection", f"{repository}: {field} differs from work graph")
-            value = graph_entry.get(field)
-            if isinstance(value, str) and value not in human:
-                error(findings, "digital_metrics.human", f"STACK_MANIFEST.md omits {repository} {field}")
+        participant_row = (
+            f"| `{DIGITAL_METRICS_WORKSPACE}` | `{repository}` | "
+            f"`{graph_entry.get('commit', '')}` | {graph_entry.get('relation', '')} | no |"
+        )
+        if human.splitlines().count(participant_row) != 1:
+            error(
+                findings,
+                "digital_metrics.human",
+                f"STACK_MANIFEST.md must carry exactly one participant row for {repository}",
+            )
+        authority_row = f"| `{repository}` | {graph_entry.get('authority', '')} |"
+        if human.splitlines().count(authority_row) != 1:
+            error(
+                findings,
+                "digital_metrics.human",
+                f"STACK_MANIFEST.md must carry exactly one authority row for {repository}",
+            )
         if manifest_entry.get("authority_transfer") is not False or manifest_entry.get("canonical_release") is not False:
             error(findings, "digital_metrics.status", f"{repository}: research projection must remain noncanonical and non-transferring")
 
@@ -251,8 +267,36 @@ def check_digital_metrics_projection(
     if owner.get("boundaries") != graph.get("boundaries"):
         error(findings, "digital_metrics.boundaries", "manifest boundary projection differs from work graph")
     boundary_projection = json.dumps(graph.get("boundaries"), sort_keys=True, separators=(",", ":"))
-    if boundary_projection not in human:
+    if human.splitlines().count(f"`{boundary_projection}`") != 1:
         error(findings, "digital_metrics.human", "STACK_MANIFEST.md omits the exact boundary projection")
+
+    try:
+        base = load_json(base_path)
+    except (OSError, json.JSONDecodeError) as exc:
+        error(findings, "digital_metrics.base", f"cannot read BASE.json: {exc}")
+    else:
+        if not isinstance(base, dict):
+            error(findings, "digital_metrics.base", "BASE.json must contain an object")
+            base = {}
+        stack_entries = [
+            item for item in graph_participants
+            if item.get("repository") == "The-Interdependency/stack"
+        ]
+        expected_base = {
+            "project": "digital-metrics",
+            "source_repository": "The-Interdependency/stack",
+            "source_commit": stack_entries[0].get("commit") if len(stack_entries) == 1 else None,
+            "standing": "stack-local-research",
+            "canon_path": None,
+        }
+        for field, expected in expected_base.items():
+            if base.get(field) != expected:
+                error(
+                    findings,
+                    "digital_metrics.base",
+                    f"BASE.json {field} differs from work-graph custody: "
+                    f"expected {expected!r}, got {base.get(field)!r}",
+                )
 
     skill = repositories.get("The-Interdependency/skill-lib", {})
     graph_skill = next(

@@ -63,7 +63,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-from types import ModuleType
+from types import CodeType, ModuleType
 import unittest
 from unittest.mock import patch
 
@@ -73,6 +73,7 @@ STACK_ROOT = ROOT.parents[1]
 WORK_GRAPH_PATH = ROOT / "WORK_GRAPH.json"
 STACK_MANIFEST_PATH = STACK_ROOT / "stack-manifest.json"
 STACK_HUMAN_MANIFEST_PATH = STACK_ROOT / "STACK_MANIFEST.md"
+BASE_PATH = ROOT / "BASE.json"
 PARSER_PATH = STACK_ROOT / "skill-lib/msdmd/parsers/universal.py"
 AUDITOR_PATH = ROOT / "audit_contracts.py"
 FROZEN_RECEIPT_PATH = ROOT / "receipts/native-mobius-v0.json"
@@ -91,6 +92,7 @@ WITNESS_DATA_FILES = (
     WORK_GRAPH_PATH,
     STACK_MANIFEST_PATH,
     STACK_HUMAN_MANIFEST_PATH,
+    BASE_PATH,
     FROZEN_RECEIPT_PATH,
     PARSER_PATH,
 )
@@ -111,6 +113,7 @@ UNSAFE_RUNNER_HOOKS = frozenset(
         "_callSetUp",
         "_callTestMethod",
         "_callTearDown",
+        "_callMaybeAsync",
         "__getattribute__",
         "__getattr__",
     }
@@ -284,6 +287,15 @@ def _run_unittest_witnesses(
         for dependency_path, source in audited_sources.items()
     }
     snapshots[path.resolve()] = test_source
+    test_code = compile(test_source, str(path), "exec", dont_inherit=True)
+    static_codes: dict[str, list[CodeType]] = {}
+    pending_codes = [test_code]
+    while pending_codes:
+        code = pending_codes.pop()
+        static_codes.setdefault(code.co_qualname, []).append(code)
+        pending_codes.extend(
+            constant for constant in code.co_consts if isinstance(constant, CodeType)
+        )
 
     def read_snapshot(candidate: Path) -> bytes:
         resolved = candidate.resolve()
@@ -328,7 +340,7 @@ def _run_unittest_witnesses(
                     ),
                     dependency.__dict__,
                 )
-            exec(compile(test_source, str(path), "exec", dont_inherit=True), module.__dict__)
+            exec(test_code, module.__dict__)
             cases = []
             admitted_runtime_methods = []
             for method_name, class_name in sorted(admitted_methods.items()):
@@ -351,6 +363,14 @@ def _run_unittest_witnesses(
                         f"runtime witness method is not an exact function: "
                         f"{class_name}.{method_name}"
                     )
+                declared_codes = static_codes.get(
+                    f"{class_name}.{method_name}", []
+                )
+                if len(declared_codes) != 1 or method.__code__ is not declared_codes[0]:
+                    raise AuditIdentityError(
+                        "runtime witness method differs from statically admitted body: "
+                        f"{class_name}.{method_name}"
+                    )
                 case = case_class(method_name)
                 instance_overrides = sorted(UNSAFE_RUNNER_HOOKS & case.__dict__.keys())
                 if instance_overrides:
@@ -360,7 +380,7 @@ def _run_unittest_witnesses(
                     )
                 cases.append(case)
                 admitted_runtime_methods.append(
-                    (case, method_name, method, method.__code__)
+                    (case, method_name, method, declared_codes[0])
                 )
             # A constructor can mutate its own class or a previously constructed
             # witness class. Revalidate the complete runtime set only after all
@@ -384,27 +404,86 @@ def _run_unittest_witnesses(
                         "runtime witness instance replaced admitted method: "
                         f"{case_class.__name__}.{method_name}"
                     )
+            dispatched_codes = set()
+            for case, method_name, method, code in admitted_runtime_methods:
+                case_class = type(case)
+                bound_method = method.__get__(case, case_class)
+                original_call_setup = case._callSetUp
+                original_call_maybe_async = getattr(case, "_callMaybeAsync", None)
+
+                def exact_dispatch(
+                    _runner_method,
+                    *,
+                    case=case,
+                    method_name=method_name,
+                    bound_method=bound_method,
+                    code=code,
+                    original_call_maybe_async=original_call_maybe_async,
+                ):
+                    dispatched_codes.add(code)
+                    if isinstance(case, unittest.IsolatedAsyncioTestCase):
+                        if original_call_maybe_async is None:
+                            raise AuditIdentityError(
+                                "async witness has no trusted dispatch helper"
+                            )
+                        return original_call_maybe_async(bound_method)
+                    returned = bound_method()
+                    if returned is not None:
+                        raise AuditIdentityError(
+                            "witness method returned a non-None value: "
+                            f"{type(case).__name__}.{method_name}"
+                        )
+                    return None
+
+                def guarded_call_setup(
+                    *,
+                    case=case,
+                    method_name=method_name,
+                    method=method,
+                    original_call_setup=original_call_setup,
+                    exact_dispatch=exact_dispatch,
+                ):
+                    original_call_setup()
+                    overridden = _runtime_runner_override(type(case))
+                    if overridden:
+                        raise AuditIdentityError(
+                            "runtime witness class overrides unittest execution "
+                            f"during setup: {overridden}"
+                        )
+                    instance_overrides = sorted(
+                        (UNSAFE_RUNNER_HOOKS - {"_callSetUp", "_callTestMethod"})
+                        & case.__dict__.keys()
+                    )
+                    if instance_overrides:
+                        raise AuditIdentityError(
+                            "runtime witness instance overrides unittest execution "
+                            f"during setup: {type(case).__name__}."
+                            f"{instance_overrides[0]}"
+                        )
+                    if type(case).__dict__.get(method_name) is not method:
+                        raise AuditIdentityError(
+                            "runtime witness method changed during setup: "
+                            f"{type(case).__name__}.{method_name}"
+                        )
+                    if method_name in case.__dict__:
+                        raise AuditIdentityError(
+                            "runtime witness instance replaced admitted method during setup: "
+                            f"{type(case).__name__}.{method_name}"
+                        )
+                    case.__dict__["_callTestMethod"] = exact_dispatch
+
+                case.__dict__["_callSetUp"] = guarded_call_setup
+                case.__dict__["_callTestMethod"] = exact_dispatch
+
             suite = unittest.TestSuite(cases)
             stream = io.StringIO()
+            result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
             expected_codes = {
                 code: f"{type(case).__name__}.{method_name}"
                 for case, method_name, _method, code in admitted_runtime_methods
             }
-            executed_codes = set()
-            previous_trace = sys.gettrace()
-
-            def trace_witness(frame, event, _argument):
-                if event == "call" and frame.f_code in expected_codes:
-                    executed_codes.add(frame.f_code)
-                return trace_witness
-
-            sys.settrace(trace_witness)
-            try:
-                result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
-            finally:
-                sys.settrace(previous_trace)
             missing_methods = sorted(
-                name for code, name in expected_codes.items() if code not in executed_codes
+                name for code, name in expected_codes.items() if code not in dispatched_codes
             )
             if (
                 missing_methods
@@ -414,9 +493,13 @@ def _run_unittest_witnesses(
                 and not result.unexpectedSuccesses
             ):
                 raise AuditIdentityError(
-                    "admitted witness method did not execute: "
+                    "admitted witness method was not dispatched by unittest: "
                     + ", ".join(missing_methods)
                 )
+    except (SystemExit, KeyboardInterrupt) as exc:
+        raise AuditIdentityError(
+            f"witness module attempted to terminate the audit: {type(exc).__name__}"
+        ) from exc
     finally:
         for name, prior in reversed(tuple(previous.items())):
             if prior is missing:

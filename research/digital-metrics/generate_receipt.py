@@ -378,6 +378,37 @@ def _validate_repository_work_graph_projection(
     return hashlib.sha256(manifest_source).hexdigest()
 
 
+def _verify_stack_base(
+    work_graph: Mapping[str, Any],
+    workspace: Path,
+    base_path: Path | None = None,
+) -> str:
+    """Bind the research BASE record to the work graph's Stack participant."""
+    source_path = base_path or workspace / "BASE.json"
+    try:
+        source = source_path.read_bytes()
+        base = json.loads(source.decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ProducerIdentityError(f"invalid digital-metrics BASE.json: {exc}") from exc
+    if not isinstance(base, dict):
+        raise ProducerIdentityError("digital-metrics BASE.json must contain an object")
+    stack = _participant(work_graph, "The-Interdependency/stack")
+    expected = {
+        "project": "digital-metrics",
+        "source_repository": "The-Interdependency/stack",
+        "source_commit": stack["commit"],
+        "standing": "stack-local-research",
+        "canon_path": None,
+    }
+    for field, expected_value in expected.items():
+        if base.get(field) != expected_value:
+            raise ProducerIdentityError(
+                f"digital-metrics BASE.json {field} differs from work graph: "
+                f"expected {expected_value!r}, got {base.get(field)!r}"
+            )
+    return hashlib.sha256(source).hexdigest()
+
+
 def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: tuple[str, ...]) -> None:
     root = root.resolve()
     git_root = Path(_git(root, "rev-parse", "--show-toplevel")).resolve()
@@ -682,6 +713,7 @@ def build_receipt(
     stack_manifest_sha256 = _validate_repository_work_graph_projection(
         work_graph, workspace
     )
+    stack_base_sha256 = _verify_stack_base(work_graph, workspace)
     metapat_participant = _participant(work_graph, "The-Interdependency/metapat")
     ucns_participant = _participant(work_graph, "The-Interdependency/ucns")
     edcm_participant = _participant(work_graph, "The-Interdependency/edcm")
@@ -865,6 +897,7 @@ def build_receipt(
     inputs = [
         {"identity": "digital-metric-work-graph", "sha256": work_graph_sha256},
         {"identity": "stack-manifest-source", "sha256": stack_manifest_sha256},
+        {"identity": "digital-metrics-base-source", "sha256": stack_base_sha256},
         {"identity": "metapat-affixiation-application", "sha256": application.application_digest},
         {"identity": "metapat-affixiation-application-record", "sha256": sha256_json(application_record)},
         {"identity": "ucns-native-mobius-source", "sha256": ucns_source_sha256},
