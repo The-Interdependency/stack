@@ -157,13 +157,14 @@ KMAC transcript.
 
 ## Usage guidance
 
-Recheck the public artifact identities without reading the reference module:
+Recheck the audited base identities without reading the reference module. The
+explicit revision keeps later source-receipt clarifications from changing the
+historical input set:
 
 ```bash
-sha256sum \
-  research/urpcs/docs/urpcs-v1-spec.md \
-  research/urpcs/vectors/urpcs-v1-vectors.json \
-  research/urpcs/SOURCE_RECEIPT.json
+git show db5635c7d48652d6506c3bd343f8ead0bb53872e:research/urpcs/docs/urpcs-v1-spec.md | sha256sum
+git show db5635c7d48652d6506c3bd343f8ead0bb53872e:research/urpcs/vectors/urpcs-v1-vectors.json | sha256sum
+git show db5635c7d48652d6506c3bd343f8ead0bb53872e:research/urpcs/SOURCE_RECEIPT.json | sha256sum
 ```
 
 Future decoder work may resume only after the public specification supplies the
