@@ -124,7 +124,7 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
-- URPCS has bounded deterministic codec evidence but lacks an independent decoder,
+- URPCS has bounded reference and independent-decoder evidence but lacks a
   confidentiality model, durable host-state proof, and independent release authority.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "1242de61073ee36ef1255cbac9d7835142c0f1712b4d1213ef6960b7832a4bcf",
+  "work_graph_sha256": "808d98a91d8dac553da17ec0bb2fb71b208318c609014faad818efc750dc4e78",
   "repositories": [
     {
       "repository": "The-Interdependency/stack",
@@ -23,9 +23,9 @@
     "semantic_mapping": "external-provenance",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "independent decoder interoperability is untested",
+      "independent decoder interoperability survived for the committed bounded profile",
       "confidentiality and production security are unclaimed",
-      "the full accepted Laws 1-13 are public, but clean-room decoder replay remains pending",
+      "the full accepted Laws 1-13 are public and the frozen clean-room decoder replay passed",
       "URPCS codec-local Gonol records are not UCNS gonols"
     ]
   }

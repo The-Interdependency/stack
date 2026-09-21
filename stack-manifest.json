@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d",
+  "work_graph_sha256": "99aa9e4dfd0a9b4f37d2aefe751247cb918230bc6672bd9a2f2452bae6ab82b4",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -68,7 +68,7 @@
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
-      "URPCS remains an authenticated codec experiment without a confidentiality model, independent decoder, or release authority",
+      "URPCS remains an authenticated codec experiment with bounded independent decoder evidence but without a confidentiality model or release authority",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
