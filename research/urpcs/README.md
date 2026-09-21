@@ -28,8 +28,8 @@ UCNS geometry, or UCNS-gonol identity.
 
 ## Artifacts
 
-- [`docs/urpcs-v1-spec.md`](docs/urpcs-v1-spec.md) — accepted freeze summary and
-  exact Law 2/Law 13 wire decisions.
+- [`docs/urpcs-v1-spec.md`](docs/urpcs-v1-spec.md) — normative public Laws 1–13,
+  complete forward/reverse composition, and exact wire/state rules.
 - [`urpcs_v1_reference.py`](urpcs_v1_reference.py) — dependency-free reference
   encoder, decoder, state advance, and fixture generator.
 - [`vectors/urpcs-v1-vectors.json`](vectors/urpcs-v1-vectors.json) — byte-exact
@@ -38,6 +38,8 @@ UCNS geometry, or UCNS-gonol identity.
   results, artifact receipts, and claim boundary.
 - [`docs/URPCS-v1-independent-decoder-audit.md`](docs/URPCS-v1-independent-decoder-audit.md)
   — frozen independent-decoder sufficiency audit and exact public-input identities.
+- [`docs/URPCS-v1-public-contract-repair.md`](docs/URPCS-v1-public-contract-repair.md)
+  — repair scope, preservation boundary, and clean-room replay gate.
 - [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json) — imported-artifact identities.
 
 ## Usage guidance
@@ -74,9 +76,9 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## Next gates
 
-1. Amend the public specification with the missing framing, authentication,
-   layer-reversal, receipt, and state-advance laws enumerated by the independent
-   decoder audit; decoder work must not resume before that contract repair.
+1. Run a fresh clean-room decoder audit using the repaired public specification
+   as its only URPCS law source; compare expected outputs only after freezing the
+   implementation.
 2. A threat model and leakage model must precede any confidentiality claim.
 3. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
    fork policy require implementation and adversarial testing.
@@ -85,7 +87,7 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## hmmm
 
-The independent-decoder audit is `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED`: the
-committed public contract does not yet determine a decoder. The reference remains
-one implementation agreeing with itself; the specification needs a door before a
-second implementation can walk through it.
+The frozen audit is `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input. The
+public contract has since been repaired without changing reference code or
+vectors. Independent interoperability remains the next gate: the door is now
+specified, but a clean-room implementation still has to walk through it.
