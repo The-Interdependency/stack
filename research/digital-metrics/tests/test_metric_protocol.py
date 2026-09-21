@@ -2360,7 +2360,7 @@ class MetricProtocolTests(unittest.TestCase):
             ("authority", lambda graph: graph["participants"][0].__setitem__("authority", "undeclared drift"), "authority differs"),
             ("relation", lambda graph: graph["participants"][0].__setitem__("relation", "undeclared drift"), "relation differs"),
             ("boundary", lambda graph: graph["boundaries"].__setitem__("semantic_mapping", "undeclared-drift"), "boundary projection differs"),
-            ("ordering", lambda graph: graph["participants"].reverse(), "manifest repositories"),
+            ("ordering", lambda graph: graph["participants"].reverse(), "exact ordered v0 participant set"),
         )
         with TemporaryDirectory() as directory:
             graph_path = Path(directory) / "WORK_GRAPH.json"
@@ -2420,6 +2420,55 @@ class MetricProtocolTests(unittest.TestCase):
             )
             self.assertTrue(
                 any("authority_transfer must be false" in item for item in findings),
+                findings,
+            )
+
+            graph = deepcopy(baseline_graph)
+            graph["participants"] = [
+                item for item in graph["participants"]
+                if item["repository"] != "The-Interdependency/edcm"
+            ]
+            graph["work_graph_sha256"] = sha256_json(
+                {"participants": graph["participants"], "boundaries": graph["boundaries"]}
+            )
+            drifted_manifest = deepcopy(manifest)
+            drifted_manifest["research_participants"] = [
+                item for item in drifted_manifest["research_participants"]
+                if not (
+                    item.get("workspace") == "research/digital-metrics/"
+                    and item.get("repository") == "The-Interdependency/edcm"
+                )
+            ]
+            drifted_manifest["work_graph_sha256"] = sha256_json(
+                {
+                    key: drifted_manifest[key]
+                    for key in ("repositories", "research_participants", "boundaries")
+                }
+            )
+            edcm_entry = next(
+                item for item in baseline_graph["participants"]
+                if item["repository"] == "The-Interdependency/edcm"
+            )
+            matched_human = human.replace(
+                "| `research/digital-metrics/` | `The-Interdependency/edcm` | "
+                f"`{edcm_entry['commit']}` | {edcm_entry['relation']} | no |\n",
+                "",
+            ).replace(
+                "| `The-Interdependency/edcm` | "
+                f"{edcm_entry['authority']} |\n",
+                "",
+            )
+            graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                drifted_manifest,
+                matched_human,
+                repositories,
+                findings,
+                graph_path,
+            )
+            self.assertTrue(
+                any("exact ordered v0 participant set" in item for item in findings),
                 findings,
             )
 

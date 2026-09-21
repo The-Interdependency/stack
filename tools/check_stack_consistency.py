@@ -106,6 +106,13 @@ DIGITAL_METRICS_FALSE_TRANSFER_FIELDS = (
     "measurement_status_transfer",
     "empirical_status_transfer",
 )
+DIGITAL_METRICS_PARTICIPANT_REPOSITORIES = (
+    "The-Interdependency/stack",
+    "The-Interdependency/skill-lib",
+    "The-Interdependency/metapat",
+    "The-Interdependency/ucns",
+    "The-Interdependency/edcm",
+)
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
 DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
 DIGITAL_METRICS_BASE_STATIC = {
@@ -409,6 +416,13 @@ def check_digital_metrics_projection(
     ]
     graph_repositories = [item.get("repository") for item in graph_participants]
     projected_repositories = [item.get("repository") for item in projected]
+    if tuple(graph_repositories) != DIGITAL_METRICS_PARTICIPANT_REPOSITORIES:
+        error(
+            findings,
+            "digital_metrics.participants",
+            "work graph must contain the exact ordered v0 participant set",
+        )
+        return
     if projected_repositories != graph_repositories:
         error(
             findings,
