@@ -2,8 +2,7 @@
 
 Usage guidance::
 
-    PYTHONPATH=skill-lib python3 \
-      research/digital-metrics/audit_contracts.py
+    python3 research/digital-metrics/audit_contracts_cli.py
 
 The audit parses source declarations and Python AST only.  It exits nonzero for
 unwitnessed contracts, unknown ``proves`` targets, unresolved ``self::`` calls,
@@ -44,6 +43,11 @@ from __future__ import annotations
 #   then: it source-loads only bytes whose digest and skill-lib commit match the exact Stack/work-graph pins
 #   class: provenance
 #
+# id: digital_metric_contract_audit_binds_executing_source
+#   given: the outer auditor is entered without a source digest or its file changes after load
+#   then: audit rejects unless the executing-byte digest equals the captured auditor snapshot
+#   class: provenance
+#
 # id: digital_metric_work_graph_matches_stack_manifest
 #   given: the digital-metrics work graph and Stack machine/human manifests project the same workspace
 #   then: participant commits, authority, relations, boundaries, and parser identity agree exactly
@@ -66,8 +70,10 @@ STACK_ROOT = ROOT.parents[1]
 WORK_GRAPH_PATH = ROOT / "WORK_GRAPH.json"
 STACK_MANIFEST_PATH = STACK_ROOT / "stack-manifest.json"
 PARSER_PATH = STACK_ROOT / "skill-lib/msdmd/parsers/universal.py"
+AUDITOR_PATH = ROOT / "audit_contracts.py"
 SOURCE_FILES = (
-    ROOT / "audit_contracts.py",
+    AUDITOR_PATH,
+    ROOT / "audit_contracts_cli.py",
     ROOT / "metric_protocol.py",
     ROOT / "generate_receipt.py",
     ROOT / "generate_receipt_cli.py",
@@ -79,6 +85,7 @@ WITNESS_DEPENDENCY_FILES = (STACK_ROOT / "tools/check_stack_consistency.py",)
 AUDITED_IMPORT_ORDER = (
     ("metric_protocol", ROOT / "metric_protocol.py"),
     ("audit_contracts", ROOT / "audit_contracts.py"),
+    ("audit_contracts_cli", ROOT / "audit_contracts_cli.py"),
     ("generate_receipt", ROOT / "generate_receipt.py"),
     ("generate_receipt_cli", ROOT / "generate_receipt_cli.py"),
     ("verify_receipt", ROOT / "verify_receipt.py"),
@@ -96,6 +103,7 @@ UNSAFE_RUNNER_HOOKS = frozenset(
         "__getattr__",
     }
 )
+_LOADED_AUDITOR_SHA256 = globals().get("__source_sha256__")
 
 
 class AuditIdentityError(ValueError):
@@ -217,6 +225,10 @@ def _run_unittest_witnesses(
                 dependency.__file__ = str(dependency_path)
                 dependency.__cached__ = None
                 dependency.__package__ = ""
+                if dependency_path.resolve() == AUDITOR_PATH.resolve():
+                    dependency.__source_sha256__ = hashlib.sha256(
+                        dependency_source
+                    ).hexdigest()
                 sys.modules[dependency_name] = dependency
                 exec(
                     compile(
@@ -250,7 +262,14 @@ def _run_unittest_witnesses(
                             f"runtime witness class overrides unittest execution: "
                             f"{ancestor.__name__}.{overridden[0]}"
                         )
-                cases.append(case_class(method_name))
+                case = case_class(method_name)
+                instance_overrides = sorted(UNSAFE_RUNNER_HOOKS & case.__dict__.keys())
+                if instance_overrides:
+                    raise AuditIdentityError(
+                        f"runtime witness instance overrides unittest execution: "
+                        f"{class_name}.{instance_overrides[0]}"
+                    )
+                cases.append(case)
             suite = unittest.TestSuite(cases)
             stream = io.StringIO()
             result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
@@ -395,16 +414,31 @@ def audit() -> dict[str, object]:
     findings: list[str] = []
 
     try:
-        parser = _load_pinned_parser()
+        if not isinstance(_LOADED_AUDITOR_SHA256, str) or len(
+            _LOADED_AUDITOR_SHA256
+        ) != 64 or any(
+            character not in "0123456789abcdef"
+            for character in _LOADED_AUDITOR_SHA256
+        ):
+            raise AuditIdentityError(
+                "auditor API must be source-loaded; use audit_contracts_cli.py"
+            )
         snapshot_paths = dict.fromkeys(
             (
                 *SOURCE_FILES,
+                AUDITOR_PATH,
                 *WITNESS_DEPENDENCY_FILES,
                 *(path for _name, path in AUDITED_IMPORT_ORDER),
             )
         )
         source_snapshots = {path: path.read_bytes() for path in snapshot_paths}
         test_snapshots = {path: path.read_bytes() for path in TEST_FILES}
+        auditor_sha256 = hashlib.sha256(source_snapshots[AUDITOR_PATH]).hexdigest()
+        if auditor_sha256 != _LOADED_AUDITOR_SHA256:
+            raise AuditIdentityError(
+                "executing auditor digest differs from captured source snapshot"
+            )
+        parser = _load_pinned_parser()
     except (
         AuditIdentityError,
         OSError,
@@ -414,7 +448,7 @@ def audit() -> dict[str, object]:
         json.JSONDecodeError,
         SyntaxError,
     ) as exc:
-        findings.append(f"GAP pinned msdmd parser unavailable: {exc}")
+        findings.append(f"GAP audit identity unavailable: {exc}")
         return {
             "schema": "the-interdependency.digital-metric-contract-audit",
             "version": "0.1.0",
@@ -520,4 +554,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit("run audit_contracts_cli.py so auditor execution is source-bound")

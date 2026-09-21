@@ -106,7 +106,7 @@ from __future__ import annotations
 #   cleanup: automatic temporary-directory cleanup
 #
 # id: check_digital_metric_fixed_participant_set
-#   proves: digital_metric_work_graph_requires_fixed_participants
+#   proves: digital_metric_work_graph_requires_fixed_participants,digital_metric_generator_requires_repository_work_graph
 #   call: self::test_work_graph_requires_complete_fixed_participant_set
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
@@ -168,6 +168,12 @@ from __future__ import annotations
 # id: check_digital_metric_parser_identity_gate
 #   proves: digital_metric_contract_audit_binds_parser_identity
 #   call: self::test_contract_audit_rejects_unpinned_parser_bytes
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
+# id: check_digital_metric_auditor_source_identity
+#   proves: digital_metric_contract_audit_binds_executing_source,digital_metric_audit_cli_binds_loaded_bytes
+#   call: self::test_contract_auditor_requires_source_bound_snapshot
 #   mutates: temporary directory only
 #   cleanup: automatic temporary-directory cleanup
 #
@@ -243,7 +249,14 @@ from metric_protocol import (  # noqa: E402
     validate_observation,
     verify_receipt,
 )
-import audit_contracts as contract_audit  # noqa: E402
+contract_audit = _source_load_module(  # noqa: E402
+    "_test_stack_metric_contract_audit",
+    WORKSPACE / "audit_contracts.py",
+)
+audit_cli = _source_load_module(  # noqa: E402
+    "_test_stack_metric_contract_audit_cli",
+    WORKSPACE / "audit_contracts_cli.py",
+)
 
 
 generator_cli = _source_load_module(  # noqa: E402
@@ -268,6 +281,7 @@ from generate_receipt import (  # noqa: E402
     load_work_graph,
     _load_metapat_application,
     _load_ucns_native_module,
+    _require_repository_work_graph,
     _verify_edcm_decoder_guard,
     verify_checkout,
 )
@@ -862,6 +876,11 @@ class MetricProtocolTests(unittest.TestCase):
             graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
             with self.assertRaisesRegex(ProducerIdentityError, "exact ordered v0 participant set"):
                 load_work_graph(graph_path)
+            with self.assertRaisesRegex(
+                ProducerIdentityError,
+                "work graph must be the repository-owned path",
+            ):
+                _require_repository_work_graph(graph_path, WORKSPACE)
 
     def test_metapat_loader_ignores_and_restores_cached_module(self) -> None:
         with TemporaryDirectory() as directory:
@@ -1485,6 +1504,31 @@ class MetricProtocolTests(unittest.TestCase):
                         {},
                     )
 
+            instance_override_source = (
+                "import unittest\n"
+                "class Sneaky(unittest.TestCase):\n"
+                "    def __init__(self, methodName='runTest'):\n"
+                "        super().__init__(methodName)\n"
+                "        def bypass(result=None):\n"
+                "            result.startTest(self)\n"
+                "            result.stopTest(self)\n"
+                "            return result\n"
+                "        self.run = bypass\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "instance overrides unittest execution",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "Sneaky"},
+                        instance_override_source,
+                        {},
+                    )
+
             parent_path = root / "generate_receipt.py"
             dependency_snapshot = b"MARKER = 'snapshot'\n"
             parent_snapshot = (
@@ -1522,6 +1566,43 @@ class MetricProtocolTests(unittest.TestCase):
                 )
             self.assertTrue(clean, output)
             self.assertEqual(tests_run, 1)
+
+    def test_contract_auditor_requires_source_bound_snapshot(self) -> None:
+        source_path = WORKSPACE / "audit_contracts.py"
+        source = source_path.read_bytes()
+        unbound = ModuleType("_test_unbound_contract_auditor")
+        unbound.__file__ = str(source_path)
+        unbound.__cached__ = None
+        unbound.__package__ = ""
+        exec(compile(source, str(source_path), "exec", dont_inherit=True), unbound.__dict__)
+        report = unbound.audit()
+        self.assertFalse(report["passed"])
+        self.assertTrue(
+            any("auditor API must be source-loaded" in item for item in report["findings"]),
+            report["findings"],
+        )
+
+        with TemporaryDirectory() as directory:
+            copied_source = Path(directory) / "audit_contracts.py"
+            copied_source.write_bytes(source)
+            loaded = audit_cli._load_auditor(copied_source)
+            expected = hashlib.sha256(source).hexdigest()
+            self.assertEqual(loaded._LOADED_AUDITOR_SHA256, expected)
+            copied_source.write_bytes(source + b"\n")
+            with patch.object(loaded, "SOURCE_FILES", (copied_source,)), patch.object(
+                loaded, "TEST_FILES", ()
+            ), patch.object(loaded, "WITNESS_DEPENDENCY_FILES", ()), patch.object(
+                loaded, "AUDITED_IMPORT_ORDER", ()
+            ):
+                changed_report = loaded.audit()
+            self.assertFalse(changed_report["passed"])
+            self.assertTrue(
+                any(
+                    "executing auditor digest differs" in item
+                    for item in changed_report["findings"]
+                ),
+                changed_report["findings"],
+            )
 
     def test_contract_audit_rejects_unpinned_parser_bytes(self) -> None:
         with TemporaryDirectory() as directory:

@@ -81,7 +81,7 @@ jobs:
         run: cmp stack/skill-lib/msdmd/parsers/universal.py skill-lib/msdmd/parsers/universal.py
       - name: Audit metric contract witnesses
         working-directory: stack
-        run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts.py
+        run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts_cli.py
       - name: Run adversarial metric protocol tests
         working-directory: stack
         run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s research/digital-metrics/tests -p 'test*.py' -v

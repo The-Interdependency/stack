@@ -84,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 6ab1eb559c31045311a52c8a118b483f8457dc2f8a33d0615f174beab0041d48
-File SHA-256: 5ec6aad5fc1a6dd0b7c1725bb573710783aeb9d50f5bd8ffe616f2699ba7b7a1
+Receipt payload digest (`receipt_sha256`): 724dc4ef31df329a047e51a3460261ec8d4b9223a2f8f7efa4d2d64c235a29e8
+File SHA-256: c94247eed29c4e90bea8b9668218000bf12c497a36cef8c63c897e18339ac98d
 ```
 
 ## Usage guidance
@@ -96,7 +96,8 @@ failures, unexpected successes, test failures, and static/runtime count drift:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
-python3 research/digital-metrics/audit_contracts.py
+PYTHONDONTWRITEBYTECODE=1 \
+python3 research/digital-metrics/audit_contracts_cli.py
 ```
 
 Then run the adversarial witnesses directly for verbose per-test output:

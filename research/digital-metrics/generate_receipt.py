@@ -56,6 +56,11 @@ from __future__ import annotations
 #   then: generation rejects the graph before resolving any producer
 #   class: provenance
 #
+# id: digital_metric_generator_requires_repository_work_graph
+#   given: receipt generation is pointed at a copied or alternate self-digested work graph
+#   then: generation rejects unless the resolved path is the repository-owned WORK_GRAPH.json
+#   class: provenance
+#
 # id: digital_metric_generator_loads_committed_sources_only
 #   given: an untracked shadow or altered working-tree dependency differs from the pinned METAPAT commit
 #   then: the source finder executes only Python blobs read from the participant commit object
@@ -251,6 +256,16 @@ def load_work_graph(path: Path) -> dict[str, Any]:
     if value["work_graph_sha256"] != sha256_json(payload):
         raise ProducerIdentityError("work graph digest mismatch")
     return value
+
+
+def _require_repository_work_graph(path: Path, workspace: Path) -> Path:
+    expected = (workspace / "WORK_GRAPH.json").resolve()
+    resolved = path.resolve()
+    if resolved != expected:
+        raise ProducerIdentityError(
+            f"work graph must be the repository-owned path: {expected}"
+        )
+    return resolved
 
 
 def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: tuple[str, ...]) -> None:
@@ -552,7 +567,8 @@ def build_receipt(
         verifier_path=(verifier_path or workspace / "verify_receipt.py").resolve(),
         verifier_sha256=verifier_sha256,
     )
-    work_graph = load_work_graph(work_graph_path.resolve())
+    work_graph_path = _require_repository_work_graph(work_graph_path, workspace)
+    work_graph = load_work_graph(work_graph_path)
     metapat_participant = _participant(work_graph, "The-Interdependency/metapat")
     ucns_participant = _participant(work_graph, "The-Interdependency/ucns")
     edcm_participant = _participant(work_graph, "The-Interdependency/edcm")
