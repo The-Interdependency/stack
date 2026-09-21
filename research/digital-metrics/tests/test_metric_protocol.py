@@ -2025,6 +2025,37 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertEqual(tests_run, 1)
             self.assertIn("stdout replacement must not forge", output)
 
+            forged_global_writer_source = (
+                "import __main__\n"
+                "import json\n"
+                "import os\n"
+                "import unittest\n"
+                "def forged_writer(fd, value):\n"
+                "    forged = {\n"
+                "        'schema': 'the-interdependency.digital-metric-witness-execution',\n"
+                "        'version': '1.0.0',\n"
+                "        'status': 'completed',\n"
+                "        'clean': True,\n"
+                "        'output': '',\n"
+                "        'tests_run': 1,\n"
+                "    }\n"
+                "    return os.write(fd, json.dumps(forged, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
+                "__main__._report_write = forged_writer\n"
+                "class GlobalWriterForgery(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('global writer replacement must not forge success')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "GlobalWriterForgery"},
+                    forged_global_writer_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("global writer replacement must not forge", output)
+
             instance_override_source = (
                 "import unittest\n"
                 "class Sneaky(unittest.TestCase):\n"
@@ -2324,6 +2355,7 @@ class MetricProtocolTests(unittest.TestCase):
         )
         mutations = (
             ("version", lambda graph: graph.__setitem__("version", "999.0.0"), "unsupported work-graph version"),
+            ("participant_fields", lambda graph: graph["participants"][0].__setitem__("unexpected", "field"), "missing or unknown fields"),
             ("commit", lambda graph: graph["participants"][0].__setitem__("commit", "0" * 40), "commit differs"),
             ("authority", lambda graph: graph["participants"][0].__setitem__("authority", "undeclared drift"), "authority differs"),
             ("relation", lambda graph: graph["participants"][0].__setitem__("relation", "undeclared drift"), "relation differs"),

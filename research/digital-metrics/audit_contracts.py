@@ -637,66 +637,69 @@ from pathlib import Path
 import sys
 from types import ModuleType
 
-payload = json.loads(sys.stdin.buffer.read().decode("utf-8"))
-_report_fd = os.dup(1)
-_report_write = os.write
-_report_close = os.close
-_shutdown_marker = base64.b64decode(payload.pop("shutdown_marker"))
-def _emit_shutdown_marker(
-    marker=_shutdown_marker,
-    writer=os.write,
-):
-    writer(2, marker)
-atexit.register(_emit_shutdown_marker)
-del _emit_shutdown_marker
-del _shutdown_marker
-auditor_source = base64.b64decode(payload["auditor_source"])
-module = ModuleType("_stack_digital_metric_isolated_witness_auditor")
-module.__file__ = payload["auditor_path"]
-module.__cached__ = None
-module.__package__ = ""
-module.__source_sha256__ = hashlib.sha256(auditor_source).hexdigest()
-sys.modules[module.__name__] = module
-exec(
-    compile(auditor_source, payload["auditor_path"], "exec", dont_inherit=True),
-    module.__dict__,
-)
-module.AUDITED_IMPORT_ORDER = tuple(
-    (item["name"], Path(item["path"]))
-    for item in payload["audited_import_order"]
-)
-audited_sources = {
-    Path(item["path"]): base64.b64decode(item["source"])
-    for item in payload["audited_sources"]
-}
-try:
-    clean, output, tests_run = module._run_unittest_witnesses_in_process(
-        Path(payload["path"]),
-        dict(payload["admitted_methods"]),
-        base64.b64decode(payload["test_source"]),
-        audited_sources,
+def _run_isolated_witness():
+    payload = json.loads(sys.stdin.buffer.read().decode("utf-8"))
+    report_fd = os.dup(1)
+    report_write = os.write
+    report_close = os.close
+    shutdown_marker = base64.b64decode(payload.pop("shutdown_marker"))
+
+    def emit_shutdown_marker(
+        marker=shutdown_marker,
+        writer=os.write,
+    ):
+        writer(2, marker)
+
+    atexit.register(emit_shutdown_marker)
+    auditor_source = base64.b64decode(payload["auditor_source"])
+    module = ModuleType("_stack_digital_metric_isolated_witness_auditor")
+    module.__file__ = payload["auditor_path"]
+    module.__cached__ = None
+    module.__package__ = ""
+    module.__source_sha256__ = hashlib.sha256(auditor_source).hexdigest()
+    sys.modules[module.__name__] = module
+    exec(
+        compile(auditor_source, payload["auditor_path"], "exec", dont_inherit=True),
+        module.__dict__,
     )
-    report = {
-        "schema": "the-interdependency.digital-metric-witness-execution",
-        "version": "1.0.0",
-        "status": "completed",
-        "clean": clean,
-        "output": output,
-        "tests_run": tests_run,
+    module.AUDITED_IMPORT_ORDER = tuple(
+        (item["name"], Path(item["path"]))
+        for item in payload["audited_import_order"]
+    )
+    audited_sources = {
+        Path(item["path"]): base64.b64decode(item["source"])
+        for item in payload["audited_sources"]
     }
-except BaseException as exc:
-    report = {
-        "schema": "the-interdependency.digital-metric-witness-execution",
-        "version": "1.0.0",
-        "status": "error",
-        "error_type": type(exc).__name__,
-        "error": str(exc),
-    }
-_report_write(
-    _report_fd,
-    json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8"),
-)
-_report_close(_report_fd)
+    try:
+        clean, output, tests_run = module._run_unittest_witnesses_in_process(
+            Path(payload["path"]),
+            dict(payload["admitted_methods"]),
+            base64.b64decode(payload["test_source"]),
+            audited_sources,
+        )
+        report = {
+            "schema": "the-interdependency.digital-metric-witness-execution",
+            "version": "1.0.0",
+            "status": "completed",
+            "clean": clean,
+            "output": output,
+            "tests_run": tests_run,
+        }
+    except BaseException as exc:
+        report = {
+            "schema": "the-interdependency.digital-metric-witness-execution",
+            "version": "1.0.0",
+            "status": "error",
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+        }
+    report_write(
+        report_fd,
+        json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+    )
+    report_close(report_fd)
+
+_run_isolated_witness()
 """
 
 

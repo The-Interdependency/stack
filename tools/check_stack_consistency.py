@@ -377,6 +377,32 @@ def check_digital_metrics_projection(
     if not isinstance(graph_participants, list):
         error(findings, "digital_metrics.participants", "work-graph participants must be an array")
         return
+    participant_fields = {"repository", "commit", "authority", "relation"}
+    for index, participant in enumerate(graph_participants):
+        if not isinstance(participant, dict) or set(participant) != participant_fields:
+            error(
+                findings,
+                "digital_metrics.participants",
+                f"work-graph participant[{index}] has missing or unknown fields",
+            )
+            return
+        if not all(
+            isinstance(participant[field], str) and participant[field]
+            for field in participant_fields
+        ):
+            error(
+                findings,
+                "digital_metrics.participants",
+                f"work-graph participant[{index}] fields must be non-empty strings",
+            )
+            return
+        if HEX40.fullmatch(participant["commit"]) is None:
+            error(
+                findings,
+                "digital_metrics.participants",
+                f"work-graph participant[{index}] commit must be exact",
+            )
+            return
     projected = [
         item for item in manifest.get("research_participants", [])
         if item.get("workspace") == DIGITAL_METRICS_WORKSPACE
