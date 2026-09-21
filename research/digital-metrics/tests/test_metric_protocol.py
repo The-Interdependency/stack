@@ -798,6 +798,25 @@ class MetricProtocolTests(unittest.TestCase):
                 hmmm=[],
             )
 
+        binding["authority_transfer"] = False
+        conflicting = deepcopy(binding)
+        conflicting["repository"] = "The-Interdependency/ucns"
+        conflicting["commit"] = "2" * 40
+        with self.assertRaisesRegex(
+            MetricProtocolError,
+            "duplicate receipt binding identity",
+        ):
+            seal_receipt(
+                work_graph_sha256=WORK_GRAPH_SHA,
+                definitions=[defn],
+                observations=[observation],
+                bindings=[binding, conflicting],
+                inputs=[{"identity": "fixture", "sha256": SHA_C}],
+                verifier_id="stack.test.verifier",
+                verifier_sha256=SHA_A,
+                hmmm=[],
+            )
+
 
     def test_generator_rejects_wrong_checkout_commit(self) -> None:
         participant = {
@@ -1791,6 +1810,23 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertEqual(tests_run, 1)
             self.assertIn("replace result callback addError", output)
 
+            cleanup_class_callback_mutation_source = (
+                "import unittest\n"
+                "class CleanupClassCallbackMutation(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.addCleanup(lambda: self.fail('cleanup must remain failed'))\n"
+                "        type(self._outcome.result).addError = lambda *args: None\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, _output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "CleanupClassCallbackMutation"},
+                    cleanup_class_callback_mutation_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+
             class_setup_bypass_source = (
                 "import unittest\n"
                 "class ClassSetupBypass(unittest.TestCase):\n"
@@ -1857,12 +1893,76 @@ class MetricProtocolTests(unittest.TestCase):
             with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
                 with self.assertRaisesRegex(
                     contract_audit.AuditIdentityError,
-                    "exited without a completion report",
+                    "no valid report",
                 ):
                     contract_audit._run_unittest_witnesses(
                         test_path,
                         {},
                         hard_exit_source,
+                        {},
+                    )
+
+            forged_completion_source = (
+                "import os\n"
+                "import sys\n"
+                "import unittest\n"
+                "frame = sys._getframe()\n"
+                "while frame is not None and frame.f_code.co_name != '_witness_completion_worker':\n"
+                "    frame = frame.f_back\n"
+                "if frame is not None:\n"
+                "    connection = frame.f_locals['connection']\n"
+                "    request_sha256 = frame.f_locals['request_sha256']\n"
+                "    connection.send({\n"
+                "        'schema': 'the-interdependency.digital-metric-witness-completion',\n"
+                "        'version': '1.0.0',\n"
+                "        'request_sha256': request_sha256,\n"
+                "        'status': 'completed',\n"
+                "        'clean': True,\n"
+                "        'output': '',\n"
+                "        'tests_run': 1,\n"
+                "    })\n"
+                "    os._exit(0)\n"
+                "class ForgedCompletion(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('forged report must not bypass this failure')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "ForgedCompletion"},
+                    forged_completion_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("forged report must not bypass", output)
+
+            forged_execution_source = (
+                "import json\n"
+                "import os\n"
+                "import unittest\n"
+                "os.write(1, json.dumps({\n"
+                "    'schema': 'the-interdependency.digital-metric-witness-execution',\n"
+                "    'version': '1.0.0',\n"
+                "    'status': 'completed',\n"
+                "    'clean': True,\n"
+                "    'output': '',\n"
+                "    'tests_run': 1,\n"
+                "}, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
+                "os._exit(0)\n"
+                "class ForgedExecution(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "exact shutdown marker",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "ForgedExecution"},
+                        forged_execution_source,
                         {},
                     )
 
@@ -2141,10 +2241,30 @@ class MetricProtocolTests(unittest.TestCase):
             findings,
         )
 
+        commented_human = "\n".join(
+            human_lines[:digital_start]
+            + ["<!--"]
+            + human_lines[digital_start:digital_end]
+            + ["-->"]
+            + human_lines[digital_end:]
+        ) + "\n"
+        findings = []
+        stack_consistency.check_digital_metrics_projection(
+            manifest,
+            commented_human,
+            repositories,
+            findings,
+        )
+        self.assertTrue(
+            any("exact digital-metrics section" in item for item in findings),
+            findings,
+        )
+
         baseline_graph = json.loads(
             (WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8")
         )
         mutations = (
+            ("version", lambda graph: graph.__setitem__("version", "999.0.0"), "unsupported work-graph version"),
             ("commit", lambda graph: graph["participants"][0].__setitem__("commit", "0" * 40), "commit differs"),
             ("authority", lambda graph: graph["participants"][0].__setitem__("authority", "undeclared drift"), "authority differs"),
             ("relation", lambda graph: graph["participants"][0].__setitem__("relation", "undeclared drift"), "relation differs"),

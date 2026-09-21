@@ -56,6 +56,7 @@ from __future__ import annotations
 # === END CONTRACTS ===
 
 import ast
+import base64
 import hashlib
 import io
 import json
@@ -574,6 +575,12 @@ def _run_unittest_witnesses_in_process(
                         observed_result_events.append("subtest-failure")
                     super().addSubTest(test, subtest, err)
 
+            trusted_result_callbacks = {
+                name: AppendOnlyWitnessResult.__dict__[name]
+                for name in protected_result_callbacks
+                if name in AppendOnlyWitnessResult.__dict__
+            }
+
             suite = DirectWitnessSuite(cases)
             stream = io.StringIO()
             result = trusted_text_test_runner(
@@ -581,6 +588,13 @@ def _run_unittest_witnesses_in_process(
                 verbosity=0,
                 resultclass=AppendOnlyWitnessResult,
             ).run(suite)
+            changed_result_callbacks = sorted(
+                name
+                for name, callback in trusted_result_callbacks.items()
+                if AppendOnlyWitnessResult.__dict__.get(name) is not callback
+            )
+            if changed_result_callbacks:
+                observed_result_events.append("result-class-callback-mutation")
             expected_codes = {
                 code: f"{type(case).__name__}.{method_name}"
                 for case, method_name, _method, code in admitted_runtime_methods
@@ -613,6 +627,72 @@ def _run_unittest_witnesses_in_process(
     return clean, stream.getvalue().strip(), len(observed_tests)
 
 
+_WITNESS_SUBPROCESS_BOOTSTRAP = r"""
+import atexit
+import base64
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+from types import ModuleType
+
+payload = json.loads(sys.stdin.buffer.read().decode("utf-8"))
+_shutdown_marker = base64.b64decode(payload.pop("shutdown_marker"))
+def _emit_shutdown_marker(
+    marker=_shutdown_marker,
+    writer=os.write,
+):
+    writer(2, marker)
+atexit.register(_emit_shutdown_marker)
+del _emit_shutdown_marker
+del _shutdown_marker
+auditor_source = base64.b64decode(payload["auditor_source"])
+module = ModuleType("_stack_digital_metric_isolated_witness_auditor")
+module.__file__ = payload["auditor_path"]
+module.__cached__ = None
+module.__package__ = ""
+module.__source_sha256__ = hashlib.sha256(auditor_source).hexdigest()
+sys.modules[module.__name__] = module
+exec(
+    compile(auditor_source, payload["auditor_path"], "exec", dont_inherit=True),
+    module.__dict__,
+)
+module.AUDITED_IMPORT_ORDER = tuple(
+    (item["name"], Path(item["path"]))
+    for item in payload["audited_import_order"]
+)
+audited_sources = {
+    Path(item["path"]): base64.b64decode(item["source"])
+    for item in payload["audited_sources"]
+}
+try:
+    clean, output, tests_run = module._run_unittest_witnesses_in_process(
+        Path(payload["path"]),
+        dict(payload["admitted_methods"]),
+        base64.b64decode(payload["test_source"]),
+        audited_sources,
+    )
+    report = {
+        "schema": "the-interdependency.digital-metric-witness-execution",
+        "version": "1.0.0",
+        "status": "completed",
+        "clean": clean,
+        "output": output,
+        "tests_run": tests_run,
+    }
+except BaseException as exc:
+    report = {
+        "schema": "the-interdependency.digital-metric-witness-execution",
+        "version": "1.0.0",
+        "status": "error",
+        "error_type": type(exc).__name__,
+        "error": str(exc),
+    }
+sys.stdout.write(json.dumps(report, sort_keys=True, separators=(",", ":")))
+"""
+
+
 def _witness_completion_worker(
     connection,
     request_sha256: str,
@@ -621,31 +701,110 @@ def _witness_completion_worker(
     test_source: bytes,
     audited_sources: dict[Path, bytes],
 ) -> None:
-    """Run one witness snapshot and send an explicit completion report."""
+    """Supervise isolated witness execution and sign its completion report."""
+    auditor_source = audited_sources.get(AUDITOR_PATH)
+    if auditor_source is None:
+        auditor_source = AUDITOR_PATH.read_bytes()
+    shutdown_marker = (
+        "STACK_DIGITAL_METRIC_WITNESS_SHUTDOWN_V1:"
+        + os.urandom(32).hex()
+    ).encode("ascii")
+    payload = {
+        "shutdown_marker": base64.b64encode(shutdown_marker).decode("ascii"),
+        "auditor_path": str(AUDITOR_PATH),
+        "auditor_source": base64.b64encode(auditor_source).decode("ascii"),
+        "path": str(path),
+        "admitted_methods": sorted(admitted_methods.items()),
+        "audited_import_order": [
+            {"name": name, "path": str(source_path)}
+            for name, source_path in AUDITED_IMPORT_ORDER
+        ],
+        "test_source": base64.b64encode(test_source).decode("ascii"),
+        "audited_sources": [
+            {
+                "path": str(source_path),
+                "source": base64.b64encode(source).decode("ascii"),
+            }
+            for source_path, source in sorted(
+                audited_sources.items(), key=lambda item: str(item[0])
+            )
+        ],
+    }
+    execution_report = None
+    execution_error = None
     try:
-        clean, output, tests_run = _run_unittest_witnesses_in_process(
-            path,
-            admitted_methods,
-            test_source,
-            audited_sources,
+        completed = subprocess.run(
+            [sys.executable, "-c", _WITNESS_SUBPROCESS_BOOTSTRAP],
+            input=json.dumps(
+                payload, sort_keys=True, separators=(",", ":")
+            ).encode("utf-8"),
+            capture_output=True,
+            check=False,
+            timeout=120,
         )
+    except subprocess.TimeoutExpired:
+        execution_error = "witness execution did not report within 120 seconds"
+    else:
+        if completed.returncode != 0:
+            execution_error = (
+                "witness execution exited abnormally with code "
+                f"{completed.returncode}"
+            )
+        else:
+            try:
+                execution_report = json.loads(completed.stdout.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError):
+                execution_error = "witness execution returned no valid report"
+    if execution_error is None and completed.stderr != shutdown_marker:
+        execution_error = "witness execution lacks the exact shutdown marker"
+
+    completed_fields = {
+        "schema", "version", "status", "clean", "output", "tests_run",
+    }
+    error_fields = {
+        "schema", "version", "status", "error_type", "error",
+    }
+    if execution_error is None and (
+        not isinstance(execution_report, dict)
+        or set(execution_report) not in (completed_fields, error_fields)
+        or execution_report.get("schema")
+        != "the-interdependency.digital-metric-witness-execution"
+        or execution_report.get("version") != "1.0.0"
+    ):
+        execution_error = "witness execution returned an invalid report"
+    if execution_error is None and execution_report.get("status") == "error":
+        execution_error = (
+            "witness execution rejected: "
+            f"{execution_report.get('error_type')}: "
+            f"{execution_report.get('error')}"
+        )
+    if execution_error is None and (
+        execution_report.get("status") != "completed"
+        or type(execution_report.get("clean")) is not bool
+        or type(execution_report.get("output")) is not str
+        or type(execution_report.get("tests_run")) is not int
+        or execution_report["tests_run"] != len(admitted_methods)
+    ):
+        execution_error = "witness execution returned malformed completion values"
+
+    if execution_error is None:
         report = {
             "schema": "the-interdependency.digital-metric-witness-completion",
             "version": "1.0.0",
             "request_sha256": request_sha256,
             "status": "completed",
-            "clean": clean,
-            "output": output,
-            "tests_run": tests_run,
+            "clean": execution_report["clean"],
+            "output": execution_report["output"],
+            "tests_run": execution_report["tests_run"],
         }
-    except BaseException as exc:
+    else:
         report = {
             "schema": "the-interdependency.digital-metric-witness-completion",
             "version": "1.0.0",
             "request_sha256": request_sha256,
             "status": "error",
-            "error_type": type(exc).__name__,
-            "error": str(exc),
+            "error_type": "AuditIdentityError",
+            "error": execution_error,
         }
     try:
         connection.send(report)

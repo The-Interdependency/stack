@@ -91,6 +91,7 @@ SKILLS_README_PATH = ROOT / ".agents" / "skills" / "README.md"
 STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.md"
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
+DIGITAL_METRICS_WORK_GRAPH_VERSION = "0.1.0"
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
 DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
 DIGITAL_METRICS_BASE_STATIC = {
@@ -138,6 +139,8 @@ def error(findings: list[str], code: str, message: str) -> None:
 
 def rendered_markdown_lines(source: str) -> list[str]:
     """Return Markdown lines outside fenced code blocks."""
+    source = re.sub(r"<!--.*?-->", "", source, flags=re.DOTALL)
+    source = re.sub(r"<!--.*\Z", "", source, flags=re.DOTALL)
     rendered: list[str] = []
     fence_character: str | None = None
     fence_length = 0
@@ -285,6 +288,9 @@ def check_digital_metrics_projection(
 
     if graph.get("schema") != "the-interdependency.digital-metric-work-graph":
         error(findings, "digital_metrics.schema", "unexpected work-graph schema")
+        return
+    if graph.get("version") != DIGITAL_METRICS_WORK_GRAPH_VERSION:
+        error(findings, "digital_metrics.version", "unsupported work-graph version")
         return
     try:
         graph_digest = hashlib.sha256(json.dumps(

@@ -798,8 +798,16 @@ def verify_receipt(value: Any) -> dict[str, Any]:
         )
     if not isinstance(record["bindings"], list) or not record["bindings"]:
         raise MetricProtocolError("receipt bindings must be a non-empty array")
+    binding_identities: set[tuple[str, str, str]] = set()
     for index, item in enumerate(record["bindings"]):
         _validate_binding(item, index)
+        binding = _mapping(item, f"receipt binding[{index}]")
+        identity = (binding["kind"], binding["identity"], binding["version"])
+        if identity in binding_identities:
+            raise MetricProtocolError(
+                f"duplicate receipt binding identity: {identity!r}"
+            )
+        binding_identities.add(identity)
     if not isinstance(record["inputs"], list) or not record["inputs"]:
         raise MetricProtocolError("receipt inputs must be a non-empty array")
     input_identities: set[str] = set()
