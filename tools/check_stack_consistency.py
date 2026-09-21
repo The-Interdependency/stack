@@ -140,17 +140,24 @@ def rendered_markdown_lines(source: str) -> list[str]:
     """Return Markdown lines outside fenced code blocks."""
     rendered: list[str] = []
     fence_character: str | None = None
+    fence_length = 0
     for line in source.splitlines():
-        match = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
-        if match is not None:
-            character = match.group(1)[0]
-            if fence_character is None:
-                fence_character = character
-            elif character == fence_character:
-                fence_character = None
-            continue
         if fence_character is None:
+            match = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+            if match is not None:
+                fence_character = match.group(1)[0]
+                fence_length = len(match.group(1))
+                continue
             rendered.append(line)
+            continue
+        closing = re.fullmatch(
+            rf" {{0,3}}{re.escape(fence_character)}{{{fence_length},}}[ \t]*",
+            line,
+        )
+        if closing is not None:
+            fence_character = None
+            fence_length = 0
+            continue
     return rendered
 
 

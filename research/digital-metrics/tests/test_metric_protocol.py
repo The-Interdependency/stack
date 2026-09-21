@@ -1773,6 +1773,24 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertFalse(clean)
             self.assertEqual(tests_run, 1)
 
+            cleanup_callback_mutation_source = (
+                "import unittest\n"
+                "class CleanupCallbackMutation(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.addCleanup(lambda: self.fail('cleanup must remain failed'))\n"
+                "        self._outcome.result.addError = lambda *args: None\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "CleanupCallbackMutation"},
+                    cleanup_callback_mutation_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("replace result callback addError", output)
+
             class_setup_bypass_source = (
                 "import unittest\n"
                 "class ClassSetupBypass(unittest.TestCase):\n"
@@ -1832,6 +1850,19 @@ class MetricProtocolTests(unittest.TestCase):
                         test_path,
                         {},
                         system_exit_source,
+                        {},
+                    )
+
+            hard_exit_source = b"import os\nos._exit(0)\n"
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "exited without a completion report",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {},
+                        hard_exit_source,
                         {},
                     )
 
@@ -1968,6 +1999,29 @@ class MetricProtocolTests(unittest.TestCase):
                 changed_report["findings"],
             )
 
+        with TemporaryDirectory() as directory:
+            copied_source = Path(directory) / "audit_contracts.py"
+            copied_source.write_bytes(source)
+            loaded = audit_cli._load_auditor(copied_source)
+            original_read_bytes = Path.read_bytes
+            auditor_reads = 0
+
+            def read_once(candidate: Path) -> bytes:
+                nonlocal auditor_reads
+                if candidate.resolve() == copied_source.resolve():
+                    auditor_reads += 1
+                    if auditor_reads > 1:
+                        return source + b"\n# changed after validated read\n"
+                return original_read_bytes(candidate)
+
+            with patch.object(loaded, "AUDITOR_PATH", copied_source), patch.object(
+                loaded, "SOURCE_FILES", (copied_source,)
+            ), patch.object(loaded, "TEST_FILES", ()), patch.object(
+                loaded, "AUDITED_IMPORT_ORDER", ()
+            ), patch.object(Path, "read_bytes", read_once):
+                loaded.audit(skill_lib_root=SKILL_LIB_ROOT)
+            self.assertEqual(auditor_reads, 1)
+
     def test_contract_audit_rejects_unpinned_parser_bytes(self) -> None:
         with TemporaryDirectory() as directory:
             changed_parser = Path(directory) / "universal.py"
@@ -2060,6 +2114,25 @@ class MetricProtocolTests(unittest.TestCase):
         stack_consistency.check_digital_metrics_projection(
             manifest,
             fenced_human,
+            repositories,
+            findings,
+        )
+        self.assertTrue(
+            any("exact digital-metrics section" in item for item in findings),
+            findings,
+        )
+
+        long_fenced_human = "\n".join(
+            human_lines[:digital_start]
+            + ["````markdown", "```not-a-close"]
+            + human_lines[digital_start:digital_end]
+            + ["````"]
+            + human_lines[digital_end:]
+        ) + "\n"
+        findings = []
+        stack_consistency.check_digital_metrics_projection(
+            manifest,
+            long_fenced_human,
             repositories,
             findings,
         )

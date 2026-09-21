@@ -59,6 +59,7 @@ import ast
 import hashlib
 import io
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import subprocess
@@ -263,7 +264,7 @@ def _runtime_runner_override(case_class: type[unittest.TestCase]) -> str | None:
     return None
 
 
-def _run_unittest_witnesses(
+def _run_unittest_witnesses_in_process(
     path: Path,
     admitted_methods: dict[str, str],
     test_source: bytes,
@@ -515,8 +516,35 @@ def _run_unittest_witnesses(
 
             observed_tests: list[str] = []
             observed_result_events: list[str] = []
+            protected_result_callbacks = frozenset(
+                {
+                    "addError",
+                    "addFailure",
+                    "addSkip",
+                    "addExpectedFailure",
+                    "addUnexpectedSuccess",
+                    "addSubTest",
+                    "startTest",
+                    "stopTest",
+                }
+            )
 
             class AppendOnlyWitnessResult(trusted_text_test_result):
+                def __init__(self, *args, **kwargs):
+                    super().__init__(*args, **kwargs)
+                    self._audit_callbacks_sealed = True
+
+                def __setattr__(self, name, value):
+                    if (
+                        name in protected_result_callbacks
+                        and getattr(self, "_audit_callbacks_sealed", False)
+                    ):
+                        observed_result_events.append("result-callback-mutation")
+                        raise AuditIdentityError(
+                            f"witness attempted to replace result callback {name}"
+                        )
+                    super().__setattr__(name, value)
+
                 def startTest(self, test):
                     observed_tests.append(test.id())
                     super().startTest(test)
@@ -583,6 +611,154 @@ def _run_unittest_witnesses(
         for code in expected_codes
     )
     return clean, stream.getvalue().strip(), len(observed_tests)
+
+
+def _witness_completion_worker(
+    connection,
+    request_sha256: str,
+    path: Path,
+    admitted_methods: dict[str, str],
+    test_source: bytes,
+    audited_sources: dict[Path, bytes],
+) -> None:
+    """Run one witness snapshot and send an explicit completion report."""
+    try:
+        clean, output, tests_run = _run_unittest_witnesses_in_process(
+            path,
+            admitted_methods,
+            test_source,
+            audited_sources,
+        )
+        report = {
+            "schema": "the-interdependency.digital-metric-witness-completion",
+            "version": "1.0.0",
+            "request_sha256": request_sha256,
+            "status": "completed",
+            "clean": clean,
+            "output": output,
+            "tests_run": tests_run,
+        }
+    except BaseException as exc:
+        report = {
+            "schema": "the-interdependency.digital-metric-witness-completion",
+            "version": "1.0.0",
+            "request_sha256": request_sha256,
+            "status": "error",
+            "error_type": type(exc).__name__,
+            "error": str(exc),
+        }
+    try:
+        connection.send(report)
+    finally:
+        connection.close()
+
+
+def _run_unittest_witnesses(
+    path: Path,
+    admitted_methods: dict[str, str],
+    test_source: bytes,
+    audited_sources: dict[Path, bytes],
+) -> tuple[bool, str, int]:
+    """Execute witnesses in a child and require its bound completion report."""
+    request = {
+        "path": str(path.resolve()),
+        "admitted_methods": sorted(admitted_methods.items()),
+        "test_sha256": hashlib.sha256(test_source).hexdigest(),
+        "audited_sources": sorted(
+            (str(source_path.resolve()), hashlib.sha256(source).hexdigest())
+            for source_path, source in audited_sources.items()
+        ),
+    }
+    request_sha256 = _canonical_sha256(request)
+    try:
+        context = multiprocessing.get_context("fork")
+    except ValueError as exc:
+        raise AuditIdentityError(
+            "witness isolation requires multiprocessing fork support"
+        ) from exc
+    parent_connection, child_connection = context.Pipe(duplex=False)
+    process = context.Process(
+        target=_witness_completion_worker,
+        args=(
+            child_connection,
+            request_sha256,
+            path,
+            admitted_methods,
+            test_source,
+            audited_sources,
+        ),
+    )
+    process.start()
+    child_connection.close()
+    try:
+        if not parent_connection.poll(120):
+            process.terminate()
+            process.join(5)
+            raise AuditIdentityError(
+                "witness child did not provide a completion report within 120 seconds"
+            )
+        try:
+            report = parent_connection.recv()
+        except EOFError as exc:
+            process.join(5)
+            raise AuditIdentityError(
+                "witness child exited without a completion report "
+                f"(exit code {process.exitcode})"
+            ) from exc
+    finally:
+        parent_connection.close()
+    process.join(5)
+    if process.is_alive():
+        process.terminate()
+        process.join(5)
+        raise AuditIdentityError(
+            "witness child remained alive after its completion report"
+        )
+    if process.exitcode != 0:
+        raise AuditIdentityError(
+            f"witness child exited abnormally with code {process.exitcode}"
+        )
+    if not isinstance(report, dict) or set(report) not in (
+        {
+            "schema",
+            "version",
+            "request_sha256",
+            "status",
+            "clean",
+            "output",
+            "tests_run",
+        },
+        {
+            "schema",
+            "version",
+            "request_sha256",
+            "status",
+            "error_type",
+            "error",
+        },
+    ):
+        raise AuditIdentityError("witness child returned an invalid completion report")
+    if (
+        report.get("schema")
+        != "the-interdependency.digital-metric-witness-completion"
+        or report.get("version") != "1.0.0"
+        or report.get("request_sha256") != request_sha256
+    ):
+        raise AuditIdentityError("witness child completion binding is invalid")
+    if report.get("status") == "error":
+        raise AuditIdentityError(
+            "witness child rejected execution: "
+            f"{report.get('error_type')}: {report.get('error')}"
+        )
+    if (
+        report.get("status") != "completed"
+        or type(report.get("clean")) is not bool
+        or type(report.get("output")) is not str
+        or type(report.get("tests_run")) is not int
+        or report["tests_run"] < 0
+    ):
+        raise AuditIdentityError("witness child returned malformed completion values")
+    return report["clean"], report["output"], report["tests_run"]
 
 
 def _dotted_name(node: ast.expr) -> str | None:
@@ -756,6 +932,7 @@ def audit(*, skill_lib_root: Path | None = None) -> dict[str, object]:
                 *(path for _name, path in AUDITED_IMPORT_ORDER),
             )
         )
+        snapshot_paths.pop(AUDITOR_PATH, None)
         source_snapshots = {AUDITOR_PATH: auditor_source}
         source_snapshots.update(
             {path: path.read_bytes() for path in snapshot_paths}
