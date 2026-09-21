@@ -1,0 +1,25 @@
+{
+  "schema": "the-interdependency.graduation-receipt",
+  "version": "1.0.0",
+  "project": "english-gonol",
+  "forge": "The-Interdependency/stack",
+  "forge_source_commit": "ca190204de25de240662bb438af80c8dc405cea6",
+  "forge_source_path": "research/english-gonol",
+  "uchc_repository": "The-Interdependency/uchc",
+  "uchc_commit": "118b48802b20509afa556cf3ce68cee915628af0",
+  "uchc_domain_path": "human/english",
+  "artifact": {
+    "construct_file": "human/english/experiments/full-construct-v2-local/construct.db",
+    "sha256": "af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b",
+    "hyperspace_receipt_sha256": "38b51ab5ebcf7d3e95f3b29700a170d1e7b6d3342dd6088171c5c078a08753d2"
+  },
+  "gates_1_5": "passed",
+  "gates_6_11": "license resolved (FSL-1.1-ALv2); release identity = uchc commit; reconsumption = this receipt",
+  "authority_transition": "implementation and public-contract authority moved to UCHC; Stack remains research forge and consumer",
+  "date": "2026-09-21",
+  "hmmm": [
+    "exact geometry of definition-axis orthogonality",
+    "cross-origin angles",
+    "continuum lift-selection law"
+  ]
+}
