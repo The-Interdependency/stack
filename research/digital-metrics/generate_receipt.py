@@ -268,6 +268,43 @@ def _require_repository_work_graph(path: Path, workspace: Path) -> Path:
     return resolved
 
 
+def _verify_stack_participant(
+    work_graph: Mapping[str, Any], stack_root: Path
+) -> None:
+    participant = _participant(work_graph, "The-Interdependency/stack")
+    stack_root = stack_root.resolve()
+    git_root = Path(_git(stack_root, "rev-parse", "--show-toplevel")).resolve()
+    if git_root != stack_root:
+        raise ProducerIdentityError(
+            f"Stack root is not the Git top level: {stack_root}"
+        )
+    commit = participant["commit"]
+    resolved = _git(stack_root, "rev-parse", "--verify", f"{commit}^{{commit}}")
+    if resolved != commit:
+        raise ProducerIdentityError(
+            f"Stack participant commit does not resolve exactly: {commit}"
+        )
+    ancestry = subprocess.run(
+        [
+            "git",
+            "--no-replace-objects",
+            "-C",
+            str(stack_root),
+            "merge-base",
+            "--is-ancestor",
+            commit,
+            "HEAD",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if ancestry.returncode != 0:
+        raise ProducerIdentityError(
+            f"Stack participant commit is not an ancestor of HEAD: {commit}"
+        )
+
+
 def _validate_repository_work_graph_projection(
     work_graph: Mapping[str, Any], workspace: Path
 ) -> str:
@@ -337,6 +374,7 @@ def _validate_repository_work_graph_projection(
         raise ProducerIdentityError(
             "digital-metrics Stack projection skill-lib commit differs"
         )
+    _verify_stack_participant(work_graph, workspace.parents[1])
     return hashlib.sha256(manifest_source).hexdigest()
 
 

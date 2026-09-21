@@ -286,6 +286,7 @@ from generate_receipt import (  # noqa: E402
     _load_ucns_native_module,
     _require_repository_work_graph,
     _validate_repository_work_graph_projection,
+    _verify_stack_participant,
     _verify_edcm_decoder_guard,
     verify_checkout,
 )
@@ -877,6 +878,61 @@ class MetricProtocolTests(unittest.TestCase):
                 (WORKSPACE.parents[1] / "stack-manifest.json").read_bytes()
             ).hexdigest(),
         )
+        _verify_stack_participant(baseline, WORKSPACE.parents[1])
+
+        nonexistent_stack = deepcopy(baseline)
+        next(
+            item
+            for item in nonexistent_stack["participants"]
+            if item["repository"] == "The-Interdependency/stack"
+        )["commit"] = "0" * 40
+        with self.assertRaisesRegex(
+            ProducerIdentityError,
+            "git rev-parse --verify",
+        ):
+            _verify_stack_participant(
+                nonexistent_stack, WORKSPACE.parents[1]
+            )
+
+        with TemporaryDirectory() as directory:
+            repository = Path(directory)
+            (repository / "marker.txt").write_text("main\n", encoding="utf-8")
+            self._commit_fixture_repo(repository)
+            tree = subprocess.run(
+                ["git", "-C", str(repository), "rev-parse", "HEAD^{tree}"],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            unrelated = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    str(repository),
+                    "-c",
+                    "user.name=fixture",
+                    "-c",
+                    "user.email=fixture@example.invalid",
+                    "commit-tree",
+                    tree,
+                    "-m",
+                    "unrelated",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            unrelated_stack = deepcopy(baseline)
+            next(
+                item
+                for item in unrelated_stack["participants"]
+                if item["repository"] == "The-Interdependency/stack"
+            )["commit"] = unrelated
+            with self.assertRaisesRegex(
+                ProducerIdentityError,
+                "not an ancestor",
+            ):
+                _verify_stack_participant(unrelated_stack, repository)
 
         projection_drift = deepcopy(baseline)
         projection_drift["participants"][0]["commit"] = "0" * 40
@@ -1398,6 +1454,15 @@ class MetricProtocolTests(unittest.TestCase):
                 "        yield 'not executed by unittest'\n"
                 "        self.fail('must execute')\n"
             ),
+            (
+                "import unittest\n"
+                "def erase(function):\n"
+                "    return lambda self: None\n"
+                "class DecoratedWitness(unittest.TestCase):\n"
+                "    @erase\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ),
         )
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1574,6 +1639,47 @@ class MetricProtocolTests(unittest.TestCase):
                         {},
                     )
 
+            constructor_method_override_source = (
+                "import unittest\n"
+                "class ConstructorMethodOverride(unittest.TestCase):\n"
+                "    def __init__(self, methodName='runTest'):\n"
+                "        super().__init__(methodName)\n"
+                "        type(self).test_hidden = lambda self: None\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "method changed after construction",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "ConstructorMethodOverride"},
+                        constructor_method_override_source,
+                        {},
+                    )
+
+            setup_hook_bypass_source = (
+                "import unittest\n"
+                "class SetupHookBypass(unittest.TestCase):\n"
+                "    def setUp(self):\n"
+                "        self._callTestMethod = lambda method: None\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "admitted witness method did not execute",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "SetupHookBypass"},
+                        setup_hook_bypass_source,
+                        {},
+                    )
+
             instance_override_source = (
                 "import unittest\n"
                 "class Sneaky(unittest.TestCase):\n"
@@ -1633,6 +1739,38 @@ class MetricProtocolTests(unittest.TestCase):
                         dependency_path: dependency_snapshot,
                         parent_path: parent_snapshot,
                     },
+                )
+            self.assertTrue(clean, output)
+            self.assertEqual(tests_run, 1)
+
+            self.assertEqual(
+                set(contract_audit.WITNESS_DATA_FILES),
+                {
+                    contract_audit.WORK_GRAPH_PATH,
+                    contract_audit.STACK_MANIFEST_PATH,
+                    contract_audit.STACK_HUMAN_MANIFEST_PATH,
+                    contract_audit.FROZEN_RECEIPT_PATH,
+                    contract_audit.PARSER_PATH,
+                },
+            )
+            data_path = root / "WORK_GRAPH.json"
+            data_snapshot = b'{"marker":"snapshot"}\n'
+            data_path.write_text('{"marker":"mutable"}\n', encoding="utf-8")
+            data_test_source = (
+                "import json\n"
+                "from pathlib import Path\n"
+                "import unittest\n"
+                "class DataSnapshotBound(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        value = json.loads(Path(__file__).with_name('WORK_GRAPH.json').read_text(encoding='utf-8'))\n"
+                "        self.assertEqual(value['marker'], 'snapshot')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "DataSnapshotBound"},
+                    data_test_source,
+                    {data_path: data_snapshot},
                 )
             self.assertTrue(clean, output)
             self.assertEqual(tests_run, 1)

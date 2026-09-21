@@ -53,6 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: stack
+          fetch-depth: 0
       - name: Check out exact skill-lib doctrine
         uses: actions/checkout@v4
         with:

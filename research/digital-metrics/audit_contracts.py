@@ -72,8 +72,10 @@ ROOT = Path(__file__).resolve().parent
 STACK_ROOT = ROOT.parents[1]
 WORK_GRAPH_PATH = ROOT / "WORK_GRAPH.json"
 STACK_MANIFEST_PATH = STACK_ROOT / "stack-manifest.json"
+STACK_HUMAN_MANIFEST_PATH = STACK_ROOT / "STACK_MANIFEST.md"
 PARSER_PATH = STACK_ROOT / "skill-lib/msdmd/parsers/universal.py"
 AUDITOR_PATH = ROOT / "audit_contracts.py"
+FROZEN_RECEIPT_PATH = ROOT / "receipts/native-mobius-v0.json"
 SOURCE_FILES = (
     AUDITOR_PATH,
     ROOT / "audit_contracts_cli.py",
@@ -85,6 +87,13 @@ SOURCE_FILES = (
 )
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
 WITNESS_DEPENDENCY_FILES = (STACK_ROOT / "tools/check_stack_consistency.py",)
+WITNESS_DATA_FILES = (
+    WORK_GRAPH_PATH,
+    STACK_MANIFEST_PATH,
+    STACK_HUMAN_MANIFEST_PATH,
+    FROZEN_RECEIPT_PATH,
+    PARSER_PATH,
+)
 AUDITED_IMPORT_ORDER = (
     ("metric_protocol", ROOT / "metric_protocol.py"),
     ("audit_contracts", ROOT / "audit_contracts.py"),
@@ -132,9 +141,15 @@ def _git_output(root: Path, *args: str) -> bytes:
     return result.stdout
 
 
-def _load_pinned_parser(skill_lib_root: Path) -> ModuleType:
+def _load_pinned_parser(
+    skill_lib_root: Path,
+    *,
+    graph_source: bytes,
+    manifest_source: bytes,
+    parser_source: bytes,
+) -> ModuleType:
     """Source-load the exact parser bound by the work graph and Stack manifest."""
-    graph = json.loads(WORK_GRAPH_PATH.read_text(encoding="utf-8"))
+    graph = json.loads(graph_source.decode("utf-8"))
     payload = {
         "participants": graph["participants"],
         "boundaries": graph["boundaries"],
@@ -148,7 +163,7 @@ def _load_pinned_parser(skill_lib_root: Path) -> ModuleType:
     if len(graph_skills) != 1:
         raise AuditIdentityError("work graph must pin exactly one skill-lib participant")
 
-    manifest = json.loads(STACK_MANIFEST_PATH.read_text(encoding="utf-8"))
+    manifest = json.loads(manifest_source.decode("utf-8"))
     manifest_payload = {
         key: manifest[key]
         for key in ("repositories", "research_participants", "boundaries")
@@ -192,7 +207,7 @@ def _load_pinned_parser(skill_lib_root: Path) -> ModuleType:
     ] if isinstance(artifacts, list) else []
     if len(matches) != 1:
         raise AuditIdentityError("Stack manifest must pin the msdmd parser artifact exactly once")
-    source = PARSER_PATH.read_bytes()
+    source = parser_source
     committed_source = _git_output(
         skill_lib_root,
         "show",
@@ -263,6 +278,7 @@ def _run_unittest_witnesses(
     previous[module_name] = sys.modules.get(module_name, missing)
     sys.modules[module_name] = module
     original_read_bytes = Path.read_bytes
+    original_read_text = Path.read_text
     snapshots = {
         dependency_path.resolve(): source
         for dependency_path, source in audited_sources.items()
@@ -275,8 +291,23 @@ def _run_unittest_witnesses(
             return snapshots[resolved]
         return original_read_bytes(candidate)
 
+    def read_snapshot_text(
+        candidate: Path,
+        encoding: str | None = None,
+        errors: str | None = None,
+    ) -> str:
+        resolved = candidate.resolve()
+        if resolved in snapshots:
+            return snapshots[resolved].decode(
+                encoding or "utf-8",
+                errors or "strict",
+            )
+        return original_read_text(candidate, encoding=encoding, errors=errors)
+
     try:
-        with patch.object(Path, "read_bytes", read_snapshot):
+        with patch.object(Path, "read_bytes", read_snapshot), patch.object(
+            Path, "read_text", read_snapshot_text
+        ):
             for dependency_name, dependency_path in AUDITED_IMPORT_ORDER:
                 dependency_source = snapshots[dependency_path.resolve()]
                 dependency = ModuleType(dependency_name)
@@ -299,6 +330,7 @@ def _run_unittest_witnesses(
                 )
             exec(compile(test_source, str(path), "exec", dont_inherit=True), module.__dict__)
             cases = []
+            admitted_runtime_methods = []
             for method_name, class_name in sorted(admitted_methods.items()):
                 case_class = getattr(module, class_name)
                 if not isinstance(case_class, type) or not issubclass(
@@ -313,6 +345,12 @@ def _run_unittest_witnesses(
                         "runtime witness class overrides unittest execution: "
                         f"{overridden}"
                     )
+                method = case_class.__dict__.get(method_name)
+                if not callable(method) or not hasattr(method, "__code__"):
+                    raise AuditIdentityError(
+                        f"runtime witness method is not an exact function: "
+                        f"{class_name}.{method_name}"
+                    )
                 case = case_class(method_name)
                 instance_overrides = sorted(UNSAFE_RUNNER_HOOKS & case.__dict__.keys())
                 if instance_overrides:
@@ -321,6 +359,9 @@ def _run_unittest_witnesses(
                         f"{class_name}.{instance_overrides[0]}"
                     )
                 cases.append(case)
+                admitted_runtime_methods.append(
+                    (case, method_name, method, method.__code__)
+                )
             # A constructor can mutate its own class or a previously constructed
             # witness class. Revalidate the complete runtime set only after all
             # constructors have returned and immediately before suite execution.
@@ -331,9 +372,51 @@ def _run_unittest_witnesses(
                         "runtime witness class overrides unittest execution after "
                         f"construction: {overridden}"
                     )
+            for case, method_name, method, _code in admitted_runtime_methods:
+                case_class = type(case)
+                if case_class.__dict__.get(method_name) is not method:
+                    raise AuditIdentityError(
+                        "runtime witness method changed after construction: "
+                        f"{case_class.__name__}.{method_name}"
+                    )
+                if method_name in case.__dict__:
+                    raise AuditIdentityError(
+                        "runtime witness instance replaced admitted method: "
+                        f"{case_class.__name__}.{method_name}"
+                    )
             suite = unittest.TestSuite(cases)
             stream = io.StringIO()
-            result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
+            expected_codes = {
+                code: f"{type(case).__name__}.{method_name}"
+                for case, method_name, _method, code in admitted_runtime_methods
+            }
+            executed_codes = set()
+            previous_trace = sys.gettrace()
+
+            def trace_witness(frame, event, _argument):
+                if event == "call" and frame.f_code in expected_codes:
+                    executed_codes.add(frame.f_code)
+                return trace_witness
+
+            sys.settrace(trace_witness)
+            try:
+                result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
+            finally:
+                sys.settrace(previous_trace)
+            missing_methods = sorted(
+                name for code, name in expected_codes.items() if code not in executed_codes
+            )
+            if (
+                missing_methods
+                and result.wasSuccessful()
+                and not result.skipped
+                and not result.expectedFailures
+                and not result.unexpectedSuccesses
+            ):
+                raise AuditIdentityError(
+                    "admitted witness method did not execute: "
+                    + ", ".join(missing_methods)
+                )
     finally:
         for name, prior in reversed(tuple(previous.items())):
             if prior is missing:
@@ -438,10 +521,9 @@ def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
                 or is_async
                 or any(base in discoverable_classes for base in bases)
             )
-            is_nonproof = any(
-                _decorator_name(decorator) in nonproof_decorators
-                for decorator in node.decorator_list
-            ) or any(base in nonproof_classes for base in bases) or any(
+            is_nonproof = bool(node.decorator_list) or any(
+                base in nonproof_classes for base in bases
+            ) or any(
                 isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
                 and member.name in UNSAFE_RUNNER_HOOKS
                 for member in node.body
@@ -465,10 +547,7 @@ def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
                 continue
             if not method.name.startswith("test_"):
                 continue
-            if any(
-                _decorator_name(decorator) in nonproof_decorators
-                for decorator in method.decorator_list
-            ):
+            if method.decorator_list:
                 continue
             if isinstance(method, ast.FunctionDef) and not _function_contains_yield(
                 method
@@ -507,24 +586,36 @@ def audit(*, skill_lib_root: Path | None = None) -> dict[str, object]:
             raise AuditIdentityError(
                 "auditor API must be source-loaded; use audit_contracts_cli.py"
             )
-        snapshot_paths = dict.fromkeys(
-            (
-                *SOURCE_FILES,
-                AUDITOR_PATH,
-                *WITNESS_DEPENDENCY_FILES,
-                *(path for _name, path in AUDITED_IMPORT_ORDER),
-            )
-        )
-        source_snapshots = {path: path.read_bytes() for path in snapshot_paths}
-        test_snapshots = {path: path.read_bytes() for path in TEST_FILES}
-        auditor_sha256 = hashlib.sha256(source_snapshots[AUDITOR_PATH]).hexdigest()
+        auditor_source = AUDITOR_PATH.read_bytes()
+        auditor_sha256 = hashlib.sha256(auditor_source).hexdigest()
         if auditor_sha256 != _LOADED_AUDITOR_SHA256:
             raise AuditIdentityError(
                 "executing auditor digest differs from captured source snapshot"
             )
+        snapshot_paths = dict.fromkeys(
+            (
+                *SOURCE_FILES,
+                *WITNESS_DEPENDENCY_FILES,
+                *WITNESS_DATA_FILES,
+                WORK_GRAPH_PATH,
+                STACK_MANIFEST_PATH,
+                PARSER_PATH,
+                *(path for _name, path in AUDITED_IMPORT_ORDER),
+            )
+        )
+        source_snapshots = {AUDITOR_PATH: auditor_source}
+        source_snapshots.update(
+            {path: path.read_bytes() for path in snapshot_paths}
+        )
+        test_snapshots = {path: path.read_bytes() for path in TEST_FILES}
         if skill_lib_root is None:
             raise AuditIdentityError("exact skill-lib root is required")
-        parser = _load_pinned_parser(skill_lib_root)
+        parser = _load_pinned_parser(
+            skill_lib_root,
+            graph_source=source_snapshots[WORK_GRAPH_PATH],
+            manifest_source=source_snapshots[STACK_MANIFEST_PATH],
+            parser_source=source_snapshots[PARSER_PATH],
+        )
     except (
         AuditIdentityError,
         OSError,

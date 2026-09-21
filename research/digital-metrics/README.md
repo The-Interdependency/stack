@@ -19,9 +19,9 @@ METAPAT semantic constraint
   claim status. No METAPAT label is converted into a numerical value.
 - UCNS owns geometry and its own proof status. The first slice executes its
   native Möbius state transition directly from the exact pinned checkout.
-- EDCM owns future measurement projections. The v0 receipt invokes no EDCM
-  decoder or measurement function. Its fail-closed missing-metric repair is
-  pinned as a prerequisite only.
+- EDCM owns future measurement projections. The v0 generator executes the
+  pinned decoder's fail-closed missing-field prerequisite witness, but the
+  receipt invokes no EDCM measurement or projection.
 - Stack owns this noncanonical protocol, integrity metrics, work graph,
   deterministic receipt, and replay verifier. A passing Stack receipt transfers
   no authority, proof, measurement, or empirical status.
@@ -84,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): c3a1be2f3c9425bb6e2847dfd0fa954abf284469f9334ae0327449861af53aac
-File SHA-256: 80b090bb529758cb289429d4fa60bd0a57102fc14afddd41273621281e0eb44d
+Receipt payload digest (`receipt_sha256`): a159d55ad186c3d2b8d479741f1a0a6d04941d6e80c077484709bbf81cecd53c
+File SHA-256: fef9edc756d2667e0c4de3d159247edfcb23cef76fbf4d4871a8f0b9a6822fab
 ```
 
 ## Usage guidance
