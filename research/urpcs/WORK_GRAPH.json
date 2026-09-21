@@ -25,7 +25,7 @@
     "hmmm": [
       "independent decoder interoperability is untested",
       "confidentiality and production security are unclaimed",
-      "the accepted conversation contains fuller law discussion than the committed freeze summary",
+      "the full accepted Laws 1-13 are public, but clean-room decoder replay remains pending",
       "URPCS codec-local Gonol records are not UCNS gonols"
     ]
   }
