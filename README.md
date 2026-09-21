@@ -95,13 +95,15 @@ EPAC retains implementation and public-contract authority; Stack owns only the
 local carrier audit and its bounded receipts.
 
 URPCS v1 is a separate stack-local codec experiment at `research/urpcs/`. It
-carries accepted Laws 1–13, an authenticated reference encoder/decoder, and
-byte-exact vectors. Its codec-local `Gonol` row is not a UCNS gonol; the workspace
-imports no PCEA construction and claims no confidentiality or production fitness.
+carries accepted Laws 1–13, an authenticated reference encoder/decoder, an
+independently structured decoder, and byte-exact vectors. Its codec-local `Gonol`
+row is not a UCNS gonol; the workspace imports no PCEA construction and claims no
+confidentiality or production fitness.
 
 ```bash
 python3 research/urpcs/urpcs_v1_reference.py --self-test
 python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
+node research/urpcs/tests/test_independent_decoder.js
 ```
 
 ### Change stack structure
@@ -132,8 +134,9 @@ English Gonol Construction is currently a distinct stack-local research componen
 separated from EDCM but not independently graduated.
 Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
 constructor is an implemented candidate, not stack or language canon.
-URPCS is stack-local and ungraduated; its verified reference vectors establish
-deterministic codec behavior, not encryption security.
+URPCS is stack-local and ungraduated; its verified reference vectors and
+independent replay establish bounded deterministic codec behavior, not
+encryption security.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -216,8 +219,9 @@ merge.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; UCNS affixiation geometry remains unresolved.
-- URPCS has a deterministic authenticated-codec reference profile but no independent
-  decoder, confidentiality model, production state store, or release authority.
+- URPCS has a deterministic authenticated-codec reference profile and bounded
+  independent decoder evidence, but no confidentiality model, production state
+  store, or release authority.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the

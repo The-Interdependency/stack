@@ -15,7 +15,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d`
+  `99aa9e4dfd0a9b4f37d2aefe751247cb918230bc6672bd9a2f2452bae6ab82b4`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -171,13 +171,14 @@ constructor has no independent repository/release authority, and its successful 
 transfers no semantic, geometric, measurement, or language-canon status.
 
 URPCS is likewise stack-local and ungraduated. The reference implementation and
-fixtures are executable evidence for one bounded profile; an independent decoder,
-confidentiality model, durable host state, and production-security review remain open.
+fixtures are executable evidence for one bounded profile, and an independently
+structured decoder reproduced its committed outputs. A confidentiality model,
+durable host state, and production-security review remain open.
 
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
-- URPCS remains stack-local research; independent interoperability, confidentiality, durable rollback resistance, and release authority remain unresolved.
+- URPCS remains stack-local research; bounded independent decoding survived, while confidentiality, durable rollback resistance, and release authority remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.

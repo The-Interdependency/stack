@@ -70,8 +70,8 @@
     },
     {
       "surface": "research/urpcs/",
-      "status": "Laws 1-13 freeze summary, reference encoder/decoder, eight named vectors, exhaustive one-byte depth-zero check, source receipt, and CI gate integrated",
-      "boundary": "Stack-local authenticated-codec computation only; confidentiality, PCEA compatibility, UCNS-gonol identity, independent interoperability, and release authority remain unclaimed."
+      "status": "Laws 1-13, reference encoder/decoder, independent JavaScript decoder replay, byte-exact vectors, source receipt, and CI gates integrated",
+      "boundary": "Stack-local authenticated-codec computation only; bounded independent decoding survived, while confidentiality, PCEA compatibility, UCNS-gonol identity, and release authority remain unclaimed."
     }
   ],
   "active_frontier": [
@@ -79,7 +79,7 @@
     "register organization aggregate and website projection derivations in the fresh-making control plane",
     "maintain EPAC as a hash-pinned independent release consumer",
     "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
-    "Obtain an independently written URPCS decoder and a leakage/threat model before considering any confidentiality construction."
+    "Obtain a URPCS leakage/threat model before considering any confidentiality construction."
   ],
   "next_actions": [],
   "blocked": [],
@@ -139,6 +139,6 @@
     "skill-lib remains a special operational root snapshot rather than the normal libs/research pair",
     "EPAC geometry ratification and unmeasured operation effects remain unresolved research",
     "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved.",
-    "URPCS independent decoding, confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved."
+    "URPCS confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved."
   ]
 }

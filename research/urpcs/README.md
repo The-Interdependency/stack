@@ -32,6 +32,8 @@ UCNS geometry, or UCNS-gonol identity.
   complete forward/reverse composition, and exact wire/state rules.
 - [`urpcs_v1_reference.py`](urpcs_v1_reference.py) — dependency-free reference
   encoder, decoder, state advance, and fixture generator.
+- [`urpcs_v1_independent.js`](urpcs_v1_independent.js) — independently structured,
+  dependency-free decoder built from the public contract.
 - [`vectors/urpcs-v1-vectors.json`](vectors/urpcs-v1-vectors.json) — byte-exact
   positive and negative fixtures.
 - [`docs/URPCS-v1-vector-report.md`](docs/URPCS-v1-vector-report.md) — measured
@@ -40,6 +42,8 @@ UCNS geometry, or UCNS-gonol identity.
   — frozen independent-decoder sufficiency audit and exact public-input identities.
 - [`docs/URPCS-v1-public-contract-repair.md`](docs/URPCS-v1-public-contract-repair.md)
   — repair scope, preservation boundary, and clean-room replay gate.
+- [`docs/URPCS-v1-independent-replay.md`](docs/URPCS-v1-independent-replay.md)
+  — frozen clean-room replay identities and `SURVIVED_INDEPENDENTLY` result.
 - [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json) — imported-artifact identities.
 
 ## Usage guidance
@@ -63,6 +67,13 @@ cmp /tmp/urpcs-v1-vectors.json \
 The harness accepts at most one plaintext byte and recursion depth one. It is an
 interoperability fixture, not an application API.
 
+Run the independent decoder checks:
+
+```bash
+node research/urpcs/urpcs_v1_independent.js --kat
+node research/urpcs/tests/test_independent_decoder.js
+```
+
 ## Verified reference result
 
 - 8/8 named fixtures pass.
@@ -74,20 +85,28 @@ interoperability fixture, not an application API.
 The last result makes the resource boundary concrete: this is not a compressor,
 and greater depths require a separately justified permitted-domain cap.
 
+## Verified independent result
+
+- `empty_r0`, `empty_r1`, and `odd_09_r0` reproduce the committed plaintext,
+  deterministic receipt, and complete successor state.
+- Wrong associated data and an authenticated-body mutation are rejected at tag
+  verification before state advance.
+- The independent KMAC256 implementation matches NIST SP 800-185 Sample #4 and
+  an external OpenSSL `KMAC-256` result.
+- The decoder was frozen before the first ciphertext comparison and required no
+  correction afterward.
+
 ## Next gates
 
-1. Run a fresh clean-room decoder audit using the repaired public specification
-   as its only URPCS law source; compare expected outputs only after freezing the
-   implementation.
-2. A threat model and leakage model must precede any confidentiality claim.
-3. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
+1. A threat model and leakage model must precede any confidentiality claim.
+2. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
    fork policy require implementation and adversarial testing.
-4. Any future relation to PCEA or UCNS requires a separate authority-bearing law;
+3. Any future relation to PCEA or UCNS requires a separate authority-bearing law;
    repository proximity supplies none.
 
 ## hmmm
 
-The frozen audit is `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input. The
-public contract has since been repaired without changing reference code or
-vectors. Independent interoperability remains the next gate: the door is now
-specified, but a clean-room implementation still has to walk through it.
+The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
+After the public contract repair, the clean-room replay is
+`SURVIVED_INDEPENDENTLY` for the committed bounded profile. Confidentiality,
+durable host state, production security, and release authority remain open.
