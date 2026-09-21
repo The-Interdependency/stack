@@ -84,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 9aac639c255736e3f7a4373d268ac4ac9f5a36f32a3cb88a04abe85a7158b169
-File SHA-256: 41559be153b61585755bbcf79b6ac96102256a613aaa437b884ba8579ecb37a4
+Receipt payload digest (`receipt_sha256`): 6ab1eb559c31045311a52c8a118b483f8457dc2f8a33d0615f174beab0041d48
+File SHA-256: 5ec6aad5fc1a6dd0b7c1725bb573710783aeb9d50f5bd8ffe616f2699ba7b7a1
 ```
 
 ## Usage guidance
@@ -115,6 +115,7 @@ PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/generate_receipt_cli.py \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
+  --edcm-root /path/to/exact/edcm \
   --output /tmp/native-mobius-v0.pending.json
 ```
 
@@ -128,6 +129,7 @@ python3 research/digital-metrics/verify_receipt_cli.py \
   /tmp/native-mobius-v0.pending.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
+  --edcm-root /path/to/exact/edcm \
   --attest-output /tmp/native-mobius-v0.attested.json
 ```
 
@@ -138,12 +140,15 @@ PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/verify_receipt_cli.py \
   research/digital-metrics/receipts/native-mobius-v0.json \
   --metapat-root /path/to/exact/metapat \
-  --ucns-root /path/to/exact/ucns
+  --ucns-root /path/to/exact/ucns \
+  --edcm-root /path/to/exact/edcm
 ```
 
-The generator fails before importing producer code when a supplied root is not
-the repository's resolved Git top level, or when a required producer checkout
-has the wrong commit or any tracked changes.
+The generator first executes the pinned EDCM decoder's rejecting witness for an
+incomplete metric record; this validates only the fail-closed prerequisite and
+does not invoke an EDCM measurement. It fails before importing producer code
+when a supplied root is not the repository's resolved Git top level, or when a
+required producer checkout has the wrong commit or any tracked changes.
 
 The METAPAT import is isolated from the ambient module cache, its resolved file
 must be inside the verified checkout at the expected path, and the prior cache

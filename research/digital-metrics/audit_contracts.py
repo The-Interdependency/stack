@@ -58,6 +58,7 @@ from pathlib import Path
 import sys
 from types import ModuleType
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parent
@@ -165,11 +166,11 @@ def _load_pinned_parser() -> ModuleType:
 
 def _run_unittest_witnesses(
     path: Path,
-    admitted_methods: set[str],
+    admitted_methods: dict[str, str],
     test_source: bytes,
     audited_sources: dict[Path, bytes],
 ) -> tuple[bool, str, int]:
-    """Execute a witness module and reject skips and all non-clean outcomes."""
+    """Execute exact statically admitted witnesses from one immutable snapshot."""
     module_name = f"_digital_metric_witness_{hashlib.sha256(test_source).hexdigest()}"
     module = ModuleType(module_name)
     module.__file__ = str(path)
@@ -182,39 +183,51 @@ def _run_unittest_witnesses(
     }
     previous[module_name] = sys.modules.get(module_name, missing)
     sys.modules[module_name] = module
+    original_read_bytes = Path.read_bytes
+    snapshots = {
+        dependency_path.resolve(): source
+        for dependency_path, source in audited_sources.items()
+    }
+    snapshots[path.resolve()] = test_source
+
+    def read_snapshot(candidate: Path) -> bytes:
+        resolved = candidate.resolve()
+        if resolved in snapshots:
+            return snapshots[resolved]
+        return original_read_bytes(candidate)
+
     try:
-        for dependency_name, dependency_path in AUDITED_IMPORT_ORDER:
-            dependency_source = audited_sources[dependency_path]
-            dependency = ModuleType(dependency_name)
-            dependency.__file__ = str(dependency_path)
-            dependency.__cached__ = None
-            dependency.__package__ = ""
-            sys.modules[dependency_name] = dependency
-            exec(
-                compile(
-                    dependency_source,
-                    str(dependency_path),
-                    "exec",
-                    dont_inherit=True,
-                ),
-                dependency.__dict__,
-            )
-        exec(compile(test_source, str(path), "exec", dont_inherit=True), module.__dict__)
-        discovered = unittest.defaultTestLoader.loadTestsFromModule(module)
-
-        def iter_cases(suite: unittest.TestSuite):
-            for item in suite:
-                if isinstance(item, unittest.TestSuite):
-                    yield from iter_cases(item)
-                else:
-                    yield item
-
-        suite = unittest.TestSuite(
-            case for case in iter_cases(discovered)
-            if getattr(case, "_testMethodName", None) in admitted_methods
-        )
-        stream = io.StringIO()
-        result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
+        with patch.object(Path, "read_bytes", read_snapshot):
+            for dependency_name, dependency_path in AUDITED_IMPORT_ORDER:
+                dependency_source = snapshots[dependency_path.resolve()]
+                dependency = ModuleType(dependency_name)
+                dependency.__file__ = str(dependency_path)
+                dependency.__cached__ = None
+                dependency.__package__ = ""
+                sys.modules[dependency_name] = dependency
+                exec(
+                    compile(
+                        dependency_source,
+                        str(dependency_path),
+                        "exec",
+                        dont_inherit=True,
+                    ),
+                    dependency.__dict__,
+                )
+            exec(compile(test_source, str(path), "exec", dont_inherit=True), module.__dict__)
+            cases = []
+            for method_name, class_name in sorted(admitted_methods.items()):
+                case_class = getattr(module, class_name)
+                if not isinstance(case_class, type) or not issubclass(
+                    case_class, unittest.TestCase
+                ):
+                    raise AuditIdentityError(
+                        f"runtime witness class is not unittest.TestCase: {class_name}"
+                    )
+                cases.append(case_class(method_name))
+            suite = unittest.TestSuite(cases)
+            stream = io.StringIO()
+            result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
     finally:
         for name, prior in reversed(tuple(previous.items())):
             if prior is missing:
@@ -245,7 +258,7 @@ def _decorator_name(node: ast.expr) -> str | None:
     return _dotted_name(node)
 
 
-def _discoverable_test_methods(path: Path, source: bytes) -> set[str]:
+def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
     tree = ast.parse(source.decode("utf-8"), filename=str(path))
     unittest_aliases = {"unittest"}
     testcase_aliases: set[str] = set()
@@ -316,7 +329,7 @@ def _discoverable_test_methods(path: Path, source: bytes) -> set[str]:
                 nonproof_classes.add(name)
                 changed = True
 
-    methods: set[str] = set()
+    methods: dict[str, str] = {}
     for name, node in classes.items():
         if name not in discoverable_classes or name in nonproof_classes:
             continue
@@ -331,9 +344,18 @@ def _discoverable_test_methods(path: Path, source: bytes) -> set[str]:
             ):
                 continue
             if isinstance(method, ast.FunctionDef):
-                methods.add(method.name)
+                admitted = True
             elif isinstance(method, ast.AsyncFunctionDef) and name in async_classes:
-                methods.add(method.name)
+                admitted = True
+            else:
+                admitted = False
+            if admitted:
+                if method.name in methods:
+                    raise AuditIdentityError(
+                        f"ambiguous unittest method {method.name!r} in "
+                        f"{methods[method.name]!r} and {name!r}"
+                    )
+                methods[method.name] = name
     return methods
 
 
@@ -387,7 +409,11 @@ def audit() -> dict[str, object]:
     declared_calls: set[tuple[Path, str]] = set()
     proved: set[str] = set()
     for path in TEST_FILES:
-        discoverable = _discoverable_test_methods(path, test_snapshots[path])
+        try:
+            discoverable = _discoverable_test_methods(path, test_snapshots[path])
+        except (AuditIdentityError, SyntaxError, UnicodeDecodeError) as exc:
+            findings.append(f"GAP {path.name} static unittest discovery failed: {exc}")
+            discoverable = {}
         runtime_clean = False
         try:
             suite_clean, _suite_output, tests_run = _run_unittest_witnesses(

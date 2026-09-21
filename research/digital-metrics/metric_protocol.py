@@ -67,6 +67,11 @@ from __future__ import annotations
 #   then: canonical receipt bytes and digest are identical and tampering fails verification
 #   class: provenance
 #
+# id: digital_metric_receipt_inputs_are_unambiguous
+#   given: two receipt inputs claim the same identity, whether or not their digests agree
+#   then: sealing and verification reject the ambiguous provenance even after digest recomputation
+#   class: provenance
+#
 # id: digital_metric_status_does_not_transfer
 #   given: a receipt binds METAPAT, UCNS, EDCM, and Stack identities
 #   then: every binding keeps authority and measurement-status transfer false
@@ -797,10 +802,14 @@ def verify_receipt(value: Any) -> dict[str, Any]:
         _validate_binding(item, index)
     if not isinstance(record["inputs"], list) or not record["inputs"]:
         raise MetricProtocolError("receipt inputs must be a non-empty array")
+    input_identities: set[str] = set()
     for index, item in enumerate(record["inputs"]):
         input_record = _mapping(item, f"receipt input[{index}]")
         _exact_fields(input_record, ("identity", "sha256"), f"receipt input[{index}]")
-        _text(input_record["identity"], f"receipt input[{index}].identity")
+        identity = _text(input_record["identity"], f"receipt input[{index}].identity")
+        if identity in input_identities:
+            raise MetricProtocolError(f"duplicate receipt input identity: {identity!r}")
+        input_identities.add(identity)
         _sha256(input_record["sha256"], f"receipt input[{index}].sha256")
     verification = _mapping(record["verification"], "receipt verification")
     _exact_fields(verification, ("verifier_id", "verifier_sha256", "result"), "receipt verification")

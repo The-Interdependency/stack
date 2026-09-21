@@ -71,6 +71,12 @@ jobs:
           repository: The-Interdependency/ucns
           ref: 1cf10c2df2541a332a77f2ed3feda0c6bef4abcc
           path: ucns
+      - name: Check out exact EDCM prerequisite
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/edcm
+          ref: 211ce860446d3576ae2930a101eefdd07d3e3dcc
+          path: edcm
       - name: Verify the vendored msdmd parser against the pinned doctrine commit
         run: cmp stack/skill-lib/msdmd/parsers/universal.py skill-lib/msdmd/parsers/universal.py
       - name: Audit metric contract witnesses
@@ -85,12 +91,14 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt_cli.py \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
+            --edcm-root ../edcm \
             --output /tmp/native-mobius-v0.pending.json
           python3 -c 'import json; assert json.load(open("/tmp/native-mobius-v0.pending.json"))["verification"]["result"] == "pending"'
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
             /tmp/native-mobius-v0.pending.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
+            --edcm-root ../edcm \
             --attest-output /tmp/native-mobius-v0.attested.json
           cmp \
             research/digital-metrics/receipts/native-mobius-v0.json \
@@ -98,4 +106,5 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
             research/digital-metrics/receipts/native-mobius-v0.json \
             --metapat-root ../metapat \
-            --ucns-root ../ucns
+            --ucns-root ../ucns \
+            --edcm-root ../edcm

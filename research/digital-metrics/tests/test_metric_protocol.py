@@ -57,6 +57,12 @@ from __future__ import annotations
 #   mutates: none
 #   cleanup: none
 #
+# id: check_digital_metric_receipt_input_ambiguity
+#   proves: digital_metric_receipt_inputs_are_unambiguous
+#   call: self::test_receipt_rejects_duplicate_input_identities
+#   mutates: none
+#   cleanup: none
+#
 # id: check_digital_metric_replay_attestation
 #   proves: digital_metric_pass_requires_completed_replay
 #   call: self::test_pass_is_created_only_by_post_replay_attestation
@@ -91,6 +97,12 @@ from __future__ import annotations
 #   proves: digital_metric_generator_requires_exact_clean_producers
 #   call: self::test_generator_rejects_nested_producer_root
 #   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+#
+# id: check_digital_metric_edcm_decoder_prerequisite
+#   proves: digital_metric_generator_requires_fail_closed_edcm_decoder
+#   call: self::test_edcm_decoder_prerequisite_is_fail_closed
+#   mutates: temporary Git repositories only
 #   cleanup: automatic temporary-directory cleanup
 #
 # id: check_digital_metric_fixed_participant_set
@@ -256,6 +268,7 @@ from generate_receipt import (  # noqa: E402
     load_work_graph,
     _load_metapat_application,
     _load_ucns_native_module,
+    _verify_edcm_decoder_guard,
     verify_checkout,
 )
 SHA_A = "a" * 64
@@ -625,6 +638,53 @@ class MetricProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(MetricProtocolError, "observation digest mismatch"):
             verify_receipt(tampered)
 
+    def test_receipt_rejects_duplicate_input_identities(self) -> None:
+        defn = definition()
+        observation = observed(defn, boolean_value(True))
+        binding = {
+            "kind": "test-binding",
+            "identity": "test",
+            "version": "0.1.0",
+            "repository": "The-Interdependency/stack",
+            "commit": COMMIT_A,
+            "artifact_sha256": SHA_A,
+            "record_digest": SHA_B,
+            "authority_transfer": False,
+            "measurement_status_transfer": False,
+        }
+        kwargs = {
+            "work_graph_sha256": WORK_GRAPH_SHA,
+            "definitions": [defn],
+            "observations": [observation],
+            "bindings": [binding],
+            "verifier_id": "stack.test.verifier",
+            "verifier_sha256": SHA_A,
+            "hmmm": [],
+        }
+        with self.assertRaisesRegex(
+            MetricProtocolError, "duplicate receipt input identity"
+        ):
+            seal_receipt(
+                **kwargs,
+                inputs=[
+                    {"identity": "fixture", "sha256": SHA_A},
+                    {"identity": "fixture", "sha256": SHA_B},
+                ],
+            )
+
+        valid = seal_receipt(
+            **kwargs,
+            inputs=[{"identity": "fixture", "sha256": SHA_A}],
+        )
+        tampered = deepcopy(valid)
+        tampered["inputs"].append({"identity": "fixture", "sha256": SHA_B})
+        tampered.pop("receipt_sha256")
+        tampered["receipt_sha256"] = sha256_json(tampered)
+        with self.assertRaisesRegex(
+            MetricProtocolError, "duplicate receipt input identity"
+        ):
+            verify_receipt(tampered)
+
     def test_pass_is_created_only_by_post_replay_attestation(self) -> None:
         defn = definition()
         observation = observed(defn, boolean_value(True))
@@ -662,6 +722,7 @@ class MetricProtocolTests(unittest.TestCase):
                     pending_path,
                     metapat_root=root,
                     ucns_root=root,
+                    edcm_root=root,
                     work_graph_path=root / "WORK_GRAPH.json",
                     attest_output=attested_path,
                 )
@@ -674,6 +735,7 @@ class MetricProtocolTests(unittest.TestCase):
                     attested_path,
                     metapat_root=root,
                     ucns_root=root,
+                    edcm_root=root,
                     work_graph_path=root / "WORK_GRAPH.json",
                 )
                 self.assertEqual(replayed, attested)
@@ -685,6 +747,7 @@ class MetricProtocolTests(unittest.TestCase):
                         attested_path,
                         metapat_root=root,
                         ucns_root=root,
+                        edcm_root=root,
                         work_graph_path=root / "WORK_GRAPH.json",
                         attest_output=root / "second.json",
                     )
@@ -733,6 +796,57 @@ class MetricProtocolTests(unittest.TestCase):
             }
             with self.assertRaisesRegex(ProducerIdentityError, "not the Git top level"):
                 verify_checkout(Path(directory), participant, ())
+
+    def test_edcm_decoder_prerequisite_is_fail_closed(self) -> None:
+        guarded_source = (
+            "class RoundMetrics:\n"
+            "    __slots__ = ('token_count', 'other')\n"
+            "    def __init__(self, **values):\n"
+            "        for slot in self.__slots__:\n"
+            "            setattr(self, slot, values[slot])\n"
+            "\n"
+            "def _dict_to_metrics(values, *, round_index):\n"
+            "    missing = [slot for slot in RoundMetrics.__slots__ if slot not in values]\n"
+            "    if missing:\n"
+            "        raise ValueError(f'round {round_index} metric record missing required fields: {\", \".join(missing)}')\n"
+            "    return RoundMetrics(**values)\n"
+        )
+        permissive_source = (
+            "class RoundMetrics:\n"
+            "    __slots__ = ('token_count', 'other')\n"
+            "    def __init__(self, **values):\n"
+            "        for slot in self.__slots__:\n"
+            "            setattr(self, slot, values[slot])\n"
+            "\n"
+            "def _dict_to_metrics(values, *, round_index):\n"
+            "    return RoundMetrics(**{slot: values.get(slot, 0) for slot in RoundMetrics.__slots__})\n"
+        )
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name, source in (
+                ("guarded", guarded_source),
+                ("permissive", permissive_source),
+            ):
+                repository = root / name
+                package = repository / "edcm/measurement"
+                package.mkdir(parents=True)
+                (repository / "edcm/__init__.py").write_text("", encoding="utf-8")
+                (package / "__init__.py").write_text("", encoding="utf-8")
+                decoder = package / "compress.py"
+                decoder.write_text(source, encoding="utf-8")
+                self._commit_fixture_repo(repository)
+                commit = self._head(repository)
+                if name == "guarded":
+                    self.assertEqual(
+                        _verify_edcm_decoder_guard(repository, commit),
+                        hashlib.sha256(source.encode("utf-8")).hexdigest(),
+                    )
+                else:
+                    with self.assertRaisesRegex(
+                        ProducerIdentityError,
+                        "accepted an incomplete metric record",
+                    ):
+                        _verify_edcm_decoder_guard(repository, commit)
 
     def test_work_graph_requires_complete_fixed_participant_set(self) -> None:
         graph = json.loads((WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8"))
@@ -1150,6 +1264,7 @@ class MetricProtocolTests(unittest.TestCase):
                 Path("missing"),
                 metapat_root=Path("."),
                 ucns_root=Path("."),
+                edcm_root=Path("."),
                 work_graph_path=WORKSPACE / "WORK_GRAPH.json",
             )
 
@@ -1307,13 +1422,76 @@ class MetricProtocolTests(unittest.TestCase):
             ):
                 clean, output, tests_run = contract_audit._run_unittest_witnesses(
                     test_path,
-                    {"test_hidden"},
+                    {"test_hidden": "SourceBound"},
                     test_path.read_bytes(),
                     {dependency_path: verified_dependency.encode("utf-8")},
                 )
                 self.assertTrue(clean, output)
                 self.assertEqual(tests_run, 1)
                 self.assertIs(sys.modules["metric_protocol"], cached_dependency)
+
+            load_tests_source = (
+                "import unittest\n"
+                "class Declared(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('declared witness executed')\n"
+                "class Replacement(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        pass\n"
+                "def load_tests(loader, tests, pattern):\n"
+                "    return unittest.TestSuite([Replacement('test_hidden')])\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "Declared"},
+                    load_tests_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("declared witness executed", output)
+
+            parent_path = root / "generate_receipt.py"
+            dependency_snapshot = b"MARKER = 'snapshot'\n"
+            parent_snapshot = (
+                "from pathlib import Path\n"
+                "from types import ModuleType\n"
+                "source_path = Path(__file__).with_name('metric_protocol.py')\n"
+                "source = source_path.read_bytes()\n"
+                "loaded = ModuleType('nested_dependency')\n"
+                "exec(compile(source, str(source_path), 'exec'), loaded.__dict__)\n"
+                "MARKER = loaded.MARKER\n"
+            ).encode("utf-8")
+            dependency_path.write_bytes(dependency_snapshot)
+            parent_path.write_bytes(parent_snapshot)
+            nested_test_source = (
+                "import generate_receipt\n"
+                "import unittest\n"
+                "class SnapshotBound(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.assertEqual(generate_receipt.MARKER, 'snapshot')\n"
+            ).encode("utf-8")
+            dependency_path.write_text("MARKER = 'mutable'\n", encoding="utf-8")
+            with patch.object(
+                contract_audit,
+                "AUDITED_IMPORT_ORDER",
+                (
+                    ("metric_protocol", dependency_path),
+                    ("generate_receipt", parent_path),
+                ),
+            ):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "SnapshotBound"},
+                    nested_test_source,
+                    {
+                        dependency_path: dependency_snapshot,
+                        parent_path: parent_snapshot,
+                    },
+                )
+            self.assertTrue(clean, output)
+            self.assertEqual(tests_run, 1)
 
     def test_contract_audit_rejects_unpinned_parser_bytes(self) -> None:
         with TemporaryDirectory() as directory:

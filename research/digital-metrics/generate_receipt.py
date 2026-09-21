@@ -7,12 +7,14 @@ Run only with clean checkouts at the commits pinned by ``WORK_GRAPH.json``::
     python3 research/digital-metrics/generate_receipt_cli.py \
       --metapat-root /path/to/metapat \
       --ucns-root /path/to/ucns \
+      --edcm-root /path/to/edcm \
       --output /tmp/digital-metrics-receipt.json
 
 The generator imports the current METAPAT application constructor and executes
 the current UCNS exact native Möbius transition.  It produces integrity and
 structural observations only.  It does not invoke EDCM or claim measurement,
-theorem, semantic, or empirical validity.
+theorem, semantic, or empirical validity. It does execute the pinned EDCM
+decoder's missing-field rejection as a prerequisite guard.
 """
 
 from __future__ import annotations
@@ -33,7 +35,7 @@ from __future__ import annotations
 #   tests: research/digital-metrics/tests/test_metric_protocol.py
 #   rollout: explicit command only; noncanonical Stack research
 #   rollback: remove this workspace and its manifest projections
-#   requires: stack_digital_metric_protocol,current METAPAT and UCNS producer checkouts
+#   requires: stack_digital_metric_protocol,current METAPAT and UCNS producer checkouts,pinned fail-closed EDCM decoder prerequisite
 #   since: 2026-09-20
 #   unresolved: EDCM projection selection and calibration remain out of this structural slice
 # === END MODULE_BUILD ===
@@ -83,6 +85,11 @@ from __future__ import annotations
 #   given: the exact pinned UCNS producer is available
 #   then: the generator observes native one-turn and two-turn visible/complete-state equality directly from producer objects
 #   class: evidence
+#
+# id: digital_metric_generator_requires_fail_closed_edcm_decoder
+#   given: the work graph pins EDCM as the merged missing-metric decoder prerequisite
+#   then: generation executes the committed decoder and rejects unless an omitted token_count raises ValueError before metric construction
+#   class: correctness
 # === END CONTRACTS ===
 
 import argparse
@@ -451,6 +458,52 @@ def _load_ucns_native_module(root: Path, commit: str) -> tuple[Any, str]:
     return module, _sha256_bytes(source)
 
 
+def _verify_edcm_decoder_guard(root: Path, commit: str) -> str:
+    """Execute the pinned fail-closed decoder witness without measuring data."""
+    relative = "edcm/measurement/compress.py"
+    source_path = (root / relative).resolve()
+    source = _git_blob(root, commit, relative)
+    allowed_sources = _committed_python_sources(root, commit, "edcm")
+    with _isolated_source_package_import("edcm", root / "edcm", allowed_sources):
+        module = importlib.import_module("edcm.measurement.compress")
+        actual_module_path = Path(module.__file__).resolve()
+        if actual_module_path != source_path:
+            raise ProducerIdentityError(
+                f"EDCM decoder origin differs from verified checkout: {actual_module_path}"
+            )
+        slots = tuple(module.RoundMetrics.__slots__)
+        if "token_count" not in slots:
+            raise ProducerIdentityError(
+                "EDCM RoundMetrics does not declare the token_count prerequisite field"
+            )
+        complete = {slot: 0 for slot in slots}
+        try:
+            decoded = module._dict_to_metrics(complete, round_index=0)
+        except Exception as exc:
+            raise ProducerIdentityError(
+                f"EDCM decoder rejected a complete metric prerequisite fixture: {exc}"
+            ) from exc
+        if decoded.token_count != 0:
+            raise ProducerIdentityError("EDCM complete metric prerequisite fixture changed")
+        del complete["token_count"]
+        try:
+            module._dict_to_metrics(complete, round_index=0)
+        except ValueError as exc:
+            if "token_count" not in str(exc):
+                raise ProducerIdentityError(
+                    "EDCM missing-metric rejection did not name token_count"
+                ) from exc
+        except Exception as exc:
+            raise ProducerIdentityError(
+                f"EDCM incomplete metric record raised the wrong exception: {exc}"
+            ) from exc
+        else:
+            raise ProducerIdentityError(
+                "EDCM decoder accepted an incomplete metric record"
+            )
+    return _sha256_bytes(source)
+
+
 def _state_record(state: Any, law_id: str, law_version: str) -> dict[str, Any]:
     phase = state.phase_turns
     return {
@@ -489,6 +542,7 @@ def build_receipt(
     *,
     metapat_root: Path,
     ucns_root: Path,
+    edcm_root: Path,
     work_graph_path: Path,
     verifier_path: Path | None = None,
     verifier_sha256: str | None = None,
@@ -501,6 +555,7 @@ def build_receipt(
     work_graph = load_work_graph(work_graph_path.resolve())
     metapat_participant = _participant(work_graph, "The-Interdependency/metapat")
     ucns_participant = _participant(work_graph, "The-Interdependency/ucns")
+    edcm_participant = _participant(work_graph, "The-Interdependency/edcm")
 
     verify_checkout(
         metapat_root,
@@ -517,12 +572,25 @@ def build_receipt(
         ucns_participant,
         ("src/ucns/direct_mobius.py",),
     )
+    verify_checkout(
+        edcm_root,
+        edcm_participant,
+        (
+            "edcm/measurement/compress.py",
+            "edcm/measurement/metrics/compute.py",
+            "edcm/measurement/metrics/stats.py",
+            "edcm/measurement/parser/turns_rounds.py",
+        ),
+    )
 
     application, metapat_source_sha256 = _load_metapat_application(
         metapat_root, metapat_participant["commit"]
     )
     ucns, ucns_source_sha256 = _load_ucns_native_module(
         ucns_root, ucns_participant["commit"]
+    )
+    edcm_decoder_sha256 = _verify_edcm_decoder_guard(
+        edcm_root, edcm_participant["commit"]
     )
     origin = ucns.native_mobius_state()
     one_turn = origin.advance(1)
@@ -671,6 +739,7 @@ def build_receipt(
         {"identity": "metapat-affixiation-application-record", "sha256": sha256_json(application_record)},
         {"identity": "ucns-native-mobius-source", "sha256": ucns_source_sha256},
         {"identity": "ucns-native-mobius-state-bundle", "sha256": state_bundle_sha256},
+        {"identity": "edcm-fail-closed-decoder-source", "sha256": edcm_decoder_sha256},
         {"identity": "stack-digital-metric-protocol", "sha256": protocol_sha256},
         {"identity": "stack-digital-metric-generator", "sha256": generator_sha256},
     ]
@@ -694,6 +763,7 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--metapat-root", type=Path, required=True)
     parser.add_argument("--ucns-root", type=Path, required=True)
+    parser.add_argument("--edcm-root", type=Path, required=True)
     parser.add_argument(
         "--work-graph",
         type=Path,
@@ -708,6 +778,7 @@ def main() -> int:
     receipt = build_receipt(
         metapat_root=args.metapat_root,
         ucns_root=args.ucns_root,
+        edcm_root=args.edcm_root,
         work_graph_path=args.work_graph,
     )
     args.output.write_text(canonical_json(receipt) + "\n", encoding="utf-8")

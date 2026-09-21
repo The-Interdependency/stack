@@ -5,12 +5,14 @@ Usage guidance::
     python3 research/digital-metrics/verify_receipt_cli.py \
       research/digital-metrics/receipts/native-mobius-v0.json \
       --metapat-root /path/to/metapat \
-      --ucns-root /path/to/ucns
+      --ucns-root /path/to/ucns \
+      --edcm-root /path/to/edcm
 
 To turn a generator-created pending candidate into an attested receipt::
 
     python3 research/digital-metrics/verify_receipt_cli.py pending.json \
       --metapat-root /path/to/metapat --ucns-root /path/to/ucns \
+      --edcm-root /path/to/edcm \
       --attest-output attested.json
 
 The command validates every strict field and digest and reruns the generator
@@ -137,6 +139,7 @@ def verify_and_replay(
     *,
     metapat_root: Path,
     ucns_root: Path,
+    edcm_root: Path,
     work_graph_path: Path,
     attest_output: Path | None = None,
 ) -> dict:
@@ -151,6 +154,7 @@ def verify_and_replay(
     candidate = build_receipt(
         metapat_root=metapat_root,
         ucns_root=ucns_root,
+        edcm_root=edcm_root,
         work_graph_path=work_graph_path,
         verifier_sha256=_LOADED_VERIFIER_SHA256,
     )
@@ -177,6 +181,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("receipt", type=Path)
     parser.add_argument("--metapat-root", type=Path, required=True)
     parser.add_argument("--ucns-root", type=Path, required=True)
+    parser.add_argument("--edcm-root", type=Path, required=True)
     parser.add_argument(
         "--work-graph",
         type=Path,
@@ -192,6 +197,7 @@ def main() -> int:
         args.receipt,
         metapat_root=args.metapat_root,
         ucns_root=args.ucns_root,
+        edcm_root=args.edcm_root,
         work_graph_path=args.work_graph,
         attest_output=args.attest_output,
     )
