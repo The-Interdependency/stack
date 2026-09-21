@@ -9,6 +9,7 @@ on:
       - 'AGENTS.md'
       - 'research/**'
       - 'libs/**'
+      - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
@@ -23,6 +24,7 @@ on:
       - 'AGENTS.md'
       - 'research/**'
       - 'libs/**'
+      - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
@@ -43,3 +45,69 @@ jobs:
         run: python tools/check_stack_consistency.py
       - name: Validate the repository-owned portfolio report
         run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+
+  digital-metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Stack
+        uses: actions/checkout@v4
+        with:
+          path: stack
+          fetch-depth: 0
+      - name: Check out exact skill-lib doctrine
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/skill-lib
+          ref: fb3b53a7629f7f03ecf255167d52c13abef1a979
+          path: skill-lib
+      - name: Check out exact METAPAT producer
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/metapat
+          ref: e4165b0cac9eca41daef9c2f941881028ca55d48
+          path: metapat
+      - name: Check out exact UCNS producer
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/ucns
+          ref: 1cf10c2df2541a332a77f2ed3feda0c6bef4abcc
+          path: ucns
+      - name: Check out exact EDCM prerequisite
+        uses: actions/checkout@v4
+        with:
+          repository: The-Interdependency/edcm
+          ref: 211ce860446d3576ae2930a101eefdd07d3e3dcc
+          path: edcm
+      - name: Verify the vendored msdmd parser against the pinned doctrine commit
+        run: cmp stack/skill-lib/msdmd/parsers/universal.py skill-lib/msdmd/parsers/universal.py
+      - name: Audit metric contract witnesses
+        working-directory: stack
+        run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts_cli.py --skill-lib-root ../skill-lib
+      - name: Run adversarial metric protocol tests
+        working-directory: stack
+        env:
+          STACK_DIGITAL_METRICS_SKILL_LIB_ROOT: ../skill-lib
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s research/digital-metrics/tests -p 'test*.py' -v
+      - name: Generate pending, attest after replay, and match frozen receipt
+        working-directory: stack
+        run: |
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt_cli.py \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns \
+            --edcm-root ../edcm \
+            --output /tmp/native-mobius-v0.pending.json
+          python3 -c 'import json; assert json.load(open("/tmp/native-mobius-v0.pending.json"))["verification"]["result"] == "pending"'
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
+            /tmp/native-mobius-v0.pending.json \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns \
+            --edcm-root ../edcm \
+            --attest-output /tmp/native-mobius-v0.attested.json
+          cmp \
+            research/digital-metrics/receipts/native-mobius-v0.json \
+            /tmp/native-mobius-v0.attested.json
+          PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
+            research/digital-metrics/receipts/native-mobius-v0.json \
+            --metapat-root ../metapat \
+            --ucns-root ../ucns \
+            --edcm-root ../edcm

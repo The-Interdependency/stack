@@ -13,9 +13,10 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
+- Digital metrics v0 workspace integration UTC: `2026-09-20` from Stack baseline `ca190204de25de240662bb438af80c8dc405cea6`; EDCM decoder prerequisite merged at `211ce860446d3576ae2930a101eefdd07d3e3dcc`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `39af341f00c85c137bb8e239aeb1afc00939a542b8f3f09cb371c522313a0d0d`
+  `f36e3b8b5437cd43033b15317b70420b70a3e48e2bcbbd25343b752203df75b5`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -60,6 +61,11 @@ release identity.
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
 | `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer | no |
+| `research/digital-metrics/` | `The-Interdependency/stack` | `ca190204de25de240662bb438af80c8dc405cea6` | starting identity and owner of the noncanonical digital-metrics research workspace | no |
+| `research/digital-metrics/` | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | manifest-pinned Stack operational doctrine; supplies no metric result | no |
+| `research/digital-metrics/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | exact affixiation-harmonics semantic constraint; supplies no calculated metric value | no |
+| `research/digital-metrics/` | `The-Interdependency/ucns` | `1cf10c2df2541a332a77f2ed3feda0c6bef4abcc` | exact geometric producer for one-turn and two-turn structural observations | no |
+| `research/digital-metrics/` | `The-Interdependency/edcm` | `211ce860446d3576ae2930a101eefdd07d3e3dcc` | merged fail-closed missing-metric decoder prerequisite; no EDCM measurement is invoked by the v0 structural receipt | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -70,6 +76,28 @@ release identity.
 | `research/from-photons-to-macroverse/` | `The-Interdependency/edcm` | `eb5f200d48a8c4ffa7b943238407fbdac4934946` | adjacent measurement discipline only; no validation claim | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/pcea` | `834987cb0c1fea5f62d6ea08e5c5bb878c312646` | adjacent runtime/security work; no ontology transfer | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | adjacent internal research; no external physics transfer | no |
+
+### Digital metrics exact projection
+
+The `research/digital-metrics/` work graph retains these exact authority fields:
+
+| Repository | Authority |
+|---|---|
+| `The-Interdependency/stack` | composition, strict research protocol, deterministic receipt, and non-transfer boundaries |
+| `The-Interdependency/skill-lib` | organization-wide build and evidence doctrine |
+| `The-Interdependency/metapat` | semantic definitions, question forms, interpretation constraints, and claim status |
+| `The-Interdependency/ucns` | geometry, exact native Mobius transition law, and its own proof status |
+| `The-Interdependency/edcm` | measurement projection and result contracts |
+
+The contract audit source-loads `msdmd/parsers/universal.py` from
+`skill-lib/msdmd/parsers/universal.py` only when its SHA-256 is
+`15b6d47628083db62428d52a9cecb50831c82a9903a1457c2270bf9878e34c4e` and
+its Git blob SHA-1 is `7bc86bf303083c5c0049393d6ce38a50908c4a00`; the skill-lib
+commit is the exact participant pin above.
+
+The exact non-transfer boundary projection, in canonical JSON, is:
+
+`{"authority_transfer":false,"empirical_status_transfer":false,"hmmm":["EDCM projection selection and empirical calibration are not part of the v0 structural receipt.","Producer identities are content-bound but are not cryptographic producer signatures.","Independent implementation replay remains required before promotion beyond test-backed Stack research."],"measurement_status_transfer":false,"proof_status_transfer":false,"semantic_mapping":"external-provenance"}`
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -113,6 +141,13 @@ pairing codec experiment. Its accepted Laws 1–13, reference implementation, an
 byte-exact vectors establish bounded deterministic codec behavior only. The
 workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
 Stack supplies no confidentiality or production-security standing.
+Digital metrics v0 lives separately at `research/digital-metrics/` as strict
+Stack-local transport and structural-integrity research. It binds current METAPAT
+semantic constraints, executes an exact UCNS structural producer, and records the
+merged EDCM fail-closed decoder as a future measurement prerequisite. The frozen v0
+receipt invokes no EDCM measurement and transfers no semantic, proof, measurement,
+or empirical status.
+
 
 ## License status at pinned commits
 
