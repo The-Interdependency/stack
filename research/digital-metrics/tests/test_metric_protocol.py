@@ -1324,6 +1324,16 @@ class MetricProtocolTests(unittest.TestCase):
                 "    def test_hidden(self):\n"
                 "        raise AssertionError\n"
             ),
+            (
+                "import unittest\n"
+                "class RunnerOverride(unittest.TestCase):\n"
+                "    def run(self, result=None):\n"
+                "        result.startTest(self)\n"
+                "        result.stopTest(self)\n"
+                "        return result\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ),
         )
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1452,6 +1462,29 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertEqual(tests_run, 1)
             self.assertIn("declared witness executed", output)
 
+            runtime_override_source = (
+                "import unittest\n"
+                "class DynamicRunner(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+                "def bypass(self, result=None):\n"
+                "    result.startTest(self)\n"
+                "    result.stopTest(self)\n"
+                "    return result\n"
+                "DynamicRunner.run = bypass\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "overrides unittest execution",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "DynamicRunner"},
+                        runtime_override_source,
+                        {},
+                    )
+
             parent_path = root / "generate_receipt.py"
             dependency_snapshot = b"MARKER = 'snapshot'\n"
             parent_snapshot = (
@@ -1476,10 +1509,7 @@ class MetricProtocolTests(unittest.TestCase):
             with patch.object(
                 contract_audit,
                 "AUDITED_IMPORT_ORDER",
-                (
-                    ("metric_protocol", dependency_path),
-                    ("generate_receipt", parent_path),
-                ),
+                (("generate_receipt", parent_path),),
             ):
                 clean, output, tests_run = contract_audit._run_unittest_witnesses(
                     test_path,

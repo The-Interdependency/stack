@@ -35,7 +35,7 @@ from __future__ import annotations
 
 # === CONTRACTS ===
 # id: digital_metric_contract_audit_requires_discoverable_tests
-#   given: a CHECKS call names a top-level, nested, non-TestCase, skipped, or expected-failure test-like function
+#   given: a CHECKS call names a top-level, nested, non-TestCase, skipped, expected-failure, or runner-overriding test-like function
 #   then: the audit rejects it unless unittest can execute the named method as a passing witness
 #   class: provenance
 #
@@ -75,6 +75,7 @@ SOURCE_FILES = (
     ROOT / "verify_receipt_cli.py",
 )
 TEST_FILES = (ROOT / "tests/test_metric_protocol.py",)
+WITNESS_DEPENDENCY_FILES = (STACK_ROOT / "tools/check_stack_consistency.py",)
 AUDITED_IMPORT_ORDER = (
     ("metric_protocol", ROOT / "metric_protocol.py"),
     ("audit_contracts", ROOT / "audit_contracts.py"),
@@ -82,6 +83,18 @@ AUDITED_IMPORT_ORDER = (
     ("generate_receipt_cli", ROOT / "generate_receipt_cli.py"),
     ("verify_receipt", ROOT / "verify_receipt.py"),
     ("verify_receipt_cli", ROOT / "verify_receipt_cli.py"),
+)
+UNSAFE_RUNNER_HOOKS = frozenset(
+    {
+        "run",
+        "__call__",
+        "debug",
+        "_callSetUp",
+        "_callTestMethod",
+        "_callTearDown",
+        "__getattribute__",
+        "__getattr__",
+    }
 )
 
 
@@ -224,6 +237,19 @@ def _run_unittest_witnesses(
                     raise AuditIdentityError(
                         f"runtime witness class is not unittest.TestCase: {class_name}"
                     )
+                for ancestor in case_class.__mro__:
+                    if ancestor in {
+                        unittest.TestCase,
+                        unittest.IsolatedAsyncioTestCase,
+                        object,
+                    }:
+                        continue
+                    overridden = sorted(UNSAFE_RUNNER_HOOKS & ancestor.__dict__.keys())
+                    if overridden:
+                        raise AuditIdentityError(
+                            f"runtime witness class overrides unittest execution: "
+                            f"{ancestor.__name__}.{overridden[0]}"
+                        )
                 cases.append(case_class(method_name))
             suite = unittest.TestSuite(cases)
             stream = io.StringIO()
@@ -318,7 +344,11 @@ def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
             is_nonproof = any(
                 _decorator_name(decorator) in nonproof_decorators
                 for decorator in node.decorator_list
-            ) or any(base in nonproof_classes for base in bases)
+            ) or any(base in nonproof_classes for base in bases) or any(
+                isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef))
+                and member.name in UNSAFE_RUNNER_HOOKS
+                for member in node.body
+            )
             if is_discoverable and name not in discoverable_classes:
                 discoverable_classes.add(name)
                 changed = True
@@ -367,7 +397,11 @@ def audit() -> dict[str, object]:
     try:
         parser = _load_pinned_parser()
         snapshot_paths = dict.fromkeys(
-            (*SOURCE_FILES, *(path for _name, path in AUDITED_IMPORT_ORDER))
+            (
+                *SOURCE_FILES,
+                *WITNESS_DEPENDENCY_FILES,
+                *(path for _name, path in AUDITED_IMPORT_ORDER),
+            )
         )
         source_snapshots = {path: path.read_bytes() for path in snapshot_paths}
         test_snapshots = {path: path.read_bytes() for path in TEST_FILES}
