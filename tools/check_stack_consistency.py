@@ -118,6 +118,44 @@ def error(findings: list[str], code: str, message: str) -> None:
     findings.append(f"{code}: {message}")
 
 
+def markdown_table_rows(
+    source: str,
+    header: str,
+    separator: str,
+) -> list[str] | None:
+    """Return rows from the unique table with the exact header and separator."""
+    lines = source.splitlines()
+    starts = [
+        index for index, line in enumerate(lines[:-1])
+        if line == header and lines[index + 1] == separator
+    ]
+    if len(starts) != 1:
+        return None
+    rows: list[str] = []
+    for line in lines[starts[0] + 2:]:
+        if not line.startswith("|"):
+            break
+        rows.append(line)
+    return rows
+
+
+def markdown_section(source: str, heading: str) -> list[str] | None:
+    """Return the uniquely headed section through the next peer/parent heading."""
+    lines = source.splitlines()
+    starts = [index for index, line in enumerate(lines) if line == heading]
+    if len(starts) != 1:
+        return None
+    level = len(heading) - len(heading.lstrip("#"))
+    section: list[str] = []
+    for line in lines[starts[0] + 1:]:
+        if line.startswith("#"):
+            next_level = len(line) - len(line.lstrip("#"))
+            if next_level <= level:
+                break
+        section.append(line)
+    return section
+
+
 def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
     if manifest.get("schema") != "the-interdependency.stack-manifest":
         error(findings, "manifest.schema", "unexpected or missing stack-manifest schema")
@@ -217,6 +255,48 @@ def check_digital_metrics_projection(
     if graph.get("work_graph_sha256") != graph_digest:
         error(findings, "digital_metrics.digest", "work-graph digest does not reproduce")
 
+    research_section = markdown_section(
+        human, "## Research-Only Composition Participants"
+    )
+    if research_section is None:
+        error(
+            findings,
+            "digital_metrics.human",
+            "STACK_MANIFEST.md must contain one exact research-participant section",
+        )
+        research_section = []
+    digital_section = markdown_section(human, "### Digital metrics exact projection")
+    if digital_section is None:
+        error(
+            findings,
+            "digital_metrics.human",
+            "STACK_MANIFEST.md must contain one exact digital-metrics section",
+        )
+        digital_section = []
+    participant_rows = markdown_table_rows(
+        "\n".join(research_section),
+        "| Workspace | Participant | Exact commit | Relation | Canonical release |",
+        "|---|---|---|---|---|",
+    )
+    if participant_rows is None:
+        error(
+            findings,
+            "digital_metrics.human",
+            "STACK_MANIFEST.md must contain one exact research-participant table",
+        )
+        participant_rows = []
+    authority_rows = markdown_table_rows(
+        "\n".join(digital_section),
+        "| Repository | Authority |",
+        "|---|---|",
+    )
+    if authority_rows is None:
+        error(
+            findings,
+            "digital_metrics.human",
+            "STACK_MANIFEST.md must contain one exact digital-metrics authority table",
+        )
+        authority_rows = []
     graph_participants = graph.get("participants")
     if not isinstance(graph_participants, list):
         error(findings, "digital_metrics.participants", "work-graph participants must be an array")
@@ -247,14 +327,14 @@ def check_digital_metrics_projection(
             f"| `{DIGITAL_METRICS_WORKSPACE}` | `{repository}` | "
             f"`{graph_entry.get('commit', '')}` | {graph_entry.get('relation', '')} | no |"
         )
-        if human.splitlines().count(participant_row) != 1:
+        if participant_rows.count(participant_row) != 1:
             error(
                 findings,
                 "digital_metrics.human",
                 f"STACK_MANIFEST.md must carry exactly one participant row for {repository}",
             )
         authority_row = f"| `{repository}` | {graph_entry.get('authority', '')} |"
-        if human.splitlines().count(authority_row) != 1:
+        if authority_rows.count(authority_row) != 1:
             error(
                 findings,
                 "digital_metrics.human",
@@ -267,7 +347,15 @@ def check_digital_metrics_projection(
     if owner.get("boundaries") != graph.get("boundaries"):
         error(findings, "digital_metrics.boundaries", "manifest boundary projection differs from work graph")
     boundary_projection = json.dumps(graph.get("boundaries"), sort_keys=True, separators=(",", ":"))
-    if human.splitlines().count(f"`{boundary_projection}`") != 1:
+    boundary_marker = "The exact non-transfer boundary projection, in canonical JSON, is:"
+    marker_indices = [
+        index for index, line in enumerate(digital_section) if line == boundary_marker
+    ]
+    projected_boundary = None
+    if len(marker_indices) == 1:
+        following = digital_section[marker_indices[0] + 1:]
+        projected_boundary = next((line for line in following if line), None)
+    if projected_boundary != f"`{boundary_projection}`":
         error(findings, "digital_metrics.human", "STACK_MANIFEST.md omits the exact boundary projection")
 
     try:
@@ -329,7 +417,7 @@ def check_digital_metrics_projection(
         error(findings, "digital_metrics.parser_identity", "vendored parser Git blob differs from manifest")
     for field in ("source_path", "workspace_path", "sha256", "git_blob_sha1"):
         value = artifact.get(field)
-        if not isinstance(value, str) or value not in human:
+        if not isinstance(value, str) or not any(value in line for line in digital_section):
             error(findings, "digital_metrics.human", f"STACK_MANIFEST.md omits parser {field}")
 
 

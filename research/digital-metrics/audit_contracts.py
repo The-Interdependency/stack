@@ -114,6 +114,8 @@ UNSAFE_RUNNER_HOOKS = frozenset(
         "_callTestMethod",
         "_callTearDown",
         "_callMaybeAsync",
+        "setUpClass",
+        "tearDownClass",
         "__getattribute__",
         "__getattr__",
     }
@@ -268,6 +270,12 @@ def _run_unittest_witnesses(
     audited_sources: dict[Path, bytes],
 ) -> tuple[bool, str, int]:
     """Execute exact statically admitted witnesses from one immutable snapshot."""
+    trusted_test_case = unittest.TestCase
+    trusted_async_test_case = unittest.IsolatedAsyncioTestCase
+    trusted_test_case_run = trusted_test_case.run
+    trusted_async_test_case_run = trusted_async_test_case.run
+    trusted_test_suite = unittest.TestSuite
+    trusted_text_test_runner = unittest.TextTestRunner
     module_name = f"_digital_metric_witness_{hashlib.sha256(test_source).hexdigest()}"
     module = ModuleType(module_name)
     module.__file__ = str(path)
@@ -341,12 +349,21 @@ def _run_unittest_witnesses(
                     dependency.__dict__,
                 )
             exec(test_code, module.__dict__)
+            module_fixtures = sorted(
+                name for name in ("setUpModule", "tearDownModule")
+                if callable(module.__dict__.get(name))
+            )
+            if module_fixtures:
+                raise AuditIdentityError(
+                    "runtime witness module overrides unittest execution: "
+                    + module_fixtures[0]
+                )
             cases = []
             admitted_runtime_methods = []
             for method_name, class_name in sorted(admitted_methods.items()):
                 case_class = getattr(module, class_name)
                 if not isinstance(case_class, type) or not issubclass(
-                    case_class, unittest.TestCase
+                    case_class, trusted_test_case
                 ):
                     raise AuditIdentityError(
                         f"runtime witness class is not unittest.TestCase: {class_name}"
@@ -421,7 +438,7 @@ def _run_unittest_witnesses(
                     original_call_maybe_async=original_call_maybe_async,
                 ):
                     dispatched_codes.add(code)
-                    if isinstance(case, unittest.IsolatedAsyncioTestCase):
+                    if isinstance(case, trusted_async_test_case):
                         if original_call_maybe_async is None:
                             raise AuditIdentityError(
                                 "async witness has no trusted dispatch helper"
@@ -475,9 +492,22 @@ def _run_unittest_witnesses(
                 case.__dict__["_callSetUp"] = guarded_call_setup
                 case.__dict__["_callTestMethod"] = exact_dispatch
 
-            suite = unittest.TestSuite(cases)
+            class DirectWitnessSuite(trusted_test_suite):
+                def run(self, result, debug=False):
+                    for witness in self:
+                        if result.shouldStop:
+                            break
+                        direct_run = (
+                            trusted_async_test_case_run
+                            if isinstance(witness, trusted_async_test_case)
+                            else trusted_test_case_run
+                        )
+                        direct_run(witness, result)
+                    return result
+
+            suite = DirectWitnessSuite(cases)
             stream = io.StringIO()
-            result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
+            result = trusted_text_test_runner(stream=stream, verbosity=0).run(suite)
             expected_codes = {
                 code: f"{type(case).__name__}.{method_name}"
                 for case, method_name, _method, code in admitted_runtime_methods

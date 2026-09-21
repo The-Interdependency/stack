@@ -1509,7 +1509,8 @@ class MetricProtocolTests(unittest.TestCase):
                     "import unittest\n"
                     "class RuntimeSkipped(unittest.TestCase):\n"
                     "    def test_hidden(self):\n"
-                    "        self.skipTest('runtime unavailable')\n"
+                    "        self.skipTest('runtime unavailable')\n",
+                    "zero skips",
                 ),
                 (
                     "import unittest\n"
@@ -1517,7 +1518,8 @@ class MetricProtocolTests(unittest.TestCase):
                     "    def setUp(self):\n"
                     "        raise unittest.SkipTest('runtime unavailable')\n"
                     "    def test_hidden(self):\n"
-                    "        pass\n"
+                    "        pass\n",
+                    "zero skips",
                 ),
                 (
                     "import unittest\n"
@@ -1526,10 +1528,11 @@ class MetricProtocolTests(unittest.TestCase):
                     "    def setUpClass(cls):\n"
                     "        raise unittest.SkipTest('runtime unavailable')\n"
                     "    def test_hidden(self):\n"
-                    "        pass\n"
+                    "        pass\n",
+                    "not a discoverable unittest",
                 ),
             )
-            for skipped in runtime_skip_forms:
+            for skipped, expected in runtime_skip_forms:
                 with self.subTest(runtime_skip=skipped.splitlines()[1]):
                     test_path.write_text(check_header + skipped, encoding="utf-8")
                     with patch.object(
@@ -1538,7 +1541,7 @@ class MetricProtocolTests(unittest.TestCase):
                         report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
                     self.assertFalse(report["passed"])
                     self.assertTrue(
-                        any("zero skips" in item for item in report["findings"]),
+                        any(expected in item for item in report["findings"]),
                         report["findings"],
                     )
 
@@ -1743,6 +1746,55 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertFalse(clean)
             self.assertEqual(tests_run, 1)
             self.assertIn("must execute through unittest", output)
+
+            class_setup_bypass_source = (
+                "import unittest\n"
+                "class ClassSetupBypass(unittest.TestCase):\n"
+                "    @classmethod\n"
+                "    def setUpClass(cls):\n"
+                "        def bypass(self, result=None):\n"
+                "            result.startTest(self)\n"
+                "            try:\n"
+                "                self._callTestMethod(self.test_hidden)\n"
+                "            except AssertionError:\n"
+                "                pass\n"
+                "            result.stopTest(self)\n"
+                "            return result\n"
+                "        cls.run = bypass\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute through trusted runner')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "setUpClass",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "ClassSetupBypass"},
+                        class_setup_bypass_source,
+                        {},
+                    )
+
+            module_setup_source = (
+                "import unittest\n"
+                "def setUpModule():\n"
+                "    pass\n"
+                "class ModuleSetup(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        pass\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "setUpModule",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "ModuleSetup"},
+                        module_setup_source,
+                        {},
+                    )
 
             system_exit_source = b"raise SystemExit(0)\n"
             with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
@@ -2017,6 +2069,30 @@ class MetricProtocolTests(unittest.TestCase):
             stack_consistency.check_digital_metrics_projection(
                 drifted_manifest,
                 human,
+                repositories,
+                findings,
+                graph_path,
+            )
+            self.assertTrue(
+                any("exactly one participant row" in item for item in findings),
+                findings,
+            )
+            self.assertTrue(
+                any("exactly one authority row" in item for item in findings),
+                findings,
+            )
+
+            fake_human = human + "\n```text\n" + "\n".join(
+                (
+                    "| `research/digital-metrics/` | `The-Interdependency/stack` | "
+                    f"`{graph['participants'][0]['commit']}` | research | no |",
+                    "| `The-Interdependency/stack` | research |",
+                )
+            ) + "\n```\n"
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                drifted_manifest,
+                fake_human,
                 repositories,
                 findings,
                 graph_path,
