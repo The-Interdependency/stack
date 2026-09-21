@@ -208,6 +208,9 @@ from unittest.mock import patch
 
 
 WORKSPACE = Path(__file__).resolve().parents[1]
+SKILL_LIB_ROOT = Path(
+    os.environ["STACK_DIGITAL_METRICS_SKILL_LIB_ROOT"]
+).resolve()
 sys.path.insert(0, str(WORKSPACE))
 sys.path.insert(0, str(WORKSPACE.parents[1] / "skill-lib"))
 
@@ -282,6 +285,7 @@ from generate_receipt import (  # noqa: E402
     _load_metapat_application,
     _load_ucns_native_module,
     _require_repository_work_graph,
+    _validate_repository_work_graph_projection,
     _verify_edcm_decoder_guard,
     verify_checkout,
 )
@@ -863,7 +867,34 @@ class MetricProtocolTests(unittest.TestCase):
                         _verify_edcm_decoder_guard(repository, commit)
 
     def test_work_graph_requires_complete_fixed_participant_set(self) -> None:
-        graph = json.loads((WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8"))
+        baseline = json.loads((WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8"))
+        manifest_sha256 = _validate_repository_work_graph_projection(
+            baseline, WORKSPACE
+        )
+        self.assertEqual(
+            manifest_sha256,
+            hashlib.sha256(
+                (WORKSPACE.parents[1] / "stack-manifest.json").read_bytes()
+            ).hexdigest(),
+        )
+
+        projection_drift = deepcopy(baseline)
+        projection_drift["participants"][0]["commit"] = "0" * 40
+        projection_drift["work_graph_sha256"] = sha256_json(
+            {
+                "participants": projection_drift["participants"],
+                "boundaries": projection_drift["boundaries"],
+            }
+        )
+        with self.assertRaisesRegex(
+            ProducerIdentityError,
+            "Stack projection commit differs",
+        ):
+            _validate_repository_work_graph_projection(
+                projection_drift, WORKSPACE
+            )
+
+        graph = deepcopy(baseline)
         graph["participants"] = graph["participants"][:-1]
         graph["work_graph_sha256"] = sha256_json(
             {
@@ -1353,6 +1384,20 @@ class MetricProtocolTests(unittest.TestCase):
                 "    def test_hidden(self):\n"
                 "        self.fail('must execute')\n"
             ),
+            (
+                "import unittest\n"
+                "class GeneratorWitness(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        yield 'not executed by unittest'\n"
+                "        self.fail('must execute')\n"
+            ),
+            (
+                "import unittest\n"
+                "class AsyncGeneratorWitness(unittest.IsolatedAsyncioTestCase):\n"
+                "    async def test_hidden(self):\n"
+                "        yield 'not executed by unittest'\n"
+                "        self.fail('must execute')\n"
+            ),
         )
         with TemporaryDirectory() as directory:
             root = Path(directory)
@@ -1365,7 +1410,7 @@ class MetricProtocolTests(unittest.TestCase):
                     with patch.object(contract_audit, "SOURCE_FILES", (source_path,)), patch.object(
                         contract_audit, "TEST_FILES", (test_path,)
                     ):
-                        report = contract_audit.audit()
+                        report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
                     self.assertFalse(report["passed"])
                     self.assertTrue(
                         any("not a discoverable unittest" in item for item in report["findings"])
@@ -1402,7 +1447,7 @@ class MetricProtocolTests(unittest.TestCase):
                     with patch.object(
                         contract_audit, "SOURCE_FILES", (source_path,)
                     ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
-                        report = contract_audit.audit()
+                        report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
                     self.assertFalse(report["passed"])
                     self.assertTrue(
                         any("zero skips" in item for item in report["findings"]),
@@ -1420,7 +1465,7 @@ class MetricProtocolTests(unittest.TestCase):
             with patch.object(
                 contract_audit, "SOURCE_FILES", (source_path,)
             ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
-                report = contract_audit.audit()
+                report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
             self.assertTrue(report["passed"], report["findings"])
 
             dependency_path = root / "metric_protocol.py"
@@ -1501,6 +1546,31 @@ class MetricProtocolTests(unittest.TestCase):
                         test_path,
                         {"test_hidden": "DynamicRunner"},
                         runtime_override_source,
+                        {},
+                    )
+
+            constructor_class_override_source = (
+                "import unittest\n"
+                "class ConstructorOverride(unittest.TestCase):\n"
+                "    def __init__(self, methodName='runTest'):\n"
+                "        super().__init__(methodName)\n"
+                "        def bypass(self, result=None):\n"
+                "            result.startTest(self)\n"
+                "            result.stopTest(self)\n"
+                "            return result\n"
+                "        type(self).run = bypass\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must execute')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                with self.assertRaisesRegex(
+                    contract_audit.AuditIdentityError,
+                    "after construction",
+                ):
+                    contract_audit._run_unittest_witnesses(
+                        test_path,
+                        {"test_hidden": "ConstructorOverride"},
+                        constructor_class_override_source,
                         {},
                     )
 
@@ -1594,7 +1664,7 @@ class MetricProtocolTests(unittest.TestCase):
             ), patch.object(loaded, "WITNESS_DEPENDENCY_FILES", ()), patch.object(
                 loaded, "AUDITED_IMPORT_ORDER", ()
             ):
-                changed_report = loaded.audit()
+                changed_report = loaded.audit(skill_lib_root=SKILL_LIB_ROOT)
             self.assertFalse(changed_report["passed"])
             self.assertTrue(
                 any(
@@ -1609,10 +1679,56 @@ class MetricProtocolTests(unittest.TestCase):
             changed_parser = Path(directory) / "universal.py"
             changed_parser.write_bytes(contract_audit.PARSER_PATH.read_bytes() + b"\n")
             with patch.object(contract_audit, "PARSER_PATH", changed_parser):
-                report = contract_audit.audit()
+                report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
         self.assertFalse(report["passed"])
         self.assertTrue(
-            any("msdmd parser digest mismatch" in item for item in report["findings"]),
+            any("vendored msdmd parser differs" in item for item in report["findings"]),
+            report["findings"],
+        )
+
+        graph = json.loads((WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8"))
+        manifest = json.loads(
+            (WORKSPACE.parents[1] / "stack-manifest.json").read_text(encoding="utf-8")
+        )
+        replacement = "0" * 40
+        next(
+            item
+            for item in graph["participants"]
+            if item["repository"] == "The-Interdependency/skill-lib"
+        )["commit"] = replacement
+        graph["work_graph_sha256"] = sha256_json(
+            {"participants": graph["participants"], "boundaries": graph["boundaries"]}
+        )
+        next(
+            item
+            for item in manifest["repositories"]
+            if item["repository"] == "The-Interdependency/skill-lib"
+        )["commit"] = replacement
+        next(
+            item
+            for item in manifest["research_participants"]
+            if item.get("workspace") == "research/digital-metrics/"
+            and item["repository"] == "The-Interdependency/skill-lib"
+        )["commit"] = replacement
+        manifest["work_graph_sha256"] = sha256_json(
+            {
+                key: manifest[key]
+                for key in ("repositories", "research_participants", "boundaries")
+            }
+        )
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            graph_path = root / "WORK_GRAPH.json"
+            manifest_path = root / "stack-manifest.json"
+            graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+            manifest_path.write_text(canonical_json(manifest) + "\n", encoding="utf-8")
+            with patch.object(contract_audit, "WORK_GRAPH_PATH", graph_path), patch.object(
+                contract_audit, "STACK_MANIFEST_PATH", manifest_path
+            ):
+                report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
+        self.assertFalse(report["passed"])
+        self.assertTrue(
+            any("not at graph-selected commit" in item for item in report["findings"]),
             report["findings"],
         )
 

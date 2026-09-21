@@ -84,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): 724dc4ef31df329a047e51a3460261ec8d4b9223a2f8f7efa4d2d64c235a29e8
-File SHA-256: c94247eed29c4e90bea8b9668218000bf12c497a36cef8c63c897e18339ac98d
+Receipt payload digest (`receipt_sha256`): c3a1be2f3c9425bb6e2847dfd0fa954abf284469f9334ae0327449861af53aac
+File SHA-256: 80b090bb529758cb289429d4fa60bd0a57102fc14afddd41273621281e0eb44d
 ```
 
 ## Usage guidance
@@ -96,13 +96,14 @@ failures, unexpected successes, test failures, and static/runtime count drift:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
-PYTHONDONTWRITEBYTECODE=1 \
-python3 research/digital-metrics/audit_contracts_cli.py
+python3 research/digital-metrics/audit_contracts_cli.py \
+  --skill-lib-root /path/to/exact/skill-lib
 ```
 
 Then run the adversarial witnesses directly for verbose per-test output:
 
 ```bash
+STACK_DIGITAL_METRICS_SKILL_LIB_ROOT=/path/to/exact/skill-lib \
 PYTHONDONTWRITEBYTECODE=1 \
 python3 -m unittest discover \
   -s research/digital-metrics/tests -p 'test*.py' -v

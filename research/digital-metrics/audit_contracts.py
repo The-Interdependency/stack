@@ -2,7 +2,8 @@
 
 Usage guidance::
 
-    python3 research/digital-metrics/audit_contracts_cli.py
+    python3 research/digital-metrics/audit_contracts_cli.py \
+        --skill-lib-root /path/to/exact/skill-lib
 
 The audit parses source declarations and Python AST only.  It exits nonzero for
 unwitnessed contracts, unknown ``proves`` targets, unresolved ``self::`` calls,
@@ -58,7 +59,9 @@ import ast
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
+import subprocess
 import sys
 from types import ModuleType
 import unittest
@@ -115,7 +118,21 @@ def _canonical_sha256(value: object) -> str:
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _load_pinned_parser() -> ModuleType:
+def _git_output(root: Path, *args: str) -> bytes:
+    result = subprocess.run(
+        ["git", "--no-replace-objects", "-C", str(root), *args],
+        check=False,
+        capture_output=True,
+    )
+    if result.returncode:
+        detail = result.stderr.decode("utf-8", errors="replace").strip()
+        raise AuditIdentityError(
+            f"git {' '.join(args)} failed for skill-lib checkout {root}: {detail}"
+        )
+    return result.stdout
+
+
+def _load_pinned_parser(skill_lib_root: Path) -> ModuleType:
     """Source-load the exact parser bound by the work graph and Stack manifest."""
     graph = json.loads(WORK_GRAPH_PATH.read_text(encoding="utf-8"))
     payload = {
@@ -146,7 +163,25 @@ def _load_pinned_parser() -> ModuleType:
         raise AuditIdentityError("Stack manifest must pin exactly one skill-lib repository")
     skill = manifest_skills[0]
     if skill.get("commit") != graph_skills[0].get("commit"):
-        raise AuditIdentityError("skill-lib commit differs between work graph and Stack manifest")
+        raise AuditIdentityError(
+            "skill-lib commit differs between work graph and Stack manifest"
+        )
+    commit = skill.get("commit")
+    skill_lib_root = skill_lib_root.resolve()
+    git_root = Path(
+        _git_output(skill_lib_root, "rev-parse", "--show-toplevel")
+        .decode("utf-8")
+        .strip()
+    ).resolve()
+    if git_root != skill_lib_root:
+        raise AuditIdentityError(
+            f"skill-lib root is not the Git top level: {skill_lib_root}"
+        )
+    head = _git_output(skill_lib_root, "rev-parse", "HEAD").decode("ascii").strip()
+    if head != commit:
+        raise AuditIdentityError(
+            f"skill-lib checkout is not at graph-selected commit {commit}: {head}"
+        )
     artifacts = skill.get("operational_artifacts")
     expected = {
         "source_path": "msdmd/parsers/universal.py",
@@ -158,6 +193,15 @@ def _load_pinned_parser() -> ModuleType:
     if len(matches) != 1:
         raise AuditIdentityError("Stack manifest must pin the msdmd parser artifact exactly once")
     source = PARSER_PATH.read_bytes()
+    committed_source = _git_output(
+        skill_lib_root,
+        "show",
+        f"{commit}:msdmd/parsers/universal.py",
+    )
+    if committed_source != source:
+        raise AuditIdentityError(
+            "vendored msdmd parser differs from graph-selected skill-lib commit"
+        )
     actual_sha256 = hashlib.sha256(source).hexdigest()
     actual_blob_sha1 = hashlib.sha1(
         f"blob {len(source)}\0".encode("ascii") + source
@@ -183,6 +227,20 @@ def _load_pinned_parser() -> ModuleType:
     ):
         raise AuditIdentityError("pinned msdmd parser does not expose parse_text/marker_for")
     return module
+
+
+def _runtime_runner_override(case_class: type[unittest.TestCase]) -> str | None:
+    for ancestor in case_class.__mro__:
+        if ancestor in {
+            unittest.TestCase,
+            unittest.IsolatedAsyncioTestCase,
+            object,
+        }:
+            continue
+        overridden = sorted(UNSAFE_RUNNER_HOOKS & ancestor.__dict__.keys())
+        if overridden:
+            return f"{ancestor.__name__}.{overridden[0]}"
+    return None
 
 
 def _run_unittest_witnesses(
@@ -249,19 +307,12 @@ def _run_unittest_witnesses(
                     raise AuditIdentityError(
                         f"runtime witness class is not unittest.TestCase: {class_name}"
                     )
-                for ancestor in case_class.__mro__:
-                    if ancestor in {
-                        unittest.TestCase,
-                        unittest.IsolatedAsyncioTestCase,
-                        object,
-                    }:
-                        continue
-                    overridden = sorted(UNSAFE_RUNNER_HOOKS & ancestor.__dict__.keys())
-                    if overridden:
-                        raise AuditIdentityError(
-                            f"runtime witness class overrides unittest execution: "
-                            f"{ancestor.__name__}.{overridden[0]}"
-                        )
+                overridden = _runtime_runner_override(case_class)
+                if overridden:
+                    raise AuditIdentityError(
+                        "runtime witness class overrides unittest execution: "
+                        f"{overridden}"
+                    )
                 case = case_class(method_name)
                 instance_overrides = sorted(UNSAFE_RUNNER_HOOKS & case.__dict__.keys())
                 if instance_overrides:
@@ -270,6 +321,16 @@ def _run_unittest_witnesses(
                         f"{class_name}.{instance_overrides[0]}"
                     )
                 cases.append(case)
+            # A constructor can mutate its own class or a previously constructed
+            # witness class. Revalidate the complete runtime set only after all
+            # constructors have returned and immediately before suite execution.
+            for case in cases:
+                overridden = _runtime_runner_override(type(case))
+                if overridden:
+                    raise AuditIdentityError(
+                        "runtime witness class overrides unittest execution after "
+                        f"construction: {overridden}"
+                    )
             suite = unittest.TestSuite(cases)
             stream = io.StringIO()
             result = unittest.TextTestRunner(stream=stream, verbosity=0).run(suite)
@@ -301,6 +362,23 @@ def _decorator_name(node: ast.expr) -> str | None:
     if isinstance(node, ast.Call):
         node = node.func
     return _dotted_name(node)
+
+
+def _function_contains_yield(
+    method: ast.FunctionDef | ast.AsyncFunctionDef,
+) -> bool:
+    pending = list(method.body)
+    while pending:
+        node = pending.pop()
+        if isinstance(node, (ast.Yield, ast.YieldFrom)):
+            return True
+        if isinstance(
+            node,
+            (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda, ast.ClassDef),
+        ):
+            continue
+        pending.extend(ast.iter_child_nodes(node))
+    return False
 
 
 def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
@@ -392,9 +470,15 @@ def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
                 for decorator in method.decorator_list
             ):
                 continue
-            if isinstance(method, ast.FunctionDef):
+            if isinstance(method, ast.FunctionDef) and not _function_contains_yield(
+                method
+            ):
                 admitted = True
-            elif isinstance(method, ast.AsyncFunctionDef) and name in async_classes:
+            elif (
+                isinstance(method, ast.AsyncFunctionDef)
+                and name in async_classes
+                and not _function_contains_yield(method)
+            ):
                 admitted = True
             else:
                 admitted = False
@@ -408,7 +492,7 @@ def _discoverable_test_methods(path: Path, source: bytes) -> dict[str, str]:
     return methods
 
 
-def audit() -> dict[str, object]:
+def audit(*, skill_lib_root: Path | None = None) -> dict[str, object]:
     contracts: dict[str, str] = {}
     checks: dict[str, tuple[str, str]] = {}
     findings: list[str] = []
@@ -438,7 +522,9 @@ def audit() -> dict[str, object]:
             raise AuditIdentityError(
                 "executing auditor digest differs from captured source snapshot"
             )
-        parser = _load_pinned_parser()
+        if skill_lib_root is None:
+            raise AuditIdentityError("exact skill-lib root is required")
+        parser = _load_pinned_parser(skill_lib_root)
     except (
         AuditIdentityError,
         OSError,
@@ -484,12 +570,21 @@ def audit() -> dict[str, object]:
             discoverable = {}
         runtime_clean = False
         try:
-            suite_clean, _suite_output, tests_run = _run_unittest_witnesses(
-                path,
-                discoverable,
-                test_snapshots[path],
-                source_snapshots,
-            )
+            with patch.dict(
+                os.environ,
+                {
+                    "STACK_DIGITAL_METRICS_SKILL_LIB_ROOT": str(
+                        skill_lib_root.resolve()
+                    )
+                },
+                clear=False,
+            ):
+                suite_clean, _suite_output, tests_run = _run_unittest_witnesses(
+                    path,
+                    discoverable,
+                    test_snapshots[path],
+                    source_snapshots,
+                )
             runtime_clean = suite_clean and tests_run == len(discoverable)
             if tests_run != len(discoverable):
                 findings.append(
@@ -547,8 +642,8 @@ def audit() -> dict[str, object]:
     }
 
 
-def main() -> int:
-    report = audit()
+def main(*, skill_lib_root: Path) -> int:
+    report = audit(skill_lib_root=skill_lib_root)
     print(json.dumps(report, indent=2, sort_keys=True))
     return 0 if report["passed"] else 1
 

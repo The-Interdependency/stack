@@ -30,6 +30,7 @@ from __future__ import annotations
 #   class: provenance
 # === END CONTRACTS ===
 
+import argparse
 import hashlib
 from pathlib import Path
 import sys
@@ -59,9 +60,12 @@ def _load_auditor(source_path: Path) -> ModuleType:
     return module
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--skill-lib-root", type=Path, required=True)
+    args = parser.parse_args(argv)
     auditor = _load_auditor(Path(__file__).resolve().with_name("audit_contracts.py"))
-    return auditor.main()
+    return auditor.main(skill_lib_root=args.skill_lib_root)
 
 
 if __name__ == "__main__":

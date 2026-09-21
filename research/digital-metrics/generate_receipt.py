@@ -57,8 +57,8 @@ from __future__ import annotations
 #   class: provenance
 #
 # id: digital_metric_generator_requires_repository_work_graph
-#   given: receipt generation is pointed at a copied or alternate self-digested work graph
-#   then: generation rejects unless the resolved path is the repository-owned WORK_GRAPH.json
+#   given: receipt generation is pointed at a copied, caller-edited, or projection-divergent work graph
+#   then: generation requires the repository-owned WORK_GRAPH.json and exact agreement with the machine Stack projection before loading any producer
 #   class: provenance
 #
 # id: digital_metric_generator_loads_committed_sources_only
@@ -266,6 +266,78 @@ def _require_repository_work_graph(path: Path, workspace: Path) -> Path:
             f"work graph must be the repository-owned path: {expected}"
         )
     return resolved
+
+
+def _validate_repository_work_graph_projection(
+    work_graph: Mapping[str, Any], workspace: Path
+) -> str:
+    manifest_path = workspace.parents[1] / "stack-manifest.json"
+    manifest_source = manifest_path.read_bytes()
+    try:
+        manifest = json.loads(manifest_source.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ProducerIdentityError(f"invalid Stack manifest: {exc}") from exc
+    try:
+        manifest_payload = {
+            key: manifest[key]
+            for key in ("repositories", "research_participants", "boundaries")
+        }
+    except (KeyError, TypeError) as exc:
+        raise ProducerIdentityError(f"invalid Stack manifest projection: {exc}") from exc
+    if manifest.get("work_graph_sha256") != sha256_json(manifest_payload):
+        raise ProducerIdentityError("Stack manifest digest mismatch")
+
+    projected = [
+        item
+        for item in manifest["research_participants"]
+        if item.get("workspace") == "research/digital-metrics/"
+    ]
+    participants = work_graph["participants"]
+    if len(projected) != len(participants):
+        raise ProducerIdentityError(
+            "digital-metrics Stack projection participant count differs"
+        )
+    for graph_entry, manifest_entry in zip(participants, projected):
+        repository = graph_entry["repository"]
+        expected_id = (
+            "digital-metrics"
+            if repository == "The-Interdependency/stack"
+            else repository.rsplit("/", 1)[-1]
+        )
+        if manifest_entry.get("participant_id") != expected_id:
+            raise ProducerIdentityError(
+                f"digital-metrics Stack projection participant_id differs for {repository}"
+            )
+        for field in ("repository", "commit", "authority", "relation"):
+            if manifest_entry.get(field) != graph_entry.get(field):
+                raise ProducerIdentityError(
+                    f"digital-metrics Stack projection {field} differs for {repository}"
+                )
+        if manifest_entry.get("canonical_release") is not False:
+            raise ProducerIdentityError(
+                f"digital-metrics Stack projection canonical_release differs for {repository}"
+            )
+        if manifest_entry.get("authority_transfer") is not False:
+            raise ProducerIdentityError(
+                f"digital-metrics Stack projection authority_transfer differs for {repository}"
+            )
+    if not projected or projected[0].get("boundaries") != work_graph["boundaries"]:
+        raise ProducerIdentityError("digital-metrics Stack projection boundaries differ")
+
+    graph_skill = _participant(work_graph, "The-Interdependency/skill-lib")
+    manifest_skills = [
+        item
+        for item in manifest["repositories"]
+        if item.get("repository") == "The-Interdependency/skill-lib"
+    ]
+    if (
+        len(manifest_skills) != 1
+        or manifest_skills[0].get("commit") != graph_skill["commit"]
+    ):
+        raise ProducerIdentityError(
+            "digital-metrics Stack projection skill-lib commit differs"
+        )
+    return hashlib.sha256(manifest_source).hexdigest()
 
 
 def verify_checkout(root: Path, participant: Mapping[str, Any], required_paths: tuple[str, ...]) -> None:
@@ -569,6 +641,9 @@ def build_receipt(
     )
     work_graph_path = _require_repository_work_graph(work_graph_path, workspace)
     work_graph = load_work_graph(work_graph_path)
+    stack_manifest_sha256 = _validate_repository_work_graph_projection(
+        work_graph, workspace
+    )
     metapat_participant = _participant(work_graph, "The-Interdependency/metapat")
     ucns_participant = _participant(work_graph, "The-Interdependency/ucns")
     edcm_participant = _participant(work_graph, "The-Interdependency/edcm")
@@ -751,6 +826,7 @@ def build_receipt(
     ]
     inputs = [
         {"identity": "digital-metric-work-graph", "sha256": work_graph_sha256},
+        {"identity": "stack-manifest-source", "sha256": stack_manifest_sha256},
         {"identity": "metapat-affixiation-application", "sha256": application.application_digest},
         {"identity": "metapat-affixiation-application-record", "sha256": sha256_json(application_record)},
         {"identity": "ucns-native-mobius-source", "sha256": ucns_source_sha256},

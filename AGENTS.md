@@ -96,8 +96,10 @@ python tools/check_stack_consistency.py
 Digital-metrics protocol and deterministic replay (exact producer paths required):
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts_cli.py
-python3 -m unittest discover -s research/digital-metrics/tests -p test*.py -v
+PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts_cli.py \
+  --skill-lib-root SKILL_LIB_ROOT
+STACK_DIGITAL_METRICS_SKILL_LIB_ROOT=SKILL_LIB_ROOT \
+  python3 -m unittest discover -s research/digital-metrics/tests -p test*.py -v
 python3 research/digital-metrics/verify_receipt_cli.py RECEIPT \
   --metapat-root METAPAT_ROOT --ucns-root UCNS_ROOT --edcm-root EDCM_ROOT
 ```
