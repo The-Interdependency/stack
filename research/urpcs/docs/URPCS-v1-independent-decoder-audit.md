@@ -4,6 +4,8 @@
 
 **Base commit:** `db5635c7d48652d6506c3bd343f8ead0bb53872e`
 
+**Freeze commit:** `e791a96b8b6501173831cde7d9a543dae0609406`
+
 **Classification:** `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED`
 
 The committed public contract does not determine a URPCS v1 decoder. No
