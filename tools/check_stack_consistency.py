@@ -92,6 +92,20 @@ STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
 DIGITAL_METRICS_WORK_GRAPH_VERSION = "0.1.0"
+DIGITAL_METRICS_BOUNDARY_FIELDS = {
+    "authority_transfer",
+    "proof_status_transfer",
+    "measurement_status_transfer",
+    "empirical_status_transfer",
+    "semantic_mapping",
+    "hmmm",
+}
+DIGITAL_METRICS_FALSE_TRANSFER_FIELDS = (
+    "authority_transfer",
+    "proof_status_transfer",
+    "measurement_status_transfer",
+    "empirical_status_transfer",
+)
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
 DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
 DIGITAL_METRICS_BASE_STATIC = {
@@ -292,6 +306,19 @@ def check_digital_metrics_projection(
     if graph.get("version") != DIGITAL_METRICS_WORK_GRAPH_VERSION:
         error(findings, "digital_metrics.version", "unsupported work-graph version")
         return
+    boundaries = graph.get("boundaries")
+    if not isinstance(boundaries, dict) or set(boundaries) != DIGITAL_METRICS_BOUNDARY_FIELDS:
+        error(findings, "digital_metrics.boundaries", "work-graph boundaries have missing or unknown fields")
+        return
+    for field in DIGITAL_METRICS_FALSE_TRANSFER_FIELDS:
+        if boundaries[field] is not False:
+            error(findings, "digital_metrics.boundaries", f"work-graph {field} must be false")
+    if boundaries["semantic_mapping"] != "external-provenance":
+        error(findings, "digital_metrics.boundaries", "work-graph semantic_mapping must remain external-provenance")
+    if not isinstance(boundaries["hmmm"], list) or not all(
+        isinstance(item, str) and item for item in boundaries["hmmm"]
+    ):
+        error(findings, "digital_metrics.boundaries", "work-graph hmmm must contain non-empty strings")
     try:
         graph_digest = hashlib.sha256(json.dumps(
             {"participants": graph["participants"], "boundaries": graph["boundaries"]},

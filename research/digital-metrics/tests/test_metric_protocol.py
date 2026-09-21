@@ -658,6 +658,30 @@ class MetricProtocolTests(unittest.TestCase):
         with self.assertRaisesRegex(MetricProtocolError, "observation digest mismatch"):
             verify_receipt(tampered)
 
+        duplicate = deepcopy(first)
+        conflicting = deepcopy(duplicate["observations"][0])
+        conflicting["value"] = boolean_value(False)
+        conflicting["observation_sha256"] = sha256_json(
+            {
+                key: value
+                for key, value in conflicting.items()
+                if key != "observation_sha256"
+            }
+        )
+        duplicate["observations"].append(conflicting)
+        duplicate["receipt_sha256"] = sha256_json(
+            {
+                key: value
+                for key, value in duplicate.items()
+                if key != "receipt_sha256"
+            }
+        )
+        with self.assertRaisesRegex(
+            MetricProtocolError,
+            "duplicate receipt observation coordinate",
+        ):
+            verify_receipt(duplicate)
+
     def test_receipt_rejects_duplicate_input_identities(self) -> None:
         defn = definition()
         observation = observed(defn, boolean_value(True))
@@ -1966,6 +1990,41 @@ class MetricProtocolTests(unittest.TestCase):
                         {},
                     )
 
+            forged_stdout_source = (
+                "import json\n"
+                "import os\n"
+                "import sys\n"
+                "import unittest\n"
+                "class ForgedStdout:\n"
+                "    def write(self, value):\n"
+                "        forged = {\n"
+                "            'schema': 'the-interdependency.digital-metric-witness-execution',\n"
+                "            'version': '1.0.0',\n"
+                "            'status': 'completed',\n"
+                "            'clean': True,\n"
+                "            'output': '',\n"
+                "            'tests_run': 1,\n"
+                "        }\n"
+                "        os.write(1, json.dumps(forged, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
+                "        return len(value)\n"
+                "    def flush(self):\n"
+                "        pass\n"
+                "sys.stdout = ForgedStdout()\n"
+                "class StdoutForgery(unittest.TestCase):\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('stdout replacement must not forge success')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "StdoutForgery"},
+                    forged_stdout_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+            self.assertIn("stdout replacement must not forge", output)
+
             instance_override_source = (
                 "import unittest\n"
                 "class Sneaky(unittest.TestCase):\n"
@@ -2293,6 +2352,44 @@ class MetricProtocolTests(unittest.TestCase):
                         any(expected in item for item in findings),
                         findings,
                     )
+
+            graph = deepcopy(baseline_graph)
+            original_boundary = canonical_json(graph["boundaries"])
+            graph["boundaries"]["authority_transfer"] = True
+            graph["work_graph_sha256"] = sha256_json(
+                {"participants": graph["participants"], "boundaries": graph["boundaries"]}
+            )
+            drifted_manifest = deepcopy(manifest)
+            owner = next(
+                item for item in drifted_manifest["research_participants"]
+                if item.get("workspace") == "research/digital-metrics/"
+                and item.get("repository") == "The-Interdependency/stack"
+            )
+            owner["boundaries"] = deepcopy(graph["boundaries"])
+            drifted_manifest["work_graph_sha256"] = sha256_json(
+                {
+                    key: drifted_manifest[key]
+                    for key in ("repositories", "research_participants", "boundaries")
+                }
+            )
+            changed_boundary = canonical_json(graph["boundaries"])
+            matched_human = human.replace(
+                f"`{original_boundary}`",
+                f"`{changed_boundary}`",
+            )
+            graph_path.write_text(canonical_json(graph) + "\n", encoding="utf-8")
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                drifted_manifest,
+                matched_human,
+                repositories,
+                findings,
+                graph_path,
+            )
+            self.assertTrue(
+                any("authority_transfer must be false" in item for item in findings),
+                findings,
+            )
 
             graph = deepcopy(baseline_graph)
             graph["participants"][0]["authority"] = "research"

@@ -782,12 +782,24 @@ def verify_receipt(value: Any) -> dict[str, Any]:
     if not isinstance(record["observations"], list) or not record["observations"]:
         raise MetricProtocolError("receipt observations must be a non-empty array")
     observed_definition_keys: set[tuple[str, str]] = set()
+    observation_coordinates: set[tuple[str, str, str, int]] = set()
     for item in record["observations"]:
         observation = _mapping(item, "receipt observation")
         key = (observation.get("metric_id"), observation.get("metric_version"))
         if key not in definition_index:
             raise MetricProtocolError(f"receipt observation has no matching definition: {key!r}")
         validate_observation(observation, definition_index[key])
+        coordinate = (
+            observation["metric_id"],
+            observation["metric_version"],
+            observation["subject"]["id"],
+            observation["sequence_index"],
+        )
+        if coordinate in observation_coordinates:
+            raise MetricProtocolError(
+                f"duplicate receipt observation coordinate: {coordinate!r}"
+            )
+        observation_coordinates.add(coordinate)
         observed_definition_keys.add(key)
         if observation["provenance"]["work_graph_sha256"] != record["work_graph_sha256"]:
             raise MetricProtocolError("observation work-graph digest differs from receipt")

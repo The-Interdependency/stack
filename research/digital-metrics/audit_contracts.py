@@ -638,6 +638,9 @@ import sys
 from types import ModuleType
 
 payload = json.loads(sys.stdin.buffer.read().decode("utf-8"))
+_report_fd = os.dup(1)
+_report_write = os.write
+_report_close = os.close
 _shutdown_marker = base64.b64decode(payload.pop("shutdown_marker"))
 def _emit_shutdown_marker(
     marker=_shutdown_marker,
@@ -689,7 +692,11 @@ except BaseException as exc:
         "error_type": type(exc).__name__,
         "error": str(exc),
     }
-sys.stdout.write(json.dumps(report, sort_keys=True, separators=(",", ":")))
+_report_write(
+    _report_fd,
+    json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8"),
+)
+_report_close(_report_fd)
 """
 
 
