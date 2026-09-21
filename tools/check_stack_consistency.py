@@ -93,6 +93,24 @@ STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "P
 DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
 DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
+DIGITAL_METRICS_BASE_STATIC = {
+    "schema": "the-interdependency.stack-research-base",
+    "version": "1.0.0",
+    "project": "digital-metrics",
+    "source_repository": "The-Interdependency/stack",
+    "source_path": None,
+    "canon_path": None,
+    "authority": (
+        "stack-local strict metric transport, integrity projections, deterministic "
+        "replay, and cross-repository non-transfer enforcement"
+    ),
+    "standing": "stack-local-research",
+    "note": (
+        "METAPAT retains semantic authority, UCNS retains geometry and proof status, "
+        "EDCM retains measurement authority, and Stack receipt success transfers "
+        "none of those statuses."
+    ),
+}
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 # Original completed EPAC event. Advancing release pins cannot reselect history.
@@ -118,13 +136,31 @@ def error(findings: list[str], code: str, message: str) -> None:
     findings.append(f"{code}: {message}")
 
 
+def rendered_markdown_lines(source: str) -> list[str]:
+    """Return Markdown lines outside fenced code blocks."""
+    rendered: list[str] = []
+    fence_character: str | None = None
+    for line in source.splitlines():
+        match = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+        if match is not None:
+            character = match.group(1)[0]
+            if fence_character is None:
+                fence_character = character
+            elif character == fence_character:
+                fence_character = None
+            continue
+        if fence_character is None:
+            rendered.append(line)
+    return rendered
+
+
 def markdown_table_rows(
     source: str,
     header: str,
     separator: str,
 ) -> list[str] | None:
     """Return rows from the unique table with the exact header and separator."""
-    lines = source.splitlines()
+    lines = rendered_markdown_lines(source)
     starts = [
         index for index, line in enumerate(lines[:-1])
         if line == header and lines[index + 1] == separator
@@ -141,7 +177,7 @@ def markdown_table_rows(
 
 def markdown_section(source: str, heading: str) -> list[str] | None:
     """Return the uniquely headed section through the next peer/parent heading."""
-    lines = source.splitlines()
+    lines = rendered_markdown_lines(source)
     starts = [index for index, line in enumerate(lines) if line == heading]
     if len(starts) != 1:
         return None
@@ -371,12 +407,15 @@ def check_digital_metrics_projection(
             if item.get("repository") == "The-Interdependency/stack"
         ]
         expected_base = {
-            "project": "digital-metrics",
-            "source_repository": "The-Interdependency/stack",
+            **DIGITAL_METRICS_BASE_STATIC,
             "source_commit": stack_entries[0].get("commit") if len(stack_entries) == 1 else None,
-            "standing": "stack-local-research",
-            "canon_path": None,
         }
+        if set(base) != set(expected_base):
+            error(
+                findings,
+                "digital_metrics.base",
+                "BASE.json fields differ from the exact research-base schema",
+            )
         for field, expected in expected_base.items():
             if base.get(field) != expected:
                 error(

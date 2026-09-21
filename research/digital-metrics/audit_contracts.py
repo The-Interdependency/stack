@@ -276,6 +276,7 @@ def _run_unittest_witnesses(
     trusted_async_test_case_run = trusted_async_test_case.run
     trusted_test_suite = unittest.TestSuite
     trusted_text_test_runner = unittest.TextTestRunner
+    trusted_text_test_result = unittest.TextTestResult
     module_name = f"_digital_metric_witness_{hashlib.sha256(test_source).hexdigest()}"
     module = ModuleType(module_name)
     module.__file__ = str(path)
@@ -422,6 +423,7 @@ def _run_unittest_witnesses(
                         f"{case_class.__name__}.{method_name}"
                     )
             dispatched_codes = set()
+            dispatch_outcomes: dict[CodeType, str] = {}
             for case, method_name, method, code in admitted_runtime_methods:
                 case_class = type(case)
                 bound_method = method.__get__(case, case_class)
@@ -438,18 +440,24 @@ def _run_unittest_witnesses(
                     original_call_maybe_async=original_call_maybe_async,
                 ):
                     dispatched_codes.add(code)
-                    if isinstance(case, trusted_async_test_case):
-                        if original_call_maybe_async is None:
+                    try:
+                        if isinstance(case, trusted_async_test_case):
+                            if original_call_maybe_async is None:
+                                raise AuditIdentityError(
+                                    "async witness has no trusted dispatch helper"
+                                )
+                            returned = original_call_maybe_async(bound_method)
+                        else:
+                            returned = bound_method()
+                        if returned is not None:
                             raise AuditIdentityError(
-                                "async witness has no trusted dispatch helper"
+                                "witness method returned a non-None value: "
+                                f"{type(case).__name__}.{method_name}"
                             )
-                        return original_call_maybe_async(bound_method)
-                    returned = bound_method()
-                    if returned is not None:
-                        raise AuditIdentityError(
-                            "witness method returned a non-None value: "
-                            f"{type(case).__name__}.{method_name}"
-                        )
+                    except BaseException:
+                        dispatch_outcomes[code] = "raised"
+                        raise
+                    dispatch_outcomes[code] = "passed"
                     return None
 
                 def guarded_call_setup(
@@ -505,9 +513,46 @@ def _run_unittest_witnesses(
                         direct_run(witness, result)
                     return result
 
+            observed_tests: list[str] = []
+            observed_result_events: list[str] = []
+
+            class AppendOnlyWitnessResult(trusted_text_test_result):
+                def startTest(self, test):
+                    observed_tests.append(test.id())
+                    super().startTest(test)
+
+                def addError(self, test, err):
+                    observed_result_events.append("error")
+                    super().addError(test, err)
+
+                def addFailure(self, test, err):
+                    observed_result_events.append("failure")
+                    super().addFailure(test, err)
+
+                def addSkip(self, test, reason):
+                    observed_result_events.append("skip")
+                    super().addSkip(test, reason)
+
+                def addExpectedFailure(self, test, err):
+                    observed_result_events.append("expected-failure")
+                    super().addExpectedFailure(test, err)
+
+                def addUnexpectedSuccess(self, test):
+                    observed_result_events.append("unexpected-success")
+                    super().addUnexpectedSuccess(test)
+
+                def addSubTest(self, test, subtest, err):
+                    if err is not None:
+                        observed_result_events.append("subtest-failure")
+                    super().addSubTest(test, subtest, err)
+
             suite = DirectWitnessSuite(cases)
             stream = io.StringIO()
-            result = trusted_text_test_runner(stream=stream, verbosity=0).run(suite)
+            result = trusted_text_test_runner(
+                stream=stream,
+                verbosity=0,
+                resultclass=AppendOnlyWitnessResult,
+            ).run(suite)
             expected_codes = {
                 code: f"{type(case).__name__}.{method_name}"
                 for case, method_name, _method, code in admitted_runtime_methods
@@ -517,10 +562,7 @@ def _run_unittest_witnesses(
             )
             if (
                 missing_methods
-                and result.wasSuccessful()
-                and not result.skipped
-                and not result.expectedFailures
-                and not result.unexpectedSuccesses
+                and not observed_result_events
             ):
                 raise AuditIdentityError(
                     "admitted witness method was not dispatched by unittest: "
@@ -536,13 +578,11 @@ def _run_unittest_witnesses(
                 sys.modules.pop(name, None)
             else:
                 sys.modules[name] = prior
-    clean = (
-        result.wasSuccessful()
-        and not result.skipped
-        and not result.expectedFailures
-        and not result.unexpectedSuccesses
+    clean = not observed_result_events and all(
+        dispatch_outcomes.get(code) == "passed"
+        for code in expected_codes
     )
-    return clean, stream.getvalue().strip(), result.testsRun
+    return clean, stream.getvalue().strip(), len(observed_tests)
 
 
 def _dotted_name(node: ast.expr) -> str | None:

@@ -160,6 +160,24 @@ EXPECTED_PARTICIPANT_REPOSITORIES = (
     "The-Interdependency/ucns",
     "The-Interdependency/edcm",
 )
+DIGITAL_METRICS_BASE_STATIC = {
+    "schema": "the-interdependency.stack-research-base",
+    "version": "1.0.0",
+    "project": "digital-metrics",
+    "source_repository": "The-Interdependency/stack",
+    "source_path": None,
+    "canon_path": None,
+    "authority": (
+        "stack-local strict metric transport, integrity projections, deterministic "
+        "replay, and cross-repository non-transfer enforcement"
+    ),
+    "standing": "stack-local-research",
+    "note": (
+        "METAPAT retains semantic authority, UCNS retains geometry and proof status, "
+        "EDCM retains measurement authority, and Stack receipt success transfers "
+        "none of those statuses."
+    ),
+}
 
 
 class ProducerIdentityError(ValueError):
@@ -394,12 +412,13 @@ def _verify_stack_base(
         raise ProducerIdentityError("digital-metrics BASE.json must contain an object")
     stack = _participant(work_graph, "The-Interdependency/stack")
     expected = {
-        "project": "digital-metrics",
-        "source_repository": "The-Interdependency/stack",
+        **DIGITAL_METRICS_BASE_STATIC,
         "source_commit": stack["commit"],
-        "standing": "stack-local-research",
-        "canon_path": None,
     }
+    if set(base) != set(expected):
+        raise ProducerIdentityError(
+            "digital-metrics BASE.json fields differ from the exact research-base schema"
+        )
     for field, expected_value in expected.items():
         if base.get(field) != expected_value:
             raise ProducerIdentityError(

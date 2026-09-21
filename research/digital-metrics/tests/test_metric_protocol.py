@@ -896,6 +896,14 @@ class MetricProtocolTests(unittest.TestCase):
                 "BASE.json source_commit differs from work graph",
             ):
                 _verify_stack_base(baseline, WORKSPACE, base_path)
+            base = json.loads((WORKSPACE / "BASE.json").read_text(encoding="utf-8"))
+            base["authority"] = "canonical authority, proof, and measurement owner"
+            base_path.write_text(canonical_json(base) + "\n", encoding="utf-8")
+            with self.assertRaisesRegex(
+                ProducerIdentityError,
+                "BASE.json authority differs from work graph",
+            ):
+                _verify_stack_base(baseline, WORKSPACE, base_path)
             base_path.write_text("[]\n", encoding="utf-8")
             with self.assertRaisesRegex(
                 ProducerIdentityError,
@@ -1747,6 +1755,24 @@ class MetricProtocolTests(unittest.TestCase):
             self.assertEqual(tests_run, 1)
             self.assertIn("must execute through unittest", output)
 
+            teardown_mutation_source = (
+                "import unittest\n"
+                "class TeardownMutation(unittest.TestCase):\n"
+                "    def tearDown(self):\n"
+                "        self._outcome.result.failures.clear()\n"
+                "    def test_hidden(self):\n"
+                "        self.fail('must remain failed')\n"
+            ).encode("utf-8")
+            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
+                clean, _output, tests_run = contract_audit._run_unittest_witnesses(
+                    test_path,
+                    {"test_hidden": "TeardownMutation"},
+                    teardown_mutation_source,
+                    {},
+                )
+            self.assertFalse(clean)
+            self.assertEqual(tests_run, 1)
+
             class_setup_bypass_source = (
                 "import unittest\n"
                 "class ClassSetupBypass(unittest.TestCase):\n"
@@ -2017,6 +2043,31 @@ class MetricProtocolTests(unittest.TestCase):
         )
         self.assertEqual(baseline_findings, [])
 
+        human_lines = human.splitlines()
+        digital_start = human_lines.index("### Digital metrics exact projection")
+        digital_end = next(
+            index for index in range(digital_start + 1, len(human_lines))
+            if human_lines[index].startswith("## ")
+        )
+        fenced_human = "\n".join(
+            human_lines[:digital_start]
+            + ["```markdown"]
+            + human_lines[digital_start:digital_end]
+            + ["```"]
+            + human_lines[digital_end:]
+        ) + "\n"
+        findings: list[str] = []
+        stack_consistency.check_digital_metrics_projection(
+            manifest,
+            fenced_human,
+            repositories,
+            findings,
+        )
+        self.assertTrue(
+            any("exact digital-metrics section" in item for item in findings),
+            findings,
+        )
+
         baseline_graph = json.loads(
             (WORKSPACE / "WORK_GRAPH.json").read_text(encoding="utf-8")
         )
@@ -2120,6 +2171,27 @@ class MetricProtocolTests(unittest.TestCase):
             )
             self.assertTrue(
                 any("BASE.json source_commit differs" in item for item in findings),
+                findings,
+            )
+
+            base = json.loads((WORKSPACE / "BASE.json").read_text(encoding="utf-8"))
+            base["authority"] = "canonical authority, proof, and measurement owner"
+            base["note"] = "All upstream statuses transfer."
+            base_path.write_text(canonical_json(base) + "\n", encoding="utf-8")
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                manifest,
+                human,
+                repositories,
+                findings,
+                base_path=base_path,
+            )
+            self.assertTrue(
+                any("BASE.json authority differs" in item for item in findings),
+                findings,
+            )
+            self.assertTrue(
+                any("BASE.json note differs" in item for item in findings),
                 findings,
             )
 

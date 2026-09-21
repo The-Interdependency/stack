@@ -84,8 +84,8 @@ Receipt:
 
 ```text
 receipts/native-mobius-v0.json
-Receipt payload digest (`receipt_sha256`): fd2baf9726a8bd531147568372880b97d0004123c2746cee41ae9d0268b5a701
-File SHA-256: 03a08cf0b817e01e9a116b06c03e41fe6286a432ad05b75c5ec5ac07072dc126
+Receipt payload digest (`receipt_sha256`): f438cd0b7dc69b7535b8299c7063bd24dd374f9967ce932c7c9249907d17f993
+File SHA-256: 3cc64e4a5a1c6dbe6ece0277c85b7519c26c4c37460cb9ce0bb7c9491a2aa51d
 ```
 
 ## Usage guidance
