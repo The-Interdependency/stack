@@ -1,0 +1,79 @@
+name: Repair URPCS post-merge P2s
+
+on:
+  push:
+    branches:
+      - repair/urpcs-post-merge-p2
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: repair/urpcs-post-merge-p2
+          fetch-depth: 0
+
+      - name: Apply bounded source repairs
+        shell: python
+        run: |
+          from pathlib import Path
+
+          decoder = Path("research/urpcs/urpcs_v1_independent.js")
+          text = decoder.read_text(encoding="utf-8")
+
+          old_profile = """  maxInputBytes: 1,\n  maxIntermediateBytes: 1 << 20,"""
+          new_profile = """  maxInputBytes: 1,\n  maxDepth: 1,\n  maxIntermediateBytes: 1 << 20,"""
+          if text.count(old_profile) != 1:
+              raise SystemExit("expected decoder profile insertion point not found exactly once")
+          text = text.replace(old_profile, new_profile)
+
+          old_validation = """  demand(Number.isInteger(normalized.RCap) && normalized.RCap >= 0 && normalized.RCap <= 0xffffffff,\n    \"state\", \"R_cap range\");"""
+          new_validation = """  demand(Number.isInteger(normalized.RCap)\n      && normalized.RCap >= 0\n      && normalized.RCap <= PROFILE.maxDepth,\n    \"state\", \"R_cap profile\");"""
+          if text.count(old_validation) != 1:
+              raise SystemExit("expected decoder depth validation not found exactly once")
+          text = text.replace(old_validation, new_validation)
+
+          old_contract_end = """// id: urpcs_independent_kmac_known_answer\n//   given: NIST SP 800-185 KMAC Sample 4 inputs\n//   then: the independent KMAC256 primitive emits the official 512-bit output\n//   class: evidence\n// === END CONTRACTS ==="""
+          new_contract_end = """// id: urpcs_independent_kmac_known_answer\n//   given: NIST SP 800-185 KMAC Sample 4 inputs\n//   then: the independent KMAC256 primitive emits the official 512-bit output\n//   class: evidence\n//\n// id: urpcs_independent_profile_boundary\n//   given: a state with R_cap outside the committed bounded profile\n//   then: decoding rejects at state validation before frame or witness processing\n//   class: correctness\n// === END CONTRACTS ==="""
+          if text.count(old_contract_end) != 1:
+              raise SystemExit("expected decoder contract insertion point not found exactly once")
+          decoder.write_text(text.replace(old_contract_end, new_contract_end), encoding="utf-8")
+
+          reference = Path("research/urpcs/urpcs_v1_reference.py")
+          text = reference.read_text(encoding="utf-8")
+          old = "#   unresolved: independent decoder interoperability, confidentiality model, production key lifecycle"
+          new = "#   unresolved: confidentiality model, production key lifecycle, independent release authority"
+          if text.count(old) != 1:
+              raise SystemExit("expected reference unresolved projection not found exactly once")
+          reference.write_text(text.replace(old, new), encoding="utf-8")
+
+          tests = Path("research/urpcs/tests/test_independent_decoder.js")
+          text = tests.read_text(encoding="utf-8")
+          old_checks = """// id: check_urpcs_independent_kmac_known_answer\n//   proves: urpcs_independent_kmac_known_answer\n//   call: self::testKmacKnownAnswer\n//   requires: node\n//   timeout: 10\n//   mutates: none\n//   cleanup: none\n// === END CHECKS ==="""
+          new_checks = """// id: check_urpcs_independent_kmac_known_answer\n//   proves: urpcs_independent_kmac_known_answer\n//   call: self::testKmacKnownAnswer\n//   requires: node\n//   timeout: 10\n//   mutates: none\n//   cleanup: none\n//\n// id: check_urpcs_independent_profile_boundary\n//   proves: urpcs_independent_profile_boundary\n//   call: self::testProfileBoundary\n//   requires: node\n//   timeout: 10\n//   mutates: none\n//   cleanup: none\n// === END CHECKS ==="""
+          if text.count(old_checks) != 1:
+              raise SystemExit("expected independent test metadata insertion point not found exactly once")
+          tests.write_text(text.replace(old_checks, new_checks), encoding="utf-8")
+
+      - name: Verify URPCS repair
+        run: |
+          node research/urpcs/tests/test_independent_decoder.js
+          python3 research/urpcs/urpcs_v1_reference.py --self-test
+          python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
+          python3 tools/check_stack_consistency.py
+
+      - name: Commit repair and remove one-shot executor
+        run: |
+          rm .github/workflows/repair-urpcs-post-merge-p2.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/urpcs/urpcs_v1_independent.js \
+                  research/urpcs/urpcs_v1_reference.py \
+                  research/urpcs/tests/test_independent_decoder.js \
+                  .github/workflows/repair-urpcs-post-merge-p2.yml
+          git commit -m "repair(urpcs): close post-merge decoder P2s"
+          git push origin HEAD:repair/urpcs-post-merge-p2
