@@ -44,6 +44,14 @@ const decoder = require(decoderPath);
 //   timeout: 10
 //   mutates: none
 //   cleanup: none
+//
+// id: check_urpcs_independent_profile_boundary
+//   proves: urpcs_independent_profile_boundary
+//   call: self::testProfileBoundary
+//   requires: node
+//   timeout: 10
+//   mutates: none
+//   cleanup: none
 // === END CHECKS ===
 
 const document = JSON.parse(fs.readFileSync(vectorsPath, "utf8"));
@@ -59,6 +67,16 @@ function testKmacKnownAnswer() {
     "f69d4cc3de9d104a351689f27cf6f5951f0103f33f4f24871024d9c27773a8dd",
   ].join("");
   assert.equal(decoder.runKat(), expected);
+}
+
+function testProfileBoundary() {
+  const input = decoder.vectorInput(byId.get("empty_r0"));
+  const outOfProfileState = { ...input.state, RCap: 2 };
+  assert.throws(
+    () => decoder.decode(input.ciphertext, outOfProfileState, input.associatedData),
+    (error) => error instanceof decoder.URPCSError && error.stage === "state",
+    "R_cap above the committed bounded profile must fail at state validation",
+  );
 }
 
 function testPositiveReplay() {
@@ -107,6 +125,7 @@ function testIndependenceSurface() {
 function main() {
   testIndependenceSurface();
   testKmacKnownAnswer();
+  testProfileBoundary();
   const results = testPositiveReplay();
   testAuthenticationBoundary();
   process.stdout.write(`${JSON.stringify({
@@ -121,6 +140,7 @@ function main() {
 module.exports = {
   testAuthenticationBoundary,
   testKmacKnownAnswer,
+  testProfileBoundary,
   testPositiveReplay,
 };
 

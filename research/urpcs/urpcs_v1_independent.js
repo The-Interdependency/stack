@@ -51,12 +51,18 @@ const fs = require("node:fs");
 //   given: NIST SP 800-185 KMAC Sample 4 inputs
 //   then: the independent KMAC256 primitive emits the official 512-bit output
 //   class: evidence
+//
+// id: urpcs_independent_profile_boundary
+//   given: a state with R_cap outside the committed bounded profile
+//   then: decoding rejects at state validation before frame or witness processing
+//   class: correctness
 // === END CONTRACTS ===
 
 const PROFILE = Object.freeze({
   xBytes: 1,
   M: 8,
   maxInputBytes: 1,
+  maxDepth: 1,
   maxIntermediateBytes: 1 << 20,
   maxLayerWireBytes: 1 << 20,
   maxBetaBytes: 4 << 20,
@@ -555,8 +561,10 @@ function validateState(state) {
   demand(!equalBytes(normalized.kPair, normalized.kIntegrity), "state", "distinct keys");
   demand(!equalBytes(normalized.kPair, normalized.kAdvance), "state", "distinct keys");
   demand(!equalBytes(normalized.kIntegrity, normalized.kAdvance), "state", "distinct keys");
-  demand(Number.isInteger(normalized.RCap) && normalized.RCap >= 0 && normalized.RCap <= 0xffffffff,
-    "state", "R_cap range");
+  demand(Number.isInteger(normalized.RCap)
+      && normalized.RCap >= 0
+      && normalized.RCap <= PROFILE.maxDepth,
+    "state", "R_cap profile");
   demand(bytesToBigInt(normalized.nuOrigin) !== MOD256 - 1n, "state", "origin chain exhausted");
   return normalized;
 }
