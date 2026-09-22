@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       UCNS_SOURCE_ROOT: ${{ github.workspace }}/_deps/ucns-motion
+      ENGLISH_GONOL_UCNS_ROOT: ${{ github.workspace }}/_deps/ucns-relational
     steps:
       - name: Checkout stack
         uses: actions/checkout@v7.0.1
@@ -34,6 +35,14 @@ jobs:
           path: _deps/ucns-motion
           persist-credentials: false
 
+      - name: Checkout pinned UCNS relational source
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: d7c6f51304ed6c32d48badf63132bea6de8af497
+          path: _deps/ucns-relational
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
@@ -42,8 +51,10 @@ jobs:
       - name: Install pytest
         run: python -m pip install --disable-pip-version-check pytest
 
-      - name: Verify pinned UCNS motion source
-        run: test "$(git -C _deps/ucns-motion rev-parse HEAD)" = "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc"
+      - name: Verify pinned UCNS source identities
+        run: |
+          test "$(git -C _deps/ucns-motion rev-parse HEAD)" = "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc"
+          test "$(git -C _deps/ucns-relational rev-parse HEAD)" = "d7c6f51304ed6c32d48badf63132bea6de8af497"
 
       - name: English Gonol construction tests
         working-directory: research/english-gonol
