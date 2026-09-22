@@ -149,6 +149,17 @@ python3 integration/epac/reconsume.py \
   integration/epac/release-lock.json /tmp/epac-public-consumption python3.12
 ```
 
+### English four-view full-corpus evidence
+
+The English construction's [complete four-view audit](research/english-gonol/docs/hyperspace-views-full-v1.md)
+executes all 164,864 admitted words and compares every native record with an independent
+reconstruction. All fifteen nonempty view combinations and three complete renumbering
+controls are recorded. The synthesis has 137,013 distinct values; view 4 is derivable
+from view 2 or view 3, while each of views 1, 2, and 3 adds distinctions. Numeric addresses
+remain useful provenance/memory metadata; distinctness alone does not select geometry
+or establish inference quality. The frozen protocol binds Stack `1f9a35e`, UCNS
+`1cf10c2`, and separately pinned skill-lib doctrine `abd259b` without changing `libs/`.
+
 ### Make derived artifacts fresh without depending on hosted CI
 
 `backend/` implements the durable `fresh-making` control plane. PostgreSQL on the VM is

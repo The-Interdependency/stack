@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "research/urpcs-v1-stack-workspace",
-    "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
-    "generated_at": "2026-09-20",
-    "note": "Transaction starts from exact Stack baseline a428a41 and adds the bounded URPCS workspace; the report commit identifies the pre-mutation source, while the PR diff owns the new workspace bytes."
+    "branch": "research/english-views-full-corpus",
+    "commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+    "generated_at": "2026-09-22",
+    "note": "Transaction starts from exact Stack four-view baseline 1f9a35e and adds complete-corpus evidence; this commit identifies pre-mutation source and the PR diff owns the audit bytes."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol, English Gonol, and URPCS are current Stack research workspaces. URPCS supplies bounded authenticated-codec computation only; no confidentiality, PCEA compatibility, UCNS-gonol identity, or release authority transfers."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol, English Gonol, and URPCS are current Stack research workspaces. URPCS supplies bounded authenticated-codec computation only; no confidentiality, PCEA compatibility, UCNS-gonol identity, or release authority transfers. The English four-view audit covers all 164864 words, all 15 nonempty combinations, and complete ID-renumbering controls; every native record matches exact reconstruction and separate complete evidence agrees. Synthesis has 137013 values; the canonical witness contributes no independent distinction. Address metadata retains its provenance role; inference usefulness is unresolved."
   },
   "delivered": [
     {
@@ -72,6 +72,11 @@
       "surface": "research/urpcs/",
       "status": "Laws 1-13, reference encoder/decoder, independent JavaScript decoder replay, byte-exact vectors, source receipt, and CI gates integrated",
       "boundary": "Stack-local authenticated-codec computation only; bounded independent decoding survived, while confidentiality, PCEA compatibility, UCNS-gonol identity, and release authority remain unclaimed."
+    },
+    {
+      "surface": "research/english-gonol/FULL_VIEW_AUDIT.json and experiments/hyperspace-views-full-v1/",
+      "status": "Complete 164864-word native census and independent replay agree; all view subsets and complete address controls sealed.",
+      "boundary": "Corpus discrimination and address dependence only; no automatic geometry selection, neural-input acceptance, or inference quality claim."
     }
   ],
   "active_frontier": [
@@ -79,7 +84,8 @@
     "register organization aggregate and website projection derivations in the fresh-making control plane",
     "maintain EPAC as a hash-pinned independent release consumer",
     "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
-    "Obtain a URPCS leakage/threat model before considering any confidentiality construction."
+    "Obtain a URPCS leakage/threat model before considering any confidentiality construction.",
+    "Evaluate English view usefulness on a defined inference task and preserve source-qualified addresses with explicit corpus-version remapping."
   ],
   "next_actions": [],
   "blocked": [],
@@ -132,13 +138,16 @@
     "epac_authority_transition": "integration/epac/authority-transition.json",
     "python_gonol": "research/python-gonol/README.md",
     "english_gonol": "research/english-gonol/README.md",
-    "urpcs": "research/urpcs/README.md"
+    "urpcs": "research/urpcs/README.md",
+    "english_full_view_audit": "research/english-gonol/FULL_VIEW_AUDIT.json",
+    "english_full_view_report": "research/english-gonol/docs/hyperspace-views-full-v1.md"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
     "skill-lib remains a special operational root snapshot rather than the normal libs/research pair",
     "EPAC geometry ratification and unmeasured operation effects remain unresolved research",
     "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved.",
-    "URPCS confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved."
+    "URPCS confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved.",
+    "English view discrimination is established on the complete fixed corpus; downstream inference usefulness and address remapping across corpus versions remain unresolved."
   ]
 }

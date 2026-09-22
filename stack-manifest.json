@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "99aa9e4dfd0a9b4f37d2aefe751247cb918230bc6672bd9a2f2452bae6ab82b4",
+  "work_graph_sha256": "49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -189,6 +189,36 @@
       "relation": "stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer",
       "repository": "The-Interdependency/stack",
       "workspace": "research/urpcs/"
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-source",
+      "repository": "The-Interdependency/stack",
+      "commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+      "authority": "Stack English construction and view candidates",
+      "relation": "complete four-view audit source; existing candidate formulas remain unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-ucns-motion",
+      "repository": "The-Interdependency/ucns",
+      "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
+      "authority": "UCNS native motion and scoped displacement geometry",
+      "relation": "exact eight-file motion dependency closure consumed for every word; no broader geometry selection",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-doctrine",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "abd259b4722901317e4388d774a20d6819d959c2",
+      "authority": "organization build, complete-scope and option-selection doctrine",
+      "relation": "full-corpus comparison discipline; address utility distinguished from downstream inference usefulness",
+      "canonical_release": false,
+      "authority_transfer": false
     }
   ]
 }

@@ -1,0 +1,133 @@
+{
+  "schema": "english-gonol.full-view-audit-protocol",
+  "version": "1.0.0",
+  "declared_at": "2026-09-22",
+  "scope": "every one of the 164864 admitted words; no sampling, prefix or limit parameter",
+  "history": "Frozen after the earlier 20000-word exploratory report and before full-corpus outcomes; this is not a blinded study.",
+  "purpose": "Determine complete-corpus information contribution and address dependence; retain useful metadata as metadata. No lexical or inference usefulness is inferred from uniqueness alone.",
+  "stack": {
+    "repository": "The-Interdependency/stack",
+    "commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+    "files": [
+      {
+        "path": "research/english-gonol/english_gonol/hyperspace_views.py",
+        "blob_sha": "50a56248806281a208742550a67082aa3452877f"
+      },
+      {
+        "path": "research/english-gonol/english_gonol/hyperspace_geometry.py",
+        "blob_sha": "a4288bfeefa221d46691d0a5ad6358603a36b9aa"
+      },
+      {
+        "path": "research/english-gonol/english_gonol/hyperspace_construct.py",
+        "blob_sha": "8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a"
+      },
+      {
+        "path": "research/english-gonol/english_gonol/motion_run.py",
+        "blob_sha": "99863e321c2ae2945510a4e3fc7efc76fd1fd8a2"
+      }
+    ]
+  },
+  "ucns": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
+    "files": [
+      {
+        "path": "src/ucns/carrier.py",
+        "blob_sha": "7f39c03a6794bddffe5b1be808e2117dc48fb26f"
+      },
+      {
+        "path": "src/ucns/direct_mobius.py",
+        "blob_sha": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+      },
+      {
+        "path": "src/ucns/gonal_boundary_trace.py",
+        "blob_sha": "7d3134cc7ae59b00480e2d60290027a997e6e8e0"
+      },
+      {
+        "path": "src/ucns/lifted_displacement.py",
+        "blob_sha": "2db935ff9930eff9fddbf0407d91993ed2b314ef"
+      },
+      {
+        "path": "src/ucns/modular_orbit.py",
+        "blob_sha": "0dba580ee5437c69db2af3d0fbf81781ef5843ce"
+      },
+      {
+        "path": "src/ucns/motion.py",
+        "blob_sha": "959aa48f32f36007df32b14c64fd59973f6b00fc"
+      },
+      {
+        "path": "src/ucns/visible_displacement.py",
+        "blob_sha": "601d284fb0aa6c885b807a5a7498b6ea9270ebdb"
+      },
+      {
+        "path": "src/ucns/public_gonol.py",
+        "blob_sha": "c1955e46e2dc918fb657cb346e42106d71937e91"
+      }
+    ]
+  },
+  "corpus": {
+    "repository": "globalwordnet/english-wordnet",
+    "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+    "source_tree_sha256": "3a46546a1ffbb4aed98990535ad5155c69be12ad09fdf093701b257d2a3e468f",
+    "manifest_receipt_sha256": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
+    "database_sha256": "350e819d1d6f3312dec9aaada396c351180da0030c4d07d37559d7a2686c353e",
+    "counts": {
+      "characters": 118,
+      "definition_components": 3535375,
+      "definitions": 185155,
+      "semantic_evidence": 866183,
+      "unresolved_semantic_evidence": 0,
+      "word_characters": 1739949,
+      "words": 164864
+    }
+  },
+  "work_graph_sha256": "49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102",
+  "execution": {
+    "primary": "execute the pinned native word_views for every word; bind the verified motion implementation once rather than repeating file hashes and Git subprocesses for each word; no formula is replaced",
+    "reconstruction": "independent exact sum and constituent-set implementation, compared to the complete native record for every word; then separate complete independent process replay",
+    "storage": "aggregate evidence and ordered complete-observation digest only; individual views remain recomputable from the source",
+    "completion": "all corpus counts, all words, every view subset, all renumberings, no native/reconstruction disagreements, matching terminal evidence objects, unchanged database bytes",
+    "stop": "source mismatch, corpus mismatch, integrity error, resource failure, computation error or record disagreement; no arbitrary wall-clock cutoff"
+  },
+  "comparisons": {
+    "subsets": "all 15 nonempty subsets of the four views",
+    "statistics": [
+      "distinct_values",
+      "repeated_records = N - distinct",
+      "singleton_words",
+      "ambiguous_words",
+      "collision_pairs = sum k*(k-1)/2",
+      "largest_bucket"
+    ],
+    "missingness": "view 1 None when fewer than two definitions; never convert absence to zero density",
+    "anagram_control": "all same-glyph-multiset groups across the complete corpus, including all multiword groups"
+  },
+  "renumbering_controls": {
+    "word_id_reverse": "i -> N+1-i with all word references relabelled consistently; view1/2/4 should be invariant",
+    "word_id_affine_157": "i -> 1 + (157*(i-1) mod N), a checked bijection, with all word references relabelled consistently; view1/2/4 should be invariant",
+    "glyph_id_reverse": "j -> C+1-j with all glyph references relabelled consistently; exposes dependence of view2/3/4 on glyph addresses",
+    "execution": "evaluate these exact counterfactual formulas for every source word; never mutate the corpus database",
+    "interpretation": "sensitivity establishes address dependence, not uselessness; source-qualified addresses may provide useful stable memory"
+  },
+  "decision_rules": {
+    "redundancy": "a view adds no distinctions conditional on the others when removing it leaves the exact full-corpus partition unchanged; preserve derivable witness functions where operationally useful",
+    "identity": "one distinct address per word is a control, not evidence of semantic utility",
+    "geometry": "overlap diagnostics do not replace definition-axis orthogonality; endpoint views do not replace ordered construction",
+    "inclusion": "this audit supports scoped information/metadata decisions, not automatic neural-input or universal-geometry selection"
+  },
+  "resource_preflight": {
+    "words": 164864,
+    "glyph_references": 1739949,
+    "definition_pairs": 198322,
+    "database_bytes": 306331648,
+    "available_memory_bytes_at_preflight": 22262153216,
+    "free_disk_bytes_at_preflight": 28523954176,
+    "estimated_memory_ceiling_bytes": 6442450944,
+    "execution": "two complete processes; stdlib only; no paid API, training or GPU"
+  },
+  "hmmm": [
+    "Downstream inference usefulness requires an actual task and acceptance criterion.",
+    "Stable addressing requires source-qualified identity and explicit remapping across corpus versions.",
+    "Geometric selection and higher closure retain their owning UCNS/Stack boundaries."
+  ]
+}

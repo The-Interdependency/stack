@@ -13,9 +13,10 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
+- English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `99aa9e4dfd0a9b4f37d2aefe751247cb918230bc6672bd9a2f2452bae6ab82b4`
+  `49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -70,6 +71,9 @@ release identity.
 | `research/from-photons-to-macroverse/` | `The-Interdependency/edcm` | `eb5f200d48a8c4ffa7b943238407fbdac4934946` | adjacent measurement discipline only; no validation claim | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/pcea` | `834987cb0c1fea5f62d6ea08e5c5bb878c312646` | adjacent runtime/security work; no ontology transfer | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | adjacent internal research; no external physics transfer | no |
+| `research/english-gonol/` | `The-Interdependency/stack` | `1f9a35eb355296fc88d09784c7a3e2e95511ca31` | complete four-view audit source; existing candidate formulas remain unchanged | no |
+| `research/english-gonol/` | `The-Interdependency/ucns` | `1cf10c2df2541a332a77f2ed3feda0c6bef4abcc` | exact eight-file motion dependency closure consumed for every word; no broader geometry selection | no |
+| `research/english-gonol/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | full-corpus comparison discipline; address utility distinguished from downstream inference usefulness | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.

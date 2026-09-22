@@ -12,7 +12,9 @@ projects may later graduate into their own repositories.
   not canon merely because it is in stack.
 - `research/english-gonol/` is a distinct stack-local English lexical/gonol construction
   component. UCNS owns consumed geometry; EDCM may evaluate outputs but does not define
-  the English Gonol construction.
+  the English Gonol construction. Its `FULL_VIEW_AUDIT.json` and
+  `docs/hyperspace-views-full-v1.md` bind a complete 164,864-word four-view census;
+  address metadata and independent information contribution do not establish inference quality.
 - `research/python-gonol/` is a distinct stack-local Python source/gonol construction
   component. It owns Python source admission and bottom-up affixiation only; METAPAT owns
   affixiation semantics, UCNS owns consumed geometry, and parser objects are witnesses
