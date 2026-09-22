@@ -15,7 +15,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `99aa9e4dfd0a9b4f37d2aefe751247cb918230bc6672bd9a2f2452bae6ab82b4`
+  `01035546b8af294015254a1a90266aa1219634920e4af9937c34873ca5055339`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -70,6 +70,14 @@ release identity.
 | `research/from-photons-to-macroverse/` | `The-Interdependency/edcm` | `eb5f200d48a8c4ffa7b943238407fbdac4934946` | adjacent measurement discipline only; no validation claim | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/pcea` | `834987cb0c1fea5f62d6ea08e5c5bb878c312646` | adjacent runtime/security work; no ontology transfer | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/epac` | `d8868858b2e455381ce670797bdbe47189bdc496` | adjacent internal research; no external physics transfer | no |
+| `research/zfae/` | `The-Interdependency/stack` | `d713cc5f901d74deb902a191837ef5657dbaba94` | research baseline; no new canonical runtime | no |
+| `research/zfae/` | `The-Interdependency/zfae` | `95fd37ef0e1775643399c8a9e8292190abf05c04` | construction questions and source-bound carrier observation | no |
+| `research/zfae/` | `The-Interdependency/ptcna` | `a06a049cd8722adaad32dbc9c36d9c87b0204236` | current intended-construction gate; historical scaffold is not intended architecture | no |
+| `research/zfae/` | `The-Interdependency/a0` | `f4faf5c50dd5bc55e377279a0e403e088bcdced8` | producer-state and Zeta evaluation source inspection; no runtime mutation | no |
+| `research/zfae/` | `The-Interdependency/a0-betatest` | `5d51d70a0ae6044d1386d72bd0cada9d48887f77` | exact heuristic parser comparison source; not equivalent to a0 | no |
+| `research/zfae/` | `The-Interdependency/uchc` | `118b48802b20509afa556cf3ce68cee915628af0` | extracted construct and pending release/reconsumption boundary | no |
+| `research/zfae/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | current domain-restraint consultation; root impact none | no |
+| `research/zfae/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | current research, source, structural-update and metadata rules; no snapshot refresh | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -113,6 +121,14 @@ pairing codec experiment. Its accepted Laws 1–13, reference implementation, an
 byte-exact vectors establish bounded deterministic codec behavior only. The
 workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
 Stack supplies no confidentiality or production-security standing.
+
+ZFAE construction research lives at `research/zfae/`. Its exact research-only
+inputs are recorded above. Conceptual authority remains in ZFAE, neural
+construction in PTCNA, and runtime integration in a0. The a0-betatest parser is
+a separate comparison source. Current PTCNA retains its UCNS neural-audit gate;
+UCHC extraction has not completed release/reconsumption. No `libs/` pin or
+upstream authority changes. Usage: read `research/zfae/README.md` and replay its
+source-bound input probe before selecting an input adapter.
 
 ## License status at pinned commits
 

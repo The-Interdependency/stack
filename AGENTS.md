@@ -20,6 +20,11 @@ projects may later graduate into their own repositories.
 - `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
   experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
   construction and has no confidentiality, production-security, or release standing.
+- `research/zfae/` owns Stack-local inference-construction experiments. ZFAE
+  retains conceptual authority, PTCNA owns neural construction, and a0 owns
+  runtime integration. Keep a0-betatest comparisons separately attributed.
+  Read its README and BASE before work; retain the current PTCNA neural-audit
+  prerequisite and the incomplete UCHC release/reconsumption boundary.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
