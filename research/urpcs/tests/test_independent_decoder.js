@@ -61,6 +61,16 @@ function testKmacKnownAnswer() {
   assert.equal(decoder.runKat(), expected);
 }
 
+function testProfileBoundary() {
+  const input = decoder.vectorInput(byId.get("empty_r0"));
+  const outOfProfileState = { ...input.state, RCap: 2 };
+  assert.throws(
+    () => decoder.decode(input.ciphertext, outOfProfileState, input.associatedData),
+    (error) => error instanceof decoder.URPCSError && error.stage === "state",
+    "R_cap above the committed bounded profile must fail at state validation",
+  );
+}
+
 function testPositiveReplay() {
   const results = [];
   for (const id of ["empty_r0", "empty_r1", "odd_09_r0"]) {
@@ -107,6 +117,7 @@ function testIndependenceSurface() {
 function main() {
   testIndependenceSurface();
   testKmacKnownAnswer();
+  testProfileBoundary();
   const results = testPositiveReplay();
   testAuthenticationBoundary();
   process.stdout.write(`${JSON.stringify({
@@ -121,6 +132,7 @@ function main() {
 module.exports = {
   testAuthenticationBoundary,
   testKmacKnownAnswer,
+  testProfileBoundary,
   testPositiveReplay,
 };
 
