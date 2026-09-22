@@ -27,9 +27,10 @@ Additional coverage:
 - the Python module compiles without third-party packages.
 
 Post-merge review adds separate regression coverage for witness origin/region
-completeness, pre-authentication `MAX_C0` enforcement, and true process-local
-concurrent single-winner state-slot behavior. These repairs do not change the
-frozen vector bytes; they harden acceptance around those bytes.
+completeness, pre-authentication `MAX_C0` enforcement, true process-local
+concurrent single-winner state-slot behavior, and the independent decoder's
+bounded `R_cap <= 1` profile gate. These repairs do not change the frozen vector
+bytes; they harden acceptance around those bytes.
 
 ## Positive-vector receipts
 
