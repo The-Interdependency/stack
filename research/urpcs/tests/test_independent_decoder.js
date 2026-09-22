@@ -44,6 +44,14 @@ const decoder = require(decoderPath);
 //   timeout: 10
 //   mutates: none
 //   cleanup: none
+//
+// id: check_urpcs_independent_profile_boundary
+//   proves: urpcs_independent_profile_boundary
+//   call: self::testProfileBoundary
+//   requires: node
+//   timeout: 10
+//   mutates: none
+//   cleanup: none
 // === END CHECKS ===
 
 const document = JSON.parse(fs.readFileSync(vectorsPath, "utf8"));
