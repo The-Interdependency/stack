@@ -25,6 +25,9 @@ projects may later graduate into their own repositories.
   runtime integration. Keep a0-betatest comparisons separately attributed.
   Read its README and BASE before work; retain the current PTCNA neural-audit
   prerequisite and the incomplete UCHC release/reconsumption boundary.
+  Its input parser consumes the exact English GlyphGonol producer and UCNS
+  carrier declared in GONOL_PARSER.json. Preserve occurrences and missing
+  admission; parser completion is not neural or higher-gonol completion.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.

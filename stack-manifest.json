@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "01035546b8af294015254a1a90266aa1219634920e4af9937c34873ca5055339",
+  "work_graph_sha256": "70787567cb37f4b156a66b293f9bd9cb5cf7d722f1e6ff1721f5df343ada5b79",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -268,6 +268,16 @@
       "commit": "abd259b4722901317e4388d774a20d6819d959c2",
       "authority": "organization build and evidence doctrine",
       "relation": "current research, source, structural-update and metadata rules; no snapshot refresh",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+      "authority": "UCNS geometry and Public Gonol carrier authority",
+      "relation": "exact 157-position carrier consumed by the existing Stack glyph producer for the declared parser profile; no function semantics inferred",
       "canonical_release": false,
       "authority_transfer": false
     }

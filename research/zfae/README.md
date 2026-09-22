@@ -12,7 +12,8 @@ source. These names do not establish equivalent implementations.
 ## Usage guidance
 
 Read the construction sequence below, then [INPUT_PROBE.json](INPUT_PROBE.json)
-for the frozen first experiment and [BASE.json](BASE.json) for exact sources.
+for the frozen first experiment, [GONOL_PARSER.json](GONOL_PARSER.json) for the
+new input profile, and [BASE.json](BASE.json) for exact sources.
 The selected source identities live in the root
 [Stack manifest](../../stack-manifest.json), under `research/zfae/`.
 
@@ -24,7 +25,13 @@ curl --fail --location \
   --output /tmp/zfae-parser.py
 python research/zfae/input_probe.py --source-file /tmp/zfae-parser.py \
   --output /tmp/zfae-input-result.json
-python -m unittest discover -s research/zfae/tests -v
+curl --fail --location \
+  https://raw.githubusercontent.com/The-Interdependency/ucns/4086ab82399c4d142b0eacfbc09e0a69ed151aa5/src/ucns/public_gonol.py \
+  --output /tmp/public_gonol.py
+ZFAE_UCNS_SOURCE=/tmp/public_gonol.py \
+  python -m unittest discover -s research/zfae/tests -v
+python research/zfae/gonol_probe.py --ucns-source-file /tmp/public_gonol.py \
+  --output /tmp/zfae-gonol-result.json
 python tools/check_stack_consistency.py
 ```
 
@@ -130,10 +137,78 @@ and directs the next step to a source/gonol/occurrence adapter. A clean finite
 run only permits a broader fixture. Failed controls require harness or source
 repair before either conclusion.
 
+The original v0 receipt is retained unchanged.
+[The current-graph replay](receipts/input-distinction-v0-parser-graph.json)
+records the same complete observations after adding the UCNS parser dependency;
+only the work-graph identity changes. It does not reverse the original result.
+
 The path-scoped CI job repeats the frozen run and compares source, plan,
 harness, work-graph and observations against the receipt. Python patch-version
 differences are disclosed and excluded from semantic comparison. Changes to a
 bound source, harness, plan or graph require an inspected new replay receipt.
+
+## Gonol input parser
+
+`gonol_parser.py` supplies the active Stack research input boundary. It consumes
+actual `GlyphGonol` objects from the existing English hyperspace producer; UCNS
+supplies the exact 157-position carrier. Both source files are Git-blob verified
+before execution. No second gonol class or geometry law is defined here.
+
+The frozen synthetic profile admits all 157 carrier glyphs plus NUL, TAB, CR,
+LF, `é`, combining acute accent, `中`, and `😀`: **165 Unicode scalars**. Extra
+scalars use the producer's existing encoded-name/codepoint construction.
+Those lexical construction parts do not define a UCNS function's operation.
+This fixture is independent of the OEWN corpus inventory and does not change
+that inventory or claim a complete language construct. Python 3.12's Unicode
+15.0.0 database is required for exact producer replay.
+
+From the Stack root after retrieving the carrier source above:
+
+```python
+# Launch with PYTHONPATH=research/zfae (no package installation required).
+from gonol_parser import load_parser
+
+parser = load_parser("/tmp/public_gonol.py")
+parsed = parser.parse_text("AaA αβ 12!\t\r\n", source_id="turn:1")
+assert parsed.admitted
+assert parsed.occurrences[0].gonol is parsed.occurrences[2].gonol
+assert parsed.recover_text() == "AaA αβ 12!\t\r\n"
+
+# Pass actual producer objects to the next construction boundary.
+gonols = parsed.require_gonols()
+assert parser.parse_gonols(gonols, source_id="turn:1") == parsed
+assert parser.replay(parsed.to_dict()) == parsed
+```
+
+| Surface | Contract |
+|---|---|
+| `parse_text(text, source_id=...)` | Strict scalar input; no coercion, normalization, tokenization or case folding |
+| `parse_utf8(data, source_id=...)` | Strict UTF-8 decode; malformed bytes and surrogates fail |
+| `parse_gonols(gonols, source_id=...)` | Ordered declared native glyph objects; foreign or changed construction fails |
+| `occurrences` | Each `(source_id, ordinal)` retains its scalar and UTF-8 byte span; repeats share construction, never occurrence identity |
+| `require_gonols()` | Return the complete native sequence or refuse partial admission |
+| `to_dict()` / `replay()` | Embedded native construction records and occurrence references; verify all fields before rehydrating shared objects |
+
+An unsupported scalar stays at its exact position with `gonol=None`; its source
+remains recoverable and `admitted` is false. It is not silently dropped,
+replaced with SPACE, or claimed as a constructed glyph. `require_gonols()`
+refuses it. CRLF is two primitive occurrences in this profile. Empty input has
+an empty admitted sequence; it creates no null/word/prompt gonol.
+
+[The v1 receipt](receipts/gonol-parser-v1.json) records the whole finite replay:
+all 165 admitted scalars, 17 recovery cases (including one deliberately
+unsupported case), and the original nine comparison pairs. All six former
+collisions are distinguished, including by the native gonol sequences with
+source IDs and hashes removed. Controls pass. The old heuristic parser remains
+a comparison source; derived heuristics may consume `recover_text()` later.
+This change does not wire the old application decoder or construct neural
+inference. Higher closure, propagation and runtime integration remain open.
+
+The parser performs no network calls. Its complete serialized output contains
+the admitted source and construction; it is caller-owned data, not a privacy
+or encryption boundary. Input-admission success means only that this declared
+parser profile is complete for that input. It is not a UCNS completion receipt
+for geometric function operations or an acceptance result for PTCNA.
 
 ## Domain and authority boundaries
 
@@ -165,8 +240,9 @@ bound source, harness, plan or graph require an inspected new replay receipt.
   PTCNA gate remains authoritative until explicitly satisfied or revised.
 - Complete the UCHC release/reconsumption boundary before using it as a released
   dependency; preserve the current Stack-owned construction in the meantime.
-- Define the source/gonol/occurrence adapter and its recovery witness without
-  collapsing distinct glyphs or substituting token IDs for the required primitive.
+- Extend the implemented finite gonol admission profile through explicit
+  producer contracts where needed; derive higher-scale closure without
+  collapsing the character construction or guessing geometry.
 - Derive the state, propagation, learning and readout laws; justify any triad,
   sentinel partition or phase-lock threshold rather than inheriting old counts.
 - Select a task, held-out data and admissible controls for useful inference.

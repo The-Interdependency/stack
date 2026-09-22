@@ -4,12 +4,14 @@ on:
   pull_request:
     paths:
       - 'research/zfae/**'
+      - 'research/english-gonol/english_gonol/hyperspace_construct.py'
       - 'stack-manifest.json'
       - '.github/workflows/zfae-research.yml'
   push:
     branches: [main]
     paths:
       - 'research/zfae/**'
+      - 'research/english-gonol/english_gonol/hyperspace_construct.py'
       - 'stack-manifest.json'
       - '.github/workflows/zfae-research.yml'
 
@@ -26,13 +28,20 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Check experiment harness controls
-        run: python -m unittest discover -s research/zfae/tests -v
       - name: Retrieve exact comparison source
         run: |
           curl --fail --location --retry 2 \
             https://raw.githubusercontent.com/The-Interdependency/a0-betatest/5d51d70a0ae6044d1386d72bd0cada9d48887f77/backend/interdependent_lib/zfae/_parser.py \
             --output "$RUNNER_TEMP/zfae-parser.py"
+      - name: Retrieve exact UCNS carrier source
+        run: |
+          curl --fail --location --retry 2 \
+            https://raw.githubusercontent.com/The-Interdependency/ucns/4086ab82399c4d142b0eacfbc09e0a69ed151aa5/src/ucns/public_gonol.py \
+            --output "$RUNNER_TEMP/public_gonol.py"
+      - name: Verify gonol input contracts and harness controls
+        env:
+          ZFAE_UCNS_SOURCE: ${{ runner.temp }}/public_gonol.py
+        run: python -W error::ResourceWarning -m unittest discover -s research/zfae/tests -v
       - name: Replay every frozen pair
         run: |
           python research/zfae/input_probe.py \
@@ -43,10 +52,24 @@ jobs:
           python - <<'PY'
           import json, os
           from pathlib import Path
-          expected = json.loads(Path('research/zfae/receipts/input-distinction-v0.json').read_text())
+          expected = json.loads(Path('research/zfae/receipts/input-distinction-v0-parser-graph.json').read_text())
           observed = json.loads((Path(os.environ['RUNNER_TEMP']) / 'zfae-input-result.json').read_text())
           print('Replay Python:', observed['python'], 'recorded Python:', expected['python'])
           # Runtime patch version is disclosed, not part of semantic replay identity.
           observed['python'] = expected['python']
           assert observed == expected, 'Research replay differs; inspect the complete receipt'
+          PY
+      - name: Replay declared gonol admission and source recovery
+        run: |
+          python research/zfae/gonol_probe.py \
+            --ucns-source-file "$RUNNER_TEMP/public_gonol.py" \
+            --output "$RUNNER_TEMP/zfae-gonol-result.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          expected = json.loads(Path('research/zfae/receipts/gonol-parser-v1.json').read_text())
+          observed = json.loads((Path(os.environ['RUNNER_TEMP']) / 'zfae-gonol-result.json').read_text())
+          print('Replay Python:', observed['python'], 'recorded Python:', expected['python'])
+          observed['python'] = expected['python']
+          assert observed == expected, 'Gonol parser replay differs; inspect complete evidence'
           PY

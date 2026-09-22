@@ -15,7 +15,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `01035546b8af294015254a1a90266aa1219634920e4af9937c34873ca5055339`
+  `70787567cb37f4b156a66b293f9bd9cb5cf7d722f1e6ff1721f5df343ada5b79`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -78,6 +78,7 @@ release identity.
 | `research/zfae/` | `The-Interdependency/uchc` | `118b48802b20509afa556cf3ce68cee915628af0` | extracted construct and pending release/reconsumption boundary | no |
 | `research/zfae/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | current domain-restraint consultation; root impact none | no |
 | `research/zfae/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | current research, source, structural-update and metadata rules; no snapshot refresh | no |
+| `research/zfae/` | `The-Interdependency/ucns` | `4086ab82399c4d142b0eacfbc09e0a69ed151aa5` | exact Public Gonol carrier consumed by the Stack glyph producer for the finite parser profile; no function semantics inferred | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -123,12 +124,15 @@ workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
 Stack supplies no confidentiality or production-security standing.
 
 ZFAE construction research lives at `research/zfae/`. Its exact research-only
-inputs are recorded above. Conceptual authority remains in ZFAE, neural
+inputs are recorded above. The parser consumes the existing English GlyphGonol
+producer at the Stack baseline and the separately pinned UCNS carrier. Its
+finite profile preserves occurrences and refuses incomplete gonol admission.
+Conceptual authority remains in ZFAE, neural
 construction in PTCNA, and runtime integration in a0. The a0-betatest parser is
 a separate comparison source. Current PTCNA retains its UCNS neural-audit gate;
 UCHC extraction has not completed release/reconsumption. No `libs/` pin or
 upstream authority changes. Usage: read `research/zfae/README.md` and replay its
-source-bound input probe before selecting an input adapter.
+source-bound input and gonol-parser probes.
 
 ## License status at pinned commits
 

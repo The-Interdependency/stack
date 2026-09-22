@@ -12,7 +12,7 @@
   "authority_transfer": false,
   "stack_baseline": "d713cc5f901d74deb902a191837ef5657dbaba94",
   "work_graph": "../../stack-manifest.json#research_participants[workspace=research/zfae/]",
-  "usage": "Read README.md and INPUT_PROBE.json; execute input_probe.py with the exact externally retrieved parser file.",
+  "usage": "Read README.md, INPUT_PROBE.json and GONOL_PARSER.json; retrieve exact external parser/carrier sources, then execute input_probe.py and gonol_probe.py.",
   "source_files": [
     {
       "repository": "The-Interdependency/zfae",
@@ -91,11 +91,24 @@
       "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
       "path": "DOMAIN_RESTRAINT.md",
       "blob_sha": "8d3626384c55350832767ba6f4fa913f48a5afd0"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "d713cc5f901d74deb902a191837ef5657dbaba94",
+      "path": "research/english-gonol/english_gonol/hyperspace_construct.py",
+      "blob_sha": "8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+      "path": "src/ucns/public_gonol.py",
+      "blob_sha": "c1955e46e2dc918fb657cb346e42106d71937e91"
     }
   ],
   "hmmm": [
     "Intended PTCNA construction remains subject to its source-owned UCNS neural-audit gate.",
     "UCHC extraction has not completed release, Stack reconsumption and authority transition.",
-    "The state, propagation, learning and readout laws remain construction work."
+    "The state, propagation, learning and readout laws remain construction work.",
+    "The gonol parser has finite declared admission; higher closure and runtime integration remain separate work."
   ]
 }
