@@ -1,4 +1,4 @@
-# ratios: loc_comments=175:52 imports_exports=10:6 calls_definitions=83:18
+# ratios: loc_comments=183:53 imports_exports=10:6 calls_definitions=86:19
 """Lossless glyph-gonol admission for Stack ZFAE construction research.
 
 Usage (Python 3.12, stdlib): ``parser = load_parser(ucns_source_file)``;
@@ -75,29 +75,36 @@ def _verified_module(path: Path, expected_blob: str, *, module_name: str | None 
     if observed != expected_blob:
         raise GonolAdmissionError(f"producer Git blob mismatch: {path.name}")
     name = module_name or "_zfae_gonol_source_" + expected_blob
-    if name in sys.modules:
-        cached_path = getattr(sys.modules[name], "__file__", None)
-        if cached_path is None or Path(cached_path).read_bytes() != raw:
-            raise GonolAdmissionError(f"cached producer differs: {name}")
-    if name not in sys.modules:
-        # Preserve the producer's native import/type identity for its consumers.
-        if module_name and "." in module_name:
-            package_name, _, child = module_name.rpartition(".")
-            if package_name not in sys.modules:
-                package = ModuleType(package_name)
-                package.__path__ = [str(path.parent)]
-                sys.modules[package_name] = package
-        module = ModuleType(name)
-        module.__file__ = str(path)
-        sys.modules[name] = module
-        try:
-            exec(compile(raw, str(path), "exec"), module.__dict__)
-        except BaseException:
+    # Execute the verified bytes on every admission; a cached namespace can be patched.
+    package_name, _, child = name.rpartition(".")
+    if package_name and package_name not in sys.modules:
+        package = ModuleType(package_name)
+        package.__path__ = [str(path.parent)]
+        sys.modules[package_name] = package
+    module = ModuleType(name)
+    module.__file__ = str(path)
+    previous = sys.modules.get(name)
+    sys.modules[name] = module
+    try:
+        exec(compile(raw, str(path), "exec"), module.__dict__)
+    except BaseException:
+        if previous is None:
             sys.modules.pop(name, None)
-            raise
-        if module_name and "." in module_name:
-            setattr(sys.modules[package_name], child, module)
-    return sys.modules[name]
+        else:
+            sys.modules[name] = previous
+        raise
+    if package_name:
+        setattr(sys.modules[package_name], child, module)
+    return module
+
+
+def _same_construction(left, right):
+    """Native equality must preserve types as well as values recursively."""
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, tuple):
+        return len(left) == len(right) and all(_same_construction(a, b) for a, b in zip(left, right))
+    return left == right
 
 
 def _scalar_text(text: str) -> str:
@@ -210,7 +217,11 @@ class GonolParser:
         for ordinal, gonol in enumerate(gonols):
             if not isinstance(gonol, self._gonol_type):
                 raise GonolAdmissionError(f"foreign gonol type at occurrence {ordinal}")
-            if self.inventory.get(gonol.identity) != gonol:
+            expected = self.inventory.get(gonol.identity)
+            if expected is None or not all(
+                _same_construction(getattr(expected, field), getattr(gonol, field))
+                for field in self._gonol_type.__dataclass_fields__
+            ):
                 raise GonolAdmissionError(f"undeclared glyph construction at occurrence {ordinal}")
             glyphs.append(gonol.identity)
         return self.parse_text("".join(glyphs), source_id=source_id)
@@ -262,4 +273,4 @@ def load_parser(ucns_source_file: str | Path) -> GonolParser:
 
 
 __all__ = ["load_parser", "GonolParser", "ParsedGonols", "GlyphOccurrence", "GonolAdmissionError"]
-# ratios: loc_comments=175:52 imports_exports=10:6 calls_definitions=83:18
+# ratios: loc_comments=183:53 imports_exports=10:6 calls_definitions=86:19

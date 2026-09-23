@@ -44,8 +44,8 @@ HERE = Path(__file__).resolve().parent
 
 def run(ucns_source_file: Path) -> dict:
     parser = load_parser(ucns_source_file)
-    profile = json.loads((HERE / "GONOL_PARSER.json").read_text())
-    manifest = json.loads((HERE.parents[1] / "stack-manifest.json").read_text())
+    profile = json.loads((HERE / "GONOL_PARSER.json").read_text(encoding="utf-8"))
+    manifest = json.loads((HERE.parents[1] / "stack-manifest.json").read_text(encoding="utf-8"))
     graph = {k: manifest[k] for k in ("repositories", "research_participants", "boundaries")}
     digest = hashlib.sha256(json.dumps(graph, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     if digest != manifest["work_graph_sha256"]:
@@ -55,7 +55,7 @@ def run(ucns_source_file: Path) -> dict:
                    and p["commit"] == source["commit"] and p["authority_transfer"] is False
                    for p in manifest["research_participants"]):
             raise ValueError("producer absent from research work graph")
-    pairs = json.loads((HERE / "INPUT_PROBE.json").read_text())["pairs"]
+    pairs = json.loads((HERE / "INPUT_PROBE.json").read_text(encoding="utf-8"))["pairs"]
     result = evaluate(pairs, lambda text: parser.parse_text(text, source_id="fixture:pair").to_dict())
     cases = []
     scope = profile["cases"] + [{"text": "".join(parser.inventory), "admitted": True}]
@@ -102,7 +102,7 @@ def main() -> int:
         result = {"standing": "BLOCKED", "hmmm": [f"{type(exc).__name__}: {exc}"]}
     rendered = json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
     if args.output:
-        args.output.write_text(rendered)
+        args.output.write_text(rendered, encoding="utf-8")
     else:
         print(rendered, end="")
     return 0 if result["standing"] == "SURVIVED" else 2

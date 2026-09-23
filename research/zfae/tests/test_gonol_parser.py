@@ -1,4 +1,4 @@
-# ratios: loc_comments=139:40 imports_exports=12:7 calls_definitions=76:9
+# ratios: loc_comments=149:40 imports_exports=12:7 calls_definitions=82:9
 """Behavioral witnesses against the real pinned glyph producers.
 
 Set ZFAE_UCNS_SOURCE to the exact downloaded public_gonol.py, then run:
@@ -86,6 +86,9 @@ def test_producer_and_carrier_identity():
         altered.write_text(f"open({str(marker)!r}, 'w').write('bad')\n")
         _rejects(lambda: load_parser(altered), GonolAdmissionError)
         assert not marker.exists()
+    producer = sys.modules["english_gonol.hyperspace_construct"]
+    producer.glyph_inventory = lambda db: {}
+    assert len(_parser().inventory) == 165
     _rejects(lambda: parser.inventory.__setitem__("x", glyphs[0]), AttributeError)
 
 
@@ -165,6 +168,13 @@ def test_native_gonols_and_serialized_tampering():
     # Separately instantiated native producer objects remain interoperable.
     native_copy = replace(parser.inventory["a"])
     assert parser.parse_gonols([native_copy], source_id="fixture:external").occurrences[0].gonol is parser.inventory["a"]
+    for field in ("axis_index", "carrier_position"):
+        zero = next(g for g in parser.inventory.values() if getattr(g, field) == 0)
+        for value in (False, 0.0):
+            wrong = replace(zero, **{field: value})
+            _rejects(lambda: parser.parse_gonols([wrong], source_id="fixture:typed"))
+    wrong = replace(parser.inventory["a"], construction_parts=list(parser.inventory["a"].construction_parts))
+    _rejects(lambda: parser.parse_gonols([wrong], source_id="fixture:container"))
     base = parsed.to_dict()
     mutations = []
     for key, value in (("inventory_sha256", "0" * 64), ("profile_sha256", "0" * 64),
@@ -200,4 +210,4 @@ def load_tests(loader, tests, pattern):
         test_native_gonols_and_serialized_tampering,
         test_gonol_probe_complete_scope,
     ))
-# ratios: loc_comments=139:40 imports_exports=12:7 calls_definitions=76:9
+# ratios: loc_comments=149:40 imports_exports=12:7 calls_definitions=82:9
