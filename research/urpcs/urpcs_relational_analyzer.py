@@ -896,6 +896,16 @@ def _authority_context(
     _require(_git_text(stack_root, "show", "-s", "--format=%T", STACK_INPUT_COMMIT) == STACK_INPUT_TREE, "Stack input tree drift")
     _require(_git_text(ucns_root, "rev-parse", "HEAD") == UCNS_COMMIT, "UCNS commit drift")
     _require(_git_text(ucns_root, "show", "-s", "--format=%T", "HEAD") == UCNS_TREE, "UCNS tree drift")
+    ucns_direct_mobius_path = "src/ucns/direct_mobius.py"
+    committed_ucns_direct_mobius = _git_bytes(
+        ucns_root,
+        "show",
+        f"{UCNS_COMMIT}:{ucns_direct_mobius_path}",
+    )
+    _require(
+        (ucns_root / ucns_direct_mobius_path).read_bytes() == committed_ucns_direct_mobius,
+        f"UCNS consumed source drift: {ucns_direct_mobius_path}",
+    )
     _require(_git_text(skill_lib_root, "rev-parse", "HEAD") == SKILL_LIB_COMMIT, "skill-lib commit drift")
     _require(_git_text(skill_lib_root, "show", "-s", "--format=%T", "HEAD") == SKILL_LIB_TREE, "skill-lib tree drift")
     _require(_git_text(metapat_root, "show", "-s", "--format=%T", METAPAT_COMMIT) == METAPAT_TREE, "METAPAT tree drift")
