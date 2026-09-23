@@ -31,6 +31,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -222,6 +223,29 @@ class URPCSRelationalAnalyzerTests(unittest.TestCase):
 
     def test_committed_deterministic_evidence(self) -> None:
         check_committed_evidence()
+
+    def test_authority_context_rejects_dirty_consumed_ucns_source(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ucns_root = Path(tmp)
+            consumed = ucns_root / "src/ucns/direct_mobius.py"
+            consumed.parent.mkdir(parents=True)
+            consumed.write_bytes(b"dirty-working-tree-bytes")
+            with mock.patch.object(
+                analyzer,
+                "_git_text",
+                side_effect=[
+                    analyzer.STACK_INPUT_TREE,
+                    analyzer.UCNS_COMMIT,
+                    analyzer.UCNS_TREE,
+                ],
+            ), mock.patch.object(analyzer, "_git_bytes", return_value=b"pinned-committed-bytes"):
+                with self.assertRaisesRegex(analyzer.RelationalAnalysisError, "UCNS consumed source drift"):
+                    analyzer._authority_context(
+                        STACK_ROOT,
+                        ucns_root,
+                        Path("/unused-skill-lib"),
+                        Path("/unused-metapat"),
+                    )
 
     def test_wire_has_no_frame_field_and_frozen_sources_match_governing_head(self) -> None:
         for row in load_vectors():
