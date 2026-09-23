@@ -44,7 +44,18 @@ UCNS geometry, or UCNS-gonol identity.
   — repair scope, preservation boundary, and clean-room replay gate.
 - [`docs/URPCS-v1-independent-replay.md`](docs/URPCS-v1-independent-replay.md)
   — frozen clean-room replay identities and `SURVIVED_INDEPENDENTLY` result.
+- [`urpcs_mobius_projection.py`](urpcs_mobius_projection.py) — read-only adapter
+  from authenticated v1 witness displacement rows to the exact UCNS native
+  Möbius state.
+- [`receipts/urpcs-mobius-projection-v0.json`](receipts/urpcs-mobius-projection-v0.json)
+  — canonical deterministic 514-case measurement receipt.
+- [`docs/URPCS-mobius-projection-v0.md`](docs/URPCS-mobius-projection-v0.md)
+  — generated human-readable summary of that canonical JSON.
 - [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json) — imported-artifact identities.
+
+The measurement receipt lives in the new `receipts/` evidence directory while
+its Markdown projection remains with the existing human-readable reports in
+`docs/`. A duplicate Markdown file is intentionally not stored in `receipts/`.
 
 ## Usage guidance
 
@@ -74,6 +85,31 @@ node research/urpcs/urpcs_v1_independent.js --kat
 node research/urpcs/tests/test_independent_decoder.js
 ```
 
+Run the bounded Möbius projection tests:
+
+```bash
+python3 -m unittest -v research/urpcs/tests/test_mobius_projection.py
+```
+
+The complete receipt was generated against detached source worktrees at UCNS
+`4086ab82399c4d142b0eacfbc09e0a69ed151aa5` and skill-lib
+`abd259b4722901317e4388d774a20d6819d959c2`. The canonical run used Python
+3.12 and PyCryptodome 3.23.0 after matching its KMAC256 output to the embedded
+NIST SP 800-185 known-answer vector and the dependency-free URPCS
+implementation. PyCryptodome is an execution accelerator, not a protocol
+dependency; the tests use the frozen dependency-free implementation.
+
+```bash
+python3 research/urpcs/urpcs_mobius_projection.py \
+  --stack-root . \
+  --ucns-root /path/to/ucns-at-4086ab8 \
+  --skill-lib-root /path/to/skill-lib-at-abd259b \
+  --jobs 2 \
+  --kmac-backend pycryptodome \
+  --write-receipt research/urpcs/receipts/urpcs-mobius-projection-v0.json \
+  --write-report research/urpcs/docs/URPCS-mobius-projection-v0.md
+```
+
 ## Verified reference result
 
 - 8/8 named fixtures pass.
@@ -96,6 +132,19 @@ and greater depths require a separately justified permitted-domain cap.
 - The decoder was frozen before the first ciphertext comparison and required no
   correction afterward.
 
+## Verified bounded Möbius measurement
+
+- All 514 declared plaintext/depth cases completed under the frozen harness.
+- 288,615 gonol states and 546,956 member states were projected with exact
+  integer/rational arithmetic and checked against UCNS
+  `native_mobius_state(Fraction(S, M))`.
+- Gonol/member maximum unreduced displacements were 2/6; both maximum Euclidean
+  quotients were zero.
+- No phase bucket contained both local frames. The result is
+  `DISTINCTION_ABSENT_IN_BOUNDED_DOMAIN`.
+- This zero result ends integration for the bounded profile. No traversal path,
+  frame field, protocol profile, or inactive semantic stub was added.
+
 ## Next gates
 
 1. A threat model and leakage model must precede any confidentiality claim.
@@ -103,6 +152,8 @@ and greater depths require a separately justified permitted-domain cap.
    fork policy require implementation and adversarial testing.
 3. Any future relation to PCEA or UCNS requires a separate authority-bearing law;
    repository proximity supplies none.
+4. A Möbius-frame-sensitive traversal experiment is not authorized by the
+   completed bounded measurement because no opposite-frame phase split occurred.
 
 ## hmmm
 
@@ -110,3 +161,6 @@ The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input
 After the public contract repair, the clean-room replay is
 `SURVIVED_INDEPENDENTLY` for the committed bounded profile. Confidentiality,
 durable host state, production security, and release authority remain open.
+The complete Möbius scan found no opposite-frame phase split in this fixed
+harness; whether one occurs outside the bounded domain remains unresolved and
+does not authorize integration.
