@@ -286,10 +286,146 @@ def run_view_adjudication(
     return payload
 
 
+class SynthesisRecord:
+    """First-class synthesis of views one, two, and three for one word."""
+
+    def __init__(
+        self,
+        word_id: int,
+        surface: str,
+        view1: dict[str, Any] | None,
+        view2: dict[str, Any],
+        view3: dict[str, Any],
+        receipt_sha256: str,
+    ) -> None:
+        self.word_id = word_id
+        self.surface = surface
+        self.view1 = view1
+        self.view2 = view2
+        self.view3 = view3
+        self.receipt_sha256 = receipt_sha256
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "schema": SCHEMA,
+            "version": VERSION,
+            "word_id": self.word_id,
+            "surface": self.surface,
+            "view1": self.view1,
+            "view2": self.view2,
+            "view3": self.view3,
+            "receipt_sha256": self.receipt_sha256,
+        }
+
+    def canonical_bytes(self) -> bytes:
+        payload = self.as_dict()
+        payload.pop("receipt_sha256", None)
+        return json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+    def receipt_bytes(self) -> bytes:
+        return json.dumps(self.as_dict(), sort_keys=True, separators=(",", ":")).encode("utf-8")
+
+
+def build_synthesis_record(
+    db: sqlite3.Connection, word_id: int, ucns_source_root: Path
+) -> SynthesisRecord:
+    """Build the first-class synthesis record for one word."""
+
+    views = word_views(db, word_id, ucns_source_root)
+    surface = db.execute(
+        "SELECT surface FROM words WHERE id = ?", (word_id,)
+    ).fetchone()[0]
+    payload = {
+        "schema": SCHEMA,
+        "version": VERSION,
+        "word_id": word_id,
+        "surface": surface,
+        "view1": views["views"]["view1_definition_inner_product_density"],
+        "view2": views["views"]["view2_word_axis_angle"],
+        "view3": views["views"]["view3_provenance_interval_lift"],
+    }
+    receipt = hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return SynthesisRecord(
+        word_id=word_id,
+        surface=surface,
+        view1=payload["view1"],
+        view2=payload["view2"],
+        view3=payload["view3"],
+        receipt_sha256=receipt,
+    )
+
+
+def synthesis_corpus_receipt(
+    state_dir: Path,
+    ucns_source_root: Path,
+    *,
+    limit: int | None = None,
+) -> dict[str, Any]:
+    """Stream the full synthesis surface and return an aggregate receipt."""
+
+    db = _open_db(state_dir)
+    try:
+        rows = db.execute("SELECT id FROM words ORDER BY id").fetchall()
+        words = [row[0] for row in rows[:limit]] if limit is not None else [row[0] for row in rows]
+        digest = hashlib.sha256()
+        for word_id in words:
+            record = build_synthesis_record(db, word_id, ucns_source_root)
+            digest.update(record.receipt_bytes())
+    finally:
+        db.close()
+
+    payload = {
+        "schema": SCHEMA,
+        "version": VERSION,
+        "word_count": len(words),
+        "limit": limit,
+        "synthesis_composition": "views one, two, and three together",
+        "hmmm": (
+            "view four reduces to derivation; views one, two, and three "
+            "together are the thing"
+        ),
+    }
+    payload["receipt_sha256"] = hashlib.sha256(
+        digest.digest()
+        + json.dumps(
+            {key: value for key, value in payload.items() if key != "receipt_sha256"},
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    return payload
+
+
+def verify_synthesis_replay(data: bytes, state_dir: Path, ucns_source_root: Path) -> dict[str, Any]:
+    """Recompute the synthesis corpus receipt and verify byte-identically."""
+
+    if not isinstance(data, bytes):
+        raise ViewError("receipt must be bytes")
+    try:
+        obj = json.loads(data.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ViewError("receipt is not valid canonical JSON") from exc
+    if obj.get("schema") != SCHEMA or obj.get("version") != VERSION:
+        raise ViewError("receipt schema or version mismatch")
+    rebuilt = synthesis_corpus_receipt(state_dir, ucns_source_root, limit=obj.get("limit"))
+    if rebuilt["receipt_sha256"] != obj.get("receipt_sha256"):
+        raise ViewError("receipt digest does not match recomputation")
+    rebuilt_bytes = json.dumps(rebuilt, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    if rebuilt_bytes != data:
+        raise ViewError("receipt does not replay byte-identically")
+    return rebuilt
+
+
 __all__ = [
     "SCHEMA",
     "VERSION",
     "ViewError",
     "word_views",
     "run_view_adjudication",
+    "SynthesisRecord",
+    "build_synthesis_record",
+    "synthesis_corpus_receipt",
+    "verify_synthesis_replay",
 ]

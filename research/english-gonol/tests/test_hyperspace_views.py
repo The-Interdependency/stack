@@ -15,6 +15,14 @@
 #   mutates: none
 #   cleanup: none
 #
+# id: check_synthesis_is_first_class_and_replayable
+#   proves: synthesis_is_first_class_and_replayable
+#   call: self::test_synthesis_is_first_class_and_replayable
+#   requires: python3, git
+#   timeout: 30
+#   mutates: none
+#   cleanup: none
+#
 # id: check_views_do_not_select
 #   proves: views_do_not_select
 #   call: self::test_views_do_not_select
@@ -150,3 +158,25 @@ def test_views_do_not_select(tmp_path: Path) -> None:
     assert "view four reduces to derivation" in report["hmmm"]
     again = run_view_adjudication(state_dir, UCNS_SOURCE_ROOT)
     assert again["receipt_sha256"] == report["receipt_sha256"]
+
+
+def test_synthesis_is_first_class_and_replayable(tmp_path: Path) -> None:
+    from english_gonol.hyperspace_views import (
+        build_synthesis_record,
+        synthesis_corpus_receipt,
+        verify_synthesis_replay,
+    )
+    import json
+
+    state_dir = _fixture_state(tmp_path)
+    db = sqlite3.connect(f"file:{state_dir / 'construct.db'}?mode=ro", uri=True)
+    record = build_synthesis_record(db, 1, UCNS_SOURCE_ROOT)
+    db.close()
+    assert record.word_id == 1
+    assert record.surface == "ab"
+    assert "view1" in record.as_dict() and "view2" in record.as_dict()
+
+    report = synthesis_corpus_receipt(state_dir, UCNS_SOURCE_ROOT)
+    data = json.dumps(report, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    replayed = verify_synthesis_replay(data, state_dir, UCNS_SOURCE_ROOT)
+    assert replayed["receipt_sha256"] == report["receipt_sha256"]
