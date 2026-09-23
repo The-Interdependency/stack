@@ -9,8 +9,6 @@ on:
       - "tools/qualify_language_gonols.py"
       - "tools/tests/test_language_qualification.py"
       - "requirements-language-tests.txt"
-      - "docs/language-gonol-qualification.md"
-      - "docs/evidence/language-gonol-*/**"
   pull_request:
     paths:
       - "research/english-gonol/**"
@@ -19,8 +17,6 @@ on:
       - "tools/qualify_language_gonols.py"
       - "tools/tests/test_language_qualification.py"
       - "requirements-language-tests.txt"
-      - "docs/language-gonol-qualification.md"
-      - "docs/evidence/language-gonol-*/**"
 
 permissions:
   contents: read
@@ -28,29 +24,47 @@ permissions:
 jobs:
   english-gonol-tests:
     runs-on: ubuntu-latest
+    env:
+      UCNS_SOURCE_ROOT: ${{ github.workspace }}/_deps/ucns-motion
+      ENGLISH_GONOL_UCNS_ROOT: ${{ github.workspace }}/_deps/ucns-relational
     steps:
-      - uses: actions/checkout@v7.0.1
+      - name: Checkout stack
+        uses: actions/checkout@v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-python@v7.0.0
-        with:
-          python-version: "3.12.14"
 
-      - name: Checkout exact historical lexical test authority
+      - name: Checkout pinned UCNS motion source
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 1cf10c2df2541a332a77f2ed3feda0c6bef4abcc
+          path: _deps/ucns-motion
+          persist-credentials: false
+
+      - name: Checkout pinned UCNS relational source
         uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/ucns
           ref: d7c6f51304ed6c32d48badf63132bea6de8af497
-          path: .ci/ucns-lexical
+          path: _deps/ucns-relational
           persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12.14"
 
       - name: Install pytest
         run: python -m pip install --require-hashes -r requirements-language-tests.txt
 
+      - name: Verify pinned UCNS source identities
+        run: |
+          test "$(git -C _deps/ucns-motion rev-parse HEAD)" = "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc"
+          test "$(git -C _deps/ucns-relational rev-parse HEAD)" = "d7c6f51304ed6c32d48badf63132bea6de8af497"
+
       - name: English Gonol construction tests
         working-directory: research/english-gonol
-        env:
-          ENGLISH_GONOL_UCNS_ROOT: ${{ github.workspace }}/.ci/ucns-lexical
         run: python -m pytest -q tests --junitxml="$RUNNER_TEMP/english-gonol.xml"
 
       - name: Require every test to pass

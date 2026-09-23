@@ -35,7 +35,9 @@ stack/
 │   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
+│   ├── urpcs/               # authenticated recursive pairing codec research + exact vectors
 │   ├── ptcna/               # current PTCNA research + BASE.json
+│   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
 │   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
@@ -93,6 +95,18 @@ restoring implementation code to the sealed historical `research/epac/` path.
 EPAC retains implementation and public-contract authority; Stack owns only the
 local carrier audit and its bounded receipts.
 
+URPCS v1 is a separate stack-local codec experiment at `research/urpcs/`. It
+carries accepted Laws 1–13, an authenticated reference encoder/decoder, an
+independently structured decoder, and byte-exact vectors. Its codec-local `Gonol`
+row is not a UCNS gonol; the workspace imports no PCEA construction and claims no
+confidentiality or production fitness.
+
+```bash
+python3 research/urpcs/urpcs_v1_reference.py --self-test
+python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
+node research/urpcs/tests/test_independent_decoder.js
+```
+
 ### Change stack structure
 
 Any change that alters a participant, pin, authority, relation, research workspace,
@@ -121,6 +135,9 @@ English Gonol Construction is currently a distinct stack-local research componen
 separated from EDCM but not independently graduated.
 Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
 constructor is an implemented candidate, not stack or language canon.
+URPCS is stack-local and ungraduated; its verified reference vectors and
+independent replay establish bounded deterministic codec behavior, not
+encryption security.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -132,6 +149,23 @@ independent repository, as recorded in
 python3 integration/epac/reconsume.py \
   integration/epac/release-lock.json /tmp/epac-public-consumption python3.12
 ```
+
+### English four-view full-corpus evidence
+
+The English construction's [complete four-view audit](research/english-gonol/docs/hyperspace-views-full-v1.md)
+records historical execution of all 164,864 admitted words and compares every native record with an independent
+reconstruction. All fifteen nonempty view combinations and three complete renumbering
+controls are recorded. The synthesis has 137,013 distinct values; view 4 is derivable
+from view 2 or view 3, while each of views 1, 2, and 3 adds distinctions. Numeric addresses
+remain useful provenance/memory metadata; distinctness alone does not select geometry
+or establish inference quality. The frozen protocol binds Stack `1f9a35e`, UCNS
+`1cf10c2`, and separately pinned skill-lib doctrine `abd259b` without changing `libs/`.
+### ZFAE construction research
+
+Read [research/zfae/README.md](research/zfae/README.md) for the gonol input parser, source identities,
+the construction sequence, the first executable input-distinction experiment,
+and the remaining UCNS/PTCNA and UCHC prerequisites. This is Stack research;
+conceptual, producer and runtime authority remain with their owners.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
@@ -203,6 +237,9 @@ merge.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; UCNS affixiation geometry remains unresolved.
+- URPCS has a deterministic authenticated-codec reference profile and bounded
+  independent decoder evidence, but no confidentiality model, production state
+  store, or release authority.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the

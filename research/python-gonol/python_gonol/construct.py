@@ -1,4 +1,4 @@
-# ratios: loc_comments=596:105 imports_exports=14:9 calls_definitions=154:17
+# ratios: loc_comments=600:105 imports_exports=14:9 calls_definitions=158:17
 # === MODULE_BUILD ===
 # id: python_gonol_construct
 #   module_name: python_gonol.construct
@@ -276,6 +276,8 @@ def _logical_sha256(connection: sqlite3.Connection) -> str:
     if actual != set(tables):
         raise PythonGonolConstructionError("construct table inventory mismatch")
     digest = sha256()
+    schema = connection.execute("SELECT type, name, tbl_name, sql FROM sqlite_master ORDER BY type, name").fetchall()
+    digest.update(_canonical_bytes(schema))
     for table in tables:
         digest.update(_canonical_bytes(table))
         query = ("SELECT * FROM meta WHERE key != 'receipt_sha256' ORDER BY key"
@@ -689,6 +691,7 @@ def reconstruct_source(state_dir: Path) -> str:
         raise PythonGonolConstructionError(f"construct database does not exist: {db_path}")
     connection = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
+        connection.execute("PRAGMA temp_store=MEMORY")
         rows = connection.execute(
             """
             SELECT o.scalar
@@ -734,6 +737,7 @@ def verify_construct(
         raise PythonGonolConstructionError("construct manifest schema or version mismatch")
     connection = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
     try:
+        connection.execute("PRAGMA temp_store=MEMORY")
         if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
             raise PythonGonolConstructionError("SQLite integrity failure")
         if connection.execute("PRAGMA foreign_key_check").fetchone() is not None:
@@ -784,4 +788,4 @@ __all__ = [
     "reconstruct_source",
     "load_verified_public_gonol",
 ]
-# ratios: loc_comments=596:105 imports_exports=14:9 calls_definitions=154:17
+# ratios: loc_comments=600:105 imports_exports=14:9 calls_definitions=158:17

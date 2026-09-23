@@ -1,8 +1,10 @@
 # Language construction qualification
 
-Status: the declared construction profiles survived qualification on 2026-09-19,
-with one unsuccessful Python attempt retained below. This protocol qualifies the
-current English v2 corpus construction and Python source/control construction.
+Status: the recorded 2026-09-19 qualification applies to its frozen implementation.
+The 2026-09-23 repair additionally binds SQLite schema objects, declared JUnit
+aggregates, exact qualification provenance and counts, and distinct artifact paths.
+Its complete Python-corpus requalification is pending; local adversarial gates pass.
+Artifact agreement alone does not authenticate two independent executions.
 Geometry, language understanding, runtime equivalence, and canon promotion remain hmmm.
 
 ## Observed results
@@ -161,3 +163,17 @@ verification rule changed for the replacement full run.
 The underlying database error remains hmmm. The [failure record](evidence/language-gonol-20260919/python-attempt-a.json)
 and [original log](evidence/language-gonol-20260919/python-attempt-a.log) are retained;
 the unsuccessful attempt is not counted as a completed qualification pass.
+
+## 2026-09-23 repair and runtime boundary
+
+The construct digest now includes all SQLite schema objects, including constraints,
+indexes, triggers and views. Rebinding a tampered digest still fails independent
+reconstruction. Comparison rejects aliased directories/files and validates the
+schema, source pins, implementation identities, runtime and recomputed aggregates.
+JUnit totals must agree with the observed cases and failure/skip evidence.
+
+Complete local attempts with the bundled SQLite 3.53.1 stopped with
+`attempt to write a readonly database`; these attempts are failed evidence,
+not partial qualification. Explicit connection closure and memory-backed SQLite
+temporary work did not eliminate the observed failure. SQLite runtime identity
+is now part of qualification receipts. The causal mechanism remains hmmm.

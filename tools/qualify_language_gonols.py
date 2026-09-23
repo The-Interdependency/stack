@@ -1,4 +1,4 @@
-# ratios: loc_comments=179:23 imports_exports=18:10 calls_definitions=110:10
+# ratios: loc_comments=215:23 imports_exports=19:12 calls_definitions=129:12
 """Replay the declared language construction profiles without executing corpus code.
 
 Usage: python tools/qualify_language_gonols.py --help
@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from contextlib import closing
 from hashlib import sha256
 import io
 import json
@@ -117,7 +118,7 @@ def python_pass(corpus, producer, out):
                       for p in sorted((ROOT / "research/python-gonol/python_gonol").glob("*.py"))}
     implementation[str(Path(__file__).relative_to(ROOT))] = sha256(Path(__file__).read_bytes()).hexdigest()
     header = {"schema": "language-gonol.python-qualification", "version": 1,
-              "cpython": CPYTHON, "ucns": UCNS_PYTHON, "python": "3.12.14",
+              "cpython": CPYTHON, "ucns": UCNS_PYTHON, "python": "3.12.14", "sqlite_runtime": sqlite3.sqlite_version,
               "inventory_sha256": sha256(canonical(before)).hexdigest(), "input_files": len(before),
               "input_bytes": sum(r["bytes"] for r in before), "implementation_sha256": implementation}
     (out / "inventory.json").write_bytes(canonical(before) + b"\n")
@@ -144,7 +145,8 @@ def python_pass(corpus, producer, out):
                 with tempfile.TemporaryDirectory(prefix="construct-", dir=out) as temporary:
                     state = Path(temporary)
                     result = affixiate_python_bytes(raw, source_id=entry["path"], state_dir=state, ucns_source_root=producer)
-                    with sqlite3.connect(f"file:{state / 'construct.db'}?mode=ro", uri=True) as db:
+                    with closing(sqlite3.connect(f"file:{state / 'construct.db'}?mode=ro", uri=True)) as db:
+                        db.execute("PRAGMA temp_store=MEMORY")
                         check_source_rows(db, raw, result.encoding)
                     require(verify_construct(state, producer) == result.receipt_sha256, "replay mismatch")
                     manifest = json.loads((state / "manifest.json").read_text())
@@ -166,21 +168,51 @@ def python_pass(corpus, producer, out):
     print(json.dumps(header, indent=2))
 
 
+def distinct_outputs(a, b, files):
+    require(a.resolve() != b.resolve(), "two distinct execution directories required")
+    for name in files:
+        require(not (a / name).samefile(b / name), "aliased evidence file: " + name)
+
+
+def implementation_hashes():
+    paths = list((ROOT / "research/python-gonol/python_gonol").glob("*.py")) + [Path(__file__)]
+    return {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
+
+
 def compare(a, b):
+    distinct_outputs(a, b, ("receipt.json", "inventory.json", "outcomes.jsonl"))
     for filename in ("receipt.json", "inventory.json", "outcomes.jsonl"):
         require((a / filename).read_bytes() == (b / filename).read_bytes(), "independent pass mismatch: " + filename)
     receipt = json.loads((a / "receipt.json").read_text())
+    require(receipt.get("schema") == "language-gonol.python-qualification" and receipt.get("version") == 1, "qualification schema mismatch")
+    require((receipt.get("cpython"), receipt.get("ucns"), receipt.get("python")) == (CPYTHON, UCNS_PYTHON, "3.12.14"), "qualification provenance mismatch")
+    require(receipt.get("sqlite_runtime") == sqlite3.sqlite_version, "qualification SQLite runtime mismatch")
+    require(receipt.get("implementation_sha256") == implementation_hashes(), "qualification implementation mismatch")
     for root in (a, b):
         require(sha256((root / "outcomes.jsonl").read_bytes()).hexdigest() == receipt["outcomes_sha256"], "outcome digest mismatch")
         outcomes = [json.loads(line) for line in (root / "outcomes.jsonl").read_text().splitlines()]
         require(len(outcomes) == receipt["input_files"], "outcome coverage mismatch")
         inputs = json.loads((root / "inventory.json").read_text())
+        require(len(inputs) == receipt["input_files"] and sum(r["bytes"] for r in inputs) == receipt["input_bytes"], "source aggregate mismatch")
+        counts = Counter()
+        for row in outcomes:
+            if row["outcome"] == "REJECTED_ENCODING":
+                counts["rejected_encoding"] += 1
+            else:
+                require(row["outcome"] == "CONSTRUCTED", "unknown admission outcome")
+                counts["constructed"] += 1
+                manifest = row["manifest"]
+                counts["off_carrier_files"] += bool(manifest["not_on_pinned_carrier"])
+                counts["tokenize_false"] += not manifest["verification"]["tokenize_ok"]
+                counts["ast_false"] += not manifest["verification"]["ast_ok"]
+        require(dict(counts) == receipt["counts"], "admission aggregate mismatch")
         require(sha256(canonical(inputs)).hexdigest() == receipt["inventory_sha256"], "inventory digest mismatch")
         require([{key: row[key] for key in ("path", "git_blob", "sha256", "bytes")} for row in outcomes] == inputs, "outcome/source inventory mismatch")
     print(json.dumps({"status": "SURVIVED", "receipt": receipt}, indent=2))
 
 
 def english_compare(a, b):
+    distinct_outputs(a, b, ("construct.db", "manifest.json"))
     sys.path.insert(0, str(ROOT / "research/english-gonol"))
     from english_gonol.full_construct_run import verify_replay
     first, second = verify_replay(a), verify_replay(b)
@@ -192,7 +224,7 @@ def english_compare(a, b):
             require(db.execute("PRAGMA integrity_check").fetchone()[0] == "ok", "SQLite integrity")
             for table, count in first["counts"].items():
                 require(db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] == count, "count mismatch")
-    print(json.dumps({"status": "SURVIVED", "independent_builds": 2, "manifest": first}, indent=2))
+    print(json.dumps({"status": "SURVIVED", "matching_distinct_artifacts": 2, "independent_execution": "not established by artifact comparison alone", "manifest": first}, indent=2))
 
 
 def check_tests(paths):
@@ -202,6 +234,14 @@ def check_tests(paths):
         cases = tree.findall(".//testcase")
         require(bool(cases), "empty test suite")
         require(not tree.findall(".//skipped") and not tree.findall(".//failure") and not tree.findall(".//error"), "unpassed test outcomes")
+        for suite in tree.getroot().iter():
+            if suite.tag not in ("testsuite", "testsuites"):
+                continue
+            if suite.tag == "testsuite" or "tests" in suite.attrib:
+                require(int(suite.attrib.get("tests", -1)) == len(list(suite.iter("testcase"))), "JUnit declared count mismatch")
+            for key in ("skipped", "failures", "errors"):
+                if suite.tag == "testsuite" or key in suite.attrib:
+                    require(int(suite.attrib.get(key, -1)) == 0, "JUnit aggregate reports unpassed outcomes")
         count += len(cases)
     print(json.dumps({"passed": count, "skipped": 0, "failed": 0}))
 
@@ -227,4 +267,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=179:23 imports_exports=18:10 calls_definitions=110:10
+# ratios: loc_comments=215:23 imports_exports=19:12 calls_definitions=129:12

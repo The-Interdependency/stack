@@ -1,4 +1,4 @@
-# ratios: loc_comments=195:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
 # === CHECKS ===
 # id: check_python_complete_constitutive_replay
 #   proves: python_construct_replay_fails_closed_on_tamper
@@ -270,6 +270,9 @@ def test_physical_source_addresses(tmp_path: Path, source: str, expected: list) 
     "UPDATE occurrences SET control_kind='TAB' WHERE scalar='x'",
     "UPDATE meta SET value='wrong' WHERE key='source_bytes_sha256'",
     "DELETE FROM occurrences",
+    "CREATE VIEW forged_view AS SELECT * FROM occurrences",
+    "CREATE TRIGGER forged_trigger AFTER INSERT ON occurrences BEGIN DELETE FROM occurrences; END",
+    "CREATE INDEX forged_index ON occurrences(scalar)",
 ])
 @pytest.mark.parametrize("rebind", [False, True])
 def test_complete_replay_rejects_constitutive_tamper(tmp_path: Path, statement: str, rebind: bool) -> None:
@@ -306,4 +309,4 @@ def test_replay_rejects_legacy_version(tmp_path: Path) -> None:
     path.write_text(json.dumps(data))
     with pytest.raises(PythonGonolConstructionError, match="version"):
         verify_construct(state_dir, UCNS_SOURCE_ROOT)
-# ratios: loc_comments=195:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
