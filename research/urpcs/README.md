@@ -169,14 +169,21 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## Verified relational audit
 
+- Overall classification:
+  `RELATION_PRESENT_SHEET_RELATION_NOT_INVARIANT`. Equal native motion preserves
+  relative visible phase but can change the naive endpoint sheet product, so
+  the proposed complete relative-state tuple fails the requested common-action
+  invariance without a new covariant comparison law.
 - The source-backed multi-origin relation is whole-layer serialization:
   canonical `LayerWire(G^r)` bytes become the exact input to layer `r+1`, then
   partition into successor origins and occurrence spans.
 - Pairing and attachment remain scoped to one origin. URPCS v1 supplies no
   direct peer-origin phase transport or synchronization relation.
-- The canonical graph covers all eight committed vector rows, all tracked
-  `research/urpcs` artifacts at the governing head, and deterministic generated
-  probes only for unrepresented recursive and state-transition relations.
+- The declared corpus binds all eight committed vector rows and every tracked
+  `research/urpcs` artifact at the governing head. The canonical graph is
+  instantiated from the three positive committed traces plus deterministic
+  probes only for unrepresented recursive and state-transition relations; the
+  five negative/host rows supply boundary and capacity evidence.
 - Phase, sheet, origin, gonol identity, arity/shape, provenance, and full
   transformation history are measured separately. The receipt retains exact
   identifiers and minimal witnesses.

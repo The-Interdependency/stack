@@ -1,17 +1,19 @@
 # URPCS relational carrier v0 — read-only architecture audit
 
-Classification: **RELATION_PRESENT_WITH_BLOCKED_CAPACITIES**.
+Classification: **RELATION_PRESENT_SHEET_RELATION_NOT_INVARIANT**.
 
 The native multi-origin relation is present, but narrower than a global or peer-origin coordinate: canonical `LayerWire(G^r)` bytes become the exact input to layer `r+1`, where they are partitioned into successor origins and occurrence spans. Pairing and attachment remain local to one origin. URPCS v1 defines no origin phase, origin-to-origin phase transport, synchronization, traversal, or typed event-promotion law.
+
+The proposed relative visible phase is invariant under equal native motion, but the naive endpoint sheet product is not. Therefore the proposed `(delta_phase, sheet_product)` relation does **not** satisfy the requested common-rotation invariance without an additional coordinate-covariant comparison/transport law.
 
 This analyzer is read-only. It changes no v1 serialization, state transition, vector, receipt, traversal, or UCNS law.
 
 ## Evidence identity
 
-- Canonical receipt SHA-256: `08e9d8d951331d2298527298119f2a35280decb515eed6809b6697d39a07a700`
-- Receipt payload SHA-256: `72bcd15c065f34c88a8b13b0b27d79cc599ebd3160583d270b884153407bcb05`
-- Measurement SHA-256: `9ea9428ece73c4b1f9b190cf76d43e54db4c5de502e7828e9361f6fd38683cf4`
-- Aggregate graph SHA-256: `4ccfdfff0a4ef82fa6cf5de64e43c2d85668e67d5a2cd905261747bb62601137`
+- Canonical receipt SHA-256: `a6cdb3e078ff765904bd954ad4619eb8be33096e255df1d5705028293b006b10`
+- Receipt payload SHA-256: `1c7ed29f87945a8e920dff70f317490442c690af98607e9c35d6c055bfd8db7a`
+- Measurement SHA-256: `e92f610bae2fe6b59c6c3ea41e680edf703365b11181a58912e2b5082bf9b355`
+- Aggregate graph SHA-256: `0cb0323135ffdc6aed5270b41ead24c43d80e189aae27593238386c74b0fbe15`
 - Corpus identity SHA-256: `8b0e356f23c462761ac4a036d37d36830879803faf72bb34d96f5bd9a44b8c62`
 - Governing Stack commit/tree: `164f86ce2cb640242dbfb06390330142e90a406e` / `de450f1355bf2c9d7f178b0f3f770ed05460a3a7`
 - UCNS commit/law: `4086ab82399c4d142b0eacfbc09e0a69ed151aa5` / `ucns.native-mobius-root-loop@1.0.0`
@@ -63,7 +65,8 @@ The prior 514-case Möbius receipt is preserved and consumed only as a narrow fi
 - Identities in shared visible-angle classes: 2737
 - Identities in shared phase-and-sheet classes: 2737
 - Identifiers and geometry remain separate dimensions; these multiplicities are not called complete-state collisions.
-- Common phase rotation preserves every measured relative phase and sheet product; no privileged global zero was selected.
+- Equal native-motion checks: 120; relative-phase changes: 0; naive sheet-product changes: 44.
+- Common-action classification: **PHASE_INVARIANT_SHEET_PRODUCT_NOT_INVARIANT**. No privileged global zero was selected.
 
 | Added component | Colliding pairs separated |
 |---|---:|
@@ -74,7 +77,11 @@ The prior 514-case Möbius receipt is preserved and consumed only as a narrow fi
 | provenance | 1237 |
 | full transformation history after provenance | 0 |
 
-The frame supplies no additional distinction in this declared corpus. Origin, gonol identity, arity/shape, and provenance do; transformation history adds no further split after case-scoped provenance is already included. These are representation contributions, not utility or security claims.
+Within pairs still joined at `(origin, gonol, phase, sheet)`, arity/shape alone separates 0, provenance alone separates 171, both differ for 1066, and neither differs for 0.
+
+The frame supplies no additional distinction in this declared corpus. Origin and gonol identity contribute at their declared lattice steps; arity/shape and provenance contributions overlap as quantified above. Transformation history adds no further split after case-scoped provenance is already included. These are representation contributions, not utility or security claims.
+
+The requested torsor-style check exposes a missing law: equal native Möbius motion preserves relative visible phase, but the naive product of endpoint frame signs can change when one endpoint crosses the quotient seam. A coordinate-covariant frame comparison would require an explicit native comparison/transport law; this audit does not invent one.
 
 ## Serialization boundary
 
@@ -87,6 +94,7 @@ The frame supplies no additional distinction in this declared corpus. Origin, go
 
 | Capacity | Classification |
 |---|---|
+| common-rotation-invariant relative phase and sheet | **PHASE_INVARIANT_SHEET_PRODUCT_NOT_INVARIANT** |
 | exact provenance recovery | **SUPPORTED_FOR_COMPLETE_AUTHENTICATED_TRACE** |
 | mutation localization | **DETECTION_ONLY_AT_AUTHENTICATION_BOUNDARY** |
 | divergent-state and fork detection | **SUPPORTED_AT_NEXT_USE_AND_HOST_CAS_BOUNDARY** |
@@ -105,6 +113,7 @@ Each capacity has its source evidence, limitation, and any missing law in the ca
 - The empty depth-one committed vector already creates many successor origins even though its source plaintext is empty.
 - URPCS v1 assigns local phase to gonols and members, not to origins; origin phase/sheet would require a new law.
 - Recursion preserves source bytes exactly while dropping the type of the transformation event: resulting bytes recur, the event does not.
+- Equal native Möbius motion preserves relative visible phase but can change the naive product of endpoint frame signs; v1 has no covariant frame-comparison transport law.
 
 ## Explicit nonclaims
 
@@ -112,4 +121,4 @@ This work does not establish traversal utility, compression, entropy, confidenti
 
 ## hmmm
 
-Whether the exact byte-provenance relation warrants a typed origin transport, synchronization, traversal, or event-promotion law remains unresolved; v1 supplies none of those laws.
+Equal native motion falsifies invariance of the naive endpoint sheet product, so a coordinate-covariant frame comparison remains a missing law. Whether exact byte provenance warrants typed origin transport, synchronization, traversal, or event promotion is also unresolved; v1 supplies none of those laws.

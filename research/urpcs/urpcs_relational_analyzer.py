@@ -85,6 +85,7 @@ import shutil
 import subprocess  # nosec B404
 import sys
 from collections import Counter, defaultdict
+from fractions import Fraction
 from itertools import combinations
 from pathlib import Path
 from types import ModuleType
@@ -108,12 +109,13 @@ METAPAT_COMMIT = "e4165b0cac9eca41daef9c2f941881028ca55d48"
 METAPAT_TREE = "9918f1188f64a517745851514804deb5fcae9c96"
 GRAPH_SCHEMA = "the-interdependency.stack.urpcs-relational-graph.v0"
 RECEIPT_SCHEMA = "the-interdependency.stack.urpcs-relational-carrier-receipt.v0"
-CLASSIFICATION = "RELATION_PRESENT_WITH_BLOCKED_CAPACITIES"
+CLASSIFICATION = "RELATION_PRESENT_SHEET_RELATION_NOT_INVARIANT"
 GIT = shutil.which("git")
 
 FROZEN_PATHS = (
     "research/urpcs/docs/urpcs-v1-spec.md",
     "research/urpcs/urpcs_v1_reference.py",
+    "research/urpcs/urpcs_mobius_projection.py",
     "research/urpcs/urpcs_v1_independent.js",
     "research/urpcs/vectors/urpcs-v1-vectors.json",
     "research/urpcs/receipts/urpcs-mobius-projection-v0.json",
@@ -244,6 +246,7 @@ def analyze_trace(
     ucns: ModuleType,
     expected_plaintext: bytes | None = None,
     source_kind: str,
+    predecessor_transform_history: Sequence[str] = (),
 ) -> dict[str, Any]:
     """Authenticate one frame and construct only relations established by v1."""
 
@@ -276,6 +279,7 @@ def analyze_trace(
         "pre_state": _state_identity(state),
         "successor_state": _state_identity(decoded.next_state),
         "promotion_status": "hmmm: v1 carries resulting bytes and state, not a typed event identity in the next layer",
+        "analyzer_predecessor_transform_history": list(predecessor_transform_history),
     })
 
     for layer_index, (layer, raw) in enumerate(zip(layers, decoded.layers)):
@@ -381,7 +385,12 @@ def analyze_trace(
             "arity": child_arity,
             "shape": [child_arity, carry_flag, len(item["members"])],
             "provenance": [case_id, layer_index, region_index, source_kind],
-            "history": [transform_id, *structural_path],
+            "history": [
+                *predecessor_transform_history,
+                transform_id,
+                *(f"case:{case_id}:serialization:{step}->{step + 1}" for step in range(layer_index)),
+                *structural_path,
+            ],
         }
         observations.append(observation)
 
@@ -420,7 +429,13 @@ def analyze_trace(
                     occurrence_item["axis"].hex(),
                     source_kind,
                 ],
-                "history": [transform_id, *structural_path, membership["id"]],
+                "history": [
+                    *predecessor_transform_history,
+                    transform_id,
+                    *(f"case:{case_id}:serialization:{step}->{step + 1}" for step in range(layer_index)),
+                    *structural_path,
+                    membership["id"],
+                ],
             })
 
     for parent, child, _layer_raw in witness[1][4]:
@@ -664,32 +679,74 @@ def ablate(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     return result
 
 
-def torsor_invariance(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
-    """Check common phase rotation without selecting a privileged global zero."""
+def torsor_rotation_check(
+    records: Sequence[Mapping[str, Any]],
+    ucns: ModuleType,
+) -> dict[str, Any]:
+    """Apply equal native motion and test the proposed relative-state tuple."""
 
     states = sorted({(record["phase"], record["frame"]) for record in records})
-    checked = 0
+    checks = 0
+    phase_changes = 0
+    sheet_changes = 0
+    witness = None
+
+    def advance(state: tuple[str, str], displacement: int) -> tuple[int, str]:
+        remainder = int(state[0].strip("()").split(",")[0])
+        native = ucns.NativeMobiusState(
+            Fraction(remainder, ref.M),
+            ucns.NativeMobiusFrame(state[1]),
+        ).advance(Fraction(displacement, ref.M))
+        scaled_phase = native.phase_turns * ref.M
+        _require(scaled_phase.denominator == 1, "native rotation left the URPCS phase lattice")
+        return scaled_phase.numerator, native.frame.value
+
     for left, right in combinations(states, 2):
         left_phase = int(left[0].strip("()").split(",")[0])
         right_phase = int(right[0].strip("()").split(",")[0])
-        before = (right_phase - left_phase) % ref.M
+        phase_before = (right_phase - left_phase) % ref.M
         sheet_before = 1 if left[1] == right[1] else -1
         for rotation in range(ref.M):
-            after = ((right_phase + rotation) - (left_phase + rotation)) % ref.M
-            _require(after == before, "common rotation changed relative phase")
-            sheet_after = 1 if left[1] == right[1] else -1
-            _require(sheet_after == sheet_before, "common rotation changed sheet relation")
-            checked += 1
+            left_after = advance(left, rotation)
+            right_after = advance(right, rotation)
+            phase_after = (right_after[0] - left_after[0]) % ref.M
+            sheet_after = 1 if left_after[1] == right_after[1] else -1
+            phase_changes += int(phase_after != phase_before)
+            changed = sheet_after != sheet_before
+            sheet_changes += int(changed)
+            if changed and witness is None:
+                witness = {
+                    "left_before": {"phase": left[0], "frame": left[1]},
+                    "right_before": {"phase": right[0], "frame": right[1]},
+                    "common_native_displacement": f"({rotation},{ref.M})",
+                    "relation_before": {"delta_phase": f"({phase_before},{ref.M})", "sheet_product": sheet_before},
+                    "left_after": {"phase": f"({left_after[0]},{ref.M})", "frame": left_after[1]},
+                    "right_after": {"phase": f"({right_after[0]},{ref.M})", "frame": right_after[1]},
+                    "relation_after": {"delta_phase": f"({phase_after},{ref.M})", "sheet_product": sheet_after},
+                }
+            checks += 1
+    _require(phase_changes == 0, "equal native motion changed relative phase")
     return {
-        "status": "INVARIANT",
+        "classification": (
+            "RELATION_INVARIANT"
+            if sheet_changes == 0
+            else "PHASE_INVARIANT_SHEET_PRODUCT_NOT_INVARIANT"
+        ),
         "coordinate_zero_selected": False,
         "distinct_complete_local_states": len(states),
-        "complete_state_pair_rotation_checks": checked,
-        "law": "((phi_b+k)-(phi_a+k)) mod M = (phi_b-phi_a) mod M; sheet product unchanged",
+        "complete_state_pair_rotation_checks": checks,
+        "relative_phase_changes": phase_changes,
+        "sheet_product_changes": sheet_changes,
+        "minimal_sheet_change_witness": witness,
+        "interpretation": "equal native Möbius motion preserves relative visible phase but the naive product of endpoint frame signs is not generally invariant when only one endpoint crosses the quotient seam",
     }
 
 
-def _capacity_ledger(vector_rows: Sequence[Mapping[str, Any]], traces: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+def _capacity_ledger(
+    vector_rows: Sequence[Mapping[str, Any]],
+    traces: Sequence[Mapping[str, Any]],
+    rotation_check: Mapping[str, Any],
+) -> list[dict[str, Any]]:
     vector_ids = {row["id"] for row in vector_rows}
     _require({
         "wrong_ad",
@@ -700,6 +757,13 @@ def _capacity_ledger(vector_rows: Sequence[Mapping[str, Any]], traces: Sequence[
     } <= vector_ids, "committed capacity vectors incomplete")
     recursive = [trace for trace in traces if trace["serialization_events"]]
     return [
+        {
+            "capacity": "common-rotation-invariant relative phase and sheet",
+            "classification": rotation_check["classification"],
+            "evidence": rotation_check["minimal_sheet_change_witness"],
+            "limitations": "relative visible phase is invariant; the naive endpoint sheet product is not a coordinate-covariant comparison under equal native motion",
+            "missing_law": "coordinate-covariant frame comparison with explicit path/transport provenance",
+        },
         {
             "capacity": "exact provenance recovery",
             "classification": "SUPPORTED_FOR_COMPLETE_AUTHENTICATED_TRACE",
@@ -769,6 +833,13 @@ def _unresolved_relations() -> list[dict[str, Any]]:
             "required_outputs": ["target local state", "relative phase", "relative sheet"],
             "invertibility_obligation": "recover the source state or declare and authenticate exact information loss",
             "owner": "The-Interdependency/stack profile for transport; UCNS retains sole authority over Möbius geometry",
+        },
+        {
+            "relation": "coordinate-covariant comparison of frames at different phases",
+            "required_inputs": ["two native local states", "comparison path or transport identity", "common-motion convention"],
+            "required_outputs": ["relative frame relation invariant under the declared common action"],
+            "invertibility_obligation": "retain both endpoint states and the complete comparison/transport provenance",
+            "owner": "UCNS for native geometric comparison law; The-Interdependency/stack for any codec-local transport adapter",
         },
         {
             "relation": "independent-origin synchronization",
@@ -934,6 +1005,7 @@ def _generated_traces(ucns: ModuleType) -> tuple[list[dict[str, Any]], list[dict
 
     chain_state = ref.vector_state(0)
     prior_transform: str | None = None
+    predecessor_history: list[str] = []
     for sequence, plaintext in enumerate((b"", b"\x09", b"\xff")):
         encrypted = ref.encrypt(plaintext, chain_state, ref.VECTOR_AD)
         case_id = f"generated_state_chain_{sequence}"
@@ -945,10 +1017,12 @@ def _generated_traces(ucns: ModuleType) -> tuple[list[dict[str, Any]], list[dict
             ucns=ucns,
             expected_plaintext=plaintext,
             source_kind="deterministic-generated-state-transition-chain",
+            predecessor_transform_history=predecessor_history,
         )
         if prior_transform is not None:
             trace["state_predecessor_transform"] = prior_transform
         prior_transform = f"case:{case_id}:transform"
+        predecessor_history.append(prior_transform)
         traces.append(trace)
         cases.append({
             "id": case_id,
@@ -1174,6 +1248,7 @@ def run_analysis(
     }
     corpus["corpus_identity_sha256"] = _sha256(_compact(corpus))
 
+    rotation_check = torsor_rotation_check(all_observations, ucns)
     measurement = {
         "trace_manifest": trace_manifest,
         "traces": traces,
@@ -1183,14 +1258,15 @@ def run_analysis(
         "relation_audit": _relation_audit(traces, cross_trace_edges),
         "serialization_boundaries": _serialization_audit(traces),
         "ablation": ablate(all_observations),
-        "torsor_invariance": torsor_invariance(all_observations),
-        "capacities": _capacity_ledger(rows, traces),
+        "torsor_rotation_check": rotation_check,
+        "capacities": _capacity_ledger(rows, traces, rotation_check),
         "unresolved_relation_ledger": _unresolved_relations(),
         "unexpected_findings": [
             "The native multi-origin relation is whole-layer byte serialization followed by successor partitioning, not a direct relation between peer origins.",
             "The empty depth-one committed vector already creates many successor origins even though its source plaintext is empty.",
             "URPCS v1 assigns local phase to gonols and members, not to origins; origin phase/sheet would require a new law.",
             "Recursion preserves source bytes exactly while dropping the type of the transformation event: resulting bytes recur, the event does not.",
+            "Equal native Möbius motion preserves relative visible phase but can change the naive product of endpoint frame signs; v1 has no covariant frame-comparison transport law.",
         ],
     }
     measurement["measurement_sha256"] = _sha256(_compact(measurement))
@@ -1239,7 +1315,7 @@ def run_analysis(
         "corpus": corpus,
         "measurement": measurement,
         "explicit_nonclaims": list(NONCLAIMS),
-        "hmmm": "Whether the exact byte-provenance relation warrants a typed origin transport, synchronization, traversal, or event-promotion law remains unresolved; v1 supplies none of those laws.",
+        "hmmm": "Equal native motion falsifies invariance of the naive endpoint sheet product, so a coordinate-covariant frame comparison remains a missing law. Whether exact byte provenance warrants typed origin transport, synchronization, traversal, or event promotion is also unresolved; v1 supplies none of those laws.",
     }
     receipt["receipt_payload_sha256"] = _sha256(_compact(receipt))
     return receipt
@@ -1266,6 +1342,8 @@ def render_report(receipt: Mapping[str, Any], receipt_sha256: str) -> str:
         f"Classification: **{receipt['classification']}**.",
         "",
         "The native multi-origin relation is present, but narrower than a global or peer-origin coordinate: canonical `LayerWire(G^r)` bytes become the exact input to layer `r+1`, where they are partitioned into successor origins and occurrence spans. Pairing and attachment remain local to one origin. URPCS v1 defines no origin phase, origin-to-origin phase transport, synchronization, traversal, or typed event-promotion law.",
+        "",
+        "The proposed relative visible phase is invariant under equal native motion, but the naive endpoint sheet product is not. Therefore the proposed `(delta_phase, sheet_product)` relation does **not** satisfy the requested common-rotation invariance without an additional coordinate-covariant comparison/transport law.",
         "",
         "This analyzer is read-only. It changes no v1 serialization, state transition, vector, receipt, traversal, or UCNS law.",
         "",
@@ -1318,12 +1396,15 @@ def render_report(receipt: Mapping[str, Any], receipt_sha256: str) -> str:
         lines.append(f"| `{row['name']}` | {row['equivalence_classes']} | {row['maximum_multiplicity']} | {row['colliding_pairs_retained']} | {row['colliding_pairs_separated_from_previous']} |")
     identity = measurement["ablation"]["identity_multiplicity"]
     marginals = measurement["ablation"]["marginal_contributions"]
+    exclusive = measurement["ablation"]["exclusive_pair_attribution_within_origin_gonol_phase_sheet"]
+    rotation = measurement["torsor_rotation_check"]
     lines.extend([
         "",
         f"- Identities in shared visible-angle classes: {identity['identities_sharing_one_visible_angle']}",
         f"- Identities in shared phase-and-sheet classes: {identity['identities_sharing_phase_and_sheet']}",
         "- Identifiers and geometry remain separate dimensions; these multiplicities are not called complete-state collisions.",
-        "- Common phase rotation preserves every measured relative phase and sheet product; no privileged global zero was selected.",
+        f"- Equal native-motion checks: {rotation['complete_state_pair_rotation_checks']}; relative-phase changes: {rotation['relative_phase_changes']}; naive sheet-product changes: {rotation['sheet_product_changes']}.",
+        f"- Common-action classification: **{rotation['classification']}**. No privileged global zero was selected.",
         "",
         "| Added component | Colliding pairs separated |",
         "|---|---:|",
@@ -1334,7 +1415,11 @@ def render_report(receipt: Mapping[str, Any], receipt_sha256: str) -> str:
         f"| provenance | {marginals['provenance']['pairs_separated']} |",
         f"| full transformation history after provenance | {marginals['transformation_history']['pairs_separated']} |",
         "",
-        "The frame supplies no additional distinction in this declared corpus. Origin, gonol identity, arity/shape, and provenance do; transformation history adds no further split after case-scoped provenance is already included. These are representation contributions, not utility or security claims.",
+        f"Within pairs still joined at `(origin, gonol, phase, sheet)`, arity/shape alone separates {exclusive['arity_shape_only']}, provenance alone separates {exclusive['provenance_only']}, both differ for {exclusive['both_arity_shape_and_provenance']}, and neither differs for {exclusive['neither']}.",
+        "",
+        "The frame supplies no additional distinction in this declared corpus. Origin and gonol identity contribute at their declared lattice steps; arity/shape and provenance contributions overlap as quantified above. Transformation history adds no further split after case-scoped provenance is already included. These are representation contributions, not utility or security claims.",
+        "",
+        "The requested torsor-style check exposes a missing law: equal native Möbius motion preserves relative visible phase, but the naive product of endpoint frame signs can change when one endpoint crosses the quotient seam. A coordinate-covariant frame comparison would require an explicit native comparison/transport law; this audit does not invent one.",
         "",
         "## Serialization boundary",
         "",

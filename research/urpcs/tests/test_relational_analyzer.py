@@ -128,6 +128,14 @@ def check_committed_evidence() -> None:
         graph = trace["graph"]
         payload = {"schema": graph["schema"], "nodes": graph["nodes"], "edges": graph["edges"]}
         assert analyzer._sha256(analyzer._compact(payload)) == graph["graph_sha256"]
+    recursive = next(trace for trace in receipt["measurement"]["traces"] if trace["case_id"] == "generated_odd_09_r1")
+    assert any(
+        "case:generated_odd_09_r1:serialization:0->1" in row["history"]
+        for row in recursive["observations"]
+    )
+    chain_two = next(trace for trace in receipt["measurement"]["traces"] if trace["case_id"] == "generated_state_chain_2")
+    assert all("case:generated_state_chain_0:transform" in row["history"] for row in chain_two["observations"])
+    assert all("case:generated_state_chain_1:transform" in row["history"] for row in chain_two["observations"])
     canonical_graph = dict(receipt["measurement"]["canonical_graph"])
     claimed_graph_hash = canonical_graph.pop("graph_sha256")
     assert analyzer._sha256(analyzer._compact(canonical_graph)) == claimed_graph_hash
@@ -188,14 +196,23 @@ class URPCSRelationalAnalyzerTests(unittest.TestCase):
         self.assertEqual(result["marginal_contributions"]["frame"]["pairs_separated"], 2)
         self.assertGreater(result["marginal_contributions"]["transformation_history"]["pairs_separated"], 0)
 
-    def test_torsor_rotation_invariance(self) -> None:
+    def test_common_native_motion_exposes_noninvariant_sheet_product(self) -> None:
         records = [
-            {"phase": "(1,8)", "frame": "positive-local-frame"},
-            {"phase": "(7,8)", "frame": "reversed-local-frame"},
+            {"phase": "(0,8)", "frame": "positive-local-frame"},
+            {"phase": "(5,8)", "frame": "positive-local-frame"},
         ]
-        result = analyzer.torsor_invariance(records)
-        self.assertEqual(result["status"], "INVARIANT")
+        result = analyzer.torsor_rotation_check(
+            records,
+            analyzer.projection.load_ucns_direct_mobius(UCNS_ROOT),
+        )
+        self.assertEqual(result["classification"], "PHASE_INVARIANT_SHEET_PRODUCT_NOT_INVARIANT")
         self.assertFalse(result["coordinate_zero_selected"])
+        self.assertEqual(result["relative_phase_changes"], 0)
+        self.assertGreater(result["sheet_product_changes"], 0)
+        witness = result["minimal_sheet_change_witness"]
+        self.assertEqual(witness["common_native_displacement"], "(3,8)")
+        self.assertEqual(witness["relation_before"]["sheet_product"], 1)
+        self.assertEqual(witness["relation_after"]["sheet_product"], -1)
 
     def test_graph_rejects_duplicate_and_missing_references(self) -> None:
         with self.assertRaisesRegex(analyzer.RelationalAnalysisError, "duplicate graph node"):
