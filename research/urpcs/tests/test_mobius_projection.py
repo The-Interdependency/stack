@@ -170,6 +170,10 @@ def check_deterministic_evidence() -> None:
     receipt = json.loads(receipt_bytes)
     projection.verify_receipt_payload(receipt)
     require(receipt_bytes == projection._json_bytes(receipt), "committed receipt is not canonical JSON")
+    for relative_path, identity in receipt["sources"].items():
+        source = STACK_ROOT / relative_path
+        require(source.stat().st_size == identity["bytes"], f"source size drift: {relative_path}")
+        require(sha256_file(source) == identity["sha256"], f"source hash drift: {relative_path}")
     rebuilt = projection.build_receipt(
         measurement=receipt["measurement"],
         authorities=receipt["authorities"],

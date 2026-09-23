@@ -12514,7 +12514,7 @@
       "x_bytes": 1
     }
   },
-  "receipt_payload_sha256": "09f33b6082ee21e8d6702d486d48aef3f2506b9c700839fbb21be63860849aa9",
+  "receipt_payload_sha256": "993c805d8fc2f8490363573b8caaa54be7dcf7c663cda557c2fb4173e8899649",
   "record_encoding": {
     "bucket_context": "record class, canonical phase (r,M), and frame are supplied by the enclosing JSON bucket",
     "bucketed_hash_framing": "for each ASCII bucket key in lexical order: u32be key_length || key || u64be record_stream_length || record_stream; SHA-256 binds labels, boundaries, and records",
@@ -12553,8 +12553,8 @@
       "sha256": "633816370d8be0c7cdcaf5c9275d6373ae3d36d63ce71cdaaf87f146018135fe"
     },
     "research/urpcs/tests/test_mobius_projection.py": {
-      "bytes": 11620,
-      "sha256": "f59eb18ac1c16e0d5c9fd91a33660e92a6013dd600543b33ad6bce422671abc2"
+      "bytes": 11924,
+      "sha256": "4a1c9ed81869e14c980e2ef6f20937457c45b4eca855c1f3cd8fbcf8294e019b"
     },
     "research/urpcs/urpcs_mobius_projection.py": {
       "bytes": 47295,
