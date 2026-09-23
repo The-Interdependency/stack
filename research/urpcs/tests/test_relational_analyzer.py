@@ -213,9 +213,15 @@ class URPCSRelationalAnalyzerTests(unittest.TestCase):
             c0, _tag = ref.unframe(bytes.fromhex(row["ciphertext_hex"]))
             self.assertNotIn(b"positive-local-frame", c0)
             self.assertNotIn(b"reversed-local-frame", c0)
+        receipt = json.loads(RECEIPT_PATH.read_text())
+        governing_files = {
+            row["path"]: row
+            for row in receipt["corpus"]["source_corpus"]["files"]
+        }
         for path in analyzer.FROZEN_PATHS:
-            committed = analyzer._git_bytes(STACK_ROOT, "show", f"{analyzer.STACK_INPUT_COMMIT}:{path}")
-            self.assertEqual((STACK_ROOT / path).read_bytes(), committed)
+            data = (STACK_ROOT / path).read_bytes()
+            self.assertEqual(len(data), governing_files[path]["bytes"])
+            self.assertEqual(sha256(data), governing_files[path]["sha256"])
 
 
 if __name__ == "__main__":

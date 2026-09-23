@@ -8,8 +8,8 @@ This analyzer is read-only. It changes no v1 serialization, state transition, ve
 
 ## Evidence identity
 
-- Canonical receipt SHA-256: `79bdb0e57561852ac9f2bcba28814a3723e0a260904dab1a79358e5f9c7cec94`
-- Receipt payload SHA-256: `d0f4a10b9fe6d9ce8dd4902454dd7323024f189270ac882ebaaaabac4828e72e`
+- Canonical receipt SHA-256: `08e9d8d951331d2298527298119f2a35280decb515eed6809b6697d39a07a700`
+- Receipt payload SHA-256: `72bcd15c065f34c88a8b13b0b27d79cc599ebd3160583d270b884153407bcb05`
 - Measurement SHA-256: `9ea9428ece73c4b1f9b190cf76d43e54db4c5de502e7828e9361f6fd38683cf4`
 - Aggregate graph SHA-256: `4ccfdfff0a4ef82fa6cf5de64e43c2d85668e67d5a2cd905261747bb62601137`
 - Corpus identity SHA-256: `8b0e356f23c462761ac4a036d37d36830879803faf72bb34d96f5bd9a44b8c62`
