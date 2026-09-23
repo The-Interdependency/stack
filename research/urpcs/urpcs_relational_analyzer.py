@@ -1312,8 +1312,8 @@ def run_analysis(
             "member_state_count": sum(record["kind"] == "member-state" for record in all_observations),
         },
         "test_and_measurement_counts": {
-            "complete_urpcs_python_tests": 26,
-            "relational_analyzer_tests": 7,
+            "complete_urpcs_python_tests": 27,
+            "relational_analyzer_tests": 8,
             "committed_vector_rows": len(rows),
             "committed_positive_traces": len(positive_rows),
             "independent_decoder_positive_replays": 3,
