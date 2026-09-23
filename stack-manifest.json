@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -217,6 +217,96 @@
       "commit": "abd259b4722901317e4388d774a20d6819d959c2",
       "authority": "organization build, complete-scope and option-selection doctrine",
       "relation": "full-corpus comparison discipline; address utility distinguished from downstream inference usefulness",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "stack-baseline",
+      "repository": "The-Interdependency/stack",
+      "commit": "d713cc5f901d74deb902a191837ef5657dbaba94",
+      "authority": "composition forge and existing English/Python construction owner",
+      "relation": "research baseline; no new canonical runtime",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "zfae",
+      "repository": "The-Interdependency/zfae",
+      "commit": "95fd37ef0e1775643399c8a9e8292190abf05c04",
+      "authority": "ZFAE conceptual/specification authority",
+      "relation": "construction questions and source-bound carrier observation",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "ptcna",
+      "repository": "The-Interdependency/ptcna",
+      "commit": "a06a049cd8722adaad32dbc9c36d9c87b0204236",
+      "authority": "PTCNA construction authority",
+      "relation": "current intended-construction gate; historical scaffold is not intended architecture",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "a0",
+      "repository": "The-Interdependency/a0",
+      "commit": "f4faf5c50dd5bc55e377279a0e403e088bcdced8",
+      "authority": "a0 runtime integration authority",
+      "relation": "producer-state and Zeta evaluation source inspection; no runtime mutation",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "a0-betatest",
+      "repository": "The-Interdependency/a0-betatest",
+      "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+      "authority": "separate a0-betatest implementation authority",
+      "relation": "exact heuristic parser comparison source; not equivalent to a0",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "118b48802b20509afa556cf3ce68cee915628af0",
+      "authority": "intended independent language-construct authority; Stack retains current forge ownership",
+      "relation": "extracted construct and pending release/reconsumption boundary",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "authority": "semantic authority for its own domain",
+      "relation": "current domain-restraint consultation; root impact none",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "abd259b4722901317e4388d774a20d6819d959c2",
+      "authority": "organization build and evidence doctrine",
+      "relation": "current research, source, structural-update and metadata rules; no snapshot refresh",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+      "authority": "UCNS geometry and Public Gonol carrier authority",
+      "relation": "exact 157-position carrier consumed by the existing Stack glyph producer for the declared parser profile; no function semantics inferred",
       "canonical_release": false,
       "authority_transfer": false
     }

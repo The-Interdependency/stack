@@ -1,0 +1,114 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "zfae",
+  "source_repository": "The-Interdependency/zfae",
+  "source_commit": "95fd37ef0e1775643399c8a9e8292190abf05c04",
+  "source_path": ".",
+  "canon_path": null,
+  "authority": "stack-local construction research; conceptual authority remains ZFAE; PTCNA owns neural construction; a0 owns runtime integration",
+  "standing": "stack-local-research",
+  "lifecycle": "incubating",
+  "authority_transfer": false,
+  "stack_baseline": "d713cc5f901d74deb902a191837ef5657dbaba94",
+  "work_graph": "../../stack-manifest.json#research_participants[workspace=research/zfae/]",
+  "usage": "Read README.md, INPUT_PROBE.json and GONOL_PARSER.json; retrieve exact external parser/carrier sources, then execute input_probe.py and gonol_probe.py.",
+  "source_files": [
+    {
+      "repository": "The-Interdependency/zfae",
+      "commit": "95fd37ef0e1775643399c8a9e8292190abf05c04",
+      "path": "CLAUDE.md",
+      "blob_sha": "fe1e78ee3062b8b32a9f43e35c8b696ec22e5539"
+    },
+    {
+      "repository": "The-Interdependency/zfae",
+      "commit": "95fd37ef0e1775643399c8a9e8292190abf05c04",
+      "path": "docs/PLATONIC_AGENT_INFERENCE_BOUNDARY.md",
+      "blob_sha": "bf1e9e2842f920ecf83f51e6f59ea09737a74629"
+    },
+    {
+      "repository": "The-Interdependency/zfae",
+      "commit": "95fd37ef0e1775643399c8a9e8292190abf05c04",
+      "path": "src/zfae/gonal_constructor.py",
+      "blob_sha": "cf6e53d9b386b839bea9949956f2efad45b82817"
+    },
+    {
+      "repository": "The-Interdependency/ptcna",
+      "commit": "a06a049cd8722adaad32dbc9c36d9c87b0204236",
+      "path": "docs/INTENDED_CONSTRUCTION_GATE.md",
+      "blob_sha": "b9fda32b771e5e7e2111416bd1223592dc915293"
+    },
+    {
+      "repository": "The-Interdependency/a0",
+      "commit": "f4faf5c50dd5bc55e377279a0e403e088bcdced8",
+      "path": "python/engine/ptcna_state.py",
+      "blob_sha": "32b4c8be690f4235e1db0d9714a761f0a91a5b7d"
+    },
+    {
+      "repository": "The-Interdependency/a0",
+      "commit": "f4faf5c50dd5bc55e377279a0e403e088bcdced8",
+      "path": "python/engine/zeta.py",
+      "blob_sha": "64852727d7dc7ceab6943980241393ab92f3cbc3"
+    },
+    {
+      "repository": "The-Interdependency/a0-betatest",
+      "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+      "path": "backend/interdependent_lib/zfae/inference.py",
+      "blob_sha": "035d01faa2a26b433910e230af49b186c0731757"
+    },
+    {
+      "repository": "The-Interdependency/a0-betatest",
+      "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+      "path": "backend/interdependent_lib/zfae/_decoder.py",
+      "blob_sha": "baa300782a88972f7a8f9d2b3e3e258a0aca42a1"
+    },
+    {
+      "repository": "The-Interdependency/a0-betatest",
+      "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+      "path": "backend/interdependent_lib/zfae/_parser.py",
+      "blob_sha": "13fa9c529d15e7f420e09520ca8cbf45587ea14a"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "118b48802b20509afa556cf3ce68cee915628af0",
+      "path": "README.md",
+      "blob_sha": "f8e18d03c07f7f03969cc00732ba5eb33fad705a"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "path": "AXIOMS.md",
+      "blob_sha": "90b7fea71369f08bee09d4fa100491a66e0c498e"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "path": "POSTULATES.md",
+      "blob_sha": "e6003140a569e26fbe22ac63f34c0525b27cab48"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "path": "DOMAIN_RESTRAINT.md",
+      "blob_sha": "8d3626384c55350832767ba6f4fa913f48a5afd0"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "d713cc5f901d74deb902a191837ef5657dbaba94",
+      "path": "research/english-gonol/english_gonol/hyperspace_construct.py",
+      "blob_sha": "8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+      "path": "src/ucns/public_gonol.py",
+      "blob_sha": "c1955e46e2dc918fb657cb346e42106d71937e91"
+    }
+  ],
+  "hmmm": [
+    "Intended PTCNA construction remains subject to its source-owned UCNS neural-audit gate.",
+    "UCHC extraction has not completed release, Stack reconsumption and authority transition.",
+    "The state, propagation, learning and readout laws remain construction work.",
+    "The gonol parser has finite declared admission; higher closure and runtime integration remain separate work."
+  ]
+}

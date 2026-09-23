@@ -16,7 +16,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102`
+  `b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -74,6 +74,15 @@ release identity.
 | `research/english-gonol/` | `The-Interdependency/stack` | `1f9a35eb355296fc88d09784c7a3e2e95511ca31` | complete four-view audit source; existing candidate formulas remain unchanged | no |
 | `research/english-gonol/` | `The-Interdependency/ucns` | `1cf10c2df2541a332a77f2ed3feda0c6bef4abcc` | exact eight-file motion dependency closure consumed for every word; no broader geometry selection | no |
 | `research/english-gonol/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | full-corpus comparison discipline; address utility distinguished from downstream inference usefulness | no |
+| `research/zfae/` | `The-Interdependency/stack` | `d713cc5f901d74deb902a191837ef5657dbaba94` | research baseline; no new canonical runtime | no |
+| `research/zfae/` | `The-Interdependency/zfae` | `95fd37ef0e1775643399c8a9e8292190abf05c04` | construction questions and source-bound carrier observation | no |
+| `research/zfae/` | `The-Interdependency/ptcna` | `a06a049cd8722adaad32dbc9c36d9c87b0204236` | current intended-construction gate; historical scaffold is not intended architecture | no |
+| `research/zfae/` | `The-Interdependency/a0` | `f4faf5c50dd5bc55e377279a0e403e088bcdced8` | producer-state and Zeta evaluation source inspection; no runtime mutation | no |
+| `research/zfae/` | `The-Interdependency/a0-betatest` | `5d51d70a0ae6044d1386d72bd0cada9d48887f77` | exact heuristic parser comparison source; not equivalent to a0 | no |
+| `research/zfae/` | `The-Interdependency/uchc` | `118b48802b20509afa556cf3ce68cee915628af0` | extracted construct and pending release/reconsumption boundary | no |
+| `research/zfae/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | current domain-restraint consultation; root impact none | no |
+| `research/zfae/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | current research, source, structural-update and metadata rules; no snapshot refresh | no |
+| `research/zfae/` | `The-Interdependency/ucns` | `4086ab82399c4d142b0eacfbc09e0a69ed151aa5` | exact Public Gonol carrier consumed by the Stack glyph producer for the finite parser profile; no function semantics inferred | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -117,6 +126,17 @@ pairing codec experiment. Its accepted Laws 1–13, reference implementation, an
 byte-exact vectors establish bounded deterministic codec behavior only. The
 workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
 Stack supplies no confidentiality or production-security standing.
+
+ZFAE construction research lives at `research/zfae/`. Its exact research-only
+inputs are recorded above. The parser consumes the existing English GlyphGonol
+producer at the Stack baseline and the separately pinned UCNS carrier. Its
+finite profile preserves occurrences and refuses incomplete gonol admission.
+Conceptual authority remains in ZFAE, neural
+construction in PTCNA, and runtime integration in a0. The a0-betatest parser is
+a separate comparison source. Current PTCNA retains its UCNS neural-audit gate;
+UCHC extraction has not completed release/reconsumption. No `libs/` pin or
+upstream authority changes. Usage: read `research/zfae/README.md` and replay its
+source-bound input and gonol-parser probes.
 
 ## License status at pinned commits
 
