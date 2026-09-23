@@ -64,6 +64,7 @@ from .hyperspace_geometry import (
     definition_inner_product,
     word_axis_angle,
 )
+from .motion_run import _load_verified_motion
 
 SCHEMA = "english-gonol.hyperspace-views"
 VERSION = "0.1.0"
@@ -118,12 +119,42 @@ def _definition_density(
     }
 
 
+def _definition_walk_state(
+    db: sqlite3.Connection, word_id: int, build_motion: Any
+) -> dict[str, Any] | None:
+    rows = db.execute(
+        "SELECT id, ordinal, definition_index FROM definitions "
+        "WHERE origin_word_id = ? ORDER BY ordinal",
+        (word_id,),
+    ).fetchall()
+    if not rows:
+        return None
+    walk = []
+    for definition_id, ordinal, definition_index in rows:
+        target = db.execute(
+            "SELECT target_word_id FROM semantic_evidence "
+            "WHERE definition_id = ? ORDER BY id LIMIT 1",
+            (definition_id,),
+        ).fetchone()
+        semantic = target[0] if target else 0
+        walk.append((ordinal, semantic, definition_index))
+    motion = build_motion(tuple(walk))
+    return {
+        "definition_count": len(rows),
+        "end_phase": f"{motion.end_phase.numerator}/{motion.end_phase.denominator}",
+        "end_frame": motion.end_frame,
+        "derivation": "terminal NativeMobiusState of the ordered definition walk",
+    }
+
+
 def word_views(
     db: sqlite3.Connection, word_id: int, ucns_source_root: Path
 ) -> dict[str, Any]:
     """Compute the four views and the synthesis tuple for one word."""
 
     angle = word_axis_angle(db, word_id, ucns_source_root)
+    build_motion = _load_verified_motion(Path(ucns_source_root))
+    definition_walk = _definition_walk_state(db, word_id, build_motion)
     phase_num = int(angle["end_phase"].split("/")[0])
     residue = phase_num % _MODULUS
     deck = word_id // _MODULUS
@@ -139,7 +170,10 @@ def word_views(
         if density is not None
         else None
     )
-    view2 = {"phase": angle["end_phase"], "frame": angle["end_frame"]}
+    view2 = {
+        "glyph_walk": {"phase": angle["end_phase"], "frame": angle["end_frame"]},
+        "definition_walk": definition_walk,
+    }
     view3 = {"deck": deck, "residue": residue, "lift": deck * _MODULUS + residue}
     view4 = {
         "residue": residue,
@@ -151,7 +185,7 @@ def word_views(
         ),
     }
 
-    synthesis = (view1, view2["phase"], view2["frame"], view3["lift"])
+    synthesis = (view1, view2, view3["lift"])
     payload = {
         "schema": SCHEMA,
         "version": VERSION,
@@ -164,8 +198,7 @@ def word_views(
         },
         "synthesis": [
             view1,
-            view2["phase"],
-            view2["frame"],
+            view2,
             view3["lift"],
         ],
         "synthesis_composition": "views one, two, and three together",

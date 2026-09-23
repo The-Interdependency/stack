@@ -71,6 +71,15 @@ def _fixture_state(tmp_path: Path) -> Path:
             start_offset INTEGER NOT NULL,
             end_offset INTEGER NOT NULL
         );
+        CREATE TABLE semantic_evidence (
+            id INTEGER PRIMARY KEY,
+            definition_id INTEGER NOT NULL REFERENCES definitions(id),
+            source_ordinal INTEGER NOT NULL,
+            channel TEXT NOT NULL,
+            relation TEXT NOT NULL,
+            target_word_id INTEGER NOT NULL REFERENCES words(id),
+            target_ref TEXT NOT NULL
+        );
         """
     )
     db.execute("INSERT INTO characters VALUES (1, 'a', 0)")
@@ -107,8 +116,12 @@ def test_views_are_four_plus_synthesis(tmp_path: Path) -> None:
         "view3_provenance_interval_lift",
         "view4_canonical_witness_lift",
     }
-    assert len(record["synthesis"]) == 4
+    assert len(record["synthesis"]) == 3
     assert record["synthesis_composition"] == "views one, two, and three together"
+    assert set(record["views"]["view2_word_axis_angle"]) == {
+        "glyph_walk",
+        "definition_walk",
+    }
     assert record["views"]["view4_canonical_witness_lift"]["derived"] is True
     assert record["views"]["view3_provenance_interval_lift"]["deck"] == 0
     assert record["views"]["view4_canonical_witness_lift"]["lift"] == 157 + record["views"]["view4_canonical_witness_lift"]["residue"]
