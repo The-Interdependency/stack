@@ -218080,14 +218080,14 @@
       }
     ]
   },
-  "receipt_payload_sha256": "1c7ed29f87945a8e920dff70f317490442c690af98607e9c35d6c055bfd8db7a",
+  "receipt_payload_sha256": "c6c1f165bb6c10b5e88fa74d86d27eca0191ab71ef6dd3cb399ef3d6a069aff5",
   "runtime": {
-    "cpu_count": 2,
-    "git_executable_sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
-    "git_version": "git version 2.43.0",
+    "cpu_count": 4,
+    "git_executable_sha256": "d4d2ba562243015206d4248edfec871a74786499292d00ed072dbca2f5ae8073",
+    "git_version": "git version 2.55.0",
     "kmac256": {
       "agrees_with_urpcs_reference_probes": 2,
-      "module_path": "/tmp/urpcs-mobius-venv/lib/python3.12/site-packages/Crypto/Hash/KMAC256.py",
+      "module_path": "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/Crypto/Hash/KMAC256.py",
       "module_sha256": "5f8c2a59c17bfc91f08674afb4dfad1785abdc77439e44573426f53bd02bfd50",
       "name": "pycryptodome Crypto.Hash.KMAC256",
       "official_sample_4_customization_ascii": "My Tagged Application",
@@ -218095,20 +218095,20 @@
       "official_sample_4_sha256": "890e4575209379bfadb3c5d36f60a19b2ba9de81aeb6893e42f70283ff0d2849",
       "version": "3.23.0"
     },
-    "platform": "Linux-7.0.0-1011-gcp-x86_64-with-glibc2.39",
-    "python_executable_sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python_executable_sha256": "bef88f140b625959f8af25c7b75cce2cd5d4b29cc2f2b079befd7f68eda4dba0",
     "python_implementation": "CPython",
-    "python_version": "3.12.3"
+    "python_version": "3.12.14"
   },
   "schema": "the-interdependency.stack.urpcs-relational-carrier-receipt.v0",
   "sources": {
     "research/urpcs/tests/test_relational_analyzer.py": {
-      "bytes": 10439,
-      "sha256": "d11ce260286db21cbf096ac4deb87e33293401e46f2aa9e2cc09ee25cf44c967"
+      "bytes": 11513,
+      "sha256": "5e117f888e324ef9c531a2af0a3a3fd9cb90da2e4ebacb5a7217fd45525aa1b4"
     },
     "research/urpcs/urpcs_relational_analyzer.py": {
-      "bytes": 72670,
-      "sha256": "f6242efc44b6d4f1e2b5cf2c50b52e34e394427de1f2c967b5d507be7f936fda"
+      "bytes": 73046,
+      "sha256": "a6c32e9281ffc7b5624875de95c57abcea1ade5925e63fdcfb5b96b23818571c"
     }
   },
   "standing": "COMPUTATION; Stack-local research; not a protocol or traversal profile",
@@ -218116,10 +218116,10 @@
     "analyzed_traces": 7,
     "committed_positive_traces": 3,
     "committed_vector_rows": 8,
-    "complete_urpcs_python_tests": 26,
+    "complete_urpcs_python_tests": 27,
     "gonol_states": 948,
     "independent_decoder_positive_replays": 3,
     "member_states": 1789,
-    "relational_analyzer_tests": 7
+    "relational_analyzer_tests": 8
   }
 }
