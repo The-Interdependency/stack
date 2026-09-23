@@ -36,3 +36,4 @@ jobs:
           python -m py_compile
           research/urpcs/urpcs_v1_reference.py
           research/urpcs/urpcs_mobius_projection.py
+          research/urpcs/urpcs_relational_analyzer.py
