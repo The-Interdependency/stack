@@ -467,15 +467,20 @@ def _install_kmac_backend(name: str) -> dict[str, Any]:
     stdlib_kmac = ref.kmac256
     sample_key = bytes(range(0x40, 0x60))
     sample_message = bytes.fromhex("00010203")
+    sample_customization = b"My Tagged Application"
     sample_expected = bytes.fromhex(
-        "2ebd1622de2de44174e3477206060d7f64489a639b7545649132317609fa214f"
-        "4c8ac90630fb4c757fba074b15186fe452ae71b6a1e443bf54059e090c11ae20"
+        "20c570c31346f703c9ac36c61c03cb64c3970d0cfc787e9b79599d273a68d2f7"
+        "f69d4cc3de9d104a351689f27cf6f5951f0103f33f4f24871024d9c27773a8dd"
     )
-    _require(stdlib_kmac(sample_key, sample_message, 64, b"") == sample_expected, "stdlib KMAC256 KAT failure")
+    _require(
+        stdlib_kmac(sample_key, sample_message, 64, sample_customization) == sample_expected,
+        "stdlib KMAC256 NIST Sample #4 failure",
+    )
     if name == "stdlib":
         return {
             "name": "URPCS dependency-free KMAC256",
             "version": "frozen-v1",
+            "official_sample_4_customization_ascii": sample_customization.decode("ascii"),
             "official_sample_4_sha256": _sha256(sample_expected),
             "official_sample_4_output_hex": sample_expected.hex(),
         }
@@ -492,7 +497,10 @@ def _install_kmac_backend(name: str) -> dict[str, Any]:
     def fast_kmac(key: bytes, data: bytes, output_len: int, custom: bytes) -> bytes:
         return KMAC256.new(key=key, data=data, mac_len=output_len, custom=custom).digest()
 
-    _require(fast_kmac(sample_key, sample_message, 64, b"") == sample_expected, "external KMAC256 KAT failure")
+    _require(
+        fast_kmac(sample_key, sample_message, 64, sample_customization) == sample_expected,
+        "external KMAC256 NIST Sample #4 failure",
+    )
     probes = (
         (bytes(range(32)), b"", 32, b"URPCS/PAIR/v1"),
         (bytes(range(32, 64)), b"probe", 32, b"URPCS/TAG/v1"),
@@ -506,6 +514,7 @@ def _install_kmac_backend(name: str) -> dict[str, Any]:
         "version": Crypto.__version__,
         "module_path": str(module_path),
         "module_sha256": _file_sha256(module_path),
+        "official_sample_4_customization_ascii": sample_customization.decode("ascii"),
         "official_sample_4_sha256": _sha256(sample_expected),
         "official_sample_4_output_hex": sample_expected.hex(),
         "agrees_with_urpcs_reference_probes": len(probes),
@@ -777,6 +786,12 @@ def _authority_context(stack_root: Path, ucns_root: Path, skill_lib_root: Path) 
         stderr=subprocess.DEVNULL,
     )
     _require(equivalence.returncode == 0, "governing URPCS blobs drifted from the equivalence commit")
+    for governed_path in governed_paths:
+        current_path = stack_root / governed_path
+        _require(current_path.is_file(), f"governing URPCS path missing: {governed_path}")
+        consumed_blob = _git(stack_root, "hash-object", str(current_path))
+        frozen_blob = _git(stack_root, "rev-parse", f"{STACK_INPUT_COMMIT}:{governed_path}")
+        _require(consumed_blob == frozen_blob, f"consumed governing URPCS blob drift: {governed_path}")
     ucns_commit = _git(ucns_root, "rev-parse", "HEAD")
     ucns_tree = _git(ucns_root, "rev-parse", "HEAD^{tree}")
     _require(ucns_commit == UCNS_COMMIT and ucns_tree == UCNS_TREE, "UCNS authority drift")

@@ -6,8 +6,8 @@ This is a read-only measurement of UCNS native Möbius state already derivable f
 
 ## Exact evidence identity
 
-- Canonical receipt SHA-256: `9c55154a56ee1f10e0b64bef53dc239bdf690718223e168fe06b8f8551243cf3`
-- Receipt payload SHA-256: `b56886022b3fdcbb808262ebd2dddca0402ed8cd4e0a922374b0af19cf0b735e`
+- Canonical receipt SHA-256: `34950d37dbf882cd6de331a98a555862c57edddc3749512c75db180d0539a6eb`
+- Receipt payload SHA-256: `b2e83d932102ad5c10748a0e03eb3c3b205a147d14bb6fe9d5e668f1be0f8da2`
 - Aggregate result SHA-256: `b83a6bbfe1223f047c9d4e96ae8b105cb305129dc2eb9fc7a64efd9f5f4290e2`
 - Input domain SHA-256: `1de7d25896deb06106ef73249baaca15e559e804e352fabcf460f3bdace1d506`
 - Stack input commit/tree: `2fadd145db09e352f84146fa490be03dbfa708d4` / `1d0aa08624ccb6c618b852779b5f1688514f8cdc`

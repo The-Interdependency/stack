@@ -12447,7 +12447,7 @@
     },
     "messages_processed": 514
   },
-  "receipt_payload_sha256": "b56886022b3fdcbb808262ebd2dddca0402ed8cd4e0a922374b0af19cf0b735e",
+  "receipt_payload_sha256": "b2e83d932102ad5c10748a0e03eb3c3b205a147d14bb6fe9d5e668f1be0f8da2",
   "record_encoding": {
     "bucket_context": "record class, canonical phase (r,M), and frame are supplied by the enclosing JSON bucket",
     "common": "u32be payload_length || u16be case_index || u32be layer || u32be region || i64be S || u16be gonol_id_length || gonol_id",
@@ -12462,8 +12462,9 @@
       "module_path": "/tmp/urpcs-mobius-venv/lib/python3.12/site-packages/Crypto/Hash/KMAC256.py",
       "module_sha256": "5f8c2a59c17bfc91f08674afb4dfad1785abdc77439e44573426f53bd02bfd50",
       "name": "pycryptodome Crypto.Hash.KMAC256",
-      "official_sample_4_output_hex": "2ebd1622de2de44174e3477206060d7f64489a639b7545649132317609fa214f4c8ac90630fb4c757fba074b15186fe452ae71b6a1e443bf54059e090c11ae20",
-      "official_sample_4_sha256": "2123b3842b2a3c6826f363b99b214754a7261fb8943ef3ef5961c9478732181f",
+      "official_sample_4_customization_ascii": "My Tagged Application",
+      "official_sample_4_output_hex": "20c570c31346f703c9ac36c61c03cb64c3970d0cfc787e9b79599d273a68d2f7f69d4cc3de9d104a351689f27cf6f5951f0103f33f4f24871024d9c27773a8dd",
+      "official_sample_4_sha256": "890e4575209379bfadb3c5d36f60a19b2ba9de81aeb6893e42f70283ff0d2849",
       "version": "3.23.0"
     },
     "platform": "Linux-7.0.0-1011-gcp-x86_64-with-glibc2.39",
@@ -12488,8 +12489,8 @@
       "sha256": "b493e9cc3d90125e91d9a4d5fd2530408d6736609a10acda9e13e15ed9a9007d"
     },
     "research/urpcs/urpcs_mobius_projection.py": {
-      "bytes": 44448,
-      "sha256": "87a9c1401fcadf13a1c05ae0b5f2b49e17ab85ffcdd0f140f02f89850a9a208e"
+      "bytes": 45234,
+      "sha256": "b9aadcb59b32c220d220a30664e6d33a0cd7b22646a98ba252b1d1c74636ed84"
     },
     "research/urpcs/urpcs_v1_independent.js": {
       "bytes": 41182,
