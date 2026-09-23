@@ -155,30 +155,33 @@ def check_deterministic_evidence() -> None:
     first = projection.run_measurement(**kwargs)
     second = projection.run_measurement(**kwargs)
     require(first == second, "test-subset measurement is nondeterministic")
-    context = {
-        "authorities": {
-            "stack": {"input_commit": "test", "input_tree": "test"},
-            "ucns": {
-                "commit": "test",
-                "native_mobius_law_id": projection.UCNS_LAW_ID,
-                "native_mobius_law_version": projection.UCNS_LAW_VERSION,
-            },
-            "skill_lib": {"commit": "test"},
-        },
-        "runtime": {"test": "fixed"},
-        "sources": {"test": "fixed"},
-    }
-    first_receipt = projection.build_receipt(measurement=first, jobs=1, **context)
-    second_receipt = projection.build_receipt(measurement=second, jobs=1, **context)
-    projection.verify_receipt_payload(first_receipt)
-    require(
-        projection._json_bytes(first_receipt) == projection._json_bytes(second_receipt),
-        "test-subset receipt is nondeterministic",
+    with unittest.TestCase().assertRaisesRegex(projection.ProjectionError, "canonical receipt requires"):
+        projection.build_receipt(
+            measurement=first,
+            authorities={},
+            runtime={},
+            sources={},
+            jobs=1,
+        )
+
+    receipt_path = URPCS_ROOT / "receipts" / "urpcs-mobius-projection-v0.json"
+    report_path = URPCS_ROOT / "docs" / "URPCS-mobius-projection-v0.md"
+    receipt_bytes = receipt_path.read_bytes()
+    receipt = json.loads(receipt_bytes)
+    projection.verify_receipt_payload(receipt)
+    require(receipt_bytes == projection._json_bytes(receipt), "committed receipt is not canonical JSON")
+    rebuilt = projection.build_receipt(
+        measurement=receipt["measurement"],
+        authorities=receipt["authorities"],
+        runtime=receipt["runtime"],
+        sources=receipt["sources"],
+        jobs=receipt["execution"]["jobs"],
     )
-    first_sha = hashlib.sha256(projection._json_bytes(first_receipt)).hexdigest()
+    require(projection._json_bytes(rebuilt) == receipt_bytes, "canonical receipt regeneration drift")
+    receipt_sha = hashlib.sha256(receipt_bytes).hexdigest()
     require(
-        projection.render_report(first_receipt, first_sha) == projection.render_report(second_receipt, first_sha),
-        "test-subset Markdown report is nondeterministic",
+        projection.render_report(receipt, receipt_sha) == report_path.read_text(),
+        "committed Markdown report does not match its canonical receipt",
     )
 
 
@@ -214,6 +217,14 @@ class URPCSMobiusProjectionTests(unittest.TestCase):
         result = projection._finalize_kind("gonol", buckets, previews, 2, 8, 1)
         self.assertEqual(result["opposite_frame_phase_buckets"], 1)
         self.assertEqual(result["records_in_opposite_frame_phase_buckets"], 2)
+        relabeled = {
+            key.replace("(0,8)", "(1,8)"): value
+            for key, value in buckets.items()
+        }
+        self.assertNotEqual(
+            projection._bucketed_records_sha256(buckets),
+            projection._bucketed_records_sha256(relabeled),
+        )
 
     def test_same_complete_state_after_two_windings(self) -> None:
         first = projection.euclidean_mobius_state(2, 8, self.ucns)

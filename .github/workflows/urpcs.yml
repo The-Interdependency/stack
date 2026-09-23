@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
   push:
     branches: [main]
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
 
 permissions:

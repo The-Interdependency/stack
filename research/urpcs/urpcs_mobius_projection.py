@@ -544,6 +544,20 @@ def _state_identity(state: ref.KState) -> dict[str, Any]:
     return fields
 
 
+def _bucketed_records_sha256(bucket_blobs: Mapping[str, bytes]) -> str:
+    """Bind every bucket label, boundary, and record stream into one digest."""
+
+    digest = hashlib.sha256()
+    for key in sorted(bucket_blobs):
+        key_bytes = key.encode("ascii")
+        blob = bucket_blobs[key]
+        digest.update(struct.pack(">I", len(key_bytes)))
+        digest.update(key_bytes)
+        digest.update(struct.pack(">Q", len(blob)))
+        digest.update(blob)
+    return digest.hexdigest()
+
+
 def bounded_cases(depths: Sequence[int] = (0, 1), values: Sequence[bytes] | None = None) -> list[dict[str, Any]]:
     plaintexts = [b""] + [bytes([value]) for value in range(256)] if values is None else list(values)
     cases: list[dict[str, Any]] = []
@@ -586,8 +600,8 @@ def _worker_case(case: Mapping[str, Any]) -> dict[str, Any]:
         "urpcs_trace_receipt_sha256": _sha256(encrypted.receipt),
         "gonol_states": projected["stats"]["gonol"]["states"],
         "member_states": projected["stats"]["member"]["states"],
-        "gonol_projection_sha256": _sha256(b"".join(projected["buckets"]["gonol"].values())),
-        "member_projection_sha256": _sha256(b"".join(projected["buckets"]["member"].values())),
+        "gonol_projection_sha256": _bucketed_records_sha256(projected["buckets"]["gonol"]),
+        "member_projection_sha256": _bucketed_records_sha256(projected["buckets"]["member"]),
     }
     case_projection["result_identity_sha256"] = _sha256(_compact_json_bytes(case_projection))
     return {
@@ -635,6 +649,15 @@ def _finalize_kind(
         phase_frames.setdefault(phase, set()).add(frame)
     split_phases = sorted(phase for phase, frames in phase_frames.items() if len(frames) == 2)
     split_records = sum(counts[f"{phase}|{frame}"] for phase in split_phases for frame in PHASE_FRAMES)
+    phase_frame_buckets = []
+    for key in sorted(bucket_blobs):
+        phase, frame = _split_key(key)
+        phase_frame_buckets.append({
+            "phase": phase,
+            "frame": frame,
+            "record_count": counts[key],
+            "records_sha256": _sha256(bucket_blobs[key]),
+        })
     split_evidence = []
     for phase in split_phases:
         frame_entries = []
@@ -653,7 +676,6 @@ def _finalize_kind(
                 "first_record": previews[key],
             })
         split_evidence.append({"phase": phase, "frames": frame_entries})
-    all_records = b"".join(bucket_blobs[key] for key in sorted(bucket_blobs))
     return {
         "states": states,
         "distinct_phase_buckets": len(phase_frames),
@@ -662,7 +684,8 @@ def _finalize_kind(
         "records_in_opposite_frame_phase_buckets": split_records,
         "maximum_S": maximum_s,
         "maximum_q": maximum_q,
-        "all_records_sha256": _sha256(all_records),
+        "bucketed_records_sha256": _bucketed_records_sha256(bucket_blobs),
+        "phase_frame_buckets": phase_frame_buckets,
         "opposite_frame_phase_splits": split_evidence,
     }
 
@@ -743,13 +766,19 @@ def run_measurement(
     domain["input_domain_sha256"] = _sha256(_compact_json_bytes(domain["cases"]))
     output_identity = {
         "case_result_hashes": [item["result_identity_sha256"] for item in case_results],
-        "gonol_records_sha256": summaries["gonol"]["all_records_sha256"],
-        "member_records_sha256": summaries["member"]["all_records_sha256"],
+        "gonol_bucketed_records_sha256": summaries["gonol"]["bucketed_records_sha256"],
+        "member_bucketed_records_sha256": summaries["member"]["bucketed_records_sha256"],
         "classification": classification,
     }
     return {
         "classification": classification,
         "messages_processed": len(case_results),
+        "profile": {
+            "x_bytes": ref.X,
+            "M": modulus,
+            "depths": list(depths),
+            "associated_data_sha256": _sha256(ref.VECTOR_AD),
+        },
         "input_domain": domain,
         "case_results": case_results,
         "gonol_measurement": summaries["gonol"],
@@ -866,6 +895,24 @@ def build_receipt(
     sources: Mapping[str, Any],
     jobs: int,
 ) -> dict[str, Any]:
+    canonical_profile = {
+        "x_bytes": ref.X,
+        "M": ref.M,
+        "depths": [0, 1],
+        "associated_data_sha256": _sha256(ref.VECTOR_AD),
+    }
+    _require(measurement.get("profile") == canonical_profile, "canonical receipt requires the frozen measurement profile")
+    domain = measurement.get("input_domain")
+    _require(isinstance(domain, Mapping), "canonical receipt requires the complete 514-case domain")
+    canonical_cases = bounded_cases()
+    _require(
+        domain.get("definition") == "({epsilon} union {00,...,ff}) x (R_cap in {0,1})"
+        and domain.get("cases_expected") == 514
+        and domain.get("cases_completed") == 514
+        and domain.get("cases") == canonical_cases
+        and measurement.get("messages_processed") == 514,
+        "canonical receipt requires the complete 514-case domain",
+    )
     state_identities = {str(depth): _state_identity(ref.vector_state(depth)) for depth in (0, 1)}
     receipt: dict[str, Any] = {
         "artifact": "URPCS Möbius projection v0 bounded measurement",
@@ -890,6 +937,7 @@ def build_receipt(
             "common": "u32be payload_length || u16be case_index || u32be layer || u32be region || i64be S || u16be gonol_id_length || gonol_id",
             "member_suffix": "u16be occurrence_id_length || occurrence_id || i64be local_displacement",
             "bucket_context": "record class, canonical phase (r,M), and frame are supplied by the enclosing JSON bucket",
+            "bucketed_hash_framing": "for each ASCII bucket key in lexical order: u32be key_length || key || u64be record_stream_length || record_stream; SHA-256 binds labels, boundaries, and records",
             "compression": "zlib level 9 followed by base64; lossless evidence storage only, not a URPCS compression claim",
         },
         "measurement": dict(measurement),
