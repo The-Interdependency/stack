@@ -107,7 +107,9 @@ def test_views_are_four_plus_synthesis(tmp_path: Path) -> None:
         "view3_provenance_interval_lift",
         "view4_canonical_witness_lift",
     }
-    assert len(record["synthesis"]) == 5
+    assert len(record["synthesis"]) == 4
+    assert record["synthesis_composition"] == "views one, two, and three together"
+    assert record["views"]["view4_canonical_witness_lift"]["derived"] is True
     assert record["views"]["view3_provenance_interval_lift"]["deck"] == 0
     assert record["views"]["view4_canonical_witness_lift"]["lift"] == 157 + record["views"]["view4_canonical_witness_lift"]["residue"]
 
@@ -120,9 +122,9 @@ def test_adjudication_counts_are_exact(tmp_path: Path) -> None:
         "view1_definition_inner_product_density",
         "view2_word_axis_angle",
         "view3_provenance_interval_lift",
-        "view4_canonical_witness_lift",
         "synthesis",
     }
+    assert report["view4_canonical_witness_lift"]["derived"] is True
     for name, distinct in report["distinct_values"].items():
         assert distinct <= report["word_count"]
 
@@ -132,6 +134,6 @@ def test_views_do_not_select(tmp_path: Path) -> None:
     report = run_view_adjudication(state_dir, UCNS_SOURCE_ROOT)
     assert "ranking_by_distinctness" in report
     assert "select" not in report or report.get("selected") is None
-    assert "one doctor or four" in report["hmmm"]
+    assert "view four reduces to derivation" in report["hmmm"]
     again = run_view_adjudication(state_dir, UCNS_SOURCE_ROOT)
     assert again["receipt_sha256"] == report["receipt_sha256"]

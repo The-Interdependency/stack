@@ -16,7 +16,7 @@
 #   rollback: remove this module, facade exports, tests, and candidate documentation
 #   requires: english_gonol_hyperspace_construct, english_gonol_hyperspace_geometry, ucns_lift_selection_candidates (via ucns source)
 #   since: 2026-09-21
-#   unresolved: one doctor or four - whether any single view or the differential synthesis is most useful remains hmmm
+#   unresolved: view four reduces to derivation; views one, two, and three together are the thing
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -141,9 +141,17 @@ def word_views(
     )
     view2 = {"phase": angle["end_phase"], "frame": angle["end_frame"]}
     view3 = {"deck": deck, "residue": residue, "lift": deck * _MODULUS + residue}
-    view4 = {"residue": residue, "lift": _MODULUS + residue}
+    view4 = {
+        "residue": residue,
+        "lift": _MODULUS + residue,
+        "derived": True,
+        "derivation": (
+            "157 + residue, where residue is the phase numerator mod 157 "
+            "already carried by view2 and view3; view four reduces to derivation"
+        ),
+    }
 
-    synthesis = (view1, view2["phase"], view2["frame"], view3["lift"], view4["lift"])
+    synthesis = (view1, view2["phase"], view2["frame"], view3["lift"])
     payload = {
         "schema": SCHEMA,
         "version": VERSION,
@@ -159,8 +167,8 @@ def word_views(
             view2["phase"],
             view2["frame"],
             view3["lift"],
-            view4["lift"],
         ],
+        "synthesis_composition": "views one, two, and three together",
     }
     payload["receipt_sha256"] = _receipt(payload)
     return payload
@@ -182,11 +190,11 @@ def run_view_adjudication(
             "view1_definition_inner_product_density": set(),
             "view2_word_axis_angle": set(),
             "view3_provenance_interval_lift": set(),
-            "view4_canonical_witness_lift": set(),
             "synthesis": set(),
         }
         collisions: dict[str, int] = {name: 0 for name in seen}
         view_names = [name for name in seen if name != "synthesis"]
+        view4_values: set[str] = set()
         for word_id in words:
             record = word_views(db, word_id, ucns_source_root)
             for name in view_names:
@@ -195,6 +203,13 @@ def run_view_adjudication(
                 if key in seen[name]:
                     collisions[name] += 1
                 seen[name].add(key)
+            view4_values.add(
+                json.dumps(
+                    record["views"]["view4_canonical_witness_lift"],
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
             synthesis_key = json.dumps(
                 record["synthesis"], sort_keys=True, separators=(",", ":")
             )
@@ -219,14 +234,19 @@ def run_view_adjudication(
         "word_count": len(words),
         "distinct_values": {name: len(values) for name, values in seen.items()},
         "collisions": collisions,
+        "view4_canonical_witness_lift": {
+            "derived": True,
+            "distinct": len(view4_values),
+            "note": "view four reduces to derivation; excluded from the synthesis",
+        },
+        "synthesis_composition": "views one, two, and three together",
         "ranking_by_distinctness": [
             {"view": name, "distinct": distinct, "collisions": collision}
             for name, distinct, collision in ranking
         ],
         "hmmm": (
-            "one doctor or four? The corpus adjudicates which views merit "
-            "retainment or whether the differential synthesis is most "
-            "useful; this report ranks, it does not select"
+            "view four reduces to derivation; views one, two, and three "
+            "together are the thing. This report ranks, it does not select"
         ),
     }
     payload["receipt_sha256"] = _receipt(payload)
