@@ -37,6 +37,7 @@ stack/
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── urpcs/               # authenticated recursive pairing codec research + exact vectors
 │   ├── ptcna/               # current PTCNA research + BASE.json
+│   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
 │   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
@@ -148,6 +149,13 @@ independent repository, as recorded in
 python3 integration/epac/reconsume.py \
   integration/epac/release-lock.json /tmp/epac-public-consumption python3.12
 ```
+
+### ZFAE construction research
+
+Read [research/zfae/README.md](research/zfae/README.md) for the gonol input parser, source identities,
+the construction sequence, the first executable input-distinction experiment,
+and the remaining UCNS/PTCNA and UCHC prerequisites. This is Stack research;
+conceptual, producer and runtime authority remain with their owners.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
