@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "70787567cb37f4b156a66b293f9bd9cb5cf7d722f1e6ff1721f5df343ada5b79",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -69,8 +69,7 @@
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "URPCS remains an authenticated codec experiment with bounded independent decoder evidence but without a confidentiality model or release authority",
-      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
-      "ZFAE construction research remains stack-local; intended PTCNA requires its UCNS neural audit and UCHC release/reconsumption remains incomplete"
+      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
   "research_participants": [
@@ -190,6 +189,36 @@
       "relation": "stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer",
       "repository": "The-Interdependency/stack",
       "workspace": "research/urpcs/"
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-source",
+      "repository": "The-Interdependency/stack",
+      "commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+      "authority": "Stack English construction and view candidates",
+      "relation": "complete four-view audit source; existing candidate formulas remain unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-ucns-motion",
+      "repository": "The-Interdependency/ucns",
+      "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
+      "authority": "UCNS native motion and scoped displacement geometry",
+      "relation": "exact eight-file motion dependency closure consumed for every word; no broader geometry selection",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "views-doctrine",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "abd259b4722901317e4388d774a20d6819d959c2",
+      "authority": "organization build, complete-scope and option-selection doctrine",
+      "relation": "full-corpus comparison discipline; address utility distinguished from downstream inference usefulness",
+      "canonical_release": false,
+      "authority_transfer": false
     },
     {
       "workspace": "research/zfae/",

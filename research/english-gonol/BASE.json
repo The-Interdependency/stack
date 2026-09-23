@@ -11,5 +11,12 @@
   },
   "canon_path": "../../libs/edcm",
   "authority": "stack-local research component (extracted from The-Interdependency/edcm)",
-  "standing": "stack-local-research"
+  "standing": "stack-local-research",
+  "full_view_audit": {
+    "source_repository": "The-Interdependency/stack",
+    "source_commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+    "protocol": "FULL_VIEW_AUDIT.json",
+    "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
+    "authority_transfer": false
+  }
 }

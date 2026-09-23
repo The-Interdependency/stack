@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scope": "complete declared finite input profile; source preservation, not neural inference",
   "python": "3.12.14",
-  "work_graph_sha256": "70787567cb37f4b156a66b293f9bd9cb5cf7d722f1e6ff1721f5df343ada5b79",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
   "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
   "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
   "source_sha256": {

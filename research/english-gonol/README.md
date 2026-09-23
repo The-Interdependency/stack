@@ -94,6 +94,21 @@ python -m pytest -q tests
 
 See [`docs/full-construct-v2.md`](docs/full-construct-v2.md).
 
+## Four-view full-corpus audit
+
+The [complete view report](docs/hyperspace-views-full-v1.md) covers all **164,864 words**,
+all fifteen nonempty view combinations, and three complete address-renumbering controls.
+Native and independent evidence agree exactly, including per-word native reconstruction.
+The synthesis distinguishes 137,013 values. Removing view 1, 2, or 3 loses 10,267,
+20,042, or 125,813 distinctions respectively; removing view 4 loses none.
+
+View 1 is nullable constituent-overlap metadata, view 2 is the terminal phase/frame,
+view 3 carries coarse address/provenance information, and view 4 is a derivable witness.
+Their inference usefulness requires a task beyond distinctness. The frozen protocol is
+[`FULL_VIEW_AUDIT.json`](FULL_VIEW_AUDIT.json); complete receipts are in
+[`experiments/hyperspace-views-full-v1/`](experiments/hyperspace-views-full-v1/).
+The report contains the exact source/database bindings and full replay commands.
+
 ## Historical research
 
 The orthogonal-carrier sweep and earlier definition-affixiation run remain

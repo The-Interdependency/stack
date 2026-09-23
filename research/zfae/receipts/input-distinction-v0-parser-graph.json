@@ -12,7 +12,7 @@
   "source_sha256": "79999e41c9f9fead6d3dcfe8b283be613af517850772cacfbf5693e8c0803c79",
   "plan_sha256": "b40cc9ca7d7071ece972423822d76354ef33bce04f6168552c6458b3fcd9208a",
   "harness_sha256": "4f10a4d1cc71ef4499177d868eeadd8fcd72b931b55184a68d4cdfadc4f5f0c6",
-  "work_graph_sha256": "70787567cb37f4b156a66b293f9bd9cb5cf7d722f1e6ff1721f5df343ada5b79",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
   "python": "3.12.14",
   "standing": "FALSIFIED",
   "controls_passed": true,
