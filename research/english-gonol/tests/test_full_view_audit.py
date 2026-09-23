@@ -1,4 +1,4 @@
-# ratios: loc_comments=82:43 imports_exports=9:4 calls_definitions=35:4
+# ratios: loc_comments=104:44 imports_exports=11:5 calls_definitions=48:6
 """Receipt integrity and audit mechanics; fixtures are not inclusion evidence."""
 
 # === CHECKS ===
@@ -31,9 +31,11 @@ from itertools import combinations
 import json
 from pathlib import Path
 import sqlite3
+import subprocess
+from copy import deepcopy
 import unittest
 
-from english_gonol.full_view_audit import metrics, verify_sources
+from english_gonol.full_view_audit import metrics, verify_sources, verify_manifest
 from english_gonol.view_replay import Corpus, VIEW_NAMES, canonical, freeze_views
 
 WORKSPACE = Path(__file__).resolve().parents[1]
@@ -59,12 +61,35 @@ def test_complete_sealed_evidence():
     assert evidence["corpus_counts"] == protocol["corpus"]["counts"]
     manifest = json.loads((WORKSPACE / "experiments/full-construct-v2/manifest.json").read_text())
     assert evidence["corpus_manifest_receipt"] == manifest["receipt_sha256"]
-    verify_sources(WORKSPACE.parents[1], protocol["stack"]["files"])
+    verify_manifest(manifest, protocol)
+    # Sealed receipts qualify the recorded historical sources, never current main.
+    def archived(commit, path):
+        return subprocess.check_output(["git", "show", f"{commit}:{path}"], cwd=WORKSPACE)
+    for source in protocol["stack"]["files"]:
+        raw = archived(protocol["stack"]["commit"], source["path"])
+        assert hashlib.sha1(f"blob {len(raw)}\0".encode() + raw).hexdigest() == source["blob_sha"]
     for name, digest in evidence["runner_sha256"].items():
-        assert hashlib.sha256((WORKSPACE / "english_gonol" / name).read_bytes()).hexdigest() == digest
+        raw = archived("df9515aea7b502d4e73142eb892fcde90c03af71", "research/english-gonol/english_gonol/" + name)
+        assert hashlib.sha256(raw).hexdigest() == digest
     for sealed in (evidence, evidence["legacy_report"]):
         body = {key: value for key, value in sealed.items() if key != "receipt_sha256"}
         assert hashlib.sha256(canonical(body)).hexdigest() == sealed["receipt_sha256"]
+
+
+def test_manifest_binding():
+    protocol = json.loads((WORKSPACE / "FULL_VIEW_AUDIT.json").read_text())
+    manifest = json.loads((WORKSPACE / "experiments/full-construct-v2/manifest.json").read_text())
+    verify_manifest(manifest, protocol)
+    for key in ("repository", "commit", "source_tree_sha256"):
+        altered = deepcopy(manifest)
+        altered["corpus"][key] = "forged"
+        with unittest.TestCase().assertRaises(ValueError):
+            verify_manifest(altered, protocol)
+    for key, value in (("receipt_sha256", "0" * 64), ("counts", {})):
+        altered = deepcopy(manifest)
+        altered[key] = value
+        with unittest.TestCase().assertRaises(ValueError):
+            verify_manifest(altered, protocol)
 
 
 def test_metrics_and_full_subsets():
@@ -134,6 +159,6 @@ def test_reconstruction_boundaries():
 def load_tests(loader, tests, pattern):
     return unittest.TestSuite(unittest.FunctionTestCase(check) for check in (
         test_complete_sealed_evidence, test_metrics_and_full_subsets,
-        test_reconstruction_boundaries,
+        test_reconstruction_boundaries, test_manifest_binding,
     ))
-# ratios: loc_comments=82:43 imports_exports=9:4 calls_definitions=35:4
+# ratios: loc_comments=104:44 imports_exports=11:5 calls_definitions=48:6

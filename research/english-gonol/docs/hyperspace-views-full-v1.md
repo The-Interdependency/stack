@@ -12,6 +12,19 @@ contribute distinctions that the other views cannot recover in this corpus.
 That establishes information contribution; inference usefulness still needs a
 specified task and acceptance criterion.
 
+## Historical scope and current replay gate
+
+These sealed receipts qualify the frozen Stack and runner identities below.
+Current main has since changed the view payload and synthesis representation;
+this report does not qualify that implementation. The receipt gate reads the
+historical Git objects and verifies their recorded digests. It does not rewrite
+old receipts to match new source. The tightened runner additionally binds the
+supplied manifest directly to the protocol's repository, commit, tree digest,
+receipt, and counts; two identically altered manifest copies cannot pass.
+A new current-source qualification requires a new protocol and full native and
+independent corpus runs. The historical runner also requires the exact database
+and historical source checkout; running it on current main fails closed.
+
 ## Complete-corpus results
 
 | View | Distinct values | Repeated records | Singleton words | Colliding word pairs |

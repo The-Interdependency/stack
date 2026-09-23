@@ -1,4 +1,4 @@
-# ratios: loc_comments=206:35 imports_exports=15:6 calls_definitions=90:6
+# ratios: loc_comments=220:36 imports_exports=15:7 calls_definitions=97:7
 """Exhaustive four-view audit; run native and independent modes over all words.
 
 Usage from Stack with PYTHONPATH=research/english-gonol:
@@ -69,6 +69,22 @@ def verify_sources(root, sources):
             raise ValueError("source Git blob mismatch: " + source["path"])
 
 
+def verify_manifest(manifest, protocol):
+    """Bind supplied metadata to the frozen protocol, not another mutable copy."""
+    corpus = protocol["corpus"]
+    expected = {
+        "repository": corpus["repository"],
+        "commit": corpus["commit"],
+        "source_tree_sha256": corpus["source_tree_sha256"],
+    }
+    if any(manifest["corpus"].get(key) != value for key, value in expected.items()):
+        raise ValueError("corpus provenance differs from frozen protocol")
+    if manifest.get("receipt_sha256") != corpus["manifest_receipt_sha256"]:
+        raise ValueError("corpus receipt differs from frozen protocol")
+    if manifest.get("counts") != corpus["counts"]:
+        raise ValueError("corpus counts differ from frozen protocol")
+
+
 def load_native(ucns_root):
     """Load only verified dependency files; bind motion once for this run."""
     if any(name == "ucns" or name.startswith("ucns.") for name in sys.modules):
@@ -109,6 +125,7 @@ def run(state_dir, ucns_root, engine):
     if database_sha != protocol["corpus"]["database_sha256"]:
         raise ValueError("corpus database hash mismatch")
     manifest = json.loads((state_dir / "manifest.json").read_text())
+    verify_manifest(manifest, protocol)
     if manifest != json.loads((WORKSPACE / "experiments/full-construct-v2/manifest.json").read_text()):
         raise ValueError("corpus manifest differs from the committed full construct")
     graph = json.loads((STACK / "stack-manifest.json").read_text())
@@ -259,4 +276,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=206:35 imports_exports=15:6 calls_definitions=90:6
+# ratios: loc_comments=220:36 imports_exports=15:7 calls_definitions=97:7
