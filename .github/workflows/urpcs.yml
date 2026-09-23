@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
   push:
     branches: [main]
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
 
 permissions:
@@ -30,4 +32,7 @@ jobs:
       - name: Reference codec and committed-vector checks
         run: python -m unittest discover -s research/urpcs/tests -p 'test*.py'
       - name: Python syntax
-        run: python -m py_compile research/urpcs/urpcs_v1_reference.py
+        run: >-
+          python -m py_compile
+          research/urpcs/urpcs_v1_reference.py
+          research/urpcs/urpcs_mobius_projection.py
