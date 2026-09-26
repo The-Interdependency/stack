@@ -1,0 +1,91 @@
+# Usage: validate the exact locked UCHC candidate inside Stack. No release,
+# deployment, authority transition, model call or neural-readiness promotion.
+name: UCHC input integration
+on:
+  pull_request:
+    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
+  push:
+    branches: [main]
+    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
+permissions:
+  contents: read
+jobs:
+  installed-candidate:
+    runs-on: ubuntu-24.04
+    env:
+      SOURCE_DATE_EPOCH: '1790308800'
+    steps:
+      - name: Resolve full-history Stack and exact input sources
+        shell: bash
+        env:
+          STACK_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(df --output=avail -B1 . | tail -1)" -gt 8589934592
+          fetch_source() {
+            local repo="$1" target="$2" sha="$3"
+            [[ "$sha" =~ ^[0-9a-f]{40}$ ]]
+            git init -q "$target"
+            git -C "$target" remote add origin "https://github.com/$repo.git"
+            git -C "$target" fetch --quiet origin "$sha"
+            git -C "$target" checkout -q --detach FETCH_HEAD
+            test "$(git -C "$target" rev-parse HEAD)" = "$sha"
+          }
+          fetch_source The-Interdependency/stack stack "$STACK_SHA"
+          UCHC_SHA="$(python3 -c 'import json;print(json.load(open("stack/research/zfae/UCHC_INPUT.json"))["source_commit"])')"
+          fetch_source The-Interdependency/uchc producer "$UCHC_SHA"
+          fetch_source globalwordnet/english-wordnet oewn dc343f2683279ecbb13fab4e2fd778d7b162d287
+          fetch_source The-Interdependency/ucns ucns 4f863ad37096b7baab8f62820ad5cb937b62a3a7
+          python3 -m venv .build
+          .build/bin/python -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0
+          mkdir -p evidence
+      - name: Check coherent Stack projections and reproduce the exact wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd stack && ../.build/bin/python tools/check_stack_consistency.py)
+          .build/bin/python -m pip wheel --no-deps --no-build-isolation ./producer -w evidence/dist
+          .build/bin/python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          lock = json.loads(Path('stack/research/zfae/UCHC_INPUT.json').read_text())
+          wheel = Path('evidence/dist') / lock['wheel']
+          assert hashlib.sha256(wheel.read_bytes()).hexdigest() == lock['wheel_sha256'], 'candidate bytes differ from the verified lock'
+          PY
+          python3 -m venv .clean
+          .clean/bin/python -m pip install pytest==8.3.5 PyYAML==6.0.2
+          .clean/bin/python -m pip install --no-index --no-deps evidence/dist/uchc-0.1.0a1-py3-none-any.whl
+      - name: Build the complete corpus through the installed candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          .clean/bin/python -I -m english_gonol.full_construct_run \
+            --source-root "$PWD/oewn/src/yaml" --ucns-source-root "$PWD/ucns" \
+            --out-dir "$PWD/evidence/construct"
+      - name: Verify real consumer and exhaust native input records
+        shell: bash
+        run: |
+          set -euo pipefail
+          UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
+            .clean/bin/python -I -m pytest -q stack/integration/uchc/tests/test_input.py --junitxml=evidence/integration.xml
+          .clean/bin/python -I producer/tools/verify_inference_corpus.py \
+            --database evidence/construct/construct.db \
+            --database-sha256 af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b \
+            --logical-receipt 12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57 \
+            --output evidence/input-acceptance.json
+          .clean/bin/python -I stack/research/zfae/uchc_input.py \
+            --database evidence/construct/construct.db --source-id ci:exact-input \
+            --text 'alpha letter alpha' > evidence/consumer-frame.json
+          cp stack/research/zfae/UCHC_INPUT.json evidence/
+          git -C stack rev-parse HEAD > evidence/STACK_COMMIT
+          git -C producer rev-parse HEAD > evidence/UCHC_COMMIT
+          # Keep acceptance and the exact wheel; corpus provenance/attribution is
+          # retained by the UCHC producer. Do not republish corpus bytes here.
+          rm -r evidence/construct
+      - name: Retain consumer evidence and identical candidate bytes
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: uchc-stack-integration
+          path: evidence/
+          retention-days: 14
+          if-no-files-found: error
