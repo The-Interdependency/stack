@@ -24,14 +24,14 @@ permissions:
 jobs:
   input-distinction:
     runs-on: ubuntu-24.04
-    env:
-      FROZEN: ${{ runner.temp }}/zfae-frozen
     steps:
       - name: Resolve current tests and the exact frozen replay snapshot
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
+          FROZEN="$RUNNER_TEMP/zfae-frozen"
+          printf 'FROZEN=%s\n' "$FROZEN" >> "$GITHUB_ENV"
           [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
           git init -q .
           git remote add origin https://github.com/The-Interdependency/stack.git
