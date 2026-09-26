@@ -1,34 +1,39 @@
 # Asynchronous gonol-key research
 
-**Standing:** candidate research. Not PCEA runtime, not UCNS canon, not a security claim.
+**Standing:** candidate research / UNRESOLVED. Not PCEA runtime, UCNS canon,
+or a completed encryption construction.
+
+## Current algorithm specification
+
+Use [PCEA current research specification v1](docs/pcea-current-research-v1.md)
+for the complete stable baseline, current research changes, partial successor
+algorithm, exact source identities, and remaining gates. Its
+[work graph](docs/pcea-current-research-v1.work-graph.json) binds this update.
 
 ## Observation to preserve
 
-A gonol construction has produced the observed progression:
+The recorded progression is:
 
-```text
-157 -> 2881 -> 54837698421
-```
+`157 -> 2881 -> 54837698421`.
 
-The exact 157-position Public Gonol is established in current UCNS authority, while the recursive-scale transition law remains unresolved. Therefore the later values are preserved here as observed constructor outputs pending independent replay, not promoted as a mathematical law.
+The exact 157-position Public Gonol carrier is established in UCNS. The
+recorded later observations have not been independently reconstructed by a
+surviving recursive constructor. They do not select a key schedule.
 
-## Cryptographic placement
+Current research has executable candidate carrier operations, ordered
+incidence coupling, and digest-bound atomic promotion. Those records preserve
+useful structure, but they do not yet select next-scale geometry. The pinned
+based-traversal contract stops at `STOP_MISSING_ORIGIN_ATTACHMENT`; its
+later four fields remain dependency-blocked.
 
-The useful candidate placement is a deterministic asynchronous key **schedule/state topology**, not an entropy source.
+Prime-arity coefficient recursion is exact for caller-supplied prime roles.
+It preserves their unordered multiset, does not discover the next prime role,
+and does not construct the observed nonnested factorizations. Preserve
+`R=(C_k(t), relations, provenance)`; scalar breadth/radius is insufficient.
 
-```text
-real shared secret / approved key establishment
-                 |
-                 v
-        gonol-addressed ratchet
-                 |
-                 v
-          one-use traffic keys
-```
+## Candidate key schedule
 
-A large gonol can provide sparse addressability, branching, bounded rendezvous, replay coordinates, and hierarchical ratchet state without materializing every possible key. Secret strength still comes from CSPRNG/KEM/pre-shared entropy and an approved KDF.
-
-A candidate derivation shape is deliberately generic until the constructor is replayed:
+The current generic shape remains:
 
 ```text
 traffic_key = KDF(root_secret,
@@ -41,21 +46,39 @@ traffic_key = KDF(root_secret,
                   transcript)
 ```
 
-Public coordinates may identify where a receiver should derive; they must not substitute for the secret input.
+Public geometry may organize addresses, branching, rendezvous and state.
+These are candidate uses, not measured benefits. Public coordinates do not
+replace secret input. Freeze the exact KDF, encoding, secret-state evolution,
+message framing and acceptance rules before implementation or claims.
 
-## First falsification program
+A new UCNS-derived encryption primitive remains a legitimate research target.
+A schedule around an existing cipher does not by itself meet that target.
+Conventional constructions supply matched controls; their security does not
+transfer to the candidate.
 
-1. Freeze the exact gonol transition constructor and all source identities.
-2. Independently replay `157 -> 2881 -> 54837698421`.
-3. Compare the resulting topology against a conventional tree/ratchet with the same root entropy.
-4. Measure synchronization recovery, replay rejection, compromise containment, state/storage cost, and message reordering tolerance.
-5. Attack public positional metadata for state leakage and linkability.
-6. Credit gonol geometry only for properties that beat or simplify the control construction.
+## Current falsification program
+
+1. Rebind the geometry and traversal evidence to the exact intended UCNS source.
+2. Resolve the five traversal fields in dependency order; stop at the first
+   unresolved field, preserving subsequent fields as unevaluated.
+3. Independently replay any proposed successor without fitting the observed
+   targets; retain complete ordered structure rather than scalar projections.
+4. Freeze the proposed encryption/key lifecycle and matched control contracts.
+5. Test synchronization, replay/rollback rejection, compromise containment,
+   reordering, state/storage cost, and public metadata leakage/linkability.
+6. Assess any quantum-resistance claim under an explicit quantum attack model.
+7. Promote only completed, bounded behavior through an owning PCEA change.
 
 ## Usage guidance
 
-Do not implement this in `The-Interdependency/pcea` while it remains candidate research. Prototype and attack it here. If a bounded ratchet behavior survives and is useful, promote only that completed behavior to PCEA through an explicit owning-repository change.
+Prototype and attack candidates in this workspace. Preserve negative results
+and provenance. Stable runtime changes belong in `The-Interdependency/pcea`
+after their behavior and falsifiable contract are complete; Stack reconsumes
+the resulting source through its explicit pin-refresh process.
 
 ## hmmm
 
-The load-bearing unknown is the exact reproducible recursive transition operator. Until independent replay exists, gonol scale is an observed research coordinate, not cryptographic hardness, entropy, or canon.
+The successor and traversal gates are unresolved. The cryptographic successor
+is incomplete. The source-bound specification records what was fetched and
+replayed, and separates operator-reported local audits that were unavailable.
+
