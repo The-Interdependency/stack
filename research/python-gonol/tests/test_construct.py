@@ -1,4 +1,40 @@
+# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
 # === CHECKS ===
+# id: check_python_complete_constitutive_replay
+#   proves: python_construct_replay_fails_closed_on_tamper
+#   call: self::test_complete_replay_rejects_constitutive_tamper
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_original_source_bytes
+#   proves: python_construct_preserves_source_bytes
+#   call: self::test_replay_preserves_original_bytes
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_legacy_receipt_rejection
+#   proves: python_construct_replay_fails_closed_on_tamper
+#   call: self::test_replay_rejects_legacy_version
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_tabs_match_python_expansion
+#   proves: python_construct_controls_are_constitutive
+#   call: self::test_tabs_match_python_expansion
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
+# id: check_python_physical_source_addresses
+#   proves: python_construct_physical_addresses
+#   call: self::test_physical_source_addresses
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
 # id: check_python_construct_acceptance_gates
 #   proves: python_construct_one_shared_identity_per_glyph, python_construct_controls_are_constitutive, python_construct_newlines_remain_source_distinct, python_construct_off_carrier_is_hmmm_not_invented
 #   call: self::test_acceptance_gates
@@ -35,6 +71,8 @@
 from __future__ import annotations
 
 import os
+import json
+from hashlib import sha256
 import sqlite3
 from pathlib import Path
 
@@ -119,8 +157,8 @@ def test_acceptance_gates(tmp_path: Path) -> None:
     assert reconstruct_source(state_dir2) == "\t\tx"
     rows = _controls(state_dir2)
     assert len(rows) == 2
-    assert rows[0][2] == 1 and rows[0][3] == 7  # column 1 -> 7 spaces
-    assert rows[1][2] == 2 and rows[1][3] == 6  # column 2 -> 6 spaces
+    assert rows[0][2] == 1 and rows[0][3] == 8
+    assert rows[1][2] == 2 and rows[1][3] == 8
 
     # LF, CR, and CR+LF remain source-distinct.
     mixed = "a\nb\r\nc\rd"
@@ -196,3 +234,79 @@ def test_off_carrier_unicode_is_hmmm_not_invented(tmp_path: Path) -> None:
         connection.close()
     assert row == (None, None)
     assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+@pytest.mark.parametrize("prefix", [" " * n for n in range(16)] + ["\t", " \t", "\t "])
+def test_tabs_match_python_expansion(tmp_path: Path, prefix: str) -> None:
+    source = prefix + "\tx\n"
+    state_dir, result = _build(tmp_path, source)
+    expected = [
+        len(source[:i + 1].expandtabs(8)) - len(source[:i].expandtabs(8))
+        for i, scalar in enumerate(source) if scalar == "\t"
+    ]
+    assert [row[3] for row in _controls(state_dir) if source[row[0] - 1] == "\t"] == expected
+    assert reconstruct_source(state_dir) == source
+    assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+@pytest.mark.parametrize("source,expected", [
+    ("a\rb", [(1, 1), (1, 2), (2, 1)]),
+    ("a\nb", [(1, 1), (1, 2), (2, 1)]),
+    ("a\r\nb", [(1, 1), (1, 2), (1, 3), (2, 1)]),
+    ("\r\rb", [(1, 1), (2, 1), (3, 1)]),
+])
+def test_physical_source_addresses(tmp_path: Path, source: str, expected: list) -> None:
+    state_dir, result = _build(tmp_path, source)
+    with sqlite3.connect(state_dir / "construct.db") as db:
+        positions = list(db.execute("SELECT line, column FROM occurrences ORDER BY ordinal"))
+    assert positions == expected
+    assert reconstruct_source(state_dir) == source
+    assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+@pytest.mark.parametrize("statement", [
+    "UPDATE control_identities SET member_ids='[]' WHERE kind='TAB'",
+    "UPDATE characters SET public_position=900 WHERE scalar='Z'",
+    "UPDATE occurrences SET control_kind='TAB' WHERE scalar='x'",
+    "UPDATE meta SET value='wrong' WHERE key='source_bytes_sha256'",
+    "DELETE FROM occurrences",
+    "CREATE VIEW forged_view AS SELECT * FROM occurrences",
+    "CREATE TRIGGER forged_trigger AFTER INSERT ON occurrences BEGIN DELETE FROM occurrences; END",
+    "CREATE INDEX forged_index ON occurrences(scalar)",
+])
+@pytest.mark.parametrize("rebind", [False, True])
+def test_complete_replay_rejects_constitutive_tamper(tmp_path: Path, statement: str, rebind: bool) -> None:
+    from python_gonol.construct import _logical_sha256
+    state_dir, _ = _build(tmp_path, "\tx=1\n")
+    manifest_path = state_dir / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    with sqlite3.connect(state_dir / "construct.db") as db:
+        db.execute(statement)
+        if rebind:
+            manifest["construct_sha256"] = _logical_sha256(db)
+            manifest.pop("receipt_sha256")
+            digest = sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            manifest["receipt_sha256"] = digest
+            db.execute("UPDATE meta SET value=? WHERE key='receipt_sha256'", (digest,))
+            manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(PythonGonolConstructionError):
+        verify_construct(state_dir, UCNS_SOURCE_ROOT)
+
+
+@pytest.mark.parametrize("raw", [b"", b"\xef\xbb\xbfx=1\r\n", b"# coding: latin-1\n# caf\xe9\n"])
+def test_replay_preserves_original_bytes(tmp_path: Path, raw: bytes) -> None:
+    state_dir = tmp_path / "raw"
+    result = affixiate_python_bytes(raw, source_id="raw.py", state_dir=state_dir, ucns_source_root=UCNS_SOURCE_ROOT)
+    with sqlite3.connect(state_dir / "construct.db") as db:
+        assert db.execute("SELECT data FROM source_bytes").fetchall() == [(raw,)]
+    assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+def test_replay_rejects_legacy_version(tmp_path: Path) -> None:
+    state_dir, _ = _build(tmp_path, "x=1\n")
+    path = state_dir / "manifest.json"
+    data = json.loads(path.read_text()); data["version"] = "1.0.0"
+    path.write_text(json.dumps(data))
+    with pytest.raises(PythonGonolConstructionError, match="version"):
+        verify_construct(state_dir, UCNS_SOURCE_ROOT)
+# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
