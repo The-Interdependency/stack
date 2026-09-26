@@ -16,7 +16,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d`
+  `7faa844d63c0e6d30727f3310f82c3ebc57193324b05f6c7979ed1fb90e7ef17`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -206,3 +206,12 @@ durable host state, and production-security review remain open.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS remains stack-local research; bounded independent decoding survived, while confidentiality, durable rollback resistance, and release authority remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
+
+## UCHC input candidate
+
+`research/zfae/` now consumes `The-Interdependency/uchc@3d82007b88f74ded88ca913d6e85bcd6f6ff024d` through the immutable wheel lock `research/zfae/UCHC_INPUT.json`.
+The prior `118b488` extraction remains the source identity of the earlier research.
+This additional candidate supplies full-corpus native language input; it does not
+choose PTCNA dimensions, propagate neural state or transfer domain authority.
+See `integration/uchc/README.md` for isolated installation, complete-corpus
+verification and rollback. Stable released-artifact consumption remains `hmmm`.

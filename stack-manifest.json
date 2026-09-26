@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
+  "work_graph_sha256": "7faa844d63c0e6d30727f3310f82c3ebc57193324b05f6c7979ed1fb90e7ef17",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -307,6 +307,16 @@
       "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
       "authority": "UCNS geometry and Public Gonol carrier authority",
       "relation": "exact 157-position carrier consumed by the existing Stack glyph producer for the declared parser profile; no function semantics inferred",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/zfae/",
+      "participant_id": "uchc-input-candidate",
+      "repository": "The-Interdependency/uchc",
+      "commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+      "authority": "extracted language construction and input public contract; domain graduation incomplete",
+      "relation": "exact installed wheel consumer via research/zfae/UCHC_INPUT.json; no fixed-width semantic projection or neural readiness promotion",
       "canonical_release": false,
       "authority_transfer": false
     }
