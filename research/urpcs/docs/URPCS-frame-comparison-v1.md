@@ -48,7 +48,7 @@ native displacement, and uses every trace. It reproduces the old six-state,
 It also checks every pair sharing a gonol anchor and every native attachment
 edge. Counts for these additional probes come from execution, not prediction.
 
-`receipts/urpcs-frame-comparison-v1.json`, when sealed after replay, records the
+`receipts/urpcs-frame-comparison-v1.json` records the
 exact counts, source hashes, producer commit, input graph, and nonclaims. The
 CI artifact `urpcs-frame-comparison-evidence` retains the generated receipt,
 exact consumer source archive, and source commit/tree identity. The receipt
@@ -100,3 +100,29 @@ promotion, path winding beyond modulo two, nontrivial path holonomy, protocol
 adoption, security and operational/inference utility are separate claims. The
 comparison completes its declared geometric task without filling those gaps
 with invented relations or promoting a full UCNS carrier.
+
+## Verified replay result
+
+Initial consumer execution at `ea3235105a859e20c230e5d05527206795458b63`
+passed all six consumer tests, Stack consistency, and byte-identical repeated
+receipt generation. Artifact `10897060106` from Actions run `36214423549`
+binds that exact commit/tree and producer `ee3df862112811711b43afed4174592a241c373d`.
+The downloaded archive, source hashes, sealed input, and receipt payload were
+verified before this receipt was committed. Separate local enumeration with the
+split-form seam-correction oracle reproduced all counts; this was not a
+second-agent review.
+
+| Probe | Complete population | Native motion checks | Corrected changes |
+|---|---:|---:|---:|
+| Original distinct-state probe | 6 states / 15 pairs | 120 | 0 |
+| Same-gonol-anchor pairs | 948 anchors / 2,630 pairs | 21,040 | 0 |
+| Existing attachment edges | 369 edges | 2,952 | 0 |
+| Total | All 2,737 source observations admitted | 24,112 | 0 |
+
+The original naive product changes 44 times in the original probe and 6,728
+times in the shared-anchor probe. No new protocol edge was introduced.
+
+Canonical new receipt SHA-256:
+`c758837cc8e9fdd7e618f6bc008a46cab77ff644408db57fe8cd35daa1b92fab`.
+Receipt payload SHA-256:
+`88813a160543b95f5c3c910bc40725eadd75d1df1d058c4fa303d8227a07c6c7`.
