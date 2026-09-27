@@ -226,6 +226,12 @@ Pinned and vendored components keep their own licenses:
 | `libs/ucns/` | `hmmm`: no `LICENSE` at pinned commit `828c0b8` | Upstream ucns carries MPL-2.0 again from 2026-09-11; a refresh of this pin would bring it in |
 | `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/`) are listed in `skill-lib/ATTRIBUTION.md`; the Apache-2.0 text is in [`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) |
 
+The pinned snapshot's `skill-lib/ATTRIBUTION.md` still says "see upstream
+`LICENSE`". Until the `skill-lib/` snapshot is refreshed after
+The-Interdependency/skill-lib#110 merges, the Apache-2.0 text in
+[`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) governs the imported skills.
+The snapshot itself is not edited here.
+
 `hmmm` (not yet decided): the license status of `ahbg/`, `research/`, `media/` and
 `docs/`. Files there that are modified copies of an MPL-2.0 or MIT component stay
 under that component's license. Nothing else in these paths is licensed yet.
