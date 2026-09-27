@@ -224,13 +224,16 @@ Pinned and vendored components keep their own licenses:
 | `libs/pcea/` | MIT | `libs/pcea/LICENSE` (Copyright (c) 2026 Erin Patrick Spencer) |
 | `libs/ptcna/` | MPL-2.0 | `libs/ptcna/LICENSE`, pinned from The-Interdependency/ptcna |
 | `libs/ucns/` | `hmmm`: no `LICENSE` at pinned commit `828c0b8` | Upstream ucns carries MPL-2.0 again from 2026-09-11; a refresh of this pin would bring it in |
-| `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/`) are listed in `skill-lib/ATTRIBUTION.md`; the Apache-2.0 text is in [`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) |
+| `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/`) are listed in `skill-lib/ATTRIBUTION.md`; the Apache-2.0 text is in [`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) |
 
-The pinned snapshot's `skill-lib/ATTRIBUTION.md` still says "see upstream
-`LICENSE`". Until the `skill-lib/` snapshot is refreshed after
-The-Interdependency/skill-lib#110 merges, the Apache-2.0 text in
-[`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) governs the imported skills.
-The snapshot itself is not edited here.
+The Apache-2.0 text now sits inside the snapshot, at
+[`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt). It came in
+through a licensing-only sync from The-Interdependency/skill-lib `e6e3e5c` (the
+skill-lib#110 merge). That sync copied only `skill-lib/LICENSES/Apache-2.0.txt` and
+`skill-lib/ATTRIBUTION.md`. Every other file in `skill-lib/` is unchanged, and the
+doctrine and MSDMD generator pin stays at `fb3b53a` (see `stack-manifest.json` and
+`backend/fresh-making-provenance.json`). The root
+[`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) is the same text.
 
 `hmmm` (not yet decided): the license status of `ahbg/`, `research/`, `media/` and
 `docs/`. Files there that are modified copies of an MPL-2.0 or MIT component stay
@@ -239,7 +242,7 @@ under that component's license. Nothing else in these paths is licensed yet.
 Usage: when you copy code out of stack, take the license of the path it came from
 in the table above. For MPL-2.0 files, keep the license notice and publish your
 modifications to those files under MPL-2.0. For the Apache-2.0 skills, keep
-`skill-lib/ATTRIBUTION.md` and include `LICENSES/Apache-2.0.txt`. This section is
+`skill-lib/ATTRIBUTION.md` and include `skill-lib/LICENSES/Apache-2.0.txt`. This section is
 a licensing map, not legal advice.
 
 ## Boundaries
