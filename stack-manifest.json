@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "1e9a8f485c290bf7e3537e66cc72ac8ced749ce58fd4005647bd3981e071af1f",
+  "work_graph_sha256": "985d462de06bdf3c0e8cadfbac93d43f9cc72c82aca6712b6012512dea75350d",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -69,7 +69,8 @@
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved",
-      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
+      "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
+      "Interlace Encryption preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved"
     ]
   },
   "research_participants": [
@@ -189,6 +190,15 @@
       "relation": "retired historical evidence for a substituted GPT-produced recursive pairing/authenticated codec; does not implement, validate, or falsify Erin Spencer's intended multi-arity interleaving URPCS construction",
       "repository": "The-Interdependency/stack",
       "workspace": "research/urpcs/"
+    },
+    {
+      "authority_transfer": false,
+      "canonical_release": false,
+      "commit": "01f340ba5b4c5f107703233750768e201a41da68",
+      "participant_id": "interlace-encryption",
+      "relation": "new stack-local specification and research for Erin Spencer's intended multi-arity interleaving encryption construction; no URPCS implementation inheritance and no confidentiality/security standing yet",
+      "repository": "The-Interdependency/stack",
+      "workspace": "research/interlace-encryption/"
     },
     {
       "workspace": "research/english-gonol/",
