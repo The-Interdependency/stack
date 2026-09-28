@@ -102,14 +102,11 @@ multi-arity interleaving construction during GPT-assisted implementation. The re
 for the substitution is unresolved. Its tests and receipts apply only to that
 substituted codec and must not be used to validate or falsify the intended URPCS design.
 
-The replacement research path is `research/interlace-encryption/`. It starts from the
-actual declared mechanisms: ordered arity/division levels, section-local last/first
-inward interleaving, and final whole-sequence interleaving. It deliberately contains no
-URPCS implementation dependency and makes no security claim.
+The replacement research path is `research/weave/`. It owns the full intended encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity bit interleaving, and the eventual asymmetric public/private relation. The interleave is one layer, not the project identity. The workspace deliberately contains no URPCS implementation dependency and makes no security claim.
 
 ```bash
-cat research/interlace-encryption/SPECIFICATION.md
-cat research/interlace-encryption/BASE.json
+cat research/weave/SPECIFICATION.md
+cat research/weave/BASE.json
 ```
 
 ### Change stack structure
@@ -142,7 +139,7 @@ Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.
 constructor is an implemented candidate, not stack or language canon.
 URPCS is retired; its retained vectors and replay evidence establish behavior only
 of the substituted historical codec. No URPCS claim may be inferred from them.
-Interlace Encryption is new stack-local research and remains specification-first; no
+Weave is new stack-local research and remains specification-first; no
 confidentiality or production-security standing is implied by its placement.
 Psychsocio metafauna and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
