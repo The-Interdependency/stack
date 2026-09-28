@@ -13,10 +13,11 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
+- URPCS retirement UTC: `2026-09-28`; specification divergence discovered after conversation-history review; retained implementation is historical evidence only
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `7faa844d63c0e6d30727f3310f82c3ebc57193324b05f6c7979ed1fb90e7ef17`
+  `3e64527f16f0b3875a978df11c8d7e2f7a852a2c6f80a54608006533c3cd477c`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -121,11 +122,12 @@ Active post-graduation carrier research lives separately at
 bytes for audit purposes; it neither changes the accepted immutable release nor
 returns EPAC implementation authority to Stack.
 
-URPCS v1 lives separately at `research/urpcs/` as an authenticated recursive
-pairing codec experiment. Its accepted Laws 1–13, reference implementation, and
-byte-exact vectors establish bounded deterministic codec behavior only. The
-workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
-Stack supplies no confidentiality or production-security standing.
+URPCS at `research/urpcs/` is retired historical evidence. Conversation-history
+review established that the GPT-assisted implementation substituted a recursive
+pairing/authenticated codec for Erin Spencer's intended multi-arity interleaving
+construction. The reason for that substitution remains unresolved. All retained
+vectors, decoder evidence, and measurements describe only the substituted codec;
+they do not validate or falsify the intended URPCS design.
 
 ZFAE construction research lives at `research/zfae/`. Its exact research-only
 inputs are recorded above. The parser consumes the existing English GlyphGonol
@@ -194,17 +196,17 @@ Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
 transfers no semantic, geometric, measurement, or language-canon status.
 
-URPCS is likewise stack-local and ungraduated. The reference implementation and
-fixtures are executable evidence for one bounded profile, and an independently
-structured decoder reproduced its committed outputs. A confidentiality model,
-durable host state, and production-security review remain open.
+URPCS is retired, not a graduation candidate. The reference implementation and
+fixtures remain executable historical evidence for the substituted profile only.
+No result from that profile may be promoted to a claim about the intended URPCS
+construction.
 
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
-- URPCS remains stack-local research; bounded independent decoding survived, while confidentiality, durable rollback resistance, and release authority remain unresolved.
+- URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
 ## UCHC input candidate
