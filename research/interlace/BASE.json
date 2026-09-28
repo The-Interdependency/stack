@@ -1,0 +1,10 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "interlace",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "01f340ba5b4c5f107703233750768e201a41da68",
+  "canon_path": null,
+  "authority": "stack-local specification and research for Erin Spencer's intended multi-arity interleaving encryption construction",
+  "standing": "stack-local-research"
+}
