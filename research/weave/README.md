@@ -2,6 +2,10 @@
 
 Standing: **stack-local research; specification-first; no security claim**.
 
+[Executed source-bound results](REPORT.md) include literal-operation recovery,
+schedule equivalences and a fixed-map attack. The complete design remains untested;
+these results are not a whole-system verdict.
+
 Weave is the replacement research workspace for Erin Spencer's intended encryption
 system after retirement of the substituted URPCS implementation.
 
@@ -42,7 +46,7 @@ remain to be frozen.
 
 The bit transform is one load-bearing layer inside Weave.
 
-For an ordered sequence of division arities, with at least three levels:
+For an explicitly declared ordered sequence of division arities:
 
 1. divide the working bit sequence into the declared number of sections;
 2. within each section interleave inward from opposite ends:
@@ -52,8 +56,13 @@ For an ordered sequence of division arities, with at least three levels:
 4. after the declared levels, interleave the resulting whole sequence in the same
    opposite-end manner.
 
+Stage count is distinct from arity. “Arity three, minimum” does not establish a
+minimum of three stages; the unsupported assistant-added restriction is removed.
+
 Knowing the division choices, their order, and the number of levels is part of the
-reconstruction problem unless an explicit later law changes that role.
+reconstruction problem unless an explicit later law changes that role. Different
+schedule descriptions can induce the same map; measure equivalence rather than
+assuming schedule uniqueness.
 
 ### 5. Keying / recovery structure
 
@@ -76,7 +85,9 @@ must not happen again.
 ## Development discipline
 
 The full architecture is preserved from the start, while implementation proceeds in
-separable layers so each contribution can be falsified.
+separable layers so each contribution can be falsified. The order listed below is an
+assistant proposal, not a user-selected dependency law; actual dependencies must come
+from the complete source-backed construction.
 
 1. Freeze the complete dataflow and the inverse dependencies among gonol construction,
    threads, corpus/material, interleaving, and key structure.
@@ -102,13 +113,27 @@ cat research/weave/SPECIFICATION.md
 cat research/weave/BASE.json
 ```
 
+Reproduce the executed component evidence with Python's standard library only:
+
+```bash
+cd research/weave
+python probe.py > receipt.json
+python probe.py --check receipt.json
+python verify.py receipt.json
+```
+
+See [PLAN.md](PLAN.md) for the pre-execution scope and [REPORT.md](REPORT.md) for
+results, mathematical derivations, exact assumptions and the expected receipt digest.
+
 Do not use Weave to protect real secrets until an explicit security contract and
 adversarial evidence justify that use.
 
 ## hmmm
 
-Uneven section partitioning; exact ordering/composition of arity stages; thread
+Uneven section partition selection; exact ordering/composition of arity stages; thread
 formation; corpus/material derivation; hyperspace/gonol encoding; private-gonol binding;
 public/private key derivation; authentication, nonce/state, replay behavior; and the
 threat model remain unresolved. They are preserved as required design boundaries, not
-optional features and not invitations for model substitution.
+optional features and not invitations for model substitution. The original pre-substitution
+thirteen-law conversation was not recovered; a missing retrieved source is not evidence
+that the user never supplied the relation.
