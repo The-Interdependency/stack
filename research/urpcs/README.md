@@ -1,4 +1,15 @@
-# URPCS v1 recursive pairing codec research
+# URPCS — retired substituted implementation
+
+> [!WARNING]
+> **RETIRED — SPECIFICATION DIVERGENCE**
+>
+> This workspace does **not** implement Erin Spencer's intended URPCS construction and must not be used as evidence about that construction.
+>
+> During GPT-assisted implementation, the stated design was flattened/replaced by the recursive pairing/authenticated-codec profile preserved below. The intended design included successive arity-based partitioning (for example fifths, sevenths, then thirds), last-bit/first-bit interleaving within each partition, and whole-stream interleaving, with the selected divisions and number/order of arity levels forming part of the reconstruction problem. Those decisive mechanisms are absent from the implemented profile.
+>
+> The reason GPT substituted this different architecture is unresolved. The divergence was not recognized until after four days of work and review of the conversation history.
+>
+> **Standing:** historical evidence of the substituted implementation only. Passing vectors, decoder agreement, relational audits, and Möbius measurements below remain valid only for that substituted codec. They neither validate nor falsify the intended URPCS design. Do not extend, integrate, publish, or cite this workspace as URPCS except when documenting this failure.
 
 URPCS is a **stack-local authenticated codec experiment**. Laws 1–13 define a
 recursive pairing/witness format, deterministic framing, integrity verification,
@@ -192,7 +203,7 @@ and greater depths require a separately justified permitted-domain cap.
   authorization, and independent-origin synchronization remain blocked on
   explicit missing laws.
 
-## Next gates
+## Historical next gates — superseded by retirement
 
 1. A threat model and leakage model must precede any confidentiality claim.
 2. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
@@ -205,7 +216,7 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## hmmm
 
-The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
+Retirement supersedes further development of this workspace. The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
 After the public contract repair, the clean-room replay is
 `SURVIVED_INDEPENDENTLY` for the committed bounded profile. Confidentiality,
 durable host state, production security, and release authority remain open.
