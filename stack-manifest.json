@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "3e64527f16f0b3875a978df11c8d7e2f7a852a2c6f80a54608006533c3cd477c",
+  "work_graph_sha256": "1e9a8f485c290bf7e3537e66cc72ac8ced749ce58fd4005647bd3981e071af1f",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
