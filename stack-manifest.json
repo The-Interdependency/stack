@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "985d462de06bdf3c0e8cadfbac93d43f9cc72c82aca6712b6012512dea75350d",
+  "work_graph_sha256": "fa81adcbc37d2042bd6691857f3f97c26f8a16f89821bef66b8331df9553d251",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -70,7 +70,7 @@
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
-      "Interlace Encryption preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved"
+      "Weave preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved"
     ]
   },
   "research_participants": [
@@ -195,10 +195,10 @@
       "authority_transfer": false,
       "canonical_release": false,
       "commit": "01f340ba5b4c5f107703233750768e201a41da68",
-      "participant_id": "interlace-encryption",
-      "relation": "new stack-local specification and research for Erin Spencer's intended multi-arity interleaving encryption construction; no URPCS implementation inheritance and no confidentiality/security standing yet",
+      "participant_id": "weave",
+      "relation": "new stack-local specification and research for Erin Spencer's full intended multi-layer encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, reconstruction-dependent threads, corpus/material binding, multi-arity bit interleaving, and intended asymmetric key relation; no URPCS implementation inheritance and no security standing yet",
       "repository": "The-Interdependency/stack",
-      "workspace": "research/interlace-encryption/"
+      "workspace": "research/weave/"
     },
     {
       "workspace": "research/english-gonol/",
