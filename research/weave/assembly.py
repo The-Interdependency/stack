@@ -1,9 +1,8 @@
-"""Switchable full-scope Weave assembly with explicit unresolved operators.
+"""Switchable full-scope assembly; missing native laws never become identities.
 
-Usage: Pipeline(switches, operators).encrypt(value, PublicContext(...)).
-A missing enabled law refuses before any operator executes. Decryption uses the
-same lab recipe and the reverse order. This module defines no ciphertext wire
-format and supplies no substitute asymmetric relation. Source/rollout: ASSEMBLY.md.
+Usage: Pipeline(switches, operators).encrypt(value, PublicContext(...)). Transport
+operators remain explicitly classified even if combined with native operators.
+Native state stays inside selected operations. The trace contains no stage payloads.
 """
 from __future__ import annotations
 from dataclasses import dataclass, field, replace
@@ -37,7 +36,7 @@ class Switches:
 
 @dataclass(frozen=True)
 class Run:
-    """Lab result. recipe/events are sidecar evidence, NOT ciphertext headers."""
+    """Experimental result; recipe/events are not a proposed cipher wire format."""
     payload: Any = field(repr=False)
     recipe: tuple
     classification: str
@@ -85,7 +84,7 @@ class Pipeline:
         return tuple(problems)
 
     def recipe(self):
-        return (('proposal', 'assembly-v1'), ('key', self.switches['key']), *(
+        return (('proposal', 'assembly-v2'), ('key', self.switches['key']), *(
             (s.name, self.switches[s.name],
              self.operators[s.name].identity if self.switches[s.name] and s.name in self.operators else None)
             for s in STEPS))
@@ -99,7 +98,7 @@ class Pipeline:
             'forward_order': [s.name for s in STEPS if self.switches[s.name]],
             'inverse_order': [s.name for s in reversed(STEPS) if self.switches[s.name]],
             'missing': self.problems(),
-            'note': 'Read ASSEMBLY.md: proposed answers do not implement missing native laws.',
+            'note': 'IMPLEMENTED.md separates executable proposals from missing native laws.',
         }
 
     def encrypt(self, value, context: PublicContext):
@@ -111,7 +110,7 @@ class Pipeline:
         if type(context) is not PrivateContext:
             raise TypeError('decrypt requires explicit PrivateContext')
         if not isinstance(encrypted, Run) or encrypted.direction != 'encrypt':
-            raise TypeError('supply the encrypted lab result, not an invented wire format')
+            raise TypeError('supply the encrypted lab result')
         if encrypted.recipe != self.recipe():
             raise ValueError('inverse profile/operator identities differ from forward lab recipe')
         return self._run(encrypted.payload, context, reverse=True)
@@ -123,14 +122,17 @@ class Pipeline:
         if not self.switches['key']:
             context = (replace(context, public_key=None, private_key=None)
                        if type(context) is PrivateContext else replace(context, public_key=None))
-        events = []
-        fixture = False
+        if not self.switches['corpus']:
+            context = (replace(context, public_material={}, private_material={})
+                       if type(context) is PrivateContext else replace(context, public_material={}))
+        events, fixture, transport = [], False, False
         for step in reversed(STEPS) if reverse else STEPS:
             if not self.switches[step.name]:
                 events.append((step.name, 'OFF'))
                 continue
             op = self.operators[step.name]
             fixture = fixture or op.fixture
+            transport = transport or op.scope == 'transport'
             result = (op.inverse if reverse else op.forward)(value, context)
             if isinstance(result, Transition):
                 value = result.payload
@@ -138,7 +140,7 @@ class Pipeline:
             else:
                 value = result
             events.append((step.name, 'EXECUTED'))
-        classification = ('WIRING_ONLY' if fixture else
+        classification = ('WIRING_ONLY' if fixture else 'TRANSPORT_CANDIDATE' if transport else
                           'FULL_PROFILE_EXPERIMENT' if self.switches.complete else 'ABLATION_ONLY')
         return Run(value, self.recipe(), classification, tuple(events),
                    'decrypt' if reverse else 'encrypt')

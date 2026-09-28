@@ -1,0 +1,34 @@
+name: Weave modular experiments
+on:
+  pull_request:
+    paths:
+      - 'research/weave/**'
+      - '.github/workflows/weave.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/weave/**'
+      - '.github/workflows/weave.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch exact source without unpinned action dependencies
+        env:
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          git init .
+          git remote add origin https://github.com/The-Interdependency/stack.git
+          git fetch --depth=1 origin "$SOURCE_SHA"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - name: Verify assembly and provisional transport, not native cipher security
+        run: |
+          set -euo pipefail
+          python3 -VV
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
+          cat "$RUNNER_TEMP/weave-check.json"

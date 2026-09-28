@@ -1,8 +1,8 @@
-"""Typed operator contracts, not cryptographic constructions.
+"""Operator contracts; native objects retain their owners and identities.
 
-Usage: supply explicit Operator(forward, inverse, identity) instances to Pipeline.
-No network or storage. Native payloads pass unchanged except through selected operators.
-Roll back by removing this assembly; no producer code is changed.
+Usage: supply source-identified Operator instances to assembly.Pipeline. A transport
+candidate cannot earn a whole-Weave classification. Contexts are in-memory inputs,
+not ciphertext headers. No network, storage or key generation occurs here.
 """
 from __future__ import annotations
 from dataclasses import dataclass, field
@@ -11,7 +11,7 @@ from typing import Any, Callable, Mapping
 
 
 class Blocked(RuntimeError):
-    """An enabled law/input is missing; execution must not silently bypass it."""
+    """An enabled operation or required input is unresolved."""
 
 
 @dataclass(frozen=True)
@@ -43,7 +43,7 @@ class PrivateContext:
 
 @dataclass(frozen=True)
 class Streams:
-    """Exact bit streams; not a gonol, key or native thread-generation law."""
+    """Exact bit lanes, not a replacement gonol or secret-sharing construction."""
     lanes: tuple[tuple[int, ...], ...] = field(repr=False)
 
     def __post_init__(self):
@@ -58,11 +58,11 @@ class Streams:
 
 @dataclass(frozen=True)
 class Operator:
-    """A real transformation pair plus provenance; fixture is never full evidence."""
     forward: Callable[[Any, PublicContext], Any] = field(repr=False)
     inverse: Callable[[Any, PrivateContext], Any] = field(repr=False)
     identity: str
     fixture: bool = False
+    scope: str = 'native'
 
     def __post_init__(self):
         if not callable(self.forward) or not callable(self.inverse):
@@ -71,6 +71,8 @@ class Operator:
             raise ValueError('an explicit law/source identity is required')
         if type(self.fixture) is not bool:
             raise TypeError('fixture flag must be Boolean')
+        if self.scope not in ('native', 'transport'):
+            raise ValueError('operator scope must be native or transport')
 
 
 @dataclass(frozen=True)
@@ -84,11 +86,6 @@ class Step:
 
 @dataclass(frozen=True)
 class Transition:
-    """A stage may pass derived working parameters to later stages, not ciphertext.
-
-    This preserves coupled, message-dependent constructions. The inverse key law
-    must independently make whatever reverse parameters are needed available.
-    Updates are not copied into receipts and do not supply a missing private law.
-    """
+    """Working state only: inverse controls must be reconstructed independently."""
     payload: Any = field(repr=False)
     parameters: Mapping[str, Any] = field(default_factory=dict, repr=False)

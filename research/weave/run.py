@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Phone-sized Weave plan entrypoint. Usage: python run.py --off corpus --on auth.
+"""Phone-sized Weave entrypoint: python run.py demo; python run.py --off corpus.
 
-Prints exact switches and missing laws. No file writes, network, automatic native
-imports or encryption claims. Exit 2 = unresolved; exit 0 = plan has no blockers.
+The default full plan reports missing native laws. demo/enc/dec explicitly select
+the separate transport experiment CLI. Neither is a production cipher.
 """
 import argparse
 import json
+import sys
 from assembly import DEFAULTS, Pipeline, Switches
 
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] in ('demo', 'enc', 'dec'):
+        from lab import main as experiment
+        return experiment(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--off', action='append', choices=tuple(DEFAULTS), default=[])
     parser.add_argument('--on', action='append', choices=tuple(DEFAULTS), default=[])
