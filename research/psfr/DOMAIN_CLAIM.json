@@ -40,39 +40,39 @@
   ],
   "defined_terms": [
     {
-      "term_id": "psychsocio-metafauna.pattern-instance",
+      "term_id": "psfr.pattern-instance",
       "sense": "One embodied registration of a lineage in speech, text, ritual, image, software, institution, model state, memory, or behavior."
     },
     {
-      "term_id": "psychsocio-metafauna.pattern-lineage",
+      "term_id": "psfr.pattern-lineage",
       "sense": "The recoverable invariants joining related instances across transmission, mutation, embodiment, and time."
     },
     {
-      "term_id": "psychsocio-metafauna.host-pattern-coupling",
+      "term_id": "psfr.host-pattern-coupling",
       "sense": "A relation in which a reconstructed pattern participates in a host's identity maintenance, interpretation, or policy selection."
     },
     {
-      "term_id": "psychsocio-metafauna.identity-capture",
+      "term_id": "psfr.identity-capture",
       "sense": "A proposed subtype of host-pattern coupling in which defense or reproduction of a lineage becomes bound to identity maintenance while capacities to inspect, revise, refuse, or exit are materially narrowed."
     },
     {
-      "term_id": "psychsocio-metafauna.coalescence-site",
+      "term_id": "psfr.coalescence-site",
       "sense": "A compatibility relation between a host's current susceptibility topology and a lineage's affordance profile."
     },
     {
-      "term_id": "psychsocio-metafauna.coalescence-event",
+      "term_id": "psfr.coalescence-event",
       "sense": "A proposed threshold crossing at which several compatible host-pattern couplings become mutually reinforcing."
     },
     {
-      "term_id": "psychsocio-metafauna.capture-basin",
+      "term_id": "psfr.capture-basin",
       "sense": "A self-maintaining host-pattern configuration that persists after the initiating exposure or condition is reduced."
     },
     {
-      "term_id": "psychsocio-metafauna.accountable-i",
+      "term_id": "psfr.accountable-i",
       "sense": "A candidate coherency state among coupled arity sets capable of not-self(self) internal modeling, integrated policy selection, counterfactual revision, and enough causal persistence for action attribution."
     },
     {
-      "term_id": "psychsocio-metafauna.repair",
+      "term_id": "psfr.repair",
       "sense": "Restoration or enlargement of inspectability, plurality, refusal, revision, safe exit, and accountable action; not compulsory abandonment of a belief."
     },
     {
@@ -120,6 +120,10 @@
     {
       "term": "collective or distributed agent",
       "distinction": "A possible higher-order status requiring additional evidence of boundary, memory, integrated policy, counterfactual revision, and causal persistence."
+    },
+    {
+      "term": "psychsocio metafauna",
+      "distinction": "Historical predecessor name for this Stack research line. PSFR is the current research-area identity."
     }
   ],
   "known_namespace_collisions": [
