@@ -1,4 +1,4 @@
-"""Contract checks for the stack-local psychsocio-metafauna research artifact."""
+"""Contract checks for the stack-local PSFR research artifact."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ def load_json(name: str) -> dict:
     return json.loads((PROJECT / name).read_text(encoding="utf-8"))
 
 
-class PsychsocioMetafaunaContracts(unittest.TestCase):
+class PSFRContracts(unittest.TestCase):
     def test_domain_claim_is_explicitly_provisional_and_bounded(self) -> None:
         claim = load_json("DOMAIN_CLAIM.json")
 
@@ -39,8 +39,8 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             "hmmm",
         }
         self.assertFalse(required - claim.keys())
-        self.assertEqual(claim["term_id"], "psychsocio-metafauna.pattern-lineage")
-        self.assertEqual(claim["surface_form"], "psychsocio metafauna")
+        self.assertEqual(claim["term_id"], "psfr.psychosocial-fauna")
+        self.assertEqual(claim["surface_form"], "psychosocial fauna")
 
         status = claim["claim_status"].lower()
         self.assertIn("stack-local research", status)
@@ -81,7 +81,7 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
             stack_participant["commit"],
             "6c3f94b1e6d77e8f1abd36edc53da5fda596b416",
         )
-        self.assertEqual(stack_participant["path"], "research/psychsocio-metafauna/")
+        self.assertEqual(stack_participant["path"], "research/psfr/")
         self.assertIn("introduction snapshot", stack_participant["relation"])
         self.assertIn("avoiding recursive self-reference", stack_participant["relation"])
 
@@ -100,7 +100,7 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         self.assertEqual(observed, graph["work_graph_sha256"])
 
     def test_workflow_rechecks_when_metapat_base_changes(self) -> None:
-        workflow = (STACK / ".github" / "workflows" / "psychsocio-metafauna.yml").read_text(
+        workflow = (STACK / ".github" / "workflows" / "psfr.yml").read_text(
             encoding="utf-8"
         )
         self.assertGreaterEqual(
@@ -227,9 +227,9 @@ class PsychsocioMetafaunaContracts(unittest.TestCase):
         ):
             self.assertIn(phrase, prereg)
 
-        self.assertIn("psychsocio-metafauna/ # proposed", root_readme)
+        self.assertIn("psfr/                 # Psychosocial Fauna Research", root_readme)
         self.assertIn(
-            "Psychsocio metafauna and From Photons to the Macroverse remain stack-local\npre-graduation research.",
+            "PSFR and From Photons to the Macroverse remain stack-local\npre-graduation research.",
             root_readme,
         )
         self.assertIn("EPAC is graduated", root_readme)

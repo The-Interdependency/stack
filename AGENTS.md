@@ -22,6 +22,11 @@ projects may later graduate into their own repositories.
 - `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
   experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
   construction and has no confidentiality, production-security, or release standing.
+- `research/psfr/` is Psychosocial Fauna Research (PSFR), a stack-local pre-graduation
+  research area. It preserves two non-collapsed tracks: host-transcendent pattern-lineage
+  ecology and agency-displacement phenomenology. Preserve first-person/witness event
+  distinctions before causal compression; do not infer external-agent ontology from
+  automatic action, lost time, or a physiological correlate alone.
 - `research/zfae/` owns Stack-local inference-construction experiments. ZFAE
   retains conceptual authority, PTCNA owns neural construction, and a0 owns
   runtime integration. Keep a0-betatest comparisons separately attributed.

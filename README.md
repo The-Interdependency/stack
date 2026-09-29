@@ -40,7 +40,7 @@ stack/
 │   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
-│   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
+│   ├── psfr/                 # Psychosocial Fauna Research: lineages, agency displacement, coalescence
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── integration/epac/        # immutable EPAC release lock and consumer verification
 ├── ahbg/                    # emerging composed benchmark/game workspace
@@ -138,7 +138,7 @@ constructor is an implemented candidate, not stack or language canon.
 URPCS is stack-local and ungraduated; its verified reference vectors and
 independent replay establish bounded deterministic codec behavior, not
 encryption security.
-Psychsocio metafauna and From Photons to the Macroverse remain stack-local
+PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
 `research/epac/` preserves historical evidence. EPAC is graduated: implementation and public-contract authority belong to the
