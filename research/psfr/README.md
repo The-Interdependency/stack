@@ -4,7 +4,7 @@ PSFR is a stack-local research program for transmissible thought-pattern lineage
 
 ```text
 standing: proposed cross-domain theory
-version:  0.1.0
+version:  0.2.0
 owner:    research/psfr/
 canon:    no
 clinical or diagnostic use: no
