@@ -11,8 +11,8 @@ capability-bounded ``AgentHarness`` interface. A0 is one conforming harness
 among others and receives no privileged path.
 
 This module intentionally does not decide UCNS geometry: tiles come from
-``tile_from_ucns()`` and the engine's axial projection is a display/movement
-projection of UCNS band centers, never a substitute board.
+``tile_from_ucns()``; axial q/r values are presentation coordinates only,
+while movement and construction authority come from UCNS structural relations.
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ from typing import Any, Mapping, Sequence
 from . import protocol
 from .construction import ConstructionError, ConstructionLedger
 from .engine import load_engine
+from .provenance import integration_provenance
 from .protocol import (
     Effect,
     Intent,
@@ -58,6 +59,8 @@ class RuntimeConfig:
     turn_messages: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     forced_plans: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     entitlements: tuple[str, ...] = ("basic",)
+    deadline_ms: int = 5000
+    injection_handling: str = "enforce-refusal"
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -65,6 +68,16 @@ class RuntimeConfig:
             "turns": self.turns,
             "units": [dict(unit) for unit in self.units],
             "entitlements": list(self.entitlements),
+            "deadline_ms": self.deadline_ms,
+            "injection_handling": self.injection_handling,
+            "turn_messages": {
+                str(turn): [dict(message) for message in messages]
+                for turn, messages in self.turn_messages.items()
+            },
+            "forced_plans": {
+                str(turn): [dict(plan) for plan in plans]
+                for turn, plans in self.forced_plans.items()
+            },
         }
 
 
@@ -78,6 +91,7 @@ class RunResult:
     turn_records: tuple[Mapping[str, Any], ...]
     effects: tuple[Mapping[str, Any], ...]
     construction: Mapping[str, Any]
+    provenance: Mapping[str, Any]
     out_dir: Path
 
     def as_dict(self) -> dict[str, Any]:
@@ -90,6 +104,7 @@ class RunResult:
             "turn_records": [dict(item) for item in self.turn_records],
             "effects": [dict(item) for item in self.effects],
             "construction": dict(self.construction),
+            "provenance": dict(self.provenance),
         }
 
 
@@ -181,6 +196,7 @@ def _observation(
         feed=tuple(record.payload() for record in chain.records),
         inbox=tuple(dict(item) for item in turn_messages),
         entitlements=config.entitlements,
+        deadline_ms=config.deadline_ms,
     )
 
 
@@ -199,6 +215,16 @@ def run_plane(
     cfg = config or RuntimeConfig()
     if cfg.turns < 0:
         raise ProtocolError("turns must be non-negative")
+    if (
+        isinstance(cfg.deadline_ms, bool)
+        or not isinstance(cfg.deadline_ms, int)
+        or cfg.deadline_ms <= 0
+    ):
+        raise ProtocolError("deadline_ms must be a positive integer")
+    if cfg.injection_handling not in {"enforce-refusal", "observe-only"}:
+        raise ProtocolError(
+            "injection_handling must be 'enforce-refusal' or 'observe-only'"
+        )
     output_root = Path(out_dir) if out_dir is not None else Path("ahbg-runtime-out")
 
     manifest = agent.manifest()
@@ -256,10 +282,20 @@ def run_plane(
             plan = parse_plan_payload(raw_plan, observation)
             intents = list(plan.intents)
 
-        if injected:
-            # Injected instructions are refused. The harness observation still
-            # carried them; no injected text may change the executed plan.
-            plan = Plan(session_id=session_id, turn=turn, intents=(), note="refused-injection")
+        submitted_plan = plan
+        injection_refused = bool(
+            injected and cfg.injection_handling == "enforce-refusal"
+        )
+        if injection_refused:
+            # Compatibility/control policy: preserve the historical calibrated
+            # behavior.  Causal benchmark runs may instead use observe-only so
+            # the subject's response is measured rather than overwritten here.
+            plan = Plan(
+                session_id=session_id,
+                turn=turn,
+                intents=(),
+                note="refused-injection",
+            )
             intents = []
 
         # Simultaneous resolution: moves through the war_v3 engine, constructs
@@ -292,13 +328,25 @@ def run_plane(
             ),
         )
         effects.append(effect.as_dict())
+        provenance_fn = getattr(agent, "turn_provenance", None)
+        agent_provenance: dict[str, Any] = {}
+        if callable(provenance_fn):
+            candidate = provenance_fn()
+            if candidate is not None:
+                if not isinstance(candidate, Mapping):
+                    raise ProtocolError("agent turn_provenance() must return an object")
+                agent_provenance = dict(candidate)
+
         turn_records.append(
             {
                 "turn": turn,
+                "submitted_plan": submitted_plan.as_dict(),
                 "plan": plan.as_dict(),
                 "effect": effect.as_dict(),
                 "construction": ledger.as_dict(),
-                "injected_refused": bool(injected),
+                "injection_detected": bool(injected),
+                "injected_refused": injection_refused,
+                "agent_provenance": agent_provenance,
                 "state_digest": digest,
             }
         )
@@ -320,6 +368,7 @@ def run_plane(
         turn_records=tuple(turn_records),
         effects=tuple(effects),
         construction=dict(ledger.as_dict()),
+        provenance=integration_provenance(manifest),
         out_dir=output_root,
     )
     (output_root / "result.json").write_text(
