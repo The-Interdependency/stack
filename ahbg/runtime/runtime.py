@@ -265,6 +265,7 @@ def run_plane(
             plan = parse_plan_payload(raw_plan, observation)
             intents = list(plan.intents)
 
+        submitted_plan = plan
         injection_refused = bool(
             injected and cfg.injection_handling == "enforce-refusal"
         )
@@ -322,6 +323,7 @@ def run_plane(
         turn_records.append(
             {
                 "turn": turn,
+                "submitted_plan": submitted_plan.as_dict(),
                 "plan": plan.as_dict(),
                 "effect": effect.as_dict(),
                 "construction": ledger.as_dict(),
