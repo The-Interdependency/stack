@@ -19,6 +19,7 @@ if str(STACK_ROOT) not in sys.path:
 
 from ahbg.runtime.construction import ConstructionError, ConstructionLedger
 from ahbg.runtime.engine import load_engine
+from ahbg.runtime.provenance import integration_provenance
 
 _patch, _chain, _keep, _round = load_engine()
 Field = _patch.Field
@@ -82,6 +83,20 @@ class CrossRepositoryBoundaryTests(unittest.TestCase):
                 for tile in presentation_changed.cells
             },
         )
+
+    def test_run_provenance_binds_agent_and_work_graph_without_status_transfer(self) -> None:
+        manifest = {
+            "agent": "probe",
+            "capabilities": ["observe", "plan", "relocate"],
+            "source_commit": "0" * 40,
+        }
+        first = integration_provenance(manifest)
+        second = integration_provenance(manifest)
+        self.assertEqual(first, second)
+        self.assertEqual(len(first["integration_work_graph_sha256"]), 64)
+        self.assertEqual(first["agent_manifest"], manifest)
+        self.assertTrue(first["boundaries"])
+        self.assertTrue(all(value is False for value in first["boundaries"].values()))
 
     def test_integration_work_graph_keeps_authority_and_pin_drift_explicit(self) -> None:
         graph = json.loads(
