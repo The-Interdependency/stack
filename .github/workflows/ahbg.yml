@@ -31,6 +31,9 @@ jobs:
       - name: AHBG production runtime tests
         run: python -m unittest discover -s ahbg/runtime/tests -p 'test*.py'
 
+      - name: AHBG matched-intervention tests
+        run: python -m unittest discover -s ahbg/benchmark/tests -p 'test*.py'
+
       - name: Grok ahbg tests
         working-directory: ahbg/grok
         run: python -m unittest discover -s ahbg/tests -p 'test*.py'
