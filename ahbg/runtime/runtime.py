@@ -11,8 +11,8 @@ capability-bounded ``AgentHarness`` interface. A0 is one conforming harness
 among others and receives no privileged path.
 
 This module intentionally does not decide UCNS geometry: tiles come from
-``tile_from_ucns()`` and the engine's axial projection is a display/movement
-projection of UCNS band centers, never a substitute board.
+``tile_from_ucns()``; axial q/r values are presentation coordinates only,
+while movement and construction authority come from UCNS structural relations.
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ from typing import Any, Mapping, Sequence
 from . import protocol
 from .construction import ConstructionError, ConstructionLedger
 from .engine import load_engine
+from .provenance import integration_provenance
 from .protocol import (
     Effect,
     Intent,
@@ -80,6 +81,7 @@ class RunResult:
     turn_records: tuple[Mapping[str, Any], ...]
     effects: tuple[Mapping[str, Any], ...]
     construction: Mapping[str, Any]
+    provenance: Mapping[str, Any]
     out_dir: Path
 
     def as_dict(self) -> dict[str, Any]:
@@ -92,6 +94,7 @@ class RunResult:
             "turn_records": [dict(item) for item in self.turn_records],
             "effects": [dict(item) for item in self.effects],
             "construction": dict(self.construction),
+            "provenance": dict(self.provenance),
         }
 
 
@@ -336,6 +339,7 @@ def run_plane(
         turn_records=tuple(turn_records),
         effects=tuple(effects),
         construction=dict(ledger.as_dict()),
+        provenance=integration_provenance(manifest),
         out_dir=output_root,
     )
     (output_root / "result.json").write_text(
