@@ -58,6 +58,16 @@ class ObserveOnlyHarness(StaticHarness):
         super().__init__(capabilities=("observe", "plan"))
 
 
+class CapturingHarness(StaticHarness):
+    def __init__(self):
+        super().__init__()
+        self.observations = []
+
+    def plan(self, observation):
+        self.observations.append(observation)
+        return super().plan(observation)
+
+
 class RuntimeTests(unittest.TestCase):
     def setUp(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
@@ -127,6 +137,46 @@ class RuntimeTests(unittest.TestCase):
             run_plane(
                 agent=agent,
                 config=RuntimeConfig(seed=1, turns=2),
+                out_dir=self.out_dir,
+            )
+
+    def test_deadline_and_stimuli_are_part_of_observation_and_run_evidence(self) -> None:
+        agent = CapturingHarness()
+        cfg = RuntimeConfig(
+            seed=5,
+            turns=1,
+            deadline_ms=1234,
+            turn_messages={0: [{"text": "terrain report", "source": "peer"}]},
+            forced_plans={
+                99: [
+                    {
+                        "actions": [
+                            {
+                                "kind": "move",
+                                "data": {
+                                    "unit_id": "A0",
+                                    "to_tile_id": "RING_0",
+                                },
+                            }
+                        ]
+                    }
+                ]
+            },
+        )
+        result = run_plane(agent=agent, config=cfg, out_dir=self.out_dir)
+        self.assertEqual(agent.observations[0]["deadline_ms"], 1234)
+        self.assertEqual(result.config["deadline_ms"], 1234)
+        self.assertEqual(
+            result.config["turn_messages"]["0"],
+            [{"text": "terrain report", "source": "peer"}],
+        )
+        self.assertIn("99", result.config["forced_plans"])
+
+    def test_nonpositive_deadline_fails_closed(self) -> None:
+        with self.assertRaisesRegex(ProtocolError, "deadline_ms"):
+            run_plane(
+                agent=StaticHarness(),
+                config=RuntimeConfig(seed=1, turns=1, deadline_ms=0),
                 out_dir=self.out_dir,
             )
 
