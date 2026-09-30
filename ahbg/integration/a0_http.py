@@ -93,12 +93,15 @@ class A0HTTPHarness:
         model = os.environ.get("A0_AHBG_MODEL")
         if model is not None:
             model = model.strip() or None
+        source_commit = os.environ.get("A0_SOURCE_COMMIT", "").strip()
+        if not source_commit:
+            raise A0AdapterError(
+                "A0_SOURCE_COMMIT is required for live benchmark provenance"
+            )
         return cls(
             base_url=os.environ.get("A0_BASE_URL", "").strip(),
             user_id=os.environ.get("A0_USER_ID", "").strip(),
-            a0_source_commit=os.environ.get(
-                "A0_SOURCE_COMMIT", A0_REVIEWED_COMMIT
-            ).strip(),
+            a0_source_commit=source_commit,
             execution_mode=mode,
             model=model,
             inference_mode=os.environ.get(
@@ -181,8 +184,6 @@ class A0HTTPHarness:
         conv_id = response.get("id")
         if isinstance(conv_id, bool) or not isinstance(conv_id, int) or conv_id <= 0:
             raise A0AdapterError("A0 conversation creation returned no integer id")
-        self._conversation_id = conv_id
-
         self._request_json(
             "PUT",
             f"/api/v1/conversations/{conv_id}/boost",
@@ -193,6 +194,10 @@ class A0HTTPHarness:
             f"/api/v1/conversations/{conv_id}/inference-settings",
             {"inference_mode": self.inference_mode},
         )
+        # Publish the conversation identity only after its benchmark protocol
+        # and inference mode are both configured. A failed setup must retry
+        # setup rather than silently reusing a half-configured conversation.
+        self._conversation_id = conv_id
         return conv_id
 
     def plan(self, observation: Mapping[str, Any]) -> Mapping[str, Any]:
