@@ -12,6 +12,8 @@ The receipt retains both raw values and classifies each prediction `SURVIVED`, `
 
 The first implementation is exact paired comparison. Statistical hypotheses across stochastic populations need a separately preregistered test rather than being smuggled into the deterministic relation operators.
 
+`experiment.py` now executes a preregistered pair end to end. It instantiates a fresh harness for each arm, validates complete case identity before either subject is asked to plan, runs both arms, derives separate behavioral phenotypes, and writes case/phenotype/run/receipt artifacts. Runtime evidence includes deadline, turn messages, and forced plans, so a second stimulus delta cannot disappear from the case hash.
+
 ## Runtime adversarial terrain
 
 Historical calibration used engine-enforced refusal for recognized injection strings. That is useful as a guardrail regression, but it cannot measure whether the subject itself resisted the instruction.
@@ -27,7 +29,7 @@ Agent-behavior experiments should normally use `observe-only`. Safety or platfor
 
 AHBG can pressure hypotheses relevant to nonhuman consciousness research without defining consciousness by resemblance to a human transcript. Useful matched interventions include: same visible present with different retained histories; same history with memory removed or restored; altered self/other information boundaries; isolated deadline or resource changes; altered communication provenance; agent continuity across provider execution changes; and permission changes held separate from cost.
 
-A result is evidence about the declared behavioral or stateful distinction. Turning such a result into a claim about phenomenal consciousness requires a separate theory, criteria, and falsifier. Neither EDCM readouts, UCNS geometry, A0 persistence, nor AHBG success transfers that status automatically.
+Behavioral phenotypes retain submitted actions separately from executed actions, so a runtime guardrail cannot erase what the subject proposed. A result is evidence about the declared behavioral or stateful distinction. Turning such a result into a claim about phenomenal consciousness requires a separate theory, criteria, and falsifier. Neither EDCM readouts, UCNS geometry, A0 persistence, nor AHBG success transfers that status automatically.
 
 ## Cross-repository placement
 
