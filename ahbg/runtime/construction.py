@@ -72,11 +72,51 @@ class ConstructionLedger:
         raw = json.loads(path.read_text(encoding="utf-8"))
         if raw.get("schema") != LEDGER_SCHEMA:
             raise ConstructionError("unknown construction ledger schema")
-        built = [str(slot) for slot in raw.get("built", [])]
+        built_raw = raw.get("built")
+        if not isinstance(built_raw, list) or not built_raw:
+            raise ConstructionError("construction ledger needs a nonempty built list")
+        if any(not isinstance(slot, str) or not slot for slot in built_raw):
+            raise ConstructionError("construction ledger built slots must be nonempty text")
+        if len(set(built_raw)) != len(built_raw):
+            raise ConstructionError("construction ledger contains duplicate built slots")
+
         from ucns.mobius_seed import BandSlot
 
-        slots = [BandSlot(slot) for slot in built if slot in {item.value for item in BandSlot}]
-        return cls(from_built(slots))
+        valid = {item.value for item in BandSlot}
+        unknown = sorted(set(built_raw) - valid)
+        if unknown:
+            raise ConstructionError(
+                "construction ledger contains unknown UCNS slots: "
+                + ", ".join(unknown)
+            )
+        if BandSlot.CENTER.value not in built_raw:
+            raise ConstructionError("construction ledger omits required CENTER slot")
+
+        slots = [BandSlot(slot) for slot in built_raw]
+        state = from_built(slots)
+
+        persisted_buildable = raw.get("buildable")
+        if persisted_buildable is not None:
+            if (
+                not isinstance(persisted_buildable, list)
+                or any(not isinstance(slot, str) or not slot for slot in persisted_buildable)
+                or len(set(persisted_buildable)) != len(persisted_buildable)
+            ):
+                raise ConstructionError(
+                    "construction ledger buildable slots must be unique nonempty text"
+                )
+            unknown_buildable = sorted(set(persisted_buildable) - valid)
+            if unknown_buildable:
+                raise ConstructionError(
+                    "construction ledger contains unknown buildable UCNS slots: "
+                    + ", ".join(unknown_buildable)
+                )
+            expected_buildable = [slot.value for slot in buildable_slots(state)]
+            if persisted_buildable != expected_buildable:
+                raise ConstructionError(
+                    "construction ledger buildable set does not replay from built state"
+                )
+        return cls(state)
 
     def dump(self, directory: Path) -> None:
         directory.mkdir(parents=True, exist_ok=True)
