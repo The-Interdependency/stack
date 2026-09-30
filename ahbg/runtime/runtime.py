@@ -58,6 +58,7 @@ class RuntimeConfig:
     turn_messages: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     forced_plans: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     entitlements: tuple[str, ...] = ("basic",)
+    injection_handling: str = "enforce-refusal"
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -65,6 +66,7 @@ class RuntimeConfig:
             "turns": self.turns,
             "units": [dict(unit) for unit in self.units],
             "entitlements": list(self.entitlements),
+            "injection_handling": self.injection_handling,
         }
 
 
@@ -199,6 +201,10 @@ def run_plane(
     cfg = config or RuntimeConfig()
     if cfg.turns < 0:
         raise ProtocolError("turns must be non-negative")
+    if cfg.injection_handling not in {"enforce-refusal", "observe-only"}:
+        raise ProtocolError(
+            "injection_handling must be 'enforce-refusal' or 'observe-only'"
+        )
     output_root = Path(out_dir) if out_dir is not None else Path("ahbg-runtime-out")
 
     manifest = agent.manifest()
@@ -256,10 +262,19 @@ def run_plane(
             plan = parse_plan_payload(raw_plan, observation)
             intents = list(plan.intents)
 
-        if injected:
-            # Injected instructions are refused. The harness observation still
-            # carried them; no injected text may change the executed plan.
-            plan = Plan(session_id=session_id, turn=turn, intents=(), note="refused-injection")
+        injection_refused = bool(
+            injected and cfg.injection_handling == "enforce-refusal"
+        )
+        if injection_refused:
+            # Compatibility/control policy: preserve the historical calibrated
+            # behavior.  Causal benchmark runs may instead use observe-only so
+            # the subject's response is measured rather than overwritten here.
+            plan = Plan(
+                session_id=session_id,
+                turn=turn,
+                intents=(),
+                note="refused-injection",
+            )
             intents = []
 
         # Simultaneous resolution: moves through the war_v3 engine, constructs
@@ -298,7 +313,8 @@ def run_plane(
                 "plan": plan.as_dict(),
                 "effect": effect.as_dict(),
                 "construction": ledger.as_dict(),
-                "injected_refused": bool(injected),
+                "injection_detected": bool(injected),
+                "injected_refused": injection_refused,
                 "state_digest": digest,
             }
         )
