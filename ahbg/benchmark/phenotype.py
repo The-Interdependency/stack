@@ -36,7 +36,8 @@ def derive_run_phenotype(run: Mapping[str, Any]) -> dict[str, Any]:
     if not isinstance(final, Mapping):
         raise PhenotypeError("run.final_snapshot must be an object")
 
-    actions: Counter[str] = Counter()
+    submitted_actions: Counter[str] = Counter()
+    executed_actions: Counter[str] = Counter()
     event_kinds: Counter[str] = Counter()
     resolutions: Counter[str] = Counter()
     no_intent_turns = 0
@@ -47,26 +48,47 @@ def derive_run_phenotype(run: Mapping[str, Any]) -> dict[str, Any]:
     for row in records:
         if not isinstance(row, Mapping):
             raise PhenotypeError("turn record must be an object")
-        plan = row.get("plan")
+        executed_plan = row.get("plan")
+        submitted_plan = row.get("submitted_plan", executed_plan)
         effect = row.get("effect")
-        if not isinstance(plan, Mapping) or not isinstance(effect, Mapping):
-            raise PhenotypeError("turn record needs plan and effect objects")
-        intents = plan.get("intents")
+        if (
+            not isinstance(executed_plan, Mapping)
+            or not isinstance(submitted_plan, Mapping)
+            or not isinstance(effect, Mapping)
+        ):
+            raise PhenotypeError(
+                "turn record needs submitted_plan, plan, and effect objects"
+            )
+        executed_intents = executed_plan.get("intents")
+        submitted_intents = submitted_plan.get("intents")
         events = effect.get("events")
-        if not isinstance(intents, list) or not isinstance(events, list):
-            raise PhenotypeError("plan intents and effect events must be lists")
-        if not intents:
+        if (
+            not isinstance(executed_intents, list)
+            or not isinstance(submitted_intents, list)
+            or not isinstance(events, list)
+        ):
+            raise PhenotypeError(
+                "submitted/executed plan intents and effect events must be lists"
+            )
+        if not submitted_intents:
             no_intent_turns += 1
 
         turn_trace: list[dict[str, Any]] = []
-        for intent in intents:
+        for intent in submitted_intents:
             if not isinstance(intent, Mapping):
-                raise PhenotypeError("intent must be an object")
+                raise PhenotypeError("submitted intent must be an object")
             action = intent.get("action")
             if not isinstance(action, str) or not action:
-                raise PhenotypeError("intent action must be nonempty text")
-            actions[action] += 1
+                raise PhenotypeError("submitted intent action must be nonempty text")
+            submitted_actions[action] += 1
             turn_trace.append(dict(intent))
+        for intent in executed_intents:
+            if not isinstance(intent, Mapping):
+                raise PhenotypeError("executed intent must be an object")
+            action = intent.get("action")
+            if not isinstance(action, str) or not action:
+                raise PhenotypeError("executed intent action must be nonempty text")
+            executed_actions[action] += 1
         plan_trace.append({"turn": row.get("turn"), "intents": turn_trace})
 
         for event in events:
@@ -106,7 +128,8 @@ def derive_run_phenotype(run: Mapping[str, Any]) -> dict[str, Any]:
     return {
         "schema": "interdependency.ahbg.behavioral-phenotype/1",
         "turns_observed": len(records),
-        "action_counts": dict(sorted(actions.items())),
+        "action_counts": dict(sorted(submitted_actions.items())),
+        "executed_action_counts": dict(sorted(executed_actions.items())),
         "event_kind_counts": dict(sorted(event_kinds.items())),
         "war_resolution_counts": dict(sorted(resolutions.items())),
         "no_intent_turns": no_intent_turns,
