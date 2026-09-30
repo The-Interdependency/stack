@@ -3,7 +3,7 @@
 Environment:
   A0_BASE_URL              required, for example http://127.0.0.1:8000
   A0_USER_ID               required
-  A0_SOURCE_COMMIT         exact deployed A0 commit (defaults to reviewed commit)
+  A0_SOURCE_COMMIT         required exact deployed A0 commit
   A0_AHBG_EXECUTION_MODE   model | a0-continuity
   A0_AHBG_MODEL            required only for model mode
   A0_AHBG_INFERENCE_MODE   direct (default) | agentic | swarm
