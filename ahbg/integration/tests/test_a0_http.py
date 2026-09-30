@@ -91,7 +91,10 @@ class A0HTTPHarnessTests(unittest.TestCase):
         ]
         self.assertEqual(len(sends), 2)
         self.assertTrue(all(row["model"] == "gpt-test" for row in sends))
-        self.assertEqual(result.agent_manifest["execution_mode"], "model")
+        self.assertEqual(
+            result.provenance["agent_manifest"]["execution_mode"],
+            "model",
+        )
         for record in result.turn_records:
             provenance = record["agent_provenance"]
             self.assertEqual(provenance["assistant_model"], "openai")
