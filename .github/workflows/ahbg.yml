@@ -28,6 +28,9 @@ jobs:
         working-directory: ahbg/grok
         run: python -m unittest discover -s a0/tests -p 'test*.py'
 
+      - name: AHBG production runtime tests
+        run: python -m unittest discover -s ahbg/runtime/tests -p 'test*.py'
+
       - name: Grok ahbg tests
         working-directory: ahbg/grok
         run: python -m unittest discover -s ahbg/tests -p 'test*.py'
