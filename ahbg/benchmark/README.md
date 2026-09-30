@@ -35,7 +35,7 @@ See `../integration/work-graph.json`.
 
 - UCNS owns geometry. AHBG now reads movement adjacency from UCNS structural-vesica relations instead of deriving movement from its q/r display projection.
 - TIWCG is the containing game-system design. AHBG does not grow a parallel card/rules kernel while that common kernel remains unimplemented.
-- Current A0 is a benchmark subject/harness peer. For model-specific trials pin the provider. For A0-continuity trials provider failover may be part of the agent runtime only if attempted/actual provider and tool-boundary provenance are retained.
+- Current A0 is a benchmark subject/harness peer. The HTTP adapter uses the ordinary AgentHarness boundary. Model-specific trials pin the provider; A0-continuity trials omit that pin and retain attempted/actual provider plus tool-boundary provenance.
 - EDCM may become a first-class conflict measurement input under TIWCG, but the exact EDCM-to-game-state mapping is still unresolved. Candidate measurements do not silently acquire legality or truth authority.
 - UCHC may later provide source-bound language evidence for observations; it does not choose actions or conclusions for the subject.
 - EPAC's held-out-validation discipline is relevant. Its chemistry/energy domain content is not AHBG resource semantics.
@@ -43,7 +43,7 @@ See `../integration/work-graph.json`.
 ## hmmm
 
 - Population/statistical matched-intervention contracts are not implemented.
-- Current A0 has not yet been connected through a live AHBG external adapter.
+- The current-A0 HTTP adapter is implemented and contract-tested against the reviewed API shape; it still needs a live run against an exact deployed A0 commit.
 - The stack UCNS pin predates the native Möbius frame-comparison/lift advances; those advances remain reviewed but unconsumed here until a coherent pin update is made.
 - The exact EDCM conflict-to-state mapping remains undefined.
 - The benchmark currently produces evidence relevant to competing theories of agency and consciousness; it does not contain a validated consciousness decision rule.
