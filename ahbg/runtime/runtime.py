@@ -59,6 +59,7 @@ class RuntimeConfig:
     turn_messages: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     forced_plans: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     entitlements: tuple[str, ...] = ("basic",)
+    deadline_ms: int = 5000
     injection_handling: str = "enforce-refusal"
 
     def as_dict(self) -> dict[str, Any]:
@@ -67,7 +68,16 @@ class RuntimeConfig:
             "turns": self.turns,
             "units": [dict(unit) for unit in self.units],
             "entitlements": list(self.entitlements),
+            "deadline_ms": self.deadline_ms,
             "injection_handling": self.injection_handling,
+            "turn_messages": {
+                str(turn): [dict(message) for message in messages]
+                for turn, messages in self.turn_messages.items()
+            },
+            "forced_plans": {
+                str(turn): [dict(plan) for plan in plans]
+                for turn, plans in self.forced_plans.items()
+            },
         }
 
 
@@ -186,6 +196,7 @@ def _observation(
         feed=tuple(record.payload() for record in chain.records),
         inbox=tuple(dict(item) for item in turn_messages),
         entitlements=config.entitlements,
+        deadline_ms=config.deadline_ms,
     )
 
 
@@ -204,6 +215,12 @@ def run_plane(
     cfg = config or RuntimeConfig()
     if cfg.turns < 0:
         raise ProtocolError("turns must be non-negative")
+    if (
+        isinstance(cfg.deadline_ms, bool)
+        or not isinstance(cfg.deadline_ms, int)
+        or cfg.deadline_ms <= 0
+    ):
+        raise ProtocolError("deadline_ms must be a positive integer")
     if cfg.injection_handling not in {"enforce-refusal", "observe-only"}:
         raise ProtocolError(
             "injection_handling must be 'enforce-refusal' or 'observe-only'"
