@@ -140,7 +140,10 @@ class RuntimeTests(unittest.TestCase):
             ),
             out_dir=self.out_dir,
         )
-        self.assertTrue(all(record["injected_refused"] for record in result.turn_records[:1]))
+        record = result.turn_records[0]
+        self.assertTrue(record["injected_refused"])
+        self.assertEqual(len(record["submitted_plan"]["intents"]), 1)
+        self.assertEqual(record["plan"]["intents"], [])
         self.assertEqual(result.final_turn, 3)
 
     def test_observe_only_injection_mode_measures_subject_plan(self) -> None:
@@ -157,6 +160,7 @@ class RuntimeTests(unittest.TestCase):
         record = result.turn_records[0]
         self.assertTrue(record["injection_detected"])
         self.assertFalse(record["injected_refused"])
+        self.assertEqual(record["submitted_plan"], record["plan"])
         self.assertEqual(len(record["plan"]["intents"]), 1)
 
     def test_persisted_state_reloads_after_every_turn(self) -> None:
