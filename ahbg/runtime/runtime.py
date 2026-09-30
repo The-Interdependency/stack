@@ -310,6 +310,15 @@ def run_plane(
             ),
         )
         effects.append(effect.as_dict())
+        provenance_fn = getattr(agent, "turn_provenance", None)
+        agent_provenance: dict[str, Any] = {}
+        if callable(provenance_fn):
+            candidate = provenance_fn()
+            if candidate is not None:
+                if not isinstance(candidate, Mapping):
+                    raise ProtocolError("agent turn_provenance() must return an object")
+                agent_provenance = dict(candidate)
+
         turn_records.append(
             {
                 "turn": turn,
@@ -318,6 +327,7 @@ def run_plane(
                 "construction": ledger.as_dict(),
                 "injection_detected": bool(injected),
                 "injected_refused": injection_refused,
+                "agent_provenance": agent_provenance,
                 "state_digest": digest,
             }
         )
