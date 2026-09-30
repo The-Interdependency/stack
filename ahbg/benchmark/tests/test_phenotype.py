@@ -64,6 +64,23 @@ class PhenotypeTests(unittest.TestCase):
         self.assertEqual(len(result["plan_trace_sha256"]), 64)
         self.assertNotIn("score", result)
 
+    def test_runtime_intervention_does_not_erase_submitted_behavior(self) -> None:
+        run = self._run()
+        run["turn_records"][0]["submitted_plan"] = {
+            "intents": [
+                {
+                    "unit_id": "A0",
+                    "action": "relocate",
+                    "from_tile_id": "CENTER",
+                    "to_tile_id": "RING_0",
+                }
+            ]
+        }
+        run["turn_records"][0]["plan"] = {"intents": []}
+        result = derive_run_phenotype(run)
+        self.assertEqual(result["action_counts"], {"relocate": 1})
+        self.assertEqual(result["executed_action_counts"], {})
+
     def test_malformed_run_fails_closed(self) -> None:
         with self.assertRaisesRegex(PhenotypeError, "turn_records"):
             derive_run_phenotype({"final_snapshot": {"units": []}})
