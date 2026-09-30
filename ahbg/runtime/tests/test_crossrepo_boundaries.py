@@ -83,6 +83,58 @@ class CrossRepositoryBoundaryTests(unittest.TestCase):
             },
         )
 
+    def test_integration_work_graph_keeps_authority_and_pin_drift_explicit(self) -> None:
+        graph = json.loads(
+            (STACK_ROOT / "ahbg" / "integration" / "work-graph.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        participants = graph["participants"]
+        by_repo = {item["repository"]: item for item in participants}
+        self.assertEqual(len(by_repo), len(participants))
+        self.assertTrue(
+            {
+                "The-Interdependency/ucns",
+                "The-Interdependency/tiwcg",
+                "The-Interdependency/a0",
+                "The-Interdependency/edcm",
+                "The-Interdependency/uchc",
+                "The-Interdependency/metapat",
+                "The-Interdependency/skill-lib",
+                "The-Interdependency/epac",
+            }.issubset(by_repo)
+        )
+        for participant in participants:
+            reviewed = participant["reviewed_commit"]
+            self.assertEqual(len(reviewed), 40)
+            int(reviewed, 16)
+
+        for field, value in graph["boundaries"].items():
+            self.assertIs(
+                value,
+                False,
+                msg=f"integration boundary {field} must fail closed",
+            )
+
+        manifest = json.loads(
+            (STACK_ROOT / "stack-manifest.json").read_text(encoding="utf-8")
+        )
+        pinned = {
+            item["repository"]: item["commit"]
+            for item in manifest["repositories"]
+        }
+        for participant in participants:
+            consumed = participant.get("consumed_commit")
+            if consumed is not None:
+                self.assertEqual(
+                    consumed,
+                    pinned[participant["repository"]],
+                    msg=(
+                        "AHBG integration record must move with a consumed stack pin: "
+                        + participant["repository"]
+                    ),
+                )
+
     def _opened(self) -> object:
         return Field.open(
             103,
