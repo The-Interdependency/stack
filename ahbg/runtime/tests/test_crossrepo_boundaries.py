@@ -1,0 +1,146 @@
+"""Cross-repository boundary witnesses for the AHBG production runtime.
+
+These tests are intentionally narrow.  They prove that AHBG consumes the
+current pinned UCNS structural relation ledger for movement and that persisted
+UCNS construction state fails closed when its evidence cannot replay.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+STACK_ROOT = Path(__file__).resolve().parents[3]
+if str(STACK_ROOT) not in sys.path:
+    sys.path.insert(0, str(STACK_ROOT))
+
+from ahbg.runtime.construction import ConstructionError, ConstructionLedger
+from ahbg.runtime.engine import load_engine
+
+_patch, _chain, _keep, _round = load_engine()
+Field = _patch.Field
+tile_from_ucns = _patch.tile_from_ucns
+
+UCNS_SRC = STACK_ROOT / "libs" / "ucns" / "src"
+if str(UCNS_SRC) not in sys.path:
+    sys.path.insert(0, str(UCNS_SRC))
+
+from ucns.mobius_seed import build_mobius_seed_of_life
+
+
+class CrossRepositoryBoundaryTests(unittest.TestCase):
+    def test_movement_adjacency_is_exactly_ucns_structural_relations(self) -> None:
+        seed = build_mobius_seed_of_life()
+        expected: set[frozenset[str]] = {
+            frozenset((relation.left.value, relation.right.value))
+            for relation in seed.structural_relations
+        }
+
+        opened = Field.open(
+            101,
+            tile_from_ucns(),
+            [{"unit_id": "A0", "tile_id": "CENTER"}],
+        )
+        observed: set[frozenset[str]] = set()
+        for tile_id in opened.cells:
+            for neighbor in opened.neighbors(tile_id):
+                observed.add(frozenset((tile_id, neighbor)))
+
+        self.assertEqual(observed, expected)
+
+    def test_axial_projection_cannot_change_movement_authority(self) -> None:
+        tiles = tile_from_ucns()
+        shifted = [
+            {
+                **tile,
+                "q": int(tile["q"]) * 97 + 41,
+                "r": int(tile["r"]) * -89 - 23,
+            }
+            for tile in tiles
+        ]
+        canonical = Field.open(
+            102,
+            tiles,
+            [{"unit_id": "A0", "tile_id": "CENTER"}],
+        )
+        presentation_changed = Field.open(
+            102,
+            shifted,
+            [{"unit_id": "A0", "tile_id": "CENTER"}],
+        )
+
+        self.assertEqual(
+            {
+                tile: tuple(canonical.neighbors(tile))
+                for tile in canonical.cells
+            },
+            {
+                tile: tuple(presentation_changed.neighbors(tile))
+                for tile in presentation_changed.cells
+            },
+        )
+
+    def _opened(self) -> object:
+        return Field.open(
+            103,
+            tile_from_ucns(),
+            [{"unit_id": "A0", "tile_id": "CENTER"}],
+        )
+
+    def _write_ledger(self, directory: Path, payload: dict) -> None:
+        (directory / "construction.json").write_text(
+            json.dumps(payload) + "\n",
+            encoding="utf-8",
+        )
+
+    def test_construction_ledger_rejects_unknown_slot_instead_of_dropping_it(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            self._write_ledger(
+                path,
+                {
+                    "schema": "interdependency.ahbg.construction-ledger/1",
+                    "built": ["CENTER", "NOT_A_UCNS_SLOT"],
+                    "buildable": [
+                        "RING_0", "RING_1", "RING_2",
+                        "RING_3", "RING_4", "RING_5",
+                    ],
+                },
+            )
+            with self.assertRaisesRegex(ConstructionError, "unknown UCNS slots"):
+                ConstructionLedger.load(self._opened(), path)
+
+    def test_construction_ledger_rejects_missing_center(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            self._write_ledger(
+                path,
+                {
+                    "schema": "interdependency.ahbg.construction-ledger/1",
+                    "built": ["RING_0"],
+                    "buildable": [],
+                },
+            )
+            with self.assertRaisesRegex(ConstructionError, "required CENTER"):
+                ConstructionLedger.load(self._opened(), path)
+
+    def test_construction_ledger_rejects_nonreplaying_buildable_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)
+            self._write_ledger(
+                path,
+                {
+                    "schema": "interdependency.ahbg.construction-ledger/1",
+                    "built": ["CENTER"],
+                    "buildable": ["RING_0"],
+                },
+            )
+            with self.assertRaisesRegex(ConstructionError, "does not replay"):
+                ConstructionLedger.load(self._opened(), path)
+
+
+if __name__ == "__main__":
+    unittest.main()
