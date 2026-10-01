@@ -1,0 +1,290 @@
+{
+  "coefficient_audit": {
+    "byte_identical": true,
+    "command": "python docs/prime-arity/audit_coefficient_breadth.py",
+    "finite_exhaustive_replay_cases": 126,
+    "runs": 2,
+    "source_commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+    "stdout_sha256": "d6753120b8326decf9ad30de4d60950094e681784398ef418a013153c84c93a6",
+    "tests": {
+      "B_c_as_complete_UCNS_breadth_evaluator": "UNRESOLVED",
+      "B_c_null_faithful_on_positive_prime_role_multisets": "SURVIVED",
+      "C_at_1_as_injective_structure_encoding": "FALSIFIED",
+      "arity_admission_rule": "factors count only when assigned mutually-constraining roles",
+      "coefficient_update_law": "PROVEN",
+      "coefficient_vector_preserves_order_or_provenance": false,
+      "complete_product_is_top_coefficient": "PROVEN",
+      "constructs_observed_successors": false,
+      "factor_count_is_UCNS_arity": false,
+      "finite_exhaustive_replay_cases": 126,
+      "full_coefficient_vector_preserves_unordered_prime_multiset": "PROVEN",
+      "full_retained_structure_breadth": "BLOCKED",
+      "observed_role_sets_are_nested": [
+        false,
+        false
+      ],
+      "order_and_provenance_location": "separate retained structure",
+      "retained_record_byte_identical_replay": {
+        "157": true,
+        "2881": true,
+        "54837698421": true
+      },
+      "scalar_breadth_collision": {
+        "left_coefficients": [
+          1,
+          14,
+          33
+        ],
+        "left_roles": [
+          3,
+          11
+        ],
+        "right_coefficients": [
+          1,
+          12,
+          35
+        ],
+        "right_roles": [
+          5,
+          7
+        ],
+        "shared_C_at_1": 48,
+        "shared_radius": "47/48"
+      },
+      "successor_q_discovery": "UNRESOLVED",
+      "supplied_successor_controls": {
+        "q=3": [
+          1,
+          113,
+          3211,
+          8643
+        ],
+        "q=5": [
+          1,
+          115,
+          3431,
+          14405
+        ]
+      },
+      "update_requires_supplied_successor_q": true
+    },
+    "verdict": "UNRESOLVED"
+  },
+  "date": "2026-09-19",
+  "documentation_validation": {
+    "attachment_follow_on": {
+      "broken_links": 0,
+      "files_checked": 4,
+      "local_links_checked": 44
+    },
+    "broken_links": 0,
+    "files_checked": 4,
+    "local_links_checked": 51,
+    "pinned_external_source_links_checked": 14,
+    "structural_stack_change": false,
+    "work_graph_digest_recomputed": true
+  },
+  "follow_on_audit": {
+    "constructor": {
+      "adversarial_tests": 14,
+      "freeze_sha256": "86741937e58af2cc22c7e78692ac3e0d036c2c431f5062ee32b9305234d0a5e6",
+      "receipt_sha256": "2ea191b08fb6f37e085f8ea2a241fbea6eb99f2aed1d7fa53dfbe6089c3641cd",
+      "result": "SURVIVED_LOCALLY_UNDER_EXPLICIT_ASSUMPTIONS",
+      "successor_candidates": {
+        "rooted-ribbon.paired-germs.v0": "FALSIFIED",
+        "rooted-ribbon.sign-blocks.v0": "FALSIFIED"
+      }
+    },
+    "contract_graph": {
+      "checks": 12,
+      "contracts": 12,
+      "no_exec_resolution": "CLOSED"
+    },
+    "inherited_related_suite": {
+      "errors": 9,
+      "failures": 4,
+      "passes": 56,
+      "reason": "historical receipt identity drift plus deliberate fail-closed detection of UCNS commits 5d79bc2 and f6b5fd0 introducing exact origin-attachment terminology; manual review finds no callable attachment",
+      "tests": 69
+    },
+    "native_attachment_target_stabilizer": {
+      "canonical_receipt_sha256": "6133673d732eff5ce00c2abfa2e29de86034c6aef501e9920f4b0107ab200d0f",
+      "first_remaining_irreducible_assumption": "geometry-owned oriented incidence from Structural Null or Public Gonol origin to one complete native Mobius state and local displacement germ",
+      "json_file_sha256": "ffaa134755563fd85f4f4bfa9ac5dfc028ec29d44a7a9de0edb52cea65f5a23a",
+      "markdown_file_sha256": "b2b7e6b6b4259677093341a3c6e133acaf91e10f00c3862e71516138c411f49b",
+      "next_experiment": "public-origin to native-germ incidence sieve",
+      "observed_successor_gate_executed": false,
+      "result": {
+        "c2_invariant_two_lift_fiber": "FALSIFIED_AS_ADDITIONAL_OBSERVABLE",
+        "intrinsic_target_selection": "UNRESOLVED",
+        "single_complete_framed_lift": "FALSIFIED_AS_DIRECTION_SUFFICIENT",
+        "single_lift_with_directed_local_germ": "SURVIVED_LOCALLY_EXPLICIT_ASSUMPTION",
+        "visible_phase_basepoint": "FALSIFIED_AS_DIRECTION_SUFFICIENT"
+      },
+      "source_parent_commit": "7419712f5bfa0813b9d2e8f28743aa44dad6f30c",
+      "stabilizer_orders": [
+        4,
+        4,
+        2,
+        1
+      ],
+      "tests": 9,
+      "visible_fiber_collision": true
+    },
+    "pcea_crypto_audit": {
+      "commit": "0b49672862a30cec0a0ee24e39a34241c9626f27",
+      "tests": 6,
+      "verdict": "FALSIFIED"
+    },
+    "trapdoor_lift_audit": {
+      "canonical_receipt_sha256": "4d8ae8cbe68344c6f4847fefd6659f228a3112e3810ee997af1dfa807eeaed7f",
+      "minimal_fourth_power_candidate": "FALSIFIED",
+      "overall": "UNRESOLVED_NOT_RECONSTRUCTED",
+      "tests": 10
+    }
+  },
+  "hmmm": [
+    "Geometric replay does not establish cryptographic security.",
+    "The branch-only local checkout predates current main EPAC retirement and therefore reports the inherited epac.graduation duplicate-forge finding; the PR merge commit with current main passes Stack consistency, and this research change does not reopen EPAC graduation.",
+    "Canonical origin attachment, selected rotation, torsion presentation, and successor selector remain unresolved.",
+    "A visible phase and its full two-lift fiber are the same pointed information; a single lift still retains exact reflection, so current geometry needs an oriented incidence rather than a time field."
+  ],
+  "input_sources": [
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "81d48871166f6ee44712ee6f14329aa67d082577",
+      "path": "pcea/cipher.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "d3763c6715cd90e1b926cf04d740638fc295176c87b2efae97ba3513d2a2692a"
+    },
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "67108882c63e4cdf3084142bc2eae2773691cbc2",
+      "path": "pcea/codec.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "5486f77dfe5022f8d30bcd88107d6c3bee81c2d367fa1de92e2b4c20ccc8693b"
+    },
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "03626ec41e60eee9c9f3d5c1db886d6c84145d03",
+      "path": "pcea/kdf.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "1baa8a6caa93a7df320d9c3318c9f7753b3f3d99d2e264b0117b89e4535d9ad7"
+    },
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "1f0b5a17727edbf5d7011da1c8a93ed416a7967c",
+      "path": "pcea/instance.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "261f9023c62d01c8a822acbd0ad752a5fefbf060c484f37cdaea01c71defa7d5"
+    },
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "e4ca26419c1ce0f61b1ae9bccb5707628c8fd446",
+      "path": "pcea/primes.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "ee092d92db53f5a8728285800b951be61e1f02192770d0f50203c3c9ce85aa59"
+    },
+    {
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "git_blob_sha1": "cb2239e18765e0a59e51742e77ac4c424ccc1b1e",
+      "path": "pcea/contract.py",
+      "repository": "The-Interdependency/pcea",
+      "sha256": "00e86dbbf71b88ad45da9bd11c181915d9d88495846a7e98154bd7e87830be8a"
+    },
+    {
+      "commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+      "git_blob_sha1": "e5c83a79f375862ce664a01f2172800f2c54b4b1",
+      "path": "docs/prime-arity/audit_coefficient_breadth.py",
+      "repository": "The-Interdependency/ucns",
+      "sha256": "867943cb4d84face7d17e6806f1fd34892d9e1e91844a8add415477ff8687662"
+    },
+    {
+      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "git_blob_sha1": "0eecb72ccae7cb004291b3930c8cccbbe159fc42",
+      "path": "research/pcea/README.md",
+      "repository": "The-Interdependency/stack",
+      "sha256": "4794df36192f25e6cdaa34d566b50f32d0f05d85117cc5cd56e81289f10b4081"
+    },
+    {
+      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "git_blob_sha1": "c1c73053a4228481897657ac751b1e60e33e79d5",
+      "path": "research/pcea/ASYNC_GONOL_KEYS.md",
+      "repository": "The-Interdependency/stack",
+      "sha256": "d67109e2eeef225a8557fdb57883ecf40f6d7f3184417d4cf24931982af2f131"
+    }
+  ],
+  "not_executed": [
+    "complete Stack geometry suite",
+    "complete PCEA or UCNS package suites",
+    "performance and bandwidth after cryptographic falsification"
+  ],
+  "output_sha256": {
+    "research/pcea/ASYNC_GONOL_KEYS.md": "99dc5b69f7c9052f774edcc59bef2ea5de35ccb3f76c12c3121e421ded6df18d",
+    "research/pcea/README.md": "57fa6c75780dd29208ad56a62d7996881fd553ee7a1cd005112e4a11ec9e1ac2",
+    "research/pcea/docs/pcea-current-research-v1.md": "982dd1179f0969804214763629aa5fcc93c2888485ad68555ee18207263d3079",
+    "research/pcea/docs/pcea-current-research-v1.work-graph.json": "1cf97ab555571a97630c96805a14f348c03a4d62574f5605059d50fe310b9215",
+    "research/ucns/README.md": "129c0446e4ee1f00fa927ca8b65311fe910cd928ddd107d638813c55a1cd4c91",
+    "research/ucns/docs/native-attachment-target-stabilizer-v0.md": "d1abc911cc0a9a7df5618226bbff5cfadd2650bc9a154f41d40f806ebd71ac17",
+    "research/ucns/docs/rooted-rotation-closure-audit-v0.md": "e0ade49e78307fade0bc311c243ced16d02a7af56fcc9331ed9ba925d02f1fc8",
+    "research/ucns/native_attachment_target_stabilizer.py": "b8063d6cc6eaab7a2810b592153dcbf00f9cb7a6a289ade860a405ddc0b7d0e7",
+    "research/ucns/receipts/native-attachment-target-stabilizer-v0.json": "ffaa134755563fd85f4f4bfa9ac5dfc028ec29d44a7a9de0edb52cea65f5a23a",
+    "research/ucns/receipts/native-attachment-target-stabilizer-v0.md": "b2b7e6b6b4259677093341a3c6e133acaf91e10f00c3862e71516138c411f49b",
+    "research/ucns/receipts/rooted-rotation-successor-gate-v0.json": "496487176cc7099d488a83ae15374860e89d436eee94ec3e99ee75beeb11e4b0",
+    "research/ucns/receipts/rooted-rotation-successor-gate-v0.md": "253f52dfc76dfddcdd1e2d3c88e2b75c24a5bc7f3f925a44d29011a56ba086ca",
+    "research/ucns/rooted_rotation_closure_constructor.py": "42a2062469f96f048bcf3bdf3a8d3fe2afb1666ff710c66c55569826b3c9b6af",
+    "research/ucns/rooted_rotation_successor_gate.py": "f764190338d58815157a94f3ea9184458869c709cad666d90f8fb8684879de85",
+    "research/ucns/tests/test_native_attachment_target_stabilizer.py": "18fdeea8f096a9bae7a1f31219c61fd142ed6e1f4a0ce5e9a0a9d5a44c1f7f8d",
+    "research/ucns/tests/test_rooted_rotation_closure_constructor.py": "6feec88582169aef86cab26efcfcefe2a0a55caf46ded758bfa21efa26a69e7b"
+  },
+  "runtime_comparison": {
+    "after_commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+    "before_commit": "f6b14e664e8366e291275eb56c39c60e0b6ef65d",
+    "changed_kdf_ast_identical": true,
+    "changed_package_files": [
+      "pcea/kdf.py"
+    ],
+    "other_package_blob_identities_unchanged": true
+  },
+  "schema": "the-interdependency.stack-research.pcea.research-update-verification",
+  "standing": "bounded-source-algebra-and-explicit-assumption-verification",
+  "targeted_current_source_replays": {
+    "current_ucns_commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+    "current_ucns_native_carrier_and_boundary_tests": {
+      "failed": 0,
+      "passed": 18
+    },
+    "exact_crypto_audit_0b49672": {
+      "failed": 0,
+      "passed": 6,
+      "verdict": "FALSIFIED"
+    },
+    "rooted_rotation_regression": {
+      "failed": 0,
+      "passed": 14
+    },
+    "unpublished_pcea_boundary_arity_tests": {
+      "failed": 0,
+      "passed": 30
+    },
+    "unpublished_trapdoor_lift": {
+      "failed": 0,
+      "minimal_candidate": "FALSIFIED",
+      "overall": "UNRESOLVED",
+      "passed": 10
+    },
+    "unpublished_ucns_factorization_arity": {
+      "byte_identical": true,
+      "runs": 2,
+      "stdout_sha256": "511f3b5887257579bfc07981d6942781a038801081f8c3641c2ebf80b6f50576",
+      "ucns_selects_ratio_triple": false,
+      "verdict": "BLOCKED"
+    },
+    "unpublished_ucns_ladder_arity_tests": {
+      "failed": 0,
+      "passed": 6
+    }
+  },
+  "version": "0.3.0",
+  "work_graph_sha256": "b548be6927b0994d84ecf84b78531626509372c41d14ef5f1517331dfec951d7"
+}
