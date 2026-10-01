@@ -1,0 +1,95 @@
+{
+  "schema": "interdependency.ahbg.integration-work-graph/1",
+  "recorded_on": "2026-09-29",
+  "stack_base_commit": "4de7dcdf84cd36c76ac34471592d7bf430c08ca4",
+  "purpose": "Bind AHBG benchmark/game integration decisions to exact reviewed repository states without transferring authority between repositories.",
+  "participants": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "reviewed_commit": "fc01e1f0323da45362704f92adbf6d3b8a008307",
+      "consumed_commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "relevant_advance_commit": "42e9a3c7598bd2bd80701f58504aa0d51e55ec8b",
+      "authority": "geometry and mathematical representation",
+      "relation": "producer",
+      "integration": "partial",
+      "decision": "Movement and construction consume structural-vesica relations from the pinned UCNS view. Native Mobius frame comparison/lift advances are reviewed but not consumed until the stack pin advances coherently."
+    },
+    {
+      "repository": "The-Interdependency/tiwcg",
+      "reviewed_commit": "25add51ed967a6ff352d5bc3d1826c15bc92baf9",
+      "architecture_commit": "5a12a0f4891b1a39ca71f57b8419e21809ad7c60",
+      "authority": "containing game system: card/rules/state/timing/legality/menagerie",
+      "relation": "containing-system",
+      "integration": "planned",
+      "decision": "AHBG remains the territory benchmark workspace while the common TIWCG kernel is not yet implemented; no duplicate card/rules kernel is added here."
+    },
+    {
+      "repository": "The-Interdependency/a0",
+      "reviewed_commit": "ad958a4e5f4cdb17ba815539d2e6a545034db161",
+      "authority": "a0 persistent-agent runtime and conversation continuity",
+      "relation": "benchmark-subject-and-harness-peer",
+      "integration": "adapter-implemented-live-validation-pending",
+      "decision": "Current A0 enters through the ordinary AHBG AgentHarness boundary via its public chat API. Model-phenotype trials pin one model per turn; A0-continuity trials omit that pin and retain attempted/actual provider plus tool-execution provenance from the A0 work harness."
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "reviewed_commit": "616484d0caaa7a9ad82937d85c28bb43773d909b",
+      "consumed_commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
+      "authority": "measurement and evaluation",
+      "relation": "candidate-conflict-measurement-peer",
+      "integration": "blocked-pending-explicit-mapping",
+      "decision": "TIWCG requires EDCM-capable conflict resolution, but AHBG must not let candidate EDCM readouts silently become legality or truth. Preserve raw conflict evidence and the simple control resolver until an exact EDCM-to-game-state mapping is separately specified and tested."
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "reviewed_commit": "229110f92aac17f81ab8ccddbda813ca9b93af9a",
+      "authority": "source-bound language construction and candidate inference input",
+      "relation": "optional-observation-evidence-peer",
+      "integration": "not-in-core-mechanics",
+      "decision": "UCHC may later annotate language-bearing observations with source-bound construction evidence. It does not decide actions, truth, or consciousness and its falsified admission-cube harmonic hypothesis is not imported."
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "reviewed_commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "consumed_commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
+      "authority": "semantic authority",
+      "relation": "semantic-peer",
+      "integration": "no-direct-runtime-import",
+      "decision": "Semantic distinctions may govern named game concepts only through explicit domain claims. AHBG does not derive mechanics from lexical resemblance to METAPAT terms."
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "reviewed_commit": "516933d98f9de376f4e498f44059043dc0d96470",
+      "consumed_commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "relevant_advance_commit": "284ebefad76a6589788ce8d16d47ad75bbfaa333",
+      "authority": "build, evidence, metadata, and cross-repository coordination doctrine",
+      "relation": "evidence-doctrine-peer",
+      "integration": "drift-visible",
+      "decision": "Native-first MSDMD readers are reviewed but are not copied into AHBG while stack still consumes the older skill-lib snapshot. Integration waits for a coherent snapshot refresh."
+    },
+    {
+      "repository": "The-Interdependency/epac",
+      "reviewed_commit": "1e5c999286f12221eff9870d1372203ac7935f2a",
+      "authority": "EPAC domain construction and held-out validation",
+      "relation": "reviewed-nonparticipant",
+      "integration": "excluded",
+      "decision": "EPAC chemistry/energy constructions do not become AHBG resource or consciousness semantics by name similarity. Its held-out-validation discipline is conceptually reusable; its domain facts are not."
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "empirical_status_transfer": false,
+    "consciousness_status_transfer": false,
+    "benchmark_result_selects_consciousness": false,
+    "game_mechanics_may_reimplement_ucns_geometry": false
+  },
+  "hmmm": [
+    "Advance the stack UCNS pin only through a coherent stack transaction before consuming native Mobius comparison/lift state in AHBG.",
+    "Define and test the exact EDCM-to-TIWCG/AHBG conflict-state mapping before EDCM readouts can alter committed game state.",
+    "Exercise the current-A0 HTTP adapter against a deployed exact A0 commit and preserve the resulting live provider/tool provenance receipt.",
+    "Refresh the stack skill-lib snapshot before AHBG depends on the native-first MSDMD reader implementation.",
+    "The benchmark can produce evidence relevant to theories of nonhuman consciousness; no repository currently supplies a validated rule that turns AHBG behavior into a consciousness determination."
+  ]
+}

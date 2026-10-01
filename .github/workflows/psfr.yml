@@ -1,19 +1,19 @@
-name: psychsocio-metafauna
+name: psfr
 
 on:
   pull_request:
     paths:
-      - "research/psychsocio-metafauna/**"
+      - "research/psfr/**"
       - "research/metapat/BASE.json"
       - "README.md"
-      - ".github/workflows/psychsocio-metafauna.yml"
+      - ".github/workflows/psfr.yml"
   push:
     branches: [main]
     paths:
-      - "research/psychsocio-metafauna/**"
+      - "research/psfr/**"
       - "research/metapat/BASE.json"
       - "README.md"
-      - ".github/workflows/psychsocio-metafauna.yml"
+      - ".github/workflows/psfr.yml"
 
 permissions:
   contents: read
@@ -26,5 +26,5 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Validate psychsocio-metafauna boundaries
-        run: python -m unittest discover -s research/psychsocio-metafauna/tests -q
+      - name: Validate PSFR boundaries
+        run: python -m unittest discover -s research/psfr/tests -q
