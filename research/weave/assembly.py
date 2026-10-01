@@ -8,10 +8,36 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from types import MappingProxyType
 from typing import Any, Mapping
+import hashlib
+import json
+import math
 from stages import STEPS
 from stages.api import Blocked, Operator, PrivateContext, PublicContext, Transition
+from stages.key import relation
 
 DEFAULTS = {'key': True, **{s.name: s.required for s in STEPS}}
+
+
+def plan_identity(parameters):
+    """Type-preserving plan digest; never serialize native objects by repr.
+
+    Usage: independently derive the same controls for each inverse stage.
+    Digests are research comparison metadata, not authentication or secrecy.
+    """
+    def encode(value):
+        kind = type(value)
+        if value is None or kind in (bool, int, str):
+            return (kind.__name__, value)
+        if kind is float and math.isfinite(value):
+            return ('float', value.hex())
+        if kind is bytes:
+            return ('bytes', value.hex())
+        if kind in (tuple, list):
+            return (kind.__name__, [encode(v) for v in value])
+        if isinstance(value, Mapping) and all(type(k) is str for k in value):
+            return ('mapping', [(k, encode(value[k])) for k in sorted(value)])
+        raise Blocked('transform plan requires explicit finite, serializable controls')
+    return hashlib.sha256(json.dumps(encode(parameters), separators=(',', ':')).encode()).hexdigest()
 
 
 @dataclass(frozen=True)
@@ -42,6 +68,7 @@ class Run:
     classification: str
     events: tuple[tuple[str, str], ...]
     direction: str
+    plan_identities: tuple = field(default=(), repr=False)
 
 
 class Pipeline:
@@ -67,10 +94,13 @@ class Pipeline:
 
     def problems(self, context=None):
         problems = []
-        if self.switches['key'] and (context is None or context.public_key is None):
-            problems.append('key: Q2/Q7/Q8, native public/private relation/key input missing')
-        if type(context) is PrivateContext and self.switches['key'] and context.private_key is None:
-            problems.append('key: private key missing for inverse')
+        if self.switches['key']:
+            try:
+                key_relation = relation(context)
+                if key_relation[2] and not self.allow_fixtures:
+                    problems.append('key: wiring fixture is not a native law')
+            except Blocked as exc:
+                problems.append(str(exc))
         if self.switches['bind'] and not (self.switches['key'] and self.switches['gonol']):
             problems.append('bind: incompatible ablation; native binding requires key and gonol')
         for step in STEPS:
@@ -83,8 +113,9 @@ class Pipeline:
                 problems.append(step.name + ': wiring fixture is not a native law')
         return tuple(problems)
 
-    def recipe(self):
-        return (('proposal', 'assembly-v2'), ('key', self.switches['key']), *(
+    def recipe(self, context=None):
+        key_relation = relation(context) if self.switches['key'] else None
+        return (('proposal', 'assembly-v3'), ('key', self.switches['key'], key_relation), *(
             (s.name, self.switches[s.name],
              self.operators[s.name].identity if self.switches[s.name] and s.name in self.operators else None)
             for s in STEPS))
@@ -106,16 +137,34 @@ class Pipeline:
             raise TypeError('encrypt takes PublicContext only; never PrivateContext')
         return self._run(value, context, reverse=False)
 
-    def decrypt(self, encrypted: Run, context: PrivateContext):
+    def decrypt(self, encrypted: Run, context: PrivateContext, *, inverse_plans=None):
+        """Optional per-stage plans must be independently reconstructed by the caller.
+
+        Use this when native forward operators derive controls through Transition.
+        The encrypted Run contains only comparison identities, never those controls.
+        """
         if type(context) is not PrivateContext:
             raise TypeError('decrypt requires explicit PrivateContext')
         if not isinstance(encrypted, Run) or encrypted.direction != 'encrypt':
             raise TypeError('supply the encrypted lab result')
-        if encrypted.recipe != self.recipe():
+        if encrypted.recipe != self.recipe(context):
             raise ValueError('inverse profile/operator identities differ from forward lab recipe')
-        return self._run(encrypted.payload, context, reverse=True)
+        names = tuple(s.name for s in STEPS if self.switches[s.name])
+        if (type(encrypted.plan_identities) is not tuple
+                or any(type(row) is not tuple or len(row) != 2
+                       or type(row[0]) is not str or type(row[1]) is not str
+                       or len(row[1]) != 64 or any(c not in '0123456789abcdef' for c in row[1])
+                       for row in encrypted.plan_identities)
+                or tuple(row[0] for row in encrypted.plan_identities) != names):
+            raise ValueError('missing or reordered transform plan identities')
+        if inverse_plans is not None and (not isinstance(inverse_plans, Mapping)
+                or set(inverse_plans) != set(names)
+                or any(not isinstance(p, Mapping) for p in inverse_plans.values())):
+            raise ValueError('independently derived inverse plans must cover every enabled stage')
+        return self._run(encrypted.payload, context, reverse=True,
+                         expected_plans=dict(encrypted.plan_identities), inverse_plans=inverse_plans)
 
-    def _run(self, value, context, *, reverse):
+    def _run(self, value, context, *, reverse, expected_plans=None, inverse_plans=None):
         problems = self.problems(context)
         if problems:
             raise Blocked('; '.join(problems))
@@ -125,12 +174,20 @@ class Pipeline:
         if not self.switches['corpus']:
             context = (replace(context, public_material={}, private_material={})
                        if type(context) is PrivateContext else replace(context, public_material={}))
-        events, fixture, transport = [], False, False
+        recipe = self.recipe(context)
+        events, plans, transport = [], [], False
+        fixture = self.switches['key'] and relation(context)[2]
         for step in reversed(STEPS) if reverse else STEPS:
             if not self.switches[step.name]:
                 events.append((step.name, 'OFF'))
                 continue
             op = self.operators[step.name]
+            if reverse and inverse_plans is not None:
+                context = replace(context, parameters=inverse_plans[step.name])
+            identity = plan_identity(context.parameters)
+            if reverse and expected_plans.get(step.name) != identity:
+                raise ValueError('inverse transform plan differs before stage: ' + step.name)
+            plans.append((step.name, identity))
             fixture = fixture or op.fixture
             transport = transport or op.scope == 'transport'
             result = (op.inverse if reverse else op.forward)(value, context)
@@ -142,5 +199,6 @@ class Pipeline:
             events.append((step.name, 'EXECUTED'))
         classification = ('WIRING_ONLY' if fixture else 'TRANSPORT_CANDIDATE' if transport else
                           'FULL_PROFILE_EXPERIMENT' if self.switches.complete else 'ABLATION_ONLY')
-        return Run(value, self.recipe(), classification, tuple(events),
-                   'decrypt' if reverse else 'encrypt')
+        return Run(value, recipe, classification, tuple(events),
+                   'decrypt' if reverse else 'encrypt',
+                   tuple(reversed(plans)) if reverse else tuple(plans))

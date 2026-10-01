@@ -35,7 +35,7 @@ def main():
     after = snapshot()
     passed = (result.wasSuccessful() and not result.skipped
               and not result.expectedFailures and not result.unexpectedSuccesses
-              and result.testsRun == 43 and before == after)
+              and result.testsRun == 54 and before == after)
     receipt = {
         'schema':'weave.transport-evidence/v1',
         'status':'PASSED' if passed else 'FAILED',
@@ -43,7 +43,7 @@ def main():
         'tests':result.testsRun,
         'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),
         'source_unchanged':before == after,
-        'expected_test_methods':43,
+        'expected_test_methods':54,
         'coverage_status':'WITNESSED' if passed else 'NOT_ACCEPTED',
         'source_sha256':hashlib.sha256(json.dumps(before,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
         'source_files':before,

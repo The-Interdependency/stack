@@ -9,6 +9,11 @@ fixed architecture from unresolved mechanics. An unresolved mechanic must remain
 Executed evidence and its exact scope are recorded in [REPORT.md](REPORT.md).
 That evidence is not a full-system verdict.
 
+Provenance: this preserves the reported design account, not a recovered immutable
+transcript or the original thirteen laws. The merged retirement at
+`1ba201449731337dc20c564788f4303c8910bfdd` records that boundary in
+`research/urpcs/SOURCE_RECEIPT.json`. Exact historical attribution remains `hmmm`.
+
 ## 1. System layers
 
 Weave currently comprises these intended layers:
@@ -41,9 +46,11 @@ For an ordered arity schedule
 A = (a_1, ..., a_k)
 ```
 
-each level partitions the relevant working sequence into `a_i` ordered sections and
-applies `I` independently to each section. After the declared levels, `I` is applied
-to the complete resulting sequence.
+each level partitions its explicitly selected input into `a_i` ordered sections and
+applies `I` independently to each section. The final whole-sequence operation likewise
+requires an explicitly selected input. This skeleton does not choose between original
+and prior-stage inputs; the executable experimental profiles explicitly select prior-stage
+output. That proposal is not retroactive historical ratification.
 
 Stage count and section arity are distinct. The user's phrase “arity three, minimum”
 does not establish `k >= 3`. The prior minimum of three stages was an unsupported
@@ -124,7 +131,7 @@ Any complete Weave profile must eventually demonstrate:
 - exact preservation of supplied arity order and stage count; equivalences between
   different schedules are measured, not forbidden by an invented uniqueness law;
 - dependence on the declared thread relation;
-- dependence on the declared corpus/material relation if that layer is enabled;
+- dependence on the declared corpus/material relation, which is mandatory for every complete profile;
 - dependence on the private gonol/private-key relation;
 - no hidden inheritance from URPCS.
 

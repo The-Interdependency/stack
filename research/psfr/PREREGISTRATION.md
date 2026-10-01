@@ -1,5 +1,10 @@
 # Preregistration: synthetic coalescence falsifier v0.1
 
+> **PSFR scope boundary:** this frozen program tests the pattern-lineage/coalescence
+> track only. It does not test possession-state reports, externally attributed control
+> displacement, automatic perseverative action, lost time, EEG correlates, or the
+> existence/identity of an external agent. Those require separate preregistrations.
+
 ```text
 status: design frozen by repository merge only
 run status: not-run
@@ -8,7 +13,7 @@ LLM calls: none
 canon selection: null
 ```
 
-This is the first bounded test of the internal usefulness of the psychsocio-metafauna framework. It does **not** test whether any real person, group, institution, or belief is captured. It tests whether the proposed distinctions can produce separable, falsifiable behavior in a synthetic environment without encoding a `captured` label into the agent.
+This is the first bounded test of the internal usefulness of the PSFR pattern-lineage framework. It does **not** test whether any real person, group, institution, or belief is captured. It tests whether the proposed distinctions can produce separable, falsifiable behavior in a synthetic environment without encoding a `captured` label into the agent.
 
 ## Decision
 

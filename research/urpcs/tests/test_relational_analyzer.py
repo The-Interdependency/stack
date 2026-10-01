@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -120,7 +121,12 @@ def check_committed_evidence() -> None:
     assert len(receipt["corpus"]["committed_vector_ids"]) == 8
     assert receipt["corpus"]["narrow_514_case_baseline"]["messages_processed"] == 514
     for path, identity in receipt["sources"].items():
-        data = (STACK_ROOT / path).read_bytes()
+        if path == "research/urpcs/tests/test_relational_analyzer.py":
+            # Exact pre-repair test source recorded by the sealed receipt.
+            data = subprocess.check_output(["git", "-C", str(STACK_ROOT), "show",
+                f"01f340ba5b4c5f107703233750768e201a41da68:{path}"])
+        else:
+            data = (STACK_ROOT / path).read_bytes()
         assert len(data) == identity["bytes"]
         assert sha256(data) == identity["sha256"]
     receipt_sha = sha256(receipt_bytes)
@@ -247,7 +253,7 @@ class URPCSRelationalAnalyzerTests(unittest.TestCase):
                         Path("/unused-metapat"),
                     )
 
-    def test_wire_has_no_frame_field_and_frozen_sources_match_governing_head(self) -> None:
+    def test_wire_has_no_frame_field_and_frozen_sources_match_historical_input(self) -> None:
         for row in load_vectors():
             if "ciphertext_hex" not in row:
                 continue
@@ -260,9 +266,34 @@ class URPCSRelationalAnalyzerTests(unittest.TestCase):
             for row in receipt["corpus"]["source_corpus"]["files"]
         }
         for path in analyzer.FROZEN_PATHS:
-            data = (STACK_ROOT / path).read_bytes()
+            # Retirement changes authority projections, never the sealed evidence.
+            # Usage: run this suite in a full-history checkout (CI fetch-depth: 0).
+            if path in {"research/urpcs/WORK_GRAPH.json", "research/urpcs/SOURCE_RECEIPT.json"}:
+                data = subprocess.check_output(["git", "-C", str(STACK_ROOT), "show",
+                                                f"{analyzer.STACK_INPUT_COMMIT}:{path}"])
+            else:
+                data = (STACK_ROOT / path).read_bytes()
             self.assertEqual(len(data), governing_files[path]["bytes"])
             self.assertEqual(sha256(data), governing_files[path]["sha256"])
+
+
+    def test_current_authority_is_retired_and_provenance_unresolved(self) -> None:
+        """Current metadata cannot borrow authority from the frozen codec replay."""
+        domain = json.loads((URPCS_ROOT / "DOMAIN_CLAIM.json").read_text())
+        self.assertIn("retired", domain["claim_status"])
+        self.assertNotEqual(domain["authority_source"]["author"], "Erin Spencer")
+        graph = json.loads((URPCS_ROOT / "WORK_GRAPH.json").read_text())
+        self.assertIn("historical", graph["repositories"][0]["authority"])
+        self.assertNotEqual(graph["repositories"][0]["relation"], "implementation owner and integration target")
+        payload = {k: graph[k] for k in ("repositories", "boundaries")}
+        self.assertEqual(graph["work_graph_sha256"], sha256(json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()))
+        receipt = json.loads((URPCS_ROOT / "SOURCE_RECEIPT.json").read_text())
+        self.assertEqual(receipt["intended_design_provenance"]["standing"], "UNRESOLVED")
+        self.assertIsNone(receipt["intended_design_provenance"]["immutable_public_transcript_identity"])
+        report = json.loads((STACK_ROOT / "docs/work-graphs/repository-plan-report.json").read_text())
+        self.assertFalse(any("URPCS" in item for item in report["active_frontier"]))
+        entry = next(item for item in report["delivered"] if item["surface"] == "research/urpcs/")
+        self.assertIn("RETIRED", entry["status"])
 
 
 if __name__ == "__main__":

@@ -13,6 +13,9 @@ from pathlib import Path
 import sys
 
 
+# Sealed run-1 provenance; receipt-controlled subsets cannot select what is verified.
+EXPECTED_SOURCE_INPUTS = {'stack_head': '247af26527d0d76558dac1dd7fd05e41ce83112e', 'uchc_inspected_blob': '8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a', 'local_sha256': {'probe.py': '9649f8ed463ceaa2ad466d8caa9af235bfe7fc3567fc2c17d94ed83f2853ae63', 'PLAN.md': '2d268639ef65a50083fd7737579ca893110e10765864f77237fdc9b187385f54'}}
+
 def must(test: bool, message: str) -> None:
     if not test:
         raise ValueError(message)
@@ -39,13 +42,20 @@ def transform_map(n: int, arities: tuple[int, ...]) -> tuple[int, ...]:
     return tuple(p[index] for index in end_map(n))
 
 
+def verify_sources(receipt):
+    """Reject omission, substitution and drift before numerical evidence checks."""
+    must(receipt.get("source_inputs") == EXPECTED_SOURCE_INPUTS,
+         "complete source hash set and exact provenance identities required")
+    root = Path(__file__).resolve().parent
+    for name, expected in EXPECTED_SOURCE_INPUTS["local_sha256"].items():
+        must(hashlib.sha256((root / name).read_bytes()).hexdigest() == expected,
+             f"source mismatch: {name}")
+
+
 def main() -> int:
     path = Path(sys.argv[1] if len(sys.argv) > 1 else "receipt.json").resolve()
     r = json.loads(path.read_text())
-    root = path.parent
-    for name, expected in r["source_inputs"]["local_sha256"].items():
-        must(hashlib.sha256((root/name).read_bytes()).hexdigest() == expected,
-             f"source mismatch: {name}")
+    verify_sources(r)
     must(end_map(5) == (4, 0, 3, 1, 2), "literal odd golden vector")
     must(end_map(6) == (5, 0, 4, 1, 3, 2), "literal even golden vector")
     must(transform_map(6, (3,)) == (4, 1, 5, 0, 2, 3), "three-section golden vector")

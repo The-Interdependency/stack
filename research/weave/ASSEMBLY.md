@@ -128,3 +128,34 @@ Skill application record (one unit of work): `the-interdependency`,
 fail-closed module wiring applied. Outcome: assembly tested, full cipher unresolved.
 METAPAT README consulted for domain-owned mechanisms/non-transfer; no cryptographic
 conclusion is inferred from that semantic source.
+
+## Review repair: provenance and inverse controls
+
+Usage: a supplied native key law returns
+`KeyPair(public, private, law_identity, relation_identity)` through `keygen`.
+Export `pair.public_context(parameters=...)` for the sender and
+`pair.private_context(parameters=...)` for the recipient. Both declarations are
+validated and their law/relation identities are bound into the recipe. Sender
+contexts contain no private-side reference. Fixture pairs must set `fixture=True`
+and require explicit fixture permission; they remain `WIRING_ONLY`.
+These checks verify declared provenance and matching sides, not the mathematical
+truth or secrecy of a still-unimplemented asymmetric relation.
+
+Each enabled stage records a type-preserving digest of its effective parameters
+before execution. Inverse execution checks it before that stage runs. If forward
+operators derive different controls through `Transition`, callers may supply
+`decrypt(run, private_context, inverse_plans={stage: independently_derived_controls})`.
+That mapping must cover exactly the enabled stages. The Run never contains the
+controls and cannot reconstruct them for the recipient; missing native derivation
+still blocks. Unserializable controls require an explicit representation, never repr.
+
+The transport lab record is now `weave.lab-record/v2`, carrying plan identities.
+Version 1 is refused because it cannot bind inverse plans; regenerate experimental
+records from the declared profile and original input. These comparison digests are
+neither authentication nor a secrecy mechanism and may disclose plan guesses. They
+belong to the lab, not a proposed native cipher wire format.
+
+The source verifier requires both `probe.py` and `PLAN.md` at their frozen hashes,
+plus the exact declared Stack and inspected UCHC identities. Receipt location does
+not choose executable sources. Run `python probe.py > /tmp/weave-probe.json` and
+`python verify.py /tmp/weave-probe.json`; omission and substitution must fail.

@@ -141,3 +141,20 @@ was consulted; no cryptographic result is inferred from it.
 The coded proposals are ready to correct, improve or approve. The complete native cipher
 remains unimplemented. Transport execution, source verification and API refusal do not
 replace its missing constitutive relations.
+
+## PR #62 review repair
+
+Retirement dependency: merged Stack #61 at
+`1ba201449731337dc20c564788f4303c8910bfdd`.
+The current source adds key-law/relation provenance, per-stage inverse-plan checks,
+complete source verification and mandatory corpus dependence for complete profiles.
+All original layers and independent switches remain. Native asymmetric derivation
+is still unresolved. Prior `evidence/transport-v1.json` is historical evidence for
+its exact source, not evidence for this repair. Reproduce current coverage with:
+
+```bash
+python research/weave/test.py --receipt /tmp/weave-review-repair.json
+```
+
+See `ASSEMBLY.md` for the required key-side exports, independently derived inverse
+plans and replacement v2 lab-record usage. No native cipher security is established.

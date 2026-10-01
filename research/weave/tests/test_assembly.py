@@ -6,16 +6,23 @@ secrets, network or provider calls. Marker operators are explicitly WIRING_ONLY.
 """
 from dataclasses import replace
 from itertools import product
+from copy import deepcopy
+from pathlib import Path
+from unittest.mock import patch
 import unittest
-from assembly import DEFAULTS, Pipeline, Switches
+from assembly import DEFAULTS, Pipeline, Switches, plan_identity
 from stages import STEPS
 from stages.api import Blocked, Operator, PrivateContext, PublicContext, Streams, Transition
-from stages.key import keygen
+from stages.key import KeyPair, keygen
+from verify import EXPECTED_SOURCE_INPUTS, verify_sources
 
 DATA = Streams(((0, 1, 0, 1, 1, 0),))
 PARAMS = {'inter': (((2, 2, 2),),)}
-PUB = PublicContext('test-public-only', PARAMS)
-PRIV = PrivateContext('test-public-only', 'test-private-only', PARAMS)
+PAIR = keygen(lambda **kw: KeyPair('test-public-only', 'test-private-only',
+              'wiring-fixture/key-law-v1', 'wiring-fixture/pair-1', True),
+              private_gonol=None, material={}, randomness=b'')
+PUB = PAIR.public_context(parameters=PARAMS)
+PRIV = PAIR.private_context(parameters=PARAMS)
 
 
 def markers(log):
@@ -91,6 +98,7 @@ class AssemblyTests(unittest.TestCase):
 
     def test_independent_switch_no_cascade(self):
         config = Switches({'corpus': False})
+        self.assertFalse(config.complete)
         self.assertTrue(config['split'])
         self.assertTrue(config['inter'])
         self.assertTrue(config['join'])
@@ -141,7 +149,7 @@ class AssemblyTests(unittest.TestCase):
         def forward(value, context):
             return Transition(value, secret_plan)
         ops['corpus'] = Operator(forward, lambda x,c:x, 'wiring-fixture/derived', fixture=True)
-        e = Pipeline(operators=ops, allow_fixtures=True).encrypt(DATA, PublicContext('test-public'))
+        e = Pipeline(operators=ops, allow_fixtures=True).encrypt(DATA, PAIR.public_context())
         self.assertNotIn('secret-marker', repr(e))
         self.assertFalse(hasattr(e, 'parameters'))
 
@@ -170,6 +178,102 @@ class AssemblyTests(unittest.TestCase):
         for lanes in (((True,),), ([0,1],), []):
             with self.assertRaises(TypeError):
                 Streams(lanes)
+
+    def test_arbitrary_key_objects_refused_before_any_operator(self):
+        touched = []
+        pipeline = Pipeline(operators=markers(touched), allow_fixtures=True)
+        with self.assertRaisesRegex(Blocked, 'KeyPair'):
+            pipeline.encrypt(DATA, PublicContext(object(), PARAMS))
+        self.assertEqual(touched, [])
+
+    def test_key_law_and_relation_are_part_of_inverse_recipe(self):
+        pipeline = Pipeline(operators=markers([]), allow_fixtures=True)
+        encrypted = pipeline.encrypt(DATA, PUB)
+        for pair in (replace(PAIR, law_identity='different-law'),
+                     replace(PAIR, relation_identity='different-pair')):
+            with self.assertRaisesRegex(ValueError, 'recipe'):
+                pipeline.decrypt(encrypted, pair.private_context(parameters=PARAMS))
+
+    def test_private_side_must_match_declared_public_relation(self):
+        pipeline = Pipeline(operators=markers([]), allow_fixtures=True)
+        encrypted = pipeline.encrypt(DATA, PUB)
+        bad = replace(PRIV, private_key=replace(PRIV.private_key, relation_identity='wrong'))
+        with self.assertRaisesRegex(Blocked, 'same declared KeyPair'):
+            pipeline.decrypt(encrypted, bad)
+
+    def test_keypair_requires_nonempty_provenance_and_sides(self):
+        for kwargs in ({'law_identity':''}, {'relation_identity':None},
+                       {'public':None}, {'private':None}, {'fixture':1}):
+            with self.assertRaises((ValueError, TypeError)):
+                replace(PAIR, **kwargs)
+
+    def test_fixture_key_alone_cannot_earn_full_profile(self):
+        operators = {k: replace(v, fixture=False) for k,v in markers([]).items()}
+        with self.assertRaisesRegex(Blocked, 'wiring fixture'):
+            Pipeline(operators=operators).encrypt(DATA, PUB)
+        result = Pipeline(operators=operators, allow_fixtures=True).encrypt(DATA, PUB)
+        self.assertEqual(result.classification, 'WIRING_ONLY')
+
+    def test_inverse_rejects_changed_partition_before_transform(self):
+        switches = Switches({n:n=='inter' for n in DEFAULTS})
+        pipeline = Pipeline(switches)
+        encrypted = pipeline.encrypt(DATA, PUB)
+        bad = replace(PRIV, parameters={'inter': (((1,1,4),),)})
+        with self.assertRaisesRegex(ValueError, 'plan differs before stage: inter'):
+            pipeline.decrypt(encrypted, bad)
+
+    def test_derived_plan_is_checked_at_its_execution_boundary(self):
+        switches = Switches({n:n in ('corpus','inter') for n in DEFAULTS})
+        source = {'control': 'before'}
+        derived = {**source, **PARAMS}
+        op = Operator(lambda value, ctx: Transition(value, PARAMS),
+                      lambda value, ctx: value, 'wiring/derive', fixture=True)
+        pipeline = Pipeline(switches, {'corpus':op}, allow_fixtures=True)
+        encrypted = pipeline.encrypt(DATA, PublicContext(None, source))
+        with self.assertRaisesRegex(ValueError, 'plan differs before stage: inter'):
+            pipeline.decrypt(encrypted, PrivateContext(None, None, source))
+        # Inverse sees the actual effective interleave plan, not the initial plan.
+        # This fixture does not restore earlier controls, so corpus also refuses.
+        with self.assertRaisesRegex(ValueError, 'plan differs before stage: corpus'):
+            pipeline.decrypt(encrypted, PrivateContext(None, None, derived))
+        recovered = pipeline.decrypt(encrypted, PrivateContext(None, None),
+                                     inverse_plans={'inter':derived, 'corpus':source})
+        self.assertEqual(recovered.payload, DATA)
+        with self.assertRaisesRegex(ValueError, 'cover every enabled stage'):
+            pipeline.decrypt(encrypted, PrivateContext(None, None),
+                             inverse_plans={'inter':derived})
+
+    def test_plan_inventory_cannot_be_missing_reordered_or_malformed(self):
+        pipeline = Pipeline(Switches({n:n in ('inter','whole') for n in DEFAULTS}))
+        encrypted = pipeline.encrypt(DATA, PUB)
+        for plans in ((), tuple(reversed(encrypted.plan_identities)), (('inter',),)):
+            with self.assertRaisesRegex(ValueError, 'plan identities'):
+                pipeline.decrypt(replace(encrypted, plan_identities=plans), PRIV)
+
+    def test_plan_identity_preserves_types_and_refuses_opaque_controls(self):
+        self.assertNotEqual(plan_identity({'a':(1,)}), plan_identity({'a':[1]}))
+        self.assertNotEqual(plan_identity({'a':1}), plan_identity({'a':True}))
+        for value in (object(), float('nan'), float('inf')):
+            with self.assertRaises(Blocked):
+                plan_identity({'a':value})
+
+    def test_source_verification_rejects_subsets_and_altered_provenance(self):
+        verify_sources({'source_inputs':deepcopy(EXPECTED_SOURCE_INPUTS)})
+        for field in ('stack_head', 'uchc_inspected_blob', 'local_sha256'):
+            bad = deepcopy(EXPECTED_SOURCE_INPUTS)
+            bad[field] = {} if field == 'local_sha256' else '0'*40
+            with self.assertRaisesRegex(ValueError, 'complete source hash set'):
+                verify_sources({'source_inputs':bad})
+        for key in EXPECTED_SOURCE_INPUTS['local_sha256']:
+            bad = deepcopy(EXPECTED_SOURCE_INPUTS)
+            del bad['local_sha256'][key]
+            with self.assertRaises(ValueError):
+                verify_sources({'source_inputs':bad})
+
+    def test_source_verification_rejects_changed_local_bytes(self):
+        with patch.object(Path, 'read_bytes', return_value=b'altered source'):
+            with self.assertRaisesRegex(ValueError, 'source mismatch'):
+                verify_sources({'source_inputs':deepcopy(EXPECTED_SOURCE_INPUTS)})
 
 
 if __name__ == '__main__':

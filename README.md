@@ -36,12 +36,12 @@ stack/
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── urpcs/               # RETIRED: substituted GPT-produced codec; historical evidence only
-│   ├── interlace-encryption/ # intended multi-arity interleaving encryption research
+│   ├── weave/               # full gonol/private-key/thread/corpus/interleave research
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
-│   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
+│   ├── psfr/                 # Psychosocial Fauna Research: lineages, agency displacement, coalescence
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── integration/epac/        # immutable EPAC release lock and consumer verification
 ├── ahbg/                    # emerging composed benchmark/game workspace
@@ -141,7 +141,7 @@ URPCS is retired; its retained vectors and replay evidence establish behavior on
 of the substituted historical codec. No URPCS claim may be inferred from them.
 Weave is new stack-local research and remains specification-first; no
 confidentiality or production-security standing is implied by its placement.
-Psychsocio metafauna and From Photons to the Macroverse remain stack-local
+PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
 `research/epac/` preserves historical evidence. EPAC is graduated: implementation and public-contract authority belong to the
@@ -286,3 +286,10 @@ a licensing map, not legal advice.
 - The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
   pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
   snapshot refresh would also import unrelated doctrine changes.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.

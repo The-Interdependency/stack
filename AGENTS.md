@@ -24,6 +24,11 @@ projects may later graduate into their own repositories.
   multi-arity interleaving construction. Do not extend it or treat any passing test,
   vector, decoder audit, or measurement as evidence for the intended URPCS design.
 - `research/weave/` owns new Stack-local research into the full intended encryption system. Preserve all declared layers: hyperspace/gonol plaintext construction, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity last/first interleaving, and the intended asymmetric public/private relation. Read `SPECIFICATION.md` before implementation. Unresolved mechanics must fail closed as `hmmm`; do not reduce the project to its interleave layer or substitute a familiar cipher, codec, permutation generator, or URPCS mechanism.
+- `research/psfr/` is Psychosocial Fauna Research (PSFR), a stack-local pre-graduation
+  research area. It preserves two non-collapsed tracks: host-transcendent pattern-lineage
+  ecology and agency-displacement phenomenology. Preserve first-person/witness event
+  distinctions before causal compression; do not infer external-agent ontology from
+  automatic action, lost time, or a physiological correlate alone.
 - `research/zfae/` owns Stack-local inference-construction experiments. ZFAE
   retains conceptual authority, PTCNA owns neural construction, and a0 owns
   runtime integration. Keep a0-betatest comparisons separately attributed.
@@ -144,3 +149,7 @@ coherence; it does not replace workspace behavioral tests.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).

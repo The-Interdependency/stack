@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "fa81adcbc37d2042bd6691857f3f97c26f8a16f89821bef66b8331df9553d251",
+  "work_graph_sha256": "7384687cde8e9d18a1019fecd62adbaa6278930bb556546db05062ef4a348f0b",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -68,9 +68,10 @@
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
-      "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved",
+      "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved; immutable public intended-design transcript identity and detailed attribution remain unresolved",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
-      "Weave preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved"
+      "Weave preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved",
+      "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law."
     ]
   },
   "research_participants": [
@@ -194,7 +195,7 @@
     {
       "authority_transfer": false,
       "canonical_release": false,
-      "commit": "01f340ba5b4c5f107703233750768e201a41da68",
+      "commit": "1ba201449731337dc20c564788f4303c8910bfdd",
       "participant_id": "weave",
       "relation": "new stack-local specification and research for Erin Spencer's full intended multi-layer encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, reconstruction-dependent threads, corpus/material binding, multi-arity bit interleaving, and intended asymmetric key relation; no URPCS implementation inheritance and no security standing yet",
       "repository": "The-Interdependency/stack",

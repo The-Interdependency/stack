@@ -43,21 +43,28 @@ def wire(result: Run) -> bytes:
         padding = (-len(lane)) % 8
         packed = recover_bytes(Streams((lane + (0,) * padding,)))
         lanes.append({'bits': len(lane), 'hex': packed.hex()})
-    obj = {'schema': 'weave.lab-record/v1', 'classification': result.classification,
-           'recipe': result.recipe, 'lanes': lanes}
+    obj = {'schema': 'weave.lab-record/v2', 'classification': result.classification,
+           'recipe': result.recipe, 'lanes': lanes, 'plan_identities': result.plan_identities}
     return json.dumps(obj, separators=(',', ':')).encode('utf-8')
 
 
 def unwire(data: bytes, pipeline) -> Run:
     obj = strict_json(data)
-    if (type(obj) is not dict or set(obj) != {'schema','classification','recipe','lanes'}
-            or obj['schema'] != 'weave.lab-record/v1'
+    if (type(obj) is not dict or set(obj) != {'schema','classification','recipe','lanes','plan_identities'}
+            or obj['schema'] != 'weave.lab-record/v2'
             or obj['classification'] not in ('TRANSPORT_CANDIDATE', 'ABLATION_ONLY')):
         raise ValueError('invalid lab record; not a Weave cipher format')
     if obj['recipe'] != json.loads(json.dumps(pipeline.recipe())):
         raise ValueError('experiment switch/operator recipe mismatch')
     lanes = parse_lanes(obj['lanes'])
-    return Run(lanes, pipeline.recipe(), obj['classification'], (), 'encrypt')
+    plans = obj['plan_identities']
+    if (type(plans) is not list or any(type(row) is not list or len(row) != 2
+            or type(row[0]) is not str or type(row[1]) is not str
+            or len(row[1]) != 64 or any(c not in '0123456789abcdef' for c in row[1])
+            for row in plans)):
+        raise ValueError('invalid transform plan identities')
+    return Run(lanes, pipeline.recipe(), obj['classification'], (), 'encrypt',
+               tuple(tuple(row) for row in plans))
 
 
 def parse_lanes(records):

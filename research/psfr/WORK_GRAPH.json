@@ -1,8 +1,8 @@
 {
-  "schema": "the-interdependency.psychsocio-metafauna-work-graph",
-  "version": "0.1.0",
-  "as_of": "2026-09-04",
-  "work_graph_sha256": "aa475076249eecdcfb114cdde55118828e41eeeb6fe708d9197e4976d1aed60d",
+  "schema": "the-interdependency.psfr-work-graph",
+  "version": "0.2.0",
+  "as_of": "2026-09-28",
+  "work_graph_sha256": "b242e7051c28ec80e434dccd7f34629c589d04ac2cd99afd46fbea5cbdd2b362",
   "digest_contract": "sha256(canonical-json({participants,boundaries}); sort_keys=true; separators=(',',':'); participant order is significant)",
   "participants": [
     {
@@ -10,9 +10,9 @@
       "kind": "repository",
       "repository": "The-Interdependency/stack",
       "commit": "6c3f94b1e6d77e8f1abd36edc53da5fda596b416",
-      "path": "research/psychsocio-metafauna/",
+      "path": "research/psfr/",
       "authority": "composition, provenance, and stack-local research placement at workspace introduction",
-      "relation": "immutable introduction snapshot for this research workspace; current bytes are identified by the enclosing stack commit, avoiding recursive self-reference"
+      "relation": "immutable introduction snapshot for the predecessor research workspace, now continued as PSFR; current bytes are identified by the enclosing stack commit, avoiding recursive self-reference"
     },
     {
       "id": "skill-lib",
@@ -205,7 +205,8 @@
       "No empirical damage-affordance matrix, nonlinear coalescence threshold, capture classifier, or repair model has been validated.",
       "The criteria by which a distributed host-pattern network becomes an accountable I remain unresolved.",
       "The stack root skill-lib snapshot is older than the current external skill-lib doctrine consulted here.",
-      "interdependent-lib and eml_ucns retain historical descriptions that conflict with current UCNS/PTCNA source boundaries."
+      "interdependent-lib and eml_ucns retain historical descriptions that conflict with current UCNS/PTCNA source boundaries.",
+      "Agency-displacement phenomenology has been specified as a separate PSFR track, but no preregistered physiological experiment has yet been executed."
     ]
   }
 }

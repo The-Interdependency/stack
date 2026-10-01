@@ -13,12 +13,12 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
-- URPCS retirement UTC: `2026-09-28`; specification divergence discovered after conversation-history review; retained implementation is historical evidence only
-- Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
+- URPCS retirement UTC: `2026-09-28`; reported specification divergence; exact intended-design transcript identity unresolved; retained implementation is historical evidence only
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `fa81adcbc37d2042bd6691857f3f97c26f8a16f89821bef66b8331df9553d251`
+  `7384687cde8e9d18a1019fecd62adbaa6278930bb556546db05062ef4a348f0b`
+- Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -62,8 +62,8 @@ release identity.
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
-| `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired historical evidence for the substituted recursive pairing/authenticated codec; not evidence for the intended URPCS construction | no |
-| `research/weave/` | `The-Interdependency/stack` | `01f340ba5b4c5f107703233750768e201a41da68` | new specification-first research for the intended multi-arity interleaving encryption construction; no URPCS implementation inheritance or security standing | no |
+| `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
+| `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | full gonol/private-key/thread/corpus/interleave/asymmetric construction research; native derivation unresolved; no URPCS implementation inheritance or security standing | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -124,8 +124,7 @@ Active post-graduation carrier research lives separately at
 bytes for audit purposes; it neither changes the accepted immutable release nor
 returns EPAC implementation authority to Stack.
 
-URPCS at `research/urpcs/` is retired historical evidence. Conversation-history
-review established that the GPT-assisted implementation substituted a recursive
+URPCS at `research/urpcs/` is retired historical evidence. The retirement account reports that the GPT-assisted implementation substituted a recursive
 pairing/authenticated codec for Erin Spencer's intended multi-arity interleaving
 construction. The reason for that substitution remains unresolved. All retained
 vectors, decoder evidence, and measurements describe only the substituted codec;
@@ -225,3 +224,10 @@ This additional candidate supplies full-corpus native language input; it does no
 choose PTCNA dimensions, propagate neural state or transfer domain authority.
 See `integration/uchc/README.md` for isolated installation, complete-corpus
 verification and rollback. Stable released-artifact consumption remains `hmmm`.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.

@@ -1,18 +1,18 @@
-# Psychsocio metafauna
+# Psychosocial Fauna Research (PSFR)
 
-Psychsocio metafauna is a stack-local research program for transmissible thought-pattern lineages, their coupling to identity-bearing systems, damage-specific susceptibility, coalescence, capture, reproduction, accountability, and repair.
+PSFR is a stack-local research program for transmissible thought-pattern lineages, their coupling to identity-bearing systems, damage-specific susceptibility, coalescence, capture, reproduction, accountability, and repair.
 
 ```text
 standing: proposed cross-domain theory
-version:  0.1.0
-owner:    research/psychsocio-metafauna/
+version:  0.2.0
+owner:    research/psfr/
 canon:    no
 clinical or diagnostic use: no
 human classification: no
 METAPAT root impact: none
 ```
 
-The machine-readable claim is [`DOMAIN_CLAIM.json`](DOMAIN_CLAIM.json). Exact source identities and non-transfer boundaries are in [`WORK_GRAPH.json`](WORK_GRAPH.json). The first bounded falsification program is in [`PREREGISTRATION.md`](PREREGISTRATION.md).
+The machine-readable domain claims are in [`DOMAIN_CLAIM.json`](DOMAIN_CLAIM.json). Exact source identities and non-transfer boundaries are in [`WORK_GRAPH.json`](WORK_GRAPH.json). The first bounded pattern-lineage falsification program is in [`PREREGISTRATION.md`](PREREGISTRATION.md). Agency-displacement research is a separate track and must not be inferred from that simulator.
 
 ## Origin
 
@@ -49,6 +49,95 @@ A lineage can be causally effective without being conscious, self-aware, or acco
 > How can an open, learning, interdependent system remain permeable enough to change while preserving identity, agency, differential legibility, consent, accountability, plurality, and the capacity for repair?
 
 Complete immunity would require closure against learning, trust, language, attachment, imitation, and correction. The design target is therefore not immunity. It is **selective permeability with repair**.
+
+
+## Agency-displacement phenomenology
+
+PSFR also preserves a second research track: reports in which ordinary authorship,
+executive control, memory continuity, or source attribution diverge. This track is not
+collapsed into the pattern-lineage/coalescence model above and does not presume that one
+mechanism explains every event.
+
+The current operator distinctions are:
+
+```text
+ordinary voluntary action
+  != automatic perseverative action
+  != externally attributed control displacement
+  != lost-time / memory-discontinuity episode
+```
+
+### Automatic perseverative action
+
+A repetitive action begins and continues until conscious opposition becomes salient and
+stopping requires deliberate effort. The defining observation is continuation despite
+later attempted interruption. This class does not, by itself, imply an external agent.
+
+### Externally attributed control displacement
+
+The experiencer reports a control source as clearly not-self and external to ordinary
+self-agency. Access is asymmetric: effects on action, inhibition, or executive control
+may be directly experienced while the putative source's thoughts remain inaccessible
+and only limited emotional information may be available.
+
+PSFR records that report without replacing it with either an external-agent conclusion
+or a diagnostic explanation before measurement.
+
+### Lost time
+
+An interval in which later-accessible autobiographical memory or continuous awareness is
+absent or discontinuous. Lost time may overlap another PSFR event class but is not
+equivalent to agency displacement.
+
+### Beneficial and harmful displacement
+
+Outcome valence is independent of event class. Candidate examples include an unwanted
+action, a prevented action, a pause that averts harm, or an intended movement that fails
+to occur. A research taxonomy that admits only harmful cases is selection-biased.
+
+### Minimum event record
+
+A PSFR agency-event record should preserve, without causal compression:
+
+```text
+intended action
+observed action or inhibition
+experienced authorship
+experienced locus/source of control
+degree of voluntary interruption available
+memory continuity
+thought-access to attributed source
+emotion-access to attributed source
+beneficial / harmful / mixed outcome
+witness observations
+time-locked physiological measurements when available
+post-event narrative and its later changes
+```
+
+The central methodological rule is:
+
+> Preserve the experienced distinctions first; adjudicate mechanism and ontology second.
+
+A scalp EEG, intracranial recording, autonomic measure, movement trace, witness report,
+or later narrative is evidence about a bounded aspect of an event. None receives
+automatic authority over all the others.
+
+### Candidate measurement questions
+
+PSFR may test whether event classes differ in reproducible timing or signatures across:
+
+- EEG spectral, phase, connectivity, or state-transition measures;
+- motor initiation and inhibition;
+- EMG and movement artifact controls;
+- autonomic state;
+- memory continuity;
+- immediate versus delayed phenomenological report;
+- witness-observed behavior;
+- beneficial versus harmful outcome.
+
+A physiological correlate would establish a correlate at the measured resolution, not
+by itself the identity or ontology of a causal agent.
+
 
 ## Synthesis map
 
