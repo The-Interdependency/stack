@@ -1,0 +1,60 @@
+{
+  "schema": "weave.provisional-implementation-plan/v1",
+  "source": "The-Interdependency/stack@200032dba6131145ebc61b52bb4f1aee507e6f63",
+  "instruction": "Implement what can be with available answers; expose questions and probable answers for correction, improvement or approval.",
+  "claim": "Executable modular transport candidate and native-source adapter; not the complete asymmetric Weave construction.",
+  "selected_provisional_answers": {
+    "partition": "Sequential balanced quotient/remainder; retain empty sections; no minimum stage count.",
+    "split": "Explicit occurrence-to-lane route; cyclic routing is a named transport-only example, not the missing native complementary-thread law.",
+    "corpus": "Named traversal candidate: actual selected corpus bits choose left/right consumption of lane occurrences; inverse recomputes independently from material.",
+    "join": "Explicit lane visitation order repeated until exhausted; preserve each lane's internal order.",
+    "native": "Read/recover existing native UCHC word/glyph/definition objects at the inspected source identity; do not substitute a general plaintext gonol.",
+    "unknown": "Native key/binding, whole-message admission, native thread projection and corpus-origin geometry remain unimplemented."
+  },
+  "files": [
+    "stages/api.py",
+    "assembly.py",
+    "stages/split.py",
+    "stages/corpus.py",
+    "stages/inter.py",
+    "stages/join.py",
+    "stages/gonol.py",
+    "transport.py",
+    "lab.py",
+    "tests/test_transport.py",
+    "profiles/transport.json",
+    "IMPLEMENTED.md"
+  ],
+  "boundaries": {
+    "network": "none during execution",
+    "files": "CLI reads explicitly supplied paths and writes new output files only",
+    "secrets": "no private key/corpus bytes in receipts",
+    "authority": "no upstream producer or libs changes"
+  },
+  "verification": [
+    "native refusals",
+    "exact inverses",
+    "all switch combinations",
+    "actual corpus contribution",
+    "separate-process recovery",
+    "wrong-material and malformed-input behavior",
+    "no source/trace-assisted inverse"
+  ],
+  "rollout": "Explicit transport profile only; full profile remains default and refuses unresolved laws.",
+  "rollback": "Revert this workspace-local commit; retain sealed run-1 evidence.",
+  "review_repair": {
+    "source": "The-Interdependency/stack@5dd67dec2d3cfe7eeb2cdd3d4f132bc9b8007ba9",
+    "retirement": "The-Interdependency/stack@1ba201449731337dc20c564788f4303c8910bfdd",
+    "scope": [
+      "root directory and full-architecture projections",
+      "mandatory corpus dependence",
+      "unresolved asymmetric derivation",
+      "complete frozen source set verification",
+      "declared key-law and pair relation identity",
+      "independently reconstructed inverse plans bound before each operation"
+    ],
+    "verification": "54 methods, exact 512 assembly / 32 transport switch domains and malformed source/key/plan refusal; python research/weave/test.py --receipt /tmp/weave-review-repair.json",
+    "rollout": "Explicit v2 lab records; full native profile remains blocked.",
+    "rollback": "Revert the Weave review-repair commit without undoing merged URPCS retirement."
+  }
+}

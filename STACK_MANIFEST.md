@@ -17,7 +17,8 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `9cb08004e1e602b7971f1a853d4133af9245b400279752dd877fcd0d3cef51c4`
+  `7384687cde8e9d18a1019fecd62adbaa6278930bb556546db05062ef4a348f0b`
+- Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -62,6 +63,7 @@ release identity.
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
 | `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
+| `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | full gonol/private-key/thread/corpus/interleave/asymmetric construction research; native derivation unresolved; no URPCS implementation inheritance or security standing | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
@@ -127,6 +129,8 @@ pairing/authenticated codec for Erin Spencer's intended multi-arity interleaving
 construction. The reason for that substitution remains unresolved. All retained
 vectors, decoder evidence, and measurements describe only the substituted codec;
 they do not validate or falsify the intended URPCS design.
+
+The intended construction now has a separate research owner at `research/weave/`. Weave preserves the full system rather than naming only the interleave layer: hyperspace/gonol plaintext construction, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity bit interleaving, and the intended asymmetric public/private relation. The workspace starts with no implementation inheritance from URPCS and no confidentiality or production-security claim.
 
 ZFAE construction research lives at `research/zfae/`. Its exact research-only
 inputs are recorded above. The parser consumes the existing English GlyphGonol
@@ -200,12 +204,16 @@ fixtures remain executable historical evidence for the substituted profile only.
 No result from that profile may be promoted to a claim about the intended URPCS
 construction.
 
+Weave is a new stack-local research component. It is not yet an
+independent repository, release, or security-reviewed cryptosystem.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
+- Weave preserves the intended mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and the threat model remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
 ## UCHC input candidate
@@ -220,3 +228,6 @@ verification and rollback. Stable released-artifact consumption remains `hmmm`.
 URPCS provenance boundary: the immutable public intended-design transcript identity
 and detailed design attribution remain unresolved; see
 [`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.

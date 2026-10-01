@@ -1,0 +1,8 @@
+{
+  "schema": "weave.transport-profile/v1",
+  "switches": {"key": false, "gonol": false, "bind": false, "split": true, "corpus": true, "inter": true, "join": true, "whole": true, "auth": false},
+  "threads": 3,
+  "arities": [[5, 7, 3], [7, 3, 5], [3, 5, 7]],
+  "join_order": [2, 0, 1],
+  "corpus": [["a", 0], ["b", 1], ["c", 2]]
+}

@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "retire-urpcs-spec-divergence",
-    "commit": "01f340ba5b4c5f107703233750768e201a41da68",
+    "branch": "actual-interlace-encryption",
+    "commit": "5dd67dec2d3cfe7eeb2cdd3d4f132bc9b8007ba9",
     "generated_at": "2026-10-01",
-    "note": "Retirement closure against the exact PR #61 baseline, reconciled with main 49ca652d24b974a58ed614bdf564ae32bea590aa. The containing commit owns the update; historical evidence identities are unchanged."
+    "note": "PR #62 review repair from its exact starting head, revalidated against merged retirement 1ba201449731337dc20c564788f4303c8910bfdd; containing commit owns the update. Historical receipts retain their original source identities."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol and English Gonol are current Stack research workspaces. URPCS is retired substituted-codec historical evidence only; no result transfers to the intended design. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol and English Gonol are current Stack research workspaces. URPCS is retired substituted-codec historical evidence only; no result transfers to the intended design. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification. Weave preserves all intended layers in research/weave/ with switchable assembly and an explicit transport candidate; native asymmetric derivation remains unresolved."
   },
   "delivered": [
     {
@@ -82,6 +82,11 @@
       "surface": "research/english-gonol/FULL_VIEW_AUDIT.json and experiments/hyperspace-views-full-v1/",
       "status": "Complete 164864-word native census and independent replay agree; all view subsets and complete address controls sealed.",
       "boundary": "Corpus discrimination and address dependence only; no automatic geometry selection, neural-input acceptance, or inference quality claim."
+    },
+    {
+      "surface": "research/weave/",
+      "status": "Switchable assembly, explicit transport candidate and fail-closed key/plan/source provenance checks",
+      "boundary": "No inherited URPCS result, complete native cipher implementation or security standing; full profiles require actual corpus dependence."
     }
   ],
   "active_frontier": [
@@ -90,7 +95,8 @@
     "maintain EPAC as a hash-pinned independent release consumer",
     "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
     "Resolve the UCNS neural-audit prerequisite and derive higher-scale closure and runtime integration from the source-preserving gonol input boundary.",
-    "Evaluate English view usefulness on a defined inference task and preserve source-qualified addresses with explicit corpus-version remapping."
+    "Evaluate English view usefulness on a defined inference task and preserve source-qualified addresses with explicit corpus-version remapping.",
+    "Derive and validate the missing native Weave key, gonol, binding and thread/corpus relations without replacing the preserved architecture."
   ],
   "next_actions": [
     {
@@ -175,7 +181,8 @@
     "zfae": "research/zfae/README.md",
     "zfae_gonol_parser": "research/zfae/gonol_parser.py",
     "english_full_view_audit": "research/english-gonol/FULL_VIEW_AUDIT.json",
-    "english_full_view_report": "research/english-gonol/docs/hyperspace-views-full-v1.md"
+    "english_full_view_report": "research/english-gonol/docs/hyperspace-views-full-v1.md",
+    "weave": "research/weave/README.md"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
@@ -184,6 +191,7 @@
     "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved.",
     "URPCS is retired; intended-design transcript identity and cause of substitution remain unresolved.",
     "ZFAE state, propagation, learning and readout laws remain construction work; input preservation alone does not demonstrate inference.",
-    "English view discrimination is established on the complete fixed corpus; downstream inference usefulness and address remapping across corpus versions remain unresolved."
+    "English view discrimination is established on the complete fixed corpus; downstream inference usefulness and address remapping across corpus versions remain unresolved.",
+    "Weave public/private key derivation and source of asymmetry remain unresolved; provenance-bound key labels are not a mathematical implementation."
   ]
 }

@@ -36,6 +36,7 @@ stack/
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
 │   ├── urpcs/               # RETIRED: substituted GPT-produced codec; historical evidence only
+│   ├── weave/               # full gonol/private-key/thread/corpus/interleave research
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
@@ -101,10 +102,11 @@ multi-arity interleaving construction during GPT-assisted implementation. The re
 for the substitution is unresolved. Its tests and receipts apply only to that
 substituted codec and must not be used to validate or falsify the intended URPCS design.
 
+The replacement research path is `research/weave/`. It owns the full intended encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity bit interleaving, and the eventual asymmetric public/private relation. The interleave is one layer, not the project identity. The workspace deliberately contains no URPCS implementation dependency and makes no security claim.
+
 ```bash
-python3 research/urpcs/urpcs_v1_reference.py --self-test
-python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
-node research/urpcs/tests/test_independent_decoder.js
+cat research/weave/SPECIFICATION.md
+cat research/weave/BASE.json
 ```
 
 ### Change stack structure
@@ -137,6 +139,8 @@ Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.
 constructor is an implemented candidate, not stack or language canon.
 URPCS is retired; its retained vectors and replay evidence establish behavior only
 of the substituted historical codec. No URPCS claim may be inferred from them.
+Weave is new stack-local research and remains specification-first; no
+confidentiality or production-security standing is implied by its placement.
 PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -286,3 +290,6 @@ a licensing map, not legal advice.
 URPCS provenance boundary: the immutable public intended-design transcript identity
 and detailed design attribution remain unresolved; see
 [`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.

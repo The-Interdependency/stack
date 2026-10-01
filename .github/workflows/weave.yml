@@ -1,0 +1,33 @@
+name: Weave modular experiments
+on:
+  pull_request:
+    paths:
+      - 'research/weave/**'
+      - '.github/workflows/weave.yml'
+  push:
+    paths:
+      - 'research/weave/**'
+      - '.github/workflows/weave.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the event source with GitHub PR isolation
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Verify exact event identity
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      # Push validates the exact branch head; pull_request validates GitHub's
+      # isolated merge ref. Neither grants write credentials to tested code.
+      - name: Verify assembly and provisional transport, not native cipher security
+        run: |
+          set -euo pipefail
+          python3 -VV
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
+          cat "$RUNNER_TEMP/weave-check.json"
