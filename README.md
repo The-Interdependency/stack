@@ -35,7 +35,7 @@ stack/
 │   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
-│   ├── urpcs/               # authenticated recursive pairing codec research + exact vectors
+│   ├── urpcs/               # RETIRED: substituted GPT-produced codec; historical evidence only
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── zfae/                # inference construction research and gonol input parser
 │   ├── epac/                # historical forge evidence; active implementation is independent
@@ -95,11 +95,11 @@ restoring implementation code to the sealed historical `research/epac/` path.
 EPAC retains implementation and public-contract authority; Stack owns only the
 local carrier audit and its bounded receipts.
 
-URPCS v1 is a separate stack-local codec experiment at `research/urpcs/`. It
-carries accepted Laws 1–13, an authenticated reference encoder/decoder, an
-independently structured decoder, and byte-exact vectors. Its codec-local `Gonol`
-row is not a UCNS gonol; the workspace imports no PCEA construction and claims no
-confidentiality or production fitness.
+URPCS at `research/urpcs/` is **retired historical evidence**. The implemented
+recursive-pairing/authenticated-codec profile diverged from Erin Spencer's intended
+multi-arity interleaving construction during GPT-assisted implementation. The reason
+for the substitution is unresolved. Its tests and receipts apply only to that
+substituted codec and must not be used to validate or falsify the intended URPCS design.
 
 ```bash
 python3 research/urpcs/urpcs_v1_reference.py --self-test
@@ -135,9 +135,8 @@ English Gonol Construction is currently a distinct stack-local research componen
 separated from EDCM but not independently graduated.
 Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
 constructor is an implemented candidate, not stack or language canon.
-URPCS is stack-local and ungraduated; its verified reference vectors and
-independent replay establish bounded deterministic codec behavior, not
-encryption security.
+URPCS is retired; its retained vectors and replay evidence establish behavior only
+of the substituted historical codec. No URPCS claim may be inferred from them.
 PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -272,9 +271,9 @@ a licensing map, not legal advice.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; UCNS affixiation geometry remains unresolved.
-- URPCS has a deterministic authenticated-codec reference profile and bounded
-  independent decoder evidence, but no confidentiality model, production state
-  store, or release authority.
+- URPCS is retired because the implemented GPT-produced codec diverged from the
+  intended specification. Cause of the substitution remains `hmmm`; retained evidence
+  applies only to the substituted implementation.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the
@@ -283,3 +282,7 @@ a licensing map, not legal advice.
 - The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
   pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
   snapshot refresh would also import unrelated doctrine changes.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).

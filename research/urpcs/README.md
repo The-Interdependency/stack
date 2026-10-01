@@ -1,11 +1,22 @@
-# URPCS v1 recursive pairing codec research
+# URPCS — retired substituted implementation
 
-URPCS is a **stack-local authenticated codec experiment**. Laws 1–13 define a
+> [!WARNING]
+> **RETIRED — SPECIFICATION DIVERGENCE**
+>
+> This workspace does **not** implement Erin Spencer's intended URPCS construction and must not be used as evidence about that construction.
+>
+> The retirement records a reported specification divergence during GPT-assisted implementation. The reported intended design includes successive arity partitioning (for example fifths, sevenths, then thirds), partition-local last-bit/first-bit interleaving and whole-stream interleaving. **These details remain UNRESOLVED as source-backed attribution:** no immutable public intended-design transcript has been verified. They are preserved as an account, not a recovered or ratified specification. See [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json).
+>
+> The exact comparison, cause of substitution and reported elapsed time remain `hmmm`. Retirement withdraws this implementation as evidence for the intended design; it does not manufacture the missing specification.
+>
+> **Standing:** historical evidence of the substituted implementation only. Passing vectors, decoder agreement, relational audits, and Möbius measurements below remain valid only for that substituted codec. They neither validate nor falsify the intended URPCS design. Do not extend, integrate, publish, or cite this workspace as URPCS except when documenting this failure.
+
+The retired substituted implementation was an authenticated codec experiment. Its historical Laws 1–13 define a
 recursive pairing/witness format, deterministic framing, integrity verification,
 and linear state advance. The committed reference implementation and vectors
 exercise that bounded construction.
 
-Standing: **COMPUTATION; research, not canon**.
+Standing: **RETIRED; historical computation for the substituted profile only**.
 
 The evidence supports deterministic round-trip behavior for the frozen harness.
 It does not establish confidentiality, production suitability, PCEA compatibility,
@@ -13,7 +24,7 @@ UCNS geometry, or UCNS-gonol identity.
 
 ## Placement and authority
 
-- `The-Interdependency/stack` owns this research workspace and its reference code.
+- `The-Interdependency/stack` preserves this historical workspace and reference code; it owns no active URPCS construction here.
 - `The-Interdependency/skill-lib` supplies build, evidence, domain-claim, and
   stack-update discipline; it supplies no codec or security result.
 - KMAC256 follows [NIST SP 800-185](https://csrc.nist.gov/pubs/sp/800/185/final)
@@ -66,7 +77,7 @@ its Markdown projection remains with the existing human-readable reports in
 
 ## Usage guidance
 
-Run the reference checks:
+For historical reproduction only, run the reference checks. These commands do not reopen research or validate the intended design:
 
 ```bash
 python3 research/urpcs/urpcs_v1_reference.py --self-test
@@ -192,7 +203,7 @@ and greater depths require a separately justified permitted-domain cap.
   authorization, and independent-origin synchronization remain blocked on
   explicit missing laws.
 
-## Next gates
+## Historical next gates — superseded by retirement
 
 1. A threat model and leakage model must precede any confidentiality claim.
 2. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
@@ -205,7 +216,7 @@ and greater depths require a separately justified permitted-domain cap.
 
 ## hmmm
 
-The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
+Retirement supersedes further development of this workspace. The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
 After the public contract repair, the clean-room replay is
 `SURVIVED_INDEPENDENTLY` for the committed bounded profile. Confidentiality,
 durable host state, production security, and release authority remain open.

@@ -19,9 +19,10 @@ projects may later graduate into their own repositories.
   component. It owns Python source admission and bottom-up affixiation only; METAPAT owns
   affixiation semantics, UCNS owns consumed geometry, and parser objects are witnesses
   rather than gonol identities.
-- `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
-  experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
-  construction and has no confidentiality, production-security, or release standing.
+- `research/urpcs/` is retired historical evidence. GPT-assisted implementation
+  substituted a recursive pairing/authenticated codec for Erin Spencer's intended
+  multi-arity interleaving construction. Do not extend it or treat any passing test,
+  vector, decoder audit, or measurement as evidence for the intended URPCS design.
 - `research/psfr/` is Psychosocial Fauna Research (PSFR), a stack-local pre-graduation
   research area. It preserves two non-collapsed tracks: host-transcendent pattern-lineage
   ecology and agency-displacement phenomenology. Preserve first-person/witness event
@@ -139,8 +140,12 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
-- URPCS has bounded reference and independent-decoder evidence but lacks a
-  confidentiality model, durable host-state proof, and independent release authority.
+- URPCS is retired for specification divergence. Why GPT substituted the different
+  architecture remains `hmmm`; its retained evidence is historical and implementation-local.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).

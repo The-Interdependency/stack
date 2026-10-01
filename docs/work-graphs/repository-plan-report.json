@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "research/english-views-full-corpus",
-    "commit": "c9cc72e9acf5f669c2c0333f2d7cf0de92b3179e",
-    "generated_at": "2026-09-23",
-    "note": "Reconciles both research work graphs against this main baseline; the PR owns the resulting transaction. Historical audit evidence remains bound to its recorded source."
+    "branch": "retire-urpcs-spec-divergence",
+    "commit": "01f340ba5b4c5f107703233750768e201a41da68",
+    "generated_at": "2026-10-01",
+    "note": "Retirement closure against the exact PR #61 baseline, reconciled with main 49ca652d24b974a58ed614bdf564ae32bea590aa. The containing commit owns the update; historical evidence identities are unchanged."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol, English Gonol, and URPCS are current Stack research workspaces. URPCS supplies bounded authenticated-codec computation only; no confidentiality, PCEA compatibility, UCNS-gonol identity, or release authority transfers. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol and English Gonol are current Stack research workspaces. URPCS is retired substituted-codec historical evidence only; no result transfers to the intended design. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification."
   },
   "delivered": [
     {
@@ -70,8 +70,8 @@
     },
     {
       "surface": "research/urpcs/",
-      "status": "Laws 1-13, reference encoder/decoder, independent JavaScript decoder replay, byte-exact vectors, source receipt, and CI gates integrated",
-      "boundary": "Stack-local authenticated-codec computation only; bounded independent decoding survived, while confidentiality, PCEA compatibility, UCNS-gonol identity, and release authority remain unclaimed."
+      "status": "RETIRED: substituted-codec artifacts retained for historical reproduction only",
+      "boundary": "No active URPCS research or implementation authority; retained results neither validate nor falsify the intended construction. Immutable intended-design transcript identity remains unresolved."
     },
     {
       "surface": "research/zfae/",
@@ -89,7 +89,6 @@
     "register organization aggregate and website projection derivations in the fresh-making control plane",
     "maintain EPAC as a hash-pinned independent release consumer",
     "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
-    "Obtain a URPCS leakage/threat model before considering any confidentiality construction.",
     "Resolve the UCNS neural-audit prerequisite and derive higher-scale closure and runtime integration from the source-preserving gonol input boundary.",
     "Evaluate English view usefulness on a defined inference task and preserve source-qualified addresses with explicit corpus-version remapping."
   ],
@@ -183,7 +182,7 @@
     "skill-lib remains a special operational root snapshot rather than the normal libs/research pair",
     "EPAC geometry ratification and unmeasured operation effects remain unresolved research",
     "Python Gonol exhaustive CPython 3.12 grammar/test-corpus parity, later language profiles, and exact UCNS affixiation/coupling operations remain unresolved.",
-    "URPCS confidentiality, durable rollback resistance, fork recovery, and production suitability remain unresolved.",
+    "URPCS is retired; intended-design transcript identity and cause of substitution remain unresolved.",
     "ZFAE state, propagation, learning and readout laws remain construction work; input preservation alone does not demonstrate inference.",
     "English view discrimination is established on the complete fixed corpus; downstream inference usefulness and address remapping across corpus versions remain unresolved."
   ]

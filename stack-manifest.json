@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "7faa844d63c0e6d30727f3310f82c3ebc57193324b05f6c7979ed1fb90e7ef17",
+  "work_graph_sha256": "9cb08004e1e602b7971f1a853d4133af9245b400279752dd877fcd0d3cef51c4",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -68,7 +68,7 @@
     "hmmm": [
       "ucns has no LICENSE file at snapshot commit 828c0b8",
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
-      "URPCS remains an authenticated codec experiment with bounded independent decoder evidence but without a confidentiality model or release authority",
+      "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved; immutable public intended-design transcript identity and detailed attribution remain unresolved",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair"
     ]
   },
@@ -186,7 +186,7 @@
       "canonical_release": false,
       "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
       "participant_id": "urpcs",
-      "relation": "stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer",
+      "relation": "retired historical evidence for a substituted GPT-produced recursive pairing/authenticated codec; does not implement, validate, or falsify Erin Spencer's intended multi-arity interleaving URPCS construction",
       "repository": "The-Interdependency/stack",
       "workspace": "research/urpcs/"
     },
