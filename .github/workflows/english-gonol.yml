@@ -34,6 +34,7 @@ jobs:
           repository: The-Interdependency/ucns
           ref: 5a042416ef62abd9b674523284c2a31193918d66
           path: _deps/ucns-motion
+          fetch-depth: 0 # Motion and lift-selection validate their pinned ancestry.
           persist-credentials: false
 
       - name: Checkout pinned UCNS relational source
