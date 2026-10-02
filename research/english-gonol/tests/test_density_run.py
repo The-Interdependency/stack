@@ -1,4 +1,12 @@
+# ratios: loc_comments=235:90 imports_exports=7:11 calls_definitions=64:14
 # === CHECKS ===
+# id: check_density_markdown_displays_measured_values
+#   proves: density_markdown_displays_measured_values
+#   call: self::test_markdown_renders_measured_values
+#   requires: python3, pytest
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+#
 # id: check_density_counts_constructed_occurrence_relations
 #   proves: density_counts_constructed_occurrence_relations
 #   call: self::test_counts_come_from_constructed_occurrence_relations
@@ -204,6 +212,16 @@ def test_counts_come_from_constructed_occurrence_relations(tmp_path: Path) -> No
     assert result.scales["word"]["total"] == 4
 
 
+def test_markdown_renders_measured_values(tmp_path: Path) -> None:
+    db_path, manifest_path = _make_construct(tmp_path)
+    out = tmp_path / "density"
+    run(db_path, manifest_path, out)
+    rendered = (out / "density.md").read_text(encoding="utf-8")
+    assert "| a | 0 | 1 | 1/4 |" in rendered
+    assert "| b | 1 | 3 | 3/4 |" in rendered
+    assert rendered.count("| scalar | public_position | count | frequency_fraction |") == 4
+
+
 def test_density_is_determinable_at_every_scale(tmp_path: Path) -> None:
     db_path, manifest_path = _make_construct(tmp_path)
     result = build_density(db_path, manifest_path)
@@ -356,3 +374,4 @@ def test_fails_closed_on_wrong_construct_schema(tmp_path: Path) -> None:
 
     with pytest.raises(DensityError):
         build_density(db_path, bad_path)
+# ratios: loc_comments=235:90 imports_exports=7:11 calls_definitions=64:14

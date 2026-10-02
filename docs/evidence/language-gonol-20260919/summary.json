@@ -1,0 +1,132 @@
+{
+  "english": {
+    "completed_independent_process_builds": 2,
+    "proof": "english-replay.json",
+    "receipt_sha256": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57"
+  },
+  "evidence_files": {
+    "english-replay.json": {
+      "bytes": 1996,
+      "sha256": "66f6a7371ad2c3b8b9ef725f3798b177bd51e29858243a417c6758c9647b4294"
+    },
+    "english-tests.xml": {
+      "bytes": 11372,
+      "sha256": "0e94a985634cfca3eaf55e138466c531db977c70462da533ae86d50510471332"
+    },
+    "python-attempt-a.json": {
+      "bytes": 1083,
+      "sha256": "525cd23c82c03d46b724eeed82b23ea31b8be5a2dca5fa3244cb4c0fa15a4552"
+    },
+    "python-attempt-a.log": {
+      "bytes": 1722,
+      "sha256": "c13d0c3420eb742d4bff16fa501c7eac740a45e314c7ffcee674187893080126"
+    },
+    "python-inventory.json.gz": {
+      "bytes": 78516,
+      "sha256": "b320a84047c2d17696844b21bdb5a8ca22685c423f32ce304566b9f1d399d56a"
+    },
+    "python-outcomes.jsonl.gz": {
+      "bytes": 207442,
+      "sha256": "3b8b05912be60ad2c38a60b5075e45a37782e189b7ec2182ea3619a6acd0816c"
+    },
+    "python-replay.json": {
+      "bytes": 1331,
+      "sha256": "fe2135b7f6e3303dce7b7d7f12f14883b32d1857037d43b1cb4b34a75ec96a14"
+    },
+    "python-tests.xml": {
+      "bytes": 7140,
+      "sha256": "51c89e2c4e3557b5068b07e82e08e7370288b71edb09b62d97bf5e2f677ced0a"
+    }
+  },
+  "hmmm": [
+    "exact UCNS geometric displacement",
+    "off-carrier glyph admission (113 source files retain their unresolved scalars)",
+    "grammar/runtime equivalence (six AST witness failures are retained)",
+    "independent project graduation",
+    "cause of the first attempt SQLite readonly error"
+  ],
+  "minimum_repair_commit": "8c84d3dc9e05ef0a4373f215da1bcf20801ed663",
+  "observed_utc": "2026-09-19T03:59:02.423791+00:00",
+  "python": {
+    "ast_false_sources": [
+      "Lib/test/test_lib2to3/data/bom.py",
+      "Lib/test/test_lib2to3/data/crlf.py",
+      "Lib/test/test_lib2to3/data/different_encoding.py",
+      "Lib/test/test_lib2to3/data/false_encoding.py",
+      "Lib/test/test_lib2to3/data/py2_test_grammar.py",
+      "Lib/test/tokenizedata/badsyntax_3131.py"
+    ],
+    "attempts": [
+      "python-b",
+      "python-c"
+    ],
+    "comparison": "receipt.json, inventory.json and outcomes.jsonl exactly equal",
+    "completed_independent_process_passes": 2,
+    "counts": {
+      "ast_false": 6,
+      "constructed": 1049,
+      "off_carrier_files": 113,
+      "rejected_encoding": 3,
+      "tokenize_false": 0
+    },
+    "input_bytes": 20732440,
+    "input_files": 1052,
+    "inventory_sha256": "1dd99a2c8e27e10c669dfd46a29b2e0107da15279f18aac94eb5453052bb41e1",
+    "outcomes_sha256": "5a38fb2ff50c0ab0cae636a5d8e57110506e263a775f0c17b7b56baa0c6e4bf1",
+    "proof": "python-replay.json",
+    "rejected_sources": [
+      "Lib/test/tokenizedata/bad_coding.py",
+      "Lib/test/tokenizedata/bad_coding2.py",
+      "Lib/test/tokenizedata/badsyntax_pep3120.py"
+    ]
+  },
+  "qualification_implementation_commit": "64698061fb0ff0b92ccc4dfdc8538680fccbbfd2",
+  "qualification_implementation_tree": "aa5371c5c11ffa7988a0ab5b77e8c0261855c48c",
+  "ratios": {
+    "changed_python_files": 6,
+    "drift": 0,
+    "gaps": 0,
+    "misplaced": 0,
+    "verified_ratios": 36
+  },
+  "requirements_file": "requirements-language-tests.txt",
+  "requirements_sha256": "506d60886f9a1d832731abc6909758b79af2f96e6883dc6af471c068219c653a",
+  "runtime": {
+    "executable_sha256": "fa67443527ed9647f760d807e2a38f26340757123e643c4639cf273ed15d5ea7",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1"
+  },
+  "schema": "language-gonol.qualification-result",
+  "skill_lib_commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
+  "stack_consistency": {
+    "repositories": 7,
+    "research_participant_identities": 12,
+    "status": "PASS"
+  },
+  "stack_start_commit": "bcaba85900716e5209150a504660fa2ca5158299",
+  "status": "SURVIVED_DECLARED_CONSTRUCTION_PROFILES_WITH_RECORDED_ATTEMPT_FAILURE",
+  "tests": {
+    "english": {
+      "errors": 0,
+      "failed": 0,
+      "passed": 85,
+      "skipped": 0
+    },
+    "python": {
+      "errors": 0,
+      "failed": 0,
+      "passed": 47,
+      "skipped": 0
+    }
+  },
+  "unsuccessful_attempts": [
+    {
+      "attempt": "python-a",
+      "completed_files": 671,
+      "failure_record": "python-attempt-a.json",
+      "included_in_completed_pass_count": false
+    }
+  ],
+  "version": 1
+}
