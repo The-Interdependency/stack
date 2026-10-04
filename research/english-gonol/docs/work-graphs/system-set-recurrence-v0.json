@@ -1,13 +1,38 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "f10085245db161b9126a585b23f98a70aed860055def62580d08915d67647fc1",
+  "work_graph_sha256": "4aac88dc7b5d787cca5992b5b92278d3e0bf8b20c4e889de8848f9d858f6611c",
   "repositories": [
-    {"repository":"The-Interdependency/metapat","commit":"102e07ae2bfd837c91ff79fe70630e4e71469647","authority":"cross-domain semantic recurrence adjudication","relation":"adjudicates independently supplied structural evidence without semantic transfer"},
-    {"repository":"The-Interdependency/ucns","commit":"a374e2a8f08be2140d88a0ab24daaad2e5a98864","authority":"geometry and mathematical representation","relation":"supplies actual geometric constructions and proof identities when available; no generic recurrence schema"},
-    {"repository":"The-Interdependency/stack","commit":"d94b674d690c9f02edcd875d34f3a99e7073e561","authority":"current Stack-forged English semantic trajectory implementation","relation":"constructs ordered provenance-bearing system-set trajectory candidates"},
-    {"repository":"The-Interdependency/uchc","commit":"35c11cb93d658d93fe06ec2b682825a46085329e","authority":"intended independent UCHC authority after graduation","relation":"migration target only; no current system-set trajectory implementation authority"},
-    {"repository":"The-Interdependency/edcm","commit":"616484d0caaa7a9ad82937d85c28bb43773d909b","authority":"measurement and evaluation","relation":"audits architecture revisions using candidate EDCM metrics without status transfer"}
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "102e07ae2bfd837c91ff79fe70630e4e71469647",
+      "authority": "cross-domain semantic recurrence adjudication",
+      "relation": "adjudicates independently supplied structural evidence without semantic transfer"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "a374e2a8f08be2140d88a0ab24daaad2e5a98864",
+      "authority": "geometry and mathematical representation",
+      "relation": "supplies actual geometric constructions and proof identities when available; no generic recurrence schema"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "9dc13c1a89fff88d2f123cc79292d3ff81b2b64b",
+      "authority": "current Stack-forged English semantic trajectory implementation",
+      "relation": "constructs ordered provenance-bearing system-set trajectory candidates"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "35c11cb93d658d93fe06ec2b682825a46085329e",
+      "authority": "intended independent UCHC authority after graduation",
+      "relation": "migration target only; no current system-set trajectory implementation authority"
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "commit": "616484d0caaa7a9ad82937d85c28bb43773d909b",
+      "authority": "measurement and evaluation",
+      "relation": "audits architecture revisions using candidate EDCM metrics without status transfer"
+    }
   ],
   "boundaries": {
     "authority_transfer": false,

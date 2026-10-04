@@ -10,7 +10,7 @@
 # id: check_system_set_trajectory_evidence
 #   proves: system_set_trajectory_preserves_comparison_evidence
 #   call: self::test_comparison_input_carries_complete_steps
-#   requires: python3
+#   requires: python3, git
 #   timeout: 10
 #   mutates: none
 #   cleanup: none
@@ -35,6 +35,8 @@
 from dataclasses import replace
 from hashlib import sha256
 import json
+from pathlib import Path
+import subprocess
 
 import pytest
 
@@ -74,6 +76,18 @@ def test_order_and_multiplicity_are_load_bearing():
 
 
 def test_comparison_input_carries_complete_steps():
+    root = Path(__file__).resolve().parents[3]
+    graph = json.loads((root / "research/english-gonol/docs/work-graphs/system-set-recurrence-v0.json").read_text())
+    assert graph["work_graph_sha256"] == sha256(json.dumps(
+        {key: graph[key] for key in ("repositories", "boundaries")},
+        sort_keys=True, separators=(",", ":"),
+    ).encode()).hexdigest()
+    producer = next(row for row in graph["repositories"] if row["repository"] == "The-Interdependency/stack")
+    source_path = "research/english-gonol/english_gonol/system_set_trajectory.py"
+    pinned_source = subprocess.check_output(
+        ["git", "show", f"{producer['commit']}:{source_path}"], cwd=root,
+    )
+    assert pinned_source == (root / source_path).read_bytes(), "trajectory work graph source drift"
     t = make("x", [SemanticStep("axis:a", "rel:r", "axis:b")])
     payload = t.to_ucns_comparison_input()
     assert payload["construct_id"] == "english:construct:v2"
