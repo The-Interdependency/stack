@@ -32,12 +32,12 @@ from english_gonol.edcm_metric_origins import build_metric_origin_set
 
 def _fixture(tmp_path: Path, metric="F", standing="resolved"):
     source = {
-        "schema":"edcm.metric-origin-spec-fixture","version":"0.1.0",
+        "schema":"edcm.metric-origin-spec-fixture","version":"0.2.0",
         "producer_repository":"The-Interdependency/edcm","producer_commit":"a"*40,
         "specs":{metric:{
-            "surface_terms":["Fixation"],"defining_statement":"is persistence",
-            "formula_or_rule":"across states","standing":standing,
-            "unresolved":[] if standing=="resolved" else ["collision"]}}
+            "surface_terms":["Fixation"],"semantic_definition":"is persistence across states",
+            "standing":standing,"measurement_alignment":"proxy",
+            "unresolved":["proxy gap"] if standing=="resolved" else ["collision"]}}
     }
     path=tmp_path/"source.json"
     path.write_text(json.dumps(source),encoding="utf-8")
@@ -73,6 +73,7 @@ def test_resolved_origin_uses_word_and_glyph_axes_in_order(tmp_path):
     assert record.components[0].axis_origin=="O_W"
     assert any(x.axis_origin=="O_G" and x.surface==" " for x in record.components)
     assert record.producer_repository=="The-Interdependency/edcm"
+    assert "proxy gap" in record.unresolved
 
 def test_origin_record_contains_no_measurement_value(tmp_path):
     _db(tmp_path)
@@ -82,6 +83,7 @@ def test_origin_record_contains_no_measurement_value(tmp_path):
     assert "value" not in keys
     assert "measurement" not in keys
     assert "score" not in keys
+    assert "implemented_rule" not in record.source_text
 
 def test_unresolved_origin_does_not_construct_components(tmp_path):
     record=build_metric_origin_set(tmp_path,"F",construct_receipt="r"*64,
