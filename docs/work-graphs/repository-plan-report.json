@@ -10,9 +10,9 @@
   },
   "source": {
     "branch": "research/a0-municipality-handoff",
-    "commit": "b4fa4bae476be3308b99a974979dd5eec0a38089",
+    "commit": "0679879486d3a9b43a3cc1aa7aa2effdee53bd2c",
     "generated_at": "2026-10-04",
-    "note": "Municipal-placement refresh against the exact commit that already contains the new workspace, source receipt and manifest registration. Earlier component claims retain their source-specific evidence; this refresh does not re-audit their implementations."
+    "note": "Municipal-placement report bound to the reviewed PR #69 snapshot, retained as an ancestor of the repair and merge history. That snapshot contains the complete workspace, source receipt and municipal registration. Earlier component claims retain their source-specific evidence; this report does not re-audit their implementations or claim later main-branch changes."
   },
   "authority": {
     "owns": [

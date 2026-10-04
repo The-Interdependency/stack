@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "16efb26a3aeebd70f41c64cf7fa6841b13fb9f56d1e60718a35fb15133177d00",
+  "work_graph_sha256": "1592038e77f342b15fd4044815487628e31beefae094bb26eea2fff4c81f31b1",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -329,6 +329,16 @@
       "commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
       "authority": "extracted language construction and input public contract; domain graduation incomplete",
       "relation": "exact installed wheel consumer via research/zfae/UCHC_INPUT.json; no fixed-width semantic projection or neural readiness promotion",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "edcm-metric-origin-source",
+      "repository": "The-Interdependency/edcm",
+      "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+      "authority": "EDCM semantic metric-origin definitions and measurement-rule alignment",
+      "relation": "exact semantic-origin producer consumed by Stack English; does not refresh libs/edcm or transfer measurement authority",
       "canonical_release": false,
       "authority_transfer": false
     },
