@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `7384687cde8e9d18a1019fecd62adbaa6278930bb556546db05062ef4a348f0b`
+  `f0ce9606681cc053d9dcbb010805a932290207d49a5d8714297b8c3ce455ec41`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
@@ -65,6 +65,7 @@ release identity.
 | `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
 | `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | full gonol/private-key/thread/corpus/interleave/asymmetric construction research; native derivation unresolved; no URPCS implementation inheritance or security standing | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/english-gonol/` | `The-Interdependency/edcm` | `ce645e4b3cce0308676837f60bed118fa74f23ac` | exact EDCM semantic metric-origin producer; supplies metric definitions and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
