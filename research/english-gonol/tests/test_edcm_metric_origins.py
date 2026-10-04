@@ -45,12 +45,20 @@
 #   timeout: 60
 #   mutates: none
 #   cleanup: none
+# id: check_metric_origin_source_fixture
+#   proves: metric_origin_source_fixture_matches_pinned_edcm
+#   call: self::test_stack_fixture_matches_exact_edcm_producer
+#   requires: python3, exact EDCM metric-origin producer
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 from hashlib import sha256
+import importlib.util
 import json
 import os
 import sqlite3
+import sys
 from pathlib import Path
 
 import pytest
@@ -172,3 +180,26 @@ def test_all_resolved_terms_are_admitted_by_pinned_oewn():
         if absent:
             missing[metric]=absent
     assert missing=={}
+
+
+def test_stack_fixture_matches_exact_edcm_producer():
+    root=os.environ.get("EDCM_METRIC_ORIGIN_ROOT")
+    if not root:
+        pytest.skip("exact EDCM metric-origin producer not present; authoritative CI supplies it")
+    module_path=Path(root)/"edcm"/"metric_origin_spec.py"
+    spec=importlib.util.spec_from_file_location("_pinned_edcm_metric_origin_spec",module_path)
+    assert spec is not None and spec.loader is not None
+    module=importlib.util.module_from_spec(spec)
+    sys.modules[spec.name]=module
+    spec.loader.exec_module(module)
+    fixture=origins.load_metric_origin_specs()
+    assert fixture["producer_commit"]=="57e2c32196568b4bbde61a80001906eb735ac830"
+    assert tuple(fixture["specs"])==tuple(module.METRIC_ORIGIN_SPECS)
+    for metric,source_spec in module.METRIC_ORIGIN_SPECS.items():
+        record=fixture["specs"][metric]
+        assert record["surface_terms"]==list(source_spec.surface_terms)
+        assert record["construction_terms"]==list(source_spec.construction_terms)
+        assert record["semantic_definition"]==source_spec.semantic_definition
+        assert record["standing"]==source_spec.standing
+        assert record["measurement_alignment"]==source_spec.measurement_alignment
+        assert record["unresolved"]==list(source_spec.unresolved)
