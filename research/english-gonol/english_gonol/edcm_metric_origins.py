@@ -40,10 +40,10 @@ complete-corpus construction, export, and EDCM adapter commands.
 #   then: exact ordered word and whitespace-glyph axes plus producer and verified construct identities survive in the receipt
 #   class: correctness
 #
-# id: metric_origin_unresolved_fails_open_as_hmmm_not_closed
-#   given: the EDCM source spec is hmmm
-#   then: no semantic components are constructed and closed is false
-#   class: safety
+# id: metric_origin_legacy_carriers_target_canonical_axes
+#   given: a legacy EDCM vector carrier is constructed as a metric origin
+#   then: its emitted metric_id and origin_id name the source-declared canonical metric axis rather than the bare carrier symbol
+#   class: identity_contract
 #
 # id: metric_origin_receipt_binds_schema
 #   given: any metric-origin record is emitted
