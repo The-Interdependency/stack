@@ -23,9 +23,9 @@
 #   mutates: temporary sqlite fixture
 #   cleanup: pytest tmp_path
 #
-# id: check_metric_origin_hmmm
-#   proves: metric_origin_unresolved_fails_open_as_hmmm_not_closed
-#   call: self::test_unresolved_origin_does_not_construct_components
+# id: check_metric_origin_canonical_carrier_targets
+#   proves: metric_origin_legacy_carriers_target_canonical_axes
+#   call: self::test_o_and_l_emit_their_explicit_canonical_targets
 #   requires: python3
 #   timeout: 10
 #   mutates: none
@@ -134,7 +134,7 @@ def test_resolved_origin_uses_word_and_glyph_axes_in_order(tmp_path, monkeypatch
     assert any(x.axis_origin=="O_G" and x.surface==" " for x in record.components)
     assert record.producer_repository=="The-Interdependency/edcm"
     assert "maintained implementation is a lexical structural proxy, not embedding similarity" in record.unresolved
-    assert record.origin_id == "O_M(F)"
+    assert record.origin_id == "O_M(edcm.behavioral.F.fixation)"
 
 
 def test_origin_record_contains_no_measurement_value(tmp_path, monkeypatch):
