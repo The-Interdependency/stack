@@ -51,6 +51,11 @@ English v2 construct receipt; unresolved EDCM semantics remain unclosed hmmm.
 #   given: resolved EDCM construction terms are compared with the exact pinned OEWN 2025 source
 #   then: every term is an exact admitted word surface before an origin is licensed
 #   class: provenance_contract
+#
+# id: metric_origin_source_fixture_matches_pinned_edcm
+#   given: the Stack source fixture and exact pinned EDCM producer are inspected
+#   then: every semantic construction field is identical before Stack constructs an origin
+#   class: provenance_contract
 # === END CONTRACTS ===
 
 from __future__ import annotations
