@@ -26,7 +26,7 @@ complete-corpus construction, export, and EDCM adapter commands.
 #   rollback: remove module fixture and tests; EDCM source specs remain unchanged
 #   requires: english_gonol_language_hyperspace, english_gonol_full_construct, edcm metric-origin spec fixture
 #   since: 2026-10-03
-#   unresolved: O and L source semantics conflict; lawful observed-state projection to these origins remains hmmm
+#   unresolved: lawful observed-state projection to canonical metric origins remains hmmm
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -81,7 +81,7 @@ VERSION = "0.2.0"
 FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
 BASE = FIXTURE.parent / "BASE.json"
 # Bind the complete source projection, not only a caller-supplied commit label.
-FIXTURE_SHA256 = "cd3d384399da3029833e8f1cba993e4571cfcd2dd605e3ac44869de85aba43d3"
+FIXTURE_SHA256 = "9d42186ec3d84f4f12c126518497e25e70f56d7c6aff4b75ccbfa7000f4458c0"
 
 
 def _canonical(value: object) -> bytes:
@@ -140,7 +140,7 @@ def load_metric_origin_specs(path: Path = FIXTURE) -> dict[str, object]:
     data = json.loads(content)
     if (
         data.get("schema") != "edcm.metric-origin-spec-fixture"
-        or data.get("version") != "0.3.0"
+        or data.get("version") != "0.4.0"
     ):
         raise ValueError("unsupported EDCM metric-origin fixture")
     registered = json.loads(BASE.read_text(encoding="utf-8"))["metric_origin_source"]
@@ -188,12 +188,15 @@ def build_metric_origin_set(
     spec = specs[metric_id]
     unresolved = tuple(spec.get("unresolved", ()))
     terms = tuple(spec.get("construction_terms", ()))
+    canonical_metric_id = spec.get("canonical_metric_id")
+    if not isinstance(canonical_metric_id, str) or not canonical_metric_id.strip():
+        raise ValueError(f"metric {metric_id}: canonical_metric_id required")
     source_text = " ".join(terms)
 
     if spec["standing"] != "resolved":
         common = {
-            "metric_id": metric_id,
-            "origin_id": f"O_M({metric_id})",
+            "metric_id": canonical_metric_id,
+            "origin_id": f"O_M({canonical_metric_id})",
             "producer_repository": source["producer_repository"],
             "producer_commit": source["producer_commit"],
             "construct_receipt": "hmmm",
@@ -244,8 +247,8 @@ def build_metric_origin_set(
         db.close()
 
     common = {
-        "metric_id": metric_id,
-        "origin_id": f"O_M({metric_id})",
+        "metric_id": canonical_metric_id,
+        "origin_id": f"O_M({canonical_metric_id})",
         "producer_repository": source["producer_repository"],
         "producer_commit": source["producer_commit"],
         "construct_receipt": observed_receipt,
