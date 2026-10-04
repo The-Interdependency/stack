@@ -110,10 +110,14 @@ def test_comparison_input_carries_complete_steps():
 
 
 def test_no_downstream_judgment_is_encoded():
-    trajectory = make("x", [SemanticStep("a", "r", "b")])
     forbidden = {"equivalence", "analogy", "equivalent", "analogous", "recurrence", "proof_status", "measurement"}
-    for payload in (trajectory.to_dict(), trajectory.to_ucns_comparison_input()):
-        assert forbidden.isdisjoint(payload)
+    for label in ("r", *sorted(forbidden)):
+        trajectory = make("x", [SemanticStep("a", label, "b")])
+        for payload in (trajectory.to_dict(), trajectory.to_ucns_comparison_input()):
+            assert payload["schema"] == "english-gonol.system-set-trajectory"
+            assert payload["steps"] == [{"axis_id": "a", "relation_id": label, "target_axis_id": "b"}]
+            assert forbidden.isdisjoint(payload)
+            assert forbidden.isdisjoint(payload["steps"][0])
 
 
 def test_mutable_inputs_are_frozen_before_identity():
@@ -133,3 +137,9 @@ def test_mutable_inputs_are_frozen_before_identity():
         for scalar in ("source:fixture", b"source:fixture", bytearray(b"source:fixture")):
             with pytest.raises(ValueError, match=field):
                 replace(t, **{field: scalar})
+        valid = getattr(t, field)
+        for unordered in (set(valid), frozenset(valid), dict.fromkeys(valid)):
+            with pytest.raises(ValueError, match=field):
+                replace(t, **{field: unordered})
+        with pytest.raises(ValueError, match=field):
+            replace(t, **{field: iter(valid)})

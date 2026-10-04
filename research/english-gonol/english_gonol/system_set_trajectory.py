@@ -43,17 +43,18 @@ Recompute structure_id as SHA-256 of canonical JSON of all other handoff fields.
 #
 # id: system_set_trajectory_no_downstream_judgment
 #   given: trajectories expose matching or differing relation signatures
-#   then: the English record asserts no equivalence analogy recurrence proof or measurement outcome
+#   then: source relation labels remain unevaluated evidence in the English schema and assert no equivalence analogy recurrence proof or measurement outcome
 #   class: boundary_contract
 #
 # id: system_set_trajectory_immutable_inputs
-#   given: mutable iterable containers are passed by a caller
-#   then: the record normalizes them into immutable tuples before identity is computed
+#   given: ordered sequence containers are passed by a caller
+#   then: the record freezes them into tuples before identity is computed and rejects scalar or unordered containers
 #   class: correctness
 # === END CONTRACTS ===
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from hashlib import sha256
 import json
@@ -77,6 +78,13 @@ def _text(value: str, label: str) -> str:
 
 @dataclass(frozen=True, slots=True)
 class SemanticStep:
+    """A declared English relation, not a downstream adjudication.
+
+    relation_id is an opaque source reference within this English schema.
+    Even the label 'equivalence' records source evidence only; it does not
+    evaluate the relation or assert UCNS structural equivalence.
+    """
+
     axis_id: str
     relation_id: str
     target_axis_id: str
@@ -102,8 +110,8 @@ class SystemSetTrajectory:
         _text(self.path_id, "path_id")
         for label in ("steps", "provenance_ids", "unresolved"):
             values = getattr(self, label)
-            if isinstance(values, (str, bytes, bytearray)):
-                raise ValueError(f"{label} must be a sequence, not scalar text")
+            if isinstance(values, (str, bytes, bytearray)) or not isinstance(values, Sequence):
+                raise ValueError(f"{label} must be an ordered sequence, not scalar text or an unordered collection")
             object.__setattr__(self, label, tuple(values))
         if not self.steps:
             raise ValueError("trajectory requires at least one semantic step")

@@ -32,3 +32,16 @@ unresolved:
 Usage: this claim licenses the provisional schema handle inside the Stack forge.
 It does not make system-set a METAPAT primitive and does not authorize UCNS or
 UCHC to infer semantic identity from matching labels or paths.
+
+`SemanticStep.relation_id` is an opaque source relation reference under the
+`english-gonol.system-set-trajectory` schema. It records a declared relation in
+the English input; it does not evaluate that relation. The labels `equivalence`,
+`analogy`, and `recurrence` may occur in source material and must remain
+recoverable without becoming UCNS/METAPAT judgments. No value of `relation_id`
+authorizes a downstream classification. Consumers require independent comparison
+evidence and the owning adjudicator for those outcomes.
+
+Usage: pass ordered sequences for steps, provenance IDs, and unresolved reasons.
+The constructor freezes them to tuples. Scalar text, sets, mappings, and other
+non-sequence containers fail closed instead of choosing an order or silently
+discarding multiplicity.
