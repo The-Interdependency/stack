@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "68b59a0106a8922c75fa2bba32ba09303d3ed78643c1adfae13b2ffa08e7acbb",
+  "work_graph_sha256": "PENDING_RECOMPUTE",
   "repositories": [
     {
       "repository": "The-Interdependency/edcm",
@@ -11,9 +11,9 @@
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "316a8c8f10e2dacd34007e076bcf20c4d1ecda00",
+      "commit": "0d991c391930c037fd9e177d9199e1b9ae7e6c17",
       "authority": "current English Gonol semantic construction",
-      "relation": "constructs exact EDCM construction terms as verified O_W/O_G metric origin sets"
+      "relation": "constructs canonical EDCM metric-origin identities from the v0.4.1 source fixture and verified English O_W/O_G components"
     },
     {
       "repository": "The-Interdependency/metapat",
