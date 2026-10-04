@@ -53,6 +53,14 @@ jobs:
           path: _deps/oewn
           persist-credentials: false
 
+      - name: Checkout pinned EDCM metric-origin producer
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/edcm
+          ref: 57e2c32196568b4bbde61a80001906eb735ac830
+          path: _deps/edcm-metric-origin
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
