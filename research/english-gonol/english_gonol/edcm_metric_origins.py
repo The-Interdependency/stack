@@ -81,7 +81,7 @@ VERSION = "0.2.0"
 FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
 BASE = FIXTURE.parent / "BASE.json"
 # Bind the complete source projection, not only a caller-supplied commit label.
-FIXTURE_SHA256 = "1ec7ddef9c41aac365131d8cf8a49df5246795897d57a4fa2e3e250ad74d3337"
+FIXTURE_SHA256 = "cd3d384399da3029833e8f1cba993e4571cfcd2dd605e3ac44869de85aba43d3"
 
 
 def _canonical(value: object) -> bytes:

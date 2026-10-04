@@ -2,7 +2,7 @@
   "schema": "edcm.metric-origin-spec-fixture",
   "version": "0.3.0",
   "producer_repository": "The-Interdependency/edcm",
-  "producer_commit": "91b56007f4c77bd7e939bcbe93d8095411ceff78",
+  "producer_commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
   "specs": {
     "C": {
       "surface_terms": [
