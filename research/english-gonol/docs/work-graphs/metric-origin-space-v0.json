@@ -5,7 +5,7 @@
   "repositories": [
     {
       "repository": "The-Interdependency/edcm",
-      "commit": "f38b1529f34fb94edefcc30c846f7f955b178f5a",
+      "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
       "authority": "metric definitions, scalar measurement, and evidence/readout contracts",
       "relation": "defines canonical metric identities and explicit legacy-carrier targets consumed by Stack"
     },
