@@ -21,7 +21,7 @@
   },
   "metric_origin_source": {
     "repository": "The-Interdependency/edcm",
-    "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+    "commit": "f38b1529f34fb94edefcc30c846f7f955b178f5a",
     "relation": "exact EDCM semantic metric-origin producer; does not refresh the historical extraction source or libs/edcm pin",
     "authority_transfer": false
   }
