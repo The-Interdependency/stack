@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `1592038e77f342b15fd4044815487628e31beefae094bb26eea2fff4c81f31b1`
+  `e0c50981f1ae0ed204d63359df96ba169be402f900e4c2cc5f2ec94770444222`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
