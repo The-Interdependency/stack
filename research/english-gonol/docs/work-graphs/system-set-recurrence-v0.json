@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "4aac88dc7b5d787cca5992b5b92278d3e0bf8b20c4e889de8848f9d858f6611c",
+  "work_graph_sha256": "5b2a2ba20de66292f2c0af0d2ffc00db32b7de8af1f8883998fe143c47a71f15",
   "repositories": [
     {
       "repository": "The-Interdependency/metapat",
@@ -17,7 +17,7 @@
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "9dc13c1a89fff88d2f123cc79292d3ff81b2b64b",
+      "commit": "35495f6df96e14cfdef47685117b53b6405ab916",
       "authority": "current Stack-forged English semantic trajectory implementation",
       "relation": "constructs ordered provenance-bearing system-set trajectory candidates"
     },
