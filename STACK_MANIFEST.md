@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `f0ce9606681cc053d9dcbb010805a932290207d49a5d8714297b8c3ce455ec41`
+  `1592038e77f342b15fd4044815487628e31beefae094bb26eea2fff4c81f31b1`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
@@ -87,6 +87,14 @@ release identity.
 | `research/zfae/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | current domain-restraint consultation; root impact none | no |
 | `research/zfae/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | current research, source, structural-update and metadata rules; no snapshot refresh | no |
 | `research/zfae/` | `The-Interdependency/ucns` | `4086ab82399c4d142b0eacfbc09e0a69ed151aa5` | exact Public Gonol carrier consumed by the Stack glyph producer for the finite parser profile; no function semantics inferred | no |
+| `research/a0-municipality/` | `The-Interdependency/stack` | `6504ed963d93836f66fc88e354fe52809a1a3b7a` | starting forge baseline containing the merged English Hilbert candidate, PSFR boundaries and orchestration contracts; placement adds no runtime or canon | no |
+| `research/a0-municipality/` | `The-Interdependency/a0` | `ad958a4e5f4cdb17ba815539d2e6a545034db161` | intended municipal phone, permissions, finance and persistence implementation owner; inspected source, not a deployment claim | no |
+| `research/a0-municipality/` | `The-Interdependency/ucns` | `380ce7b7ec6b8b45ffa53ea4210070f0b3129747` | source-qualified relational geometry producer; no municipal semantics or operational authority transfer | no |
+| `research/a0-municipality/` | `The-Interdependency/uchc` | `0b3ada9ef2f8e32bba10daf104fc0d38730c3a77` | native glyph, word and definition origin reference; current English/Hilbert authority remains Stack-owned pending graduation | no |
+| `research/a0-municipality/` | `The-Interdependency/metapat` | `1cdfb09dd00a451cee30eec2e78624df8c682662` | source-qualified semantic distinctions; structural resemblance transfers no authority or status | no |
+| `research/a0-municipality/` | `The-Interdependency/skill-lib` | `3024df2b91a2cf7f103dc60640081ec03505335a` | separately pinned current placement doctrine; does not refresh the root operational snapshot | no |
+| `research/a0-municipality/` | `The-Interdependency/uchc` | `0401191adcfd490bc98856d3f4f8e9f3c1ae189c` | unmerged PR #3 documentation reference; no duplicate Hilbert implementation or completed graduation | no |
+| `research/a0-municipality/` | `The-Interdependency/stack` | `1df56909816362695b3519838dd7da38226ec565` | unmerged draft PR #66 protocol reference only; no implemented recovery, theorem or minimum-complexity claim | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -143,6 +151,21 @@ a separate comparison source. Current PTCNA retains its UCNS neural-audit gate;
 UCHC extraction has not completed release/reconsumption. No `libs/` pin or
 upstream authority changes. Usage: read `research/zfae/README.md` and replay its
 source-bound input and gonol-parser probes.
+
+## a0 Municipality placement
+
+`research/a0-municipality/` preserves the complete 2 October 2026 handoff v1.1
+and registers its current application-composition placement on 4 October 2026.
+The eight research-only identities above bind the starting Stack baseline,
+a0, UCNS, UCHC, METAPAT, current external skill-lib doctrine and the unmerged
+UCHC migration/holography references. They do not change canonical `libs/` pins.
+
+Stack owns this specification and integration research; a0 owns runtime
+implementation. Native construction remains with the declared geometry/language
+producers. Read the workspace README for the merged Stack Hilbert status and
+incomplete UCHC graduation, then HANDOFF.md for all four workflows, the reserved
+fifth, UCNS/UCHC origin requirements and T01–T38. No app, funds, partner authority
+or six-month proof is established by this registration.
 
 ## License status at pinned commits
 

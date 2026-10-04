@@ -39,6 +39,7 @@ stack/
 │   ├── weave/               # full gonol/private-key/thread/corpus/interleave research
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── zfae/                # inference construction research and gonol input parser
+│   ├── a0-municipality/     # municipal application handoff and composition research
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
 │   ├── psfr/                 # Psychosocial Fauna Research: lineages, agency displacement, coalescence
@@ -169,6 +170,17 @@ Read [research/zfae/README.md](research/zfae/README.md) for the gonol input pars
 the construction sequence, the first executable input-distinction experiment,
 and the remaining UCNS/PTCNA and UCHC prerequisites. This is Stack research;
 conceptual, producer and runtime authority remain with their owners.
+
+### a0 Municipality composition research
+
+[research/a0-municipality/](research/a0-municipality/README.md) holds the complete
+v1.1 municipal application handoff, its source receipt and exact research inputs.
+It preserves the four workflows, the Oakland/Berkeley homeless union stewardship
+model, tax-funded remuneration and UCNS/UCHC native construction requirements.
+Stack owns composition research; a0 owns runtime implementation. This is
+specification-first work, with the fifth workflow reserved and operational proof
+still outstanding. Read the workspace README for current producer standing, then
+HANDOFF.md for the full build and acceptance contract.
 
 ### Make derived artifacts fresh without depending on hosted CI
 

@@ -36,10 +36,34 @@ jobs:
   consistency:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; Node.js 24
         with:
           fetch-depth: 0
       - name: Verify stack authority and provenance projections
         run: python tools/check_stack_consistency.py
       - name: Validate the repository-owned portfolio report
-        run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+        run: |
+          python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+          # Full history above is required: an exact source must remain reachable.
+          source_commit=$(python -c 'import json; print(json.load(open("docs/work-graphs/repository-plan-report.json"))["source"]["commit"])')
+          git merge-base --is-ancestor "$source_commit" HEAD
+      - name: Verify the preserved municipal handoff
+        working-directory: research/a0-municipality
+        run: |
+          # Run from research/a0-municipality for the same local integrity gate.
+          sha256sum -c HANDOFF.sha256
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          handoff = Path("HANDOFF.md").read_bytes()
+          artifact = json.loads(Path("SOURCE_RECEIPT.json").read_text(encoding="utf-8"))["artifact"]
+          if artifact["path"] != "HANDOFF.md":
+              raise SystemExit("Source receipt must identify HANDOFF.md")
+          if artifact["sha256"] != hashlib.sha256(handoff).hexdigest():
+              raise SystemExit("Handoff SHA-256 differs from source receipt")
+          if type(artifact["size_bytes"]) is not int or artifact["size_bytes"] != len(handoff):
+              raise SystemExit("Handoff byte count differs from source receipt")
+          print(f"Source receipt verified: {len(handoff)} bytes")
+          PY

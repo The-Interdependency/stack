@@ -9,10 +9,10 @@
     "blob_sha": "9b347b2dff7692054b571602f30ee6d00c2e7265"
   },
   "source": {
-    "branch": "actual-interlace-encryption",
-    "commit": "5dd67dec2d3cfe7eeb2cdd3d4f132bc9b8007ba9",
-    "generated_at": "2026-10-01",
-    "note": "PR #62 review repair from its exact starting head, revalidated against merged retirement 1ba201449731337dc20c564788f4303c8910bfdd; containing commit owns the update. Historical receipts retain their original source identities."
+    "branch": "research/a0-municipality-handoff",
+    "commit": "0679879486d3a9b43a3cc1aa7aa2effdee53bd2c",
+    "generated_at": "2026-10-04",
+    "note": "Municipal-placement report bound to the reviewed PR #69 snapshot, retained as an ancestor of the repair and merge history. That snapshot contains the complete workspace, source receipt and municipal registration. Earlier component claims retain their source-specific evidence; this report does not re-audit their implementations or claim later main-branch changes."
   },
   "authority": {
     "owns": [
@@ -40,7 +40,7 @@
   },
   "status": {
     "state": "active composition forge; EPAC graduated and consumed as an immutable public release",
-    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol and English Gonol are current Stack research workspaces. URPCS is retired substituted-codec historical evidence only; no result transfers to the intended design. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification. Weave preserves all intended layers in research/weave/ with switchable assembly and an explicit transport candidate; native asymmetric derivation remains unresolved."
+    "current_claim": "Stack composes pinned participant identities and consumes independently published MPL-2.0 EPAC v0.1.0 from exact release source 949cb1cb304927942966c9fb396caf6227120e7f. Same-candidate pre-publication verification, public reconsumption and clean retired-source replay passed. All 37 forge Python implementation/test files are retired; 28 historical files retain their actual Stack BASE. The scoped receipt transfers only EPAC implementation/public-contract authority to its independent repository. Python Gonol and English Gonol are current Stack research workspaces. URPCS is retired substituted-codec historical evidence only; no result transfers to the intended design. ZFAE construction research is incubating at research/zfae/ with exact source comparison, a frozen character-input probe, and a source-verified gonol input parser over a declared 165-scalar profile; inference capability is not established. Historical English four-view receipts cover every word at their frozen implementation; current view payloads require a new full-corpus qualification. Weave preserves all intended layers in research/weave/ with switchable assembly and an explicit transport candidate; native asymmetric derivation remains unresolved. a0 Municipality is now registered at research/a0-municipality/ with the complete handoff v1.1, source integrity receipt and eight exact research inputs. This establishes specification placement only; runtime implementation belongs in a0 and the six-month operational proof remains outstanding."
   },
   "delivered": [
     {
@@ -87,6 +87,11 @@
       "surface": "research/weave/",
       "status": "Switchable assembly, explicit transport candidate and fail-closed key/plan/source provenance checks",
       "boundary": "No inherited URPCS result, complete native cipher implementation or security standing; full profiles require actual corpus dependence."
+    },
+    {
+      "surface": "research/a0-municipality/",
+      "status": "Complete v1.1 handoff preserved byte-for-byte, current placement and producer standing documented, source integrity gate and eight research-only inputs registered.",
+      "boundary": "Specification-first composition research; no municipal runtime, partner authority, funding, geometry proof, producer graduation or six-month operational proof is claimed."
     }
   ],
   "active_frontier": [
@@ -96,17 +101,24 @@
     "Maintain Python and English Gonol construction/replay as bounded Stack research against their declared source and geometry identities.",
     "Resolve the UCNS neural-audit prerequisite and derive higher-scale closure and runtime integration from the source-preserving gonol input boundary.",
     "Evaluate English view usefulness on a defined inference task and preserve source-qualified addresses with explicit corpus-version remapping.",
-    "Derive and validate the missing native Weave key, gonol, binding and thread/corpus relations without replacing the preserved architecture."
+    "Derive and validate the missing native Weave key, gonol, binding and thread/corpus relations without replacing the preserved architecture.",
+    "Continue the complete a0 Municipality build contract, preserving four interacting workflows, the reserved fifth and native UCNS/UCHC origin construction; place application runtime work in a0."
   ],
   "next_actions": [
     {
       "action": "Bind the UCNS neural audit required by PTCNA and extend admitted constructions through explicit producer profiles; integrate only after the owning gates close.",
       "owner": "The-Interdependency/stack",
       "dependency": "Current PTCNA intended-construction gate and UCHC release/reconsumption boundary."
+    },
+    {
+      "action": "Produce the handoff section 13 source-bound gap/placement map, then implement the complete municipal application through its section 12 sequence and T01-T38 gates.",
+      "owner": "The-Interdependency/a0 for runtime; The-Interdependency/stack for composition research",
+      "dependency": "research/a0-municipality/HANDOFF.md; exact producer APIs and native origin/affixiation contracts; actual authority before corresponding live operations."
     }
   ],
   "blocked": [
-    "Intended PTCNA-dependent ZFAE construction remains subject to the UCNS neural-audit gate; UCHC is not yet a released/reconsumed dependency."
+    "Intended PTCNA-dependent ZFAE construction remains subject to the UCNS neural-audit gate; UCHC is not yet a released/reconsumed dependency.",
+    "Live municipal operation requires actual union/municipal/payer authority and deployment acceptance; native semantic-origin/affixiation integration and holographic recovery remain unestablished by the handoff."
   ],
   "cross_repository_relations": [
     {
@@ -151,7 +163,7 @@
     },
     {
       "repository": "The-Interdependency/a0",
-      "relation": "producer-state and Zeta evaluation source inspection; no runtime mutation",
+      "relation": "producer-state and Zeta evaluation source inspection; no runtime mutation; intended runtime owner for a0 Municipality, whose specification and integration research live in Stack",
       "authority_transfer": false
     },
     {
@@ -182,7 +194,11 @@
     "zfae_gonol_parser": "research/zfae/gonol_parser.py",
     "english_full_view_audit": "research/english-gonol/FULL_VIEW_AUDIT.json",
     "english_full_view_report": "research/english-gonol/docs/hyperspace-views-full-v1.md",
-    "weave": "research/weave/README.md"
+    "weave": "research/weave/README.md",
+    "a0_municipality": "research/a0-municipality/README.md",
+    "a0_municipality_handoff": "research/a0-municipality/HANDOFF.md",
+    "a0_municipality_base": "research/a0-municipality/BASE.json",
+    "a0_municipality_source_receipt": "research/a0-municipality/SOURCE_RECEIPT.json"
   },
   "hmmm": [
     "organization aggregate and website-projection derivation specs are not yet registered in fresh-making",
@@ -192,6 +208,7 @@
     "URPCS is retired; intended-design transcript identity and cause of substitution remain unresolved.",
     "ZFAE state, propagation, learning and readout laws remain construction work; input preservation alone does not demonstrate inference.",
     "English view discrimination is established on the complete fixed corpus; downstream inference usefulness and address remapping across corpus versions remain unresolved.",
-    "Weave public/private key derivation and source of asymmetry remain unresolved; provenance-bound key labels are not a mathematical implementation."
+    "Weave public/private key derivation and source of asymmetry remain unresolved; provenance-bound key labels are not a mathematical implementation.",
+    "a0 Municipality preserves the four workflows and reserved fifth; native producer integration, live payer/union/municipal authority and six-month operational proof remain separate work."
   ]
 }

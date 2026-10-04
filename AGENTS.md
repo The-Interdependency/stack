@@ -37,6 +37,13 @@ projects may later graduate into their own repositories.
   Its input parser consumes the exact English GlyphGonol producer and UCNS
   carrier declared in GONOL_PARSER.json. Preserve occurrences and missing
   admission; parser completion is not neural or higher-gonol completion.
+- `research/a0-municipality/` owns the municipal application specification and
+  cross-project integration research. Read its README for current placement,
+  then preserve the complete v1.1 HANDOFF.md and its source receipt. a0 owns
+  runtime implementation; UCNS and current Stack/UCHC owners retain construction
+  authority. Keep all four workflows, the reserved fifth, homeless-union
+  stewardship, tax-funded remuneration and native origin requirements. Placement
+  is not a working app, partner authorization or operational proof.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
