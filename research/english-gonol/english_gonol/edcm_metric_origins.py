@@ -81,7 +81,7 @@ VERSION = "0.2.0"
 FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
 BASE = FIXTURE.parent / "BASE.json"
 # Bind the complete source projection, not only a caller-supplied commit label.
-FIXTURE_SHA256 = "9d42186ec3d84f4f12c126518497e25e70f56d7c6aff4b75ccbfa7000f4458c0"
+FIXTURE_SHA256 = "46f8f21a20d4b61de9e9891b5b0b421d6c786d376ac328ca38c2077117627ee5"
 
 
 def _canonical(value: object) -> bytes:
@@ -140,7 +140,7 @@ def load_metric_origin_specs(path: Path = FIXTURE) -> dict[str, object]:
     data = json.loads(content)
     if (
         data.get("schema") != "edcm.metric-origin-spec-fixture"
-        or data.get("version") != "0.4.0"
+        or data.get("version") != "0.4.1"
     ):
         raise ValueError("unsupported EDCM metric-origin fixture")
     registered = json.loads(BASE.read_text(encoding="utf-8"))["metric_origin_source"]
