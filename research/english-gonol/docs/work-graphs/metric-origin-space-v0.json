@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "PENDING_RECOMPUTE",
+  "work_graph_sha256": "018aa94e37678c348ce50c1f92726eb51af4d8b1230504c5a2b2b023783499ea",
   "repositories": [
     {
       "repository": "The-Interdependency/edcm",
