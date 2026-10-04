@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/edcm
-          ref: 57e2c32196568b4bbde61a80001906eb735ac830
+          ref: ed1b6e42b72c47f9383bd20b65e49a6c39a1a747
           path: _deps/edcm-metric-origin
           persist-credentials: false
 
