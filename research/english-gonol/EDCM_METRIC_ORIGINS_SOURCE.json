@@ -1,8 +1,8 @@
 {
   "schema": "edcm.metric-origin-spec-fixture",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "producer_repository": "The-Interdependency/edcm",
-  "producer_commit": "f38b1529f34fb94edefcc30c846f7f955b178f5a",
+  "producer_commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
   "specs": {
     "C": {
       "surface_terms": [
@@ -144,8 +144,7 @@
         "scope",
         "motion",
         "expansion",
-        "contraction",
-        "overextension"
+        "contraction"
       ],
       "canonical_metric_id": "edcm.behavioral.O_scope"
     },
