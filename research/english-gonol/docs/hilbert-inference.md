@@ -96,7 +96,8 @@ mathematical senses are borrowed rather than redefined.
 
 `english_gonol.hilbert_inference` supplies:
 
-- `ConstructRef`: logical receipt + physical artifact SHA-256;
+- `ConstructRef`: logical receipt + physical artifact SHA-256 (an expected identity, not verification by itself);
+- `VerifiedConstruct`: private read-only snapshot whose copied bytes and complete logical rows match that expected identity before helpers can consume it;
 - `AxisRef`: origin and axis identity bound to that exact construct;
 - `HilbertStateVector`: sparse origin-local vector arithmetic;
 - explicit `R` or `C` selection, with no default;
@@ -108,6 +109,39 @@ mathematical senses are borrowed rather than redefined.
 
 No inference weight, phase, probability, meaning score, sense choice, or learned
 operator is synthesized.
+
+## Usage guidance
+
+Open a standalone, checkpointed `construct.db` using hashes from trusted evidence.
+The candidate validates the complete logical receipt once on open; subsequent
+space dimensions use direct SQL counts. Bare SQLite connections are rejected.
+
+```python
+from english_gonol.hilbert_inference import (
+    ConstructRef, VerifiedConstruct, word_promotion, word_space,
+)
+
+# expected_logical_receipt and expected_artifact_sha256 come from trusted evidence.
+ref = ConstructRef(expected_logical_receipt, expected_artifact_sha256)
+with VerifiedConstruct("construct.db", ref) as db:
+    space = word_space(db, ref, scalar_field="R")
+    promoted = word_promotion(db, db.inventory, admitted_word_id, ref, scalar_field="R")
+```
+
+Primitive `glyph_axis`, `word_axis`, `definition_axis`, and `glyph_space` helpers
+also require the verified handle as `db=db`; supplied gonols/inventories must match
+that snapshot. Source-file replacement or later source writes cannot change the
+private snapshot. Live WAL/uncommitted data is outside the standalone artifact
+contract. Closing the handle releases its temporary copy and blocks further reads.
+Opening costs one artifact copy plus complete logical replay and requires scratch
+disk for that copy; it is not repeated per helper call. Hashes identify contents,
+not producer authentication.
+
+Word factors dereference the declared ordered `word_characters` IDs and reject a
+surface disagreement, including one with the same length. Finite inputs whose
+inner products overflow are rejected. Sparse coordinates are canonicalized at
+construction: zero and underflowed products disappear, preserving equality and
+hash identity through scaling and cancellation.
 
 ## Failure definition
 

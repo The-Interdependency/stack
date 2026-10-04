@@ -4,7 +4,7 @@
 #   module_kind: constructor
 #   summary: stack-forged candidate for axis-native Hilbert inference state; existing glyph axes are basis directions, ordered glyph-axis tensors close into existing word axes, and higher-scale constructions consume those closed axes without Cartesian substitution
 #   owner: Erin Spencer
-#   public_surface: SCHEMA, VERSION, HilbertInferenceError, ConstructRef, AxisRef, HilbertStateVector, OrderedTensor, AxisPromotion, FiniteHilbertSpace, glyph_axis, word_axis, definition_axis, basis_vector, glyph_space, word_space, definition_space, word_promotion, definition_promotion
+#   public_surface: SCHEMA, VERSION, HilbertInferenceError, ConstructRef, VerifiedConstruct, AxisRef, HilbertStateVector, OrderedTensor, AxisPromotion, FiniteHilbertSpace, glyph_axis, word_axis, definition_axis, basis_vector, glyph_space, word_space, definition_space, word_promotion, definition_promotion
 #   internal_surface: origin-local sparse coordinates, construct-qualified axis identity, ordered tensor basis states, direct SQL dimension reads
 #   auth_boundary: stack-local English Gonol construction candidate; no UCHC authority transfer
 #   storage_boundary: read-only SQLite construct consumption; no persistent state
@@ -80,13 +80,26 @@ cross-construct vector inner products fail closed.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from hashlib import sha256
 from math import isfinite, sqrt
+from pathlib import Path
 import sqlite3
+import tempfile
+from types import MappingProxyType
+from typing import Mapping
+
+from .full_construct_run import (
+    SCHEMA as CONSTRUCT_SCHEMA,
+    VERSION as CONSTRUCT_VERSION,
+    _assert_schema_boundary,
+    _logical_receipt,
+)
 
 from .hyperspace_construct import (
     DefinitionGonol,
     GlyphGonol,
     WordGonol,
+    glyph_inventory,
     promote_definition,
     promote_word,
 )
@@ -143,6 +156,89 @@ class ConstructRef:
         }
 
 
+class VerifiedConstruct:
+    """Read-only private snapshot, verified once before any axis is emitted.
+
+    Usage: ``with VerifiedConstruct(path, expected_ref) as db:`` then pass
+    ``db`` and ``expected_ref`` to helpers. Expected hashes must come from trusted
+    evidence. Copying and hashing the same bytes prevents pathname replacement
+    from changing the consumed artifact. Source WAL/uncommitted changes are not
+    part of the standalone artifact; publish/checkpoint it before opening.
+    """
+
+    def __init__(self, path: str | Path, construct: ConstructRef):
+        self._db: sqlite3.Connection | None = None
+        self._temporary = tempfile.TemporaryDirectory(prefix="hilbert-construct-")
+        try:
+            target = Path(self._temporary.name) / "construct.db"
+            digest = sha256()
+            with Path(path).open("rb") as source, target.open("xb") as snapshot:
+                while chunk := source.read(1024 * 1024):
+                    digest.update(chunk)
+                    snapshot.write(chunk)
+            if digest.hexdigest() != construct.artifact_sha256:
+                raise HilbertInferenceError("construct artifact SHA-256 mismatch")
+            db = sqlite3.connect(f"{target.as_uri()}?mode=ro&immutable=1", uri=True)
+            self._db = db
+            db.execute("PRAGMA trusted_schema=OFF")
+            db.execute("PRAGMA query_only=ON")
+            _assert_schema_boundary(db)
+            if db.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
+                raise HilbertInferenceError("construct integrity check failed")
+            if db.execute("PRAGMA foreign_key_check").fetchall():
+                raise HilbertInferenceError("construct has dangling references")
+            metadata = dict(db.execute("SELECT key, value FROM meta"))
+            if (metadata.get("schema"), metadata.get("version")) != (
+                CONSTRUCT_SCHEMA, CONSTRUCT_VERSION
+            ):
+                raise HilbertInferenceError("unsupported construct schema/version")
+            if _logical_receipt(db) != construct.logical_receipt:
+                raise HilbertInferenceError("construct logical receipt mismatch")
+            self._construct = construct
+            self._inventory = MappingProxyType(glyph_inventory(db))
+        except Exception as exc:
+            self.close()
+            if isinstance(exc, HilbertInferenceError):
+                raise
+            raise HilbertInferenceError(f"cannot verify construct: {exc}") from exc
+
+    @property
+    def construct(self) -> ConstructRef:
+        return self._construct
+
+    @property
+    def inventory(self) -> Mapping[str, GlyphGonol]:
+        return self._inventory
+
+    def __enter__(self) -> "VerifiedConstruct":
+        _verified_db(self, self.construct)
+        return self
+
+    def __exit__(self, *_args: object) -> None:
+        self.close()
+
+    def close(self) -> None:
+        if self._db is not None:
+            self._db.close()
+            self._db = None
+        self._temporary.cleanup()
+
+
+def _verified_db(db: VerifiedConstruct, construct: ConstructRef) -> sqlite3.Connection:
+    if not isinstance(db, VerifiedConstruct):
+        raise HilbertInferenceError("a VerifiedConstruct is required")
+    if db._db is None:
+        raise HilbertInferenceError("verified construct is closed")
+    if db.construct != construct:
+        raise HilbertInferenceError("reference does not match verified construct")
+    return db._db
+
+
+def _verified_inventory(db: VerifiedConstruct, inventory: Mapping[str, GlyphGonol]) -> None:
+    if inventory != db.inventory:
+        raise HilbertInferenceError("glyph inventory does not match verified construct")
+
+
 @dataclass(frozen=True, order=True)
 class AxisRef:
     """One construct-qualified basis axis at one declared origin."""
@@ -187,6 +283,7 @@ class HilbertStateVector:
         if not self.space_id:
             raise HilbertInferenceError("space_id must be nonempty")
         seen: set[AxisRef] = set()
+        canonical = []
         for axis, coefficient in self.coordinates:
             if axis.construct != self.construct:
                 raise HilbertInferenceError(
@@ -199,7 +296,10 @@ class HilbertStateVector:
             if axis in seen:
                 raise HilbertInferenceError("duplicate axis coordinate")
             seen.add(axis)
-            _scalar(coefficient, self.scalar_field)
+            value = _scalar(coefficient, self.scalar_field)
+            if value != 0:
+                canonical.append((axis, value))
+        object.__setattr__(self, "coordinates", tuple(sorted(canonical)))
 
     @classmethod
     def basis(
@@ -242,10 +342,10 @@ class HilbertStateVector:
         self._compatible(other)
         left = self._map()
         right = other._map()
-        return sum(
+        return _scalar(sum(
             value.conjugate() * right.get(axis, 0j)
             for axis, value in left.items()
-        )
+        ), self.scalar_field)
 
     def norm_squared(self) -> float:
         value = self.inner_product(self)
@@ -390,7 +490,10 @@ class FiniteHilbertSpace:
         }
 
 
-def glyph_axis(gonol: GlyphGonol, construct: ConstructRef) -> AxisRef:
+def glyph_axis(gonol: GlyphGonol, construct: ConstructRef, *, db: VerifiedConstruct) -> AxisRef:
+    _verified_db(db, construct)
+    if db.inventory.get(gonol.identity) != gonol:
+        raise HilbertInferenceError("glyph does not match verified construct")
     return AxisRef(
         construct,
         "O_G",
@@ -400,7 +503,10 @@ def glyph_axis(gonol: GlyphGonol, construct: ConstructRef) -> AxisRef:
     )
 
 
-def word_axis(gonol: WordGonol, construct: ConstructRef) -> AxisRef:
+def word_axis(gonol: WordGonol, construct: ConstructRef, *, db: VerifiedConstruct) -> AxisRef:
+    connection = _verified_db(db, construct)
+    if promote_word(connection, gonol.word_id)[0] != gonol:
+        raise HilbertInferenceError("word does not match verified construct")
     return AxisRef(
         construct,
         "O_W",
@@ -411,8 +517,11 @@ def word_axis(gonol: WordGonol, construct: ConstructRef) -> AxisRef:
 
 
 def definition_axis(
-    gonol: DefinitionGonol, construct: ConstructRef
+    gonol: DefinitionGonol, construct: ConstructRef, *, db: VerifiedConstruct
 ) -> AxisRef:
+    connection = _verified_db(db, construct)
+    if promote_definition(connection, gonol.definition_id)[0] != gonol:
+        raise HilbertInferenceError("definition does not match verified construct")
     return AxisRef(
         construct,
         f"O_D:{gonol.origin_word_id}",
@@ -429,11 +538,14 @@ def basis_vector(
 
 
 def glyph_space(
-    inventory: dict[str, GlyphGonol],
+    inventory: Mapping[str, GlyphGonol],
     construct: ConstructRef,
     *,
     scalar_field: str,
+    db: VerifiedConstruct,
 ) -> FiniteHilbertSpace:
+    _verified_db(db, construct)
+    _verified_inventory(db, inventory)
     return FiniteHilbertSpace(
         construct,
         "O_G",
@@ -444,12 +556,12 @@ def glyph_space(
 
 
 def word_space(
-    db: sqlite3.Connection,
+    db: VerifiedConstruct,
     construct: ConstructRef,
     *,
     scalar_field: str,
 ) -> FiniteHilbertSpace:
-    row = db.execute("SELECT COUNT(*) FROM words").fetchone()
+    row = _verified_db(db, construct).execute("SELECT COUNT(*) FROM words").fetchone()
     if row is None:
         raise HilbertInferenceError("word count query returned no row")
     return FiniteHilbertSpace(
@@ -462,13 +574,13 @@ def word_space(
 
 
 def definition_space(
-    db: sqlite3.Connection,
+    db: VerifiedConstruct,
     construct: ConstructRef,
     origin_word_id: int,
     *,
     scalar_field: str,
 ) -> FiniteHilbertSpace:
-    row = db.execute(
+    row = _verified_db(db, construct).execute(
         "SELECT COUNT(*) FROM definitions WHERE origin_word_id = ?",
         (origin_word_id,),
     ).fetchone()
@@ -484,20 +596,21 @@ def definition_space(
 
 
 def _glyph_factor(
-    inventory: dict[str, GlyphGonol],
+    inventory: Mapping[str, GlyphGonol],
     scalar: str,
     construct: ConstructRef,
+    db: VerifiedConstruct,
 ) -> AxisRef:
     try:
         gonol = inventory[scalar]
     except KeyError as exc:
         raise HilbertInferenceError(f"glyph {scalar!r} is not admitted") from exc
-    return glyph_axis(gonol, construct)
+    return glyph_axis(gonol, construct, db=db)
 
 
 def word_promotion(
-    db: sqlite3.Connection,
-    inventory: dict[str, GlyphGonol],
+    db: VerifiedConstruct,
+    inventory: Mapping[str, GlyphGonol],
     word_id: int,
     construct: ConstructRef,
     *,
@@ -505,19 +618,20 @@ def word_promotion(
 ) -> AxisPromotion:
     """Promote an exact ordered glyph-axis construction to its word axis."""
 
-    word, _axis_index = promote_word(db, word_id)
+    connection = _verified_db(db, construct)
+    _verified_inventory(db, inventory)
+    word, _axis_index = promote_word(connection, word_id)
+    scalars = tuple(_character_scalar(connection, identity) for identity in word.glyph_ids)
+    if "".join(scalars) != word.surface:
+        raise HilbertInferenceError("word surface disagrees with declared glyph references")
     factors = tuple(
-        _glyph_factor(inventory, scalar, construct)
-        for scalar in word.surface
+        _glyph_factor(inventory, scalar, construct, db)
+        for scalar in scalars
     )
-    if len(factors) != len(word.glyph_ids):
-        raise HilbertInferenceError(
-            "word surface does not recover the declared glyph multiplicity"
-        )
     return AxisPromotion(
         "ordered glyph axes -> closed word axis",
         OrderedTensor(construct, scalar_field, factors),
-        word_axis(word, construct),
+        word_axis(word, construct, db=db),
     )
 
 
@@ -534,8 +648,8 @@ def _character_scalar(db: sqlite3.Connection, character_id: int) -> str:
 
 
 def definition_promotion(
-    db: sqlite3.Connection,
-    inventory: dict[str, GlyphGonol],
+    db: VerifiedConstruct,
+    inventory: Mapping[str, GlyphGonol],
     definition_id: int,
     construct: ConstructRef,
     *,
@@ -543,15 +657,18 @@ def definition_promotion(
 ) -> AxisPromotion:
     """Promote exact ordered closed components to the local definition axis."""
 
-    definition, _axis_index = promote_definition(db, definition_id)
+    connection = _verified_db(db, construct)
+    _verified_inventory(db, inventory)
+    definition, _axis_index = promote_definition(connection, definition_id)
     factors: list[AxisRef] = []
     for kind, identity_id in definition.constituent_ids:
         if kind == "word":
-            word, _word_axis_index = promote_word(db, identity_id)
-            factors.append(word_axis(word, construct))
+            factors.append(word_promotion(
+                db, inventory, identity_id, construct, scalar_field=scalar_field
+            ).target)
         elif kind == "character":
-            scalar = _character_scalar(db, identity_id)
-            factors.append(_glyph_factor(inventory, scalar, construct))
+            scalar = _character_scalar(connection, identity_id)
+            factors.append(_glyph_factor(inventory, scalar, construct, db))
         else:
             raise HilbertInferenceError(
                 f"unsupported definition component kind {kind!r}"
@@ -563,7 +680,7 @@ def definition_promotion(
     return AxisPromotion(
         "ordered closed component axes -> definition axis",
         OrderedTensor(construct, scalar_field, tuple(factors)),
-        definition_axis(definition, construct),
+        definition_axis(definition, construct, db=db),
     )
 
 
@@ -572,6 +689,7 @@ __all__ = [
     "VERSION",
     "HilbertInferenceError",
     "ConstructRef",
+    "VerifiedConstruct",
     "AxisRef",
     "HilbertStateVector",
     "OrderedTensor",

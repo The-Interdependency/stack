@@ -51,12 +51,17 @@
 from __future__ import annotations
 
 import sqlite3
+from hashlib import sha256
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 
 from english_gonol.hilbert_inference import (
     ConstructRef,
+    VerifiedConstruct,
+    HilbertStateVector,
+    definition_axis,
     HilbertInferenceError,
     basis_vector,
     definition_promotion,
@@ -67,59 +72,18 @@ from english_gonol.hilbert_inference import (
     word_promotion,
     word_space,
 )
+from english_gonol.full_construct_run import _SCHEMA_SQL, _logical_receipt, SCHEMA, VERSION
 from english_gonol.hyperspace_construct import (
     glyph_inventory,
     promote_word,
 )
 
 
-REF_A = ConstructRef("0" * 64, "1" * 64)
-REF_B = ConstructRef("0" * 64, "2" * 64)
-
-
-def _fixture_db(tmp_path: Path) -> sqlite3.Connection:
-    db = sqlite3.connect(tmp_path / "construct.db")
-    db.executescript(
-        """
-        CREATE TABLE characters (
-            id INTEGER PRIMARY KEY,
-            scalar TEXT NOT NULL UNIQUE,
-            public_position INTEGER
-        );
-        CREATE TABLE words (
-            id INTEGER PRIMARY KEY,
-            surface TEXT NOT NULL UNIQUE
-        );
-        CREATE TABLE word_characters (
-            word_id INTEGER NOT NULL REFERENCES words(id),
-            ordinal INTEGER NOT NULL,
-            character_id INTEGER NOT NULL REFERENCES characters(id),
-            PRIMARY KEY (word_id, ordinal)
-        ) WITHOUT ROWID;
-        CREATE TABLE definitions (
-            id INTEGER PRIMARY KEY,
-            origin_word_id INTEGER NOT NULL REFERENCES words(id),
-            part_of_speech TEXT NOT NULL,
-            ordinal INTEGER NOT NULL,
-            sense_id TEXT NOT NULL,
-            synset_id TEXT NOT NULL,
-            definition_index INTEGER NOT NULL,
-            text TEXT NOT NULL,
-            previous_definition_id INTEGER REFERENCES definitions(id),
-            UNIQUE (origin_word_id, ordinal)
-        );
-        CREATE TABLE definition_components (
-            id INTEGER PRIMARY KEY,
-            definition_id INTEGER NOT NULL REFERENCES definitions(id),
-            ordinal INTEGER NOT NULL,
-            kind TEXT NOT NULL,
-            word_id INTEGER REFERENCES words(id),
-            character_id INTEGER REFERENCES characters(id),
-            start_offset INTEGER NOT NULL,
-            end_offset INTEGER NOT NULL
-        );
-        """
-    )
+def _fixture_db(tmp_path: Path, mutation: str | None = None) -> VerifiedConstruct:
+    path = tmp_path / "construct.db"
+    db = sqlite3.connect(path)
+    db.executescript(_SCHEMA_SQL)
+    db.executemany("INSERT INTO meta VALUES (?, ?)", [("schema", SCHEMA), ("version", VERSION)])
     db.executemany(
         "INSERT INTO characters VALUES (?, ?, ?)",
         [(1, "a", 0), (2, "b", 1), (3, " ", 2)],
@@ -144,24 +108,29 @@ def _fixture_db(tmp_path: Path) -> sqlite3.Connection:
     )
     db.executemany(
         "INSERT INTO definition_components "
-        "(id, definition_id, ordinal, kind, word_id, character_id, start_offset, end_offset) "
-        "VALUES (?, 1, ?, ?, ?, ?, ?, ?)",
+        "(definition_id, ordinal, kind, word_id, character_id, start_offset, end_offset) "
+        "VALUES (1, ?, ?, ?, ?, ?, ?)",
         [
-            (1, 0, "word", 2, None, 0, 1),
-            (2, 1, "character", None, 3, 1, 2),
-            (3, 2, "word", 2, None, 2, 3),
+            (0, "word", 2, None, 0, 1),
+            (1, "character", None, 3, 1, 2),
+            (2, "word", 2, None, 2, 3),
         ],
     )
+    if mutation:
+        db.execute(mutation)
     db.commit()
-    return db
+    logical = _logical_receipt(db)
+    db.close()
+    ref = ConstructRef(logical, sha256(path.read_bytes()).hexdigest())
+    return VerifiedConstruct(path, ref)
 
 
 def test_origin_local_basis_uses_declared_axes(tmp_path: Path) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
 
-    a_axis = glyph_axis(inventory["a"], REF_A)
-    b_axis = glyph_axis(inventory["b"], REF_A)
+    a_axis = glyph_axis(inventory["a"], db.construct, db=db)
+    b_axis = glyph_axis(inventory["b"], db.construct, db=db)
 
     assert a_axis.identity == "a"
     assert a_axis.axis_index == inventory["a"].axis_index
@@ -177,16 +146,20 @@ def test_origin_local_basis_uses_declared_axes(tmp_path: Path) -> None:
 
 def test_axis_identity_is_construct_bound(tmp_path: Path) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
 
-    same_glyph_a = glyph_axis(inventory["a"], REF_A)
-    same_glyph_b = glyph_axis(inventory["a"], REF_B)
+    same_glyph_a = glyph_axis(inventory["a"], db.construct, db=db)
+    other_path = tmp_path / "other"
+    other_path.mkdir()
+    other = _fixture_db(other_path, "UPDATE words SET surface='ba' WHERE id=1")
+    same_glyph_b = glyph_axis(other.inventory["a"], other.construct, db=other)
     assert same_glyph_a != same_glyph_b
 
     vector_a = basis_vector(same_glyph_a, scalar_field="R")
     vector_b = basis_vector(same_glyph_b, scalar_field="R")
     with pytest.raises(HilbertInferenceError, match="cross-construct"):
         vector_a.inner_product(vector_b)
+    other.close()
     db.close()
 
 
@@ -194,14 +167,14 @@ def test_origin_local_inner_product_and_fail_closed_boundaries(
     tmp_path: Path,
 ) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
     glyph = basis_vector(
-        glyph_axis(inventory["a"], REF_A),
+        glyph_axis(inventory["a"], db.construct, db=db),
         scalar_field="C",
     )
-    word, _axis_index = promote_word(db, 2)
+    word, _axis_index = promote_word(db._db, 2)
     word_vector = basis_vector(
-        word_axis(word, REF_A),
+        word_axis(word, db.construct, db=db),
         scalar_field="C",
     )
 
@@ -210,20 +183,20 @@ def test_origin_local_inner_product_and_fail_closed_boundaries(
         glyph.inner_product(word_vector)
     with pytest.raises(HilbertInferenceError, match="scalar fields"):
         glyph.inner_product(
-            basis_vector(glyph_axis(inventory["a"], REF_A), scalar_field="R")
+            basis_vector(glyph_axis(inventory["a"], db.construct, db=db), scalar_field="R")
         )
     db.close()
 
 
 def test_word_promotion_preserves_order_and_multiplicity(tmp_path: Path) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
 
     ab = word_promotion(
         db,
         inventory,
         1,
-        REF_A,
+        db.construct,
         scalar_field="R",
     )
     assert [factor.identity for factor in ab.source.factors] == ["a", "b"]
@@ -234,7 +207,7 @@ def test_word_promotion_preserves_order_and_multiplicity(tmp_path: Path) -> None
         db,
         inventory,
         3,
-        REF_A,
+        db.construct,
         scalar_field="R",
     )
     assert [factor.identity for factor in aa.source.factors] == ["a", "a"]
@@ -245,7 +218,7 @@ def test_word_promotion_preserves_order_and_multiplicity(tmp_path: Path) -> None
         db,
         inventory,
         1,
-        REF_A,
+        db.construct,
         scalar_field="R",
     )
     assert [
@@ -262,15 +235,15 @@ def test_word_promotion_preserves_order_and_multiplicity(tmp_path: Path) -> None
 
 def test_dimension_queries_are_direct_counts(tmp_path: Path) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
     queries: list[str] = []
-    db.set_trace_callback(queries.append)
+    db._db.set_trace_callback(queries.append)
 
-    words = word_space(db, REF_A, scalar_field="R")
-    definitions = definition_space(db, REF_A, 1, scalar_field="R")
-    glyphs = glyph_space(inventory, REF_A, scalar_field="R")
+    words = word_space(db, db.construct, scalar_field="R")
+    definitions = definition_space(db, db.construct, 1, scalar_field="R")
+    glyphs = glyph_space(inventory, db.construct, db=db, scalar_field="R")
 
-    db.set_trace_callback(None)
+    db._db.set_trace_callback(None)
     normalized = [" ".join(query.upper().split()) for query in queries]
     assert words.dimension == 3
     assert definitions.dimension == 1
@@ -287,20 +260,117 @@ def test_finite_spaces_require_explicit_field_and_are_complete(
     tmp_path: Path,
 ) -> None:
     db = _fixture_db(tmp_path)
-    inventory = glyph_inventory(db)
+    inventory = db.inventory
 
-    real_space = glyph_space(inventory, REF_A, scalar_field="R")
-    complex_space = word_space(db, REF_A, scalar_field="C")
+    real_space = glyph_space(inventory, db.construct, db=db, scalar_field="R")
+    complex_space = word_space(db, db.construct, scalar_field="C")
     assert real_space.complete is True
     assert complex_space.complete is True
     assert real_space.scalar_field == "R"
     assert complex_space.scalar_field == "C"
 
     with pytest.raises(HilbertInferenceError, match="scalar_field"):
-        glyph_space(inventory, REF_A, scalar_field="Q")
+        glyph_space(inventory, db.construct, db=db, scalar_field="Q")
     with pytest.raises(HilbertInferenceError, match="imaginary"):
         basis_vector(
-            glyph_axis(inventory["a"], REF_A),
+            glyph_axis(inventory["a"], db.construct, db=db),
             scalar_field="R",
         ).scale(1j)
     db.close()
+
+
+@pytest.mark.parametrize("field", ["artifact_sha256", "logical_receipt"])
+def test_rejects_well_formed_false_artifact_identity(tmp_path: Path, field: str) -> None:
+    with _fixture_db(tmp_path) as db:
+        wrong = replace(db.construct, **{field: "0" * 64})
+        with pytest.raises(HilbertInferenceError, match="mismatch"):
+            VerifiedConstruct(tmp_path / "construct.db", wrong)
+
+
+def test_every_database_helper_rejects_stale_reference(tmp_path: Path) -> None:
+    with _fixture_db(tmp_path) as db:
+        wrong = replace(db.construct, logical_receipt="0" * 64)
+        word = promote_word(db._db, 1)[0]
+        from english_gonol.hyperspace_construct import promote_definition
+        definition = promote_definition(db._db, 1)[0]
+        calls = [
+            lambda: glyph_axis(db.inventory["a"], wrong, db=db),
+            lambda: word_axis(word, wrong, db=db),
+            lambda: definition_axis(definition, wrong, db=db),
+            lambda: glyph_space(db.inventory, wrong, scalar_field="R", db=db),
+            lambda: word_space(db, wrong, scalar_field="R"),
+            lambda: definition_space(db, wrong, 1, scalar_field="R"),
+            lambda: word_promotion(db, db.inventory, 1, wrong, scalar_field="R"),
+            lambda: definition_promotion(db, db.inventory, 1, wrong, scalar_field="R"),
+        ]
+        for call in calls:
+            with pytest.raises(HilbertInferenceError, match="reference does not match"):
+                call()
+        with pytest.raises(HilbertInferenceError, match="VerifiedConstruct is required"):
+            word_space(db._db, db.construct, scalar_field="R")
+
+
+def test_snapshot_keeps_identity_after_source_changes_and_rejects_closed_handle(tmp_path: Path) -> None:
+    with _fixture_db(tmp_path) as db:
+        before = word_promotion(db, db.inventory, 1, db.construct, scalar_field="R")
+        with sqlite3.connect(tmp_path / "construct.db") as source:
+            source.execute("UPDATE words SET surface='ba' WHERE id=1")
+        assert word_promotion(db, db.inventory, 1, db.construct, scalar_field="R") == before
+        with pytest.raises(sqlite3.OperationalError, match="readonly"):
+            db._db.execute("UPDATE words SET surface='ba' WHERE id=1")
+        with pytest.raises(HilbertInferenceError, match="artifact SHA-256 mismatch"):
+            VerifiedConstruct(tmp_path / "construct.db", db.construct)
+    with pytest.raises(HilbertInferenceError, match="closed"):
+        word_space(db, db.construct, scalar_field="R")
+
+
+def test_rejects_foreign_glyph_inventory_and_gonols(tmp_path: Path) -> None:
+    with _fixture_db(tmp_path) as db:
+        foreign = dict(db.inventory)
+        foreign["a"] = replace(foreign["a"], axis_index=99)
+        with pytest.raises(HilbertInferenceError, match="inventory"):
+            word_promotion(db, foreign, 1, db.construct, scalar_field="R")
+        with pytest.raises(HilbertInferenceError, match="glyph does not match"):
+            glyph_axis(foreign["a"], db.construct, db=db)
+        word = promote_word(db._db, 1)[0]
+        with pytest.raises(HilbertInferenceError, match="word does not match"):
+            word_axis(replace(word, glyph_ids=(2, 1)), db.construct, db=db)
+
+
+@pytest.mark.parametrize("mutation", [
+    "UPDATE words SET surface='ba' WHERE id=1",
+    "UPDATE word_characters SET character_id=1 WHERE word_id=1 AND ordinal=1",
+    "DELETE FROM word_characters WHERE word_id=1 AND ordinal=1",
+])
+def test_word_factors_refuse_inconsistent_declared_glyphs(tmp_path: Path, mutation: str) -> None:
+    # Hashes are valid for these malformed artifacts; content consistency is a
+    # separate obligation, including equal-length disagreement and multiplicity.
+    with _fixture_db(tmp_path, mutation) as db:
+        with pytest.raises(HilbertInferenceError, match="surface disagrees"):
+            word_promotion(db, db.inventory, 1, db.construct, scalar_field="R")
+
+
+@pytest.mark.parametrize("field, coefficient", [("R", 1e308), ("C", 1e308j)])
+def test_inner_product_and_norm_refuse_nonfinite_results(tmp_path: Path, field: str, coefficient: complex) -> None:
+    with _fixture_db(tmp_path) as db:
+        a = basis_vector(glyph_axis(db.inventory["a"], db.construct, db=db), scalar_field=field)
+        enormous = a.scale(coefficient)
+        for operation in (lambda: enormous.inner_product(enormous), enormous.norm_squared, enormous.norm):
+            with pytest.raises(HilbertInferenceError, match="finite"):
+                operation()
+        # Each product is finite, but their sum overflows.
+        b = basis_vector(glyph_axis(db.inventory["b"], db.construct, db=db), scalar_field=field)
+        accumulated = a.add(b).scale(1e154)
+        with pytest.raises(HilbertInferenceError, match="finite"):
+            accumulated.inner_product(accumulated)
+
+
+@pytest.mark.parametrize("field", ["R", "C"])
+def test_zero_coordinates_have_one_equality_and_hash_identity(tmp_path: Path, field: str) -> None:
+    with _fixture_db(tmp_path) as db:
+        a = basis_vector(glyph_axis(db.inventory["a"], db.construct, db=db), scalar_field=field)
+        zero = HilbertStateVector(db.construct, "O_G", field, ())
+        explicit = replace(a, coordinates=((a.coordinates[0][0], -0.0),))
+        zeros = (zero, explicit, a.scale(0), a.add(a.scale(-1)), a.scale(1e-300).scale(1e-300))
+        assert all(item.coordinates == () and item.norm_squared() == 0 for item in zeros)
+        assert len(set(zeros)) == 1
