@@ -43,3 +43,6 @@ jobs:
         run: python tools/check_stack_consistency.py
       - name: Validate the repository-owned portfolio report
         run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+      - name: Verify the preserved municipal handoff
+        working-directory: research/a0-municipality
+        run: sha256sum -c HANDOFF.sha256

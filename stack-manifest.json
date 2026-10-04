@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "7384687cde8e9d18a1019fecd62adbaa6278930bb556546db05062ef4a348f0b",
+  "work_graph_sha256": "16efb26a3aeebd70f41c64cf7fa6841b13fb9f56d1e60718a35fb15133177d00",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -71,7 +71,8 @@
       "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved; immutable public intended-design transcript identity and detailed attribution remain unresolved",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
       "Weave preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved",
-      "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law."
+      "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
+      "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement."
     ]
   },
   "research_participants": [
@@ -328,6 +329,86 @@
       "commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
       "authority": "extracted language construction and input public contract; domain graduation incomplete",
       "relation": "exact installed wheel consumer via research/zfae/UCHC_INPUT.json; no fixed-width semantic projection or neural readiness promotion",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "a0-municipality",
+      "repository": "The-Interdependency/stack",
+      "commit": "6504ed963d93836f66fc88e354fe52809a1a3b7a",
+      "authority": "municipal composition specification and Stack-owned research",
+      "relation": "starting forge baseline containing the merged English Hilbert candidate, PSFR boundaries and orchestration contracts; placement adds no runtime or canon",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "a0",
+      "repository": "The-Interdependency/a0",
+      "commit": "ad958a4e5f4cdb17ba815539d2e6a545034db161",
+      "authority": "a0 runtime implementation and public application contracts",
+      "relation": "intended municipal phone, permissions, finance and persistence implementation owner; inspected source, not a deployment claim",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "380ce7b7ec6b8b45ffa53ea4210070f0b3129747",
+      "authority": "UCNS geometry and mathematical representation",
+      "relation": "source-qualified relational geometry producer; no municipal semantics or operational authority transfer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "0b3ada9ef2f8e32bba10daf104fc0d38730c3a77",
+      "authority": "extracted language/input contracts; intended independent construction home",
+      "relation": "native glyph, word and definition origin reference; current English/Hilbert authority remains Stack-owned pending graduation",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "1cdfb09dd00a451cee30eec2e78624df8c682662",
+      "authority": "METAPAT semantics and domain restraint",
+      "relation": "source-qualified semantic distinctions; structural resemblance transfers no authority or status",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "3024df2b91a2cf7f103dc60640081ec03505335a",
+      "authority": "organization build, evidence and structural-update doctrine",
+      "relation": "separately pinned current placement doctrine; does not refresh the root operational snapshot",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "uchc-hilbert-contract",
+      "repository": "The-Interdependency/uchc",
+      "commit": "0401191adcfd490bc98856d3f4f8e9f3c1ae189c",
+      "authority": "provisional UCHC Hilbert migration documentation",
+      "relation": "unmerged PR #3 documentation reference; no duplicate Hilbert implementation or completed graduation",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/a0-municipality/",
+      "participant_id": "holography-protocol",
+      "repository": "The-Interdependency/stack",
+      "commit": "1df56909816362695b3519838dd7da38226ec565",
+      "authority": "Stack-local UCNS holography preregistration",
+      "relation": "unmerged draft PR #66 protocol reference only; no implemented recovery, theorem or minimum-complexity claim",
       "canonical_release": false,
       "authority_transfer": false
     }
