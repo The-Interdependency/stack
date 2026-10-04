@@ -208,7 +208,7 @@ def test_stack_fixture_matches_exact_edcm_producer():
     sys.modules[spec.name]=module
     spec.loader.exec_module(module)
     fixture=origins.load_metric_origin_specs()
-    assert fixture["producer_commit"]=="f38b1529f34fb94edefcc30c846f7f955b178f5a"
+    assert fixture["producer_commit"]=="0873c105799681ea1f7ccb3e619d1f7aebbd85e0"
     assert tuple(fixture["specs"])==tuple(module.METRIC_ORIGIN_SPECS)
     for metric,source_spec in module.METRIC_ORIGIN_SPECS.items():
         record=fixture["specs"][metric]
