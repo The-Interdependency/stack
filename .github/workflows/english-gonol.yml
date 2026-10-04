@@ -45,6 +45,14 @@ jobs:
           path: _deps/ucns-relational
           persist-credentials: false
 
+      - name: Checkout pinned OEWN 2025 source
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: globalwordnet/english-wordnet
+          ref: dc343f2683279ecbb13fab4e2fd778d7b162d287
+          path: _deps/oewn
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
