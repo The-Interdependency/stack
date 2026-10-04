@@ -2,7 +2,7 @@
   "schema": "edcm.metric-origin-spec-fixture",
   "version": "0.3.0",
   "producer_repository": "The-Interdependency/edcm",
-  "producer_commit": "7dd93e3fc19f82300e3ffbb83ffc64e641ea6cd4",
+  "producer_commit": "57e2c32196568b4bbde61a80001906eb735ac830",
   "specs": {
     "C": {
       "surface_terms": [
@@ -179,7 +179,7 @@
         "stored",
         "tension",
         "unresolved",
-        "dissonance"
+        "conflict"
       ]
     }
   }
