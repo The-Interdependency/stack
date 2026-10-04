@@ -2,7 +2,7 @@
   "schema": "edcm.metric-origin-spec-fixture",
   "version": "0.3.0",
   "producer_repository": "The-Interdependency/edcm",
-  "producer_commit": "ed1b6e42b72c47f9383bd20b65e49a6c39a1a747",
+  "producer_commit": "91b56007f4c77bd7e939bcbe93d8095411ceff78",
   "specs": {
     "C": {
       "surface_terms": [
@@ -42,7 +42,7 @@
       "surface_terms": [
         "Fixation"
       ],
-      "semantic_definition": "fixation is persistence of substantially the same constraint bearing pattern across successive states",
+      "semantic_definition": "fixation is persistence of substantially the same constraint-bearing pattern across successive states",
       "standing": "resolved",
       "measurement_alignment": "proxy",
       "unresolved": [
@@ -75,7 +75,7 @@
       "surface_terms": [
         "Deflection"
       ],
-      "semantic_definition": "deflection is movement away from the active constraint bearing subject or relation",
+      "semantic_definition": "deflection is movement away from the active constraint-bearing subject or relation",
       "standing": "resolved",
       "measurement_alignment": "proxy",
       "unresolved": [

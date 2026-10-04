@@ -21,6 +21,10 @@ jobs:
     env:
       UCNS_SOURCE_ROOT: ${{ github.workspace }}/_deps/ucns-motion
       ENGLISH_GONOL_UCNS_ROOT: ${{ github.workspace }}/_deps/ucns-relational
+      OEWN_SOURCE_ROOT: ${{ github.workspace }}/_deps/oewn/src/yaml
+      EDCM_METRIC_ORIGIN_ROOT: ${{ github.workspace }}/_deps/edcm-metric-origin
+      ENGLISH_GONOL_FULL_CONSTRUCT_ROOT: ${{ github.workspace }}/_state/english-full-construct
+      REQUIRE_METRIC_ORIGIN_SOURCES: "1"
     steps:
       - name: Checkout stack
         uses: actions/checkout@v7.0.1
@@ -57,8 +61,16 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/edcm
-          ref: ed1b6e42b72c47f9383bd20b65e49a6c39a1a747
+          ref: 91b56007f4c77bd7e939bcbe93d8095411ceff78
           path: _deps/edcm-metric-origin
+          persist-credentials: false
+
+      - name: Checkout pinned full-construct carrier
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 4f863ad37096b7baab8f62820ad5cb937b62a3a7
+          path: _deps/ucns-carrier
           persist-credentials: false
 
       - name: Set up Python
@@ -66,14 +78,42 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install pytest
-        run: python -m pip install --disable-pip-version-check pytest
+      - name: Install construction prerequisites
+        run: python -m pip install --disable-pip-version-check pytest PyYAML
 
-      - name: Verify pinned UCNS source identities
+      - name: Verify all pinned source identities
         run: |
           test "$(git -C _deps/ucns-motion rev-parse HEAD)" = "5a042416ef62abd9b674523284c2a31193918d66"
           test "$(git -C _deps/ucns-relational rev-parse HEAD)" = "d7c6f51304ed6c32d48badf63132bea6de8af497"
+          test "$(git -C _deps/oewn rev-parse HEAD)" = "dc343f2683279ecbb13fab4e2fd778d7b162d287"
+          test "$(git -C _deps/edcm-metric-origin rev-parse HEAD)" = "91b56007f4c77bd7e939bcbe93d8095411ceff78"
+          test "$(git -C _deps/ucns-carrier rev-parse HEAD)" = "4f863ad37096b7baab8f62820ad5cb937b62a3a7"
+
+      - name: Preflight full-corpus resources
+        run: |
+          python - <<'PY'
+          import os, shutil
+          assert shutil.disk_usage(os.environ["RUNNER_TEMP"]).free >= 8 * 1024**3
+          assert os.sysconf("SC_PHYS_PAGES") * os.sysconf("SC_PAGE_SIZE") >= 5 * 1024**3
+          PY
+
+      - name: Build complete pinned corpus for metric-origin replay
+        working-directory: research/english-gonol
+        run: |
+          python -m english_gonol.full_construct_run \
+            --source-root "$OEWN_SOURCE_ROOT" \
+            --ucns-source-root "$GITHUB_WORKSPACE/_deps/ucns-carrier" \
+            --out-dir "$ENGLISH_GONOL_FULL_CONSTRUCT_ROOT"
 
       - name: English Gonol construction tests
         working-directory: research/english-gonol
         run: python -m pytest -q tests
+
+      - name: Retain full-corpus metric-origin evidence
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: metric-origin-replay
+          path: |
+            ${{ env.ENGLISH_GONOL_FULL_CONSTRUCT_ROOT }}/manifest.json
+            ${{ env.ENGLISH_GONOL_FULL_CONSTRUCT_ROOT }}/metric-origin-replay.json
+          if-no-files-found: error

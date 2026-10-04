@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "e3fd82189f5968b9aa7431a39e9230d79d7053de3aebfa46b621aa0590ceb793",
+  "work_graph_sha256": "d20c8965766caacc008c1e54de2edc0c47b5247159c7ec7da0f8d3d773b29b52",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -335,7 +335,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "edcm-metric-origin-source",
       "repository": "The-Interdependency/edcm",
-      "commit": "ed1b6e42b72c47f9383bd20b65e49a6c39a1a747",
+      "commit": "91b56007f4c77bd7e939bcbe93d8095411ceff78",
       "authority": "EDCM semantic metric-origin definitions and measurement-rule alignment",
       "relation": "exact semantic-origin producer consumed by Stack English; does not refresh libs/edcm or transfer measurement authority",
       "canonical_release": false,

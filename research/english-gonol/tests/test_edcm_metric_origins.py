@@ -58,6 +58,7 @@ import importlib.util
 import json
 import os
 import sqlite3
+import subprocess
 import sys
 from pathlib import Path
 
@@ -65,22 +66,28 @@ import pytest
 
 import english_gonol.edcm_metric_origins as origins
 from english_gonol.hyperspace_construct import V2_MANIFEST_RECEIPT
+from english_gonol.full_construct_run import _collect_surfaces, verify_replay
+from english_gonol.language.source import load_oewn_2025, OEWN_COMMIT
 
 
-def _fixture(tmp_path: Path, metric="F", standing="resolved"):
-    source = {
-        "schema":"edcm.metric-origin-spec-fixture","version":"0.3.0",
-        "producer_repository":"The-Interdependency/edcm","producer_commit":"a"*40,
-        "specs":{metric:{
-            "surface_terms":["Fixation"],
-            "construction_terms":["fixation","persistence","repetition"],
-            "semantic_definition":"fixation is persistence across states",
-            "standing":standing,"measurement_alignment":"proxy",
-            "unresolved":["proxy gap"] if standing=="resolved" else ["collision"]}}
-    }
-    path=tmp_path/"source.json"
-    path.write_text(json.dumps(source),encoding="utf-8")
+def _fixture(tmp_path: Path):
+    path = tmp_path / "source.json"
+    path.write_bytes(origins.FIXTURE.read_bytes())
     return path
+
+
+def _source_root(variable):
+    root = os.environ.get(variable)
+    if not root:
+        if os.environ.get("REQUIRE_METRIC_ORIGIN_SOURCES") == "1":
+            pytest.fail(f"required provenance source missing: {variable}")
+        pytest.skip(f"{variable} not supplied for optional local replay")
+    return Path(root)
+
+
+def _verify_checkout(root, commit, paths):
+    assert subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip() == commit
+    subprocess.run(["git", "-C", str(root), "diff", "--exit-code", "HEAD", "--", *paths], check=True)
 
 
 def _db(tmp_path: Path):
@@ -120,7 +127,8 @@ def test_resolved_origin_uses_word_and_glyph_axes_in_order(tmp_path, monkeypatch
     assert record.components[0].axis_origin=="O_W"
     assert any(x.axis_origin=="O_G" and x.surface==" " for x in record.components)
     assert record.producer_repository=="The-Interdependency/edcm"
-    assert "proxy gap" in record.unresolved
+    assert "maintained implementation is a lexical structural proxy, not embedding similarity" in record.unresolved
+    assert record.origin_id == "O_M(F)"
 
 
 def test_origin_record_contains_no_measurement_value(tmp_path, monkeypatch):
@@ -143,12 +151,13 @@ def test_wrong_construct_receipt_fails_closed(tmp_path, monkeypatch):
 
 def test_unresolved_origin_does_not_construct_components(tmp_path):
     record=origins.build_metric_origin_set(
-        tmp_path,"F",fixture_path=_fixture(tmp_path,standing="hmmm")
+        tmp_path,"O",fixture_path=_fixture(tmp_path)
     )
     assert record.closed is False
     assert record.components==()
     assert record.construct_receipt=="hmmm"
-    assert record.unresolved==("collision",)
+    assert record.unresolved==("marker canon says Overextension; compute.py says Overconfidence",)
+    assert record.origin_id == "O_M(O)"
 
 
 def test_receipt_hashes_complete_payload_except_receipt(tmp_path, monkeypatch):
@@ -165,10 +174,9 @@ def test_receipt_hashes_complete_payload_except_receipt(tmp_path, monkeypatch):
 
 
 def test_all_resolved_terms_are_admitted_by_pinned_oewn():
-    root=os.environ.get("OEWN_SOURCE_ROOT")
-    if not root:
-        pytest.skip("exact OEWN source not present; authoritative CI supplies it")
-    snapshot=load_oewn_2025(Path(root))
+    root = _source_root("OEWN_SOURCE_ROOT")
+    _verify_checkout(root, OEWN_COMMIT, ["."])
+    snapshot=load_oewn_2025(root)
     words,_characters=_collect_surfaces(snapshot)
     admitted=set(words)
     fixture=origins.load_metric_origin_specs()
@@ -183,9 +191,9 @@ def test_all_resolved_terms_are_admitted_by_pinned_oewn():
 
 
 def test_stack_fixture_matches_exact_edcm_producer():
-    root=os.environ.get("EDCM_METRIC_ORIGIN_ROOT")
-    if not root:
-        pytest.skip("exact EDCM metric-origin producer not present; authoritative CI supplies it")
+    root = _source_root("EDCM_METRIC_ORIGIN_ROOT")
+    fixture=origins.load_metric_origin_specs()
+    _verify_checkout(root, fixture["producer_commit"], ["edcm"] )
     module_path=Path(root)/"edcm"/"metric_origin_spec.py"
     spec=importlib.util.spec_from_file_location("_pinned_edcm_metric_origin_spec",module_path)
     assert spec is not None and spec.loader is not None
@@ -193,7 +201,7 @@ def test_stack_fixture_matches_exact_edcm_producer():
     sys.modules[spec.name]=module
     spec.loader.exec_module(module)
     fixture=origins.load_metric_origin_specs()
-    assert fixture["producer_commit"]=="ed1b6e42b72c47f9383bd20b65e49a6c39a1a747"
+    assert fixture["producer_commit"]=="91b56007f4c77bd7e939bcbe93d8095411ceff78"
     assert tuple(fixture["specs"])==tuple(module.METRIC_ORIGIN_SPECS)
     for metric,source_spec in module.METRIC_ORIGIN_SPECS.items():
         record=fixture["specs"][metric]
@@ -203,3 +211,84 @@ def test_stack_fixture_matches_exact_edcm_producer():
         assert record["standing"]==source_spec.standing
         assert record["measurement_alignment"]==source_spec.measurement_alignment
         assert record["unresolved"]==list(source_spec.unresolved)
+
+
+@pytest.mark.parametrize("mutation", ["repository", "commit", "terms", "standing"])
+def test_unregistered_or_modified_fixture_fails_closed(tmp_path, mutation):
+    path = _fixture(tmp_path)
+    source = json.loads(path.read_text())
+    if mutation == "repository":
+        source["producer_repository"] = "someone/else"
+    elif mutation == "commit":
+        source["producer_commit"] = "a" * 40
+    elif mutation == "terms":
+        source["specs"]["F"]["construction_terms"] = ["invented"]
+    else:
+        source["specs"]["O"]["standing"] = "resolved"
+    path.write_text(json.dumps(source))
+    with pytest.raises(ValueError, match="fixture digest mismatch"):
+        origins.build_metric_origin_set(tmp_path, "F", fixture_path=path)
+
+
+def test_registered_producer_and_all_projections_agree():
+    workspace = origins.FIXTURE.parent
+    stack = workspace.parents[1]
+    fixture = origins.load_metric_origin_specs()
+    producer = fixture["producer_commit"]
+    graph = json.loads((workspace / "docs/work-graphs/metric-origin-space-v0.json").read_text())
+    participant = next(x for x in graph["repositories"] if x["repository"] == fixture["producer_repository"])
+    assert participant["commit"] == producer
+    digest = sha256(json.dumps({k: graph[k] for k in ("repositories", "boundaries")}, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    assert graph["work_graph_sha256"] == digest
+    manifest = json.loads((stack / "stack-manifest.json").read_text())
+    participant = next(x for x in manifest["research_participants"] if x.get("participant_id") == "edcm-metric-origin-source")
+    assert participant["commit"] == producer
+    assert producer in (stack / "STACK_MANIFEST.md").read_text()
+
+
+def test_required_provenance_source_cannot_skip(monkeypatch):
+    monkeypatch.setenv("REQUIRE_METRIC_ORIGIN_SOURCES", "1")
+    monkeypatch.delenv("OEWN_SOURCE_ROOT", raising=False)
+    with pytest.raises(pytest.fail.Exception, match="required provenance source missing"):
+        _source_root("OEWN_SOURCE_ROOT")
+
+
+def test_full_construct_origins_bind_to_pinned_edcm():
+    state_dir = _source_root("ENGLISH_GONOL_FULL_CONSTRUCT_ROOT")
+    edcm_root = _source_root("EDCM_METRIC_ORIGIN_ROOT")
+    fixture = origins.load_metric_origin_specs()
+    _verify_checkout(edcm_root, fixture["producer_commit"], ["edcm"])
+    manifest = verify_replay(state_dir)
+    assert manifest["receipt_sha256"] == V2_MANIFEST_RECEIPT
+    records = {metric: origins.build_metric_origin_set(state_dir, metric).to_dict()
+               for metric in fixture["specs"]}
+    for metric, record in records.items():
+        payload = {k: v for k, v in record.items() if k != "receipt_sha256"}
+        assert sha256(origins._canonical(payload)).hexdigest() == record["receipt_sha256"]
+        assert record["origin_id"] == f"O_M({metric})"
+        assert record["closed"] is (metric not in {"O", "L"})
+    # A subprocess prevents an already-imported editable EDCM from shadowing
+    # the exact producer checkout under test.
+    result = subprocess.run(
+        [sys.executable, "-c", """
+import json, sys
+from dataclasses import asdict
+from edcm.measurement import compute_transcript, parse_transcript
+from edcm.semantic_metric_space import build_semantic_metric_space, bind_round_metrics
+origins = json.load(sys.stdin)
+space = build_semantic_metric_space(origins)
+assert space.unresolved_metrics == ('O', 'L')
+assert not space.complete
+metrics = compute_transcript(parse_transcript('A: State the constraint.\\nB: Recorded.'))[0]
+rows = bind_round_metrics(metrics, space, evidence_receipt='synthetic-transcript:full-replay-test')
+assert [row.value for row in rows] == metrics.vector()
+assert all(row.semantic_projection == 'hmmm' for row in rows)
+print(json.dumps([asdict(row) for row in rows], allow_nan=False))
+"""], cwd=edcm_root, input=json.dumps(records), text=True, capture_output=True,
+        env={**os.environ, "PYTHONPATH": str(edcm_root)}, check=True,
+    )
+    evidence = {"producer_commit": fixture["producer_commit"],
+                "construct_receipt": manifest["receipt_sha256"],
+                "origin_records": records, "readouts": json.loads(result.stdout),
+                "unresolved_metrics": ["O", "L"], "semantic_projection": "hmmm"}
+    (state_dir / "metric-origin-replay.json").write_text(json.dumps(evidence, indent=2) + "\n")

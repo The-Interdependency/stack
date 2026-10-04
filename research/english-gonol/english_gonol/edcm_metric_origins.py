@@ -3,6 +3,9 @@
 Only EDCM-owned construction terms enter the semantic origin. Measurement rules
 and observed evidence stay outside it. Resolved origins require the exact pinned
 English v2 construct receipt; unresolved EDCM semantics remain unclosed hmmm.
+
+Usage guidance: see ``docs/metric-origin-space.md`` for source checkout,
+complete-corpus construction, export, and EDCM adapter commands.
 """
 
 # === MODULE_BUILD ===
@@ -76,6 +79,9 @@ from .hyperspace_construct import (
 SCHEMA = "english-gonol.edcm-metric-origin-set"
 VERSION = "0.2.0"
 FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
+BASE = FIXTURE.parent / "BASE.json"
+# Bind the complete source projection, not only a caller-supplied commit label.
+FIXTURE_SHA256 = "1ec7ddef9c41aac365131d8cf8a49df5246795897d57a4fa2e3e250ad74d3337"
 
 
 def _canonical(value: object) -> bytes:
@@ -98,6 +104,7 @@ class OriginComponent:
 @dataclass(frozen=True, slots=True)
 class MetricOriginSet:
     metric_id: str
+    origin_id: str
     producer_repository: str
     producer_commit: str
     construct_receipt: str
@@ -112,6 +119,7 @@ class MetricOriginSet:
             "schema": SCHEMA,
             "version": VERSION,
             "metric_id": self.metric_id,
+            "origin_id": self.origin_id,
             "producer_repository": self.producer_repository,
             "producer_commit": self.producer_commit,
             "construct_receipt": self.construct_receipt,
@@ -126,12 +134,19 @@ class MetricOriginSet:
 
 
 def load_metric_origin_specs(path: Path = FIXTURE) -> dict[str, object]:
-    data = json.loads(Path(path).read_text(encoding="utf-8"))
+    content = Path(path).read_bytes()
+    if sha256(content).hexdigest() != FIXTURE_SHA256:
+        raise ValueError("EDCM metric-origin fixture digest mismatch")
+    data = json.loads(content)
     if (
         data.get("schema") != "edcm.metric-origin-spec-fixture"
         or data.get("version") != "0.3.0"
     ):
         raise ValueError("unsupported EDCM metric-origin fixture")
+    registered = json.loads(BASE.read_text(encoding="utf-8"))["metric_origin_source"]
+    if (data.get("producer_repository") != registered["repository"]
+            or data.get("producer_commit") != registered["commit"]):
+        raise ValueError("unregistered EDCM metric-origin producer")
     return data
 
 
@@ -178,6 +193,7 @@ def build_metric_origin_set(
     if spec["standing"] != "resolved":
         common = {
             "metric_id": metric_id,
+            "origin_id": f"O_M({metric_id})",
             "producer_repository": source["producer_repository"],
             "producer_commit": source["producer_commit"],
             "construct_receipt": "hmmm",
@@ -229,6 +245,7 @@ def build_metric_origin_set(
 
     common = {
         "metric_id": metric_id,
+        "origin_id": f"O_M({metric_id})",
         "producer_repository": source["producer_repository"],
         "producer_commit": source["producer_commit"],
         "construct_receipt": observed_receipt,
