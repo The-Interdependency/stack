@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `306da7cba2d38df0387d7f6778c88138c223b4e66ed9818feb42a4e8a8832fcf`
+  `e3fd82189f5968b9aa7431a39e9230d79d7053de3aebfa46b621aa0590ceb793`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
@@ -65,7 +65,7 @@ release identity.
 | `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
 | `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | full gonol/private-key/thread/corpus/interleave/asymmetric construction research; native derivation unresolved; no URPCS implementation inheritance or security standing | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
-| `research/english-gonol/` | `The-Interdependency/edcm` | `57e2c32196568b4bbde61a80001906eb735ac830` | exact EDCM semantic metric-origin producer; supplies metric definitions and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
+| `research/english-gonol/` | `The-Interdependency/edcm` | `ed1b6e42b72c47f9383bd20b65e49a6c39a1a747` | exact EDCM semantic metric-origin producer; supplies metric definitions and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
