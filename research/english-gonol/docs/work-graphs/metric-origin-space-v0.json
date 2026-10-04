@@ -1,13 +1,13 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "1950c6601417665245f17c27d9f292b243194fdf7a0cec380d6a7acfc61f0bb6",
+  "work_graph_sha256": "544a43a1cce34df654ed645604ad44e436fbe752006f60e0e4fbccfa5f0c4319",
   "repositories": [
     {
       "repository": "The-Interdependency/edcm",
-      "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+      "commit": "f38b1529f34fb94edefcc30c846f7f955b178f5a",
       "authority": "metric definitions, scalar measurement, and evidence/readout contracts",
-      "relation": "defines source-owned construction terms and binds scalar readouts to Stack origin receipts"
+      "relation": "defines canonical metric identities and explicit legacy-carrier targets consumed by Stack"
     },
     {
       "repository": "The-Interdependency/stack",
@@ -35,8 +35,6 @@
     "semantic_mapping": "declared mapping",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "O semantic origin conflicts: Overextension versus Overconfidence",
-      "L semantic origin conflicts: Load versus Coherence Loss",
       "lawful observed-construct to metric-origin projection/distance is unresolved",
       "full-corpus closure requires the generated English construct database",
       "originating operator decision lacks immutable public provenance; repository adoption is prospective"
