@@ -38,6 +38,13 @@
 #   timeout: 10
 #   mutates: temporary sqlite fixture
 #   cleanup: pytest tmp_path
+# id: check_metric_origin_pinned_corpus_admission
+#   proves: metric_origin_terms_admitted_by_pinned_corpus
+#   call: self::test_all_resolved_terms_are_admitted_by_pinned_oewn
+#   requires: python3, PyYAML, exact OEWN 2025 source
+#   timeout: 60
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 from hashlib import sha256
@@ -146,3 +153,21 @@ def test_receipt_hashes_complete_payload_except_receipt(tmp_path, monkeypatch):
     assert receipt==expected
     assert payload["schema"]==origins.SCHEMA
     assert payload["version"]==origins.VERSION
+
+
+def test_all_resolved_terms_are_admitted_by_pinned_oewn():
+    root=os.environ.get("OEWN_SOURCE_ROOT")
+    if not root:
+        pytest.skip("exact OEWN source not present; authoritative CI supplies it")
+    snapshot=load_oewn_2025(Path(root))
+    words,_characters=_collect_surfaces(snapshot)
+    admitted=set(words)
+    fixture=origins.load_metric_origin_specs()
+    missing={}
+    for metric,spec in fixture["specs"].items():
+        if spec["standing"]!="resolved":
+            continue
+        absent=[term for term in spec["construction_terms"] if term not in admitted]
+        if absent:
+            missing[metric]=absent
+    assert missing=={}
