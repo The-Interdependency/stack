@@ -46,6 +46,11 @@ English v2 construct receipt; unresolved EDCM semantics remain unclosed hmmm.
 #   given: any metric-origin record is emitted
 #   then: receipt identity covers schema version and every serialized field except the receipt itself
 #   class: identity_contract
+#
+# id: metric_origin_terms_admitted_by_pinned_corpus
+#   given: resolved EDCM construction terms are compared with the exact pinned OEWN 2025 source
+#   then: every term is an exact admitted word surface before an origin is licensed
+#   class: provenance_contract
 # === END CONTRACTS ===
 
 from __future__ import annotations
