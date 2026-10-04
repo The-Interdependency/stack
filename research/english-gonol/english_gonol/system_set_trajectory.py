@@ -3,6 +3,10 @@
 English Gonol Construction owns this provisional language trajectory while UCHC
 graduation remains incomplete. UCNS owns structural comparison evidence.
 METAPAT owns recurrence adjudication. EDCM owns measurement/evaluation.
+
+Usage: construct SystemSetTrajectory with SemanticStep records and at least one
+source provenance ID; call to_ucns_comparison_input() for the versioned handoff.
+Recompute structure_id as SHA-256 of canonical JSON of all other handoff fields.
 """
 
 # === MODULE_BUILD ===
@@ -53,7 +57,6 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from hashlib import sha256
 import json
-from typing import Iterable
 
 SCHEMA = "english-gonol.system-set-trajectory"
 VERSION = "0.1.0"
@@ -97,13 +100,17 @@ class SystemSetTrajectory:
         _text(self.construct_id, "construct_id")
         _text(self.origin_id, "origin_id")
         _text(self.path_id, "path_id")
-        object.__setattr__(self, "steps", tuple(self.steps))
-        object.__setattr__(self, "provenance_ids", tuple(self.provenance_ids))
-        object.__setattr__(self, "unresolved", tuple(self.unresolved))
+        for label in ("steps", "provenance_ids", "unresolved"):
+            values = getattr(self, label)
+            if isinstance(values, (str, bytes, bytearray)):
+                raise ValueError(f"{label} must be a sequence, not scalar text")
+            object.__setattr__(self, label, tuple(values))
         if not self.steps:
             raise ValueError("trajectory requires at least one semantic step")
         if any(not isinstance(step, SemanticStep) for step in self.steps):
             raise ValueError("steps must contain SemanticStep records")
+        if not self.provenance_ids:
+            raise ValueError("trajectory requires at least one provenance identifier")
         for label, values in (
             ("provenance_ids", self.provenance_ids),
             ("unresolved", self.unresolved),
@@ -137,15 +144,9 @@ class SystemSetTrajectory:
     def to_ucns_comparison_input(self) -> dict[str, object]:
         """Return identity-bearing evidence only; UCNS/METAPAT judge downstream."""
 
-        return {
-            "construct_id": self.construct_id,
-            "origin_id": self.origin_id,
-            "path_id": self.path_id,
-            "structure_id": self.receipt_sha256,
-            "steps": [asdict(step) for step in self.steps],
-            "provenance_ids": list(self.provenance_ids),
-            "unresolved": list(self.unresolved),
-        }
+        value = self.to_dict(include_receipt=False)
+        value["structure_id"] = self.receipt_sha256
+        return value
 
 
 __all__ = ["SCHEMA", "VERSION", "SemanticStep", "SystemSetTrajectory"]

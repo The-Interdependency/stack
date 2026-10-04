@@ -20,11 +20,27 @@ move English semantics into UCNS.
 every admitted character is a gonol
 one exact scalar  -> one shared character identity
 one exact surface -> one shared word identity
+
+glyph axes
+  -> ordered glyph-axis tensor
+  -> closed word
+  -> word axis
 ```
 
 Once closed, a gonol is atomic at an admissible consuming scale. Reuse preserves
 identity while order, multiplicity, relation, source position, and provenance
 remain recoverable.
+
+The Stack-forged Hilbert inference candidate treats those already-declared axes
+as mathematical basis directions rather than inserting Cartesian coordinates.
+A word's ordered glyph-axis construction is preserved when the closed word
+becomes its own higher-scale axis. Exact construct identity travels with every
+basis axis. See [Hilbert inference candidate](docs/hilbert-inference.md).
+
+This mathematical use of vector is domain-qualified as `HilbertStateVector`.
+It is not METAPAT `Vector` and not a UCNS displacement vector. The canonical
+scalar field, cross-origin inner products, amplitudes/phases and inference
+operators remain unresolved.
 
 Corpus occurrences, sense ids, and synset ids are evidence/provenance, not
 independent gonols. Definitions are word-anchored constructions: each retains
@@ -54,8 +70,10 @@ character identity. No normalization is applied.
 The builder does not create sentence/sense/synset/n-gram singleton objects,
 occurrence-object ledgers, closure graphs, synthetic relation circles,
 tangencies, attention frames, or duplicate JSON copies of the database. It does
-not synthesize weights, vectors, coordinates, centers, radii, motion, or
-tangency.
+not synthesize weights, displacement vectors, Cartesian coordinates, centers,
+radii, motion, or tangency. The separate Hilbert candidate constructs
+mathematical state vectors from axes already declared by this construction; it
+does not supply a displacement law.
 
 ### Verified full-corpus result
 
@@ -116,9 +134,22 @@ separate experiments and supply no placement law to v2. The falsified
 `full_singleton_run.py` architecture and its UCNS singleton-axis support were
 deleted rather than retained as an active precedent.
 
+## Migration standing
+
+The current lifecycle record is [`MIGRATION.json`](MIGRATION.json). UCHC is
+extracted and has a clean-installed immutable candidate verified in Stack, but
+stable publication, released-artifact reconsumption, severance of the local
+implementation path and a scoped authority-transition receipt remain incomplete.
+Stack therefore remains the implementation forge for this new candidate.
+
 ## hmmm
 
 The exact UCNS law mapping ordinal + semantic + sentence-context evidence to
 geometric displacement remains unresolved. No English-layer rule may fill that
-boundary with invented weights, directions, distances, vectors, coordinates,
-centers, radii, tangencies, or motion.
+boundary with invented weights, directions, distances, displacement vectors,
+Cartesian coordinates, centers, radii, tangencies, or motion.
+
+For the Hilbert candidate, the canonical scalar field (`R` or `C`),
+cross-origin inner products/angles, amplitudes/phases, learned inference
+operators, sense selection, sentence-axis promotion and completed UCHC
+graduation remain unresolved.
