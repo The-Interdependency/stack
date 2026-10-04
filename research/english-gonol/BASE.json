@@ -18,5 +18,11 @@
     "protocol": "FULL_VIEW_AUDIT.json",
     "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
     "authority_transfer": false
+  },
+  "metric_origin_source": {
+    "repository": "The-Interdependency/edcm",
+    "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+    "relation": "exact EDCM semantic metric-origin producer; does not refresh the historical extraction source or libs/edcm pin",
+    "authority_transfer": false
   }
 }
