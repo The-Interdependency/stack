@@ -336,9 +336,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "edcm-metric-origin-source",
       "repository": "The-Interdependency/edcm",
-      "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+      "commit": "f38b1529f34fb94edefcc30c846f7f955b178f5a",
       "authority": "EDCM semantic metric-origin definitions and measurement-rule alignment",
-      "relation": "exact semantic-origin producer consumed by Stack English; does not refresh libs/edcm or transfer measurement authority",
+      "relation": "exact canonical semantic-origin producer consumed by Stack English; bare O/L remain compatibility carriers only and transfer no measurement authority",
       "canonical_release": false,
       "authority_transfer": false
     },
