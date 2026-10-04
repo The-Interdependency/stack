@@ -99,7 +99,13 @@ def _db(tmp_path: Path):
     """)
     chars={}
     next_id=1
-    words=["fixation","persistence","repetition"]
+    fixture=origins.load_metric_origin_specs()
+    words=list(dict.fromkeys(
+        term
+        for spec in fixture["specs"].values()
+        if spec["standing"]=="resolved"
+        for term in spec["construction_terms"]
+    ))
     for surface in words:
         for ch in surface+" ":
             if ch not in chars:
@@ -226,7 +232,7 @@ def test_unregistered_or_modified_fixture_fails_closed(tmp_path, mutation):
     elif mutation == "terms":
         source["specs"]["F"]["construction_terms"] = ["invented"]
     else:
-        source["specs"]["O"]["standing"] = "resolved"
+        source["specs"]["O"]["standing"] = "hmmm"
     path.write_text(json.dumps(source))
     with pytest.raises(ValueError, match="fixture digest mismatch"):
         origins.build_metric_origin_set(tmp_path, "F", fixture_path=path)
