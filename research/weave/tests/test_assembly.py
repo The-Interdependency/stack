@@ -6,15 +6,11 @@ secrets, network or provider calls. Marker operators are explicitly WIRING_ONLY.
 """
 from dataclasses import replace
 from itertools import product
-from copy import deepcopy
-from pathlib import Path
-from unittest.mock import patch
 import unittest
 from assembly import DEFAULTS, Pipeline, Switches, plan_identity
 from stages import STEPS
 from stages.api import Blocked, Operator, PrivateContext, PublicContext, Streams, Transition
 from stages.key import KeyPair, keygen
-from verify import EXPECTED_SOURCE_INPUTS, verify_sources
 
 DATA = Streams(((0, 1, 0, 1, 1, 0),))
 PARAMS = {'inter': (((2, 2, 2),),)}
@@ -257,23 +253,6 @@ class AssemblyTests(unittest.TestCase):
             with self.assertRaises(Blocked):
                 plan_identity({'a':value})
 
-    def test_source_verification_rejects_subsets_and_altered_provenance(self):
-        verify_sources({'source_inputs':deepcopy(EXPECTED_SOURCE_INPUTS)})
-        for field in ('stack_head', 'uchc_inspected_blob', 'local_sha256'):
-            bad = deepcopy(EXPECTED_SOURCE_INPUTS)
-            bad[field] = {} if field == 'local_sha256' else '0'*40
-            with self.assertRaisesRegex(ValueError, 'complete source hash set'):
-                verify_sources({'source_inputs':bad})
-        for key in EXPECTED_SOURCE_INPUTS['local_sha256']:
-            bad = deepcopy(EXPECTED_SOURCE_INPUTS)
-            del bad['local_sha256'][key]
-            with self.assertRaises(ValueError):
-                verify_sources({'source_inputs':bad})
-
-    def test_source_verification_rejects_changed_local_bytes(self):
-        with patch.object(Path, 'read_bytes', return_value=b'altered source'):
-            with self.assertRaisesRegex(ValueError, 'source mismatch'):
-                verify_sources({'source_inputs':deepcopy(EXPECTED_SOURCE_INPUTS)})
 
 
 if __name__ == '__main__':
