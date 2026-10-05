@@ -1,156 +1,145 @@
-# Weave eight-circle / two-circle candidate
+# Weave: byte-scoped whole-plus-seven repair
 
-Status: **implemented construction research; asymmetric security not established.**
+Status: **structural repair implemented; native positional cipher not implemented**.
+This replaces the incorrect active constructions from Stack PRs #73 and #74.
+The next proposed answers are in [QUESTIONS.md](QUESTIONS.md); none is silently enabled.
 
-This workspace preserves the current Weave geometry and records candidate failures
-instead of silently promoting them into a cipher.
+## Settled construction
 
-## Preserved construction
+Each raw-byte message is an origin. Each byte occurrence participates at that origin
+as one eight-bit unit, with one big circle G0 and seven small circles G1 through G7.
+One source bit participates through each circle. The big circle is both a bit-bearing
+member and the retained whole; its dynamic role must not be replaced by metadata,
+a fixed reference, or a checksum.
 
-For each raw byte:
+Every public two-circle view contains G0 and exactly one Gi, with 1 <= i <= 7.
+There are seven possible whole-part views, not four disjoint pairs. This does not
+require emitting all seven views, fix a visitation order, or assign one pair per bit.
 
-- the byte is eight bits;
-- one whole circle plus seven derived circles form the full eight-circle key-set state;
-- every circle has an exact 720-degree return;
-- every circle has its own relationship to space, and that relationship belongs to the
-  concrete key set rather than to a universal law;
-- the full/private key set contains all eight circles;
-- a degenerate public view exposes exactly two circles at a time;
-- the two public circles produce two transmitted witness bits for each source bit,
-  therefore one eight-bit byte produces sixteen transmitted bits.
+Every circle has the complete 720-degree return. Its relationship to space is
+instantiated by the key set, not fixed by a universal placement formula. The full
+key retains the eight-circle configuration; the public object exposes two circles
+at a time. Deriving the actual cryptographic public object is distinct from enforcing
+that pair shape.
 
-The implementation uses exact rational turns: 0 <= phase < 2, with 1 turn equal to
-360 degrees and 2 turns equal to the complete 720-degree return. This is an executable
-representation of positions, not a claim that the mathematical circle has finitely
-many possible positions.
+The stated expansion remains **8 source bits -> 16 ciphertext bits per byte**. It is
+a requirement, not an implemented serializer and not a consequence of the number of
+circles alone. The removed per-bit duplication did not implement this requirement
+for the correct reason.
 
-No rule is imposed for how key sets choose their circle positions, their relations to
-space, or which two circles are exposed. Those are construction-instance data.
+## Executable repair
 
-## Executable geometry
+`stages/eight_circle.py` now has byte-level construction records:
 
-`stages/eight_circle.py` provides:
+- `Circle` stores a key-set circle binding and exact space coordinate. It is not a
+  replacement UCNS Gonol constructor. One scalar coordinate is not the complete
+  native relationship to space.
+- `FullKeySet` accepts eight bindings and an explicit source-bit/circle assignment.
+  `degenerate(i)` can produce only `(G0, Gi)`; direct `PublicPair` construction also
+  rejects a missing whole, repeated whole, extra member, or malformed circle.
+- `construct_byte` accepts a complete byte and eight caller-supplied exact positions,
+  preserving each source bit once. It emits a plaintext-bearing construction record,
+  **not ciphertext**. `source_value` reads that retained source, not a private inverse.
+- Positions are stored as exact rational turns modulo two: a 360-degree displacement
+  stays distinct, while the complete 720-degree return agrees. No sheet threshold
+  converts bit values into public output codes.
 
-- `Circle`: exact 720-degree position, zero/one positions, and key-set-specific space relation;
-- `FullKeySet`: exactly eight distinct circles;
-- `FullKeySet.degenerate(i, j)`: exactly two-circle public projection;
-- `encode_byte`: eight source bits -> sixteen positional witness bits;
-- `decode_byte`: full-key-set recovery API;
-- raw-byte `encode` / `decode` helpers.
+`stages/message_origin.py` now contains one ordered participant per **byte**.
+`construct_at` attaches that complete byte's eight placements at its message-origin
+occurrence. Repeated values preserve their separate occurrence indices. The supplied
+origin name is a namespace, not content hashing, nonce generation, or a secrecy claim.
 
-The candidate remains separate from the older transport profile and is not silently
-installed as the complete Weave `bind` law.
+The invented `CouplingKey`, public-feedback recurrence, per-bit `MessageAxis`,
+`CoupledWitness`, bitwise `encode`/`decode`, and `public_recover` have been removed.
+Their supported replacement is the corrected byte/star structure, not another cipher
+substitute. The existing transport experiment and full-profile missing-operation
+refusal remain separate and unchanged.
 
-## Message origin / UCHC-axis candidate
+## What this repair does not implement
 
-`stages/message_origin.py` consumes the UCHC architectural distinction currently
-implemented in `The-Interdependency/uchc`:
+The real native origin-axis binding, full relational circle-space state, key generation,
+whole-byte positional transformation, dynamic G0 evolution, cryptographic degeneration,
+private reconstruction and 16-bit ciphertext layout are not implemented by these records.
+No claim is made that merely requiring a `FullKeySet` argument makes its hidden circles
+necessary for recovery. The next questions concern these actual operations.
 
-- participants are individually addressable axes at one declared origin;
-- axis identity follows construction/admission order;
-- occurrence identity is preserved;
-- attachment happens at the participation point;
-- unresolved cross-origin geometry is not silently promoted.
+UCNS retains geometry authority. UCHC origin-axis architecture remains the intended
+construction dependency; this repair does **not** claim to execute UCHC by copying a
+language source or relabeling occurrence metadata. Existing Stack/UCHC implementation
+and migration boundaries are unchanged. No `libs/` source or source pin is changed.
 
-For Weave, one raw-byte message constructs one origin `O_M`. Every source-bit
-occurrence participates as its own ordered axis at that origin. The candidate then
-uses exact key-set-specific phase/feedback parameters to couple successive axes before
-the same two-circle public degeneration is applied.
+## Corrected evidence scope
 
-Usage:
+PR #73 encoded each individual source bit into two public sheet bits. PR #74 then
+added public feedback to that wrong unit. Those programs were publicly recoverable,
+but neither represented the requested byte-scoped construction. Their failures are
+not falsifications of Weave, and their successful tests did not establish that the
+requested geometry or message-origin construction had been implemented.
 
-```python
-origin = construct_origin(raw_bytes)
-witness = encode(raw_bytes, public_pair, coupling_key)
-```
+The former hidden-circle perturbation conclusion was also invalid. For a public-only
+sender, encryption is a function of its public key, message and explicit public-side
+inputs/randomness. Holding all those inputs fixed holds its output fixed regardless
+of changes to unavailable private records. That observation cannot establish whether
+private information is necessary for inversion. A correct test must examine recovery
+and unauthorized inversion for the actual forward/recovery relation, accounting for
+valid or equivalent keys rather than demanding arbitrary private changes alter a
+public sender's output.
 
-The phase recurrence is deliberately a bounded Weave candidate, not UCNS or UCHC
-canon. It is present so the message-origin construction can be executed and attacked.
+Historical source remains in Git at:
 
-## Falsifications obtained
+- PR #73 merge: `a3836f5632ed3babe1bc8c3dbebab60186c2bc78`;
+- PR #74 merge and repair base: `92ccda0620c06bc46654939c061ceb2d36476cb9`.
 
-### Independent-bit projection
+These are provenance for removed implementations, not live capability or security
+claims. Their invalid observations are not copied into the current security results.
 
-The first independent-bit implementation fails the intended asymmetric property.
-A public holder can evaluate the two public forward images for 0 and 1 and recover
-every source bit directly.
+## File plan and verification
 
-Therefore the bare geometry
+The repair changes only `research/weave`: the two structural modules, their two test
+modules, the existing full-suite receipt runner, this document, the question register,
+and the specification. It removes the stale `verify.py` command from the specification.
+Roll back as one transaction; restoring a deprecated encoder is not an accepted
+recovery path. Other Weave layers and independent stage switches remain intact.
 
-```text
-8 full circles -> 2 public circles
-```
-
-survives, while independent per-bit projection is falsified as the cryptographic
-relation.
-
-### Message-origin coupling
-
-The second candidate adds the message-scoped origin and ordered axis trajectory.
-That preserves the requested topology, but it still fails the asymmetric requirement:
-the sender's public coupling parameters and public two-circle state are sufficient to
-replay the trajectory and recover the message.
-
-The tests additionally perturb all six omitted circles while holding the two public
-circles fixed. The ciphertext is unchanged. Therefore the six private circles are
-**not causal** in this candidate.
-
-This is a useful narrowing result:
-
-```text
-message origin + ordered axes + public feedback
-!=
-trapdoor degeneration/lift
-```
-
-The UCHC architecture supplies the origin/axis topology. It does not, by itself,
-supply the missing asymmetric mathematical relation.
-
-## Authority and provenance
-
-UCHC source inspected for this candidate:
-`human/english/english_gonol/hyperspace_construct.py`,
-Git blob `8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a`.
-
-The source explicitly keeps carrier position and axis participation distinct and
-leaves cross-origin angles / continuum lift-selection as `hmmm`. Weave therefore
-does not invent those as UCNS/UCHC laws.
-
-Relevant construction discipline was read from
-`The-Interdependency/skill-lib` `gonol-build/SKILL.md` and
-`the-interdependency/SKILL.md`. Current METAPAT was consulted before selecting the
-candidate relation; its boundary-state guidance permits a domain boundary/state to
-alter a transformation only where the domain evidence supplies the mechanism. No
-METAPAT security claim is inferred.
+Focused coverage: all 256 byte values, all 40,320 source-bit/circle assignments, all
+seven whole-plus-part views, direct-constructor validation, exact coordinates, source
+occurrence preservation, and removal of the old callable cipher surfaces. These are
+construction tests, not claims about attack resistance. Full expected test inventory:
+52 existing methods plus 22 byte/star/message methods = 74.
 
 ## Usage guidance
 
-Run all Weave evidence:
+From `research/weave/`:
+
+```python
+from fractions import Fraction
+from stages.eight_circle import Circle, FullKeySet
+from stages.message_origin import construct_origin, construct_at
+
+# Explicit, nonsecret structural fixture: NOT key generation or encryption.
+full = FullKeySet(
+    tuple(Circle(i, f"G{i}", Fraction(i, 9)) for i in range(8)),
+    (7, 2, 5, 0, 3, 1, 6, 4),
+)
+origin = construct_origin(b"AA", identity="example-message")
+positions = tuple(Fraction(i, 7) for i in range(8))
+byte_state = construct_at(origin, 0, full, positions)
+assert byte_state.source_value == 65
+assert full.degenerate(3).indices == (0, 3)
+assert len(origin.bytesets) == 2
+```
 
 ```bash
-cd research/weave
+python -m unittest discover -s tests -p 'test_eight_circle.py'
+python -m unittest discover -s tests -p 'test_message_origin.py'
 python test.py --receipt /tmp/weave-check.json
 ```
 
-Run only the message-origin candidate:
-
-```bash
-python -m unittest tests.test_message_origin
-```
-
-Interpret a passing run as reproducibility of the candidate and its falsification
-witnesses, not evidence of cryptographic strength.
+The repair follows the source-preservation, native-first metadata, removal and
+verification boundaries of the loaded skill-lib instructions. Skill usage-counter
+persistence is not available in this runtime; no exposure count is fabricated.
 
 ## hmmm
 
-The remaining construction is now narrower than "couple the message."
-
-We need a **native degeneration/lift relation** in which:
-
-- the public two-circle object permits the forward operation;
-- the six omitted circles materially alter the full lift;
-- the full eight-circle key can recover the lift efficiently;
-- the public two-circle holder cannot replay the same inverse efficiently.
-
-No additional circle-selection or space-placement policy is required before that
-relation is constructed. The relation itself is the unresolved work.
+Q11-Q14 and carried-forward Q9 await approval. The concrete forward/private-recovery
+operation remains research work, not something created by approving its description.

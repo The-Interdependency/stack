@@ -111,6 +111,27 @@ recovered plaintext
 
 must be specified explicitly before implementation can claim this layer.
 
+## 5.1. Current byte/whole-part clarification
+
+The current raw-byte construction is message-scoped and byte-based: each message
+is an origin, each byte has eight bits, and one big circle G0 plus seven small
+circles G1..G7 supplies the byte's eight-circle structure. One bit participates
+through each circle. G0 also remains the dynamic whole; it is not merely a
+reference or checksum. Every public two-circle view is (G0, Gi), where 1 <= i <= 7.
+Do not replace this with four disjoint pairs or two public sheet bits per source bit.
+
+Each circle has the complete 720-degree return and key-set-specific relationships
+to space. The stated output expansion is 16 ciphertext bits per source byte; the
+actual serialization and source of that expansion remain to be constructed.
+No universal space-placement or active-small-circle schedule is imposed.
+
+[EIGHT_CIRCLE.md](EIGHT_CIRCLE.md) records the repair of PRs #73/#74 and its precise
+implementation boundary. The current code constructs byte/placement records and
+whole-plus-one key views, not a complete native positional cipher. The removed
+per-bit encoders and public-feedback recurrence were specification mismatches;
+their attacks do not falsify Weave. [QUESTIONS.md](QUESTIONS.md) contains the next
+proposed answers for approval. All previously declared system layers remain.
+
 ## 6. Asymmetric relation
 
 The intended system is to reach asymmetric key generation/recovery without silently
@@ -185,7 +206,6 @@ To reproduce the executed component evidence, run from this directory:
 ```bash
 python probe.py > receipt.json
 python probe.py --check receipt.json
-python verify.py receipt.json
 ```
 
 ## hmmm
