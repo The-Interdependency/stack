@@ -128,7 +128,9 @@ def test_resolved_origin_uses_word_and_glyph_axes_in_order(tmp_path, monkeypatch
     assert any(x.axis_origin=="O_G" and x.surface==" " for x in record.components)
     assert record.producer_repository=="The-Interdependency/edcm"
     assert "maintained implementation is a lexical structural proxy, not embedding similarity" in record.unresolved
-    assert record.origin_id == "O_M(F)"
+    assert record.carrier_id == "F"
+    assert record.metric_id == "edcm.behavioral.F.fixation"
+    assert record.origin_id == "O_M(edcm.behavioral.F.fixation)"
 
 
 def test_origin_record_contains_no_measurement_value(tmp_path, monkeypatch):
@@ -149,15 +151,17 @@ def test_wrong_construct_receipt_fails_closed(tmp_path, monkeypatch):
         origins.build_metric_origin_set(tmp_path,"F",fixture_path=_fixture(tmp_path))
 
 
-def test_unresolved_origin_does_not_construct_components(tmp_path):
-    record=origins.build_metric_origin_set(
-        tmp_path,"O",fixture_path=_fixture(tmp_path)
-    )
-    assert record.closed is False
-    assert record.components==()
-    assert record.construct_receipt=="hmmm"
-    assert record.unresolved==("marker canon says Overextension; compute.py says Overconfidence",)
-    assert record.origin_id == "O_M(O)"
+def test_o_l_source_split_is_resolved_without_aliasing():
+    fixture=origins.load_metric_origin_specs()
+    o=fixture["specs"]["O"]
+    l=fixture["specs"]["L"]
+    assert o["standing"]=="resolved"
+    assert l["standing"]=="resolved"
+    assert o["canonical_metric_id"]=="edcm.behavioral.O_scope"
+    assert l["canonical_metric_id"]=="edcm.behavioral.L_loss"
+    assert "edcm.behavioral.O_confidence" in o["unresolved"][0]
+    assert "L_load" in l["unresolved"][0]
+    assert "L_resistance" in l["unresolved"][0]
 
 
 def test_receipt_hashes_complete_payload_except_receipt(tmp_path, monkeypatch):
@@ -201,10 +205,11 @@ def test_stack_fixture_matches_exact_edcm_producer():
     sys.modules[spec.name]=module
     spec.loader.exec_module(module)
     fixture=origins.load_metric_origin_specs()
-    assert fixture["producer_commit"]=="ce645e4b3cce0308676837f60bed118fa74f23ac"
+    assert fixture["producer_commit"]=="0873c105799681ea1f7ccb3e619d1f7aebbd85e0"
     assert tuple(fixture["specs"])==tuple(module.METRIC_ORIGIN_SPECS)
     for metric,source_spec in module.METRIC_ORIGIN_SPECS.items():
         record=fixture["specs"][metric]
+        assert record["canonical_metric_id"]==source_spec.canonical_metric_id
         assert record["surface_terms"]==list(source_spec.surface_terms)
         assert record["construction_terms"]==list(source_spec.construction_terms)
         assert record["semantic_definition"]==source_spec.semantic_definition
@@ -265,8 +270,11 @@ def test_full_construct_origins_bind_to_pinned_edcm():
     for metric, record in records.items():
         payload = {k: v for k, v in record.items() if k != "receipt_sha256"}
         assert sha256(origins._canonical(payload)).hexdigest() == record["receipt_sha256"]
-        assert record["origin_id"] == f"O_M({metric})"
-        assert record["closed"] is (metric not in {"O", "L"})
+        canonical = fixture["specs"][metric]["canonical_metric_id"]
+        assert record["carrier_id"] == metric
+        assert record["metric_id"] == canonical
+        assert record["origin_id"] == f"O_M({canonical})"
+        assert record["closed"] is True
     # A subprocess prevents an already-imported editable EDCM from shadowing
     # the exact producer checkout under test.
     result = subprocess.run(
@@ -277,8 +285,8 @@ from edcm.measurement import compute_transcript, parse_transcript
 from edcm.semantic_metric_space import build_semantic_metric_space, bind_round_metrics
 origins = json.load(sys.stdin)
 space = build_semantic_metric_space(origins)
-assert space.unresolved_metrics == ('O', 'L')
-assert not space.complete
+assert space.unresolved_metrics == ()
+assert space.complete
 metrics = compute_transcript(parse_transcript('A: State the constraint.\\nB: Recorded.'))[0]
 rows = bind_round_metrics(metrics, space, evidence_receipt='synthetic-transcript:full-replay-test')
 assert [row.value for row in rows] == metrics.vector()
@@ -290,5 +298,5 @@ print(json.dumps([asdict(row) for row in rows], allow_nan=False))
     evidence = {"producer_commit": fixture["producer_commit"],
                 "construct_receipt": manifest["receipt_sha256"],
                 "origin_records": records, "readouts": json.loads(result.stdout),
-                "unresolved_metrics": ["O", "L"], "semantic_projection": "hmmm"}
+                "unresolved_metrics": [], "semantic_projection": "hmmm"}
     (state_dir / "metric-origin-replay.json").write_text(json.dumps(evidence, indent=2) + "\n")
