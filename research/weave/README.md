@@ -119,7 +119,6 @@ Reproduce the executed component evidence with Python's standard library only:
 cd research/weave
 python probe.py > receipt.json
 python probe.py --check receipt.json
-python verify.py receipt.json
 ```
 
 See [PLAN.md](PLAN.md) for the pre-execution scope and [REPORT.md](REPORT.md) for
