@@ -35,7 +35,7 @@ def main():
     after = snapshot()
     passed = (result.wasSuccessful() and not result.skipped
               and not result.expectedFailures and not result.unexpectedSuccesses
-              and result.testsRun == 58 and before == after)
+              and result.testsRun == 64 and before == after)
     receipt = {
         'schema':'weave.transport-evidence/v1',
         'status':'PASSED' if passed else 'FAILED',
@@ -43,7 +43,7 @@ def main():
         'tests':result.testsRun,
         'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),
         'source_unchanged':before == after,
-        'expected_test_methods':58,
+        'expected_test_methods':64,
         'coverage_status':'WITNESSED' if passed else 'NOT_ACCEPTED',
         'source_sha256':hashlib.sha256(json.dumps(before,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
         'source_files':before,
@@ -52,14 +52,16 @@ def main():
                     'valid_transport_masks':28,'incompatible_transport_masks':4,
                     'largest_roundtrip_bytes':65536,'separate_process_roundtrip_bytes':1026,
                     'eight_circle_full_members':8,'degenerate_public_members':2,
-                    'candidate_expansion_bits_per_byte':16},
+                    'candidate_expansion_bits_per_byte':16,
+                    'message_origin_axes_per_byte':8},
         'full_weave':Pipeline().plan(),
         'native_corpus_replay':'NOT_EXECUTED: source inspected; no constructed database materialized here',
         'native_adapter_tests':'missing-input/source-identity refusal only; not successful real-corpus replay',
         'security_observations':[
             'fixed-map recovery succeeds against the older transport candidate at 137 bits in 8 queries',
             'wrong material can yield wrong plaintext without an authentication error',
-            'independent-bit eight-to-two sheet projection is publicly brute-forceable and is preserved only as a falsified baseline'
+            'independent-bit eight-to-two sheet projection is publicly brute-forceable and is preserved only as a falsified baseline',
+            'message-origin axis coupling preserves occurrence topology but remains publicly recoverable; the six omitted circles are not yet causal'
         ],
         'nonclaim':'No complete native Weave or asymmetric security result; no independent researcher review.'
     }
