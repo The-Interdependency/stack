@@ -1,102 +1,109 @@
-# Weave — questions and provisional answers
+# Weave: current questions and proposed answers
 
-These are proposals for Erin to correct, improve or approve. Implementation does not
-constitute approval. Existing Q1–Q10 identities from ASSEMBLY.md are retained.
+**Approval status: PENDING.** The proposed answers below are not implemented defaults.
+The byte/star repair is authorized separately; it does not approve a new cipher.
+Existing Q1-Q10 identities remain in the disposition register below.
 
-## Q6 — Stage composition and uneven partitions
-**Question:** Should each arity act on the preceding output, with the remainder assigned
-left-to-right? **Proposed answer:** Yes. First r sections get one extra bit; preserve
-empty sections if arity exceeds length. Preserve supplied repetitions and allow one
-stage. **Implemented provisionally**, independently reversible and tested. Arity is
-not level count, and thread count is a third distinct parameter.
+## Settled; do not ask again
 
-## Q3 — What are the threads?
-**Question:** Are they complementary native contributions from one full plaintext
-gonol, rather than independent copies or arbitrary byte chunks?
-**Proposed answer:** Complementary native contributions, retaining occurrence identities
-and cross-thread relations. **Native rule still open.** Implemented now: exact
-occurrence-to-lane routing and inverse; the demo chooses cyclic assignment. That is an
-explicit transport witness, not a claim to have implemented the native projection or
-proved every thread necessary. Repeated/structured inputs may be recoverable from less.
+- The input is raw bytes, not Unicode or an English-word prerequisite.
+- Each message is an origin; each byte has eight bits and an eight-circle construction.
+- One big circle plus seven small circles remains eight. The big circle participates
+  dynamically and carries a bit; it is not merely an external reference.
+- Public degeneration uses two circles at a time. One is always the big circle.
+  The earlier four-circle proposal and arbitrary/disjoint pairings are superseded.
+- Every circle uses the complete 720-degree return.
+- Circle-space relationships vary per key set; do not impose a universal relation.
+- The stated ciphertext expansion is twofold. Do not obtain it by copying or
+  independently coding each bit twice.
+- UCNS geometry and UCHC origin-axis relations retain their respective authorities.
 
-## Q4 — What should the actual corpus do?
-**Question:** Should material govern traversal, supply native axes/origin attachments,
-change values, or combine these roles?
-**Proposed answer:** Keep traversal and native-context variants distinct, and compare
-both inside the eventual full construction. **A traversal trial is implemented:**
-material bit 0 consumes the left end of the current lane, bit 1 the right end. Bits are
-MSB-first, starting at the specified offset and repeating when exhausted. This exact
-formula is a new assistant proposal, NOT a rule previously attributed to Erin. It
-uses content, not a filename hash or XOR mask. Only the visited material bits influence
-a run; unused material is not counted as secrecy. Native axes/origin binding remains open.
+## Next question set for approval
 
-## Q5 — Joining and the final operation
-**Question:** How should transformed threads be interlaced, and when is the final pass?
-**Proposed answer:** An explicit context-derived lane route, then one final last/first
-pass over the whole joined stream. **Supplied routes are implemented.** The demo cycles
-through [2,0,1], skipping exhausted lanes; it does not derive that route from a key.
-A private/native route generator still needs its constitutive relation.
+### Q11 — Is the placement operation relocating values or changing them?
 
-## Q1 — Native plaintext admission
-**Question:** Should one native admission cover arbitrary binary files, alongside
-language-aware constructions for admitted text?
-**Proposed answer:** Yes; preserve exact bytes without normalization. **Implemented:
-a source-pinned read/recovery adapter for already-constructed UCHC words.** That returns
-the actual upstream object, not a new label tree. General binary admission,
-whole-message native composition and its transport serialization remain open. The
-adapter's successful real-corpus path has NOT been executed in this session.
+**Probable answer:** Preserve each bit's value and occurrence identity in the
+positional layer; transform its place and its relationships as part of the complete
+byte. The ciphertext encodes the resulting relation jointly. Do not install a
+separate two-symbol substitution for each bit.
 
-## Q2 — Private gonol and public counterpart
-**Question:** Does the private gonol restore a missing origin/attachment relation,
-a member, an embedding, or another constitutive relation?
-**Proposed answer:** First examine a private origin/attachment relation that selects
-the recoverable embedding, paired with a public forward construction. **Unimplemented.**
-The research task is to derive concrete native maps and test inversion; approval of
-this direction is not a proof, and Erin is not being asked to supply one. No password
-check, random permutation seed or conventional cryptosystem substitutes for it.
+**Still to construct:** the actual joint placement and its exact inverse. This answer
+does not prohibit a separately authorized transformation in another Weave layer.
 
-## Q7 — What can an independent sender know?
-**Question:** Must the sender operate using public-side material without recipient
-private-gonol knowledge or private schedules?
-**Proposed answer:** Yes, for the intended noninteractive asymmetric mode. Secret
-corpus selections must have a usable public forward counterpart where needed.
-**The API separates the two sides; the mathematical relation is not implemented.**
-The transport experiment supplies the same explicit routing/material recipe to both
-sides and makes no asymmetric claim.
+### Q12 — What information does the public whole-plus-one pair retain?
 
-## Q8 — Control derivation and recovery order
-**Question:** Are thread counts, routes, corpus locations and arities derived from the
-native key/context rather than simply stored as a private plan?
-**Proposed answer:** Derive them from native key relations plus available message
-context. Reverse operations must obtain needed controls before they need to recover
-the hidden content those controls protect. **Explicit control execution is implemented;
-native derivation remains open.** Forward and recovery compile the transport recipe
-independently; no encoder trace is supplied to recovery.
+**Probable answer:** A forward positional relation derived from the complete
+eight-circle configuration, with the inverse-completing relationships omitted. It is
+not merely a raw copy of two otherwise independent private circle records. The sender
+can operate with its public object; the full private configuration supplies recovery.
 
-## Q9 — Repeated-message variation
-**Question:** Should repeated input under one public key produce distinct outputs?
-**Proposed answer:** Yes: fresh per-message input should alter applicable native
-relations/controls; a fixed value allows deterministic tests. **No native randomness
-coupling is implemented.** Merely appending a nonce is not used as a substitute.
+**Still to construct:** a concrete degeneration and recovery operation. Reduced key
+exposure is not itself evidence of computational difficulty or strongest security.
 
-## Q10 — Integrity, length and replay
-**Question:** Must modified, incomplete and replayed messages be rejected, and which
-metadata may be public?
-**Proposed answer:** Require those properties for a usable final encryption profile;
-retain a distinct integrity/state module and choose its actual mechanism explicitly.
-**Unimplemented.** The lab format checks syntax, lengths and experiment identities,
-but does not authenticate data. Wrong material or a same-length bit change can return
-incorrect bytes without an integrity error. Lab recipe metadata is not a selected
-production ciphertext format.
+### Q13 — What carries forward between successive byte constructions?
 
-## Usage
+**Probable answer:** The key-set geometry and an evolving message-scoped relational
+state carry forward. Each byte keeps its own occurrence identity and eight placements.
+G0 participates in each relation; the active small circle is selected within that
+key-defined evolution, not by an added universal schedule, fixed four-pair partition,
+or a rule that emits two public bits for every source bit.
 
-Reply using the existing Q numbers, for example “Q4: corpus supplies origin attachments;
-keep the traversal candidate only for comparison.” Each changed answer can be traced
-to the owning module and tested without silently changing the others.
+**Still to construct:** a deterministic forward/recovery state transition that uses
+the established native relations. No numerical feedback formula is selected here.
+
+### Q14 — What do the additional eight ciphertext bits represent?
+
+**Probable answer:** One joint 16-bit relational codeword for the complete source
+byte, rather than eight independent two-bit codes. Its additional capacity carries
+recoverable placement/relation information; exact circle positions may be reconstructed
+through the key rather than dumped as arbitrary coordinates into the wire format.
+
+**Still to construct:** the actual 16-bit mapping, its length accounting and unique
+recovery. No field split, extra header, or claim of two possible lifts is assumed.
+Two public circles alone do not mathematically force twofold expansion.
+
+### Q9 — Should identical messages under one key repeat the same trajectory?
+
+**Probable answer, carried forward:** No. Fresh per-message input should participate
+in the origin/placement relation, and authorized recovery must obtain its needed
+state. Any transmitted origin metadata must be accounted for within the agreed
+length policy, not silently added after claiming exact twofold expansion.
+
+**Still to construct:** a concrete native variation mechanism and recovery path.
+A namespace called `O_M`, a counter, or a public nonce alone is not a secrecy result.
+
+## Earlier questions: preserved disposition
+
+| ID | Current disposition |
+|---|---|
+| Q1 — Native plaintext admission | Raw-byte, byte-scoped shape is settled. This repair constructs occurrence/placement records, not native encryption. No text database is a prerequisite. Actual geometric transformation and serialization remain Q11/Q14. |
+| Q2 — Private gonol/public counterpart | Eight full circles and G0-plus-one public shape are settled. The actual public/private transformation is Q12. |
+| Q3 — Threads | Preserve complementary native contributions, source occurrences and cross-thread relationships. Existing lane routing is a transport trial, not the native relation. |
+| Q4 — Corpus | Preserve actual selected material and its construction/recovery role. The existing left/right traversal formula remains an assistant-selected transport trial; native attachment is not settled by it. |
+| Q5 — Join/final operation | Preserve explicit route execution and the literal final last/first interleave. The demonstrated cyclic join is not a private route generator or a new universal rule. |
+| Q6 — Arity composition/remainders | Existing experiment uses sequential passes and quotient/remainder sections, preserving order, repetitions and empty sections. Keep its proposed policy separate from user-ratified general design. |
+| Q7 — Sender boundary | Intended public-side sender must not require recipient private state. API separation alone is not a mathematical asymmetric construction. |
+| Q8 — Control derivation | Key/message relation and inverse planning must provide controls before they are needed. No private encoder trace is silently supplied as ciphertext or an inverse plan. See Q12/Q13. |
+| Q9 — Repeated-message variation | Carried forward above; the earlier proposed answer remains pending, not newly approved. |
+| Q10 — Integrity/length/replay | Remains a distinct unresolved mechanism. Authentication is independently switchable and is not silently made a replacement for Weave or a newly mandatory layer by this repair. |
+
+## Removed premises
+
+The PR #73 per-bit sheet code and PR #74 bit-axis feedback code were specification
+mismatches. Their attacks do not adjudicate the requested construction. The premise
+that changing private-only data must change ciphertext while every sender input is
+held fixed is also removed; it is not a valid private-recovery-dependence test.
+See [EIGHT_CIRCLE.md](EIGHT_CIRCLE.md) for exact historical identities and repair scope.
+
+## Usage guidance
+
+Approve or amend by ID, for example `Q11 approve; Q12: ...`.
+Approved descriptions guide construction; they do not constitute an implemented
+algorithm, a proof, or permission to silently fill missing mathematics with a substitute.
+No additional decision about a particular degree, space offset, or universal circle
+visitation order is required merely to retain the repaired structure.
 
 ## hmmm
 
-The working transport is not the desired native encryption construction. Questions
-Q1–Q4 and Q7–Q9 carry the remaining native relations. Concrete rules, not renamed
-placeholders or successful transport tests, will close those boundaries.
+The actual positional cipher remains unimplemented. These are the next proposed
+construction answers, not another round of declarations that it already works.
