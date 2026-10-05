@@ -155,7 +155,7 @@ records from the declared profile and original input. These comparison digests a
 neither authentication nor a secrecy mechanism and may disclose plan guesses. They
 belong to the lab, not a proposed native cipher wire format.
 
-The source verifier requires both `probe.py` and `PLAN.md` at their frozen hashes,
-plus the exact declared Stack and inspected UCHC identities. Receipt location does
-not choose executable sources. Run `python probe.py > /tmp/weave-probe.json` and
-`python verify.py /tmp/weave-probe.json`; omission and substitution must fail.
+The frozen source identities in the experiment remain provenance records only.
+Reproduce the positional experiment with `python probe.py > /tmp/weave-probe.json`
+and check that receipt with `python probe.py --check /tmp/weave-probe.json`.
+No separate verifier is treated as additional implementation or review evidence.
