@@ -164,6 +164,24 @@ def test_o_l_source_split_is_resolved_without_aliasing():
     assert "L_resistance" in l["unresolved"][0]
 
 
+def test_unresolved_origin_does_not_construct_components(tmp_path, monkeypatch):
+    path=_fixture(tmp_path)
+    source=json.loads(path.read_text())
+    source["specs"]["O"]["standing"]="hmmm"
+    source["specs"]["O"]["construction_terms"]=[]
+    source["specs"]["O"]["unresolved"]=["synthetic unresolved boundary"]
+    path.write_text(json.dumps(source, indent=2) + "\n")
+    monkeypatch.setattr(origins, "FIXTURE_SHA256", sha256(path.read_bytes()).hexdigest())
+    record=origins.build_metric_origin_set(tmp_path,"O",fixture_path=path)
+    assert record.carrier_id=="O"
+    assert record.metric_id=="edcm.behavioral.O_scope"
+    assert record.closed is False
+    assert record.components==()
+    assert record.construct_receipt=="hmmm"
+    assert record.unresolved==("synthetic unresolved boundary",)
+    assert record.origin_id=="O_M(edcm.behavioral.O_scope)"
+
+
 def test_receipt_hashes_complete_payload_except_receipt(tmp_path, monkeypatch):
     _db(tmp_path); _verified(monkeypatch)
     record=origins.build_metric_origin_set(tmp_path,"F",fixture_path=_fixture(tmp_path))
