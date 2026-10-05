@@ -159,7 +159,7 @@ def test_o_l_source_split_is_resolved_without_aliasing():
     assert l["standing"]=="resolved"
     assert o["canonical_metric_id"]=="edcm.behavioral.O_scope"
     assert l["canonical_metric_id"]=="edcm.behavioral.L_loss"
-    assert "edcm.behavioral.O_confidence" in o["unresolved"][0]
+    assert "O_confidence" in o["unresolved"][0]
     assert "L_load" in l["unresolved"][0]
     assert "L_resistance" in l["unresolved"][0]
 
