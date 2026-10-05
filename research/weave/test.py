@@ -2,7 +2,7 @@
 """Run the full Weave workspace suite and emit a source-bound receipt.
 
 Usage: python test.py --receipt /tmp/weave-check.json
-Transport behavior, byte/star construction records and their boundaries are tested.
+Transport behavior, earlier byte/star records, and numeral construction are tested.
 Native positional encryption and native corpus replay remain explicitly unexecuted.
 """
 import argparse
@@ -33,10 +33,10 @@ def main():
     result = unittest.TextTestRunner(stream=report, verbosity=2).run(
         unittest.defaultTestLoader.discover(str(ROOT/'tests')))
     after = snapshot()
-    # 52 unchanged transport/assembly methods + 12 byte/star + 10 message methods.
+    # 74 existing methods + 15 exact numeral/reference/recipe methods.
     passed = (result.wasSuccessful() and not result.skipped
               and not result.expectedFailures and not result.unexpectedSuccesses
-              and result.testsRun == 74 and before == after)
+              and result.testsRun == 89 and before == after)
     receipt = {
         'schema':'weave.transport-evidence/v1',
         'status':'PASSED' if passed else 'FAILED',
@@ -44,7 +44,7 @@ def main():
         'tests':result.testsRun,
         'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),
         'source_unchanged':before == after,
-        'expected_test_methods':74,
+        'expected_test_methods':89,
         'coverage_status':'WITNESSED' if passed else 'NOT_ACCEPTED',
         'source_sha256':hashlib.sha256(json.dumps(before,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
         'source_files':before,
@@ -54,9 +54,14 @@ def main():
                     'largest_roundtrip_bytes':65536,'separate_process_roundtrip_bytes':1026,
                     'byte_values':256,'bit_to_circle_assignments':40320,
                     'whole_part_key_views':7,'bit_placements_per_byte':8,
-                    'message_participants_per_byte':1},
+                    'message_participants_per_byte':1,
+                    'numeral_short_blocks':8191,'numeral_large_block_bits':8388608,
+                    'numeral_repeated_roundtrip_bytes':4194304,
+                    'numeral_prime_path':[5381,53,241,1523]},
         'declared_ciphertext_bits_per_byte':16,
-        'positional_cipher':'NOT_IMPLEMENTED: byte/star structure repaired; transform proposals await approval',
+        'declared_ciphertext_scope':'Earlier positional proposal only; not an inferred property of numeral construction or the corrected sequence cycle',
+        'numeral_construction':'EXPLICIT_LAYER: length-bearing integers, supplied attachments, Unicode references, exact bounded prime replay, complete wire accounting',
+        'positional_cipher':'NOT_IMPLEMENTED: no numeral test establishes native positional encryption',
         'full_weave':Pipeline().plan(),
         'native_corpus_replay':'NOT_EXECUTED: no constructed database materialized by this suite',
         'native_adapter_tests':'missing-input/source-identity refusal only; not successful real-corpus replay',

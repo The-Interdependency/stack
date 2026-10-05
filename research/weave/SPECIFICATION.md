@@ -111,26 +111,36 @@ recovered plaintext
 
 must be specified explicitly before implementation can claim this layer.
 
-## 5.1. Current byte/whole-part clarification
+## 5.1. Current sequence/occurrence and numeral clarification
 
-The current raw-byte construction is message-scoped and byte-based: each message
-is an origin, each byte has eight bits, and one big circle G0 plus seven small
-circles G1..G7 supplies the byte's eight-circle structure. One bit participates
-through each circle. G0 also remains the dynamic whole; it is not merely a
-reference or checksum. Every public two-circle view is (G0, Gi), where 1 <= i <= 7.
-Do not replace this with four disjoint pairs or two public sheet bits per source bit.
+The latest user clarification supersedes the earlier one-bit-per-circle reading:
+normalize message bit length with corpus material; parse repeated multi-byte
+sequences; save each selected sequence at an angle on the eighth/origin circle;
+a circle among the seven records its occurrence count and order; first/last
+interleave the resulting bitstream; repeat parsing/affixiation and interleaving.
+The message remains the origin and sequential byte occurrences remain individually
+addressable. A saved multi-byte sequence is not reduced to a single source bit.
 
-Each circle has the complete 720-degree return and key-set-specific relationships
-to space. The stated output expansion is 16 ciphertext bits per source byte; the
-actual serialization and source of that expansion remain to be constructed.
-No universal space-placement or active-small-circle schedule is imposed.
+The current numerical extension interprets an exact selected bit block as an
+integer with its bit length preserved, then gives it a scoped Unicode reference.
+A reference resolves to stored literal construction or an executable prime path.
+Prime-index continuation and embedded prime spans preserve route and occurrence
+information. [NUMERAL_CONSTRUCTION.md](NUMERAL_CONSTRUCTION.md) records its
+implemented boundary, full size accounting, exact replay, and usage.
 
-[EIGHT_CIRCLE.md](EIGHT_CIRCLE.md) records the repair of PRs #73/#74 and its precise
-implementation boundary. The current code constructs byte/placement records and
-whole-plus-one key views, not a complete native positional cipher. The removed
-per-bit encoders and public-feedback recurrence were specification mismatches;
-their attacks do not falsify Weave. [QUESTIONS.md](QUESTIONS.md) contains the next
-proposed answers for approval. All previously declared system layers remain.
+The numeral module is an explicitly selected representation layer. Its supplied
+origin identifiers, angular attachments, and occurrence-circle numbers do not
+constitute a replacement UCNS/UCHC constructor. It does not implement repeated-
+sequence discovery, corpus normalization, a whole-cycle schedule, or encryption.
+No fixed total ciphertext expansion is inferred from a short Unicode reference.
+The earlier twofold-length proposal requires accounting over the completed cycle.
+
+The existing 720-degree return and key-set-specific space relationships remain
+preserved. Earlier whole-plus-one public-view research is not promoted into an
+asymmetric result by this codec. [EIGHT_CIRCLE.md](EIGHT_CIRCLE.md) records the
+prior byte/star repair; its bit-per-circle interpretation is historical rather
+than the active rule for the corrected sequence cycle. No discarded PR #73/#74
+encoder or attack is revived. All other declared system layers remain.
 
 ## 6. Asymmetric relation
 
