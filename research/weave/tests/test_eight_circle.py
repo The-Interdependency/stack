@@ -68,7 +68,8 @@ class EightCircleTests(unittest.TestCase):
         public = full.degenerate(0, 3)
         origin = Fraction(3, 16)
         witness = list(encode_byte(public, 0x5A, origin))
-        witness[0:2] = [1 - witness[0], 1 - witness[1]]
+        # Fixture admits only (0,0) and (1,1); mixed pair is impossible.
+        witness[0:2] = [0, 1]
         with self.assertRaises(ValueError):
             decode(full, public.indices, witness, origin)
         with self.assertRaises(ValueError):
