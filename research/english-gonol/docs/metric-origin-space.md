@@ -1,10 +1,12 @@
 # EDCM metric-origin construction — usage guidance
 
 Stack consumes the merged EDCM producer
-`ce645e4b3cce0308676837f60bed118fa74f23ac`. EDCM owns the metric meanings,
-scalar computations, conflicts, and proxy limitations. Stack constructs their
+`0873c105799681ea1f7ccb3e619d1f7aebbd85e0`. EDCM owns the metric meanings,
+scalar computations, canonical metric identities, and proxy limitations. Stack constructs their
 declared ordered English terms. Construction closure does not establish
-measurement validity. O and L remain unclosed `hmmm` records.
+measurement validity. Bare `O` and `L` remain compatibility carriers only:
+`O -> edcm.behavioral.O_scope` and `L -> edcm.behavioral.L_loss`; sibling
+`O_confidence`, `L_load`, and `L_resistance` axes remain distinct.
 
 `BASE.json`, the local metric work graph, the Stack manifests, the source fixture,
 and CI register this same producer. The loader binds the fixture's complete bytes
@@ -18,7 +20,7 @@ From `research/english-gonol`, install `pytest` and `PyYAML`. Use clean checkout
 
 | Input | Commit | Path passed to the checks |
 |---|---|---|
-| EDCM | `ce645e4b3cce0308676837f60bed118fa74f23ac` | checkout root |
+| EDCM | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | checkout root |
 | OEWN 2025 | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | checkout `src/yaml` |
 | UCNS full-construct carrier | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | checkout root |
 
@@ -75,7 +77,6 @@ the exported metric keys.
 
 ## hmmm
 
-O conflicts between Overextension and Overconfidence; L conflicts between Load
-and Coherence Loss. The observed-construct-to-origin projection remains
-unestablished. Receipts establish content identity, not cryptographic producer
+The O/L naming collision is resolved by canonical separation rather than aliasing.
+The observed-construct-to-origin projection remains unestablished. Receipts establish content identity, not cryptographic producer
 authentication, empirical validity, or canon selection.

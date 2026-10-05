@@ -1,8 +1,8 @@
 {
   "schema": "edcm.metric-origin-spec-fixture",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "producer_repository": "The-Interdependency/edcm",
-  "producer_commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+  "producer_commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
   "specs": {
     "C": {
       "surface_terms": [
@@ -19,7 +19,8 @@
         "strain",
         "contradiction",
         "pressure"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.C.constraint_strain"
     },
     "R": {
       "surface_terms": [
@@ -36,7 +37,8 @@
         "density",
         "refusal",
         "constraint"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.R.refusal_density"
     },
     "F": {
       "surface_terms": [
@@ -52,7 +54,8 @@
         "fixation",
         "persistence",
         "repetition"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.F.fixation"
     },
     "E": {
       "surface_terms": [
@@ -69,7 +72,8 @@
         "increase",
         "commitment",
         "intensity"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.E.escalation"
     },
     "D": {
       "surface_terms": [
@@ -86,7 +90,8 @@
         "movement",
         "away",
         "constraint"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.D.deflection"
     },
     "N": {
       "surface_terms": [
@@ -103,7 +108,8 @@
         "repetition",
         "without",
         "resolution"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.N.noise"
     },
     "I": {
       "surface_terms": [
@@ -120,33 +126,45 @@
         "failure",
         "correction",
         "change"
-      ]
+      ],
+      "canonical_metric_id": "edcm.behavioral.I.integration"
     },
     "O": {
+      "canonical_metric_id": "edcm.behavioral.O_scope",
       "surface_terms": [
-        "Overextension",
-        "Overconfidence"
+        "Scope Motion",
+        "Overextension"
       ],
-      "semantic_definition": "O has conflicting maintained semantic names and therefore has no closed semantic origin yet",
-      "standing": "hmmm",
-      "measurement_alignment": "conflict",
+      "semantic_definition": "scope motion is signed boundary change from contraction through stability to expansion or overextension",
+      "standing": "resolved",
+      "measurement_alignment": "proxy",
       "unresolved": [
-        "marker canon says Overextension; compute.py says Overconfidence"
+        "legacy scalar carrier O explicitly targets edcm.behavioral.O_scope; O_confidence is a distinct canonical axis and is not produced by RoundMetrics"
       ],
-      "construction_terms": []
+      "construction_terms": [
+        "scope",
+        "motion",
+        "expansion",
+        "contraction"
+      ]
     },
     "L": {
+      "canonical_metric_id": "edcm.behavioral.L_loss",
       "surface_terms": [
-        "Load",
         "Coherence Loss"
       ],
-      "semantic_definition": "L has conflicting maintained semantic names and therefore has no closed semantic origin yet",
-      "standing": "hmmm",
-      "measurement_alignment": "conflict",
+      "semantic_definition": "coherence loss is signed continuity motion from recovery through stability to degradation",
+      "standing": "resolved",
+      "measurement_alignment": "proxy",
       "unresolved": [
-        "marker canon says Load; compute.py says Coherence Loss"
+        "legacy scalar carrier L explicitly targets edcm.behavioral.L_loss; L_load and L_resistance are distinct canonical axes"
       ],
-      "construction_terms": []
+      "construction_terms": [
+        "coherence",
+        "loss",
+        "continuity",
+        "degradation"
+      ]
     },
     "P": {
       "surface_terms": [
@@ -163,7 +181,8 @@
         "novelty",
         "change",
         "resolution"
-      ]
+      ],
+      "canonical_metric_id": "edcm.round.P_progress"
     },
     "kappa": {
       "surface_terms": [
@@ -180,7 +199,8 @@
         "tension",
         "unresolved",
         "conflict"
-      ]
+      ],
+      "canonical_metric_id": "edcm.state.kappa"
     }
   }
 }

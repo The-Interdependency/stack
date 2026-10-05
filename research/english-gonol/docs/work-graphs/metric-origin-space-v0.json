@@ -1,17 +1,17 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "1950c6601417665245f17c27d9f292b243194fdf7a0cec380d6a7acfc61f0bb6",
+  "work_graph_sha256": "7ff5587bf530a014ae48cee1cc1de659f4f2d4dd0000cb4b17f6dc1b72f3632d",
   "repositories": [
     {
       "repository": "The-Interdependency/edcm",
-      "commit": "ce645e4b3cce0308676837f60bed118fa74f23ac",
+      "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
       "authority": "metric definitions, scalar measurement, and evidence/readout contracts",
-      "relation": "defines source-owned construction terms and binds scalar readouts to Stack origin receipts"
+      "relation": "defines source-owned canonical metric identities and binds legacy scalar carriers to explicit canonical Stack origin receipts"
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "316a8c8f10e2dacd34007e076bcf20c4d1ecda00",
+      "commit": "d5fbd9457e249f7625dacc33cdb484e53547de7c",
       "authority": "current English Gonol semantic construction",
       "relation": "constructs exact EDCM construction terms as verified O_W/O_G metric origin sets"
     },
@@ -35,8 +35,6 @@
     "semantic_mapping": "declared mapping",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "O semantic origin conflicts: Overextension versus Overconfidence",
-      "L semantic origin conflicts: Load versus Coherence Loss",
       "lawful observed-construct to metric-origin projection/distance is unresolved",
       "full-corpus closure requires the generated English construct database",
       "originating operator decision lacks immutable public provenance; repository adoption is prospective"

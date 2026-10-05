@@ -2,7 +2,7 @@
 
 Only EDCM-owned construction terms enter the semantic origin. Measurement rules
 and observed evidence stay outside it. Resolved origins require the exact pinned
-English v2 construct receipt; unresolved EDCM semantics remain unclosed hmmm.
+English v2 construct receipt; any genuinely unresolved EDCM semantic origin remains unclosed hmmm.
 
 Usage guidance: see ``docs/metric-origin-space.md`` for source checkout,
 complete-corpus construction, export, and EDCM adapter commands.
@@ -26,7 +26,7 @@ complete-corpus construction, export, and EDCM adapter commands.
 #   rollback: remove module fixture and tests; EDCM source specs remain unchanged
 #   requires: english_gonol_language_hyperspace, english_gonol_full_construct, edcm metric-origin spec fixture
 #   since: 2026-10-03
-#   unresolved: O and L source semantics conflict; lawful observed-state projection to these origins remains hmmm
+#   unresolved: lawful observed-state projection to canonical metric origins remains hmmm
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -81,7 +81,7 @@ VERSION = "0.2.0"
 FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
 BASE = FIXTURE.parent / "BASE.json"
 # Bind the complete source projection, not only a caller-supplied commit label.
-FIXTURE_SHA256 = "cd3d384399da3029833e8f1cba993e4571cfcd2dd605e3ac44869de85aba43d3"
+FIXTURE_SHA256 = "4a769f493af21eb54c0f7d95307237a172e3fd17aaf43e62d6602cd80e0dba5c"
 
 
 def _canonical(value: object) -> bytes:
@@ -103,6 +103,7 @@ class OriginComponent:
 
 @dataclass(frozen=True, slots=True)
 class MetricOriginSet:
+    carrier_id: str
     metric_id: str
     origin_id: str
     producer_repository: str
@@ -118,6 +119,7 @@ class MetricOriginSet:
         return {
             "schema": SCHEMA,
             "version": VERSION,
+            "carrier_id": self.carrier_id,
             "metric_id": self.metric_id,
             "origin_id": self.origin_id,
             "producer_repository": self.producer_repository,
@@ -140,7 +142,7 @@ def load_metric_origin_specs(path: Path = FIXTURE) -> dict[str, object]:
     data = json.loads(content)
     if (
         data.get("schema") != "edcm.metric-origin-spec-fixture"
-        or data.get("version") != "0.3.0"
+        or data.get("version") != "0.4.0"
     ):
         raise ValueError("unsupported EDCM metric-origin fixture")
     registered = json.loads(BASE.read_text(encoding="utf-8"))["metric_origin_source"]
@@ -186,14 +188,18 @@ def build_metric_origin_set(
     if metric_id not in specs:
         raise KeyError(f"unknown metric origin {metric_id!r}")
     spec = specs[metric_id]
+    canonical_metric_id = spec.get("canonical_metric_id")
+    if not isinstance(canonical_metric_id, str) or not canonical_metric_id.strip():
+        raise ValueError(f"metric {metric_id}: canonical_metric_id required")
     unresolved = tuple(spec.get("unresolved", ()))
     terms = tuple(spec.get("construction_terms", ()))
     source_text = " ".join(terms)
 
     if spec["standing"] != "resolved":
         common = {
-            "metric_id": metric_id,
-            "origin_id": f"O_M({metric_id})",
+            "carrier_id": metric_id,
+            "metric_id": canonical_metric_id,
+            "origin_id": f"O_M({canonical_metric_id})",
             "producer_repository": source["producer_repository"],
             "producer_commit": source["producer_commit"],
             "construct_receipt": "hmmm",
@@ -244,8 +250,9 @@ def build_metric_origin_set(
         db.close()
 
     common = {
-        "metric_id": metric_id,
-        "origin_id": f"O_M({metric_id})",
+        "carrier_id": metric_id,
+        "metric_id": canonical_metric_id,
+        "origin_id": f"O_M({canonical_metric_id})",
         "producer_repository": source["producer_repository"],
         "producer_commit": source["producer_commit"],
         "construct_receipt": observed_receipt,
