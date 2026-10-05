@@ -2,7 +2,7 @@
 
 Only EDCM-owned construction terms enter the semantic origin. Measurement rules
 and observed evidence stay outside it. Resolved origins require the exact pinned
-English v2 construct receipt; unresolved EDCM semantics remain unclosed hmmm.
+English v2 construct receipt; any genuinely unresolved EDCM semantic origin remains unclosed hmmm.
 
 Usage guidance: see ``docs/metric-origin-space.md`` for source checkout,
 complete-corpus construction, export, and EDCM adapter commands.
