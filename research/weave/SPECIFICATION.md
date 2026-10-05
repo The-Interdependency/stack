@@ -1,6 +1,11 @@
 # Weave — preserved architecture and specification floor
 
-Status: **PRE-SPECIFICATION / FULL-ARCHITECTURE PRESERVATION**.
+Status: **CORRECTED SEQUENCE CYCLE IMPLEMENTED AS AN EXPLICIT PROFILE; ASYMMETRY UNIMPLEMENTED**.
+
+The latest sequence/occurrence clarification in section 5.1 controls over older
+bit-per-circle interpretations. [CYCLE.md](CYCLE.md) records the executable native
+normalization/affixiation/interleave cycle and all candidate choices. Other historical
+layers below remain preserved objectives, not automatic claims about that profile.
 
 This document records the construction that must survive implementation. It separates
 fixed architecture from unresolved mechanics. An unresolved mechanic must remain
@@ -32,7 +37,8 @@ These layers are analytically separable but belong to one intended cryptosystem.
 
 Let `S = s_0, s_1, ..., s_(n-1)`.
 
-Define the preserved end-interleave ordering:
+The historical transport experiment retains this last-first ordering. The current
+cycle selects `first-last` explicitly in its profile and also supports `last-first`:
 
 ```text
 I(S) = s_(n-1), s_0, s_(n-2), s_1, ...
@@ -77,7 +83,9 @@ no one thread == complete recoverable plaintext
 complete recovery requires the declared thread relation
 ```
 
-The exact split/recombination law remains unresolved.
+The current cycle constructs seven native occurrence-circle streams and exactly
+recombines their sequence positions. Their equivalence to every earlier
+cryptographic-thread proposal is not asserted; that broader relation remains open.
 
 ## 4. Corpus/material participation
 
@@ -87,7 +95,9 @@ contemplated include literary, musical, technical-manual, and sound material.
 The material is intended to participate in construction/recovery. Treating it as an
 unused label or merely hashing its filename does not satisfy this architecture.
 
-Exact extraction, addressing, mixing, and recovery dependence remain unresolved.
+The current cycle implements actual cyclic corpus-bit extraction at a configured
+bit offset, bucket normalization, and exact reverse checks. The broader private
+corpus/key binding remains unimplemented.
 
 ## 5. Hyperspace / gonol layer
 
@@ -128,18 +138,20 @@ Prime-index continuation and embedded prime spans preserve route and occurrence
 information. [NUMERAL_CONSTRUCTION.md](NUMERAL_CONSTRUCTION.md) records its
 implemented boundary, full size accounting, exact replay, and usage.
 
-The numeral module is an explicitly selected representation layer. Its supplied
-origin identifiers, angular attachments, and occurrence-circle numbers do not
-constitute a replacement UCNS/UCHC constructor. It does not implement repeated-
-sequence discovery, corpus normalization, a whole-cycle schedule, or encryption.
+The numeral module remains a representation layer, not replacement geometry.
+The separate cycle now connects automatic repeated-sequence discovery, actual
+corpus normalization, native UCHC/UCNS sequence closure and coordinate recovery,
+prime-route split derivation, and the repeated first/last bit interleave. See
+[CYCLE.md](CYCLE.md) for the exact named profile, inverse, tests and byte accounting.
+This implements the corrected sequence cycle, not public-key encryption.
 No fixed total ciphertext expansion is inferred from a short Unicode reference.
 The earlier twofold-length proposal requires accounting over the completed cycle.
 
 The existing 720-degree return and key-set-specific space relationships remain
 preserved. Earlier whole-plus-one public-view research is not promoted into an
 asymmetric result by this codec. [EIGHT_CIRCLE.md](EIGHT_CIRCLE.md) records the
-prior byte/star repair; its bit-per-circle interpretation is historical rather
-than the active rule for the corrected sequence cycle. No discarded PR #73/#74
+prior byte/star repair; its bit-per-circle interpretation is historical and its obsolete modules/tests
+are removed in favor of the native sequence cycle. No discarded PR #73/#74
 encoder or attack is revived. All other declared system layers remain.
 
 ## 6. Asymmetric relation
@@ -220,14 +232,16 @@ python probe.py --check receipt.json
 
 ## hmmm
 
-1. Uneven partition selection rule; the component runner accepts explicit positive
-   section lengths without selecting a remainder policy.
-2. Whether each arity stage consumes the preceding stage output or composes independent
-   partitions before a later merge. The runner's sequential choice is an explicitly
-   labelled experiment, not a newly inferred user law.
-3. Exact thread split/recombine law.
-4. Corpus/material extraction and binding law.
-5. Nested gonol representation and reversible serialization.
+1. Prime-route ranked compositions implement uneven partitions for the named cycle
+   profile; other determinant profiles remain open.
+2. The current cycle consumes preceding-round output, as clarified. Historical
+   alternatives are not current prerequisites or silently selected rules.
+3. Seven native occurrence streams reconstruct exactly in the current profile;
+   broader cryptographic-thread dependence remains unestablished.
+4. Corpus-tail normalization is implemented as an explicit profile; broader
+   cryptographic corpus binding remains open.
+5. The native binary sequence profile now supplies scoped origin/axis closure and
+   reversible serialization; general nested-gonol and private-key use remain separate.
 6. Private-gonol generation and binding.
 7. Public/private key derivation and the exact source of asymmetry.
 8. Authentication, nonces, state evolution, truncation/replay handling.

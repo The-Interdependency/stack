@@ -16,18 +16,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the event source with GitHub PR isolation
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - name: Verify exact event identity
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-      # Push validates the exact branch head; pull_request validates GitHub's
-      # isolated merge ref. Neither grants write credentials to tested code.
-      - name: Verify assembly and provisional transport, not native cipher security
+      - name: Checkout exact native geometry producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 905e66964a495d7596a577bb64e4158db9465864
+          path: .weave-inputs/ucns
+          persist-credentials: false
+      - name: Checkout exact binary-domain producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/uchc
+          ref: 65ac43d5d4cf79082c0836f8545adeb0242e88fc
+          path: .weave-inputs/uchc
+          persist-credentials: false
+      - name: Verify source pins, native cycle and existing transport regressions
         run: |
           set -euo pipefail
+          export WEAVE_SOURCES="$GITHUB_WORKSPACE/.weave-inputs"
+          test "$(git -C "$WEAVE_SOURCES/ucns" rev-parse HEAD)" = "905e66964a495d7596a577bb64e4158db9465864"
+          test "$(git -C "$WEAVE_SOURCES/uchc" rev-parse HEAD)" = "65ac43d5d4cf79082c0836f8545adeb0242e88fc"
           python3 -VV
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
           cat "$RUNNER_TEMP/weave-check.json"
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/cycle.py demo

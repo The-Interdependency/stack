@@ -134,8 +134,10 @@ class PrimePath:
     steps: tuple[tuple, ...]
 
     def replay(self, limits: Limits = Limits(), *, _engine=None) -> tuple[int, ...]:
-        if type(self.steps) is not tuple or len(self.steps) > limits.recipe_steps:
-            raise ResourceLimit("recipe step budget or immutable steps required")
+        if type(self.steps) is not tuple:
+            raise Refused("recipe steps must be an immutable tuple")
+        if len(self.steps) > limits.recipe_steps:
+            raise ResourceLimit("recipe step budget exceeded")
         primes = _engine if _engine is not None else _Primes(limits)
         primes.charge(len(self.steps) + 1)
         value = _nat(self.seed)
@@ -254,17 +256,21 @@ class Packet:
     entries: tuple[Entry, ...]
     symbols: str
 
-    def validate(self, limits: Limits = Limits()) -> int:
+    def validate(self, limits: Limits = Limits(), *, _engine=None) -> int:
         if type(self.origin) is not str or not self.origin or len(self.origin.encode("utf-8")) > 1024:
             raise Refused("nonempty UTF-8 origin scope of at most 1024 bytes required")
         _nat(self.round_id)
-        if type(self.entries) is not tuple or len(self.entries) > limits.entries:
-            raise ResourceLimit("immutable definitions within entry budget required")
-        if type(self.symbols) is not str or len(self.symbols) > limits.occurrences:
+        if type(self.entries) is not tuple:
+            raise Refused("definitions must be an immutable tuple")
+        if len(self.entries) > limits.entries:
+            raise ResourceLimit("definition count exceeds execution budget")
+        if type(self.symbols) is not str:
+            raise Refused("occurrence stream must be a string")
+        if len(self.symbols) > limits.occurrences:
             raise ResourceLimit("occurrence stream exceeds execution budget")
         mapping = {}
         angles = set()
-        primes = _Primes(limits)
+        primes = _engine if _engine is not None else _Primes(limits)
         for entry in self.entries:
             if type(entry) is not Entry:
                 raise Refused("Entry required")
@@ -466,7 +472,8 @@ def decode(data: bytes, limits: Limits = Limits()) -> Packet:
     if reader.pos != len(data):
         raise Refused("trailing packet data")
     packet = Packet(origin, round_id, tuple(entries), symbols)
-    if packet.validate(limits) != declared:
+    # Parsing and structural validation share one charged prime-work budget.
+    if packet.validate(limits, _engine=primes) != declared:
         raise Refused("declared output length disagrees with occurrences")
     return packet
 
@@ -499,6 +506,14 @@ def demo() -> dict:
     return result
 
 
+def _angle_argument(text: str) -> Fraction:
+    """Translate malformed CLI fractions into argparse's status-2 refusal."""
+    try:
+        return Fraction(text)
+    except (ValueError, ZeroDivisionError) as exc:
+        raise argparse.ArgumentTypeError("angle must be an exact finite fraction") from exc
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -507,7 +522,7 @@ def main() -> int:
     bind.add_argument("input", type=Path)
     bind.add_argument("output", type=Path)
     bind.add_argument("--origin", required=True)
-    bind.add_argument("--angle", required=True, type=Fraction)
+    bind.add_argument("--angle", required=True, type=_angle_argument)
     bind.add_argument("--circle", required=True, type=int)
     recover = sub.add_parser("recover")
     recover.add_argument("input", type=Path)

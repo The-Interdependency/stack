@@ -1,0 +1,13 @@
+{
+  "schema": "weave.native-inputs/v1",
+  "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+  "ucns_sources": {
+    "src/ucns/axis_circle.py": "768777c8eca6e65537fdbab2003835d6f4f40569",
+    "src/ucns/direct_mobius.py": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+  },
+  "uchc_source": {
+    "commit": "65ac43d5d4cf79082c0836f8545adeb0242e88fc",
+    "path": "binary/uchc_binary/origin.py",
+    "git_blob": "300db7383b403acbff7ce9a94f7536ad047bc78b"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "f75fda260793ff46acab5bdc5f4a597065c1f7fe3d25cd781b9a48de05f062e3",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "65ac43d5d4cf79082c0836f8545adeb0242e88fc",
+      "authority": "binary-domain closure and public contract",
+      "relation": "exact new native binary producer consumed by the cycle"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "905e66964a495d7596a577bb64e4158db9465864",
+      "authority": "native exact geometry",
+      "relation": "unchanged mathematical producer consumed by the new domain"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "f547d755dc999bf4ba0aa2ae3d67c42ea723dc76",
+      "authority": "Weave sequence selection and round composition",
+      "relation": "consumer starting point; this change completes the explicit sequence-cycle profile"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "9867ab33877f2b1f50f8a501cf379aa99360bd52",
+      "authority": "build and evidence discipline",
+      "relation": "governing workflow source"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "86415a5368c1a1417c2b6731f19967a6b1fce6bb",
+      "authority": "domain restraint and affixiation semantics",
+      "relation": "semantic consultation only; no security or geometry transfer"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "declared binary-domain candidate; no language or cryptographic equivalence",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Named normalization, selection, attachment and split profiles are executable candidates, not universal rules.",
+      "Public/private cryptographic lifting, authentication and full-cipher security remain unimplemented.",
+      "This graph changes no English/Python graduation or UCNS geometry authority."
+    ]
+  }
+}
