@@ -125,24 +125,17 @@ blanket invariants while also asking whether schedules collide. Retain the suppl
 order/count exactly and measure induced equivalence; do not reject a faithful
 implementation because it finds a collision. The full architecture remains in scope.
 
-## Reproduce and verify
+## Reproduce
 
-`probe.py` uses a deque for the literal operation and a separate index formula for
-its inverse. `verify.py` does not import it; a second index-composition implementation
-recomputes all 9,840 schedule maps, digests, exact collision witnesses, example stage
-orders and literal odd/even/three-section golden vectors. Both implementations were
-written by the same assistant. This is **not an independent author's review**.
-
-Isolated-mode and optimized-Python replays matched the receipt exactly. Both checkers
-rejected a deliberately altered map count with exit status 1. These are evidence
-integrity checks, not authenticated encryption.
+`probe.py` contains the executed positional experiment and its receipt check. These
+results are component evidence only; they are not an independent implementation,
+independent review, or cryptographic verification.
 
 From `research/weave/`:
 
 ```bash
 python probe.py > receipt.json
 python probe.py --check receipt.json
-python verify.py receipt.json > verified.json
 ```
 
 Expected SHA-256 of the exact receipt bytes:
@@ -152,9 +145,7 @@ Expected SHA-256 of the exact receipt bytes:
 ```
 
 The runtime uses Python's standard library only. Hashes identify source and evidence;
-they do not supply encryption. `PLAN.md` was written before the first local run. The
-separate verifier and tamper checks were added afterward, and are subsequent
-verification rather than retroactively preregistered discoveries.
+they do not supply encryption. `PLAN.md` was written before the first local run.
 
 ## Sources and provenance
 
