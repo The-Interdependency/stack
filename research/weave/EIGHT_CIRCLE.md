@@ -1,9 +1,9 @@
 # Weave eight-circle / two-circle candidate
 
-Status: **implemented candidate; asymmetric security not established.**
+Status: **implemented construction research; asymmetric security not established.**
 
-This construction records the current user-specified boundary without adding a
-selection law that has not been supplied.
+This workspace preserves the current Weave geometry and records candidate failures
+instead of silently promoting them into a cipher.
 
 ## Preserved construction
 
@@ -27,7 +27,7 @@ many possible positions.
 No rule is imposed for how key sets choose their circle positions, their relations to
 space, or which two circles are exposed. Those are construction-instance data.
 
-## Executable object
+## Executable geometry
 
 `stages/eight_circle.py` provides:
 
@@ -38,35 +38,119 @@ space, or which two circles are exposed. Those are construction-instance data.
 - `decode_byte`: full-key-set recovery API;
 - raw-byte `encode` / `decode` helpers.
 
-The candidate is deliberately separate from the older transport profile and is not
-silently installed as the complete Weave `bind` law.
+The candidate remains separate from the older transport profile and is not silently
+installed as the complete Weave `bind` law.
 
-## Falsification already obtained
+## Message origin / UCHC-axis candidate
+
+`stages/message_origin.py` consumes the UCHC architectural distinction currently
+implemented in `The-Interdependency/uchc`:
+
+- participants are individually addressable axes at one declared origin;
+- axis identity follows construction/admission order;
+- occurrence identity is preserved;
+- attachment happens at the participation point;
+- unresolved cross-origin geometry is not silently promoted.
+
+For Weave, one raw-byte message constructs one origin `O_M`. Every source-bit
+occurrence participates as its own ordered axis at that origin. The candidate then
+uses exact key-set-specific phase/feedback parameters to couple successive axes before
+the same two-circle public degeneration is applied.
+
+Usage:
+
+```python
+origin = construct_origin(raw_bytes)
+witness = encode(raw_bytes, public_pair, coupling_key)
+```
+
+The phase recurrence is deliberately a bounded Weave candidate, not UCNS or UCHC
+canon. It is present so the message-origin construction can be executed and attacked.
+
+## Falsifications obtained
+
+### Independent-bit projection
 
 The first independent-bit implementation fails the intended asymmetric property.
+A public holder can evaluate the two public forward images for 0 and 1 and recover
+every source bit directly.
 
-Because each source bit is independently mapped to one of two public two-bit witnesses,
-a holder of the public pair can evaluate the public forward image of 0 and 1 and recover
-every source bit by comparison. The test
-`test_independent_bit_baseline_is_publicly_bruteforceable` preserves that attack as
-required evidence.
+Therefore the bare geometry
 
-Therefore:
+```text
+8 full circles -> 2 public circles
+```
 
-[
-8 \to 2
-]
+survives, while independent per-bit projection is falsified as the cryptographic
+relation.
 
-is implemented as a geometric degeneration, but **independent per-bit projection is
-falsified as the cryptographic relation**.
+### Message-origin coupling
 
-This does not falsify the eight-circle construction. It identifies what the next
-construction must actually use: the message-scoped UCHC origin/axis relational state
-must couple the eight circles so that the six omitted circles change the recoverable
-trajectory rather than merely sitting unused in the private object.
+The second candidate adds the message-scoped origin and ordered axis trajectory.
+That preserves the requested topology, but it still fails the asymmetric requirement:
+the sender's public coupling parameters and public two-circle state are sufficient to
+replay the trajectory and recover the message.
+
+The tests additionally perturb all six omitted circles while holding the two public
+circles fixed. The ciphertext is unchanged. Therefore the six private circles are
+**not causal** in this candidate.
+
+This is a useful narrowing result:
+
+```text
+message origin + ordered axes + public feedback
+!=
+trapdoor degeneration/lift
+```
+
+The UCHC architecture supplies the origin/axis topology. It does not, by itself,
+supply the missing asymmetric mathematical relation.
+
+## Authority and provenance
+
+UCHC source inspected for this candidate:
+`human/english/english_gonol/hyperspace_construct.py`,
+Git blob `8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a`.
+
+The source explicitly keeps carrier position and axis participation distinct and
+leaves cross-origin angles / continuum lift-selection as `hmmm`. Weave therefore
+does not invent those as UCNS/UCHC laws.
+
+Relevant construction discipline was read from
+`The-Interdependency/skill-lib` `gonol-build/SKILL.md` and
+`the-interdependency/SKILL.md`. Current METAPAT was consulted before selecting the
+candidate relation; its boundary-state guidance permits a domain boundary/state to
+alter a transformation only where the domain evidence supplies the mechanism. No
+METAPAT security claim is inferred.
+
+## Usage guidance
+
+Run all Weave evidence:
+
+```bash
+cd research/weave
+python test.py --receipt /tmp/weave-check.json
+```
+
+Run only the message-origin candidate:
+
+```bash
+python -m unittest tests.test_message_origin
+```
+
+Interpret a passing run as reproducibility of the candidate and its falsification
+witnesses, not evidence of cryptographic strength.
 
 ## hmmm
 
-The remaining construction is the coupled UCHC relation itself. No additional policy
-decision is introduced here. The next candidate must make the full eight-circle state
-causally necessary for inversion and then be attacked.
+The remaining construction is now narrower than "couple the message."
+
+We need a **native degeneration/lift relation** in which:
+
+- the public two-circle object permits the forward operation;
+- the six omitted circles materially alter the full lift;
+- the full eight-circle key can recover the lift efficiently;
+- the public two-circle holder cannot replay the same inverse efficiently.
+
+No additional circle-selection or space-placement policy is required before that
+relation is constructed. The relation itself is the unresolved work.
