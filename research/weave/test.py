@@ -17,7 +17,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 100  # 52 original + 15 numeral + 3 review repair + 30 cycle.
+EXPECTED_TESTS = 125  # 52 original + 18 numeral + 30 cycle + 13 native origin + 12 repairs.
 
 
 def snapshot():
@@ -61,7 +61,8 @@ def main():
             'discovery_binary_alphabet_byte_strings': 8191,
             'small_compositions': 4083, 'cycle_largest_roundtrip_bytes': 65536,
             'cycle_sample_rounds': 3, 'native_occurrence_circles': 7,
-            'prime_jump_trace': [5381, 53, 241, 1523]
+            'prime_jump_trace': [5381, 53, 241, 1523],
+            'native_origin_methods': 13, 'cycle_repair_methods': 12
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),

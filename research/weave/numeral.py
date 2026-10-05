@@ -54,6 +54,7 @@ from fractions import Fraction
 from math import isqrt
 from pathlib import Path
 import json
+from safe_output import write_new
 
 MAGIC = b"WNC\x01"
 
@@ -221,6 +222,13 @@ def _symbol(symbol: str) -> None:
         raise Refused("symbol must be a Unicode private-use scalar")
 
 
+def _validate_attachment(angle: Fraction, circle: int) -> None:
+    if type(angle) is not Fraction or not 0 <= angle < 2:
+        raise Refused("exact supplied angle must be in [0,2) turns")
+    if type(circle) is not int or not 1 <= circle <= 7:
+        raise Refused("occurrence circle must be one of the seven")
+
+
 @dataclass(frozen=True)
 class Entry:
     symbol: str
@@ -235,10 +243,7 @@ class Entry:
             raise Refused("a definition must contain a nonempty BitBlock")
         if self.block.length > limits.output_bits:
             raise ResourceLimit("definition exceeds bit budget")
-        if type(self.angle) is not Fraction or not 0 <= self.angle < 2:
-            raise Refused("exact supplied angle must be in [0,2) turns")
-        if type(self.circle) is not int or not 1 <= self.circle <= 7:
-            raise Refused("occurrence circle must be one of the seven")
+        _validate_attachment(self.angle, self.circle)
         if self.recipe is not None:
             if type(self.recipe) is not PrimePath or self.recipe.replay(limits, _engine=_engine)[-1] != self.block.value:
                 raise Refused("recipe does not construct its bound integer")
@@ -542,19 +547,18 @@ def main() -> int:
             if len(raw) > limit:
                 raise ResourceLimit("input grew beyond execution budget")
             if args.command == "bind":
+                _validate_attachment(args.angle, args.circle)
                 entry = Entry(chr(0xE000), BitBlock.from_bytes(raw), args.angle, args.circle)
                 packet = Packet(args.origin, 0, (entry,) if raw else (), entry.symbol if raw else "")
                 wire = encode(packet)
-                with args.output.open("xb") as target:
-                    target.write(wire)
+                write_new(args.output, wire)
                 result = accounting(packet)
             else:
                 packet = decode(raw)
                 result = accounting(packet)
                 if args.command == "recover":
                     restored = packet.restore()
-                    with args.output.open("xb") as target:
-                        target.write(restored.to_bytes())
+                    write_new(args.output, restored.to_bytes())
                     result["output_bit_length"] = restored.length
         print(json.dumps(result, indent=2))
         return 0

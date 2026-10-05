@@ -14,7 +14,7 @@ MSB-first packing; unused low bits in a partial last byte must be zero.
 Unicode private-use reference and exact supplied attachment. Angles are Fractions
 in [0,2) turns and occurrence circles are 1..7. This standalone codec does not
 invent native geometry. The cycle supplies attachments from real UCNS objects
-through the UCHC binary producer.
+through the Stack binary-origin candidate.
 
 `Packet(origin, round_id, entries, symbols)` contains definitions and ordered
 references. The same symbol may denote different blocks in different scopes.

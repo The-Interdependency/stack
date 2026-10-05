@@ -207,6 +207,7 @@ from numeral import PrimePath, Refused, ResourceLimit
 import cycle
 from cycle import Profile, CycleLimits, normalize, denormalize, affix, unaffix, forward, reverse
 from cycle_native import load_native
+import cycle_native
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('WEAVE_SOURCES', ROOT/'sources'))
@@ -463,12 +464,11 @@ class CycleTests(unittest.TestCase):
     def test_source_tampering_refused_before_execution(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
-            shutil.copytree(SOURCES/'uchc',root/'uchc')
-            shutil.copytree(SOURCES/'ucns',root/'ucns')
-            src=root/'uchc/binary/uchc_binary/origin.py'
+            shutil.copy2(ROOT/'CYCLE_NATIVE.json',root/'CYCLE_NATIVE.json')
             marker=root/'executed'
-            src.write_text(f"open({str(marker)!r},'w').write('oops')\n")
-            with self.assertRaises(Refused): load_native(root)
+            (root/'native_binary.py').write_text(f"open({str(marker)!r},'w').write('oops')\n")
+            with patch.object(cycle_native,'ROOT',root):
+                with self.assertRaises(Refused): load_native(SOURCES)
             self.assertFalse(marker.exists())
 
     def test_cli_fresh_process_source_deleted_and_no_overwrite(self):
@@ -498,9 +498,9 @@ class CycleTests(unittest.TestCase):
         digest = sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         self.assertEqual(digest, graph['work_graph_sha256'])
         repositories = {x['repository']: x for x in graph['repositories']}
-        self.assertEqual(repositories['The-Interdependency/uchc']['commit'], lock['uchc_source']['commit'])
+        self.assertEqual(repositories['The-Interdependency/uchc']['commit'], lock['uchc_architecture']['commit'])
         self.assertEqual(repositories['The-Interdependency/ucns']['commit'], lock['ucns_commit'])
-        self.assertEqual(len(lock['uchc_source']['commit']), 40)
+        self.assertEqual(lock['binary_source']['owner'], 'The-Interdependency/stack')
         self.assertFalse(graph['boundaries']['authority_transfer'])
         self.assertEqual(Profile.read(cycle.canonical(PROFILE.as_dict())),PROFILE)
         wire,stats=forward(b'ABCD'*64,CORPUS,PROFILE,SOURCES)

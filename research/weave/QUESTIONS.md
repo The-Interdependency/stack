@@ -13,8 +13,9 @@ interleave the resulting bits. Repeat affixiation and interleaving; reverse in t
 opposite order. Preserve residual material and each round's reconstruction information.
 
 The message is the origin; sequential byte occurrences are axes. Equal byte values
-remain separate occurrences. UCNS owns geometry, UCHC owns the binary-domain native
-closure, and Stack/Weave owns selection, scheduling and cycle composition.
+remain separate occurrences. UCNS owns geometry. Stack/Weave owns this binary-domain closure candidate,
+selection, scheduling and cycle composition. UCHC supplies the origin/axis
+architecture and migration boundary; no binary domain has graduated there.
 
 ## Implemented candidate answers
 
@@ -31,7 +32,7 @@ and inverse, failures, budgets and size accounting are in `CYCLE.md`.
 
 | ID | Current disposition |
 |---|---|
-| Q1 — Native admission | Exact raw byte occurrences now use UCHC binary origins and native UCNS axes. No text database prerequisite. |
+| Q1 — Native admission | Exact raw byte occurrences use the Stack binary-origin candidate and native UCNS axes. No text database prerequisite. |
 | Q2 — Private gonol/public counterpart | Intended full configuration and whole-plus-one exposure retained; asymmetric derivation is not implemented by positional recovery. |
 | Q3 — Threads | Seven occurrence-circle streams participate in current native recovery. No automatic equivalence to all historical complementary cryptographic-thread proposals is asserted. |
 | Q4 — Corpus | Actual corpus bits normalize once in the explicit bucket profile and are verified on reverse. Earlier traversal trial is not substituted for this cycle. |

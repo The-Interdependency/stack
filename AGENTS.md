@@ -150,9 +150,10 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
 - URPCS is retired for specification divergence. Why GPT substituted the different
   architecture remains `hmmm`; its retained evidence is historical and implementation-local.
-- Weave is specification-first research. Uneven partitions, stage-input
-  composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding,
-  authentication/state, and the threat model remain `hmmm` until explicitly resolved.
+- Weave remains research. Its explicit native binary sequence-cycle candidate
+  lives in `research/weave/native_binary.py`; UCNS geometry is consumed, not
+  redefined. UCHC binary graduation has not occurred. Private/public lifting,
+  authentication/state and full-cipher security remain `hmmm`.
 - The complete root `skill-lib/` snapshot refresh remains separate because the current
   provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.

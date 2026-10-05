@@ -38,7 +38,7 @@
        python cycle.py forward INPUT OUTPUT --profile cycle-profile.json --corpus CORPUS --sources /checkouts
        python cycle.py reverse INPUT OUTPUT --profile cycle-profile.json --corpus CORPUS --sources /checkouts
 
-/checkouts contains source-locked ucns/ and uchc/ trees; CYCLE_NATIVE.json names
+/checkouts contains the source-locked ucns/ tree; CYCLE_NATIVE.json names
 exact modules. No packages beyond Python's standard library are required by this
 consumer. The runnable profile is explicit construction research, not secure storage.
 The newest sequence cycle replaces the historical one-bit-per-circle interpretation.
@@ -52,6 +52,7 @@ from fractions import Fraction
 from hashlib import sha256
 from pathlib import Path
 import json
+from safe_output import write_new
 import os
 
 from numeral import (BitBlock, Entry, Packet, PrimePath, Limits, Refused, ResourceLimit,
@@ -476,8 +477,7 @@ def main() -> int:
             data = _read(args.input,limits.round_bytes+128)
             output = reverse(data,corpus,profile,args.sources,limits)
             report = {'output_bytes':len(output),'standing':'exact construction recovery; not security evidence'}
-        with args.output.open('xb') as target:
-            target.write(output)
+        write_new(args.output, output)
         print(json.dumps(report,indent=2))
         return 0
     except (OSError, ValueError, UnicodeError) as exc:

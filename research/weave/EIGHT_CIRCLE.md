@@ -9,8 +9,8 @@ occurrences and order. This is not an eight-circle allocation for every byte.
 The eight circle count does not establish a 16-bit output codeword or total 2x size.
 
 The old `stages/eight_circle.py` and `stages/message_origin.py` structural records
-and their 22 tests are removed. Native replacement is the UCHC binary-domain
-origin/sequence producer, consumed by `cycle_native.py` and `cycle.py`. It uses
+and their 22 tests are removed. Native replacement is the Stack-owned binary-origin/sequence candidate
+(`native_binary.py`), consumed by `cycle_native.py` and `cycle.py`. It uses
 actual UCNS axis-circle and Mobius objects and performs exact coordinate recovery.
 The associated bit-per-circle questions Q11/Q13/Q14 no longer control construction.
 

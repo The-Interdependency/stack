@@ -9,7 +9,7 @@ key generation and cryptographic security are not implemented by this profile.
    length inside the normalized frame.
 2. Discover repeated multi-byte sequences in the current byte stream. Select
    nonoverlapping occurrences, retaining every residual byte.
-3. Close the sequences through the UCHC binary-domain producer. The eighth/whole
+3. Close the sequences through the Stack binary-domain candidate. The eighth/whole
    circle holds native sequence attachments; seven occurrence circles hold count,
    order and native positions. Sequential byte occurrences remain addressable axes.
 4. Bind definitions through the existing length-bearing integer/Unicode numeral
@@ -45,7 +45,7 @@ not attributed to the user as universal laws:
   Counts mean selected partition occurrences, not all overlapping substring matches.
   No fixed chunk length or silent candidate truncation is introduced. This is not
   a globally optimal compression claim.
-- **native binary attachment:** UCHC attaches each saved sequence at its first
+- **native binary attachment:** The Stack candidate attaches each saved sequence at its first
   selected occurrence's native byte axis. UCNS owns the exact `r/N` axis position
   and complete 720-degree state. Source data, occurrences and native objects remain
   inside the construction; hashes merely identify it.
@@ -67,20 +67,27 @@ profile identity without redefining UCNS or UCHC geometry.
 
 ## Native dependency boundary
 
-`CYCLE_NATIVE.json` pins the exact UCHC producer commit/module blob and its two
-unchanged UCNS source modules. `cycle_native.py` verifies and executes those exact
-buffers. It refuses missing/changed sources before message processing, never fills
-that gap with a fabricated class or language corpus fixture.
+`CYCLE_NATIVE.json` v2 binds the exact local `native_binary.py` blob and its two
+unchanged UCNS producer modules at `905e66964a495d7596a577bb64e4158db9465864`.
+`cycle_native.py` executes a fresh copy of each verified buffer on every load;
+mutable `sys.modules` cache slots are never accepted as source evidence.
 
-`CYCLE_WORK_GRAPH.json` records the complete consumer work graph. The native binary
-producer is in UCHC, not an application-owned imitation. UCHC uses actual UCNS
-`AxisCirclePosition` and `NativeMobiusState` instances. This does not claim general
-cross-origin metric geometry, English/Python graduation, a private lift, or security.
+The binary-origin/sequence implementation remains in its owning Stack forge.
+UCHC `4ad94e92be10d2c4c875a848addfda46f3c7cfdb` supplies the architecture and
+migration boundary, not a graduated binary runtime. The premature UCHC #7 code
+is retained as provenance in `NATIVE_BINARY_PROVENANCE.json` and replaced by the
+repaired forge-owned candidate. No English/Python migration or UCNS authority moves.
 
-In recovery, transmitted native complete positions and configured space relations
-are inverted through `NativeMobiusState.advance`. The resulting exact source axes
-determine byte placement. Complete coverage, no overlap/gaps, source/round identity,
-whole-circle attachments and canonical seven-stream order must all replay.
+Actual UCNS `AxisCirclePosition` and `NativeMobiusState` objects construct and
+recover positions. The eighth remains the whole/origin; seven circle streams
+preserve sequence occurrence order. `SequenceTable` validates source, order,
+definitions, every occurrence, and native positions including space offsets on
+construction and before exporting a receipt or reconstruction. A frozen record
+with a forged relation is rejected, including through `dataclasses.replace`.
+
+The v2 lock and binary-domain identity deliberately reject records from the old
+ungraduated candidate. Rebuild research records using this exact profile/source.
+Native representation is not authentication, a trapdoor, or a security claim.
 
 ## Framing and full size accounting
 
@@ -104,10 +111,10 @@ The three-round nonsecret demo measured 784 original bytes, normalized to 1,024:
 | Round | Input bytes | Definitions | Selected occurrences | Complete output bytes |
 |---|---:|---:|---:|---:|
 | 0 | 1,024 | 8 | 11 | 910 |
-| 1 | 910 | 32 | 44 | 1,494 |
-| 2 | 1,494 | 178 | 248 | 5,054 |
+| 1 | 910 | 41 | 56 | 1,669 |
+| 2 | 1,669 | 231 | 321 | 6,632 |
 
-The outer frame adds 103 bytes: total **5,157 bytes**, with exact recovery.
+The outer frame adds 103 bytes: total **6,735 bytes**, with exact recovery.
 This example expands overall. Later rounds can create metadata cost larger than
 any repeated-sequence saving. No claim that additional rounds always compress,
 strengthen secrecy, or produce independent transformations is made.
@@ -115,7 +122,7 @@ strengthen secrecy, or produce independent transformations is made.
 ## Usage
 
 Python 3.12+; the consumer and native operations require only the standard library.
-The source root contains the locked `ucns/` and `uchc/` checkouts. The runnable
+The source root contains the locked `ucns/` checkout. No UCHC runtime checkout is required. The runnable
 bundle supplies exact, read-only minimal snapshots under `sources/`.
 
 ```sh
@@ -155,7 +162,10 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 = 100. Native UCHC has a separate 13-test producer suite.
+52 + 18 + 30 + 13 native-origin + 12 repair regressions = 125. The original
+13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
+The repair regressions exercise forged closed records, fresh verified module
+loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
 
 The cycle is opt-in. The original transport experiment and the all-on native cipher
 refusal remain separate; no missing asymmetric operator is silently filled.
@@ -169,3 +179,12 @@ actual private/public degeneration and recovery advantage, authentication/replay
 and security analysis of the completed cipher remain open. The named normalization,
 selection, attachment and determinant profiles are implemented candidates, not
 universal rules. This cycle now executes those choices and reports their real cost.
+
+## Output failure boundary
+
+Both `cycle.py` and `numeral.py` write a private temporary sibling, flush, fsync
+and close it, then install it with an atomic no-clobber hard link. Write, flush,
+fsync or close failure leaves no partial destination. Existing files and symlinks
+are never overwritten. A filesystem without the required hard-link semantics
+refuses explicitly. Abrupt process-crash cleanup and directory durability are
+not guaranteed. Empty numeral input still validates its required attachments.

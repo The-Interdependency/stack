@@ -140,7 +140,7 @@ implemented boundary, full size accounting, exact replay, and usage.
 
 The numeral module remains a representation layer, not replacement geometry.
 The separate cycle now connects automatic repeated-sequence discovery, actual
-corpus normalization, native UCHC/UCNS sequence closure and coordinate recovery,
+corpus normalization, Stack-owned sequence closure using native UCNS geometry and coordinate recovery,
 prime-route split derivation, and the repeated first/last bit interleave. See
 [CYCLE.md](CYCLE.md) for the exact named profile, inverse, tests and byte accounting.
 This implements the corrected sequence cycle, not public-key encryption.
