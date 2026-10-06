@@ -103,7 +103,6 @@ class FractionSpoof(Fraction):
         return True
 
     def __ne__(self, other):
-        type(self).calls += 1
         return False
 
 
