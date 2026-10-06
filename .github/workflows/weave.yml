@@ -43,6 +43,17 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
           cat "$RUNNER_TEMP/weave-check.json"
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/cycle.py demo | tee "$RUNNER_TEMP/weave-demo.json"
+      - name: Reproduce native candidate public-recovery attack (expected exit 1)
+        run: |
+          set -euo pipefail
+          if python3 research/weave/private_public.py --sources "$GITHUB_WORKSPACE/.weave-inputs" --require-distinction > "$RUNNER_TEMP/weave-private-public.json"; then
+            echo "The frozen experiment unexpectedly accepted asymmetry; reassess its scope."
+            exit 1
+          else
+            status=$?
+            test "$status" -eq 1
+          fi
+          cat "$RUNNER_TEMP/weave-private-public.json"
       - name: Package tracked research source and observed evidence
         if: always()
         run: |
@@ -52,7 +63,7 @@ jobs:
           git -C .weave-inputs/ucns archive --format=zip --output="$RUNNER_TEMP/weave-inspection/ucns.zip" HEAD
           git rev-parse HEAD > "$RUNNER_TEMP/weave-inspection/STACK_HEAD.txt"
           git -C .weave-inputs/ucns rev-parse HEAD > "$RUNNER_TEMP/weave-inspection/UCNS_HEAD.txt"
-          for evidence in weave-check.json weave-demo.json; do
+          for evidence in weave-check.json weave-demo.json weave-private-public.json; do
             if test -f "$RUNNER_TEMP/$evidence"; then cp "$RUNNER_TEMP/$evidence" "$RUNNER_TEMP/weave-inspection/"; fi
           done
       - name: Retain exact-source research bundle, not a security release
