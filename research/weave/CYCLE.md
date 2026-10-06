@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record regressions = 161. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record + 3 header-admission regressions = 164. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -254,9 +254,9 @@ Run the added regressions with:
 WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_final_findings.py -v
 ```
 
-All 152 tests pass on the repaired local source. The three-round demo still costs
-6,735 total bytes and recovers exactly. These repairs change neither the UCNS
-producer pins nor the ownership or cryptographic standing of the construction.
+The earlier follow-up checkpoint passed its then-current 152-test suite. The
+three-round demo still costs 6,735 total bytes and recovers exactly. These repairs
+change neither the UCNS producer pins nor the ownership or cryptographic standing of the construction.
 
 ## Canonical rational, route and inverse validation
 
@@ -282,7 +282,7 @@ Supplying replacement instance methods cannot license arbitrary coordinates. Thi
 remains a data-record validation boundary, not protection against modification of
 trusted Python classes or producer modules.
 
-Run these nine regressions with:
+Run the terminal-record and header-admission regressions with:
 
 ```sh
 WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_terminal_records.py -v
@@ -291,3 +291,25 @@ WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_terminal_r
 The native source lock rotates with this repair. Regenerate records tied to the
 previous lock rather than treating them as evidence for the new source. UCNS
 producer source, UCHC architectural reference and Stack ownership are unchanged.
+
+## Outer-header admission before expensive recovery
+
+Recovery parses the complete outer frame first: magic, fixed identity fields,
+root, canonical round count, bounded payload length, and absence of trailing
+bytes. It then validates the supplied profile and matches the source/profile
+identities and round count. Only admitted framing reaches prime-route replay
+or loading and execution of the pinned native producers. Valid records retain
+the same single scheduler budget and reverse operations; no wire field, split
+formula, producer pin, ownership or security claim changes.
+
+Three added tests in `tests/test_terminal_records.py` check every truncated
+prefix, wrong magic, identity/count/length mismatches, noncanonical integers
+and trailing bytes without invoking either expensive step. A complete header
+still reaches real scheduler evaluation and its existing budget refusal.
+
+Usage: `WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_terminal_records.py -k HeaderAdmissionTests -v`.
+
+Current repaired local result: **164 tests passed, zero failures, errors or skips**,
+with unchanged sources during execution. The 152-test result above is an earlier
+checkpoint, not the current suite result. Hosted checks and terminal review remain
+separate acceptance gates.

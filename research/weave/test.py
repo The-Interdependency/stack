@@ -17,7 +17,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 161  # 152 existing + 9 terminal-record regression methods.
+EXPECTED_TESTS = 164  # 161 existing + 3 outer-header admission regression methods.
 
 
 def snapshot():
@@ -64,7 +64,7 @@ def main():
             'prime_jump_trace': [5381, 53, 241, 1523],
             'native_origin_methods': 13, 'cycle_repair_methods': 12,
             'review_closure_methods': 18, 'final_findings_methods': 9,
-            'terminal_record_methods': 9
+            'terminal_record_methods': 9, 'header_admission_methods': 3
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),

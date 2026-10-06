@@ -11,6 +11,15 @@
 # id: recovery_uses_trusted_geometry
 #   proves: binary_coordinate_recovery, binary_source_refusal
 #   call: self::test_recovery_cannot_use_shadowed_geometry_to_accept_coordinates
+# id: cycle_header_admission_precedes_expensive_work
+#   proves: cycle_strict_refusal
+#   call: self::test_reverse_rejects_every_truncated_header_before_preparation
+# id: cycle_invalid_framing_never_loads_producers
+#   proves: cycle_strict_refusal
+#   call: self::test_reverse_rejects_outer_identity_count_and_length_before_preparation
+# id: cycle_valid_header_retains_scheduler_budget
+#   proves: cycle_strict_refusal, prime_split_replay
+#   call: self::test_reverse_prepares_valid_headers_under_the_existing_budget
 # === END CHECKS ===
 """Replay three terminal-review gaps using only nonsecret local records.
 
@@ -163,6 +172,61 @@ class TerminalRecordTests(unittest.TestCase):
         self.assertEqual(actual,expected)
         self.assertEqual(cycle.unaffix(actual,**args),data)
         self.assertEqual(called,[])
+
+
+class HeaderAdmissionTests(unittest.TestCase):
+    """Cheap outer-record admission must precede prime replay and source execution."""
+
+    def fixture(self):
+        profile = cycle.Profile.read((ROOT/'profiles/cycle-v1.json').read_bytes())
+        # Syntactically admitted, genuinely executable prime path; invalid wire
+        # cases must not perform its two nth-prime calculations.
+        spec = replace(profile.rounds[0], path=PrimePath(5381, (("next",),)*2))
+        profile = replace(profile, rounds=(spec,))
+        header = cycle.MAGIC + cycle._native_identity() + profile.identity + bytes(32)
+        frame = header + numeral._uint(1) + numeral._blob(b'x')
+        return profile, header, frame
+
+    def test_reverse_rejects_every_truncated_header_before_preparation(self):
+        profile, header, frame = self.fixture()
+        cases = [frame[:i] for i in range(len(frame))]
+        cases.append(b'bad!' + frame[4:])
+        with patch.object(cycle, '_prepared', side_effect=AssertionError('prime work before admission')) as prepared:
+            with patch.object(cycle, 'load_native', side_effect=AssertionError('native source before admission')) as native_load:
+                for i, wire in enumerate(cases):
+                    with self.subTest(case=i), self.assertRaises(Refused):
+                        cycle.reverse(wire, b'corpus', profile, '/unused-sources')
+                prepared.assert_not_called()
+                native_load.assert_not_called()
+
+    def test_reverse_rejects_outer_identity_count_and_length_before_preparation(self):
+        profile, header, frame = self.fixture()
+        cases = (
+            frame[:4] + bytes([frame[4] ^ 1]) + frame[5:],
+            frame[:36] + bytes([frame[36] ^ 1]) + frame[37:],
+            header + numeral._uint(2) + numeral._blob(b'x'),
+            header + b'\x81\x00' + numeral._blob(b'x'),
+            header + numeral._uint(1) + b'\x81\x00x',
+            header + numeral._uint(1) + numeral._uint(cycle.CycleLimits().round_bytes + 1),
+            frame + b'trailing',
+        )
+        with patch.object(cycle, '_prepared', side_effect=AssertionError('prime work before admission')) as prepared:
+            with patch.object(cycle, 'load_native', side_effect=AssertionError('native source before admission')) as native_load:
+                for i, wire in enumerate(cases):
+                    with self.subTest(case=i), self.assertRaises(Refused):
+                        cycle.reverse(wire, b'corpus', profile, '/unused-sources')
+                prepared.assert_not_called()
+                native_load.assert_not_called()
+
+    def test_reverse_prepares_valid_headers_under_the_existing_budget(self):
+        profile, header, frame = self.fixture()
+        limits = cycle.CycleLimits(prime_work=1)
+        with patch.object(cycle, '_prepared', wraps=cycle._prepared) as prepared:
+            with patch.object(cycle, 'load_native', side_effect=AssertionError('native load after exhausted budget')) as native_load:
+                with self.assertRaisesRegex(ResourceLimit, 'aggregate prime work'):
+                    cycle.reverse(frame, b'corpus', profile, '/unused-sources', limits)
+                prepared.assert_called_once_with(profile, limits)
+                native_load.assert_not_called()
 
 
 if __name__=='__main__':unittest.main()

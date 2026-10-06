@@ -446,19 +446,25 @@ def reverse(wire: bytes, corpus: bytes, profile: Profile, sources: str | Path,
         raise Refused('cycle record must be bytes')
     if len(wire) > limits.round_bytes+128:
         raise ResourceLimit('cycle record exceeds final byte budget')
-    routes, engine = _prepared(profile,limits)
-    api,geometry = load_native(sources)
+    # Admit the complete cheap outer frame before prime replay or native code.
+    # Tiny malformed inputs must not consume the scheduler's full work budget.
     reader = _Reader(wire)
     if reader.take(4) != MAGIC:
         raise Refused('unrecognized cycle record')
-    if reader.take(32) != _native_identity() or reader.take(32) != profile.identity:
-        raise Refused('native source lock or profile identity mismatch')
+    source_identity = reader.take(32)
+    profile_identity = reader.take(32)
     root = reader.take(32).hex()
-    if reader.uint() != len(profile.rounds):
-        raise Refused('cycle round count mismatch')
+    round_count = reader.uint()
     data = reader.blob(limits.round_bytes)
     if reader.pos != len(wire):
         raise Refused('trailing cycle bytes')
+    Profile.__post_init__(profile)
+    if source_identity != _native_identity() or profile_identity != profile.identity:
+        raise Refused('native source lock or profile identity mismatch')
+    if round_count != len(profile.rounds):
+        raise Refused('cycle round count mismatch')
+    routes, engine = _prepared(profile,limits)
+    api,geometry = load_native(sources)
     for i in range(len(profile.rounds)-1,-1,-1):
         spec,route = profile.rounds[i],routes[i]
         split = plan(len(data)*8,route,spec.arities,limits.numeral(),engine=engine)
