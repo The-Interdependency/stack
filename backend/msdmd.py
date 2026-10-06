@@ -57,9 +57,11 @@ import os
 from pathlib import Path
 import re
 import signal
+import stat
 import subprocess
 import sys
 import tempfile
+import time
 from typing import Any
 
 from .freshness import (
@@ -214,12 +216,18 @@ def _dirty_path(line: str) -> str:
 
 
 def _unrelated_dirty(root: Path, ignored: set[str]) -> list[str]:
-    proc = subprocess.run(
-        ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"],
-        text=True, capture_output=True, check=False,
-    )
+    # A worktree whose status cannot be read is never assumed clean.
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"],
+            text=True, capture_output=True, check=False,
+        )
+    except OSError as exc:
+        raise ConstraintError(f"git status could not run in {root}: {type(exc).__name__}: {exc}") from exc
     if proc.returncode != 0:
-        return []
+        detail = (proc.stderr or proc.stdout or "no output").strip()[:300]
+        raise ConstraintError(f"git status failed in {root} ({exit_description(proc.returncode)}): {detail}; "
+                              "cannot prove the target worktree is clean")
     return [line for line in proc.stdout.splitlines() if _dirty_path(line) not in ignored]
 
 
@@ -406,6 +414,56 @@ def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) ->
 _SPAWN_HMMM = "the collector process could not be spawned (for example ENOMEM); check worker memory limits, then retry"
 
 
+# Suffixes of the hidden siblings this adapter writes beside the artifact:
+# ``.<out>.<rand>.candidate`` / ``.verify`` (_temp_output),
+# ``.<out>.<job>.accepted-backup`` (run_job) and ``.<out>.fresh-status-verify``.
+_OWN_SIBLING_SUFFIXES = (".candidate", ".verify", ".accepted-backup")
+
+
+def _clean_stale_siblings(ledger: JobLedger, spec: dict[str, Any], max_age_seconds: int) -> list[str]:
+    """Remove this adapter's own leftovers that are older than one lease.
+
+    A worker killed mid-run leaves hidden candidate, verify or rollback files
+    beside the artifact; the dirty-worktree check would then hold every later
+    attempt. Only regular files matching our own naming that are older than
+    ``max_age_seconds`` are touched. A stale rollback copy that still holds the
+    accepted bytes, while the artifact does not, is restored rather than
+    deleted (the crash happened between publish and SQL acceptance).
+    """
+    output = Path(spec["runtime"]["out"])
+    prefix = f".{output.name}."
+    cutoff = time.time() - max_age_seconds
+    accepted_digest = None
+    acceptance = ledger.get_acceptance(spec["target"])
+    if acceptance is not None:
+        try:
+            accepted_digest = ledger.get_receipt(acceptance.receipt_id).output_sha256
+        except KeyError:
+            accepted_digest = None
+    cleaned: list[str] = []
+    for path in sorted(output.parent.iterdir()):
+        rest = path.name[len(prefix):] if path.name.startswith(prefix) else ""
+        if not rest or not (rest == "fresh-status-verify" or rest.endswith(_OWN_SIBLING_SUFFIXES)):
+            continue
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            continue
+        if not stat.S_ISREG(info.st_mode) or info.st_mtime > cutoff:
+            continue
+        if (rest.endswith(".accepted-backup") and accepted_digest
+                and sha256_file(path) == accepted_digest
+                and (not output.is_file() or sha256_file(output) != accepted_digest)):
+            os.replace(path, output)
+            cleaned.append(f"restored {path.name}")
+            continue
+        path.unlink(missing_ok=True)
+        cleaned.append(f"removed {path.name}")
+    if cleaned:
+        print(f"stack msdmd: {spec['target']}: stale siblings: {'; '.join(cleaned)}", file=sys.stderr, flush=True)
+    return cleaned
+
+
 def _temp_output(output: Path, suffix: str) -> Path:
     fd, name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=suffix, dir=output.parent)
     os.close(fd)
@@ -438,6 +496,10 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
     if key != job.freshness_key:
         return ledger.fail(job.id, error=f"desired freshness key moved: queued={job.freshness_key} current={key}",
                            hmmm="enqueue current identities after obsolete attempt terminates")
+    try:
+        _clean_stale_siblings(ledger, spec, lease_seconds)
+    except OSError as exc:
+        return ledger.hold(job.id, constraint=f"stale sibling cleanup failed: {type(exc).__name__}: {exc}")
     try:
         _verify_runtime(spec)
     except (ConstraintError, FileNotFoundError) as exc:

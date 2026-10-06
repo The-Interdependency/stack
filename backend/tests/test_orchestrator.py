@@ -61,7 +61,7 @@ from backend.freshness import (
     SPEC_SCHEMA, SPEC_VERSION, affected_closure, base_report, freshness_key,
 )
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
-from backend.msdmd import build_spec, evaluate, make, queue_make, run_job
+from backend.msdmd import _clean_stale_siblings, build_spec, evaluate, make, queue_make, run_job
 
 IDENTITY_PRELUDE = r'''import hashlib, sys
 from pathlib import Path as _P
@@ -484,6 +484,72 @@ class FreshMakingTests(unittest.TestCase):
                 report = evaluate(ledger, spec["target"])
             self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
             self.assertNotEqual("fresh", report.state)
+
+    def test_stale_own_siblings_older_than_the_lease_are_cleaned(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            old = os.path.getmtime(target / "x.py") - 3600
+            stale = [target / ".ucns_msdmd.ts.dead1234.candidate", target / ".ucns_msdmd.ts.dead5678.verify",
+                     target / ".ucns_msdmd.ts.fresh-status-verify", target / ".ucns_msdmd.ts.job_gone.accepted-backup"]
+            for path in stale:
+                path.write_text("junk from a crashed worker\n", encoding="utf-8")
+                os.utime(path, (old, old))
+            job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertEqual("fresh", report.state)
+            self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+    def test_young_or_foreign_siblings_are_not_touched(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            young = target / ".ucns_msdmd.ts.live1234.candidate"
+            young.write_text("another worker is still writing\n", encoding="utf-8")
+            foreign = target / ".ucns_msdmd.ts.notes"
+            foreign.write_text("not ours\n", encoding="utf-8")
+            old = os.path.getmtime(target / "x.py") - 3600
+            os.utime(foreign, (old, old))
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            self.assertIn("unrelated target worktree changes", result.error or "")
+            self.assertTrue(young.exists())
+            self.assertTrue(foreign.exists())
+
+    def test_stale_rollback_holding_accepted_bytes_is_restored(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            make(ledger, spec["target"])
+            output = target / "ucns_msdmd.ts"
+            accepted = output.read_bytes()
+            # Crash between publish and SQL acceptance: unaccepted bytes are live.
+            backup = target / ".ucns_msdmd.ts.job_crashed.accepted-backup"
+            backup.write_bytes(accepted)
+            output.write_text("published but never accepted\n", encoding="utf-8")
+            old = os.path.getmtime(target / "x.py") - 3600
+            os.utime(backup, (old, old))
+            with patch("sys.stderr"):
+                cleaned = _clean_stale_siblings(ledger, ledger.get_derivation(spec["target"]), 120)
+            self.assertEqual(["restored .ucns_msdmd.ts.job_crashed.accepted-backup"], cleaned)
+            self.assertEqual(accepted, output.read_bytes())
+            self.assertFalse(backup.exists())
+
+    def test_failed_git_status_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            job, _ = queue_make(ledger, spec["target"])
+            real = subprocess.run
+
+            def broken_status(cmd, *args, **kwargs):
+                if "status" in cmd:
+                    return subprocess.CompletedProcess(cmd, 128, "", "fatal: detected dubious ownership")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=broken_status):
+                result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            self.assertIn("git status failed", result.error or "")
+            self.assertIn("dubious ownership", result.error or "")
+            self.assertFalse((target / "ucns_msdmd.ts").exists())
 
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
