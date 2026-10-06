@@ -299,9 +299,9 @@ class SequenceTable:
         if _sha(origin.identity) != reidentified.identity:
             raise BinaryError('origin identity no longer binds its source')
         for definition in self.definitions:
-            definition.__post_init__()
+            ClosedSequence.__post_init__(definition)
             for occurrence in definition.occurrences:
-                occurrence.__post_init__()
+                Occurrence.__post_init__(occurrence)
         blocks = tuple(d.data for d in self.definitions)
         circles = tuple(d.occurrences[0].circle for d in self.definitions)
         expected = _closed_definitions(origin, blocks, self.order, circles, self.spaces)

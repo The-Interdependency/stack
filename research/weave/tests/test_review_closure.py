@@ -54,6 +54,11 @@
 #   call: self::test_inverse_discovery_honors_the_visit_budget
 #   mutates: none
 #   cleanup: none
+# id: review_native_validator_not_shadowed
+#   proves: binary_sequence_closure, binary_source_refusal
+#   call: self::test_record_instances_cannot_shadow_validation
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 """PR #77 final-review regressions, not cryptographic-strength tests.
 
@@ -207,6 +212,23 @@ class ReviewClosureTests(unittest.TestCase):
                 table=self.fixture()
                 object.__setattr__(table.definitions[0],'attachment_axis',EqualitySpoof())
                 with self.assertRaises(native.BinaryError): getattr(table,method)()
+
+    def test_record_instances_cannot_shadow_validation(self):
+        for target in ('definition', 'occurrence'):
+            with self.subTest(target=target):
+                table=self.fixture(); definition=table.definitions[0]
+                item=definition if target=='definition' else definition.occurrences[0]
+                called=[]
+                object.__setattr__(item,'__post_init__',lambda:called.append(True))
+                self.assertEqual(table.restore(),b'ABxABy')
+                self.assertEqual(called,[], 'record-supplied validation was invoked')
+                if target=='definition':
+                    object.__setattr__(item,'occurrences',(EqualitySpoof(),))
+                else:
+                    object.__setattr__(item,'source_offset',EqualitySpoof())
+                for method in (table.restore,table.receipt,table.wire_occurrences):
+                    with self.assertRaises(native.BinaryError): method()
+                self.assertEqual(called,[])
 
     def native_args(self, source):
         return dict(api=native,geometry=self.geometry,scope=PROFILE.scope,

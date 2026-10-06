@@ -17,7 +17,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 136  # 125 existing + 11 final-review closure regressions.
+EXPECTED_TESTS = 137  # 125 existing + 12 final-review closure regressions.
 
 
 def snapshot():
@@ -63,7 +63,7 @@ def main():
             'cycle_sample_rounds': 3, 'native_occurrence_circles': 7,
             'prime_jump_trace': [5381, 53, 241, 1523],
             'native_origin_methods': 13, 'cycle_repair_methods': 12,
-            'review_closure_methods': 11
+            'review_closure_methods': 12
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),

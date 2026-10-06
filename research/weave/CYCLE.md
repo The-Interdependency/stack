@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 11 review-closure regressions = 136. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 12 review-closure regressions = 137. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -197,6 +197,8 @@ prime-work engine through parsing, accounting, and recovery. Budget failure occu
 before publishing output. Native closure comparison checks the exact UCNS classes
 from the origin's Geometry instance and compares only typed canonical fields, never
 arbitrary object equality. This also rejects equality-spoofing scalar subclasses.
+Validation calls the trusted record classes directly; per-instance methods cannot
+replace the validation of a supplied record.
 
 The inverse rediscovers sequences under the declared selection profile and requires
 both definitions and source order to match. Its rediscovery obeys the same explicit
