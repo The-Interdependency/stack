@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `da8104f00f3e6616432e29a055ec73257471863e82b2bdcf92f2d3addeae0ceb`
+  `6340a86d075031ecee36276313819418ec296a8cc83b6758678f88ff10ee1fcc`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
@@ -63,7 +63,9 @@ release identity.
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
 | `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
-| `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | full gonol/private-key/thread/corpus/interleave/asymmetric construction research; native derivation unresolved; no URPCS implementation inheritance or security standing | no |
+| `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | Stack-owned native binary sequence-cycle candidate; private/public derivation unresolved; no URPCS inheritance or security standing | no |
+| `research/weave/` | `The-Interdependency/ucns` | `905e66964a495d7596a577bb64e4158db9465864` | native exact axis-circle and Mobius geometry; source-verified unchanged mathematical producer for native_binary.py | no |
+| `research/weave/` | `The-Interdependency/uchc` | `4ad94e92be10d2c4c875a848addfda46f3c7cfdb` | origin/axis architecture and domain migration boundary; architectural reference only; speculative binary implementation remains in Stack until graduation gates complete | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/english-gonol/` | `The-Interdependency/edcm` | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | exact repaired EDCM semantic metric-origin producer; preserves canonical O/L identities and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
@@ -237,7 +239,7 @@ independent repository, release, or security-reviewed cryptosystem.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
-- Weave preserves the intended mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and the threat model remain unresolved.
+- Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
 ## UCHC input candidate
@@ -255,3 +257,17 @@ and detailed design attribution remain unresolved; see
 
 Weave native public/private key derivation and source of asymmetry remain
 unresolved. Provenance metadata is not an implementation of that missing law.
+
+## Weave native sequence-cycle candidate
+
+`research/weave/native_binary.py` is the Stack-owned binary-origin and sequence
+closure implementation. It consumes the exact UCNS sources above and follows the
+UCHC origin/axis architecture, without shipping an ungraduated UCHC domain. The
+misplaced UCHC #7 proposal is retained only as source provenance in
+`research/weave/NATIVE_BINARY_PROVENANCE.json`. No geometry authority transfers.
+
+The cycle normalizes once with corpus bytes, discovers repeated multi-byte
+sequences, retains native whole/occurrence-circle relations, uses scoped numeral
+references and prime-route bit partitions, and reverses the completed rounds.
+See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
+and all-cost accounting. This is construction/recovery, not established encryption.

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "da8104f00f3e6616432e29a055ec73257471863e82b2bdcf92f2d3addeae0ceb",
+  "work_graph_sha256": "6340a86d075031ecee36276313819418ec296a8cc83b6758678f88ff10ee1fcc",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -70,7 +70,7 @@
       "Python Gonol Construction remains stack-local research without independent repository or release authority",
       "URPCS is retired historical evidence after GPT-assisted implementation diverged from Erin Spencer's intended multi-arity interleaving specification; why the substitution occurred remains unresolved; immutable public intended-design transcript identity and detailed attribution remain unresolved",
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
-      "Weave preserves the intended multi-arity interleaving mechanism, while uneven partitioning, stage-input composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding, authentication/state, and threat model remain unresolved",
+      "Weave has an explicit Stack-owned native binary sequence-cycle candidate with exact recovery; other profiles, private/public lifting, authentication/state and full-cipher security remain unresolved.",
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
       "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement."
     ]
@@ -421,6 +421,26 @@
       "relation": "unmerged draft PR #66 protocol reference only; no implemented recovery, theorem or minimum-complexity claim",
       "canonical_release": false,
       "authority_transfer": false
+    },
+    {
+      "workspace": "research/weave/",
+      "participant_id": "weave-ucns-geometry",
+      "repository": "The-Interdependency/ucns",
+      "commit": "905e66964a495d7596a577bb64e4158db9465864",
+      "authority": "native exact axis-circle and Mobius geometry",
+      "relation": "source-verified unchanged mathematical producer for native_binary.py",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/weave/",
+      "participant_id": "weave-uchc-architecture",
+      "repository": "The-Interdependency/uchc",
+      "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
+      "authority": "origin/axis architecture and domain migration boundary",
+      "relation": "architectural reference only; speculative binary implementation remains in Stack until graduation gates complete",
+      "authority_transfer": false,
+      "canonical_release": false
     }
   ]
 }

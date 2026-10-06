@@ -300,3 +300,15 @@ and detailed design attribution remain unresolved; see
 
 Weave native public/private key derivation and source of asymmetry remain
 unresolved. Provenance metadata is not an implementation of that missing law.
+
+### Executable Weave sequence cycle
+
+`research/weave/CYCLE.md` documents the current corpus-normalization → repeated
+sequence affixiation → prime-derived bit-interleave profile and exact inverse.
+The binary origin/sequence candidate remains Stack-owned in
+`research/weave/native_binary.py` and consumes unchanged native UCNS geometry.
+UCHC supplies the origin/axis architecture reference; no new binary package has
+graduated there. Private/public key derivation and security remain separate work.
+
+Run `WEAVE_SOURCES=/checkouts python research/weave/cycle.py demo` with the exact
+UCNS source named in `research/weave/CYCLE_NATIVE.json`.
