@@ -244,7 +244,7 @@ Pinned and vendored components keep their own licenses:
 The whole `skill-lib/` snapshot, including
 [`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) and
 `skill-lib/ATTRIBUTION.md`, is an exact copy of The-Interdependency/skill-lib
-`9867ab3`. The doctrine and MSDMD generator pin is that same commit (see
+`38c6433`. The doctrine and MSDMD generator pin is that same commit (see
 `stack-manifest.json` and `backend/fresh-making-provenance.json`). The root
 [`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) is the same text.
 

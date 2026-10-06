@@ -68,11 +68,51 @@ cd /srv/stack
 python3 -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r backend/requirements.txt
+# MSDMD native reader runtimes for the default STACK_SKILL_LIB_ROOT (/srv/stack/skill-lib);
+# backend/ops/install_msdmd_runtime.sh below does the same for a configured root.
+.venv/bin/pip install -r skill-lib/msdmd/requirements.txt
+npm ci --ignore-scripts --prefix skill-lib/msdmd
 
 sudo install -m 0600 backend/deploy/stack-orchestrator.env.example \
   /etc/stack-orchestrator.env
 sudo editor /etc/stack-orchestrator.env
 ```
+
+### MSDMD native reader runtimes
+
+The skill-lib collector at `STACK_SKILL_LIB_ROOT` needs its pinned Python reader
+packages in the worker venv and its TypeScript compiler installed beside the
+worker script. Without them the collector exits 3 and fresh-making fails closed.
+Run this after every skill-lib snapshot refresh, before restarting the worker
+(Node and npm must already be installed; Node version on the VM: hmmm):
+
+```bash
+set -a
+. /etc/stack-orchestrator.env
+set +a
+STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
+```
+
+The script runs `pip install -r $STACK_SKILL_LIB_ROOT/msdmd/requirements.txt`
+into the venv and `npm ci --ignore-scripts --prefix $STACK_SKILL_LIB_ROOT/msdmd`.
+It then prints `python -m msdmd.collect --print-generator-identity --json`, which
+must not report `node` or `typescript` as `absent`. The worker uses the same
+command as the generator identity, so a runtime upgrade re-keys every MSDMD derivation.
+
+Targets that still vendor the schema-1 `.agents/skills/msdmd/collection.ts` helper
+make the collector exit 4 (helper older than the schema-2 output). Those targets
+need a skill-lib propagation before they can be made fresh. A target where git is
+missing from the worker's PATH, or whose root an enclosing repository ignores,
+makes it exit 5. The worker records each refusal as a failed attempt with an
+operator action rather than writing an artifact.
+
+`hmmm`: `stack-orchestrator-worker.service` sets `MemoryDenyWriteExecute=true`,
+which JIT engines such as Node's V8 generally cannot run under. Confirm on the VM
+that the TypeScript reader and the identity probe work inside the unit's sandbox
+(for example `systemd-run --wait --pipe -p MemoryDenyWriteExecute=yes
+-p User=stackorchestrator --working-directory=/srv/stack --setenv=PYTHONPATH=/srv/stack/skill-lib
+/srv/stack/.venv/bin/python -m msdmd.collect --print-generator-identity --json`)
+before relying on fresh-making. `node` must also be on the unit's default PATH.
 
 Create `/var/lib/stack-orchestrator/receipts` and
 `/var/backups/stack-orchestrator/postgres` owned by the service account after that

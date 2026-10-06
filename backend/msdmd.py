@@ -7,7 +7,7 @@ from __future__ import annotations
 #   module_kind: adapter
 #   summary: applies fresh-making to repo-owned MSDMD collections with exact identities, independent rerender verification, rollback-safe publication, and PostgreSQL acceptance
 #   owner: stack
-#   public_surface: build_spec, register_spec, evaluate, queue_make, run_job, make, retry_job
+#   public_surface: build_spec, register_spec, evaluate, queue_make, run_job, make, retry_job, generator_identity, collector_failure
 #   auth_boundary: write
 #   storage_boundary: write
 #   network_boundary: none
@@ -43,6 +43,11 @@ from __future__ import annotations
 #   given: executor candidate and independent verifier output match under unchanged exact identities
 #   then: output is published and PostgreSQL accepts one receipt; acceptance failure restores the previous artifact
 #   class: evidence
+#
+# id: stack_msdmd_collector_refusal_fails_closed
+#   given: the collector exits 3 (reader runtime missing), 4 (target schema helper older than the output) or 5 (git cannot list visible files or the root is git-ignored)
+#   then: the attempt is recorded as failed in the ledger with the exit code and an operator action, nothing is published, and the prior accepted artifact remains the freshness authority
+#   class: verification
 # === END CONTRACTS ===
 
 from datetime import datetime, timezone
@@ -77,22 +82,6 @@ def sha256_file(path: str | Path) -> str:
     return digest.hexdigest()
 
 
-def tree_sha256(root: str | Path, *, suffixes: tuple[str, ...] = (".py",)) -> str:
-    base = Path(root).resolve()
-    if not base.is_dir():
-        raise FileNotFoundError(base)
-    files = sorted(p for p in base.rglob("*") if p.is_file() and (not suffixes or p.suffix in suffixes))
-    if not files:
-        raise ValueError(f"no generator files found under {base}")
-    digest = hashlib.sha256()
-    for path in files:
-        digest.update(path.relative_to(base).as_posix().encode())
-        digest.update(b"\0")
-        digest.update(path.read_bytes())
-        digest.update(b"\0")
-    return digest.hexdigest()
-
-
 def resolve_git_head(root: str | Path) -> str | None:
     proc = subprocess.run(
         ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
@@ -102,11 +91,64 @@ def resolve_git_head(root: str | Path) -> str | None:
     return value if _SHA40.fullmatch(value) else None
 
 
+_GENERATOR_IDENTITY = re.compile(r"^sha256:([0-9a-f]{64})$")
+
+# Collector exit statuses that refuse the run before anything is written
+# (skill-lib msdmd/collect.py). Each fails the attempt closed; nothing publishes.
+COLLECTOR_REFUSALS: dict[int, tuple[str, str]] = {
+    3: ("reader-runtime-missing",
+        "install the MSDMD native reader runtimes for STACK_SKILL_LIB_ROOT (backend/ops/install_msdmd_runtime.sh), then retry"),
+    4: ("schema-helper-outdated",
+        "propagate the current skill-lib msdmd skill into the target so .agents/skills/msdmd/collection.ts exports MSDMD_COLLECTION_HELPER_VERSION, then retry"),
+    5: ("git-visibility-unavailable",
+        "give the worker git on PATH and a readable target checkout that no enclosing repository ignores, then retry"),
+}
+
+
+def collector_failure(stage: str, proc: subprocess.CompletedProcess[str]) -> tuple[str, str | None]:
+    """Return the ledger ``(error, hmmm)`` for a nonzero collector exit."""
+    detail = (proc.stderr or proc.stdout or f"{stage} failed").strip()
+    refusal = COLLECTOR_REFUSALS.get(proc.returncode)
+    if refusal is None:
+        return detail, None
+    code, action = refusal
+    return (f"{stage} refused by collector (exit {proc.returncode}, {code}): {detail}",
+            f"msdmd exit {proc.returncode} ({code}): {action}")
+
+
+def _collector_env(generator_root: str | Path) -> dict[str, str]:
+    env = os.environ.copy()
+    root = str(Path(generator_root))
+    env["PYTHONPATH"] = root if not env.get("PYTHONPATH") else os.pathsep.join((root, env["PYTHONPATH"]))
+    return env
+
+
 def generator_identity(generator_root: str | Path) -> str:
-    package = Path(generator_root).resolve() / "msdmd"
+    """Return the pinned collector's own fingerprint as 64 hex digits.
+
+    Delegates to ``python -m msdmd.collect --print-generator-identity`` under the
+    same interpreter and environment the executor uses, so the identity covers
+    every collector source (Python, TypeScript worker, npm manifest/lock, schema
+    assets, requirements) plus the Python minor, reader package, Node and
+    TypeScript versions. A collector that cannot report it fails closed.
+    """
+    root = Path(generator_root).resolve()
+    package = root / "msdmd"
     if not (package / "collect.py").is_file():
         raise FileNotFoundError(f"MSDMD collector not found: {package / 'collect.py'}")
-    return tree_sha256(package)
+    try:
+        proc = subprocess.run(
+            [sys.executable, "-m", "msdmd.collect", "--print-generator-identity"],
+            cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
+            timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise ValueError(f"MSDMD generator identity timed out: {exc}") from exc
+    match = _GENERATOR_IDENTITY.fullmatch(proc.stdout.strip())
+    if proc.returncode != 0 or not match:
+        detail = (proc.stderr or proc.stdout or "no output").strip()[:500]
+        raise ValueError(f"MSDMD collector at {root} cannot report --print-generator-identity: {detail}")
+    return match.group(1)
 
 
 def _validate_runtime(repo: str, root: Path, generator_root: Path, out: Path) -> None:
@@ -212,9 +254,7 @@ def register_spec(ledger: JobLedger, spec: dict[str, Any]) -> dict[str, Any]:
 
 def _run_collector(spec: dict[str, Any], output: Path, timeout: int) -> subprocess.CompletedProcess[str]:
     runtime = spec["runtime"]
-    env = os.environ.copy()
-    generator_root = str(Path(runtime["generator_root"]))
-    env["PYTHONPATH"] = generator_root if not env.get("PYTHONPATH") else os.pathsep.join((generator_root, env["PYTHONPATH"]))
+    env = _collector_env(runtime["generator_root"])
     return subprocess.run(
         [sys.executable, "-m", "msdmd.collect", "--root", runtime["root"],
          "--repo", runtime["repo"], "--out", str(output), "--source-commit", _source_sha(spec)],
@@ -231,7 +271,11 @@ def _verify_runtime(spec: dict[str, Any], ignored: set[str] | None = None) -> No
     head = resolve_git_head(root)
     if head is None or head != _source_sha(spec):
         raise ConstraintError(f"source checkout differs from desired commit: expected={_source_sha(spec)} current={head}")
-    if f"sha256:{generator_identity(generator_root)}" != spec["generator"]["identity"]:
+    try:
+        current_generator = generator_identity(generator_root)
+    except ValueError as exc:
+        raise ConstraintError(str(exc)) from exc
+    if f"sha256:{current_generator}" != spec["generator"]["identity"]:
         raise ConstraintError("generator identity differs from derivation spec")
     ignored_names = {out.name} | (ignored or set())
     dirty = _unrelated_dirty(root, ignored_names)
@@ -274,10 +318,10 @@ def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
                                    report.accepted_freshness_key, receipt.id, None,
                                    "current verifier cannot establish freshness", [str(exc)])
         if proc.returncode != 0:
-            detail = (proc.stderr or proc.stdout or "verifier failed").strip()
+            error, action = collector_failure("verifier", proc)
             return FreshnessReport(target, "hmmm", "verifier-failed", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
-                                   "current verifier failed", [detail])
+                                   "current verifier failed", [error] + ([action] if action else []))
         if not verify_path.is_file() or sha256_file(verify_path) != actual:
             return FreshnessReport(target, "making-fresh", "verifier-mismatch", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
@@ -369,7 +413,8 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"executor exceeded {timeout}s: {exc}")
         if proc.returncode != 0:
-            return ledger.fail(job.id, error=(proc.stderr or proc.stdout or "executor failed").strip())
+            error, action = collector_failure("executor", proc)
+            return ledger.fail(job.id, error=error, hmmm=action)
         if not candidate.is_file():
             return ledger.fail(job.id, error="executor reported success without candidate output")
 
@@ -384,7 +429,8 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"verifier exceeded {timeout}s: {exc}")
         if verify_proc.returncode != 0:
-            return ledger.fail(job.id, error=(verify_proc.stderr or verify_proc.stdout or "verifier failed").strip())
+            error, action = collector_failure("verifier", verify_proc)
+            return ledger.fail(job.id, error=error, hmmm=action)
         if not verifier.is_file():
             return ledger.fail(job.id, error="verifier reported success without output")
         digest = sha256_file(candidate)

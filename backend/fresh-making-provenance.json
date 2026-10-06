@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "doctrine": {
     "repository": "The-Interdependency/skill-lib",
-    "commit": "9867ab33877f2b1f50f8a501cf379aa99360bd52",
+    "commit": "38c64332b840b2bbe1c07e53aeee8996644548e9",
     "path": "fresh-making/SKILL.md",
     "relation": "exact governing fresh-making doctrine for the stack backend"
   },
   "local_generator_snapshot": {
     "repository": "The-Interdependency/skill-lib",
-    "commit": "9867ab33877f2b1f50f8a501cf379aa99360bd52",
+    "commit": "38c64332b840b2bbe1c07e53aeee8996644548e9",
     "path": "skill-lib/",
     "relation": "stack-local pinned snapshot used by the default MSDMD generator root"
   },
   "evidence": {
-    "skill_lib_compare": "891dc0d13ee9d98d8ee6de3bf6ad5c309364bf92..9867ab33877f2b1f50f8a501cf379aa99360bd52",
+    "skill_lib_compare": "891dc0d13ee9d98d8ee6de3bf6ad5c309364bf92..38c64332b840b2bbe1c07e53aeee8996644548e9",
     "fresh_making_doctrine_changed_in_range": false,
     "msdmd_generator_changed_in_range": true,
     "doctrine_and_snapshot_same_commit": true

@@ -56,7 +56,10 @@ JSON receipts under `STACK_RECEIPT_DIR` are projections for inspection/recovery.
 - Python 3.11+ and `psycopg`.
 - `git`.
 - target checkouts directly under `STACK_REPO_ROOT`.
-- a pinned skill-lib checkout at `STACK_SKILL_LIB_ROOT`.
+- a pinned skill-lib checkout at `STACK_SKILL_LIB_ROOT`, with its MSDMD native
+  reader runtimes installed (`backend/ops/install_msdmd_runtime.sh`: the
+  `msdmd/requirements.txt` packages in the worker venv and
+  `npm ci --ignore-scripts --prefix $STACK_SKILL_LIB_ROOT/msdmd`; Node and npm required).
 - an independent mounted filesystem/device for the verified backup mirror.
 
 Prefer local PostgreSQL Unix-socket/peer authentication. The worker should not need a
@@ -76,8 +79,20 @@ python3 -m venv .venv
 set -a
 . /etc/stack-orchestrator.env
 set +a
+STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
 /srv/stack/.venv/bin/python -m frontend.cli.stackctl db migrate
 ```
+
+The generator identity is the collector's own `--print-generator-identity`. It
+covers collector sources plus the Python minor, reader package, Node and
+TypeScript versions and the reader modules that actually resolve; it runs under the
+worker's own interpreter and environment, and a collector that cannot report it
+fails closed. The collector exits 3 when a reader runtime is missing, 4 when a
+target's vendored schema helper is older than the schema-2 output, and 5 when git
+cannot list the target's visible files or the target root is git-ignored. Each
+fails the attempt closed in the ledger (`failed`, with the exit code and an
+operator action in `hmmm`); nothing is published and any prior accepted artifact
+stays authoritative.
 
 ## Fresh-making usage
 

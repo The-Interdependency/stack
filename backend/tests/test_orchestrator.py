@@ -47,6 +47,7 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -62,7 +63,15 @@ from backend.freshness import (
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
 from backend.msdmd import build_spec, evaluate, make, queue_make, run_job
 
-FAKE_COLLECTOR = r'''from pathlib import Path
+IDENTITY_PRELUDE = r'''import hashlib, sys
+from pathlib import Path as _P
+if "--print-generator-identity" in sys.argv:
+    # Mirrors the real collector's flag: identity of this generator's own bytes.
+    print("sha256:" + hashlib.sha256(_P(__file__).read_bytes()).hexdigest())
+    raise SystemExit(0)
+'''
+
+FAKE_COLLECTOR = IDENTITY_PRELUDE + r'''from pathlib import Path
 import argparse
 p = argparse.ArgumentParser()
 p.add_argument("--root", required=True)
@@ -73,7 +82,7 @@ a = p.parse_args()
 Path(a.out).write_text(f"repo={a.repo}\nsource_commit={a.source_commit}\n", encoding="utf-8")
 '''
 
-NONDETERMINISTIC_COLLECTOR = r'''from pathlib import Path
+NONDETERMINISTIC_COLLECTOR = IDENTITY_PRELUDE + r'''from pathlib import Path
 import argparse, uuid
 p = argparse.ArgumentParser()
 p.add_argument("--root", required=True)
@@ -348,6 +357,49 @@ class FreshMakingTests(unittest.TestCase):
             _, final = make(ledger, spec["target"])
             self.assertEqual(final.state, "fresh")
             self.assertEqual(len(ledger.jobs), 2)
+
+    def test_generator_identity_comes_from_the_collector_and_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, generator, ledger, spec = self._runtime(Path(tmp))
+            collector = generator / "msdmd" / "collect.py"
+            expected = hashlib.sha256(collector.read_bytes()).hexdigest()
+            self.assertEqual(f"sha256:{expected}", spec["generator"]["identity"])
+            # A collector that cannot report --print-generator-identity is never trusted.
+            collector.write_text(FAKE_COLLECTOR.replace(IDENTITY_PRELUDE, ""), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                build_spec(repo="ucns", root=target, generator_root=generator)
+            report = evaluate(ledger, spec["target"])
+            self.assertNotEqual(report.state, "fresh")
+            self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
+
+    def test_collector_refusals_fail_closed_into_the_ledger(self):
+        # The real collector writes nothing on exit 3/4/5; this one even leaves a
+        # file behind to prove the refusal alone keeps it unpublished.
+        for code, name in ((3, "reader-runtime-missing"), (4, "schema-helper-outdated"),
+                           (5, "git-visibility-unavailable")):
+            with self.subTest(code=code), tempfile.TemporaryDirectory() as tmp, _unbound_env():
+                target, generator, ledger, spec = self._runtime(Path(tmp))
+                first, _ = make(ledger, spec["target"])
+                self.assertEqual(first.state, "succeeded")
+                accepted = ledger.get_acceptance(spec["target"])
+                published = (target / "ucns_msdmd.ts").read_bytes()
+                refusing = FAKE_COLLECTOR + (
+                    "import sys\n"
+                    "print('msdmd: ERROR: refused for test', file=sys.stderr)\n"
+                    f"raise SystemExit({code})\n"
+                )
+                (generator / "msdmd" / "collect.py").write_text(refusing, encoding="utf-8")
+                job, _ = queue_make(ledger, spec["target"])
+                self.assertIsNotNone(job)
+                result = run_job(ledger, job.id)
+                self.assertEqual(result.state, "failed")
+                self.assertIn(f"exit {code}, {name}", result.error or "")
+                self.assertIn("refused for test", result.error or "")
+                self.assertIn(f"msdmd exit {code} ({name})", result.hmmm or "")
+                self.assertEqual(published, (target / "ucns_msdmd.ts").read_bytes())
+                self.assertEqual(accepted, ledger.get_acceptance(spec["target"]))
+                self.assertEqual([], sorted(p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")))
+                self.assertNotEqual("fresh", evaluate(ledger, spec["target"]).state)
 
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
