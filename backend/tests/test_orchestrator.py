@@ -528,6 +528,31 @@ class FreshMakingTests(unittest.TestCase):
             self.assertEqual("fresh", report.state)
             self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
 
+    def test_stale_collector_temp_files_are_cleaned_but_young_or_lookalike_ones_are_not(self):
+        # Review P3: a collector killed mid-write leaves its mkstemp(".msdmd-") file in the target root.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            old = os.path.getmtime(target / "x.py") - 3600
+            stale = target / ".msdmd-ab12_z9q"
+            stale.write_text("partial collector output\n", encoding="utf-8")
+            os.utime(stale, (old, old))
+            with patch("sys.stderr"):
+                job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertFalse(stale.exists())
+            for name in (".msdmd-young123", ".msdmd-toolongname1", ".msdmd-UPPER123"):
+                path = target / name
+                path.write_text("x\n", encoding="utf-8")
+                if name != ".msdmd-young123":
+                    os.utime(path, (old, old))
+            (target / "x.py").write_text("x = 9\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(target), "commit", "-qam", "next"], check=True)
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            for name in (".msdmd-young123", ".msdmd-toolongname1", ".msdmd-UPPER123"):
+                self.assertTrue((target / name).exists(), name)
+
     def test_young_or_foreign_siblings_are_not_touched(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
             target, _, ledger, spec = self._runtime(Path(tmp))

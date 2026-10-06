@@ -532,15 +532,20 @@ _SPAWN_HMMM = "the collector process could not be spawned (for example ENOMEM); 
 # ``.<out>.<rand>.candidate`` / ``.verify`` (_temp_output),
 # ``.<out>.<job>.accepted-backup`` (run_job) and ``.<out>.fresh-status-verify``.
 _OWN_SIBLING_SUFFIXES = (".candidate", ".verify", ".accepted-backup")
+# The pinned collector writes ``--out`` through ``tempfile.mkstemp(prefix=".msdmd-")``
+# in the artifact's directory (skill-lib msdmd/collect.py); a collector killed
+# mid-write leaves exactly this name behind in the target root.
+_COLLECTOR_TEMP = re.compile(r"\.msdmd-[a-z0-9_]{8}")
 
 
 def _clean_stale_siblings(ledger: JobLedger, spec: dict[str, Any], max_age_seconds: int) -> list[str]:
     """Remove this adapter's own leftovers that are older than one lease.
 
-    A worker killed mid-run leaves hidden candidate, verify or rollback files
-    beside the artifact; the dirty-worktree check would then hold every later
-    attempt. Only regular files matching our own naming that are older than
-    ``max_age_seconds`` are touched. A stale rollback copy that still holds the
+    A worker or collector killed mid-run leaves hidden candidate, verify,
+    rollback or collector temp (``.msdmd-XXXXXXXX``) files beside the artifact;
+    the dirty-worktree check would then hold every later attempt. Only regular
+    files matching those exact names that are older than ``max_age_seconds``
+    are touched. A stale rollback copy that still holds the
     accepted bytes, while the artifact does not, is restored rather than
     deleted (the crash happened between publish and SQL acceptance).
     """
@@ -557,7 +562,8 @@ def _clean_stale_siblings(ledger: JobLedger, spec: dict[str, Any], max_age_secon
     cleaned: list[str] = []
     for path in sorted(output.parent.iterdir()):
         rest = path.name[len(prefix):] if path.name.startswith(prefix) else ""
-        if not rest or not (rest == "fresh-status-verify" or rest.endswith(_OWN_SIBLING_SUFFIXES)):
+        ours = bool(rest) and (rest == "fresh-status-verify" or rest.endswith(_OWN_SIBLING_SUFFIXES))
+        if not ours and not _COLLECTOR_TEMP.fullmatch(path.name):
             continue
         try:
             info = path.lstat()
