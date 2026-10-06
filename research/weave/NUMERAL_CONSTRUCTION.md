@@ -51,8 +51,8 @@ Default adjustable `Limits`: 64 MiB output, 80 MiB wire, 137468 definitions,
 1000000 references, prime index100000, prime value2^32-1, sieve4000000 cells,
 256 steps per recipe, and16000000 aggregate prime-work units. Resource refusal
 means the chosen execution profile cannot complete that work, not falsification.
-Malformed immutable structures raise `Refused`, not `ResourceLimit`. Decode parsing
-and validation now share one charged prime engine rather than resetting the budget.
+Malformed immutable structures raise `Refused`, not `ResourceLimit`. Decode evaluates each recipe once under one charged prime engine. Final structural
+validation reuses the values just constructed, without a redundant recipe replay.
 
 ## Self-contained wire and accounting
 
@@ -126,3 +126,25 @@ and BitBlock/PrimePath implementations, not methods attached to supplied instanc
 BitBlock fields are rechecked before use. A caller-provided override cannot turn an
 invalid entry into an admitted packet or change a literal/recipe during serialization.
 This is a data-record boundary, not a sandbox against replacement of the runtime.
+
+
+## Same-budget recipe recovery
+
+A packet admitted by `encode(packet, limits)` no longer needs a second recipe-work
+allowance merely to decode. During `decode`, trusted recipe replay constructs each
+bound integer once, with one aggregate engine across definitions. Typed fields,
+angles, unique symbols/attachments, references and output length are checked after
+parsing without re-executing the recipes. For `PrimePath(101, ())`, encoding and
+decoding each consume five units and both succeed at `prime_work=5`; both refuse
+at four. Two such five-unit definitions consume ten, not five or twenty.
+
+This is local reuse of decoder-owned reconstruction, not cached authorization of
+mutable data. Ordinary Packet/Entry validation still verifies supplied recipe/value
+relations. Altering a decoded object's recipe or block cannot bypass later encoding,
+accounting or restoration. Trusted class dispatch is preserved for structural checks.
+Separate operations in one CLI call still share their actual total work allowance:
+for the five-unit example, inspect uses ten units and recover uses fifteen.
+
+Run `python -m unittest discover -s tests -p test_numeral_replay.py -v` for four
+focused witnesses. The binary wire format, recipe algebra and native dependencies
+are unchanged. Successful reconstruction is not cryptographic decryption.

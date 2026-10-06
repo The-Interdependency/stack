@@ -37,10 +37,10 @@ class NumeralReviewTests(unittest.TestCase):
         path = PrimePath(101, ())
         p = Packet('budget', 0, (Entry(A, BitBlock(101, 16), Fraction(1, 7), 1, path),), A)
         wire = encode(p)
-        # One recipe step and four trial-divisor candidates per pass: 10 total.
+        # One trusted replay: one step and four trial-divisor candidates, five total.
         with self.assertRaises(ResourceLimit):
-            decode(wire, Limits(prime_work=9))
-        self.assertEqual(decode(wire, Limits(prime_work=10)), p)
+            decode(wire, Limits(prime_work=4))
+        self.assertEqual(decode(wire, Limits(prime_work=5)), p)
 
     def test_malformed_structures_are_not_capacity_failures(self):
         p = Packet('scope', 0, (Entry(A, BitBlock(5,8), Fraction(1,7), 1),), A)

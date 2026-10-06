@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record + 3 header-admission regressions = 164. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record + 3 header-admission + 4 numeral-replay regressions = 168. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -309,7 +309,35 @@ still reaches real scheduler evaluation and its existing budget refusal.
 
 Usage: `WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_terminal_records.py -k HeaderAdmissionTests -v`.
 
-Current repaired local result: **164 tests passed, zero failures, errors or skips**,
-with unchanged sources during execution. The 152-test result above is an earlier
-checkpoint, not the current suite result. Hosted checks and terminal review remain
-separate acceptance gates.
+The outer-header repair passed its then-current **164-test** local suite with
+zero failures, errors or skips. The current result is recorded below; neither the
+152-test nor 164-test checkpoint is presented as the latest inventory.
+
+
+## Single recipe replay during numeral decoding
+
+The review of `8bc5e1f7ce7f` found that a shared counter still charged decoding
+for a redundant second recipe evaluation. A recipe needing five work units could
+encode under `prime_work=5` but fail to decode under those identical limits.
+
+The decoder now reconstructs each recipe-backed block once using the trusted
+PrimePath implementation and one aggregate engine. It then checks the packet's
+complete typed structure, angular attachments, definition uniqueness, occurrences
+and declared length without replaying those same definitions. No caller-supplied
+bypass or reusable validation flag is introduced. Public validation, encoding,
+accounting, occurrence export and restoration continue to revalidate supplied
+objects and recipes; mutation after decoding is not trusted.
+
+Four regressions in `tests/test_numeral_replay.py` verify the exact same-budget
+roundtrip, one replay per definition and true aggregate refusal, malformed recipe
+record rejection, and revalidation after a decoded record is changed. The prior
+budget tests now count necessary actual work rather than mandating duplicate work.
+CLI inspect/recover still share one counter across their distinct operations.
+
+Usage: `python -m unittest discover -s tests -p test_numeral_replay.py -v`.
+
+Current repaired local result: **168 tests passed, zero failures, errors or skips**,
+with unchanged sources during execution. The native source lock, profile, wire
+format, UCNS producers and 6,735-byte exact-recovery demo are unchanged. This
+numeral resource repair does not change Weave's cryptographic standing. Hosted
+checks and current-head terminal review remain separate acceptance gates.

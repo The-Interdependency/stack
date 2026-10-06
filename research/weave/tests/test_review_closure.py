@@ -172,8 +172,9 @@ class ReviewClosureTests(unittest.TestCase):
 
     def test_cli_shares_prime_budget_through_inspect_and_recover(self):
         wire = numeral.encode(self.recipe_packet())
-        # Decode charges 10, accounting 5, and restore a further 5 work units.
-        for command, minimum in (('inspect',15), ('recover',20)):
+        # Decode charges 5, accounting 5, and restore a further 5 work units.
+        # Separate public operations revalidate; the shared CLI counter never resets.
+        for command, minimum in (('inspect',10), ('recover',15)):
             for budget, success in ((minimum-1,False), (minimum,True)):
                 with self.subTest(command=command,budget=budget), tempfile.TemporaryDirectory() as directory:
                     root=Path(directory); src=root/'record'; dst=root/'out'; src.write_bytes(wire)

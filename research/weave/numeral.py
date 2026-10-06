@@ -247,7 +247,10 @@ class Entry:
     circle: int
     recipe: PrimePath | None = field(default=None, repr=False)
 
-    def validate(self, limits: Limits, *, _engine=None) -> None:
+    def _validate_fields(self, limits: Limits) -> None:
+        """Check representation fields; this alone does not establish recipe truth."""
+        if type(self) is not Entry:
+            raise Refused("exact Entry required")
         _symbol(self.symbol)
         if type(self.block) is not BitBlock:
             raise Refused("a definition must contain an exact BitBlock")
@@ -257,8 +260,14 @@ class Entry:
         if self.block.length > limits.output_bits:
             raise ResourceLimit("definition exceeds bit budget")
         _validate_attachment(self.angle, self.circle)
+        if self.recipe is not None and type(self.recipe) is not PrimePath:
+            raise Refused("exact PrimePath required")
+
+    def validate(self, limits: Limits, *, _engine=None) -> None:
+        """Validate supplied fields and independently replay any supplied recipe."""
+        Entry._validate_fields(self, limits)
         if self.recipe is not None:
-            if type(self.recipe) is not PrimePath or PrimePath.replay(self.recipe, limits, _engine=_engine)[-1] != self.block.value:
+            if PrimePath.replay(self.recipe, limits, _engine=_engine)[-1] != self.block.value:
                 raise Refused("recipe does not construct its bound integer")
 
 
@@ -274,7 +283,12 @@ class Packet:
     entries: tuple[Entry, ...]
     symbols: str
 
-    def validate(self, limits: Limits = Limits(), *, _engine=None) -> int:
+    def _validate_fields(self, limits: Limits) -> int:
+        """Check typed structure and count bits, without claiming recipe validation.
+
+        Decoder-owned recipes already produced their bound blocks by trusted replay.
+        Other public operations must use validate(), which replays supplied recipes.
+        """
         if type(self) is not Packet:
             raise Refused("exact Packet required")
         if type(self.origin) is not str or not self.origin or len(self.origin.encode("utf-8")) > 1024:
@@ -290,11 +304,8 @@ class Packet:
             raise ResourceLimit("occurrence stream exceeds execution budget")
         mapping = {}
         angles = set()
-        primes = _engine if _engine is not None else _Primes(limits)
         for entry in self.entries:
-            if type(entry) is not Entry:
-                raise Refused("Entry required")
-            Entry.validate(entry, limits, _engine=primes)
+            Entry._validate_fields(entry, limits)
             if entry.symbol in mapping or entry.angle in angles:
                 raise Refused("duplicate symbol or angular attachment in this scope")
             mapping[entry.symbol] = entry
@@ -306,6 +317,14 @@ class Packet:
             total += mapping[symbol].block.length
             if total > limits.output_bits:
                 raise ResourceLimit("reconstructed stream exceeds bit budget")
+        return total
+
+    def validate(self, limits: Limits = Limits(), *, _engine=None) -> int:
+        """Validate all supplied data, including one recipe replay per definition."""
+        total = Packet._validate_fields(self, limits)
+        primes = _engine if _engine is not None else _Primes(limits)
+        for entry in self.entries:
+            Entry.validate(entry, limits, _engine=primes)
         return total
 
     def occurrences(self, limits: Limits = Limits()) -> tuple[tuple[str, int, int, int], ...]:
@@ -494,8 +513,11 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
     if reader.pos != len(data):
         raise Refused("trailing packet data")
     packet = Packet(origin, round_id, tuple(entries), symbols)
-    # Parsing and structural validation share one charged prime-work budget.
-    if Packet.validate(packet, limits, _engine=primes) != declared:
+    # Every recipe above produced its block through trusted replay under this
+    # decoder's single charged engine. Check the remaining typed structure and
+    # occurrence length without replaying those same recipes a second time.
+    # No reusable "validated" flag or caller-supplied bypass is attached to Packet.
+    if Packet._validate_fields(packet, limits) != declared:
         raise Refused("declared output length disagrees with occurrences")
     return packet
 
