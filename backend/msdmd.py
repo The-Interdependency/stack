@@ -407,6 +407,10 @@ def _verify_runtime(spec: dict[str, Any], ignored: set[str] | None = None) -> No
     head = resolve_git_head(root)
     if head is None or head != _source_sha(spec):
         raise ConstraintError(f"source checkout differs from desired commit: expected={_source_sha(spec)} current={head}")
+    if spec["generator"]["identity"] == WORKER_PENDING:
+        raise ConstraintError("generator identity is worker-pending: no worker has observed it yet; queue this "
+                              "target for the worker (--queue-only), or pass --record-identity-here on a host "
+                              "whose shell is the executor")
     try:
         current_generator = generator_identity(generator_root)
     except ValueError as exc:
@@ -490,8 +494,13 @@ def queue_make(ledger: JobLedger, target: str, *, executor: str = "local",
             return None, FreshnessReport(target, "making-fresh", "obsolete-attempt-finishing", key,
                                          report.accepted_freshness_key, report.receipt_id, active.id,
                                          "older-key attempt must terminate before replacement work", [])
-    return ledger.enqueue(kind="fresh.make", target=target, freshness_key=key,
-                          payload=_job_payload(registered), executor=executor), report
+    job = ledger.enqueue(kind="fresh.make", target=target, freshness_key=key,
+                         payload=_job_payload(registered), executor=executor)
+    if job.state in {"succeeded", "failed", "hmmm", "cancelled"}:
+        # Same key as an earlier terminal attempt (a repair, or a run that was
+        # held): asking for freshness again re-queues it as a later attempt.
+        job = ledger.retry(job.id, executor=executor)
+    return job, report
 
 
 def _job_payload(spec: dict[str, Any]) -> dict[str, Any]:
@@ -598,7 +607,15 @@ def _temp_output(output: Path, suffix: str) -> Path:
 
 
 def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
-            executor: str | None = None, lease_seconds: int | None = None) -> Job:
+            executor: str | None = None, lease_seconds: int | None = None,
+            observe_generator: bool = True) -> Job:
+    """Execute one fresh.make job.
+
+    The worker observes and records the generator identity
+    (``observe_generator=True``). Operator-shell runs pass ``False``: they keep
+    the worker-recorded identity and hold (with the differing components)
+    unless this environment reproduces it, so they never re-key the derivation.
+    """
     job = ledger.get(job_id)
     if job.kind != "fresh.make":
         raise ValueError(f"unsupported job kind: {job.kind}")
@@ -617,12 +634,12 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
 
     # The executing worker is the only place the generator identity is observed.
     queued = ledger.get_derivation(job.target)
-    spec = refresh_identities(queued)
+    spec = refresh_identities(queued, observe_generator=observe_generator)
     register_spec(ledger, spec)
     key = freshness_key(spec)
     if key != job.freshness_key:
         moved = _moved(job, queued, spec)
-        if (job.payload.get("generator_identity") == WORKER_PENDING
+        if (observe_generator and job.payload.get("generator_identity") == WORKER_PENDING
                 and job.payload.get("inputs", queued["inputs"]) == spec["inputs"]
                 and _GENERATOR_IDENTITY.fullmatch(spec["generator"]["identity"])):
             # Queued from a shell before any worker observed the generator: the
@@ -727,22 +744,29 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
 
 
 def make(ledger: JobLedger, target: str, *, executor: str = "local",
-         worker_id: str = "operator") -> tuple[Job | None, FreshnessReport]:
-    job, before = queue_make(ledger, target, executor=executor)
+         worker_id: str = "operator", observe_generator: bool = True) -> tuple[Job | None, FreshnessReport]:
+    """Queue and run one target. Operator shells pass ``observe_generator=False``.
+
+    In that mode a ``worker-pending`` derivation is only queued (the worker
+    must observe the identity first); otherwise the job runs here and holds
+    unless this environment reproduces the worker-recorded identity.
+    """
+    job, before = queue_make(ledger, target, executor=executor, observe_generator=observe_generator)
     if job is None:
         return None, before
-    if job.state in {"succeeded", "failed", "hmmm", "cancelled"}:
-        job = ledger.retry(job.id, executor=executor)
     if job.state in {"leased", "running", "verifying"}:
-        return job, evaluate(ledger, target)
-    result = run_job(ledger, job.id, worker_id=worker_id, executor=executor)
-    return result, evaluate(ledger, target)
+        return job, evaluate(ledger, target, observe_generator=observe_generator)
+    if not observe_generator and ledger.get_derivation(target)["generator"]["identity"] == WORKER_PENDING:
+        return job, evaluate(ledger, target, observe_generator=False)
+    result = run_job(ledger, job.id, worker_id=worker_id, executor=executor, observe_generator=observe_generator)
+    return result, evaluate(ledger, target, observe_generator=observe_generator)
 
 
 def retry_job(ledger: JobLedger, job_id: str, *, executor: str = "local",
-              worker_id: str = "operator") -> Job:
+              worker_id: str = "operator", observe_generator: bool = True) -> Job:
     queued = ledger.retry(job_id, executor=executor)
-    return run_job(ledger, queued.id, worker_id=worker_id, executor=executor)
+    return run_job(ledger, queued.id, worker_id=worker_id, executor=executor,
+                   observe_generator=observe_generator)
 
 
 def registered_affected_closure(ledger: JobLedger, changed_targets: list[str]) -> list[str]:

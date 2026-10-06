@@ -108,6 +108,13 @@ python -m frontend.cli.stackctl fresh make-msdmd ucns \
   --source-sha <40-hex-commit>
 ```
 
+Operator-shell `make-msdmd`, `fresh make`, `fresh run` and `fresh retry` never
+record the shell's generator identity. A `worker-pending` target is only queued
+for the worker; otherwise the job runs here and holds, naming the differing
+components, unless this environment reproduces the worker-recorded identity.
+On a host with no worker, where the shell is the executor, add
+`--record-identity-here` to `make-msdmd` or `fresh make`.
+
 Inspect or repair a registered derivation:
 
 ```bash
