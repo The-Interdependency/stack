@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up regressions = 152. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record regressions = 161. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -257,3 +257,37 @@ WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_final_find
 All 152 tests pass on the repaired local source. The three-round demo still costs
 6,735 total bytes and recovers exactly. These repairs change neither the UCNS
 producer pins nor the ownership or cryptographic standing of the construction.
+
+## Canonical rational, route and inverse validation
+
+The three terminal-review findings at `76508332f353` are exercised by
+`tests/test_terminal_records.py`. Numeral attachments validate the exact integer
+numerator and positive denominator and compare them with a newly normalized
+Fraction before serialization. Altering an exact Fraction object's internals no
+longer produces a record the canonical decoder would reject. Native coordinate
+and space inputs receive the same canonical-field check before geometric work.
+
+`plan` validates a supplied Route by re-executing its PrimePath with trusted
+methods and comparing the typed trace and determinant. Direct construction and
+mutation do not create an evaluated route merely through the record's class.
+Its optional `limits` and `engine` parameters account for this actual replay.
+Both cycle directions share one scheduler engine across initial evaluation and
+all subsequent route validations. The aggregate work allowance is not reset;
+a workload that formerly fit only because revalidation was omitted may now
+refuse within its declared budget. The split formula and valid results are unchanged.
+
+Native inverse recovery, its axis construction and coordinate replay call trusted
+Geometry methods. The cycle's corresponding geometric exports do so as well.
+Supplying replacement instance methods cannot license arbitrary coordinates. This
+remains a data-record validation boundary, not protection against modification of
+trusted Python classes or producer modules.
+
+Run these nine regressions with:
+
+```sh
+WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_terminal_records.py -v
+```
+
+The native source lock rotates with this repair. Regenerate records tied to the
+previous lock rather than treating them as evidence for the new source. UCNS
+producer source, UCHC architectural reference and Stack ownership are unchanged.

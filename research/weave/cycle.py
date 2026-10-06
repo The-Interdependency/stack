@@ -318,9 +318,9 @@ def affix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
     origin = api.ByteOrigin(data,scope,round_id,geometry,root)
     circles = tuple(spec.circle_order[i%7] for i in range(len(partition.blocks)))
     table = api.close_sequences(origin,partition.blocks,partition.order,circles,spec.spaces)
-    entries = tuple(Entry(_symbol(i),BitBlock.from_bytes(d.data),geometry.lift(d.state),circles[i])
+    entries = tuple(Entry(_symbol(i),BitBlock.from_bytes(d.data),api.Geometry.lift(geometry,d.state),circles[i])
                     for i,d in enumerate(table.definitions))
-    wire_items = table.wire_occurrences()
+    wire_items = api.SequenceTable.wire_occurrences(table)
     symbols = ''.join(entries[i].symbol for i,_ in wire_items)
     packet = Packet(origin.identity,round_id,entries,symbols)
     encoded = encode_numeral(packet,limits.numeral())
@@ -329,7 +329,7 @@ def affix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
     for count in counts:
         out.extend(_uint(count))
     for _,occurrence in wire_items:
-        position = geometry.lift(occurrence.source_state)
+        position = api.Geometry.lift(geometry,occurrence.source_state)
         out.extend(_uint(position.numerator)+_uint(position.denominator))
         if len(out) > limits.round_bytes:
             raise ResourceLimit('affixiation coordinates exceed round byte budget')
@@ -389,9 +389,9 @@ def unaffix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
         blocks=tuple(e.block.to_bytes() for e in packet.entries),circles=circles,spaces=spec.spaces,
         counts=counts,wire_order=tuple(ids[s] for s in packet.symbols),source_turns=positions,
         max_bytes=limits.round_bytes)
-    if tuple(geometry.lift(d.state) for d in table.definitions) != tuple(e.angle for e in packet.entries):
+    if tuple(api.Geometry.lift(geometry,d.state) for d in table.definitions) != tuple(e.angle for e in packet.entries):
         raise Refused('whole-circle sequence attachments do not reconstruct')
-    restored = table.restore()
+    restored = api.SequenceTable.restore(table)
     selected = discover(restored, max_bytes=limits.round_bytes,
                         visit_budget=limits.discovery_visits)
     if (selected.blocks != tuple(d.data for d in table.definitions)
@@ -405,7 +405,8 @@ def _prepared(profile: Profile, limits: CycleLimits):
     if len(profile.rounds) > limits.rounds:
         raise ResourceLimit('round count exceeds execution budget')
     engine = _Primes(limits.numeral())
-    return tuple(Route.evaluate(s.path,limits.numeral(),engine=engine) for s in profile.rounds)
+    routes = tuple(Route.evaluate(s.path,limits.numeral(),engine=engine) for s in profile.rounds)
+    return routes, engine
 
 
 def _native_identity() -> bytes:
@@ -415,7 +416,7 @@ def _native_identity() -> bytes:
 def forward(message: bytes, corpus: bytes, profile: Profile, sources: str | Path,
             limits: CycleLimits = CycleLimits()):
     """Run the stated cycle; return its full research record and size-only report."""
-    routes = _prepared(profile,limits)
+    routes, engine = _prepared(profile,limits)
     api,geometry = load_native(sources)
     data = normalize(message,corpus,profile,limits)
     root = api.ByteOrigin(data,profile.scope,0,geometry).message_origin
@@ -424,7 +425,7 @@ def forward(message: bytes, corpus: bytes, profile: Profile, sources: str | Path
     for i,(spec,route) in enumerate(zip(profile.rounds,routes)):
         packed,stats = affix(data,api=api,geometry=geometry,scope=profile.scope,root=root,
                             round_id=i,spec=spec,limits=limits)
-        split = plan(len(packed)*8,route,spec.arities)
+        split = plan(len(packed)*8,route,spec.arities,limits.numeral(),engine=engine)
         data = interleave(packed,split,end_order=spec.end_order)
         rows.append({'round':i,**stats,'permutation_bit_count':split.bit_length})
     header = MAGIC + _native_identity() + profile.identity + bytes.fromhex(root) + _uint(len(rows))
@@ -445,7 +446,7 @@ def reverse(wire: bytes, corpus: bytes, profile: Profile, sources: str | Path,
         raise Refused('cycle record must be bytes')
     if len(wire) > limits.round_bytes+128:
         raise ResourceLimit('cycle record exceeds final byte budget')
-    routes = _prepared(profile,limits)
+    routes, engine = _prepared(profile,limits)
     api,geometry = load_native(sources)
     reader = _Reader(wire)
     if reader.take(4) != MAGIC:
@@ -460,7 +461,7 @@ def reverse(wire: bytes, corpus: bytes, profile: Profile, sources: str | Path,
         raise Refused('trailing cycle bytes')
     for i in range(len(profile.rounds)-1,-1,-1):
         spec,route = profile.rounds[i],routes[i]
-        split = plan(len(data)*8,route,spec.arities)
+        split = plan(len(data)*8,route,spec.arities,limits.numeral(),engine=engine)
         packed = interleave(data,split,inverse=True,end_order=spec.end_order)
         data = unaffix(packed,api=api,geometry=geometry,scope=profile.scope,root=root,
                       round_id=i,spec=spec,limits=limits)

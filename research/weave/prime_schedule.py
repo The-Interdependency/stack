@@ -48,6 +48,23 @@ class Route:
     trace: tuple[int, ...]
     determinant: int
 
+    def validate(self, limits: Limits = Limits(), *, engine=None) -> int:
+        """Re-execute the claimed relation before planning from a supplied record.
+
+        The optional engine is trusted execution context. Cycle callers share it
+        with initial evaluation and every round, so validation cannot reset the
+        scheduler's aggregate work allowance. No record-owned method is invoked.
+        """
+        if (type(self) is not Route or type(self.path) is not PrimePath
+                or type(self.trace) is not tuple or not self.trace
+                or any(type(v) is not int or v < 2 for v in self.trace)
+                or type(self.determinant) is not int or self.determinant < 1):
+            raise Refused('route requires exact path, trace and determinant fields')
+        expected = Route.evaluate(self.path, limits, engine=engine)
+        if self.trace != expected.trace or self.determinant != expected.determinant:
+            raise Refused('route fields do not reproduce the claimed prime path')
+        return expected.determinant
+
     @classmethod
     def evaluate(cls, path: PrimePath, limits: Limits = Limits(), *, engine=None):
         if type(path) is not PrimePath:
@@ -94,7 +111,9 @@ def _composition(n: int, arity: int, rank: int) -> tuple[int, ...]:
     return tuple(b-a for a,b in zip(points, points[1:]))
 
 
-def plan(bit_length: int, route: Route, arities: tuple[int, ...]) -> SplitPlan:
+def plan(bit_length: int, route: Route, arities: tuple[int, ...],
+         limits: Limits = Limits(), *, engine=None) -> SplitPlan:
+    """Validate the route relation under the supplied budget, then derive splits."""
     if type(bit_length) is not int or bit_length < 1:
         raise Refused('positive bit length required')
     if type(route) is not Route:
@@ -103,8 +122,9 @@ def plan(bit_length: int, route: Route, arities: tuple[int, ...]) -> SplitPlan:
             or any(type(a) is not int or not 2 <= a <= min(64,bit_length) for a in arities)
             or len(set(arities)) != len(arities)):
         raise Refused('distinct admissible arities must be integers 2..min(64, bit_length)')
-    arity = arities[route.determinant % len(arities)]
-    rank = (route.determinant//len(arities)) % comb(bit_length-1, arity-1)
+    determinant = Route.validate(route, limits, engine=engine)
+    arity = arities[determinant % len(arities)]
+    rank = (determinant//len(arities)) % comb(bit_length-1, arity-1)
     return SplitPlan(bit_length, _composition(bit_length, arity, rank), rank)
 
 
@@ -113,7 +133,7 @@ def interleave(data: bytes, split: SplitPlan, *, inverse: bool = False,
     """Rearrange bits; do not reinterpret the output as bytes until the pass ends."""
     if type(data) is not bytes or type(split) is not SplitPlan:
         raise Refused('bytes and SplitPlan required')
-    if type(inverse) is not bool or end_order not in ('first-last','last-first'):
+    if type(inverse) is not bool or type(end_order) is not str or end_order not in ('first-last','last-first'):
         raise Refused('explicit Boolean inverse and supported end order required')
     if (type(split.bit_length) is not int or split.bit_length != len(data)*8
             or type(split.lengths) is not tuple or not split.lengths

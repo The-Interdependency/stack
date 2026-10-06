@@ -90,10 +90,18 @@ def _natural(value, name: str) -> int:
 
 def _fraction_fields(value: Fraction) -> tuple[int, int]:
     """Extract builtin fields only; hostile equality must never authorize a record."""
-    if (type(value) is not Fraction or type(value.numerator) is not int
-            or type(value.denominator) is not int or value.denominator <= 0):
+    if type(value) is not Fraction:
+        raise BinaryError('native coordinate requires an exact Fraction')
+    try:
+        numerator, denominator = value.numerator, value.denominator
+    except AttributeError as exc:
+        raise BinaryError('native coordinate is missing rational fields') from exc
+    if type(numerator) is not int or type(denominator) is not int or denominator <= 0:
         raise BinaryError('native coordinate requires exact Fraction fields')
-    return value.numerator, value.denominator
+    normalized = Fraction(numerator, denominator)
+    if (normalized.numerator, normalized.denominator) != (numerator, denominator):
+        raise BinaryError('native coordinate requires canonical Fraction fields')
+    return numerator, denominator
 
 
 def _sha(value: str) -> str:
@@ -140,21 +148,21 @@ class Geometry:
             origin_sha256=origin_sha256, axis_count=count, axis_ordinal=ordinal)
 
     def placed(self, axis, space: Fraction):
-        if type(space) is not Fraction:
-            raise BinaryError('space relationship must be an exact Fraction')
+        _fraction_fields(space)
+        Geometry._axis_fields(self, axis)
         return self.mobius_module.native_mobius_state(axis.turn - space)
 
     def recover_axis(self, origin: str, count: int, position: Fraction, space: Fraction):
         """Invert the native frame displacement and recover its exact source axis."""
-        if type(position) is not Fraction or not 0 <= position < 2:
+        numerator, denominator = _fraction_fields(position)
+        if not 0 <= numerator < 2*denominator:
             raise BinaryError('canonical complete position in [0,2) required')
-        if type(space) is not Fraction:
-            raise BinaryError('exact Fraction space relationship required')
+        _fraction_fields(space)
         state = self.mobius_module.native_mobius_state(position).advance(space)
         ordinal = state.phase_turns * count
         if state.frame.sign != 1 or ordinal.denominator != 1:
             raise BinaryError('position does not lift to a source byte axis')
-        return self.axis(origin, count, ordinal.numerator)
+        return Geometry.axis(self, origin, count, ordinal.numerator)
 
     def _axis_fields(self, axis) -> tuple:
         """Inspect the exact class from this verified producer instance, then fields.
@@ -183,13 +191,17 @@ class Geometry:
                 frame = 1
             else:
                 raise BinaryError('state must carry this Geometry native frame')
-            return _fraction_fields(state.phase_turns), frame
+            phase = _fraction_fields(state.phase_turns)
+            if not 0 <= phase[0] < phase[1]:
+                raise BinaryError('native state phase is not canonical')
+            return phase, frame
         except AttributeError as exc:
             raise BinaryError('native state is missing required fields') from exc
 
     def lift(self, state) -> Fraction:
         """Serialize the native complete frame in [0,2), not just visible phase."""
-        return state.phase_turns + (1 if state.frame.sign < 0 else 0)
+        phase, frame = Geometry._state_fields(self, state)
+        return Fraction(*phase) + frame
 
 
 @dataclass(frozen=True)
@@ -369,8 +381,8 @@ def _closed_definitions(origin: ByteOrigin, blocks: tuple[bytes, ...],
         raise BinaryError('immutable partition inputs required')
     if len(circles) != len(blocks) or len(spaces) != 8:
         raise BinaryError('one circle per definition and exactly eight space relationships required')
-    if any(type(s) is not Fraction for s in spaces):
-        raise BinaryError('exact Fraction space relationships required')
+    for space in spaces:
+        _fraction_fields(space)
     if any(type(b) is not bytes or not b for b in blocks) or len(set(blocks)) != len(blocks):
         raise BinaryError('definitions must be unique nonempty byte sequences')
     if any(type(c) is not int or not 1 <= c <= 7 for c in circles):
@@ -450,8 +462,8 @@ def recover_sequences(geometry: Geometry, *, scope: str, message_origin: str,
         raise BinaryError('nonempty byte definitions required')
     if any(type(c) is not int or not 1 <= c <= 7 for c in circles):
         raise BinaryError('occurrence circle must be 1..7')
-    if any(type(s) is not Fraction for s in spaces):
-        raise BinaryError('exact space relationships required')
+    for space in spaces:
+        _fraction_fields(space)
     if any(type(n) is not int or n < 0 for n in counts):
         raise BinaryError('nonnegative circle occurrence counts required')
     if sum(counts) != len(wire_order) or len(source_turns) != len(wire_order):
@@ -464,7 +476,7 @@ def recover_sequences(geometry: Geometry, *, scope: str, message_origin: str,
             index, turn = wire_order[cursor], source_turns[cursor]
             if type(index) is not int or not 0 <= index < len(blocks) or circles[index] != circle:
                 raise BinaryError('reference is not on its declared occurrence circle')
-            axis = geometry.recover_axis(origin_identity, byte_length, turn, spaces[circle])
+            axis = Geometry.recover_axis(geometry, origin_identity, byte_length, turn, spaces[circle])
             positions.append((axis.axis_ordinal, index))
             total += len(blocks[index])
             if total > byte_length:
@@ -484,8 +496,8 @@ def recover_sequences(geometry: Geometry, *, scope: str, message_origin: str,
     if origin.identity != origin_identity:
         raise BinaryError('reconstructed origin identity differs')
     table = close_sequences(origin, blocks, tuple(order), circles, spaces)
-    replay = table.wire_occurrences()
-    if tuple(i for i, _ in replay) != wire_order or tuple(geometry.lift(o.source_state) for _, o in replay) != source_turns:
+    replay = SequenceTable.wire_occurrences(table)
+    if tuple(i for i, _ in replay) != wire_order or tuple(Geometry.lift(geometry, o.source_state) for _, o in replay) != source_turns:
         raise BinaryError('circle streams do not replay in canonical geometric order')
     return table
 

@@ -223,8 +223,18 @@ def _symbol(symbol: str) -> None:
 
 
 def _validate_attachment(angle: Fraction, circle: int) -> None:
-    if type(angle) is not Fraction or not 0 <= angle < 2:
-        raise Refused("exact supplied angle must be in [0,2) turns")
+    if type(angle) is not Fraction:
+        raise Refused("exact supplied angle must be a Fraction")
+    try:
+        numerator, denominator = angle.numerator, angle.denominator
+    except AttributeError as exc:
+        raise Refused("angle is missing its rational fields") from exc
+    if (type(numerator) is not int or type(denominator) is not int
+            or denominator <= 0 or not 0 <= numerator < 2*denominator):
+        raise Refused("exact angle fields must describe [0,2) turns")
+    canonical_angle = Fraction(numerator, denominator)
+    if (canonical_angle.numerator, canonical_angle.denominator) != (numerator, denominator):
+        raise Refused("angle fraction must have canonical fields")
     if type(circle) is not int or not 1 <= circle <= 7:
         raise Refused("occurrence circle must be one of the seven")
 
