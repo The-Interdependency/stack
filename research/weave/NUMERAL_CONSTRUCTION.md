@@ -118,3 +118,11 @@ allowance between decode, accounting and restore. A command that exhausts its
 budget refuses before output publication. Standalone library calls retain their
 individual default budgets. The private `_engine` keyword is internal orchestration,
 not serialized state or a bypass of validation.
+
+## Trusted record operations
+
+Serialization, accounting and reconstruction use the trusted Packet/Entry validation
+and BitBlock/PrimePath implementations, not methods attached to supplied instances.
+BitBlock fields are rechecked before use. A caller-provided override cannot turn an
+invalid entry into an admitted packet or change a literal/recipe during serialization.
+This is a data-record boundary, not a sandbox against replacement of the runtime.

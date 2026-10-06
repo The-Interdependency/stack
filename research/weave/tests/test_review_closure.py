@@ -59,6 +59,36 @@
 #   call: self::test_record_instances_cannot_shadow_validation
 #   mutates: none
 #   cleanup: none
+# id: review_table_dispatch
+#   proves: binary_sequence_closure, binary_coordinate_recovery
+#   call: self::test_table_exports_use_trusted_validation
+#   mutates: none
+#   cleanup: none
+# id: review_entry_dispatch
+#   proves: numeral_strict_input, numeral_exact_recovery
+#   call: self::test_entry_validation_cannot_be_shadowed
+#   mutates: none
+#   cleanup: none
+# id: review_packet_dispatch
+#   proves: numeral_strict_input, numeral_exact_recovery
+#   call: self::test_packet_validation_cannot_be_shadowed
+#   mutates: none
+#   cleanup: none
+# id: review_block_conversion
+#   proves: numeral_exact_recovery
+#   call: self::test_block_conversion_cannot_be_shadowed
+#   mutates: none
+#   cleanup: none
+# id: review_block_fields
+#   proves: numeral_strict_input
+#   call: self::test_entry_revalidates_supplied_bitblock_fields
+#   mutates: none
+#   cleanup: none
+# id: review_recipe_dispatch
+#   proves: numeral_recipe_replay, numeral_strict_input
+#   call: self::test_recipe_replay_cannot_be_shadowed
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 """PR #77 final-review regressions, not cryptographic-strength tests.
 
@@ -229,6 +259,75 @@ class ReviewClosureTests(unittest.TestCase):
                 for method in (table.restore,table.receipt,table.wire_occurrences):
                     with self.assertRaises(native.BinaryError): method()
                 self.assertEqual(called,[])
+
+    def test_table_exports_use_trusted_validation(self):
+        for change in ('order', 'definitions', 'origin'):
+            table=self.fixture(); called=[]
+            object.__setattr__(table,'validate',lambda:called.append(True))
+            self.assertEqual(table.restore(),b'ABxABy')
+            self.assertEqual(called,[])
+            if change=='order':
+                object.__setattr__(table,'order',(1,0,0,2))
+            elif change=='definitions':
+                object.__setattr__(table,'definitions',table.definitions[:-1])
+            else:
+                object.__setattr__(table,'origin',EqualitySpoof())
+            for method in (table.restore,table.receipt,table.wire_occurrences):
+                with self.subTest(change=change,method=method.__name__):
+                    with self.assertRaises(native.BinaryError):method()
+            self.assertEqual(called,[])
+
+    def test_entry_validation_cannot_be_shadowed(self):
+        packet=self.recipe_packet();entry=packet.entries[0];called=[]
+        object.__setattr__(entry,'validate',lambda *a,**kw:called.append(True))
+        self.assertEqual(numeral.decode(numeral.encode(packet)).restore(),BitBlock(101,16))
+        self.assertEqual(called,[])
+        object.__setattr__(entry,'circle',999)
+        for method in (lambda:numeral.encode(packet),lambda:numeral.accounting(packet),
+                       packet.restore,packet.occurrences):
+            with self.assertRaises(Refused):method()
+        self.assertEqual(called,[])
+
+    def test_packet_validation_cannot_be_shadowed(self):
+        packet=self.recipe_packet();called=[]
+        object.__setattr__(packet,'validate',lambda *a,**kw:called.append(True) or 16)
+        self.assertEqual(numeral.decode(numeral.encode(packet)).restore(),BitBlock(101,16))
+        self.assertEqual(called,[])
+        object.__setattr__(packet,'entries',packet.entries*2)
+        for method in (lambda:numeral.encode(packet),lambda:numeral.accounting(packet),
+                       packet.restore,packet.occurrences):
+            with self.assertRaises(Refused):method()
+        self.assertEqual(called,[])
+
+    def test_block_conversion_cannot_be_shadowed(self):
+        packet=self.recipe_packet();entry=replace(packet.entries[0],recipe=None)
+        packet=replace(packet,entries=(entry,));called=[]
+        object.__setattr__(entry.block,'to_bytes',lambda:called.append(True) or b'ZZ')
+        self.assertEqual(numeral.decode(numeral.encode(packet)).restore(),BitBlock(101,16))
+        self.assertEqual(packet.restore(),BitBlock(101,16))
+        self.assertEqual(called,[])
+
+    def test_entry_revalidates_supplied_bitblock_fields(self):
+        for field,value in (('length',True),('length',-1),('length',EqualitySpoof()),
+                            ('value',True),('value',-1),('value',1<<20)):
+            packet=self.recipe_packet();entry=replace(packet.entries[0],recipe=None)
+            packet=replace(packet,entries=(entry,))
+            object.__setattr__(entry.block,field,value)
+            with self.subTest(field=field,value_type=type(value).__name__):
+                with self.assertRaises(Refused):numeral.encode(packet)
+
+    def test_recipe_replay_cannot_be_shadowed(self):
+        packet=self.recipe_packet();recipe=packet.entries[0].recipe;called=[]
+        object.__setattr__(recipe,'replay',lambda *a,**kw:called.append(True) or (101,))
+        self.assertEqual(numeral.decode(numeral.encode(packet)).restore(),BitBlock(101,16))
+        self.assertEqual(called,[])
+        object.__setattr__(recipe,'seed',4)
+        with self.assertRaises(Refused):numeral.encode(packet)
+        self.assertEqual(called,[])
+        # A spoofed opcode is malformed data, not an executable next-prime step.
+        path=PrimePath(2,((EqualitySpoof(),),));EqualitySpoof.calls=0
+        with self.assertRaises(Refused):PrimePath.replay(path)
+        self.assertEqual(EqualitySpoof.calls,0)
 
     def native_args(self, source):
         return dict(api=native,geometry=self.geometry,scope=PROFILE.scope,

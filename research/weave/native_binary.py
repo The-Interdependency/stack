@@ -278,7 +278,7 @@ class SequenceTable:
     spaces: tuple[Fraction, ...]
 
     def __post_init__(self):
-        self.validate()
+        SequenceTable.validate(self)
 
     def validate(self) -> None:
         """Reconstruct and compare the entire closed relation, not its type label.
@@ -287,6 +287,8 @@ class SequenceTable:
         ordering, native axis, space-displacement and occurrence invariants as
         close_sequences. Frozen does not mean intrinsically consistent.
         """
+        if type(self) is not SequenceTable:
+            raise BinaryError('exact SequenceTable required')
         if type(self.origin) is not ByteOrigin:
             raise BinaryError('closed table requires a native byte-origin')
         if (type(self.definitions) is not tuple
@@ -322,18 +324,18 @@ class SequenceTable:
 
     def restore(self) -> bytes:
         """Read definitions and occurrence order, not origin.source."""
-        self.validate()
+        SequenceTable.validate(self)
         return b''.join(self.definitions[i].data for i in self.order)
 
     def wire_occurrences(self) -> tuple[tuple[int, Occurrence], ...]:
         """Seven circle streams, each ordered by its native complete local position."""
-        self.validate()
+        SequenceTable.validate(self)
         items = [(i, o) for i, d in enumerate(self.definitions) for o in d.occurrences]
         return tuple(sorted(items, key=lambda item: (
             item[1].circle, self.origin.geometry.lift(item[1].state))))
 
     def receipt(self) -> dict:
-        self.validate()
+        SequenceTable.validate(self)
         return {'schema': SCHEMA, 'version': VERSION, 'origin': self.origin.identity,
                 'message_origin': self.origin.message_origin, 'round': self.origin.round_id,
                 'spaces': [str(space) for space in self.spaces],

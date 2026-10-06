@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 12 review-closure regressions = 137. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure regressions = 143. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -210,3 +210,16 @@ The profile, forward operations, UCNS producers, ownership and cryptographic sta
 are unchanged. The local candidate source lock changes with the repaired source;
 records bound to the previous lock must be regenerated rather than accepted under
 false source provenance. This is stricter validation, not authentication.
+
+## Record-owned dispatch boundary
+
+Sequence-table exports call the trusted class validator rather than `self.validate`.
+The numeral layer likewise invokes trusted Packet, Entry, BitBlock and PrimePath
+operations while handling supplied records. Altered block fields are revalidated;
+record-owned `validate`, `replay`, and `to_bytes` overrides cannot authorize or
+change serialized content. Prime opcodes require exact string values.
+
+Six additional regressions cover the table/Entry follow-up findings and the same
+pattern in enclosing packets, bit blocks and recipes. This boundary concerns
+supplied data records; it does not sandbox hostile Python code that replaces the
+trusted runtime classes or producer modules themselves. Runtime code is trusted.

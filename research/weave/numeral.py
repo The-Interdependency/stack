@@ -145,7 +145,7 @@ class PrimePath:
         primes.require(value)
         trace = [value]
         for step in self.steps:
-            if type(step) is not tuple or not step:
+            if type(step) is not tuple or not step or type(step[0]) is not str:
                 raise Refused("invalid recipe step")
             if step == ("next",):
                 value = primes.nth(value)
@@ -239,13 +239,16 @@ class Entry:
 
     def validate(self, limits: Limits, *, _engine=None) -> None:
         _symbol(self.symbol)
-        if type(self.block) is not BitBlock or self.block.length == 0:
+        if type(self.block) is not BitBlock:
+            raise Refused("a definition must contain an exact BitBlock")
+        BitBlock.__post_init__(self.block)
+        if self.block.length == 0:
             raise Refused("a definition must contain a nonempty BitBlock")
         if self.block.length > limits.output_bits:
             raise ResourceLimit("definition exceeds bit budget")
         _validate_attachment(self.angle, self.circle)
         if self.recipe is not None:
-            if type(self.recipe) is not PrimePath or self.recipe.replay(limits, _engine=_engine)[-1] != self.block.value:
+            if type(self.recipe) is not PrimePath or PrimePath.replay(self.recipe, limits, _engine=_engine)[-1] != self.block.value:
                 raise Refused("recipe does not construct its bound integer")
 
 
@@ -262,6 +265,8 @@ class Packet:
     symbols: str
 
     def validate(self, limits: Limits = Limits(), *, _engine=None) -> int:
+        if type(self) is not Packet:
+            raise Refused("exact Packet required")
         if type(self.origin) is not str or not self.origin or len(self.origin.encode("utf-8")) > 1024:
             raise Refused("nonempty UTF-8 origin scope of at most 1024 bytes required")
         _nat(self.round_id)
@@ -279,7 +284,7 @@ class Packet:
         for entry in self.entries:
             if type(entry) is not Entry:
                 raise Refused("Entry required")
-            entry.validate(limits, _engine=primes)
+            Entry.validate(entry, limits, _engine=primes)
             if entry.symbol in mapping or entry.angle in angles:
                 raise Refused("duplicate symbol or angular attachment in this scope")
             mapping[entry.symbol] = entry
@@ -295,7 +300,7 @@ class Packet:
 
     def occurrences(self, limits: Limits = Limits()) -> tuple[tuple[str, int, int, int], ...]:
         """(symbol, bit offset, ordinal on its occurrence circle, circle)."""
-        self.validate(limits)
+        Packet.validate(self, limits)
         mapping = {entry.symbol: entry for entry in self.entries}
         counts = [0] * 8
         offset = 0
@@ -309,13 +314,13 @@ class Packet:
 
     def restore(self, limits: Limits = Limits(), *, _engine=None) -> BitBlock:
         """Reconstruct in linear output-byte work; no original input or hidden table."""
-        total = self.validate(limits, _engine=_engine)
+        total = Packet.validate(self, limits, _engine=_engine)
         mapping = {entry.symbol: entry.block for entry in self.entries}
         out = bytearray((total + 7) // 8)
         offset = 0
         for symbol in self.symbols:
             block = mapping[symbol]
-            raw = block.to_bytes()
+            raw = BitBlock.to_bytes(block)
             byte, shift = divmod(offset, 8)
             if shift == 0:
                 out[byte:byte + len(raw)] = raw
@@ -376,7 +381,7 @@ class _Reader:
 
 def _parts(packet: Packet, limits: Limits, *, _engine=None) -> tuple[int, bytes, bytes, bytes]:
     """Return the validated bit count with wire parts; never replay it for accounting."""
-    total = packet.validate(limits, _engine=_engine)
+    total = Packet.validate(packet, limits, _engine=_engine)
     header = MAGIC + _blob(packet.origin.encode("utf-8")) + _uint(packet.round_id) + _uint(total)
     count = _uint(len(packet.entries))
     # Size the entire representation before allocating literal output buffers.
@@ -407,7 +412,7 @@ def _parts(packet: Packet, limits: Limits, *, _engine=None) -> tuple[int, bytes,
             raise ResourceLimit("serialized packet exceeds byte budget")
     if projected > limits.wire_bytes:
         raise ResourceLimit("serialized packet exceeds byte budget")
-    definitions = count + b"".join(prefix + (block.to_bytes() if block is not None else b"")
+    definitions = count + b"".join(prefix + (BitBlock.to_bytes(block) if block is not None else b"")
                                     for prefix, block in pieces)
     stream = _blob(packet.symbols.encode("utf-8"))
     return total, header, definitions, stream
@@ -469,7 +474,7 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
                     else:
                         raise Refused("unknown recipe opcode")
                 recipe = PrimePath(seed, tuple(steps))
-                block = BitBlock(recipe.replay(limits, _engine=primes)[-1], length)
+                block = BitBlock(PrimePath.replay(recipe, limits, _engine=primes)[-1], length)
             else:
                 raise Refused("unknown definition tag")
             entries.append(Entry(symbol, block, angle, circle, recipe))
@@ -480,7 +485,7 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
         raise Refused("trailing packet data")
     packet = Packet(origin, round_id, tuple(entries), symbols)
     # Parsing and structural validation share one charged prime-work budget.
-    if packet.validate(limits, _engine=primes) != declared:
+    if Packet.validate(packet, limits, _engine=primes) != declared:
         raise Refused("declared output length disagrees with occurrences")
     return packet
 
