@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure regressions = 143. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up regressions = 152. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -223,3 +223,37 @@ Six additional regressions cover the table/Entry follow-up findings and the same
 pattern in enclosing packets, bit blocks and recipes. This boundary concerns
 supplied data records; it does not sandbox hostile Python code that replaces the
 trusted runtime classes or producer modules themselves. Runtime code is trusted.
+
+## Follow-up discovery and dispatch repairs
+
+`tests/test_final_findings.py` covers the five subsequent review findings. A capped
+LCP candidate now expands to the full matching suffix interval before selection;
+duplicate intervals are merged before applying the existing longest-first and
+leftmost-nonoverlapping rules. For `00 01 00 01 00 01 01`, all three disjoint
+`00 01` occurrences are retained, followed by the residual `01`. The selected
+profile is unchanged; the earlier implementation omitted a qualifying occurrence.
+The regression suite compares the LCP-derived candidate family against explicit
+prefix matches on all 1,022 nonempty binary-alphabet strings of lengths 1..9.
+
+Native closure uses the trusted ByteOrigin byte-axis constructor and trusted
+geometry/axis export methods, so a record-owned method cannot replace the origin
+under validation. Profile identity revalidates scalar and nested round fields
+and uses trusted serializers. The scheduler invokes trusted PrimePath replay,
+including its aggregate budget, rather than a method on the supplied path.
+
+This cycle profile emits literal sequence definitions. Recovery now rejects a
+recipe-backed substitute even when the recipe produces the same bytes. The
+standalone numeral layer retains its explicit prime-recipe support; it has not
+been removed or silently disabled there. Supporting such definitions in a cycle
+requires a profile that actually emits them. The existing native-source lock
+rotation refuses old records instead of attributing them to the repaired code.
+
+Run the added regressions with:
+
+```sh
+WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_final_findings.py -v
+```
+
+All 152 tests pass on the repaired local source. The three-round demo still costs
+6,735 total bytes and recovers exactly. These repairs change neither the UCNS
+producer pins nor the ownership or cryptographic standing of the construction.

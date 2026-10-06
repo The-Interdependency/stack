@@ -130,8 +130,21 @@ class RoundSpec:
     end_order: str
 
     def __post_init__(self):
+        if type(self) is not RoundSpec:
+            raise Refused('exact RoundSpec required')
         if type(self.path) is not PrimePath or type(self.path.steps) is not tuple:
             raise Refused('exact immutable PrimePath required')
+        if type(self.path.seed) is not int or self.path.seed < 2:
+            raise Refused('prime seed must be an integer at least two')
+        for step in self.path.steps:
+            if type(step) is not tuple or not step or type(step[0]) is not str:
+                raise Refused('prime steps require immutable fields and exact opcode strings')
+            if step == ('next',):
+                continue
+            if (len(step) != 4 or step[0] != 'span'
+                    or any(type(x) is not int for x in step[1:])
+                    or step[1] not in (2,10) or step[2] < 0 or step[3] < 1):
+                raise Refused('invalid prime-path step')
         if (type(self.arities) is not tuple or not self.arities
                 or any(type(a) is not int or not 2 <= a <= 64 for a in self.arities)
                 or len(set(self.arities)) != len(self.arities)):
@@ -141,13 +154,19 @@ class RoundSpec:
                 or set(self.circle_order) != set(range(1,8))):
             raise Refused('circle_order must be a permutation of 1..7')
         if (type(self.spaces) is not tuple or len(self.spaces) != 8
-                or any(type(x) is not Fraction or not 0 <= x < 2 or x.denominator >= 2**32
-                       for x in self.spaces)):
+                or any(type(x) is not Fraction
+                       or type(x.numerator) is not int or type(x.denominator) is not int
+                       or not 1 <= x.denominator < 2**32
+                       or not 0 <= x.numerator < 2*x.denominator
+                       or (Fraction(x.numerator,x.denominator).numerator,
+                           Fraction(x.numerator,x.denominator).denominator)
+                          != (x.numerator,x.denominator) for x in self.spaces)):
             raise Refused('eight exact canonical space turns with denominators below 2^32 required')
-        if self.end_order not in ('first-last','last-first'):
+        if type(self.end_order) is not str or self.end_order not in ('first-last','last-first'):
             raise Refused('explicit first-last or last-first order required')
 
     def as_dict(self):
+        RoundSpec.__post_init__(self)
         return {'prime_path': {'seed': self.path.seed, 'steps': [list(x) for x in self.path.steps]},
                 'arities': list(self.arities), 'circle_order': list(self.circle_order),
                 'spaces': [[x.numerator,x.denominator] for x in self.spaces],
@@ -162,21 +181,26 @@ class Profile:
     rounds: tuple[RoundSpec, ...]
 
     def __post_init__(self):
+        if type(self) is not Profile:
+            raise Refused('exact Profile required')
         if type(self.scope) is not str or not self.scope or len(self.scope.encode('utf-8')) > 1024:
             raise Refused('nonempty UTF-8 message scope of at most 1024 bytes required')
         _positive(self.bucket_bytes, 1048576, 'normalization bucket')
         _positive(self.corpus_bit_offset, 2**64-1, 'corpus bit offset', zero=True)
         if type(self.rounds) is not tuple or not self.rounds or any(type(r) is not RoundSpec for r in self.rounds):
             raise Refused('nonempty immutable round specification required')
+        for spec in self.rounds:
+            RoundSpec.__post_init__(spec)
 
     def as_dict(self):
+        Profile.__post_init__(self)
         return {'schema': PROFILE_SCHEMA, 'selection': SELECTION_PROFILE, 'split': SPLIT_PROFILE,
                 'scope': self.scope, 'bucket_bytes': self.bucket_bytes,
-                'corpus_bit_offset': self.corpus_bit_offset, 'rounds': [r.as_dict() for r in self.rounds]}
+                'corpus_bit_offset': self.corpus_bit_offset, 'rounds': [RoundSpec.as_dict(r) for r in self.rounds]}
 
     @property
     def identity(self):
-        return sha256(canonical(self.as_dict())).digest()
+        return sha256(canonical(Profile.as_dict(self))).digest()
 
     @classmethod
     def read(cls, data: bytes, limits: CycleLimits = CycleLimits()):
@@ -335,6 +359,8 @@ def unaffix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
     if source_length > limits.round_bytes:
         raise ResourceLimit('affixiation source length exceeds byte budget')
     packet = decode_numeral(reader.blob(limits.round_bytes),limits.numeral())
+    if any(entry.recipe is not None for entry in packet.entries):
+        raise Refused('cycle profile requires literal definitions, not prime recipes')
     if packet.round_id != round_id:
         raise Refused('round identity mismatch')
     # decode_numeral already validates/replays recipes under one budget. Do not
@@ -375,8 +401,7 @@ def unaffix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
 
 
 def _prepared(profile: Profile, limits: CycleLimits):
-    if type(profile) is not Profile:
-        raise Refused('Profile required')
+    Profile.__post_init__(profile)
     if len(profile.rounds) > limits.rounds:
         raise ResourceLimit('round count exceeds execution budget')
     engine = _Primes(limits.numeral())

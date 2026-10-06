@@ -52,7 +52,7 @@ class Route:
     def evaluate(cls, path: PrimePath, limits: Limits = Limits(), *, engine=None):
         if type(path) is not PrimePath:
             raise Refused('PrimePath required')
-        trace = path.replay(limits, _engine=engine)
+        trace = PrimePath.replay(path, limits, _engine=engine)
         tokens = [path.seed, len(path.steps)]
         for step, value in zip(path.steps, trace[1:]):
             tokens.extend((0, value) if step == ('next',) else (1, *step[1:], value))

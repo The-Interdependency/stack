@@ -129,6 +129,32 @@ class _Ranges:
         return low, high
 
 
+def _matching_interval(common: _Ranges, begin: int, end: int,
+                       length: int, size: int) -> tuple[int, int]:
+    """Expand a suffix interval to all occurrences of its shortened prefix.
+
+    Adjacent suffixes share a length-L prefix exactly when all intervening LCP
+    values are at least L. Range minima and binary search retain linear storage
+    and avoid copying/enumerating long prefixes to locate their full interval.
+    """
+    low, high = 0, begin
+    while low < high:
+        middle = (low+high)//2
+        if common.query(middle+1, begin+1)[0] >= length:
+            high = middle
+        else:
+            low = middle+1
+    expanded_begin = low
+    low, high = end, size
+    while low < high:
+        middle = (low+high+1)//2
+        if common.query(end, middle)[0] >= length:
+            low = middle
+        else:
+            high = middle-1
+    return expanded_begin, low
+
+
 class _Occupied:
     def __init__(self, size: int):
         self.tree = [0] * (size+1)
@@ -166,20 +192,25 @@ def discover(data: bytes, *, max_bytes: int = 1048576,
     suffixes = _suffix_array(data)
     common = _lcp(data, suffixes)
     ranges = _Ranges(suffixes)
-    stack, candidates = [], []
+    common_ranges = _Ranges(common)
+    stack, candidates = [], set()
     for i in range(1, n+1):
         depth = common[i] if i < n else 0
         left = i-1
         while stack and stack[-1][0] > depth:
             length, begin = stack.pop()
             first, last = ranges.query(begin, i)
-            length = min(length, last-first)  # At least two disjoint occurrences.
-            if length >= 2:
-                candidates.append((-length, first, begin, i))
+            capped = min(length, last-first)  # At least two disjoint occurrences.
+            if capped >= 2:
+                start, end = begin, i
+                if capped != length:
+                    start, end = _matching_interval(common_ranges, begin, i, capped, n)
+                    first, _ = ranges.query(start, end)
+                candidates.add((-capped, first, start, end))
             left = begin
         if depth and (not stack or stack[-1][0] < depth):
             stack.append((depth, left))
-    candidates.sort()
+    candidates = sorted(candidates)
     occupied = _Occupied(n)
     chosen, patterns = [], set()
     covered = visits = 0

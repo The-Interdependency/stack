@@ -231,7 +231,7 @@ class ByteOrigin:
         _natural(offset, 'byte offset')
         if offset >= len(self.source):
             raise BinaryError('byte offset outside this round')
-        return self.geometry.axis(self.identity, len(self.source), offset)
+        return Geometry.axis(self.geometry, self.identity, len(self.source), offset)
 
 
 @dataclass(frozen=True)
@@ -309,13 +309,13 @@ class SequenceTable:
         expected = _closed_definitions(origin, blocks, self.order, circles, self.spaces)
         def fields(definitions):
             geometry = origin.geometry
-            return tuple((d.data, geometry._axis_fields(d.attachment_axis),
-                          geometry._state_fields(d.state),
+            return tuple((d.data, Geometry._axis_fields(geometry, d.attachment_axis),
+                          Geometry._state_fields(geometry, d.state),
                           tuple((o.source_offset, o.circle, o.ordinal,
-                                 geometry._axis_fields(o.source_axis),
-                                 geometry._axis_fields(o.circle_axis),
-                                 geometry._state_fields(o.state),
-                                 geometry._state_fields(o.source_state))
+                                 Geometry._axis_fields(geometry, o.source_axis),
+                                 Geometry._axis_fields(geometry, o.circle_axis),
+                                 Geometry._state_fields(geometry, o.state),
+                                 Geometry._state_fields(geometry, o.source_state))
                                 for o in d.occurrences)) for d in definitions)
         # Only builtin tuples/bytes/strings/integers reach equality. A foreign
         # object or native subclass cannot license itself with __eq__ == True.
@@ -332,7 +332,7 @@ class SequenceTable:
         SequenceTable.validate(self)
         items = [(i, o) for i, d in enumerate(self.definitions) for o in d.occurrences]
         return tuple(sorted(items, key=lambda item: (
-            item[1].circle, self.origin.geometry.lift(item[1].state))))
+            item[1].circle, Geometry.lift(self.origin.geometry, item[1].state))))
 
     def receipt(self) -> dict:
         SequenceTable.validate(self)
@@ -341,14 +341,14 @@ class SequenceTable:
                 'spaces': [str(space) for space in self.spaces],
                 'definitions': [
                     {'length': len(d.data), 'source_sha256': sha256(d.data).hexdigest(),
-                     'attachment': d.attachment_axis.as_dict(),
-                     'complete_turn': str(self.origin.geometry.lift(d.state)),
+                     'attachment': self.origin.geometry.axis_module.AxisCirclePosition.as_dict(d.attachment_axis),
+                     'complete_turn': str(Geometry.lift(self.origin.geometry, d.state)),
                      'occurrences': [
                          {'source_offset': o.source_offset, 'circle': o.circle,
-                          'ordinal': o.ordinal, 'source_axis': o.source_axis.as_dict(),
-                          'circle_axis': o.circle_axis.as_dict(),
-                          'complete_turn': str(self.origin.geometry.lift(o.state)),
-                          'source_turn': str(self.origin.geometry.lift(o.source_state))}
+                          'ordinal': o.ordinal, 'source_axis': self.origin.geometry.axis_module.AxisCirclePosition.as_dict(o.source_axis),
+                          'circle_axis': self.origin.geometry.axis_module.AxisCirclePosition.as_dict(o.circle_axis),
+                          'complete_turn': str(Geometry.lift(self.origin.geometry, o.state)),
+                          'source_turn': str(Geometry.lift(self.origin.geometry, o.source_state))}
                          for o in d.occurrences]}
                     for d in self.definitions], 'order': list(self.order)}
 
@@ -397,16 +397,16 @@ def _closed_definitions(origin: ByteOrigin, blocks: tuple[bytes, ...],
                       for i in range(8)]
     definitions = []
     for index, block in enumerate(blocks):
-        attachment = origin.byte_axis(uses[index][0][0])
+        attachment = ByteOrigin.byte_axis(origin, uses[index][0][0])
         occurrences = []
         for start, circle, ordinal in uses[index]:
-            source_axis = origin.byte_axis(start)
-            local_axis = origin.geometry.axis(circle_origins[circle], len(slots[circle]), ordinal)
+            source_axis = ByteOrigin.byte_axis(origin, start)
+            local_axis = Geometry.axis(origin.geometry, circle_origins[circle], len(slots[circle]), ordinal)
             occurrences.append(Occurrence(start, circle, ordinal, source_axis, local_axis,
-                                          origin.geometry.placed(local_axis, spaces[circle]),
-                                          origin.geometry.placed(source_axis, spaces[circle])))
+                                          Geometry.placed(origin.geometry, local_axis, spaces[circle]),
+                                          Geometry.placed(origin.geometry, source_axis, spaces[circle])))
         definitions.append(ClosedSequence(block, attachment,
-                           origin.geometry.placed(attachment, spaces[0]), tuple(occurrences)))
+                           Geometry.placed(origin.geometry, attachment, spaces[0]), tuple(occurrences)))
     return tuple(definitions)
 
 
