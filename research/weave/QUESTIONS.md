@@ -49,13 +49,14 @@ and inverse, failures, budgets and size accounting are in `CYCLE.md`.
 
 ## Usage
 
-The input-partition experiment in [PRIVATE_PUBLIC.md](PRIVATE_PUBLIC.md) now makes
-Q7's acceptance boundary executable. The whole-plus-one projection leaves the
-current sender blocked; the explicitly overdisclosed full-profile control allows
-exact public recovery. These are scoped control results, not an implementation or
-falsification of the intended private-gonol/public law. Run
+The proposed native-shift polynomial relation in [PRIVATE_PUBLIC.md](PRIVATE_PUBLIC.md)
+now constructs a source-bearing private eight-state candidate, publishes its two
+public native states and expanded evaluation law, and executes public-only sending
+and exact private recovery over the real cycle. Public coefficient decomposition
+also recovers exactly: this candidate is FALSIFIED for private-state necessity.
+This is a result about the specified candidate, not intended Weave as a whole. Run
 `python private_public.py --sources /checkouts --require-distinction`; exit 1
-records that the required distinction remains unestablished.
+records the actual successful public-recovery attack.
 
 Run `python cycle.py demo --sources /checkouts`. Change supported operating choices
 through an explicit profile; do not silently change a named profile's meaning.

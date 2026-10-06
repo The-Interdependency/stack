@@ -1,56 +1,58 @@
-# ratios: loc_comments=229:55 imports_exports=14:8 calls_definitions=121:16
+# ratios: loc_comments=271:50 imports_exports=16:7 calls_definitions=157:19
 # === MODULE_BUILD ===
-# id: weave_private_public_boundary_experiment
+# id: weave_native_shift_polynomial
 #   module_name: private_public
 #   module_kind: experiment
-#   summary: falsifiable public/private input boundary on the unchanged native sequence cycle
+#   summary: proposed public polynomial evaluation and native-private exact-root recovery after the unchanged Weave cycle
 #   owner: Erin Spencer
-#   public_surface: partition, send, recover, public_recover, full_profile_control, experiment
-#   internal_surface: strict serialized artifacts and fresh-process evidence
+#   public_surface: keygen, send, recover, public_recover, decompose, experiment
+#   internal_surface: exact scalar binding, serialized artifacts and fresh-process witness
 #   auth_boundary: none
 #   storage_boundary: write
 #   network_boundary: none
 #   user_data_boundary: read
 #   admin_only: false
 #   tests: tests/test_private_public.py
-#   rollout: explicit experiment; BLOCKED is not asymmetric success
-#   rollback: remove experiment and its tests, docs and CI invocation
-#   unresolved: native private-gonol generation and public evaluation law
+#   rollout: research CLI only; public recovery falsifies this candidate
+#   rollback: remove candidate and its tests, evidence and links
+#   unresolved: surviving asymmetry, confidentiality, authentication and replay
 # === END MODULE_BUILD ===
 # === CONTRACTS ===
-# id: weave_public_artifact_boundary
-#   given: a full cycle profile and actual corpus
-#   then: whole-plus-one public export carries exactly two spaces per round and no private reference
-# id: weave_sender_no_private_fallback
-#   given: only the whole-plus-one projection
-#   then: refuse the undefined public operation before cycle execution rather than guessing hidden spaces
-# id: weave_private_reconstruction_inputs
-#   given: a packet and the matching public and private reconstruction artifacts
-#   then: recover exactly using only those inputs and locked source code
-# id: weave_public_recovery_falsifier
-#   given: full-profile public control and its packet
-#   then: execute public-only recovery and report exact recovery as a counterexample to private necessity
-# id: weave_process_evidence_boundary
-#   given: an experiment run
-#   then: isolate sender and recovery invocations in fresh processes with explicit input and source manifests
-# id: weave_distinction_gate
-#   given: a blocked public sender or an exact public recovery counterexample
-#   then: the requested distinction remains unaccepted and its acceptance command exits nonzero
+# id: native_private_key_relation
+#   given: private source material and the exact native geometry
+#   then: eight complete native states determine two public displacements and six privately factored operations
+# id: public_sender_evaluation
+#   given: public artifact and message only
+#   then: evaluate the published polynomial on the complete real Weave cycle record without recipient-private input
+# id: native_private_exact_recovery
+#   given: matching private material, public artifact and packet
+#   then: native-derived inverse operations recover the exact cycle record and original bytes
+# id: public_inverse_falsification
+#   given: published coefficients and packet only
+#   then: test coefficient decomposition and report exact public recovery as candidate falsification
+# id: candidate_artifact_admission
+#   given: malformed, oversized or mismatched data
+#   then: reject without inventing keys, accepting approximate roots or returning partial plaintext
+# id: candidate_process_boundary
+#   given: a research experiment
+#   then: sender, private receiver and public attack run in fresh processes with only their declared inputs
 # === END CONTRACTS ===
 """Usage: python private_public.py --sources /checkouts [--require-distinction].
 
-PRIVATE_PUBLIC.md freezes scope and acceptance criteria. This is an executable
-boundary experiment, not a key generator. A private-argument check cannot prove
-private-state necessity. The full-profile control deliberately tests that mistake.
+PRIVATE_PUBLIC.md defines the proposed law, geometry boundary and algebraic attack.
+This is a candidate construction, not a security implementation. The old input-
+partition-only experiment is replaced, not advertised as completing this work.
 """
 from __future__ import annotations
 
 import argparse
-from copy import deepcopy
+from fractions import Fraction
 from hashlib import sha256
+from math import comb, isqrt
 from pathlib import Path
 import os
 import re
+import secrets
 import subprocess
 import sys
 import tempfile
@@ -58,30 +60,25 @@ import tempfile
 import cycle
 from cycle import Profile, CycleLimits, canonical, strict_json
 from cycle_native import load_native
-from numeral import Refused
+from numeral import Refused, _Reader, _uint, _blob
 
 ROOT = Path(__file__).resolve().parent
-PUBLIC_SCHEMA = 'weave.public-cycle-input/v1'
-PRIVATE_SCHEMA = 'weave.private-cycle-input/v1'
-PROJECTION = 'whole-plus-one'
-CONTROL = 'full-profile-control'
-LIMITS = CycleLimits(input_bytes=256, round_bytes=131072, rounds=3)
-ARTIFACT_BYTES = 32768
+LAW = 'weave.native-shift-polynomial/v1'
+MAGIC = b'WPP\x01'
+LIMITS = CycleLimits(input_bytes=256, round_bytes=16384, rounds=3)
+MAX_RECORD = LIMITS.round_bytes + 128
+MAX_BOUND_BITS = 64 * (8 * MAX_RECORD + 16) + 16
+MAX_WIRE = MAX_BOUND_BITS // 8 + 256
 RUNTIME = ('private_public.py', 'cycle.py', 'cycle_native.py', 'native_binary.py',
-           'numeral.py', 'affixiation.py', 'prime_schedule.py', 'safe_output.py',
-           'CYCLE_NATIVE.json')
-
-
-class MissingPublicRelation(Refused):
-    """Q7 is blocked by a missing native operation, not a proven secret."""
+           'numeral.py', 'affixiation.py', 'prime_schedule.py', 'safe_output.py', 'CYCLE_NATIVE.json')
 
 
 def _object(data, fields):
-    if type(data) is not bytes or len(data) > ARTIFACT_BYTES:
-        raise Refused('bounded serialized artifact bytes required')
+    if type(data) is not bytes or len(data) > 65536:
+        raise Refused('bounded serialized artifact required')
     obj = strict_json(data)
-    if type(obj) is not dict or set(obj) != set(fields):
-        raise Refused('artifact fields do not match schema')
+    if type(obj) is not dict or set(obj) != set(fields) or canonical(obj) != data:
+        raise Refused('exact canonical artifact schema required')
     return obj
 
 
@@ -92,134 +89,202 @@ def _hex(value, maximum):
     return bytes.fromhex(value)
 
 
-def _projection(profile, circle):
-    obj = Profile.as_dict(profile)
-    for row in obj['rounds']:
-        row['spaces'] = [value if i in (0, circle) else None
-                         for i, value in enumerate(row['spaces'])]
-    return obj
+def _native(material, sources):
+    if type(material) is not bytes or len(material) != 256:
+        raise Refused('exactly 256 private material bytes required')
+    api, geometry = load_native(sources)
+    origin = api.ByteOrigin(material, LAW + '/key-origin', 0, geometry)
+    turns = []
+    for i in range(8):
+        axis = origin.byte_axis(material[i])
+        state = api.Geometry.placed(geometry, axis, Fraction(-(material[8+i] & 1)))
+        turns.append(api.Geometry.lift(geometry, state))
+    return origin.identity, tuple(turns)
+
+
+def _offsets(turns):
+    return tuple(1 + int(t * 256) for t in turns)
+
+
+def _expand(shifts):
+    coefficients = [0, 1]
+    for shift in shifts:
+        coefficients[0] += shift
+        squared = [0] * (2 * len(coefficients) - 1)
+        for i, a in enumerate(coefficients):
+            for j, b in enumerate(coefficients):
+                squared[i+j] += a*b
+        coefficients = squared
+    return coefficients
+
+
+def _evaluate(coefficients, x):
+    value = 0
+    for coefficient in reversed(coefficients):
+        value = value*x + coefficient
+    return value
 
 
 def _public(data):
-    obj = _object(data, ('schema', 'disclosure', 'circle', 'profile',
+    obj = _object(data, ('law', 'key_origin', 'public_turns', 'coefficients', 'profile',
                          'corpus_hex', 'native_lock_sha256'))
-    if (obj['schema'] != PUBLIC_SCHEMA or type(obj['disclosure']) is not str
-            or obj['disclosure'] not in (PROJECTION, CONTROL)
-            or type(obj['circle']) is not int or not 1 <= obj['circle'] <= 7):
-        raise Refused('unsupported public artifact')
-    if obj['native_lock_sha256'] != sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest():
-        raise Refused('native lock identity mismatch')
+    if obj['law'] != LAW or obj['native_lock_sha256'] != sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest():
+        raise Refused('law or native source identity mismatch')
+    if len(_hex(obj['key_origin'], 32)) != 32:
+        raise Refused('key origin identity required')
+    rows = obj['public_turns']
+    if type(rows) is not list or len(rows) != 2:
+        raise Refused('exactly whole-plus-one native complete turns required')
+    turns = []
+    for row in rows:
+        if (type(row) is not list or len(row) != 2 or any(type(v) is not int for v in row)
+                or not 1 <= row[1] <= 256 or not 0 <= row[0] < 2*row[1]):
+            raise Refused('invalid complete turn')
+        t = Fraction(*row)
+        if [t.numerator, t.denominator] != row or (t*256).denominator != 1:
+            raise Refused('turn must be a canonical native key-axis position')
+        turns.append(t)
+    c = obj['coefficients']
+    if (type(c) is not list or len(c) != 65 or c[-1] != 1
+            or any(type(v) is not int or v < 0 or v.bit_length() > 4096 for v in c)):
+        raise Refused('bounded exact monic degree-64 public polynomial required')
+    profile = Profile.read(canonical(obj['profile']), LIMITS)
     corpus = _hex(obj['corpus_hex'], 4096)
     if not corpus:
         raise Refused('actual nonempty public corpus required')
-    profile = deepcopy(obj['profile'])
-    if type(profile) is not dict or type(profile.get('rounds')) is not list:
-        raise Refused('profile round list required')
-    for row in profile['rounds']:
-        if (type(row) is not dict or type(row.get('spaces')) is not list
-                or len(row['spaces']) != 8):
-            raise Refused('eight space positions required')
-        for i, value in enumerate(row['spaces']):
-            hidden = obj['disclosure'] == PROJECTION and i not in (0, obj['circle'])
-            if hidden:
-                if value is not None:
-                    raise Refused('private space leaked into public projection')
-                # Syntax validation only. Never return this placeholder profile.
-                row['spaces'][i] = [0, 1]
-            elif value is None:
-                raise Refused('required public space absent')
-    Profile.read(canonical(profile), LIMITS)
-    return obj, corpus
+    return obj, profile, corpus, _offsets(turns)
 
 
-def _complete(public):
-    obj, corpus = _public(public)
-    if obj['disclosure'] != CONTROL:
-        try:
-            Profile.read(canonical(obj['profile']), LIMITS)
-        except Refused as exc:
-            raise MissingPublicRelation('six spaces per round are private; native public evaluation law missing') from exc
-        raise RuntimeError('cycle now admits partial profiles; reassess the experiment')
-    return Profile.read(canonical(obj['profile']), LIMITS), corpus
-
-
-def partition(profile: Profile, corpus: bytes, *, circle: int = 1) -> tuple[bytes, bytes]:
-    """Export reconstruction inputs; no entropy, private gonol or trapdoor invented."""
+def keygen(profile: Profile, corpus: bytes, sources: str | Path, *, material: bytes | None = None):
+    """Construct this candidate's native private configuration and public law."""
+    if material is None:
+        material = secrets.token_bytes(256)
+    origin, turns = _native(material, sources)
     if type(corpus) is not bytes:
         raise Refused('actual corpus bytes required')
-    obj = {'schema': PUBLIC_SCHEMA, 'disclosure': PROJECTION, 'circle': circle,
-           'profile': _projection(profile, circle), 'corpus_hex': corpus.hex(),
-           'native_lock_sha256': sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest()}
-    public = canonical(obj)
+    public = canonical({'law': LAW, 'key_origin': origin,
+                        'public_turns': [[t.numerator, t.denominator] for t in turns[:2]],
+                        'coefficients': _expand(_offsets(turns)[2:]),
+                        'profile': Profile.as_dict(profile), 'corpus_hex': corpus.hex(),
+                        'native_lock_sha256': sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest()})
     _public(public)
-    private = canonical({'schema': PRIVATE_SCHEMA, 'public_sha256': sha256(public).hexdigest(),
-                         'profile': Profile.as_dict(profile)})
-    _private(public, private)
+    private = canonical({'law': LAW, 'material_hex': material.hex()})
     return public, private
 
 
-def _private(public, private):
-    pub, corpus = _public(public)
-    obj = _object(private, ('schema', 'public_sha256', 'profile'))
-    if obj['schema'] != PRIVATE_SCHEMA or obj['public_sha256'] != sha256(public).hexdigest():
-        raise Refused('private artifact does not bind these exact public bytes')
-    profile = Profile.read(canonical(obj['profile']), LIMITS)
-    projected = (_projection(profile, pub['circle']) if pub['disclosure'] == PROJECTION
-                 else Profile.as_dict(profile))
-    if canonical(projected) != canonical(pub['profile']):
-        raise Refused('private profile disagrees with public projection')
-    return profile, corpus
-
-
-def full_profile_control(public: bytes, private: bytes) -> bytes:
-    """Publish all reconstruction fields explicitly as a negative control."""
-    profile, _ = _private(public, private)
-    obj, _ = _public(public)
-    obj['profile'] = Profile.as_dict(profile)
-    obj['disclosure'] = CONTROL
-    result = canonical(obj)
-    _public(result)
-    return result
-
-
 def send(message: bytes, public: bytes, sources: str | Path) -> bytes:
-    """Public inputs only. A missing native law blocks before any forward work."""
-    profile, corpus = _complete(public)
-    return cycle.forward(message, corpus, profile, sources, LIMITS)[0]
+    """Evaluate the expanded public law; no private material or keygen call."""
+    obj, profile, corpus, (whole, one) = _public(public)
+    record = cycle.forward(message, corpus, profile, sources, LIMITS)[0]
+    x = int.from_bytes(record, 'big')
+    y = _evaluate(obj['coefficients'], x + whole) + one
+    if y.bit_length() > MAX_BOUND_BITS:
+        raise Refused('public evaluation exceeds bound integer budget')
+    encoded = y.to_bytes((y.bit_length()+7)//8, 'big')
+    return MAGIC + sha256(public).digest() + _uint(len(record)) + _blob(encoded)
+
+
+def _packet(packet, public):
+    if type(packet) is not bytes or len(packet) > MAX_WIRE:
+        raise Refused('bounded packet bytes required')
+    reader = _Reader(packet)
+    if reader.take(4) != MAGIC or reader.take(32) != sha256(public).digest():
+        raise Refused('packet law/key identity mismatch')
+    length = reader.uint()
+    if not 1 <= length <= MAX_RECORD:
+        raise Refused('cycle record length outside budget')
+    encoded = reader.blob(MAX_WIRE)
+    if reader.pos != len(packet) or not encoded or encoded[0] == 0:
+        raise Refused('noncanonical or trailing bound integer')
+    y = int.from_bytes(encoded, 'big')
+    if y.bit_length() > MAX_BOUND_BITS:
+        raise Refused('bound integer exceeds bit budget')
+    return length, y
+
+
+def _invert(y, shifts):
+    for shift in reversed(shifts):
+        if y < 0:
+            raise Refused('negative inverse state')
+        root = isqrt(y)
+        if root*root != y:
+            raise Refused('non-exact square in private relation')
+        y = root - shift
+    return y
+
+
+def _restore(packet, public, shifts, sources):
+    _, profile, corpus, (whole, one) = _public(public)
+    length, y = _packet(packet, public)
+    x = _invert(y-one, shifts) - whole
+    if x < 0 or x.bit_length() > length*8:
+        raise Refused('inverse does not fit declared record length')
+    return cycle.reverse(x.to_bytes(length, 'big'), corpus, profile, sources, LIMITS)
 
 
 def recover(packet: bytes, public: bytes, private: bytes, sources: str | Path) -> bytes:
-    """Private-path exact recovery; accepting a private argument is not asymmetry."""
-    profile, corpus = _private(public, private)
-    return cycle.reverse(packet, corpus, profile, sources, LIMITS)
+    """Use actual private native states for exact square-root recovery."""
+    _, profile, corpus, _ = _public(public)
+    secret = _object(private, ('law', 'material_hex'))
+    if secret['law'] != LAW:
+        raise Refused('private law mismatch')
+    material = _hex(secret['material_hex'], 256)
+    rebuilt, _ = keygen(profile, corpus, sources, material=material)
+    if rebuilt != public:
+        raise Refused('private material belongs to a different key')
+    _, turns = _native(material, sources)
+    return _restore(packet, public, _offsets(turns)[2:], sources)
+
+
+def decompose(coefficients):
+    """Public algebraic attack: peel inner native displacements from coefficients."""
+    if (type(coefficients) not in (list, tuple) or len(coefficients) != 65
+            or any(type(v) is not int or v < 0 or v.bit_length() > 4096 for v in coefficients)):
+        raise Refused('bounded exact degree-64 coefficient list required')
+    p = list(coefficients)
+    shifts = []
+    for _ in range(6):
+        degree = len(p)-1
+        if degree < 2 or p[-1] != 1 or p[-2] % degree:
+            raise Refused('polynomial does not admit the candidate decomposition')
+        shift = p[-2] // degree
+        if not 1 <= shift <= 512:
+            raise Refused('recovered displacement outside native candidate domain')
+        # F(z-shift) = H(z^2). Exact cancellation, no numeric root estimates.
+        translated = [sum(p[j]*comb(j,i)*(-shift)**(j-i) for j in range(i,degree+1))
+                      for i in range(degree+1)]
+        if any(translated[1::2]):
+            raise Refused('public polynomial has nonzero odd residuals')
+        p = translated[::2]
+        shifts.append(shift)
+    if p != [0, 1]:
+        raise Refused('public decomposition did not end at identity')
+    return tuple(shifts)
 
 
 def public_recover(packet: bytes, public: bytes, sources: str | Path) -> bytes:
-    """Actual public inverse attack, not a call to the private-path wrapper."""
-    profile, corpus = _complete(public)
-    return cycle.reverse(packet, corpus, profile, sources, LIMITS)
+    """Recover via public coefficients alone; never consume the private artifact."""
+    obj, _, _, _ = _public(public)
+    return _restore(packet, public, decompose(obj['coefficients']), sources)
 
 
 def _worker():
-    request = strict_json(sys.stdin.buffer.read(1048577))
+    request = strict_json(sys.stdin.buffer.read(2*MAX_WIRE+262145))
     if type(request) is not dict or request.get('operation') not in ('send', 'recover', 'public-recover'):
         raise Refused('unknown worker operation')
     operation = request['operation']
     fields = {'operation', 'public', 'data'} | ({'private'} if operation == 'recover' else set())
     if set(request) != fields:
         raise Refused('worker input manifest mismatch')
-    public = _hex(request['public'], ARTIFACT_BYTES)
-    data = _hex(request['data'], LIMITS.round_bytes + 128)
-    try:
-        if operation == 'send':
-            result = send(data, public, ROOT/'inputs')
-        elif operation == 'public-recover':
-            result = public_recover(data, public, ROOT/'inputs')
-        else:
-            result = recover(data, public, _hex(request['private'], ARTIFACT_BYTES), ROOT/'inputs')
-    except MissingPublicRelation as exc:
-        return {'status': 'BLOCKED', 'reason': str(exc)}
-    return {'status': 'COMPLETED', 'data': result.hex()}
+    public = _hex(request['public'], 65536)
+    data = _hex(request['data'], MAX_WIRE)
+    if operation == 'send':
+        result = send(data, public, ROOT/'inputs')
+    elif operation == 'public-recover':
+        result = public_recover(data, public, ROOT/'inputs')
+    else:
+        result = recover(data, public, _hex(request['private'], 65536), ROOT/'inputs')
+    return {'data': result.hex()}
 
 
 def _run(root, operation, public, data, private=None):
@@ -232,21 +297,15 @@ def _run(root, operation, public, data, private=None):
     if result.returncode:
         raise RuntimeError(f'{operation} worker failed: {result.stderr.decode(errors="replace")}')
     response = strict_json(result.stdout)
-    if type(response) is not dict or response.get('status') not in ('BLOCKED', 'COMPLETED'):
+    if type(response) is not dict or set(response) != {'data'}:
         raise RuntimeError('invalid worker response')
-    return response
+    return _hex(response['data'], MAX_WIRE)
 
 
-def experiment(message: bytes, profile: Profile, corpus: bytes, sources: str | Path) -> dict:
-    """Run a bounded input-partition probe; return counts/identities, not secrets."""
-    if type(message) is not bytes or len(message) > LIMITS.input_bytes:
-        raise Refused('experiment message must be at most 256 bytes')
-    public, private = partition(profile, corpus)
-    control = full_profile_control(public, private)
-    # Verify required sources first: missing geometry is an infrastructure error,
-    # never evidence that an attacker cannot recover.
-    load_native(sources)
-    with tempfile.TemporaryDirectory(prefix='weave-public-private-') as directory:
+def experiment(message, profile, corpus, sources, *, material=None):
+    """Execute the actual candidate and its public inverse attack, with scoped evidence."""
+    public, private = keygen(profile, corpus, sources, material=material)
+    with tempfile.TemporaryDirectory(prefix='weave-native-key-') as directory:
         root = Path(directory)
         for name in RUNTIME:
             (root/name).write_bytes((ROOT/name).read_bytes())
@@ -255,49 +314,32 @@ def experiment(message: bytes, profile: Profile, corpus: bytes, sources: str | P
             target = root/'inputs'/'ucns'/name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((Path(sources)/'ucns'/name).read_bytes())
-        source_files = {str(p.relative_to(root)): sha256(p.read_bytes()).hexdigest()
-                        for p in sorted(root.rglob('*')) if p.is_file()}
-        # Public evaluation is tried before the private recovery input is sent to
-        # any process. No profile fixture or private file exists in the bundle.
-        candidate = _run(root, 'send', public, message)
-        sent = _run(root, 'send', control, message)
-        if sent['status'] != 'COMPLETED':
-            raise RuntimeError('full-profile control did not produce a packet')
-        packet = _hex(sent['data'], LIMITS.round_bytes + 128)
-        recipient = _run(root, 'recover', public, packet, private)
-        projected_attack = _run(root, 'public-recover', public, packet)
-        control_attack = _run(root, 'public-recover', control, packet)
-        after = {str(p.relative_to(root)): sha256(p.read_bytes()).hexdigest()
-                 for p in sorted(root.rglob('*')) if p.is_file()}
-        if source_files != after:
-            raise RuntimeError('worker bundle changed during the experiment')
-    recipient_exact = recipient['status'] == 'COMPLETED' and _hex(recipient['data'], LIMITS.input_bytes) == message
-    attack_exact = control_attack['status'] == 'COMPLETED' and _hex(control_attack['data'], LIMITS.input_bytes) == message
-    if not recipient_exact or not attack_exact or candidate['status'] != 'BLOCKED' or projected_attack['status'] != 'BLOCKED':
-        raise RuntimeError('frozen cycle control behavior changed; reassess the experiment')
-    return {
-        'schema': 'weave.private-public-experiment/v1', 'execution': 'COMPLETED',
-        'construction': 'INPUT_PARTITION_ONLY', 'distinction_established': False,
-        'whole_plus_one': {'status': candidate['status'], 'reason': candidate['reason'],
-                           'packet_created_by_public_sender': False,
-                           'private_gonol_relation': 'UNIMPLEMENTED'},
-        'full_profile_control': {'status': 'FALSIFIED', 'public_sender_completed': True,
-                                 'recipient_exact': recipient_exact, 'public_only_exact': attack_exact,
-                                 'whole_plus_one_preserved': False},
-        'projected_public_recovery': {'status': projected_attack['status'],
-                                     'scope': 'control packet; API refusal is not private necessity'},
-        'inputs': {'sender': ['message', 'public'], 'recipient': ['packet', 'public', 'private'],
-                   'attacker': ['packet', 'public'], 'shared': ['exact code', 'locked native sources'],
-                   'corpus': 'actual bytes inside public artifact'},
-        'accounting': {'message_bytes': len(message), 'packet_bytes': len(packet),
-                       'public_bytes': len(public), 'private_bytes': len(private),
-                       'full_profile_control_bytes': len(control)},
-        'source_files': source_files,
-        'source_sha256': sha256(canonical(source_files)).hexdigest(),
-        'native_lock_sha256': sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest(),
-        'packet_sha256': sha256(packet).hexdigest(),
-        'nonclaim': 'No falsification of intended Weave, no trapdoor or cryptographic security claim.',
-        'hmmm': 'Native private-gonol constructor, public evaluation and private recovery law remain undefined.'}
+        files = lambda: {str(p.relative_to(root)): sha256(p.read_bytes()).hexdigest()
+                         for p in sorted(root.rglob('*')) if p.is_file()}
+        source_files = files()
+        packet = _run(root, 'send', public, message)
+        restored = _run(root, 'recover', public, packet, private)
+        attacked = _run(root, 'public-recover', public, packet)
+        if files() != source_files:
+            raise RuntimeError('worker bundle changed during execution')
+    if restored != message:
+        raise RuntimeError('candidate private recovery failed')
+    exact = attacked == message
+    return {'schema': 'weave.private-public-experiment/v2', 'law': LAW,
+            'status': 'FALSIFIED' if exact else 'UNRESOLVED', 'distinction_established': False,
+            'public_sender_completed': True, 'private_recovery_exact': True,
+            'public_recovery_exact': exact, 'attack': 'exact public coefficient decomposition',
+            'private_material_given_to_attacker': False, 'equivalent_inverse_recovered': exact,
+            'inputs': {'sender': ['message', 'public'], 'recipient': ['packet', 'public', 'private'],
+                       'attacker': ['packet', 'public'], 'shared': ['exact code', 'locked native sources']},
+            'accounting': {'message_bytes': len(message), 'packet_bytes': len(packet),
+                           'public_bytes': len(public), 'private_bytes': len(private),
+                           'inner_cycle_bytes': _packet(packet, public)[0]},
+            'source_files': source_files, 'source_sha256': sha256(canonical(source_files)).hexdigest(),
+            'public_sha256': sha256(public).hexdigest(), 'packet_sha256': sha256(packet).hexdigest(),
+            'native_lock_sha256': sha256((ROOT/'CYCLE_NATIVE.json').read_bytes()).hexdigest(),
+            'scope': 'This candidate only; no verdict on all native private/public relations.',
+            'hmmm': 'A surviving asymmetric relation and cryptographic security remain unestablished.'}
 
 
 def main():
@@ -311,7 +353,8 @@ def main():
             result = _worker()
         else:
             profile = Profile.read((ROOT/'profiles'/'cycle-v1.json').read_bytes(), LIMITS)
-            result = experiment(b'ABxABy\x00ABxABy\xff', profile, bytes(range(256)), args.sources)
+            result = experiment(b'ABxABy\x00ABxABy\xff', profile, bytes(range(256)), args.sources,
+                                material=bytes((i*73+41)%256 for i in range(256)))
         print(canonical(result).decode())
         return 1 if args.require_distinction and not result.get('distinction_established', False) else 0
     except (Refused, OSError, RuntimeError) as exc:
@@ -321,4 +364,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=229:55 imports_exports=14:8 calls_definitions=121:16
+# ratios: loc_comments=271:50 imports_exports=16:7 calls_definitions=157:19

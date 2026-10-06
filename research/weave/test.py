@@ -18,7 +18,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 196  # 176 merged-cycle regressions + 20 private/public boundary experiments.
+EXPECTED_TESTS = 196  # 176 merged-cycle regressions + 20 native public/private candidate tests.
 
 
 def snapshot():
@@ -67,12 +67,12 @@ def main():
             'review_closure_methods': 18, 'final_findings_methods': 9,
             'terminal_record_methods': 9, 'header_admission_methods': 3,
             'numeral_single_replay_methods': 4, 'cheap_admission_methods': 8,
-            'private_public_boundary_methods': 20
+            'private_public_candidate_methods': 20
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),
         'asymmetric_cipher': 'NOT_IMPLEMENTED: cycle/profile recovery is not a public/private trapdoor',
-        'private_public_experiment': 'BLOCKED: whole-plus-one sender law missing; full-profile control permits public recovery',
+        'private_public_experiment': 'FALSIFIED_CANDIDATE: native-shift polynomial supports public sending and private recovery, but public coefficients reveal an equivalent inverse',
         'native_language_corpus_replay': 'NOT_EXECUTED: binary construction does not use or replace a language corpus',
         'security_observations': [
             'The older fixed transport map remains recoverable in its declared attack experiment.',

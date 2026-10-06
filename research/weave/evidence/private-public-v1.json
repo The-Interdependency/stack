@@ -1,28 +1,20 @@
 {
   "accounting": {
-    "full_profile_control_bytes": 1563,
+    "inner_cycle_bytes": 5904,
     "message_bytes": 14,
-    "packet_bytes": 5904,
-    "private_bytes": 984,
-    "public_bytes": 1537
+    "packet_bytes": 377885,
+    "private_bytes": 572,
+    "public_bytes": 8091
   },
-  "construction": "INPUT_PARTITION_ONLY",
+  "attack": "exact public coefficient decomposition",
   "distinction_established": false,
-  "execution": "COMPLETED",
-  "full_profile_control": {
-    "public_only_exact": true,
-    "public_sender_completed": true,
-    "recipient_exact": true,
-    "status": "FALSIFIED",
-    "whole_plus_one_preserved": false
-  },
-  "hmmm": "Native private-gonol constructor, public evaluation and private recovery law remain undefined.",
+  "equivalent_inverse_recovered": true,
+  "hmmm": "A surviving asymmetric relation and cryptographic security remain unestablished.",
   "inputs": {
     "attacker": [
       "packet",
       "public"
     ],
-    "corpus": "actual bytes inside public artifact",
     "recipient": [
       "packet",
       "public",
@@ -37,14 +29,16 @@
       "locked native sources"
     ]
   },
+  "law": "weave.native-shift-polynomial/v1",
   "native_lock_sha256": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43",
-  "nonclaim": "No falsification of intended Weave, no trapdoor or cryptographic security claim.",
-  "packet_sha256": "2d2d20d9beb8824664184e293795884cfb3ac7b60adefd0e5990cf539960879c",
-  "projected_public_recovery": {
-    "scope": "control packet; API refusal is not private necessity",
-    "status": "BLOCKED"
-  },
-  "schema": "weave.private-public-experiment/v1",
+  "packet_sha256": "9b2c6593ea118d36ca722a4d3c827fbace309c677fe90485061209635299430c",
+  "private_material_given_to_attacker": false,
+  "private_recovery_exact": true,
+  "public_recovery_exact": true,
+  "public_sender_completed": true,
+  "public_sha256": "5ea45180a952ea9d52ce7d6eabd5d523e82045c8bae58d7c5ed388a88af5aceb",
+  "schema": "weave.private-public-experiment/v2",
+  "scope": "This candidate only; no verdict on all native private/public relations.",
   "source_files": {
     "CYCLE_NATIVE.json": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43",
     "affixiation.py": "15518004e43873515badefd951d6f32a0de79ce8002d3aebd41921bf8d7eb985",
@@ -55,14 +49,9 @@
     "native_binary.py": "3843b4fb7c735c2d3d45f28a13905397a4dd8ff988fba91b3fe1f92e75103e4d",
     "numeral.py": "a3c2b67611b095f65ba4b355fac2275735a062fb76ba2170790e64d8b434f9e3",
     "prime_schedule.py": "c5b59833d236c1f7dfe66102052e1796e8532a25f299820c68e2b417c6678242",
-    "private_public.py": "1e928325776ada4657a3803e703db195c56c6e5b913d6eb23f83845d3ce87248",
+    "private_public.py": "6619e1982d166748a61cc9448033f96dc0787b8bf32d41f0c37ebe3169ca665b",
     "safe_output.py": "5bdfc6ead9f7eb9341d3de669ece63cdf653e1e8ba7882b334360cbafad8b052"
   },
-  "source_sha256": "e7d8613f0cd6cdcbe2d3bbab9a9c61ee94f4d746777b31dc8851cab535b8ec97",
-  "whole_plus_one": {
-    "packet_created_by_public_sender": false,
-    "private_gonol_relation": "UNIMPLEMENTED",
-    "reason": "six spaces per round are private; native public evaluation law missing",
-    "status": "BLOCKED"
-  }
+  "source_sha256": "496a529002bc66f82189cf64d5f866c0241f22304325722b6a34f67e936f08c2",
+  "status": "FALSIFIED"
 }

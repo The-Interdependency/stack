@@ -43,7 +43,7 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
           cat "$RUNNER_TEMP/weave-check.json"
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/cycle.py demo | tee "$RUNNER_TEMP/weave-demo.json"
-      - name: Observe unclosed private-public distinction (expected exit 1)
+      - name: Reproduce native candidate public-recovery attack (expected exit 1)
         run: |
           set -euo pipefail
           if python3 research/weave/private_public.py --sources "$GITHUB_WORKSPACE/.weave-inputs" --require-distinction > "$RUNNER_TEMP/weave-private-public.json"; then
