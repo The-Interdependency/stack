@@ -79,7 +79,7 @@ python3 -m venv .venv
 set -a
 . /etc/stack-orchestrator.env
 set +a
-STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
+sudo -E env STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
 /srv/stack/.venv/bin/python -m frontend.cli.stackctl db migrate
 ```
 

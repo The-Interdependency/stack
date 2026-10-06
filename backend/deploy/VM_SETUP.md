@@ -83,21 +83,29 @@ sudo editor /etc/stack-orchestrator.env
 The skill-lib collector at `STACK_SKILL_LIB_ROOT` needs its pinned Python reader
 packages in the worker venv and its TypeScript compiler installed beside the
 worker script. Without them the collector exits 3 and fresh-making fails closed.
-Run this after every skill-lib snapshot refresh, before restarting the worker
-(Node and npm must already be installed; Node version on the VM: hmmm):
+Run this as root after every skill-lib snapshot refresh, before restarting the
+worker (Node and npm must already be installed; Node version on the VM: hmmm):
 
 ```bash
 set -a
 . /etc/stack-orchestrator.env
 set +a
-STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
+sudo -E env STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
 ```
 
-The script runs `pip install -r $STACK_SKILL_LIB_ROOT/msdmd/requirements.txt`
-into the venv and `npm ci --ignore-scripts --prefix $STACK_SKILL_LIB_ROOT/msdmd`.
-It then prints `python -m msdmd.collect --print-generator-identity --json`, which
-must not report `node` or `typescript` as `absent`. The worker uses the same
-command as the generator identity, so a runtime upgrade re-keys every MSDMD derivation.
+The script sets `umask 022` so the worker user (`STACK_WORKER_USER`, default
+`stackorchestrator`, which must exist) can read what it installs, runs
+`pip install -r $STACK_SKILL_LIB_ROOT/msdmd/requirements.txt` into the venv and
+`npm ci --ignore-scripts --prefix $STACK_SKILL_LIB_ROOT/msdmd`, then probes
+`python -P -m msdmd.collect --print-generator-identity --json` twice: in the
+calling shell, and inside the worker unit's sandbox through
+`backend/ops/worker_sandbox_run.sh` (systemd-run with the unit's `User`,
+`EnvironmentFile` and sandbox properties, including `MemoryDenyWriteExecute`).
+It fails (exit 3) if either probe fails or reports `node` or `typescript` as
+`absent`, and exits 4 if the sandboxed probe cannot run (not root, or no
+systemd-run). The sandboxed identity is the one the worker records, so a
+runtime upgrade re-keys every MSDMD derivation. pip hash-checking is not used
+(hmmm: skill-lib publishes pinned versions without hashes).
 
 Targets that still vendor the schema-1 `.agents/skills/msdmd/collection.ts` helper
 make the collector exit 4 (helper older than the schema-2 output). Those targets
@@ -106,13 +114,13 @@ missing from the worker's PATH, or whose root an enclosing repository ignores,
 makes it exit 5. The worker records each refusal as a failed attempt with an
 operator action rather than writing an artifact.
 
-`hmmm`: `stack-orchestrator-worker.service` sets `MemoryDenyWriteExecute=true`,
-which JIT engines such as Node's V8 generally cannot run under. Confirm on the VM
-that the TypeScript reader and the identity probe work inside the unit's sandbox
-(for example `systemd-run --wait --pipe -p MemoryDenyWriteExecute=yes
--p User=stackorchestrator --working-directory=/srv/stack --setenv=PYTHONPATH=/srv/stack/skill-lib
-/srv/stack/.venv/bin/python -m msdmd.collect --print-generator-identity --json`)
-before relying on fresh-making. `node` must also be on the unit's default PATH.
+`stack-orchestrator-worker.service` keeps `MemoryDenyWriteExecute=true`. V8's
+JIT cannot run under it: Node dies with a V8 fatal error (SIGTRAP). skill-lib's
+collector runs Node with `--jitless` from the skill-lib PR that follows
+`38c6433` (The-Interdependency/skill-lib#120); with the `38c6433` snapshot the
+sandboxed probe reports `node`/`typescript` as `absent` and the install script
+fails. The stack pin must move past that PR before fresh-making can read
+TypeScript in the sandbox. `node` must also be on the unit's default PATH.
 
 Create `/var/lib/stack-orchestrator/receipts` and
 `/var/backups/stack-orchestrator/postgres` owned by the service account after that
