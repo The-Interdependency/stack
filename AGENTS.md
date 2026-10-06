@@ -153,8 +153,6 @@ coherence; it does not replace workspace behavioral tests.
 - Weave is specification-first research. Uneven partitions, stage-input
   composition, schedule encoding, thread/corpus binding, hyperspace/gonol binding,
   authentication/state, and the threat model remain `hmmm` until explicitly resolved.
-- The complete root `skill-lib/` snapshot refresh remains separate because the current
-  provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity

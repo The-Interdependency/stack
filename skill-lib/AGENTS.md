@@ -51,6 +51,8 @@ Read [`RESOURCE_RUN_INVARIANT.md`](RESOURCE_RUN_INVARIANT.md) before any compute
 <skill-name>/SKILL.md          # required: the skill itself
 <skill-name>/<helpers>...      # optional: parsers, executors, examples
 llms/                          # stdlib module for python -m llms.build
+tools/ai.sh                    # canonical Termux -> a0 SSH/tmux coding-agent launcher
+tools/install_ai.sh            # installs ai.sh into caller PATH (Termux $PREFIX/bin first)
 ```
 
 Every skill is a directory at the repo root containing at least a
@@ -64,7 +66,7 @@ description: <one paragraph; ends with explicit "Load this when …" triggers>
 ```
 
 The `description` is what your harness uses to decide whether to load
-the skill. Treat it as the public contract.
+the rest. Treat it as the public contract.
 
 ## How to load a skill
 
@@ -77,9 +79,9 @@ the skill. Treat it as the public contract.
    `owner-build`, `test-build`, `meta-module-build`, `risk-boundary-build`,
    `ratios`, `manifest`, `llms-build`, and `typed-meta-frontend`) define metadata blocks that other
    modules declare inside their own source files. Other skills (currently
-   `canon`, `domain-claims`, `char-compress`, `visitor-intro`, `agent-instantiation`,
-   `a0p-instancing`, `plain-lens`, `gonol-build`, `ucns-option-selection`, `meta`, `the-interdependency`,
-   `interdependent-work-graph`, `distributed-publication`, `loop-eng`, `action-calibration`, `skill-build`, `skill-usage`,
+   `canon`, `domain-claims`, `char-compress`, `visitor-intro`, `adaptive-elicitation`, `agent-instantiation`,
+   `a0p-instancing`, `plain-lens`, `thought-lens`, `gonol-build`, `ucns-option-selection`, `epac-selection-display`, `meta`, `the-interdependency`,
+   `interdependent-work-graph`, `stack-update`, `project-incubation-graduation`, `distributed-publication`, `website-builder-journal`, `loop-eng`, `fresh-making`, `action-calibration`, `repo-audit-repair`, `skill-build`, `skill-usage`,
    `ssh-automation`, `vm-mcp`, `sql-queries`, `statistical-analysis`, `explore-data`, `validate-data`, `data-visualization`) are procedural and
    define no block.
 
@@ -115,8 +117,11 @@ propagate from here.
   the triggers explicitly. Do not bury them.
 - Unknown fields are written `hmmm`, not guessed. This applies to any
   metadata block declared via `msdmd`.
-- New module work in any repo should start with a `MODULE_BUILD`
-  block; see `meta-module-build/SKILL.md`.
+- New module work starts with source-linked planning information; consume
+  existing native manifests, schemas, and design records first. Use supplemental
+  `MODULE_BUILD` entries only for otherwise unexpressed information; see
+  `meta-module-build/SKILL.md`. Purpose, surfaces, boundaries, tests, rollout,
+  and rollback remain required. Unsupported extraction stays `hmmm`, not absent.
 - If you are creating or maintaining a root `llms.txt`, load
   `llms-build/SKILL.md`, edit source `LLMS` blocks first, then run
   `python -m llms.build --root . --out llms.txt --apply`.
@@ -132,6 +137,8 @@ propagate from here.
   bones, transforms, and `hmmm`; drop only safely regenerable scaffold.
 - If you are an agent introducing a newcomer to the org, load
   `visitor-intro/SKILL.md` and follow its output rubric.
+- If a task requires recovering several missing user-supplied facts, especially when prior context or source material may already answer some of them, load
+  `adaptive-elicitation/SKILL.md`; harvest known context first, ask exactly one highest-value unresolved question per turn, consume volunteered facts, and recompute the remaining gaps before asking again.
 - If you are instantiating, forking, merging, or retiring an agent or
   sub-agent in `a0` / `a0ucns`, load `agent-instantiation/SKILL.md` and
   follow its instantiation sequence. For `a0-betatest` (a0p), whose model
@@ -140,23 +147,43 @@ propagate from here.
   multi-lens companion view, a progressive-disclosure reader, or a dynamic
   page that must keep a static fallback — load `plain-lens/SKILL.md`; keep the
   paraphrase subordinate to the canon and mark uncertain mappings as `hmmm`.
-- If you are constructing, reviewing, replaying, or continuing UCNS gonols,
-  including lexical floors, morphology, definitions, punctuation functions,
-  closure, atomic promotion, or recursive relations, load `gonol-build/SKILL.md`.
-  Resolve current UCNS authority first; never restore historical
-  `gonal-morphology` doctrine as current canon.
+- If you are translating raw, recursive, fragmentary, coined, or private-language
+  thought for strangers or a specific audience, load `thought-lens/SKILL.md`;
+  freeze the claim kernel before changing vocabulary and back-check the result.
+- If you are constructing, reviewing, replaying, or continuing language-gonol
+  research, including lexical floors, morphology, definitions, punctuation
+  functions, closure, atomic promotion, or recursive relations, load
+  `gonol-build/SKILL.md`. Resolve current UCNS gonol-object/constructor/geometry
+  authority and the exact owning Stack research workspace first. EDCM is
+  measurement/evaluation only; never impose a universal adjacent-scale ladder
+  or restore historical `gonal-morphology` doctrine as current canon.
 - If you are comparing UCNS options, deciding whether evidence authorizes a
   winner, or issuing a scoped selection receipt, load
   `ucns-option-selection/SKILL.md`. Hard eligibility and evidence gates cannot
   be compensated by scores; selection requires explicit scoped ratification.
+- If you are selecting an EPAC element, molecule, receipt, comparison, or
+  available visualization for display, or exposing that workflow through
+  WebMCP, load `epac-selection-display/SKILL.md`. Pin the provisional source and
+  target, verify the receipt and renderer, preserve nonclaims and `hmmm`, and do
+  not turn presentation into canon selection or MCP execution authority.
 - If you are building code, researching, performing GitHub maintenance or updates, assembling EDCMBONE transcripts for analysis, or any work that touches The Interdependency organization, The Interdependent Way projects, or related assets (edcmbone, ucns, pcea, skill-lib, a0, aimmh, etc.), load `the-interdependency/SKILL.md` and follow its structure-preservation, EDCMBONE framework, mandatory usage-guidance, and org-workflow rules.
 - If the task spans, consumes, compares, publishes to, or changes the contract between multiple repositories, load `interdependent-work-graph/SKILL.md` before choosing an edit workspace. Resolve exact commits, authority roles, relations, non-transfer boundaries, and one shared graph record.
+- If you are changing `The-Interdependency/stack` structure — participants, source pins, authorities, relations, research workspaces, BASE records, extraction/graduation standing, or architecture projections — load `stack-update/SKILL.md` with `interdependent-work-graph`. Treat the mutation as one coherent transaction, remove superseded claims, recompute the work-graph identity, and require the stack's deterministic consistency gate before merge.
+- If a new component is born inside a stack, integration, laboratory, or incubator repository and may become an independent repository/package, load `project-incubation-graduation/SKILL.md`. Qualify it before extraction, preserve provenance, create a new implementation-authority boundary explicitly, release it through its declared distribution surface, and require the former forge to reconsume the released artifact before declaring graduation. Load `interdependent-work-graph` once the transition crosses repositories.
 - If one ordered textbook, report, standard, corpus, archive, or public reading surface displays source-owned content from multiple repositories or independently owned files, load `distributed-publication/SKILL.md` with `interdependent-work-graph`. Preserve exact source identities, source-local licenses and statuses, correction routing, fail-closed production retrieval, explicit fallback, and publication build provenance.
+- Before modifying any file in `The-Interdependency/The-Interdependency.github.io`, load `website-builder-journal/SKILL.md`. Every website change transaction must append a new `By the builder` record with date, time, exact runtime model, and model-discretionary prose before terminal validation; read-only inspection is the non-trigger.
 - If you are designing, implementing, or reviewing agent feedback loops, closed cycles, subagent fleets (maker vs checker), orchestration in a0p/AIMMH, or any repeatable AI workflow that should run autonomously with Verify → Iterate stages, load `loop-eng/SKILL.md` and apply its 5-stage cycle, 6 building blocks, and structure-preserving closed-loop principles.
+- If authoritative inputs changed and stored collections, documentation,
+  projections, package indexes, or other derived artifacts may be stale, load
+  `fresh-making/SKILL.md`; bind exact inputs and generator/verifier identities,
+  rebuild only the affected closure, and accept freshness only after verification.
 - If you are deciding between the smallest decisive experiment and a maximal coherent program, choosing the highest-leverage next action under time, attention, money, compute, or coordination constraints, or deciding whether a bounded falsifier should precede a full build, load `action-calibration/SKILL.md`. It sizes the action; `loop-eng` executes the selected loop.
+- If you are auditing, assessing, hardening, cleaning up, or auditing and repairing an existing repository, load `repo-audit-repair/SKILL.md`. Resolve exact repository identity, select checks from actual claims, classify findings before mutation, preserve audit-only requests as read-only, repair the owning layer, and verify merge/release/deployment states separately when applicable.
 - If you are giving an MCP-capable agent operational contact with a private VM,
-  load `vm-mcp/SKILL.md`; keep credentials outside the model path and expose
-  only named, bounded capabilities.
+  load `vm-mcp/SKILL.md`; keep credentials outside the model path and choose
+  the authority profile explicitly. Shared or first-contact deployments should
+  stay bounded; a single-owner `personal-console` may intentionally expose broad
+  `user_exec` plus visibly separate root `admin_exec`.
 - If you are creating a new skill, revising an existing skill, bringing skills into compliance, or designing a skill-specific test suite, load `skill-build/SKILL.md` and answer its trigger, source-of-truth, workflow, validation, and `hmmm` question sets before patching.
 - If you are writing, reviewing, or troubleshooting SSH automation, non-interactive remote commands, deployment scripts over SSH, or Cloud Shell copy-paste SSH blocks, load `ssh-automation/SKILL.md`; fail closed on host trust and identity, preserve stdin and PTY boundaries, quote remote scripts, and keep bulk pastes inside a child shell.
 - If any skill-lib skill materially shapes a task, also load `skill-usage/SKILL.md` and record exactly one use after its contribution is observable. Record unknown outcomes as `hmmm`; do not infer success from silence.
@@ -172,3 +199,5 @@ propagate from here.
 - `llms.txt` — generated LLM-facing root instructions.
 - Each `<skill>/SKILL.md` — the authoritative skill spec.
 - `llms/build.py` — reference runner for `llms-build`.
+- `tools/ai.sh` — canonical Termux-side launcher for the remote `a0` tmux coding-agent session.
+- `tools/install_ai.sh` — installs `ai.sh` into caller PATH, preferring Termux `$PREFIX/bin`.

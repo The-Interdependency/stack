@@ -29,21 +29,29 @@ Propagation PRs should cite this repository and the source commit SHA.
 * `canon/` — canonical-source and doctrine maintenance
 * `domain-claims/` — domain-first lexical standing, collision checks, and semantic provenance gating
 * `visitor-intro/` — onboarding tour for newcomers landing at any org repo
-* `char-compress/` — bone/flesh context compression for handoffs and skill writing
+* `adaptive-elicitation/` — context-first, one-question-at-a-time interviewing for missing task information
+* `char-compress/` — skill-lib-owned bone/flesh context compression for handoffs and skill writing; historical notation is not current UCNS mathematics
 * `agent-instantiation/` — a0/a0ucns agent spawn/fork/merge lifecycle methodology
 * `a0p-instancing/` — a0-betatest (a0p) per-user CRUD + native-ZFAE instancing methodology
 * `manifest/` — living-spec generation
 * `llms-build/` — root llms.txt generation from LLMS blocks
 * `typed-meta-frontend/` — TypeScript self-building frontend generation from backend module metadata
 * `plain-lens/` — plain-language, multi-lens companion views of dense canonical text
+* `thought-lens/` — raw-thought to audience-legible translation with claim-kernel fidelity and back-translation checks
 * `meta/` — consultation router for current METAPAT authority; no frozen doctrine copy
-* `gonol-build/` — UCNS gonol construction, closure, atomic promotion, explicit function application, complete replay, and honest continuation boundaries
+* `gonol-build/` — UCNS gonol objects/constructors/geometry + Stack language-construction research, closure, atomic participation, replay, and honest continuation boundaries; EDCM is measurement/evaluation only
 * `ucns-option-selection/` — fail-closed scoped UCNS option comparison, selection, ratification, non-transfer, rollback, and decision receipts
+* `epac-selection-display/` — exact provisional EPAC target and representation selection with receipt-backed display, status preservation, and a read-only WebMCP handoff boundary
 * `the-interdependency/` — org-wide workflow protocol and usage-guidance doctrine for The Interdependency projects
 * `interdependent-work-graph/` — cross-repository identity, authority, coordination, and shared stack-manifest doctrine
+* `stack-update/` — fail-closed structural stack update protocol; keeps authority, relation, lifecycle, provenance, manifests, BASE records, and work-graph identity coherent in one transaction
+* `project-incubation-graduation/` — incubation, qualification, extraction, release, reconsumption, and implementation-authority graduation doctrine
 * `distributed-publication/` — provenance-bearing materialization of one ordered publication from independently owned source units
+* `website-builder-journal/` — append-only model-attributed By the builder expansion required for every interdependentway.org modification
 * `loop-eng/` — closed-loop engineering doctrine for repeatable Discover→Plan→Execute→Verify→Iterate workflows
+* `fresh-making/` — deterministic derivation freshness, minimal affected rebuild closure, executor-independent restoration, verification, and receipts
 * `action-calibration/` — action sizing doctrine for minimal decisive experiments, maximal coherent programs, prerequisite repair, and immediate containment
+* `repo-audit-repair/` — evidence-led repository audit, classified findings, authorized repair, and terminal verification
 * `skill-build/` — skill authoring, compliance, and individualized test-suite question workflow
 * `skill-usage/` — evidence-bearing local invocation counts and maturity designations
 * `ssh-automation/` — fail-closed SSH scripting and copy-paste automation doctrine
@@ -52,7 +60,7 @@ Propagation PRs should cite this repository and the source commit SHA.
 * `statistical-analysis/` — statistical methods doctrine (imported, Apache-2.0 — see `ATTRIBUTION.md`)
 * `explore-data/` — dataset profiling doctrine (imported, Apache-2.0 — see `ATTRIBUTION.md`)
 * `validate-data/` — analysis QA doctrine (imported, Apache-2.0 — see `ATTRIBUTION.md`)
-* `data-visualization/` — chart-building doctrine (imported, Apache-2.0 — see `ATTRIBUTION.md`)
+* `data-visualization/` — chart-building doctrine (`SKILL.md` imported and, with its local additions, entirely Apache-2.0; the four extension files from `868de86` original, MPL-2.0 — see `ATTRIBUTION.md`)
 
 ## Target repos
 
@@ -72,6 +80,9 @@ detector (`.github/workflows/consumer-drift.yml`) checks:
 * `The-Interdependency/a0-betatest`
 * `The-Interdependency/metapat`
 * `The-Interdependency/ptcna`
+* `The-Interdependency/pubskill-lib`
+* `The-Interdependency/epac`
+* `The-Interdependency/stack`
 
 **Targets not in the drift matrix** (do not vendor a top-level subset yet, so
 `--require-vendored` would fail them):
@@ -79,6 +90,7 @@ detector (`.github/workflows/consumer-drift.yml`) checks:
 * `The-Interdependency/a0ucns` — an aggregator that embeds whole copies of other
   repos rather than vendoring a top-level `.agents/skills/` subset. Its nested
   embeds carry their own copies; re-sync those from their source repos.
+
 **Archived or superseded** — not active drift consumers:
 
 * `The-Interdependency/edcmbone` — archived; maintained EDCM work lives in `edcm`
@@ -100,14 +112,60 @@ when the repo can run the collector locally. A provisional hand-seeded collectio
 point is allowed only when it records a `hmmm` gap explaining what local
 generation still needs.
 
-`skill-lib_msdmd.ts` is the root collection point for this canonical repo.
+`skill-lib_msdmd.ts` is the generated root collection point for this canonical
+repo. Regenerate it from owning native and supplemental sources, never by editing
+the projection:
+
+```bash
+python -m pip install -r msdmd/requirements.txt
+npm ci --ignore-scripts --prefix msdmd
+python -m msdmd.collect --root . --repo The-Interdependency/skill-lib --snapshot-identity --import-path ./msdmd/collection --out skill-lib_msdmd.ts --strict
+python -m unittest tests.test_msdmd_native_contract_docs
+```
+
+The shipped collector defaults to schema 2. It integrates supported native facts
+through `msdmd/readers.py` and supplemental MSDMD blocks through the universal
+parser path. Its legacy/block-only output remains available only as an explicit
+compatibility path and cannot silently represent native facts. In
+`--legacy-blocks-only` mode the universal parser is lexical rather than
+syntax-aware: block-shaped text in source strings or fixtures can be promoted
+when it matches the selected line-comment fence syntax. Treat that output as a
+block inventory only, not native coverage, identity validation, or behavioral
+evidence.
+
+The schema-2 reader matrix is implemented in bounded subsets rather than as a
+claim to every metadata convention. Recognized unsupported, ambiguous,
+unreadable, dynamic, or out-of-scope inputs remain visible findings. `gaps` is
+only the expected-block adoption result: an empty `gaps` array means there are no
+requested `--expected-block` adoption gaps. Native `--require-fact` obligations
+are reported through `requirements` and diagnostics, and `--strict` makes
+unresolved required scope fail the command. Deferred limitations are declared in
+the collector's owning metadata; they are not missing-block gaps. The generated
+file and its inputs travel in one Git commit; the replay test checks their bytes.
+
+Python repositories may additionally generate source-bound per-module sidecars:
+
+```bash
+python -m msdmd.module_projection --root . --repo <repo> --revision <exact-revision> --out-dir .msdmd/modules --write
+python -m msdmd.module_projection --root . --repo <repo> --revision <exact-revision> --out-dir .msdmd/modules --check
+```
+
+This partial reader covers Python declarations, signatures, decorators,
+docstrings, and structurally attached line comments. It does not replace
+`<reponame>_msdmd.ts` and is not a repository-wide native coverage verdict. Keep
+generated sidecars with the exact source and reader identity that their headers
+record.
 
 ## Propagation checklist
 
 Use `docs/propagation-checklist.md` for the concrete source-change →
 target-repo PR sequence. Use `docs/runner-config-guidance.md` before judging
-large or artifact-heavy repos; frozen research artifacts, archives, generated
-trees, and vendored `.agents/skills/` copies should not pollute the denominator.
+coverage. Distinguish schema-2 supported readers, legacy block-helper scans,
+unsupported native discovery, including manifests, CODEOWNERS, documentation,
+extensionless and unsupported sources. Record every exclusion and its reason,
+including frozen research artifacts, archives, generated trees, and vendored
+`.agents/skills/` copies. Declared scope can exclude them from live-module
+obligations without hiding them from accounting.
 
 ## Rule
 
@@ -119,6 +177,27 @@ Before assigning a stack-level task to one repository, agents should read:
 
 Resolve the exact participating repository and evidence-source identities first. Repository boundaries remain authority and provenance boundaries, not agent-attention boundaries.
 
+Before changing the structure of `The-Interdependency/stack` — including participant,
+pin, authority, relation, workspace, BASE, extraction/graduation, or architecture
+projections — agents should read:
+
+```text
+.agents/skills/stack-update/SKILL.md
+```
+
+Load `interdependent-work-graph` with it. Treat the mutation as one coherent
+transaction: update every affected authority/provenance projection, remove superseded
+claims, recompute the work-graph digest, and require the stack consistency checker to
+pass before merge.
+
+Before deciding whether a component born inside a stack, integration, laboratory, or incubator repository should become an independent repository/package, or before extracting, publishing, reconsuming, or declaring such a component graduated, agents should read:
+
+```text
+.agents/skills/project-incubation-graduation/SKILL.md
+```
+
+Load `interdependent-work-graph` once the transition crosses repository boundaries. Graduation transfers implementation/public-contract authority only after qualification, release, and downstream reconsumption; it does not transfer semantic, proof, theorem, measurement, certification, or empirical status.
+
 Before assembling one textbook, report, standard, corpus, archive, or public reading sequence from source-owned units distributed across repositories or independently owned files, agents should read:
 
 ```text
@@ -127,6 +206,14 @@ Before assembling one textbook, report, standard, corpus, archive, or public rea
 
 Load `interdependent-work-graph` with it. Preserve ordered source identity, source-local licenses and statuses, correction routing, fail-closed production retrieval, explicit fallback, static reading access, and provenance in the published build artifact.
 
+Before modifying any file in `The-Interdependency/The-Interdependency.github.io`, agents should read:
+
+```text
+.agents/skills/website-builder-journal/SKILL.md
+```
+
+Every website change transaction must append at least one new `By the builder` record containing date, time, and exact runtime model. The model chooses the subject and stops when it has properly explicated it. The journal append satisfies the transaction and does not recursively require another append.
+
 Before creating a new module, route, service, adapter, schema, worker,
 engine, UI panel, migration, or experiment, agents should read:
 
@@ -134,8 +221,11 @@ engine, UI panel, migration, or experiment, agents should read:
 .agents/skills/meta-module-build/SKILL.md
 ```
 
-New module work should start with a `MODULE_BUILD` block. Unknown fields
-must be marked `hmmm`, not guessed.
+New module work starts with source-linked planning information from existing
+native manifests, schemas, and design records. Use supplemental `MODULE_BUILD`
+entries only for otherwise unexpressed information; do not demand a second copy.
+Purpose, surfaces, boundaries, tests, rollout, and rollback remain required.
+Unsupported extraction and unknown fields stay `hmmm`, not missing information.
 
 Before creating or maintaining a root `llms.txt`, agents should read:
 
@@ -143,8 +233,23 @@ Before creating or maintaining a root `llms.txt`, agents should read:
 .agents/skills/llms-build/SKILL.md
 ```
 
-Root LLM instructions should be declared in source `LLMS` blocks and generated
-with the llms-build runner, not hand-maintained as separate doctrine.
+Root LLM instructions remain owned by their source declarations. The shipped
+llms-build runner publishes existing source `LLMS` blocks; edit those blocks and
+regenerate their projection. Native instruction readers remain a contract, so
+unsupported native sources stay `hmmm` rather than requiring duplicate blocks.
+
+Before translating raw, recursive, context-heavy, fragmentary, coined, or
+private-language thought for another human audience or public surface, agents
+should read:
+
+```text
+.agents/skills/thought-lens/SKILL.md
+```
+
+Recover and freeze the claim kernel before changing vocabulary. Reduce the
+context required from the reader without strengthening, flattening, or silently
+completing the thought; use `hmmm` where a bridge remains unresolved. Use
+`plain-lens` instead when the source is already a stable dense document.
 
 Before promoting a word or phrase into canon, a theorem, schema, ontology, encoding,
 or other semantic control surface, agents should read:
@@ -176,6 +281,18 @@ Freeze scope, candidates, hard gates, evidence, policies, authority, and
 ratification before outcome comparison. Do not let scores compensate for failed gates
 or transfer a scoped result into universal UCNS canon.
 
+Before selecting an EPAC artifact and representation for a human-facing or
+WebMCP display, agents should read:
+
+```text
+.agents/skills/epac-selection-display/SKILL.md
+```
+
+Pin the provisional EPAC source, exact target, receipt, and available renderer;
+preserve research standings, nonclaims, sealed-comparison boundaries, and `hmmm`;
+and keep the WebMCP server a read-only registry/handoff rather than an EPAC
+executor.
+
 Before choosing between the smallest decisive action and a maximal coherent program,
 selecting the highest-leverage next step under constrained time, attention, money,
 compute, or coordination, or deciding whether a bounded falsifier should precede a
@@ -188,6 +305,17 @@ full build, agents should read:
 Name the decision, preserve load-bearing invariants, compare complete cost vectors,
 freeze outcome-conditioned escalation rules, and let `loop-eng` execute the selected
 bounded loop.
+
+Before auditing or auditing and repairing an existing repository, agents should read:
+
+```text
+.agents/skills/repo-audit-repair/SKILL.md
+```
+
+Resolve exact repository identity and authority first; select checks from actual
+repository claims; classify defects separately from environment, external service,
+policy, and `hmmm`; repair only the owning layer under the user's authorization; and
+verify merge, release, and deployment as distinct terminal states when applicable.
 
 Before writing, reviewing, or troubleshooting repeatable SSH automation or a
 large terminal paste that contains SSH, agents should read:

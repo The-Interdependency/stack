@@ -183,9 +183,9 @@ Skipped PostgreSQL tests are deployment gates, not passes.
 ## Provenance
 
 `fresh-making-provenance.json` binds this runtime to exact `skill-lib` fresh-making
-doctrine. The root `skill-lib/` snapshot remains older because refreshing it would
-also import unrelated doctrine changes; the comparison records that the MSDMD
-generator tree did not change across that gap.
+doctrine. The root `skill-lib/` snapshot and the doctrine pin are the same skill-lib
+commit; the comparison records that `fresh-making/SKILL.md` is unchanged from the
+previous doctrine pin.
 
 ## hmmm
 
@@ -199,4 +199,3 @@ generator tree did not change across that gap.
   registered; the generic affected-closure logic is present.
 - Automatic commit/PR materialization of regenerated collection points remains
   separate from freshness verification and acceptance.
-- The complete root `skill-lib/` snapshot refresh remains a separate bounded change.
