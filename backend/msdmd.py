@@ -56,6 +56,7 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
 import subprocess
 import sys
 import tempfile
@@ -83,10 +84,13 @@ def sha256_file(path: str | Path) -> str:
 
 
 def resolve_git_head(root: str | Path) -> str | None:
-    proc = subprocess.run(
-        ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
-        text=True, capture_output=True, check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
+            text=True, capture_output=True, check=False,
+        )
+    except OSError:
+        return None
     value = proc.stdout.strip() if proc.returncode == 0 else ""
     return value if _SHA40.fullmatch(value) else None
 
@@ -105,12 +109,29 @@ COLLECTOR_REFUSALS: dict[int, tuple[str, str]] = {
 }
 
 
+def exit_description(returncode: int) -> str:
+    """Name a child's end: ``exit N`` or ``killed by SIGNAME`` (negative return)."""
+    if returncode < 0:
+        try:
+            return f"killed by {signal.Signals(-returncode).name}"
+        except ValueError:
+            return f"killed by signal {-returncode}"
+    return f"exit {returncode}"
+
+
 def collector_failure(stage: str, proc: subprocess.CompletedProcess[str]) -> tuple[str, str | None]:
     """Return the ledger ``(error, hmmm)`` for a nonzero collector exit."""
-    detail = (proc.stderr or proc.stdout or f"{stage} failed").strip()
+    detail = (proc.stderr or proc.stdout or "").strip()
     refusal = COLLECTOR_REFUSALS.get(proc.returncode)
     if refusal is None:
-        return detail, None
+        # Unmapped exits and signal deaths still name the status they ended with.
+        status = exit_description(proc.returncode)
+        error = f"{stage} failed ({status})" + (f": {detail}" if detail else "")
+        if proc.returncode < 0:
+            return error, (f"msdmd {stage} {status}: check the worker's memory and sandbox limits "
+                           "(journalctl -u stack-orchestrator-worker), then retry")
+        return error, None
+    detail = detail or f"{stage} failed"
     code, action = refusal
     return (f"{stage} refused by collector (exit {proc.returncode}, {code}): {detail}",
             f"msdmd exit {proc.returncode} ({code}): {action}")
@@ -158,10 +179,14 @@ def generator_identity(generator_root: str | Path) -> str:
         )
     except subprocess.TimeoutExpired as exc:
         raise ValueError(f"MSDMD generator identity timed out: {exc}") from exc
+    except OSError as exc:
+        # Spawn failures (ENOMEM, EAGAIN, a missing interpreter) fail closed.
+        raise ValueError(f"MSDMD generator identity could not start: {type(exc).__name__}: {exc}") from exc
     match = _GENERATOR_IDENTITY.fullmatch(proc.stdout.strip())
     if proc.returncode != 0 or not match:
         detail = (proc.stderr or proc.stdout or "no output").strip()[:500]
-        raise ValueError(f"MSDMD collector at {root} cannot report --print-generator-identity: {detail}")
+        raise ValueError(f"MSDMD collector at {root} cannot report --print-generator-identity "
+                         f"({exit_description(proc.returncode)}): {detail}")
     return match.group(1)
 
 
@@ -328,7 +353,7 @@ def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
         try:
             _verify_runtime(spec, {verify_path.name})
             proc = _run_collector(spec, verify_path, int(os.environ.get("STACK_VERIFY_TIMEOUT_SECONDS", "900")))
-        except (ConstraintError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        except (ConstraintError, OSError, subprocess.TimeoutExpired) as exc:
             return FreshnessReport(target, "hmmm", "verifier-unavailable", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
                                    "current verifier cannot establish freshness", [str(exc)])
@@ -376,6 +401,9 @@ def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) ->
     tmp.write_text(json.dumps(projected, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     os.replace(tmp, path)
     return path
+
+
+_SPAWN_HMMM = "the collector process could not be spawned (for example ENOMEM); check worker memory limits, then retry"
 
 
 def _temp_output(output: Path, suffix: str) -> Path:
@@ -427,6 +455,9 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             proc = _run_collector(spec, candidate, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"executor exceeded {timeout}s: {exc}")
+        except OSError as exc:
+            return ledger.fail(job.id, error=f"executor could not start: {type(exc).__name__}: {exc}",
+                               hmmm=_SPAWN_HMMM)
         if proc.returncode != 0:
             error, action = collector_failure("executor", proc)
             return ledger.fail(job.id, error=error, hmmm=action)
@@ -443,6 +474,9 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             verify_proc = _run_collector(spec, verifier, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"verifier exceeded {timeout}s: {exc}")
+        except OSError as exc:
+            return ledger.fail(job.id, error=f"verifier could not start: {type(exc).__name__}: {exc}",
+                               hmmm=_SPAWN_HMMM)
         if verify_proc.returncode != 0:
             error, action = collector_failure("verifier", verify_proc)
             return ledger.fail(job.id, error=error, hmmm=action)

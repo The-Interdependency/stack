@@ -432,6 +432,59 @@ class FreshMakingTests(unittest.TestCase):
             self.assertIn("repo=ucns", published)
             self.assertNotEqual("sha256:" + "f" * 64, ledger.get_derivation(spec["target"])["generator"]["identity"])
 
+    def test_unmapped_exits_and_signals_name_their_status(self):
+        for tail, status, has_hmmm in (
+            ("raise SystemExit(7)\n", "exit 7", False),
+            ("import os, signal\nos.kill(os.getpid(), signal.SIGKILL)\n", "killed by SIGKILL", True),
+            ("import os, signal\nos.kill(os.getpid(), signal.SIGSEGV)\n", "killed by SIGSEGV", True),
+        ):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as tmp, _unbound_env():
+                target, generator, ledger, spec = self._runtime(Path(tmp))
+                (generator / "msdmd" / "collect.py").write_text(FAKE_COLLECTOR + tail, encoding="utf-8")
+                job, _ = queue_make(ledger, spec["target"])
+                result = run_job(ledger, job.id)
+                self.assertEqual("failed", result.state)
+                self.assertIn(f"executor failed ({status})", result.error or "")
+                self.assertEqual(has_hmmm, bool(result.hmmm), result.hmmm)
+                self.assertFalse((target / "ucns_msdmd.ts").exists())
+                self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+    def test_spawn_oserror_is_recorded_not_raised(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            first, _ = make(ledger, spec["target"])
+            published = (target / "ucns_msdmd.ts").read_bytes()
+            (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])
+            job = ledger.retry(job.id)  # same key as the accepted run: a repair attempt
+            real = subprocess.run
+
+            def no_memory(cmd, *args, **kwargs):
+                if "--out" in cmd:
+                    raise OSError(12, "Cannot allocate memory")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=no_memory):
+                result = run_job(ledger, job.id)
+                self.assertEqual("failed", result.state)
+                self.assertIn("executor could not start: OSError", result.error or "")
+                self.assertIn("ENOMEM", result.hmmm or "")
+                report = evaluate(ledger, spec["target"])
+                self.assertNotEqual("fresh", report.state)
+            self.assertEqual(b"tampered\n", (target / "ucns_msdmd.ts").read_bytes())
+            self.assertNotEqual(published, b"tampered\n")
+            self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+            def identity_no_memory(cmd, *args, **kwargs):
+                if "--print-generator-identity" in cmd:
+                    raise OSError(12, "Cannot allocate memory")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=identity_no_memory):
+                report = evaluate(ledger, spec["target"])
+            self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
+            self.assertNotEqual("fresh", report.state)
+
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
             _, generator, ledger, spec = self._runtime(Path(tmp))
