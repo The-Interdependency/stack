@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "6340a86d075031ecee36276313819418ec296a8cc83b6758678f88ff10ee1fcc",
+  "work_graph_sha256": "7e2aeaee9aa9589b79471f1b43dbc9d3cbfb017455e3d5b462be582695a7a6c1",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -198,7 +198,7 @@
       "canonical_release": false,
       "commit": "1ba201449731337dc20c564788f4303c8910bfdd",
       "participant_id": "weave",
-      "relation": "new stack-local specification and research for Erin Spencer's full intended multi-layer encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, reconstruction-dependent threads, corpus/material binding, multi-arity bit interleaving, and intended asymmetric key relation; no URPCS implementation inheritance and no security standing yet",
+      "relation": "Stack-owned binary origin/sequence candidate and complete declared corpus-normalization, repeated-sequence affixiation, prime-route split and interleave recovery profile; private/public cryptographic relation remains unresolved; no URPCS inheritance or security standing",
       "repository": "The-Interdependency/stack",
       "workspace": "research/weave/"
     },
