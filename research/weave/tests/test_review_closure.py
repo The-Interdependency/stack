@@ -45,7 +45,7 @@
 #   mutates: none
 #   cleanup: none
 # id: review_discovery_roundtrip
-#   proves: cycle_discovery_profile, cycle_exact_recovery
+#   proves: cycle_discovery_profile, cycle_reversible_rounds
 #   call: self::test_canonical_discovery_records_still_recover
 #   mutates: none
 #   cleanup: none
@@ -103,6 +103,7 @@ class FractionSpoof(Fraction):
         return True
 
     def __ne__(self, other):
+        type(self).calls += 1
         return False
 
 
