@@ -18,8 +18,8 @@ canonical repo into a consuming repository.
 
 ```bash
 python -m unittest discover -s tests
-python tools/check_skill_lib_drift.py
-python tools/check_skill_compliance.py
+python tools/check_skill_lib_drift.py --warnings-fail
+python tools/check_skill_compliance.py --warnings-fail
 python ratios/ratios_check.py --strict
 python -m llms.build --root . --out llms.txt --check
 ```
@@ -36,6 +36,11 @@ python tools/propagate_skills.py ../target-repo          # inspect dry-run
 python tools/propagate_skills.py ../target-repo --apply  # copy skill dirs
 ```
 
+A partial `--skills` refresh lists the copied skills under its exact source
+commit and keeps every other installed skill in a separate, unrefreshed section.
+Owner-written local descriptions are retained. An unrefreshed canonical copy's
+prior cited source is retained when known; otherwise it stays `hmmm`.
+
 Then in the target repo:
 
 1. Add or update `.agents/skills/README.md`.
@@ -50,8 +55,22 @@ Minimum target checks:
 
 ```bash
 python .agents/skills/manifest/generate.py --check
+python -m pip install -r .agents/skills/msdmd/requirements.txt
+npm ci --ignore-scripts --prefix .agents/skills/msdmd
 python -m msdmd.collect --root . --repo <repo> --out <repo>_msdmd.ts
 ```
+
+Exit 3 means a native reader runtime is missing (install the two runtimes
+above; `--allow-missing-reader-runtimes` writes incomplete, flagged output).
+Exit 4 means the target's `.agents/skills/msdmd/collection.ts` helper is older
+than the schema-2 output (`MSDMD_COLLECTION_HELPER_VERSION`); propagate the
+current msdmd skill, or use `--legacy-blocks-only` for explicit schema-1 output.
+Exit 5 means git could not list the visible files (git missing from PATH, a
+corrupt index or broken `.git`) or the root is git-ignored by an enclosing
+repository; run in a readable checkout (no opt-out). `--check` reports 5, not
+drift. Nothing is written on exit 3, 4 or 5. Runners that fingerprint freshness should use
+`python -m msdmd.collect --print-generator-identity` (exit 3 and no output when
+its Node probe is killed by a signal or fails).
 
 Run any target-local checks named in `CLAUDE.md`, `AGENTS.md`, or
 `.agents/skills/README.md`.

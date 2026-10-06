@@ -154,8 +154,6 @@ coherence; it does not replace workspace behavioral tests.
   lives in `research/weave/native_binary.py`; UCNS geometry is consumed, not
   redefined. UCHC binary graduation has not occurred. Private/public lifting,
   authentication/state and full-cipher security remain `hmmm`.
-- The complete root `skill-lib/` snapshot refresh remains separate because the current
-  provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity

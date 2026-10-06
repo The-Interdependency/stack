@@ -56,7 +56,10 @@ JSON receipts under `STACK_RECEIPT_DIR` are projections for inspection/recovery.
 - Python 3.11+ and `psycopg`.
 - `git`.
 - target checkouts directly under `STACK_REPO_ROOT`.
-- a pinned skill-lib checkout at `STACK_SKILL_LIB_ROOT`.
+- a pinned skill-lib checkout at `STACK_SKILL_LIB_ROOT`, with its MSDMD native
+  reader runtimes installed (`backend/ops/install_msdmd_runtime.sh`: the
+  `msdmd/requirements.txt` packages in the worker venv and
+  `npm ci --ignore-scripts --prefix $STACK_SKILL_LIB_ROOT/msdmd`; Node and npm required).
 - an independent mounted filesystem/device for the verified backup mirror.
 
 Prefer local PostgreSQL Unix-socket/peer authentication. The worker should not need a
@@ -76,8 +79,24 @@ python3 -m venv .venv
 set -a
 . /etc/stack-orchestrator.env
 set +a
+sudo -E env STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
 /srv/stack/.venv/bin/python -m frontend.cli.stackctl db migrate
 ```
+
+The generator identity is the collector's own `--print-generator-identity`. It
+covers collector sources plus the Python minor, reader package, Node and
+TypeScript versions and the reader modules that actually resolve, so it is
+environment-bound: it is observed only where the collector executes (the worker,
+or a local `fresh make`), never by a queueing or read-only operator shell. Every
+collector process runs with `cwd` at the generator root and `python -P`, so an
+inspected target cannot shadow the pinned collector. A collector that cannot
+report the identity fails closed, and a mismatch names the components that
+differ (for example `node: v24.15.0 -> absent`). The collector exits 3 when a reader runtime is missing, 4 when a
+target's vendored schema helper is older than the schema-2 output, and 5 when git
+cannot list the target's visible files or the target root is git-ignored. Each
+fails the attempt closed in the ledger (`failed`, with the exit code and an
+operator action in `hmmm`); nothing is published and any prior accepted artifact
+stays authoritative.
 
 ## Fresh-making usage
 
@@ -88,6 +107,13 @@ python -m frontend.cli.stackctl fresh make-msdmd ucns \
   --root /srv/stack-repos/ucns \
   --source-sha <40-hex-commit>
 ```
+
+Operator-shell `make-msdmd`, `fresh make`, `fresh run` and `fresh retry` never
+record the shell's generator identity. A `worker-pending` target is only queued
+for the worker; otherwise the job runs here and holds, naming the differing
+components, unless this environment reproduces the worker-recorded identity.
+On a host with no worker, where the shell is the executor, add
+`--record-identity-here` to `make-msdmd` or `fresh make`.
 
 Inspect or repair a registered derivation:
 
@@ -111,6 +137,14 @@ python -m frontend.cli.stackctl fresh make-msdmd ucns \
 python -m frontend.cli.stackctl worker once
 python -m frontend.cli.stackctl worker run
 ```
+
+`--queue-only`, `fresh status` and `fresh explain` never probe the generator
+identity. A first queue records it as `worker-pending`; the worker observes its
+own identity, records it with its components, and supersedes that job once
+under the observed key (so the first `worker once` reports `superseded` and the
+next one makes the target fresh). Later queues reuse the worker-recorded
+identity. To compare or verify in the worker's exact environment, run the
+command through `sudo backend/ops/worker_sandbox_run.sh -- ...`.
 
 The old `stackctl msdmd ...` namespace is removed. MSDMD is an adapter under one
 fresh-making architecture, not a parallel job system.
@@ -183,9 +217,9 @@ Skipped PostgreSQL tests are deployment gates, not passes.
 ## Provenance
 
 `fresh-making-provenance.json` binds this runtime to exact `skill-lib` fresh-making
-doctrine. The root `skill-lib/` snapshot remains older because refreshing it would
-also import unrelated doctrine changes; the comparison records that the MSDMD
-generator tree did not change across that gap.
+doctrine. The root `skill-lib/` snapshot and the doctrine pin are the same skill-lib
+commit; the comparison records that `fresh-making/SKILL.md` is unchanged from the
+previous doctrine pin.
 
 ## hmmm
 
@@ -199,4 +233,3 @@ generator tree did not change across that gap.
   registered; the generic affected-closure logic is present.
 - Automatic commit/PR materialization of regenerated collection points remains
   separate from freshness verification and acceptance.
-- The complete root `skill-lib/` snapshot refresh remains a separate bounded change.

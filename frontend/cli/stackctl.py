@@ -60,14 +60,17 @@ def _print(value) -> None:
 def _evaluate(ledger: JobLedger, target: str):
     spec = ledger.get_derivation(target)
     if spec.get("kind") == "msdmd.collection":
-        return msdmd.evaluate(ledger, target)
+        # Read-only status never re-observes the generator identity: only the
+        # executing worker records it, so an operator shell cannot re-key.
+        return msdmd.evaluate(ledger, target, observe_generator=False)
     return base_report(ledger, spec)
 
 
-def _make(ledger: JobLedger, target: str, *, executor: str, worker_id: str):
+def _make(ledger: JobLedger, target: str, *, executor: str, worker_id: str, record_here: bool = False):
     spec = ledger.get_derivation(target)
     if spec.get("kind") == "msdmd.collection":
-        return msdmd.make(ledger, target, executor=executor, worker_id=worker_id)
+        return msdmd.make(ledger, target, executor=executor, worker_id=worker_id,
+                          observe_generator=record_here)
     raise ValueError(f"no make adapter registered for derivation kind: {spec.get('kind')}")
 
 
@@ -80,16 +83,27 @@ def cmd_db_migrate(args):
 def cmd_make_msdmd(args):
     ledger = _ledger(args)
     stack_root = Path(__file__).resolve().parents[2]
+    # The operator shell never records its own generator identity unless it is
+    # declared the executor (--record-identity-here, e.g. a dev host without a
+    # worker): it keeps what the worker recorded, or marks it worker-pending.
+    record_here = args.record_identity_here and not args.queue_only
+    try:
+        recorded = None if record_here else ledger.get_derivation(f"msdmd:{args.repo}")
+    except KeyError:
+        recorded = None
     spec = msdmd.build_spec(
         repo=args.repo, root=args.root, out=args.out, source_sha=args.source_sha,
         generator_root=args.generator_root or (stack_root / "skill-lib"),
+        observe_generator=record_here, recorded=recorded,
     )
     msdmd.register_spec(ledger, spec)
     if args.queue_only:
-        job, report = msdmd.queue_make(ledger, spec["target"], executor=args.executor)
+        job, report = msdmd.queue_make(ledger, spec["target"], executor=args.executor,
+                                       observe_generator=False)
     else:
         job, report = msdmd.make(
             ledger, spec["target"], executor=args.executor, worker_id=args.worker_id,
+            observe_generator=record_here,
         )
     _print({"target": spec["target"], "job": asdict(job) if job else None, "freshness": report.to_dict()})
     return 0 if report.state in {"fresh", "making-fresh"} else 1
@@ -97,7 +111,8 @@ def cmd_make_msdmd(args):
 
 def cmd_make(args):
     ledger = _ledger(args)
-    job, report = _make(ledger, args.target, executor=args.executor, worker_id=args.worker_id)
+    job, report = _make(ledger, args.target, executor=args.executor, worker_id=args.worker_id,
+                        record_here=args.record_identity_here)
     _print({"target": args.target, "job": asdict(job) if job else None, "freshness": report.to_dict()})
     return 0 if report.state == "fresh" else 1
 
@@ -136,7 +151,7 @@ def cmd_run(args):
         raise ValueError(f"no executor adapter for {spec.get('kind')}")
     result = msdmd.run_job(
         ledger, job.id, worker_id=args.worker_id, executor=args.executor,
-        lease_seconds=args.lease_seconds,
+        lease_seconds=args.lease_seconds, observe_generator=False,
     )
     _print(asdict(result))
     return 0 if result.state == "succeeded" else 1
@@ -148,7 +163,8 @@ def cmd_retry(args):
     spec = ledger.get_derivation(job.target)
     if spec.get("kind") != "msdmd.collection":
         raise ValueError(f"no retry adapter for {spec.get('kind')}")
-    result = msdmd.retry_job(ledger, job.id, executor=args.executor, worker_id=args.worker_id)
+    result = msdmd.retry_job(ledger, job.id, executor=args.executor, worker_id=args.worker_id,
+                             observe_generator=False)
     _print(asdict(result))
     return 0 if result.state == "succeeded" else 1
 
@@ -212,10 +228,14 @@ def build_parser() -> argparse.ArgumentParser:
     mm.add_argument("--executor", default="local", choices=("local",))
     mm.add_argument("--worker-id", default="stackctl")
     mm.add_argument("--queue-only", action="store_true")
+    mm.add_argument("--record-identity-here", action="store_true",
+                    help="this shell is the executor (no worker): observe and record its generator identity")
     mm.set_defaults(func=cmd_make_msdmd)
 
     make = actions.add_parser("make")
     make.add_argument("target")
+    make.add_argument("--record-identity-here", action="store_true",
+                      help="this shell is the executor (no worker): observe and record its generator identity")
     make.add_argument("--executor", default="local", choices=("local",))
     make.add_argument("--worker-id", default="stackctl")
     make.set_defaults(func=cmd_make)

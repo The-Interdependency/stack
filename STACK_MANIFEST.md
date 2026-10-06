@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `dc2cac5ac1d609f7f72434514ec95a55e8020b0b9326c17883b1ef25e86baaa3`
+  `7e2aeaee9aa9589b79471f1b43dbc9d3cbfb017455e3d5b462be582695a7a6c1`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
@@ -44,7 +44,7 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/skill-lib` | `1b1a9473fcbaab16965af9907e4aafd12853a704` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |

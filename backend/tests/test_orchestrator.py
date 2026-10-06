@@ -43,10 +43,23 @@ from __future__ import annotations
 #   call: self::test_make_then_noop_is_idempotent
 #   requires: python3, git
 #   mutates: filesystem
+#
+# id: check_stack_msdmd_target_cannot_shadow_collector
+#   proves: stack_msdmd_target_cannot_shadow_collector
+#   call: self::test_target_msdmd_package_cannot_shadow_the_pinned_collector
+#   requires: python3, git
+#   mutates: filesystem
+#
+# id: check_stack_msdmd_identity_observed_where_executed
+#   proves: stack_msdmd_identity_observed_where_executed
+#   call: self::test_shell_queue_never_keys_the_generator_and_worker_owns_identity
+#   requires: python3, git
+#   mutates: filesystem
 # === END CHECKS ===
 
 from dataclasses import replace
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -60,9 +73,20 @@ from backend.freshness import (
     SPEC_SCHEMA, SPEC_VERSION, affected_closure, base_report, freshness_key,
 )
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
-from backend.msdmd import build_spec, evaluate, make, queue_make, run_job
+from backend.msdmd import (
+    WORKER_PENDING, _clean_stale_siblings, build_spec, component_difference, evaluate, make, queue_make,
+    register_spec, run_job,
+)
 
-FAKE_COLLECTOR = r'''from pathlib import Path
+IDENTITY_PRELUDE = r'''import hashlib, sys
+from pathlib import Path as _P
+if "--print-generator-identity" in sys.argv:
+    # Mirrors the real collector's flag: identity of this generator's own bytes.
+    print("sha256:" + hashlib.sha256(_P(__file__).read_bytes()).hexdigest())
+    raise SystemExit(0)
+'''
+
+FAKE_COLLECTOR = IDENTITY_PRELUDE + r'''from pathlib import Path
 import argparse
 p = argparse.ArgumentParser()
 p.add_argument("--root", required=True)
@@ -73,7 +97,21 @@ a = p.parse_args()
 Path(a.out).write_text(f"repo={a.repo}\nsource_commit={a.source_commit}\n", encoding="utf-8")
 '''
 
-NONDETERMINISTIC_COLLECTOR = r'''from pathlib import Path
+# Identity depends on the environment the probe runs in (FAKE_NODE stands in
+# for PATH/Node/venv differences between an operator shell and the worker).
+ENV_COLLECTOR = r'''import hashlib, json, os, sys
+from pathlib import Path as _P
+_components = {"source_sha256": hashlib.sha256(_P(__file__).read_bytes()).hexdigest(),
+               "node": os.environ.get("FAKE_NODE", "absent")}
+if "--print-generator-identity" in sys.argv:
+    if "--json" in sys.argv:
+        print(json.dumps(_components, sort_keys=True))
+    else:
+        print("sha256:" + hashlib.sha256(json.dumps(_components, sort_keys=True).encode()).hexdigest())
+    raise SystemExit(0)
+''' + FAKE_COLLECTOR.replace(IDENTITY_PRELUDE, "")
+
+NONDETERMINISTIC_COLLECTOR = IDENTITY_PRELUDE + r'''from pathlib import Path
 import argparse, uuid
 p = argparse.ArgumentParser()
 p.add_argument("--root", required=True)
@@ -348,6 +386,369 @@ class FreshMakingTests(unittest.TestCase):
             _, final = make(ledger, spec["target"])
             self.assertEqual(final.state, "fresh")
             self.assertEqual(len(ledger.jobs), 2)
+
+    def test_generator_identity_comes_from_the_collector_and_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, generator, ledger, spec = self._runtime(Path(tmp))
+            collector = generator / "msdmd" / "collect.py"
+            expected = hashlib.sha256(collector.read_bytes()).hexdigest()
+            self.assertEqual(f"sha256:{expected}", spec["generator"]["identity"])
+            # A collector that cannot report --print-generator-identity is never trusted.
+            collector.write_text(FAKE_COLLECTOR.replace(IDENTITY_PRELUDE, ""), encoding="utf-8")
+            with self.assertRaises(ValueError):
+                build_spec(repo="ucns", root=target, generator_root=generator)
+            report = evaluate(ledger, spec["target"])
+            self.assertNotEqual(report.state, "fresh")
+            self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
+
+    def test_collector_refusals_fail_closed_into_the_ledger(self):
+        # The real collector writes nothing on exit 3/4/5; this one even leaves a
+        # file behind to prove the refusal alone keeps it unpublished.
+        for code, name in ((3, "reader-runtime-missing"), (4, "schema-helper-outdated"),
+                           (5, "git-visibility-unavailable")):
+            with self.subTest(code=code), tempfile.TemporaryDirectory() as tmp, _unbound_env():
+                target, generator, ledger, spec = self._runtime(Path(tmp))
+                first, _ = make(ledger, spec["target"])
+                self.assertEqual(first.state, "succeeded")
+                accepted = ledger.get_acceptance(spec["target"])
+                published = (target / "ucns_msdmd.ts").read_bytes()
+                refusing = FAKE_COLLECTOR + (
+                    "import sys\n"
+                    "print('msdmd: ERROR: refused for test', file=sys.stderr)\n"
+                    f"raise SystemExit({code})\n"
+                )
+                (generator / "msdmd" / "collect.py").write_text(refusing, encoding="utf-8")
+                job, _ = queue_make(ledger, spec["target"])
+                self.assertIsNotNone(job)
+                result = run_job(ledger, job.id)
+                self.assertEqual(result.state, "failed")
+                self.assertIn(f"exit {code}, {name}", result.error or "")
+                self.assertIn("refused for test", result.error or "")
+                self.assertIn(f"msdmd exit {code} ({name})", result.hmmm or "")
+                self.assertEqual(published, (target / "ucns_msdmd.ts").read_bytes())
+                self.assertEqual(accepted, ledger.get_acceptance(spec["target"]))
+                self.assertEqual([], sorted(p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")))
+                self.assertNotEqual("fresh", evaluate(ledger, spec["target"]).state)
+
+    def test_target_msdmd_package_cannot_shadow_the_pinned_collector(self):
+        # Review P1 on stack #78: with cwd at the target, `python -m` imported the
+        # target's own msdmd/collect.py (and yaml.py) ahead of PYTHONPATH and
+        # published its forged artifact as fresh.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target, _, ledger, spec = self._runtime(base)
+            marker = base / "target-code-ran"
+            (target / "msdmd").mkdir()
+            (target / "msdmd" / "__init__.py").write_text("", encoding="utf-8")
+            (target / "msdmd" / "collect.py").write_text(
+                "import pathlib, sys\n"
+                f"pathlib.Path({str(marker)!r}).write_text('msdmd shadow ran')\n"
+                "if '--print-generator-identity' in sys.argv:\n"
+                "    print('sha256:' + 'f' * 64); raise SystemExit(0)\n"
+                "out = sys.argv[sys.argv.index('--out') + 1]\n"
+                "pathlib.Path(out).write_text('// forged by the inspected repository\\n')\n",
+                encoding="utf-8")
+            (target / "yaml.py").write_text(
+                f"import pathlib\npathlib.Path({str(marker)!r}).write_text('yaml shadow ran')\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(target), "add", "-A"], check=True)
+            subprocess.run(["git", "-C", str(target), "commit", "-qm", "shadow"], check=True)
+            job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertEqual("fresh", report.state)
+            self.assertFalse(marker.exists(), marker.read_text() if marker.exists() else "")
+            published = (target / "ucns_msdmd.ts").read_text(encoding="utf-8")
+            self.assertNotIn("forged", published)
+            self.assertIn("repo=ucns", published)
+            self.assertNotEqual("sha256:" + "f" * 64, ledger.get_derivation(spec["target"])["generator"]["identity"])
+
+    def test_unmapped_exits_and_signals_name_their_status(self):
+        for tail, status, has_hmmm in (
+            ("raise SystemExit(7)\n", "exit 7", False),
+            ("import os, signal\nos.kill(os.getpid(), signal.SIGKILL)\n", "killed by SIGKILL", True),
+            ("import os, signal\nos.kill(os.getpid(), signal.SIGSEGV)\n", "killed by SIGSEGV", True),
+        ):
+            with self.subTest(status=status), tempfile.TemporaryDirectory() as tmp, _unbound_env():
+                target, generator, ledger, spec = self._runtime(Path(tmp))
+                (generator / "msdmd" / "collect.py").write_text(FAKE_COLLECTOR + tail, encoding="utf-8")
+                job, _ = queue_make(ledger, spec["target"])
+                result = run_job(ledger, job.id)
+                self.assertEqual("failed", result.state)
+                self.assertIn(f"executor failed ({status})", result.error or "")
+                self.assertEqual(has_hmmm, bool(result.hmmm), result.hmmm)
+                self.assertFalse((target / "ucns_msdmd.ts").exists())
+                self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+    def test_spawn_oserror_is_recorded_not_raised(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            first, _ = make(ledger, spec["target"])
+            published = (target / "ucns_msdmd.ts").read_bytes()
+            (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])  # same key as the accepted run: re-queued repair
+            self.assertEqual("queued", job.state)
+            real = subprocess.run
+
+            def no_memory(cmd, *args, **kwargs):
+                if "--out" in cmd:
+                    raise OSError(12, "Cannot allocate memory")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=no_memory):
+                result = run_job(ledger, job.id)
+                self.assertEqual("failed", result.state)
+                self.assertIn("executor could not start: OSError", result.error or "")
+                self.assertIn("ENOMEM", result.hmmm or "")
+                report = evaluate(ledger, spec["target"])
+                self.assertNotEqual("fresh", report.state)
+            self.assertEqual(b"tampered\n", (target / "ucns_msdmd.ts").read_bytes())
+            self.assertNotEqual(published, b"tampered\n")
+            self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+            def identity_no_memory(cmd, *args, **kwargs):
+                if "--print-generator-identity" in cmd:
+                    raise OSError(12, "Cannot allocate memory")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=identity_no_memory):
+                report = evaluate(ledger, spec["target"])
+            self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
+            self.assertNotEqual("fresh", report.state)
+
+    def test_stale_own_siblings_older_than_the_lease_are_cleaned(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            old = os.path.getmtime(target / "x.py") - 3600
+            stale = [target / ".ucns_msdmd.ts.dead1234.candidate", target / ".ucns_msdmd.ts.dead5678.verify",
+                     target / ".ucns_msdmd.ts.fresh-status-verify", target / ".ucns_msdmd.ts.job_gone.accepted-backup"]
+            for path in stale:
+                path.write_text("junk from a crashed worker\n", encoding="utf-8")
+                os.utime(path, (old, old))
+            job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertEqual("fresh", report.state)
+            self.assertEqual([], [p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")])
+
+    def test_stale_collector_temp_files_are_cleaned_but_young_or_lookalike_ones_are_not(self):
+        # Review P3: a collector killed mid-write leaves its mkstemp(".msdmd-") file in the target root.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            old = os.path.getmtime(target / "x.py") - 3600
+            stale = target / ".msdmd-ab12_z9q"
+            stale.write_text("partial collector output\n", encoding="utf-8")
+            os.utime(stale, (old, old))
+            with patch("sys.stderr"):
+                job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertFalse(stale.exists())
+            for name in (".msdmd-young123", ".msdmd-toolongname1", ".msdmd-UPPER123"):
+                path = target / name
+                path.write_text("x\n", encoding="utf-8")
+                if name != ".msdmd-young123":
+                    os.utime(path, (old, old))
+            (target / "x.py").write_text("x = 9\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(target), "commit", "-qam", "next"], check=True)
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            for name in (".msdmd-young123", ".msdmd-toolongname1", ".msdmd-UPPER123"):
+                self.assertTrue((target / name).exists(), name)
+
+    def test_concurrent_status_rerender_does_not_hold_the_worker(self):
+        # Review P3: `fresh status` writes .<out>.fresh-status-verify while the
+        # worker checks the worktree; that sibling is ours, not a dirty change.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            in_flight = target / ".ucns_msdmd.ts.fresh-status-verify"
+            in_flight.write_text("status rerender in progress\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("succeeded", result.state, result.error)
+            self.assertTrue(in_flight.exists())  # young: left for the status run to remove
+
+    def test_young_or_foreign_siblings_are_not_touched(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            young = target / ".ucns_msdmd.ts.live1234.candidate"
+            young.write_text("another worker is still writing\n", encoding="utf-8")
+            foreign = target / ".ucns_msdmd.ts.notes"
+            foreign.write_text("not ours\n", encoding="utf-8")
+            old = os.path.getmtime(target / "x.py") - 3600
+            os.utime(foreign, (old, old))
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            self.assertIn("unrelated target worktree changes", result.error or "")
+            self.assertTrue(young.exists())
+            self.assertTrue(foreign.exists())
+
+    def test_stale_rollback_holding_accepted_bytes_is_restored(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            make(ledger, spec["target"])
+            output = target / "ucns_msdmd.ts"
+            accepted = output.read_bytes()
+            # Crash between publish and SQL acceptance: unaccepted bytes are live.
+            backup = target / ".ucns_msdmd.ts.job_crashed.accepted-backup"
+            backup.write_bytes(accepted)
+            output.write_text("published but never accepted\n", encoding="utf-8")
+            old = os.path.getmtime(target / "x.py") - 3600
+            os.utime(backup, (old, old))
+            with patch("sys.stderr"):
+                cleaned = _clean_stale_siblings(ledger, ledger.get_derivation(spec["target"]), 120)
+            self.assertEqual(["restored .ucns_msdmd.ts.job_crashed.accepted-backup"], cleaned)
+            self.assertEqual(accepted, output.read_bytes())
+            self.assertFalse(backup.exists())
+
+    def test_failed_git_status_fails_closed(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            job, _ = queue_make(ledger, spec["target"])
+            real = subprocess.run
+
+            def broken_status(cmd, *args, **kwargs):
+                if "status" in cmd:
+                    return subprocess.CompletedProcess(cmd, 128, "", "fatal: detected dubious ownership")
+                return real(cmd, *args, **kwargs)
+
+            with patch("backend.msdmd.subprocess.run", side_effect=broken_status):
+                result = run_job(ledger, job.id)
+            self.assertEqual("hmmm", result.state)
+            self.assertIn("git status failed", result.error or "")
+            self.assertIn("dubious ownership", result.error or "")
+            self.assertFalse((target / "ucns_msdmd.ts").exists())
+
+    def test_shell_queue_never_keys_the_generator_and_worker_owns_identity(self):
+        # Review P2 on stack #78: the VM_SETUP queue-from-shell flow keyed jobs
+        # with the operator shell's identity, then the worker re-keyed (and
+        # status from the shell re-keyed back).
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}), \
+                 patch("backend.msdmd.generator_identity", side_effect=AssertionError("shell probed identity")):
+                spec = build_spec(repo="ucns", root=target, generator_root=generator, observe_generator=False)
+                self.assertEqual(WORKER_PENDING, spec["generator"]["identity"])
+                register_spec(ledger, spec)
+                queued, _ = queue_make(ledger, spec["target"], observe_generator=False)
+            self.assertEqual("queued", queued.state)
+            with patch.dict(os.environ, {"FAKE_NODE": "v24-worker"}), patch("sys.stderr"):
+                superseded = run_job(ledger, queued.id)
+                self.assertEqual("failed", superseded.state)
+                self.assertIn("superseded", superseded.error or "")
+                replacement = ledger.active_job_for_target(spec["target"])
+                self.assertIsNotNone(replacement)
+                self.assertNotEqual(queued.id, replacement.id)
+                done = run_job(ledger, replacement.id)
+                self.assertEqual("succeeded", done.state, done.error)
+                worker_spec = ledger.get_derivation(spec["target"])
+                self.assertEqual("v24-worker", worker_spec["runtime"]["generator_components"]["node"])
+                self.assertEqual("fresh", evaluate(ledger, spec["target"]).state)
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}):
+                status = evaluate(ledger, spec["target"], observe_generator=False)
+                self.assertEqual(worker_spec, ledger.get_derivation(spec["target"]))  # no re-key
+                self.assertEqual("verifier-unavailable", status.diagnosis)
+                self.assertIn("node: v24-worker -> v20-shell", " ".join(status.hmmm))
+                again = build_spec(repo="ucns", root=target, generator_root=generator,
+                                   observe_generator=False, recorded=ledger.get_derivation(spec["target"]))
+                self.assertEqual(worker_spec["generator"], again["generator"])
+                self.assertEqual(freshness_key(worker_spec), freshness_key(again))
+            self.assertEqual(2, len(ledger.jobs))
+
+    def test_stackctl_queue_only_and_status_do_not_probe_the_generator(self):
+        from contextlib import redirect_stdout
+        import io
+        from frontend.cli import stackctl
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            with patch.object(stackctl, "_ledger", return_value=ledger), \
+                 patch("backend.msdmd.generator_identity", side_effect=AssertionError("shell probed identity")), \
+                 redirect_stdout(io.StringIO()) as printed:
+                code = stackctl.main(["fresh", "make-msdmd", "ucns", "--root", str(target),
+                                      "--generator-root", str(generator), "--queue-only"])
+                self.assertEqual(0, code)
+                self.assertEqual(0, stackctl.main(["fresh", "status", "msdmd:ucns"]))
+            self.assertEqual(WORKER_PENDING, ledger.get_derivation("msdmd:ucns")["generator"]["identity"])
+            self.assertIn('"state": "queued"', printed.getvalue())
+
+    def test_shell_make_reuses_worker_identity_and_never_rekeys(self):
+        # Review P3: make-msdmd without --queue-only and `stackctl make` still
+        # registered the shell identity (recovering only after a failed attempt).
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}):
+                spec = build_spec(repo="ucns", root=target, generator_root=generator, observe_generator=False)
+                register_spec(ledger, spec)
+                pending_job, _ = make(ledger, spec["target"], observe_generator=False)
+            self.assertEqual("queued", pending_job.state)  # left for the worker to observe
+            self.assertEqual(WORKER_PENDING, ledger.get_derivation(spec["target"])["generator"]["identity"])
+            with patch.dict(os.environ, {"FAKE_NODE": "v24-worker"}), patch("sys.stderr"):
+                run_job(ledger, pending_job.id)
+                run_job(ledger, ledger.active_job_for_target(spec["target"]).id)
+            worker_spec = ledger.get_derivation(spec["target"])
+            (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}):
+                held, report = make(ledger, spec["target"], observe_generator=False)
+            self.assertEqual("hmmm", held.state)
+            self.assertIn("node: v24-worker -> v20-shell", held.error or "")
+            self.assertEqual(worker_spec, ledger.get_derivation(spec["target"]))  # no re-key
+            self.assertEqual(b"tampered\n", (target / "ucns_msdmd.ts").read_bytes())
+            # The same request from the worker's environment repairs it under the same key.
+            with patch.dict(os.environ, {"FAKE_NODE": "v24-worker"}):
+                repaired, report = make(ledger, spec["target"], observe_generator=False)
+            self.assertEqual("succeeded", repaired.state, repaired.error)
+            self.assertEqual(held.id, repaired.id)
+            self.assertEqual("fresh", report.state)
+            self.assertEqual(worker_spec, ledger.get_derivation(spec["target"]))
+
+    def test_stackctl_make_paths_record_identity_only_when_declared_executor(self):
+        from contextlib import redirect_stdout
+        import io
+        from frontend.cli import stackctl
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            argv = ["fresh", "make-msdmd", "ucns", "--root", str(target), "--generator-root", str(generator)]
+            with patch.object(stackctl, "_ledger", return_value=ledger), \
+                 patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}), redirect_stdout(io.StringIO()):
+                with patch("backend.msdmd.generator_identity", side_effect=AssertionError("shell probed identity")):
+                    self.assertEqual(0, stackctl.main(argv))  # queued for the worker, not run here
+                    self.assertEqual(1, stackctl.main(["fresh", "make", "msdmd:ucns"]))
+                self.assertEqual(WORKER_PENDING, ledger.get_derivation("msdmd:ucns")["generator"]["identity"])
+                self.assertEqual(0, stackctl.main(argv + ["--record-identity-here"]))
+                self.assertEqual("fresh", evaluate(ledger, "msdmd:ucns", observe_generator=False).state)
+            recorded = ledger.get_derivation("msdmd:ucns")
+            self.assertEqual("v20-shell", recorded["runtime"]["generator_components"]["node"])
+
+    def test_moved_generator_names_the_components_that_differ(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env(), patch.dict(os.environ, {"FAKE_NODE": "v24.15.0"}):
+            target, _, ledger, spec = self._runtime(Path(tmp), collector=ENV_COLLECTOR)
+            first, _ = make(ledger, spec["target"])
+            (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])
+            with patch.dict(os.environ, {"FAKE_NODE": "absent"}):
+                result = run_job(ledger, job.id)
+            self.assertEqual("failed", result.state)
+            self.assertIn("desired freshness key moved", result.error or "")
+            self.assertIn("components differ: node: v24.15.0 -> absent", result.error or "")
+            self.assertNotIn("superseded", result.error or "")
+        self.assertEqual("components differ: python_modules.yaml: sha256:a -> absent",
+                         component_difference({"python_modules": {"yaml": "sha256:a"}},
+                                              {"python_modules": {"yaml": "absent"}}))
+        self.assertIn("unavailable", component_difference(None, {"node": "v24"}))
 
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():

@@ -60,12 +60,12 @@
     {
       "repository": "The-Interdependency/skill-lib",
       "reviewed_commit": "516933d98f9de376f4e498f44059043dc0d96470",
-      "consumed_commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "consumed_commit": "1b1a9473fcbaab16965af9907e4aafd12853a704",
       "relevant_advance_commit": "284ebefad76a6589788ce8d16d47ad75bbfaa333",
       "authority": "build, evidence, metadata, and cross-repository coordination doctrine",
       "relation": "evidence-doctrine-peer",
       "integration": "drift-visible",
-      "decision": "Native-first MSDMD readers are reviewed but are not copied into AHBG while stack still consumes the older skill-lib snapshot. Integration waits for a coherent snapshot refresh."
+      "decision": "Native-first MSDMD readers are reviewed but are not copied into AHBG. Stack's root skill-lib/ snapshot now consumes 1b1a947, which carries them; whether AHBG adopts them is a separate AHBG integration decision (hmmm) that this snapshot refresh does not make."
     },
     {
       "repository": "The-Interdependency/epac",
@@ -89,7 +89,7 @@
     "Advance the stack UCNS pin only through a coherent stack transaction before consuming native Mobius comparison/lift state in AHBG.",
     "Define and test the exact EDCM-to-TIWCG/AHBG conflict-state mapping before EDCM readouts can alter committed game state.",
     "Exercise the current-A0 HTTP adapter against a deployed exact A0 commit and preserve the resulting live provider/tool provenance receipt.",
-    "Refresh the stack skill-lib snapshot before AHBG depends on the native-first MSDMD reader implementation.",
+    "Decide, as a separate AHBG integration change, whether AHBG adopts the native-first MSDMD readers now carried by the stack skill-lib snapshot.",
     "The benchmark can produce evidence relevant to theories of nonhuman consciousness; no repository currently supplies a validated rule that turns AHBG behavior into a consciousness determination."
   ]
 }

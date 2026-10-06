@@ -173,7 +173,9 @@ class SkillSpecCoverageTest(unittest.TestCase):
             [
                 "ratios: loc_comments=",
                 "not a fenced block",
-                "first line and its last non-blank line",
+                "opening seal immediately on literal line 2",
+                "last non-blank line",
+                "non-empty `#!` interpreter directive",
                 "loc_comments",
                 "imports_exports",
                 "calls_definitions",
@@ -232,6 +234,28 @@ class SkillSpecCoverageTest(unittest.TestCase):
                 "hmmm",
             ],
             "visitor-intro",
+        )
+
+    def test_adaptive_elicitation_spec(self) -> None:
+        text = read_skill("adaptive-elicitation")
+        self.assertContainsAll(
+            text,
+            [
+                "## Core contract",
+                "Harvest before asking",
+                "Ask one question per turn",
+                "## Interview ledger",
+                "## Workflow",
+                "Select exactly one next question",
+                "Consume the whole answer",
+                "## Sensitive and stressful subjects",
+                "## Validation",
+                "### Single-question test",
+                "### Volunteer-consumption test",
+                "## Anti-patterns",
+                "## hmmm",
+            ],
+            "adaptive-elicitation",
         )
 
     def test_skill_build_spec(self) -> None:
