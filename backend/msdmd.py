@@ -448,7 +448,7 @@ def evaluate(ledger: JobLedger, target: str, *, observe_generator: bool = True) 
         return FreshnessReport(target, "making-fresh", "output-tampered", report.desired_freshness_key,
                                report.accepted_freshness_key, receipt.id, None,
                                "output digest differs from accepted receipt", [])
-    verify_path = output.with_name(f".{output.name}.fresh-status-verify")
+    verify_path = _status_verify_path(output)
     try:
         try:
             _verify_runtime(spec, {verify_path.name})
@@ -584,6 +584,11 @@ def _clean_stale_siblings(ledger: JobLedger, spec: dict[str, Any], max_age_secon
     return cleaned
 
 
+def _status_verify_path(output: Path) -> Path:
+    """Sibling that ``evaluate`` (fresh status) rerenders into."""
+    return output.with_name(f".{output.name}.fresh-status-verify")
+
+
 def _temp_output(output: Path, suffix: str) -> Path:
     fd, name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=suffix, dir=output.parent)
     os.close(fd)
@@ -636,12 +641,15 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
         _clean_stale_siblings(ledger, spec, lease_seconds)
     except OSError as exc:
         return ledger.hold(job.id, constraint=f"stale sibling cleanup failed: {type(exc).__name__}: {exc}")
+    output = Path(spec["runtime"]["out"])
+    # A concurrent `fresh status` rerenders into this sibling; it is ours and
+    # must not hold the worker's job as an unrelated worktree change.
+    status_verify = _status_verify_path(output).name
     try:
-        _verify_runtime(spec)
+        _verify_runtime(spec, {status_verify})
     except (ConstraintError, FileNotFoundError) as exc:
         return ledger.hold(job.id, constraint=str(exc))
 
-    output = Path(spec["runtime"]["out"])
     output.parent.mkdir(parents=True, exist_ok=True)
     candidate, verifier = _temp_output(output, ".candidate"), _temp_output(output, ".verify")
     rollback = output.with_name(f".{output.name}.{job.id}.accepted-backup")
@@ -663,7 +671,7 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             return ledger.fail(job.id, error="executor reported success without candidate output")
 
         try:
-            _verify_runtime(spec, {candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name, status_verify})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
         ledger.heartbeat(job.id, worker_id=worker_id, lease_seconds=lease_seconds)
@@ -685,7 +693,7 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             return ledger.fail(job.id, error="executor candidate and independent verifier output differ",
                                hmmm="generation is nondeterministic or executor/verifier environments diverge")
         try:
-            _verify_runtime(spec, {candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name, status_verify})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
 

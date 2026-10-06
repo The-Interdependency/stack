@@ -553,6 +553,18 @@ class FreshMakingTests(unittest.TestCase):
             for name in (".msdmd-young123", ".msdmd-toolongname1", ".msdmd-UPPER123"):
                 self.assertTrue((target / name).exists(), name)
 
+    def test_concurrent_status_rerender_does_not_hold_the_worker(self):
+        # Review P3: `fresh status` writes .<out>.fresh-status-verify while the
+        # worker checks the worktree; that sibling is ours, not a dirty change.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            target, _, ledger, spec = self._runtime(Path(tmp))
+            in_flight = target / ".ucns_msdmd.ts.fresh-status-verify"
+            in_flight.write_text("status rerender in progress\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])
+            result = run_job(ledger, job.id)
+            self.assertEqual("succeeded", result.state, result.error)
+            self.assertTrue(in_flight.exists())  # young: left for the status run to remove
+
     def test_young_or_foreign_siblings_are_not_touched(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
             target, _, ledger, spec = self._runtime(Path(tmp))
