@@ -85,9 +85,13 @@ STACK_VENV=/srv/stack/.venv backend/ops/install_msdmd_runtime.sh
 
 The generator identity is the collector's own `--print-generator-identity`. It
 covers collector sources plus the Python minor, reader package, Node and
-TypeScript versions and the reader modules that actually resolve; it runs under the
-worker's own interpreter and environment, and a collector that cannot report it
-fails closed. The collector exits 3 when a reader runtime is missing, 4 when a
+TypeScript versions and the reader modules that actually resolve, so it is
+environment-bound: it is observed only where the collector executes (the worker,
+or a local `fresh make`), never by a queueing or read-only operator shell. Every
+collector process runs with `cwd` at the generator root and `python -P`, so an
+inspected target cannot shadow the pinned collector. A collector that cannot
+report the identity fails closed, and a mismatch names the components that
+differ (for example `node: v24.15.0 -> absent`). The collector exits 3 when a reader runtime is missing, 4 when a
 target's vendored schema helper is older than the schema-2 output, and 5 when git
 cannot list the target's visible files or the target root is git-ignored. Each
 fails the attempt closed in the ledger (`failed`, with the exit code and an
@@ -126,6 +130,14 @@ python -m frontend.cli.stackctl fresh make-msdmd ucns \
 python -m frontend.cli.stackctl worker once
 python -m frontend.cli.stackctl worker run
 ```
+
+`--queue-only`, `fresh status` and `fresh explain` never probe the generator
+identity. A first queue records it as `worker-pending`; the worker observes its
+own identity, records it with its components, and supersedes that job once
+under the observed key (so the first `worker once` reports `superseded` and the
+next one makes the target fresh). Later queues reuse the worker-recorded
+identity. To compare or verify in the worker's exact environment, run the
+command through `sudo backend/ops/worker_sandbox_run.sh -- ...`.
 
 The old `stackctl msdmd ...` namespace is removed. MSDMD is an adapter under one
 fresh-making architecture, not a parallel job system.

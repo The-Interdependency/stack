@@ -60,7 +60,9 @@ def _print(value) -> None:
 def _evaluate(ledger: JobLedger, target: str):
     spec = ledger.get_derivation(target)
     if spec.get("kind") == "msdmd.collection":
-        return msdmd.evaluate(ledger, target)
+        # Read-only status never re-observes the generator identity: only the
+        # executing worker records it, so an operator shell cannot re-key.
+        return msdmd.evaluate(ledger, target, observe_generator=False)
     return base_report(ledger, spec)
 
 
@@ -80,13 +82,22 @@ def cmd_db_migrate(args):
 def cmd_make_msdmd(args):
     ledger = _ledger(args)
     stack_root = Path(__file__).resolve().parents[2]
+    # --queue-only hands execution to the worker, so this shell does not probe
+    # the generator identity: it keeps what the worker recorded, or marks it
+    # worker-pending for the worker to observe on its first run.
+    try:
+        recorded = ledger.get_derivation(f"msdmd:{args.repo}") if args.queue_only else None
+    except KeyError:
+        recorded = None
     spec = msdmd.build_spec(
         repo=args.repo, root=args.root, out=args.out, source_sha=args.source_sha,
         generator_root=args.generator_root or (stack_root / "skill-lib"),
+        observe_generator=not args.queue_only, recorded=recorded,
     )
     msdmd.register_spec(ledger, spec)
     if args.queue_only:
-        job, report = msdmd.queue_make(ledger, spec["target"], executor=args.executor)
+        job, report = msdmd.queue_make(ledger, spec["target"], executor=args.executor,
+                                       observe_generator=False)
     else:
         job, report = msdmd.make(
             ledger, spec["target"], executor=args.executor, worker_id=args.worker_id,

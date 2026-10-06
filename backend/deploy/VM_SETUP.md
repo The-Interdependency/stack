@@ -152,7 +152,10 @@ not require hosted CI or outbound network access.
 
 ## First fresh-making vertical slice
 
-Register and queue an exact MSDMD derivation:
+Register and queue an exact MSDMD derivation. Queueing from the operator shell
+never probes the generator identity (that shell's PATH, Node or venv may differ
+from the worker's); the derivation is recorded as `worker-pending`, or keeps the
+identity a worker already recorded:
 
 ```bash
 /srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh make-msdmd ucns \
@@ -161,12 +164,25 @@ Register and queue an exact MSDMD derivation:
   --queue-only
 ```
 
-Then observe the worker and verify accepted freshness:
+The worker observes its own identity, records it with its components, and
+supersedes a `worker-pending` job once under the observed key. With the service
+running this happens on its own; by hand, the first `worker once` reports the
+`superseded` job and the second makes the target fresh. Run `worker once` in the
+worker's environment, not the operator shell:
 
 ```bash
-/srv/stack/.venv/bin/python -m frontend.cli.stackctl worker once
-/srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh status msdmd:ucns
-/srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh explain msdmd:ucns
+sudo backend/ops/worker_sandbox_run.sh -- /srv/stack/.venv/bin/python -m frontend.cli.stackctl worker once
+sudo backend/ops/worker_sandbox_run.sh -- /srv/stack/.venv/bin/python -m frontend.cli.stackctl worker once
+```
+
+Then verify accepted freshness. `status` and `explain` never re-key the
+derivation, but their independent rerender compares the generator identity
+where they run, so use the same wrapper; from a different shell they report
+`verifier-unavailable` with the components that differ:
+
+```bash
+sudo backend/ops/worker_sandbox_run.sh -- /srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh status msdmd:ucns
+sudo backend/ops/worker_sandbox_run.sh -- /srv/stack/.venv/bin/python -m frontend.cli.stackctl fresh explain msdmd:ucns
 ```
 
 ## Independent backup

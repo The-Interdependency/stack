@@ -43,6 +43,18 @@ from __future__ import annotations
 #   call: self::test_make_then_noop_is_idempotent
 #   requires: python3, git
 #   mutates: filesystem
+#
+# id: check_stack_msdmd_target_cannot_shadow_collector
+#   proves: stack_msdmd_target_cannot_shadow_collector
+#   call: self::test_target_msdmd_package_cannot_shadow_the_pinned_collector
+#   requires: python3, git
+#   mutates: filesystem
+#
+# id: check_stack_msdmd_identity_observed_where_executed
+#   proves: stack_msdmd_identity_observed_where_executed
+#   call: self::test_shell_queue_never_keys_the_generator_and_worker_owns_identity
+#   requires: python3, git
+#   mutates: filesystem
 # === END CHECKS ===
 
 from dataclasses import replace
@@ -61,7 +73,10 @@ from backend.freshness import (
     SPEC_SCHEMA, SPEC_VERSION, affected_closure, base_report, freshness_key,
 )
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
-from backend.msdmd import _clean_stale_siblings, build_spec, evaluate, make, queue_make, run_job
+from backend.msdmd import (
+    WORKER_PENDING, _clean_stale_siblings, build_spec, component_difference, evaluate, make, queue_make,
+    register_spec, run_job,
+)
 
 IDENTITY_PRELUDE = r'''import hashlib, sys
 from pathlib import Path as _P
@@ -81,6 +96,20 @@ p.add_argument("--source-commit", required=True)
 a = p.parse_args()
 Path(a.out).write_text(f"repo={a.repo}\nsource_commit={a.source_commit}\n", encoding="utf-8")
 '''
+
+# Identity depends on the environment the probe runs in (FAKE_NODE stands in
+# for PATH/Node/venv differences between an operator shell and the worker).
+ENV_COLLECTOR = r'''import hashlib, json, os, sys
+from pathlib import Path as _P
+_components = {"source_sha256": hashlib.sha256(_P(__file__).read_bytes()).hexdigest(),
+               "node": os.environ.get("FAKE_NODE", "absent")}
+if "--print-generator-identity" in sys.argv:
+    if "--json" in sys.argv:
+        print(json.dumps(_components, sort_keys=True))
+    else:
+        print("sha256:" + hashlib.sha256(json.dumps(_components, sort_keys=True).encode()).hexdigest())
+    raise SystemExit(0)
+''' + FAKE_COLLECTOR.replace(IDENTITY_PRELUDE, "")
 
 NONDETERMINISTIC_COLLECTOR = IDENTITY_PRELUDE + r'''from pathlib import Path
 import argparse, uuid
@@ -550,6 +579,84 @@ class FreshMakingTests(unittest.TestCase):
             self.assertIn("git status failed", result.error or "")
             self.assertIn("dubious ownership", result.error or "")
             self.assertFalse((target / "ucns_msdmd.ts").exists())
+
+    def test_shell_queue_never_keys_the_generator_and_worker_owns_identity(self):
+        # Review P2 on stack #78: the VM_SETUP queue-from-shell flow keyed jobs
+        # with the operator shell's identity, then the worker re-keyed (and
+        # status from the shell re-keyed back).
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}), \
+                 patch("backend.msdmd.generator_identity", side_effect=AssertionError("shell probed identity")):
+                spec = build_spec(repo="ucns", root=target, generator_root=generator, observe_generator=False)
+                self.assertEqual(WORKER_PENDING, spec["generator"]["identity"])
+                register_spec(ledger, spec)
+                queued, _ = queue_make(ledger, spec["target"], observe_generator=False)
+            self.assertEqual("queued", queued.state)
+            with patch.dict(os.environ, {"FAKE_NODE": "v24-worker"}), patch("sys.stderr"):
+                superseded = run_job(ledger, queued.id)
+                self.assertEqual("failed", superseded.state)
+                self.assertIn("superseded", superseded.error or "")
+                replacement = ledger.active_job_for_target(spec["target"])
+                self.assertIsNotNone(replacement)
+                self.assertNotEqual(queued.id, replacement.id)
+                done = run_job(ledger, replacement.id)
+                self.assertEqual("succeeded", done.state, done.error)
+                worker_spec = ledger.get_derivation(spec["target"])
+                self.assertEqual("v24-worker", worker_spec["runtime"]["generator_components"]["node"])
+                self.assertEqual("fresh", evaluate(ledger, spec["target"]).state)
+            with patch.dict(os.environ, {"FAKE_NODE": "v20-shell"}):
+                status = evaluate(ledger, spec["target"], observe_generator=False)
+                self.assertEqual(worker_spec, ledger.get_derivation(spec["target"]))  # no re-key
+                self.assertEqual("verifier-unavailable", status.diagnosis)
+                self.assertIn("node: v24-worker -> v20-shell", " ".join(status.hmmm))
+                again = build_spec(repo="ucns", root=target, generator_root=generator,
+                                   observe_generator=False, recorded=ledger.get_derivation(spec["target"]))
+                self.assertEqual(worker_spec["generator"], again["generator"])
+                self.assertEqual(freshness_key(worker_spec), freshness_key(again))
+            self.assertEqual(2, len(ledger.jobs))
+
+    def test_stackctl_queue_only_and_status_do_not_probe_the_generator(self):
+        from contextlib import redirect_stdout
+        import io
+        from frontend.cli import stackctl
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target = base / "target"
+            _git_repo(target)
+            generator = _fake_generator(base / "generator", ENV_COLLECTOR)
+            ledger = MemoryLedger(base / "receipts")
+            with patch.object(stackctl, "_ledger", return_value=ledger), \
+                 patch("backend.msdmd.generator_identity", side_effect=AssertionError("shell probed identity")), \
+                 redirect_stdout(io.StringIO()) as printed:
+                code = stackctl.main(["fresh", "make-msdmd", "ucns", "--root", str(target),
+                                      "--generator-root", str(generator), "--queue-only"])
+                self.assertEqual(0, code)
+                self.assertEqual(0, stackctl.main(["fresh", "status", "msdmd:ucns"]))
+            self.assertEqual(WORKER_PENDING, ledger.get_derivation("msdmd:ucns")["generator"]["identity"])
+            self.assertIn('"state": "queued"', printed.getvalue())
+
+    def test_moved_generator_names_the_components_that_differ(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env(), patch.dict(os.environ, {"FAKE_NODE": "v24.15.0"}):
+            target, _, ledger, spec = self._runtime(Path(tmp), collector=ENV_COLLECTOR)
+            first, _ = make(ledger, spec["target"])
+            (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
+            job, _ = queue_make(ledger, spec["target"])
+            job = ledger.retry(job.id)
+            with patch.dict(os.environ, {"FAKE_NODE": "absent"}):
+                result = run_job(ledger, job.id)
+            self.assertEqual("failed", result.state)
+            self.assertIn("desired freshness key moved", result.error or "")
+            self.assertIn("components differ: node: v24.15.0 -> absent", result.error or "")
+            self.assertNotIn("superseded", result.error or "")
+        self.assertEqual("components differ: python_modules.yaml: sha256:a -> absent",
+                         component_difference({"python_modules": {"yaml": "sha256:a"}},
+                                              {"python_modules": {"yaml": "absent"}}))
+        self.assertIn("unavailable", component_difference(None, {"node": "v24"}))
 
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
