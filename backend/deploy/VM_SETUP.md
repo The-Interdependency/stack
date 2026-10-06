@@ -119,12 +119,10 @@ makes it exit 5. The worker records each refusal as a failed attempt with an
 operator action rather than writing an artifact.
 
 `stack-orchestrator-worker.service` keeps `MemoryDenyWriteExecute=true`. V8's
-JIT cannot run under it: Node dies with a V8 fatal error (SIGTRAP). skill-lib's
-collector runs Node with `--jitless` from the skill-lib PR that follows
-`38c6433` (The-Interdependency/skill-lib#120); with the `38c6433` snapshot the
-sandboxed probe reports `node`/`typescript` as `absent` and the install script
-fails. The stack pin must move past that PR before fresh-making can read
-TypeScript in the sandbox. `node` must also be on the unit's default PATH.
+JIT cannot run under it: Node dies with a V8 fatal error (SIGTRAP). The pinned
+skill-lib snapshot (`1b1a947`, after The-Interdependency/skill-lib#120) runs
+Node with `--jitless`, so the sandboxed probe and TypeScript extraction work
+under MDWE. `node` must also be on the unit's default PATH.
 
 Create `/var/lib/stack-orchestrator/receipts` and
 `/var/backups/stack-orchestrator/postgres` owned by the service account after that

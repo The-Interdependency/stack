@@ -60,12 +60,12 @@
     {
       "repository": "The-Interdependency/skill-lib",
       "reviewed_commit": "516933d98f9de376f4e498f44059043dc0d96470",
-      "consumed_commit": "38c64332b840b2bbe1c07e53aeee8996644548e9",
+      "consumed_commit": "1b1a9473fcbaab16965af9907e4aafd12853a704",
       "relevant_advance_commit": "284ebefad76a6589788ce8d16d47ad75bbfaa333",
       "authority": "build, evidence, metadata, and cross-repository coordination doctrine",
       "relation": "evidence-doctrine-peer",
       "integration": "drift-visible",
-      "decision": "Native-first MSDMD readers are reviewed but are not copied into AHBG. Stack's root skill-lib/ snapshot now consumes 38c6433, which carries them; whether AHBG adopts them is a separate AHBG integration decision (hmmm) that this snapshot refresh does not make."
+      "decision": "Native-first MSDMD readers are reviewed but are not copied into AHBG. Stack's root skill-lib/ snapshot now consumes 1b1a947, which carries them; whether AHBG adopts them is a separate AHBG integration decision (hmmm) that this snapshot refresh does not make."
     },
     {
       "repository": "The-Interdependency/epac",
