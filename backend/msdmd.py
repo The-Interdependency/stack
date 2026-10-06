@@ -123,12 +123,26 @@ def _collector_env(generator_root: str | Path) -> dict[str, str]:
     return env
 
 
+def _collector_command(*args: str) -> list[str]:
+    """Return the interpreter command for the pinned collector.
+
+    ``python -m`` puts the working directory ahead of ``PYTHONPATH``, so every
+    collector process runs with ``cwd`` set to the generator root, never the
+    inspected target, and with ``-P`` (Python 3.11+) so no working directory
+    is added to ``sys.path`` at all. A target-level ``msdmd/collect.py`` or
+    ``yaml.py`` therefore cannot shadow the pinned collector or its imports.
+    """
+    safe_path = ["-P"] if sys.version_info >= (3, 11) else []
+    return [sys.executable, *safe_path, "-m", "msdmd.collect", *args]
+
+
 def generator_identity(generator_root: str | Path) -> str:
     """Return the pinned collector's own fingerprint as 64 hex digits.
 
-    Delegates to ``python -m msdmd.collect --print-generator-identity`` under the
-    same interpreter and environment the executor uses, so the identity covers
-    every collector source (Python, TypeScript worker, npm manifest/lock, schema
+    Delegates to ``python -m msdmd.collect --print-generator-identity`` with the
+    same interpreter, ``-P`` flag, ``cwd`` (the generator root, never a target)
+    and ``PYTHONPATH`` as the collector runs, so the identity covers every
+    collector source (Python, TypeScript worker, npm manifest/lock, schema
     assets, requirements) plus the Python minor, reader package, Node and
     TypeScript versions. A collector that cannot report it fails closed.
     """
@@ -138,7 +152,7 @@ def generator_identity(generator_root: str | Path) -> str:
         raise FileNotFoundError(f"MSDMD collector not found: {package / 'collect.py'}")
     try:
         proc = subprocess.run(
-            [sys.executable, "-m", "msdmd.collect", "--print-generator-identity"],
+            _collector_command("--print-generator-identity"),
             cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
             timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
         )
@@ -255,10 +269,11 @@ def register_spec(ledger: JobLedger, spec: dict[str, Any]) -> dict[str, Any]:
 def _run_collector(spec: dict[str, Any], output: Path, timeout: int) -> subprocess.CompletedProcess[str]:
     runtime = spec["runtime"]
     env = _collector_env(runtime["generator_root"])
+    # cwd is the trusted generator root: the target is only ever --root.
     return subprocess.run(
-        [sys.executable, "-m", "msdmd.collect", "--root", runtime["root"],
-         "--repo", runtime["repo"], "--out", str(output), "--source-commit", _source_sha(spec)],
-        cwd=runtime["root"], env=env, text=True, capture_output=True,
+        _collector_command("--root", runtime["root"], "--repo", runtime["repo"],
+                           "--out", str(output), "--source-commit", _source_sha(spec)),
+        cwd=runtime["generator_root"], env=env, text=True, capture_output=True,
         check=False, timeout=timeout,
     )
 

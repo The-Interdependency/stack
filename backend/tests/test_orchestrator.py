@@ -401,6 +401,37 @@ class FreshMakingTests(unittest.TestCase):
                 self.assertEqual([], sorted(p.name for p in target.iterdir() if p.name.startswith(".ucns_msdmd.ts.")))
                 self.assertNotEqual("fresh", evaluate(ledger, spec["target"]).state)
 
+    def test_target_msdmd_package_cannot_shadow_the_pinned_collector(self):
+        # Review P1 on stack #78: with cwd at the target, `python -m` imported the
+        # target's own msdmd/collect.py (and yaml.py) ahead of PYTHONPATH and
+        # published its forged artifact as fresh.
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            base = Path(tmp)
+            target, _, ledger, spec = self._runtime(base)
+            marker = base / "target-code-ran"
+            (target / "msdmd").mkdir()
+            (target / "msdmd" / "__init__.py").write_text("", encoding="utf-8")
+            (target / "msdmd" / "collect.py").write_text(
+                "import pathlib, sys\n"
+                f"pathlib.Path({str(marker)!r}).write_text('msdmd shadow ran')\n"
+                "if '--print-generator-identity' in sys.argv:\n"
+                "    print('sha256:' + 'f' * 64); raise SystemExit(0)\n"
+                "out = sys.argv[sys.argv.index('--out') + 1]\n"
+                "pathlib.Path(out).write_text('// forged by the inspected repository\\n')\n",
+                encoding="utf-8")
+            (target / "yaml.py").write_text(
+                f"import pathlib\npathlib.Path({str(marker)!r}).write_text('yaml shadow ran')\n", encoding="utf-8")
+            subprocess.run(["git", "-C", str(target), "add", "-A"], check=True)
+            subprocess.run(["git", "-C", str(target), "commit", "-qm", "shadow"], check=True)
+            job, report = make(ledger, spec["target"])
+            self.assertEqual("succeeded", job.state, job.error)
+            self.assertEqual("fresh", report.state)
+            self.assertFalse(marker.exists(), marker.read_text() if marker.exists() else "")
+            published = (target / "ucns_msdmd.ts").read_text(encoding="utf-8")
+            self.assertNotIn("forged", published)
+            self.assertIn("repo=ucns", published)
+            self.assertNotEqual("sha256:" + "f" * 64, ledger.get_derivation(spec["target"])["generator"]["identity"])
+
     def test_generator_change_invalidates(self):
         with tempfile.TemporaryDirectory() as tmp, _unbound_env():
             _, generator, ledger, spec = self._runtime(Path(tmp))
