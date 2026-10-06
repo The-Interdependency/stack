@@ -89,7 +89,7 @@ if [[ "$(id -u)" -ne 0 ]] || ! command -v systemd-run >/dev/null; then
   exit 4
 fi
 echo "== generator identity inside the worker unit's sandbox (user $worker_user)"
-if ! sandbox_identity="$("$here/worker_sandbox_run.sh" --chdir "$skill_root" --setenv "PYTHONPATH=$skill_root" -- "${probe[@]}")"; then
+if ! sandbox_identity="$(STACK_WORKER_USER="$worker_user" "$here/worker_sandbox_run.sh" --chdir "$skill_root" --setenv "PYTHONPATH=$skill_root" -- "${probe[@]}")"; then
   echo "hmmm: identity probe failed inside the worker sandbox (see journalctl for the transient unit)" >&2; exit 3
 fi
 require_runtimes "worker sandbox" "$sandbox_identity"

@@ -100,7 +100,11 @@ The script sets `umask 022` so the worker user (`STACK_WORKER_USER`, default
 `python -P -m msdmd.collect --print-generator-identity --json` twice: in the
 calling shell, and inside the worker unit's sandbox through
 `backend/ops/worker_sandbox_run.sh` (systemd-run with the unit's `User`,
-`EnvironmentFile` and sandbox properties, including `MemoryDenyWriteExecute`).
+`EnvironmentFile` and sandbox properties, including `MemoryDenyWriteExecute`,
+read with `systemctl show` from the installed unit, drop-ins included). Install
+the unit file and run `systemctl daemon-reload` first (see Worker below; enabling
+it can wait). The wrapper refuses to run (exit 2) unless the unit is loaded,
+runs as `STACK_WORKER_USER` and has `MemoryDenyWriteExecute=yes`.
 It fails (exit 3) if either probe fails or reports `node` or `typescript` as
 `absent`, and exits 4 if the sandboxed probe cannot run (not root, or no
 systemd-run). The sandboxed identity is the one the worker records, so a
