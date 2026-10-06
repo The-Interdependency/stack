@@ -162,7 +162,7 @@ and malformed-input versus resource-limit classification. Three new regressions
 bring its suite to 18. The obsolete bit-per-circle modules and their 22 tests are
 removed, with these sequence/native operations as replacement. Fifty-two original
 transport/assembly tests retain their original limited scope. Full Weave inventory:
-52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record + 3 header-admission + 4 numeral-replay regressions = 168. The original
+52 + 18 + 30 + 13 native-origin + 12 repair + 18 review-closure + 9 follow-up + 9 terminal-record + 3 header-admission + 4 numeral-replay + 8 cheap-admission regressions = 176. The original
 13 native producer tests are retained in Stack as `tests/test_binary_origin.py`.
 The repair regressions exercise forged closed records, fresh verified module
 loading, atomic failed-write cleanup, empty-input attachments and manifest edges.
@@ -336,8 +336,33 @@ CLI inspect/recover still share one counter across their distinct operations.
 
 Usage: `python -m unittest discover -s tests -p test_numeral_replay.py -v`.
 
-Current repaired local result: **168 tests passed, zero failures, errors or skips**,
+The single-replay checkpoint passed **168 tests, zero failures, errors or skips**,
 with unchanged sources during execution. The native source lock, profile, wire
 format, UCNS producers and 6,735-byte exact-recovery demo are unchanged. This
 numeral resource repair does not change Weave's cryptographic standing. Hosted
 checks and current-head terminal review remain separate acceptance gates.
+
+
+## Complete cheap admission and public helper validation
+
+The review at `07ac59976b9e` identified two remaining gaps. Numeral decoding now
+parses every definition into decoder-owned pending data, validates all cheap entry
+metadata and recipe shapes, uniqueness, references, declared length and trailing
+bytes, and only then executes accepted prime recipes once under its aggregate
+engine. No fabricated block values or persistent validation flags are used. Shared
+scope/reference checks keep public Packet validation and wire admission aligned.
+A mathematical property requiring actual prime evaluation still receives that
+bounded evaluation; malformed metadata cannot consume that work first.
+
+Public normalize/denormalize operations validate Profile through the trusted class
+before reading its fields. Affix/unaffix apply the equivalent check to RoundSpec
+before discovery or decoding. This closes the same supplied-profile boundary for
+all four public helpers, including frozen-record mutation and instance-method
+shadowing. Valid formulas, wire format, native lock, producer ownership and the
+6,735-byte exact-recovery demonstration remain unchanged.
+
+Run `WEAVE_SOURCES=/checkouts python -m unittest discover -s tests -p test_admission_order.py -v`.
+Eight regressions cover early and late malformed definitions, recipe shape,
+single-replay accounting, direct helper mutation/refusal and valid recovery.
+Current suite inventory is **176**; run `test.py` for source-bound results. Earlier
+counts in this document are explicitly historical checkpoints, not current results.

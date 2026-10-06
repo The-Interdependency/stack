@@ -148,3 +148,19 @@ for the five-unit example, inspect uses ten units and recover uses fifteen.
 Run `python -m unittest discover -s tests -p test_numeral_replay.py -v` for four
 focused witnesses. The binary wire format, recipe algebra and native dependencies
 are unchanged. Successful reconstruction is not cryptographic decryption.
+
+
+## Cheap admission before recipe work
+
+The decoder first parses deferred recipe definitions and literal blocks and
+validates scope, exact attachments, nonempty lengths, unique symbols/angles,
+all recipe shapes, occurrence references, total length and complete framing.
+Only an admitted structure reaches prime evaluation. Recipe results must then fit
+their declared lengths, with one evaluation per definition under the shared engine.
+No metadata-invalid packet is mislabeled as a prime-work shortage merely because
+its configured prime budget is small. Mathematical validity that depends on a
+computed prime path still requires actual evaluation.
+
+The existing same-budget replay guarantee and post-decode mutation checks remain.
+See `tests/test_admission_order.py` for early/late malformed input and unchanged
+valid reconstruction witnesses. No wire format or native-source dependency changes.

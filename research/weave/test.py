@@ -17,7 +17,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 168  # 164 existing + 4 single-replay roundtrip regression methods.
+EXPECTED_TESTS = 176  # 168 existing + 8 cheap-admission/public-helper regressions.
 
 
 def snapshot():
@@ -65,7 +65,7 @@ def main():
             'native_origin_methods': 13, 'cycle_repair_methods': 12,
             'review_closure_methods': 18, 'final_findings_methods': 9,
             'terminal_record_methods': 9, 'header_admission_methods': 3,
-            'numeral_single_replay_methods': 4
+            'numeral_single_replay_methods': 4, 'cheap_admission_methods': 8
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),

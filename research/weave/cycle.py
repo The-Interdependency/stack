@@ -253,6 +253,7 @@ def _corpus_bytes(corpus: bytes, count: int, bit_offset: int) -> bytes:
 def normalize(message: bytes, corpus: bytes, profile: Profile,
               limits: CycleLimits = CycleLimits()) -> bytes:
     """Selected corpus-tail bucket profile; original length remains inside the cycle."""
+    Profile.__post_init__(profile)
     if type(message) is not bytes:
         raise Refused('exact message bytes required')
     if len(message) > limits.input_bytes:
@@ -271,6 +272,7 @@ def normalize(message: bytes, corpus: bytes, profile: Profile,
 
 def denormalize(data: bytes, corpus: bytes, profile: Profile,
                 limits: CycleLimits = CycleLimits()) -> bytes:
+    Profile.__post_init__(profile)
     if type(data) is not bytes or len(data) < 45 or data[:4] != NORMAL_MAGIC:
         raise Refused('invalid normalized source frame')
     if type(corpus) is not bytes or not corpus:
@@ -312,6 +314,7 @@ def _fraction(reader: _Reader) -> Fraction:
 
 def affix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
           spec: RoundSpec, limits: CycleLimits = CycleLimits()):
+    RoundSpec.__post_init__(spec)
     partition = discover(data,max_bytes=limits.round_bytes,visit_budget=limits.discovery_visits)
     if len(partition.order) > limits.native_occurrences:
         raise ResourceLimit('native occurrence count exceeds execution budget')
@@ -348,6 +351,7 @@ def affix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
 
 def unaffix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
             spec: RoundSpec, limits: CycleLimits = CycleLimits()) -> bytes:
+    RoundSpec.__post_init__(spec)
     if type(data) is not bytes:
         raise Refused('affixiation input must be bytes')
     if len(data) > limits.round_bytes:

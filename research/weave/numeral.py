@@ -134,35 +134,45 @@ class PrimePath:
     seed: int
     steps: tuple[tuple, ...]
 
-    def replay(self, limits: Limits = Limits(), *, _engine=None) -> tuple[int, ...]:
+    def _validate_fields(self, limits: Limits) -> None:
+        """Validate the whole recipe shape without executing prime operations."""
+        if type(self) is not PrimePath or _nat(self.seed) < 2:
+            raise Refused("exact PrimePath with a seed at least two required")
         if type(self.steps) is not tuple:
             raise Refused("recipe steps must be an immutable tuple")
         if len(self.steps) > limits.recipe_steps:
             raise ResourceLimit("recipe step budget exceeded")
-        primes = _engine if _engine is not None else _Primes(limits)
-        primes.charge(len(self.steps) + 1)
-        value = _nat(self.seed)
-        primes.require(value)
-        trace = [value]
         for step in self.steps:
             if type(step) is not tuple or not step or type(step[0]) is not str:
                 raise Refused("invalid recipe step")
             if step == ("next",):
+                continue
+            if len(step) != 4 or step[0] != "span":
+                raise Refused("unknown recipe operation")
+            _, base, start, width = step
+            if type(base) is not int or base not in (2, 10):
+                raise Refused("span base must be 2 or 10")
+            _nat(start)
+            if _nat(width) == 0:
+                raise Refused("empty span")
+
+    def replay(self, limits: Limits = Limits(), *, _engine=None) -> tuple[int, ...]:
+        PrimePath._validate_fields(self, limits)
+        primes = _engine if _engine is not None else _Primes(limits)
+        primes.charge(len(self.steps) + 1)
+        value = self.seed
+        primes.require(value)
+        trace = [value]
+        for step in self.steps:
+            if step == ("next",):
                 value = primes.nth(value)
-            elif len(step) == 4 and step[0] == "span":
+            else:
                 _, base, start, width = step
-                if type(base) is not int or base not in (2, 10):
-                    raise Refused("span base must be 2 or 10")
-                _nat(start)
-                if _nat(width) == 0:
-                    raise Refused("empty span")
                 digits = format(value, "b") if base == 2 else str(value)
                 if start + width > len(digits):
                     raise Refused("span outside source numeral")
                 value = int(digits[start:start + width], base)
                 primes.require(value)
-            else:
-                raise Refused("unknown recipe operation")
             trace.append(value)
         return tuple(trace)
 
@@ -260,8 +270,8 @@ class Entry:
         if self.block.length > limits.output_bits:
             raise ResourceLimit("definition exceeds bit budget")
         _validate_attachment(self.angle, self.circle)
-        if self.recipe is not None and type(self.recipe) is not PrimePath:
-            raise Refused("exact PrimePath required")
+        if self.recipe is not None:
+            PrimePath._validate_fields(self.recipe, limits)
 
     def validate(self, limits: Limits, *, _engine=None) -> None:
         """Validate supplied fields and independently replay any supplied recipe."""
@@ -269,6 +279,28 @@ class Entry:
         if self.recipe is not None:
             if PrimePath.replay(self.recipe, limits, _engine=_engine)[-1] != self.block.value:
                 raise Refused("recipe does not construct its bound integer")
+
+
+def _validate_scope(origin: str, round_id: int) -> None:
+    if type(origin) is not str or not origin or len(origin.encode("utf-8")) > 1024:
+        raise Refused("nonempty UTF-8 origin scope of at most 1024 bytes required")
+    _nat(round_id)
+
+
+def _reference_length(symbols: str, lengths: dict[str, int], limits: Limits) -> int:
+    """Validate references against admitted lengths without requiring recipe values."""
+    if type(symbols) is not str:
+        raise Refused("occurrence stream must be a string")
+    if len(symbols) > limits.occurrences:
+        raise ResourceLimit("occurrence stream exceeds execution budget")
+    total = 0
+    for symbol in symbols:
+        if symbol not in lengths:
+            raise Refused("undefined symbol")
+        total += lengths[symbol]
+        if total > limits.output_bits:
+            raise ResourceLimit("reconstructed stream exceeds bit budget")
+    return total
 
 
 @dataclass(frozen=True)
@@ -291,33 +323,20 @@ class Packet:
         """
         if type(self) is not Packet:
             raise Refused("exact Packet required")
-        if type(self.origin) is not str or not self.origin or len(self.origin.encode("utf-8")) > 1024:
-            raise Refused("nonempty UTF-8 origin scope of at most 1024 bytes required")
-        _nat(self.round_id)
+        _validate_scope(self.origin, self.round_id)
         if type(self.entries) is not tuple:
             raise Refused("definitions must be an immutable tuple")
         if len(self.entries) > limits.entries:
             raise ResourceLimit("definition count exceeds execution budget")
-        if type(self.symbols) is not str:
-            raise Refused("occurrence stream must be a string")
-        if len(self.symbols) > limits.occurrences:
-            raise ResourceLimit("occurrence stream exceeds execution budget")
         mapping = {}
         angles = set()
         for entry in self.entries:
             Entry._validate_fields(entry, limits)
             if entry.symbol in mapping or entry.angle in angles:
                 raise Refused("duplicate symbol or angular attachment in this scope")
-            mapping[entry.symbol] = entry
+            mapping[entry.symbol] = entry.block.length
             angles.add(entry.angle)
-        total = 0
-        for symbol in self.symbols:
-            if symbol not in mapping:
-                raise Refused("undefined symbol")
-            total += mapping[symbol].block.length
-            if total > limits.output_bits:
-                raise ResourceLimit("reconstructed stream exceeds bit budget")
-        return total
+        return _reference_length(self.symbols, mapping, limits)
 
     def validate(self, limits: Limits = Limits(), *, _engine=None) -> int:
         """Validate all supplied data, including one recipe replay per definition."""
@@ -455,7 +474,7 @@ def encode(packet: Packet, limits: Limits = Limits(), *, _engine=None) -> bytes:
 
 
 def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
-    """Strict self-contained decoder; malformed input never becomes a partial result."""
+    """Admit the entire cheap wire structure, then replay accepted recipes once."""
     if type(data) is not bytes:
         raise Refused("packet must be bytes")
     if len(data) > limits.wire_bytes:
@@ -466,13 +485,14 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
     try:
         origin = reader.blob(1024).decode("utf-8")
         round_id, declared = reader.uint(), reader.uint()
+        _validate_scope(origin, round_id)
         if declared > limits.output_bits:
             raise ResourceLimit("declared output exceeds bit budget")
         count = reader.uint()
         if count > limits.entries:
             raise ResourceLimit("definition count exceeds budget")
-        entries = []
-        primes = _engine if _engine is not None else _Primes(limits)
+        pending = []
+        lengths, angles = {}, set()
         for _ in range(count):
             symbol = reader.blob(4).decode("utf-8")
             _symbol(symbol)
@@ -483,12 +503,18 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
             if (angle.numerator, angle.denominator) != (numerator, denominator):
                 raise Refused("angle fraction is not canonical")
             circle, length = reader.uint(), reader.uint()
+            _validate_attachment(angle, circle)
+            if length == 0:
+                raise Refused("a definition must contain a nonempty BitBlock")
             if length > limits.output_bits:
                 raise ResourceLimit("definition exceeds bit budget")
+            if symbol in lengths or angle in angles:
+                raise Refused("duplicate symbol or angular attachment in this scope")
+            lengths[symbol] = length
+            angles.add(angle)
             tag = reader.take(1)[0]
-            recipe = None
             if tag == 0:
-                block = BitBlock.from_bytes(reader.take((length + 7) // 8), length)
+                payload = BitBlock.from_bytes(reader.take((length + 7) // 8), length)
             elif tag == 1:
                 seed, step_count = reader.uint(), reader.uint()
                 if step_count > limits.recipe_steps:
@@ -502,21 +528,31 @@ def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
                         steps.append(("span", reader.uint(), reader.uint(), reader.uint()))
                     else:
                         raise Refused("unknown recipe opcode")
-                recipe = PrimePath(seed, tuple(steps))
-                block = BitBlock(PrimePath.replay(recipe, limits, _engine=primes)[-1], length)
+                payload = PrimePath(seed, tuple(steps))
+                PrimePath._validate_fields(payload, limits)
             else:
                 raise Refused("unknown definition tag")
-            entries.append(Entry(symbol, block, angle, circle, recipe))
+            # Decoder-owned pending data, not an Entry with a fabricated bit value.
+            pending.append((symbol, length, angle, circle, payload))
         symbols = reader.blob(limits.occurrences * 4).decode("utf-8")
     except UnicodeError as exc:
         raise Refused("invalid UTF-8") from exc
     if reader.pos != len(data):
         raise Refused("trailing packet data")
+    if _reference_length(symbols, lengths, limits) != declared:
+        raise Refused("declared output length disagrees with occurrences")
+    # All cheap fields, every recipe shape and the complete occurrence stream are
+    # admitted before any primality test or nth-prime calculation is attempted.
+    primes = _engine if _engine is not None else _Primes(limits)
+    entries = []
+    for symbol, length, angle, circle, payload in pending:
+        recipe = payload if type(payload) is PrimePath else None
+        block = (BitBlock(PrimePath.replay(recipe, limits, _engine=primes)[-1], length)
+                 if recipe is not None else payload)
+        entries.append(Entry(symbol, block, angle, circle, recipe))
     packet = Packet(origin, round_id, tuple(entries), symbols)
-    # Every recipe above produced its block through trusted replay under this
-    # decoder's single charged engine. Check the remaining typed structure and
-    # occurrence length without replaying those same recipes a second time.
-    # No reusable "validated" flag or caller-supplied bypass is attached to Packet.
+    # Check actual constructed blocks without a second recipe replay. No cached
+    # authorization escapes: later public operations revalidate supplied records.
     if Packet._validate_fields(packet, limits) != declared:
         raise Refused("declared output length disagrees with occurrences")
     return packet
