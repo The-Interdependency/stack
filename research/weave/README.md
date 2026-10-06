@@ -22,6 +22,13 @@ accounting, budgets and exact source lock. These choices are not universal laws.
 [The numeral layer](NUMERAL_CONSTRUCTION.md) separately records length-bearing
 integers, Unicode references and exact prime recipes.
 
+[The private/public experiment](PRIVATE_PUBLIC.md) separates whole-plus-one public
+inputs from the full private reconstruction profile and tests the sender boundary
+in fresh processes. It reports the missing public operation as BLOCKED. Its
+full-profile control produces an exact public-recovery counterexample; this does
+not falsify the intended Weave relation. Run `python private_public.py --sources
+/checkouts --require-distinction` to observe the still-failing acceptance gate.
+
 `native_binary.py` is the Stack-owned binary-origin/sequence candidate, consuming
 actual source-verified UCNS `AxisCirclePosition` and `NativeMobiusState` objects.
 UCHC supplies the origin/axis architecture reference; the premature UCHC #7

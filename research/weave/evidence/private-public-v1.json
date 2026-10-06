@@ -1,0 +1,68 @@
+{
+  "accounting": {
+    "full_profile_control_bytes": 1563,
+    "message_bytes": 14,
+    "packet_bytes": 5904,
+    "private_bytes": 984,
+    "public_bytes": 1537
+  },
+  "construction": "INPUT_PARTITION_ONLY",
+  "distinction_established": false,
+  "execution": "COMPLETED",
+  "full_profile_control": {
+    "public_only_exact": true,
+    "public_sender_completed": true,
+    "recipient_exact": true,
+    "status": "FALSIFIED",
+    "whole_plus_one_preserved": false
+  },
+  "hmmm": "Native private-gonol constructor, public evaluation and private recovery law remain undefined.",
+  "inputs": {
+    "attacker": [
+      "packet",
+      "public"
+    ],
+    "corpus": "actual bytes inside public artifact",
+    "recipient": [
+      "packet",
+      "public",
+      "private"
+    ],
+    "sender": [
+      "message",
+      "public"
+    ],
+    "shared": [
+      "exact code",
+      "locked native sources"
+    ]
+  },
+  "native_lock_sha256": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43",
+  "nonclaim": "No falsification of intended Weave, no trapdoor or cryptographic security claim.",
+  "packet_sha256": "2d2d20d9beb8824664184e293795884cfb3ac7b60adefd0e5990cf539960879c",
+  "projected_public_recovery": {
+    "scope": "control packet; API refusal is not private necessity",
+    "status": "BLOCKED"
+  },
+  "schema": "weave.private-public-experiment/v1",
+  "source_files": {
+    "CYCLE_NATIVE.json": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43",
+    "affixiation.py": "15518004e43873515badefd951d6f32a0de79ce8002d3aebd41921bf8d7eb985",
+    "cycle.py": "25cbe0e5567562c1f2de3de0ca69d4e5a4e57e78a283aa7dcee882b0b16de562",
+    "cycle_native.py": "8a3cf679078b6ffc36a26ab99d0f4cbd593cfa2c404e05fd927d8fae09947219",
+    "inputs/ucns/src/ucns/axis_circle.py": "ab69c3cb84065d8f6332d31d0c9f128b2685954ecf4de5d3c5d29e0afe371f9c",
+    "inputs/ucns/src/ucns/direct_mobius.py": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+    "native_binary.py": "3843b4fb7c735c2d3d45f28a13905397a4dd8ff988fba91b3fe1f92e75103e4d",
+    "numeral.py": "a3c2b67611b095f65ba4b355fac2275735a062fb76ba2170790e64d8b434f9e3",
+    "prime_schedule.py": "c5b59833d236c1f7dfe66102052e1796e8532a25f299820c68e2b417c6678242",
+    "private_public.py": "1e928325776ada4657a3803e703db195c56c6e5b913d6eb23f83845d3ce87248",
+    "safe_output.py": "5bdfc6ead9f7eb9341d3de669ece63cdf653e1e8ba7882b334360cbafad8b052"
+  },
+  "source_sha256": "e7d8613f0cd6cdcbe2d3bbab9a9c61ee94f4d746777b31dc8851cab535b8ec97",
+  "whole_plus_one": {
+    "packet_created_by_public_sender": false,
+    "private_gonol_relation": "UNIMPLEMENTED",
+    "reason": "six spaces per round are private; native public evaluation law missing",
+    "status": "BLOCKED"
+  }
+}

@@ -49,6 +49,14 @@ and inverse, failures, budgets and size accounting are in `CYCLE.md`.
 
 ## Usage
 
+The input-partition experiment in [PRIVATE_PUBLIC.md](PRIVATE_PUBLIC.md) now makes
+Q7's acceptance boundary executable. The whole-plus-one projection leaves the
+current sender blocked; the explicitly overdisclosed full-profile control allows
+exact public recovery. These are scoped control results, not an implementation or
+falsification of the intended private-gonol/public law. Run
+`python private_public.py --sources /checkouts --require-distinction`; exit 1
+records that the required distinction remains unestablished.
+
 Run `python cycle.py demo --sources /checkouts`. Change supported operating choices
 through an explicit profile; do not silently change a named profile's meaning.
 The current next mathematical question is the private/public relation, not another
