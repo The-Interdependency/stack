@@ -107,3 +107,14 @@ interleaving are connected in the separately named cycle profile. Automatic shor
 prime-recipe discovery and an asymmetric private reconstruction advantage remain
 unimplemented. Reverting this codec requires retiring or rebinding its cycle consumer;
 no discarded bit-per-circle implementation is a supported fallback.
+
+## Accounting and CLI work budget
+
+`accounting(packet, limits)` returns sizes from the same validation that constructs
+its wire parts. It does not replay prime recipes a second time merely to obtain
+source length. Each numeral CLI `bind`, `inspect`, or `recover` command shares one
+charged prime-work engine across its component operations; it does not reset the
+allowance between decode, accounting and restore. A command that exhausts its
+budget refuses before output publication. Standalone library calls retain their
+individual default budgets. The private `_engine` keyword is internal orchestration,
+not serialized state or a bypass of validation.

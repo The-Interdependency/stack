@@ -307,9 +307,9 @@ class Packet:
             offset += entry.block.length
         return tuple(result)
 
-    def restore(self, limits: Limits = Limits()) -> BitBlock:
+    def restore(self, limits: Limits = Limits(), *, _engine=None) -> BitBlock:
         """Reconstruct in linear output-byte work; no original input or hidden table."""
-        total = self.validate(limits)
+        total = self.validate(limits, _engine=_engine)
         mapping = {entry.symbol: entry.block for entry in self.entries}
         out = bytearray((total + 7) // 8)
         offset = 0
@@ -374,8 +374,9 @@ class _Reader:
         return self.take(count)
 
 
-def _parts(packet: Packet, limits: Limits) -> tuple[bytes, bytes, bytes]:
-    total = packet.validate(limits)
+def _parts(packet: Packet, limits: Limits, *, _engine=None) -> tuple[int, bytes, bytes, bytes]:
+    """Return the validated bit count with wire parts; never replay it for accounting."""
+    total = packet.validate(limits, _engine=_engine)
     header = MAGIC + _blob(packet.origin.encode("utf-8")) + _uint(packet.round_id) + _uint(total)
     count = _uint(len(packet.entries))
     # Size the entire representation before allocating literal output buffers.
@@ -409,16 +410,17 @@ def _parts(packet: Packet, limits: Limits) -> tuple[bytes, bytes, bytes]:
     definitions = count + b"".join(prefix + (block.to_bytes() if block is not None else b"")
                                     for prefix, block in pieces)
     stream = _blob(packet.symbols.encode("utf-8"))
-    return header, definitions, stream
+    return total, header, definitions, stream
 
 
 
-def encode(packet: Packet, limits: Limits = Limits()) -> bytes:
+def encode(packet: Packet, limits: Limits = Limits(), *, _engine=None) -> bytes:
     """Serialize all reconstruction information, including the definition table."""
-    return b"".join(_parts(packet, limits))
+    _, header, table, stream = _parts(packet, limits, _engine=_engine)
+    return header + table + stream
 
 
-def decode(data: bytes, limits: Limits = Limits()) -> Packet:
+def decode(data: bytes, limits: Limits = Limits(), *, _engine=None) -> Packet:
     """Strict self-contained decoder; malformed input never becomes a partial result."""
     if type(data) is not bytes:
         raise Refused("packet must be bytes")
@@ -436,7 +438,7 @@ def decode(data: bytes, limits: Limits = Limits()) -> Packet:
         if count > limits.entries:
             raise ResourceLimit("definition count exceeds budget")
         entries = []
-        primes = _Primes(limits)
+        primes = _engine if _engine is not None else _Primes(limits)
         for _ in range(count):
             symbol = reader.blob(4).decode("utf-8")
             _symbol(symbol)
@@ -483,9 +485,9 @@ def decode(data: bytes, limits: Limits = Limits()) -> Packet:
     return packet
 
 
-def accounting(packet: Packet, limits: Limits = Limits()) -> dict[str, int]:
-    header, table, stream = _parts(packet, limits)
-    bits = packet.validate(limits)
+def accounting(packet: Packet, limits: Limits = Limits(), *, _engine=None) -> dict[str, int]:
+    """Count all serialized bytes under a single validation/prime-work budget."""
+    bits, header, table, stream = _parts(packet, limits, _engine=_engine)
     return {"source_bits": bits, "source_packed_bytes": (bits + 7) // 8,
             "header_bytes": len(header), "definition_bytes": len(table),
             "occurrence_bytes": len(stream), "total_bytes": len(header) + len(table) + len(stream),
@@ -539,7 +541,10 @@ def main() -> int:
         if args.command == "demo":
             result = demo()
         else:
-            limit = Limits().output_bits // 8 if args.command == "bind" else Limits().wire_bytes
+            # One CLI operation has one budget across decode/account/recover.
+            limits = Limits()
+            engine = _Primes(limits)
+            limit = limits.output_bits // 8 if args.command == "bind" else limits.wire_bytes
             if args.input.stat().st_size > limit:
                 raise ResourceLimit("input file exceeds execution budget")
             with args.input.open("rb") as source:
@@ -550,14 +555,14 @@ def main() -> int:
                 _validate_attachment(args.angle, args.circle)
                 entry = Entry(chr(0xE000), BitBlock.from_bytes(raw), args.angle, args.circle)
                 packet = Packet(args.origin, 0, (entry,) if raw else (), entry.symbol if raw else "")
-                wire = encode(packet)
+                wire = encode(packet, limits, _engine=engine)
+                result = accounting(packet, limits, _engine=engine)
                 write_new(args.output, wire)
-                result = accounting(packet)
             else:
-                packet = decode(raw)
-                result = accounting(packet)
+                packet = decode(raw, limits, _engine=engine)
+                result = accounting(packet, limits, _engine=engine)
                 if args.command == "recover":
-                    restored = packet.restore()
+                    restored = packet.restore(limits, _engine=engine)
                     write_new(args.output, restored.to_bytes())
                     result["output_bit_length"] = restored.length
         print(json.dumps(result, indent=2))

@@ -33,6 +33,9 @@
 # id: cycle_strict_refusal
 #   given: malformed records, mismatched configuration/material, or exhausted budgets
 #   then: refuse clearly without overwrite, partial recovery or silent truncation
+# id: cycle_discovery_profile
+#   given: a decoded record claiming the selected deterministic discovery profile
+#   then: its definitions and occurrence order equal discovery on the restored bytes or recovery refuses
 # === END CONTRACTS ===
 """Usage: python cycle.py demo --sources /checkouts
        python cycle.py forward INPUT OUTPUT --profile cycle-profile.json --corpus CORPUS --sources /checkouts
@@ -362,7 +365,13 @@ def unaffix(data: bytes, *, api, geometry, scope: str, root: str, round_id: int,
         max_bytes=limits.round_bytes)
     if tuple(geometry.lift(d.state) for d in table.definitions) != tuple(e.angle for e in packet.entries):
         raise Refused('whole-circle sequence attachments do not reconstruct')
-    return table.restore()
+    restored = table.restore()
+    selected = discover(restored, max_bytes=limits.round_bytes,
+                        visit_budget=limits.discovery_visits)
+    if (selected.blocks != tuple(d.data for d in table.definitions)
+            or selected.order != table.order):
+        raise Refused('reconstructed partition disagrees with the discovery profile')
+    return restored
 
 
 def _prepared(profile: Profile, limits: CycleLimits):

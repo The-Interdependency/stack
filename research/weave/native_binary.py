@@ -88,6 +88,14 @@ def _natural(value, name: str) -> int:
     return value
 
 
+def _fraction_fields(value: Fraction) -> tuple[int, int]:
+    """Extract builtin fields only; hostile equality must never authorize a record."""
+    if (type(value) is not Fraction or type(value.numerator) is not int
+            or type(value.denominator) is not int or value.denominator <= 0):
+        raise BinaryError('native coordinate requires exact Fraction fields')
+    return value.numerator, value.denominator
+
+
 def _sha(value: str) -> str:
     if type(value) is not str or re.fullmatch('[0-9a-f]{64}', value) is None:
         raise BinaryError('exact lowercase SHA-256 identity required')
@@ -147,6 +155,37 @@ class Geometry:
         if state.frame.sign != 1 or ordinal.denominator != 1:
             raise BinaryError('position does not lift to a source byte axis')
         return self.axis(origin, count, ordinal.numerator)
+
+    def _axis_fields(self, axis) -> tuple:
+        """Inspect the exact class from this verified producer instance, then fields.
+
+        Comparison to a newly constructed native axis owns geometric validation;
+        these guards prevent Python equality overrides from bypassing that comparison.
+        """
+        if type(axis) is not self.axis_module.AxisCirclePosition:
+            raise BinaryError('axis must be an exact native object from this Geometry')
+        try:
+            return (_sha(axis.origin_sha256), _natural(axis.axis_count, 'axis count'),
+                    _natural(axis.axis_ordinal, 'axis ordinal'), _fraction_fields(axis.turn),
+                    _sha(axis.identity_sha256))
+        except AttributeError as exc:
+            raise BinaryError('native axis is missing required fields') from exc
+
+    def _state_fields(self, state) -> tuple:
+        """Native frame identity and typed scalars, without user-defined equality."""
+        if type(state) is not self.mobius_module.NativeMobiusState:
+            raise BinaryError('state must be an exact native object from this Geometry')
+        try:
+            frames = self.mobius_module.NativeMobiusFrame
+            if state.frame is frames.POSITIVE:
+                frame = 0
+            elif state.frame is frames.REVERSED:
+                frame = 1
+            else:
+                raise BinaryError('state must carry this Geometry native frame')
+            return _fraction_fields(state.phase_turns), frame
+        except AttributeError as exc:
+            raise BinaryError('native state is missing required fields') from exc
 
     def lift(self, state) -> Fraction:
         """Serialize the native complete frame in [0,2), not just visible phase."""
@@ -256,7 +295,8 @@ class SequenceTable:
         origin = self.origin
         reidentified = ByteOrigin(origin.source, origin.scope, origin.round_id,
                                   origin.geometry, origin.message_origin)
-        if origin.identity != reidentified.identity:
+        _sha(origin.message_origin)
+        if _sha(origin.identity) != reidentified.identity:
             raise BinaryError('origin identity no longer binds its source')
         for definition in self.definitions:
             definition.__post_init__()
@@ -265,7 +305,19 @@ class SequenceTable:
         blocks = tuple(d.data for d in self.definitions)
         circles = tuple(d.occurrences[0].circle for d in self.definitions)
         expected = _closed_definitions(origin, blocks, self.order, circles, self.spaces)
-        if self.definitions != expected:
+        def fields(definitions):
+            geometry = origin.geometry
+            return tuple((d.data, geometry._axis_fields(d.attachment_axis),
+                          geometry._state_fields(d.state),
+                          tuple((o.source_offset, o.circle, o.ordinal,
+                                 geometry._axis_fields(o.source_axis),
+                                 geometry._axis_fields(o.circle_axis),
+                                 geometry._state_fields(o.state),
+                                 geometry._state_fields(o.source_state))
+                                for o in d.occurrences)) for d in definitions)
+        # Only builtin tuples/bytes/strings/integers reach equality. A foreign
+        # object or native subclass cannot license itself with __eq__ == True.
+        if fields(self.definitions) != fields(expected):
             raise BinaryError('closed native relations disagree with source or placement')
 
     def restore(self) -> bytes:

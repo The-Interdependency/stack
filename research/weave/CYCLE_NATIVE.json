@@ -8,7 +8,7 @@
   "binary_source": {
     "owner": "The-Interdependency/stack",
     "path": "native_binary.py",
-    "git_blob": "8b22cefa39129a6e1ab41de6ac7d495e8b90542e",
+    "git_blob": "b3afde7f95678b47ceda7fbbd931972ebeaf8b7e",
     "standing": "forge-owned candidate, not graduated"
   },
   "uchc_architecture": {

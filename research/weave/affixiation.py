@@ -26,6 +26,9 @@
 # id: discovery_resource_refusal
 #   given: input or candidate-visit work exceeding the configured budget
 #   then: refuse instead of silently truncating the candidate search
+# id: discovery_closure_authority
+#   given: sequence participants selected by this module
+#   then: closure remains Stack-owned, consuming UCNS geometry; UCHC is the architecture reference
 # === END CONTRACTS ===
 """Usage: partition = discover(raw_bytes); partition.restore() == raw_bytes.
 
@@ -34,7 +37,8 @@ by earliest source occurrence. When overlaps compete it retains leftmost availab
 nonoverlapping occurrences. Occurrence counts mean selected partition occurrences,
 not every possible overlapping substring match. No maximum sequence-length heuristic
 or fixed byte chunks are imposed. Residual runs remain exact literal definitions.
-This module discovers participants; UCHC closes them using native UCNS geometry.
+This module discovers participants. Stack-owned native_binary.py closes them
+using native UCNS geometry; UCHC supplies the origin/axis architecture reference.
 """
 from __future__ import annotations
 
