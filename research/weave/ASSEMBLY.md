@@ -1,5 +1,11 @@
 # Weave: full modular assembly v1
 
+**Historical transport/assembly scope.** This document describes the retained
+transport experiment, not the current binary sequence cycle. Current executable
+construction and ownership are in [CYCLE.md](CYCLE.md); current question
+status is in [QUESTIONS.md](QUESTIONS.md). The older unresolved declarations below
+apply to that assembly, not to already-implemented parts of the new cycle.
+
 Status: ASSEMBLY IMPLEMENTED; COMPLETE ENCRYPTION NOT IMPLEMENTED.
 
 This is a source-bound composition contract and switchable runner, not a replacement

@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Run the full Weave workspace suite and emit a source-bound receipt.
+"""Run the full repository Weave suite and emit a source-bound receipt.
 
-Usage: python test.py --receipt /tmp/weave-check.json
-Transport behavior, byte/star construction records and their boundaries are tested.
-Native positional encryption and native corpus replay remain explicitly unexecuted.
+Usage: WEAVE_SOURCES=/checkouts python test.py --receipt /tmp/weave-check.json
+The exact source lock is required for the native cycle tests. All remaining old
+transport tests retain their scope; no cycle result establishes cipher security.
+This runner belongs to the full Stack checkout, not the smaller standalone bundle.
 """
 import argparse
 import hashlib
@@ -16,12 +17,14 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
+EXPECTED_TESTS = 176  # 168 existing + 8 cheap-admission/public-helper regressions.
 
 
 def snapshot():
     paths = list(ROOT.rglob('*.py')) + list((ROOT/'profiles').glob('*.json'))
+    paths += [ROOT/'CYCLE_NATIVE.json', ROOT/'CYCLE_WORK_GRAPH.json']
     return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
-            for p in sorted(paths) if '__pycache__' not in p.parts}
+            for p in sorted(set(paths)) if '__pycache__' not in p.parts and 'sources' not in p.parts}
 
 
 def main():
@@ -33,51 +36,60 @@ def main():
     result = unittest.TextTestRunner(stream=report, verbosity=2).run(
         unittest.defaultTestLoader.discover(str(ROOT/'tests')))
     after = snapshot()
-    # 52 unchanged transport/assembly methods + 12 byte/star + 10 message methods.
     passed = (result.wasSuccessful() and not result.skipped
               and not result.expectedFailures and not result.unexpectedSuccesses
-              and result.testsRun == 74 and before == after)
+              and result.testsRun == EXPECTED_TESTS and before == after)
     receipt = {
-        'schema':'weave.transport-evidence/v1',
-        'status':'PASSED' if passed else 'FAILED',
-        'python':platform.python_version(),
-        'tests':result.testsRun,
-        'failures':len(result.failures),'errors':len(result.errors),'skipped':len(result.skipped),
-        'source_unchanged':before == after,
-        'expected_test_methods':74,
-        'coverage_status':'WITNESSED' if passed else 'NOT_ACCEPTED',
-        'source_sha256':hashlib.sha256(json.dumps(before,sort_keys=True,separators=(',',':')).encode()).hexdigest(),
-        'source_files':before,
-        'coverage':{'binary_messages':8191,'binary_lengths_inclusive':[0,12],
-                    'assembly_switch_masks':512,'transport_switch_masks':32,
-                    'valid_transport_masks':28,'incompatible_transport_masks':4,
-                    'largest_roundtrip_bytes':65536,'separate_process_roundtrip_bytes':1026,
-                    'byte_values':256,'bit_to_circle_assignments':40320,
-                    'whole_part_key_views':7,'bit_placements_per_byte':8,
-                    'message_participants_per_byte':1},
-        'declared_ciphertext_bits_per_byte':16,
-        'positional_cipher':'NOT_IMPLEMENTED: byte/star structure repaired; transform proposals await approval',
-        'full_weave':Pipeline().plan(),
-        'native_corpus_replay':'NOT_EXECUTED: no constructed database materialized by this suite',
-        'native_adapter_tests':'missing-input/source-identity refusal only; not successful real-corpus replay',
-        'security_observations':[
-            'fixed-map recovery succeeds against the older transport candidate at 137 bits in 8 queries',
-            'wrong material can yield wrong plaintext without an authentication error'
-        ],
-        'retired_substitutions':{
-            'stack_pr_73':'REMOVED: per-bit two-sheet encoding was not the specified byte construction',
-            'stack_pr_74':'REMOVED: bit-axis public feedback was not the specified whole-byte coupling',
-            'evidence_scope':'their attacks concern those rejected implementations, not Weave',
-            'private_perturbation_correction':'unchanged public encryption inputs cannot establish private-key noncausality'
+        'schema': 'weave.sequence-cycle-suite/v1',
+        'status': 'PASSED' if passed else 'FAILED',
+        'python': platform.python_version(),
+        'tests': result.testsRun,
+        'failures': len(result.failures), 'errors': len(result.errors), 'skipped': len(result.skipped),
+        'expected_test_methods': EXPECTED_TESTS,
+        'source_unchanged': before == after,
+        'source_sha256': hashlib.sha256(json.dumps(before, sort_keys=True, separators=(',', ':')).encode()).hexdigest(),
+        'source_files': before,
+        'native_sources': json.loads((ROOT/'CYCLE_NATIVE.json').read_text()),
+        'work_graph_sha256': json.loads((ROOT/'CYCLE_WORK_GRAPH.json').read_text())['work_graph_sha256'],
+        'coverage_status': 'WITNESSED' if passed else 'NOT_ACCEPTED',
+        'coverage': {
+            'old_transport_binary_messages': 8191, 'assembly_switch_masks': 512,
+            'transport_switch_masks': 32, 'valid_transport_masks': 28,
+            'incompatible_transport_masks': 4, 'old_transport_largest_roundtrip_bytes': 65536,
+            'numeral_short_bitblocks': 8191, 'numeral_large_block_bits': 8388608,
+            'numeral_repeated_roundtrip_bytes': 4194304, 'numeral_review_regressions': 3,
+            'discovery_binary_alphabet_byte_strings': 8191,
+            'small_compositions': 4083, 'cycle_largest_roundtrip_bytes': 65536,
+            'cycle_sample_rounds': 3, 'native_occurrence_circles': 7,
+            'prime_jump_trace': [5381, 53, 241, 1523],
+            'native_origin_methods': 13, 'cycle_repair_methods': 12,
+            'review_closure_methods': 18, 'final_findings_methods': 9,
+            'terminal_record_methods': 9, 'header_admission_methods': 3,
+            'numeral_single_replay_methods': 4, 'cheap_admission_methods': 8
         },
-        'nonclaim':'Construction-source recovery is not decryption. No native Weave security result.'
+        'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
+        'full_weave': Pipeline().plan(),
+        'asymmetric_cipher': 'NOT_IMPLEMENTED: cycle/profile recovery is not a public/private trapdoor',
+        'native_language_corpus_replay': 'NOT_EXECUTED: binary construction does not use or replace a language corpus',
+        'security_observations': [
+            'The older fixed transport map remains recoverable in its declared attack experiment.',
+            'The cycle is deterministic from the same source, corpus and profile; syntax/digest checks are not authentication.'
+        ],
+        'retired_substitutions': {
+            'stack_pr_73': 'REMOVED: per-bit public sheet substitution',
+            'stack_pr_74': 'REMOVED: bit-axis public feedback',
+            'stack_pr_76': 'SUPERSEDED: one-bit-per-circle byte records replaced by native sequence-cycle construction',
+            'evidence_scope': 'Rejected encoders do not falsify the corrected sequence construction.'
+        },
+        'nonclaim': 'No fixed total expansion, universal compression, cryptographic strength, or language-graduation result.'
     }
     sys.stderr.write(report.getvalue())
     if args.receipt:
-        args.receipt.parent.mkdir(parents=True,exist_ok=True)
-        args.receipt.write_text(json.dumps(receipt,indent=2)+'\n')
-    print(json.dumps({key:receipt[key] for key in ('status','tests','failures','errors','skipped','source_sha256')}))
+        args.receipt.parent.mkdir(parents=True, exist_ok=True)
+        args.receipt.write_text(json.dumps(receipt, indent=2)+'\n')
+    print(json.dumps({k: receipt[k] for k in ('status','tests','failures','errors','skipped','source_sha256')}))
     return 0 if passed else 1
 
 
-if __name__=='__main__':raise SystemExit(main())
+if __name__ == '__main__':
+    raise SystemExit(main())

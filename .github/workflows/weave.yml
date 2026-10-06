@@ -4,10 +4,14 @@ on:
     paths:
       - 'research/weave/**'
       - '.github/workflows/weave.yml'
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
   push:
     paths:
       - 'research/weave/**'
       - '.github/workflows/weave.yml'
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,19 +19,47 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the event source with GitHub PR isolation
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Checkout event source with PR isolation
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
       - name: Verify exact event identity
         env:
           SOURCE_SHA: ${{ github.sha }}
         run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-      # Push validates the exact branch head; pull_request validates GitHub's
-      # isolated merge ref. Neither grants write credentials to tested code.
-      - name: Verify assembly and provisional transport, not native cipher security
+      - name: Checkout exact native geometry producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 905e66964a495d7596a577bb64e4158db9465864
+          path: .weave-inputs/ucns
+          persist-credentials: false
+      - name: Verify native cycle and existing regressions
         run: |
           set -euo pipefail
+          export WEAVE_SOURCES="$GITHUB_WORKSPACE/.weave-inputs"
+          test "$(git -C "$WEAVE_SOURCES/ucns" rev-parse HEAD)" = "905e66964a495d7596a577bb64e4158db9465864"
           python3 -VV
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
           cat "$RUNNER_TEMP/weave-check.json"
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/cycle.py demo | tee "$RUNNER_TEMP/weave-demo.json"
+      - name: Package tracked research source and observed evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/weave-inspection"
+          git archive --format=zip --output="$RUNNER_TEMP/weave-inspection/stack.zip" HEAD research/weave tools stack-manifest.json STACK_MANIFEST.md AGENTS.md README.md docs
+          git -C .weave-inputs/ucns archive --format=zip --output="$RUNNER_TEMP/weave-inspection/ucns.zip" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/weave-inspection/STACK_HEAD.txt"
+          git -C .weave-inputs/ucns rev-parse HEAD > "$RUNNER_TEMP/weave-inspection/UCNS_HEAD.txt"
+          for evidence in weave-check.json weave-demo.json; do
+            if test -f "$RUNNER_TEMP/$evidence"; then cp "$RUNNER_TEMP/$evidence" "$RUNNER_TEMP/weave-inspection/"; fi
+          done
+      - name: Retain exact-source research bundle, not a security release
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1, Node 24
+        with:
+          name: weave-inspection-${{ github.sha }}
+          path: ${{ runner.temp }}/weave-inspection/
+          if-no-files-found: error
+          retention-days: 7
