@@ -56,6 +56,29 @@ These are source-bound observations, not a whole-engine audit. PTCNA's sealed
 historical experiment remains evidence about its particular scaffold/workload.
 It is neither rerun nor generalized to the intended construction here.
 
+## UCNS neuronal inference candidate
+
+A new bounded candidate is recorded in
+[UCNS_NEURONAL_INFERENCE.md](UCNS_NEURONAL_INFERENCE.md).
+
+It tests a different placement from the current PTCNA-first assumption:
+
+\[
+\text{UCHC construction}
+\rightarrow
+\text{tensor of UCNS gonols}
+\rightarrow
+\text{UCNS neuronal inference node}
+\rightarrow
+\text{gonol}
+\]
+
+The candidate does **not** deprecate PTCNA by declaration. Instead it makes PTCNA's
+architectural necessity falsifiable: enumerate every still-required PTCNA operation
+and test whether composition among UCNS neuronal inference nodes can represent it
+without semantic substitution. Until that comparison closes, PTCNA remains an
+independent project and the necessity question is `hmmm`.
+
 ## Construction narrative
 
 1. **Admit the input without losing its construction.** The intended PTCNA
