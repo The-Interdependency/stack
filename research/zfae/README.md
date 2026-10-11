@@ -61,7 +61,17 @@ It is neither rerun nor generalized to the intended construction here.
 A new bounded candidate is recorded in
 [UCNS_NEURONAL_INFERENCE.md](UCNS_NEURONAL_INFERENCE.md).
 
-It tests a different placement from the current PTCNA-first assumption:
+Proposed inference authority: **unassigned**. This is a future hypothesis, not
+an adopted replacement for the current work graph. PTCNA retains neural
+construction authority and its source-owned UCNS neural-audit gate. The pinned
+UCNS input remains carrier-only; no function semantics are inferred.
+
+Axis construction is not an inference-node witness. The exact
+[UCHC input lock](UCHC_INPUT.json) records `neural_readiness` as `not established`.
+UCHC supplies source-bound gonols and axes; the proposed node operator and its
+recursive inference law remain `hmmm`.
+
+The hypothesized path, conditional on a source-owned executable relation, is:
 
 \[
 \text{UCHC construction}
@@ -73,11 +83,18 @@ It tests a different placement from the current PTCNA-first assumption:
 \text{gonol}
 \]
 
-The candidate does **not** deprecate PTCNA by declaration. Instead it makes PTCNA's
-architectural necessity falsifiable: enumerate every still-required PTCNA operation
-and test whether composition among UCNS neuronal inference nodes can represent it
-without semantic substitution. Until that comparison closes, PTCNA remains an
-independent project and the necessity question is `hmmm`.
+The candidate proposes a capability-difference experiment: enumerate every
+still-required PTCNA operation and, once an executable node law exists, test
+whether composition can represent it without semantic substitution. Its present
+standing is **UNRESOLVED**. A comparison result would be scoped evidence, not an
+authority transition or a waiver of PTCNA's gate.
+
+[BASE.json](BASE.json), [the machine manifest](../../stack-manifest.json),
+[the human manifest](../../STACK_MANIFEST.md), and their work-graph digest retain
+the current architecture unchanged. Adopting a new relationship requires exact
+producer identities, source-owned acceptance, and a separate coherent update of
+all authority projections. UCHC's incomplete release/reconsumption boundary also
+remains in force.
 
 ## Construction narrative
 

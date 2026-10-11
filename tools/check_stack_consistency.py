@@ -49,6 +49,12 @@
 #   then: provenance pins an immutable skill-lib commit and source blob, authority_transfer is false, and the local Git blob identity matches the declared source blob
 #   class: boundary
 #   since: 2026-09-12
+#
+# id: zfae_candidate_preserves_current_authority
+#   given: the unimplemented neuronal-inference candidate is present
+#   then: both candidate projections retain explicit unassigned inference authority and axis-versus-node boundaries while BASE and the input lock retain current construction standing
+#   class: boundary
+#   since: 2026-10-11
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -454,6 +460,36 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         error(findings, "epac.graduation", f"invalid or missing transition evidence: {exc}")
 
 
+def check_zfae_neuronal_candidate(findings: list[str], root: Path = ROOT) -> None:
+    """Guard explicit candidate disclaimers; this does not validate neural capability.
+
+    Usage: called by the structural gate; tests may supply an isolated root.
+    Adopting a source-owned operator requires revising this boundary with all
+    authority projections, rather than deleting a disclaimer in one document.
+    """
+    workspace = root / "research" / "zfae"
+    candidate = workspace / "UCNS_NEURONAL_INFERENCE.md"
+    if not candidate.exists():
+        return
+    try:
+        for path in (candidate, workspace / "README.md"):
+            text = " ".join(path.read_text(encoding="utf-8").split())
+            for boundary in (
+                "Proposed inference authority: **unassigned**.",
+                "Axis construction is not an inference-node witness.",
+            ):
+                if boundary not in text:
+                    error(findings, "zfae.candidate_boundary", f"{path.name} is missing {boundary!r}")
+        base = load_json(workspace / "BASE.json")
+        lock = load_json(workspace / "UCHC_INPUT.json")
+        if base.get("authority_transfer") is not False or "PTCNA owns neural construction" not in base.get("authority", ""):
+            error(findings, "zfae.candidate_authority", "unassigned candidate must retain current PTCNA construction authority")
+        if lock.get("authority_transfer") is not False or lock.get("neural_readiness") != "not established":
+            error(findings, "zfae.candidate_readiness", "axis/input construction must not promote neural readiness")
+    except (OSError, ValueError, TypeError) as exc:
+        error(findings, "zfae.candidate_inputs", f"invalid or missing candidate boundary evidence: {exc}")
+
+
 def main() -> int:
     findings: list[str] = []
     try:
@@ -472,6 +508,7 @@ def main() -> int:
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)
     check_epac_graduation(manifest, findings)
+    check_zfae_neuronal_candidate(findings)
 
     if findings:
         for finding in findings:

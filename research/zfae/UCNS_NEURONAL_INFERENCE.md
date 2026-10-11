@@ -2,11 +2,32 @@
 
 Status: **stack-local research candidate**.
 
-This document records the current construction reached from the UCHC/UCNS inference thread. It does not transfer authority to Stack, does not establish a biological equivalence claim, and does not by itself retire PTCNA.
+This document preserves the proposed construction from the UCHC/UCNS inference
+thread as a future hypothesis. It supplies no executable neuronal operator and
+establishes no biological equivalence or PTCNA deprecation.
+
+Proposed inference authority: **unassigned**. The proposal does not change
+[BASE.json](BASE.json), [stack-manifest.json](../../stack-manifest.json),
+[STACK_MANIFEST.md](../../STACK_MANIFEST.md), or their work-graph digest.
+PTCNA retains neural construction authority and its source-owned UCNS
+neural-audit gate; ZFAE retains conceptual authority and a0 runtime integration.
+The pinned UCNS input remains carrier-only, with no function semantics inferred.
+UCHC's release/reconsumption and authority-transition boundary remains incomplete.
+
+## Usage guidance
+
+Read the current source bindings in BASE.json and UCHC_INPUT.json before using
+this candidate. Keep the proposed operator separate from input admission and
+axis construction. No parser, corpus, closure, or axis completion may satisfy a
+neural-construction prerequisite. Before adopting an inference relationship,
+bind its source-owned executable law and witnesses, then update every affected
+work-graph projection and digest together under the Stack structural-update gate.
+Run `python tools/check_stack_consistency.py` and the ZFAE tests from the Stack
+root; these check boundaries and existing construction, not inference capability.
 
 ## Core construction
 
-A single inference node is modeled as an operation over a tensor of UCNS gonols:
+The hypothesis models a future single inference node as an operation over a tensor of UCNS gonols:
 
 \[
 \mathcal N:\bigotimes_{i=1}^{k} G_i \rightarrow G_o
@@ -14,7 +35,7 @@ A single inference node is modeled as an operation over a tensor of UCNS gonols:
 
 where every \(G_i\) and the result \(G_o\) are UCNS gonols.
 
-The tensor preserves simultaneous gonol distinctions rather than flattening them into one scalar coordinate or ordinary weighted-sum input. The inference result remains a gonol, so it can participate recursively in later inference.
+The proposed tensor must preserve simultaneous gonol distinctions rather than flattening them into one scalar coordinate or ordinary weighted-sum input. The proposed result must remain a gonol so that recursive participation can be tested; neither the operator nor that recursive inference is implemented here.
 
 The candidate primitive is therefore:
 
@@ -26,19 +47,28 @@ with gonols as native operands and result.
 
 ## UCHC placement
 
-UCHC constructs these nodes from language construction.
+UCHC currently supplies source-bound language gonols and axes. The exact
+[UCHC_INPUT.json](UCHC_INPUT.json) pin records `neural_readiness` as
+`not established`. The Stack [Hilbert candidate](../english-gonol/docs/hilbert-inference.md)
+synthesizes no learned operator and leaves later recursive scales as `hmmm`.
 
-Current intended sequence:
+Axis construction is not an inference-node witness. A closed word may become a
+higher-scale axis under its construction contract without becoming a neuron or
+performing inference. Node creation requires a separately supplied, source-owned
+executable relation; no producer or source identity for that relation is assigned
+by this proposal.
+
+Current construction boundary:
 
 \[
 \text{glyph gonols}
 \rightarrow
 \text{closed word gonol}
 \rightarrow
-\text{word axis / inference node}
+\text{word axis}
 \]
 
-and recursively:
+A separate future hypothesis would admit those source-bound gonols to a node and recursively apply its still-missing law:
 
 \[
 G_{\text{word}_1}\otimes G_{\text{word}_2}\otimes\cdots
@@ -46,22 +76,22 @@ G_{\text{word}_1}\otimes G_{\text{word}_2}\otimes\cdots
 G_{\text{construct}}
 \]
 
-The higher-scale result remains a gonol and may become an operand in another inference node.
+If the hypothesis survives, its higher-scale result would remain a gonol and could become an operand in another inference node. Axis promotion alone supplies neither this result nor the inference law.
 
 This preserves the existing UCHC requirement that a closed word becomes its own higher-scale axis rather than remaining permanently reducible to its constituent glyph coordinates.
 
-## Thread conclusions
+## Proposed thread conclusions
 
-1. One neuron is a sufficient minimum computational unit for an inference primitive; a network is not required merely to define inference.
+1. The hypothesis asks whether one node can supply an inference primitive before requiring a network; sufficiency remains to be demonstrated.
 2. The UCNS candidate is not "a neuron as an arbitrary tensor". It is **inference over tensors of gonols**.
 3. Gonols are the native operands.
-4. The inferred result is also a gonol.
-5. UCHC creates the language-derived UCNS neuronal inference nodes.
-6. Closed words become higher-scale axes/nodes after glyph composition.
-7. Higher language inference recursively composes those nodes.
-8. Inference therefore stays inside UCNS-native construction rather than flattening semantic construction into Cartesian coordinates or scalar weights first.
+4. The proposed inferred result must also be a gonol.
+5. UCHC's source-bound gonols are proposed operands for future nodes; UCHC does not currently supply the neuronal operator.
+6. Closed words can become higher-scale axes after glyph composition; node admission is a separate missing witness.
+7. Higher language inference is hypothesized to compose future nodes recursively, pending an executable relation and recursive witnesses.
+8. The candidate aims to keep inference inside UCNS-native construction rather than flattening semantic construction into Cartesian coordinates or scalar weights first; this is an acceptance obligation, not delivered behavior.
 
-Compactly:
+Compactly, the proposed future path is:
 
 \[
 \boxed{
@@ -77,7 +107,12 @@ Compactly:
 
 ## PTCNA capability-difference test
 
-PTCNA is no longer assumed necessary merely because the system requires neural inference.
+The experiment asks whether an additional PTCNA layer would remain necessary
+if the proposed node law were supplied. This does not replace the current
+PTCNA-owned construction or waive its neural-audit prerequisite.
+
+Current comparison standing: **UNRESOLVED**. Neither the executable node law
+nor a complete source-bound operation comparison is supplied here.
 
 The surviving question is:
 
@@ -90,7 +125,7 @@ Possible outcomes:
 - **UNRESOLVED** — the required UCNS neuronal inference law or the relevant PTCNA operation is not yet specified strongly enough to compare.
 - **BLOCKED** — producer identities or executable witnesses needed for the comparison are unavailable.
 
-PTCNA's own repository retains authority over PTCNA. This Stack candidate only tests whether PTCNA remains architecturally necessary to the composed inference path.
+PTCNA's own repository retains authority over PTCNA. This Stack candidate specifies a future test of architectural necessity. Even a completed comparison would not itself assign a replacement owner or update the current architecture; source-owned acceptance and a coherent work-graph transaction are separate requirements.
 
 ## Acceptance obligations
 
@@ -102,7 +137,7 @@ A future implementation must at minimum demonstrate:
 2. **tensor distinction preservation** — changing operand identity, ordering, multiplicity, or declared relation can be observed independently where the construction says it matters;
 3. **non-flattening** — no hidden projection into an ordinary scalar/vector representation is allowed to stand in for the claimed gonol tensor relation without an explicit reversible boundary;
 4. **recursive closure** — a node output can be admitted as an operand to another node without changing its identity merely to fit the next layer;
-5. **UCHC construction witness** — an actual UCHC glyph/word/construct path creates the corresponding node operands from source-bound gonols;
+5. **UCHC operand witness** — an actual UCHC glyph/word/construct path supplies source-bound operands; closure or axis completion does not count as node creation or an inference witness;
 6. **inference witness** — the node produces a state/result not obtainable merely by replaying an identity-preserving serializer;
 7. **intervention test** — a preregistered change to one participating gonol relation changes or preserves the result according to the declared inference law;
 8. **PTCNA difference test** — enumerate each still-claimed PTCNA necessity and test whether UCNS neuronal inference composition represents it without semantic substitution.
@@ -111,12 +146,13 @@ Passing structure checks alone does not establish useful inference, learning, bi
 
 ## Authority boundary
 
-- **UCNS** owns gonol geometry and any canonical neuronal-inference primitive admitted into UCNS.
-- **UCHC** owns its language construction and, if adopted, the construction of language-derived UCNS neuronal inference nodes.
+- **UCNS** owns the consumed gonol geometry. No canonical neuronal-inference primitive is supplied or assigned to UCNS by this proposal.
+- **UCHC** supplies the exact candidate language input contract, with the existing Stack forge and incomplete authority-transition boundary preserved. Any future node-construction responsibility is unassigned.
 - **Stack** owns this cross-project research candidate and its comparison evidence.
-- **PTCNA** owns PTCNA; this candidate may falsify its necessity in the composed architecture without rewriting PTCNA's own historical or project-local claims.
+- **PTCNA** retains current neural-construction authority and its UCNS neural-audit gate. The candidate comparison cannot revise that authority by itself.
 - **EDCM** may measure resulting behavior but does not define the construction.
-- **ZFAE** may consume the inference construction, but its conceptual inference-event boundary does not establish the UCNS neuronal law.
+- **ZFAE** retains conceptual authority; it may consume a future accepted construction, but its inference-event boundary does not establish the missing law.
+- **a0** retains runtime-integration authority; no new runtime path is delivered.
 
 ## Nonclaims
 
@@ -141,4 +177,4 @@ The missing executable object is the exact UCNS law for:
 
 Until that law exists with failure-bearing witnesses, **UCNS neuronal inference** is a well-placed construction candidate, not a demonstrated inference mechanism.
 
-PTCNA remains a hypothesis about additional necessary architecture pending the capability-difference test.
+PTCNA retains its current construction responsibility while the capability-difference hypothesis remains unresolved. A future comparison must not silently change that responsibility.
