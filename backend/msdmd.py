@@ -112,8 +112,13 @@ _GENERATOR_IDENTITY = re.compile(r"^sha256:([0-9a-f]{64})$")
 # Collector exit statuses that refuse the run before anything is written
 # (skill-lib msdmd/collect.py). Each fails the attempt closed; nothing publishes.
 COLLECTOR_REFUSALS: dict[int, tuple[str, str]] = {
-    3: ("reader-runtime-missing",
-        "install the MSDMD native reader runtimes for STACK_SKILL_LIB_ROOT (backend/ops/install_msdmd_runtime.sh), then retry"),
+    # Exit 3 covers a missing reader runtime and, since skill-lib#121, any
+    # TypeScript reader or worker failure and a reader past --typescript-timeout.
+    3: ("reader-runtime-failed",
+        "a native reader runtime is missing, or the TypeScript reader or its worker failed or timed out; "
+        "read the collector error above, check node and typescript for STACK_SKILL_LIB_ROOT "
+        "(rerun backend/ops/install_msdmd_runtime.sh and its sandboxed probe), and check the "
+        "worker's memory, sandbox and time limits (journalctl -u stack-orchestrator-worker), then retry"),
     4: ("schema-helper-outdated",
         "propagate the current skill-lib msdmd skill into the target so .agents/skills/msdmd/collection.ts exports MSDMD_COLLECTION_HELPER_VERSION, then retry"),
     5: ("git-visibility-unavailable",

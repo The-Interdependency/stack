@@ -74,7 +74,7 @@ from backend.freshness import (
 )
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
 from backend.msdmd import (
-    WORKER_PENDING, _clean_stale_siblings, build_spec, component_difference, evaluate, make, queue_make,
+    WORKER_PENDING, _clean_stale_siblings, build_spec, collector_failure, component_difference, evaluate, make, queue_make,
     register_spec, run_job,
 )
 
@@ -401,10 +401,28 @@ class FreshMakingTests(unittest.TestCase):
             self.assertNotEqual(report.state, "fresh")
             self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
 
+    def test_exit_3_hint_covers_reader_failures_and_timeouts(self):
+        # Since skill-lib#121 exit 3 is not only a missing runtime: a failed or
+        # timed-out TypeScript reader/worker exits 3 too, and the operator hint
+        # must not send the operator only to install runtimes.
+        for stderr in ("msdmd: ERROR: typescript_reader_failed: worker exited with status 1",
+                       "msdmd: ERROR: typescript_reader_timeout: worker exceeded 120s and was killed",
+                       "msdmd: ERROR: node_runtime_unavailable"):
+            with self.subTest(stderr=stderr):
+                proc = subprocess.CompletedProcess(["collect"], 3, stdout="", stderr=stderr)
+                error, hmmm = collector_failure("collect", proc)
+                self.assertIn("exit 3, reader-runtime-failed", error)
+                self.assertIn(stderr, error)
+                self.assertTrue(hmmm.startswith("msdmd exit 3 (reader-runtime-failed): "), hmmm)
+                for phrase in ("runtime is missing", "TypeScript reader", "worker", "timed out",
+                               "install_msdmd_runtime.sh", "time limits"):
+                    self.assertIn(phrase, hmmm)
+                self.assertNotIn("reader-runtime-missing", error + hmmm)
+
     def test_collector_refusals_fail_closed_into_the_ledger(self):
         # The real collector writes nothing on exit 3/4/5; this one even leaves a
         # file behind to prove the refusal alone keeps it unpublished.
-        for code, name in ((3, "reader-runtime-missing"), (4, "schema-helper-outdated"),
+        for code, name in ((3, "reader-runtime-failed"), (4, "schema-helper-outdated"),
                            (5, "git-visibility-unavailable")):
             with self.subTest(code=code), tempfile.TemporaryDirectory() as tmp, _unbound_env():
                 target, generator, ledger, spec = self._runtime(Path(tmp))
