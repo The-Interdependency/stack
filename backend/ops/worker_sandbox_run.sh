@@ -17,7 +17,9 @@ set -euo pipefail
 #   tests: backend.tests.test_worker_sandbox_run (stubbed systemctl/systemd-run) plus VM acceptance
 #   rollout: operator tool on the stack VM
 #   rollback: none needed; it changes nothing persistent
-# === END MODULE# Usage: sudo backend/ops/worker_sandbox_run.sh [--chdir DIR] [--setenv NAME=VALUE]... -- COMMAND [ARG...]
+# === END MODULE_BUILD ===
+
+# Usage: sudo backend/ops/worker_sandbox_run.sh [--chdir DIR] [--setenv NAME=VALUE]... -- COMMAND [ARG...]
 #   STACK_WORKER_UNIT  installed worker unit (default stack-orchestrator-worker.service)
 #   STACK_WORKER_USER  User= the unit must run as (default stackorchestrator)
 # The generator identity depends on PATH, Node, the venv and the sandbox, so
