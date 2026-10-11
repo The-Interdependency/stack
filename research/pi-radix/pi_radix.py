@@ -46,7 +46,7 @@ from typing import Any, Iterable
 #   rollout: explicit CLI execution; no runtime integration
 #   rollback: remove research/pi-radix and its Stack research-participant projections
 #   since: 2026-10-10
-#   unresolved: base-independent segmentation criterion, fixed-information-horizon profile
+#   unresolved: base-independent segmentation criterion
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
@@ -73,6 +73,16 @@ from typing import Any, Iterable
 #   then: canonical JSON payload and receipt_sha256 are byte-identical
 #   class: reproducibility
 #   since: 2026-10-10
+#
+# id: pi_radix_configuration_faithful
+#   given: an admitted experiment configuration
+#   then: bounded allocation and complete prefixes precede analysis; reports use configured counts and lengths
+#   class: correctness
+#
+# id: pi_radix_overlap_complete
+#   given: unequal radix prefix lengths
+#   then: phase comparisons include every position present in at least two streams
+#   class: correctness
 # === END CONTRACTS ===
 
 
@@ -81,6 +91,7 @@ DEFAULT_CONFIG = ROOT / "EXPERIMENT.json"
 DEFAULT_RECEIPT = ROOT / "receipts" / "pi-radix-scan-v1.json"
 DEFAULT_REPORT = ROOT / "docs" / "pi-radix-scan-v1.md"
 UINT64_LIMIT = 1 << 64
+MAX_BASE = 100_000
 MR_BASES_64 = (2, 325, 9375, 28178, 450775, 9780504, 1795265022)
 
 
@@ -246,6 +257,8 @@ def digit_stream_sha256(digits: list[int]) -> str:
 
 
 def analyze_base(base: int, digits: list[int], lengths: list[int]) -> dict[str, Any]:
+    if not 2 <= base <= MAX_BASE:
+        raise ValueError(f"base must be in 2..{MAX_BASE} for bounded alphabet enumeration")
     primes = set(prime_sieve(base - 1))
     prime_symbols = [
         {"position": position, "digit": digit}
@@ -273,7 +286,7 @@ def analyze_base(base: int, digits: list[int], lengths: list[int]) -> dict[str, 
                 hits.append(hit)
                 prefix_hits[start + 1].append({"length": length, "value": value})
         blocks[str(length)] = {
-            "window_count": len(digits) - length + 1,
+            "window_count": max(0, len(digits) - length + 1),
             "canonical_count": canonical_count,
             "terminal_gcd_eligible_count": eligible_count,
             "prime_count": len(hits),
@@ -326,10 +339,12 @@ def cross_base_results(scans: list[dict[str, Any]]) -> dict[str, Any]:
             recurrences.append({"prime": value, "occurrences": occurrences})
 
     phase_collisions = []
-    symbol_count = min((scan["symbol_count"] for scan in scans), default=0)
+    symbol_count = max((scan["symbol_count"] for scan in scans), default=0)
     for position in range(symbol_count):
         phases: dict[Fraction, list[dict[str, int]]] = defaultdict(list)
         for scan in scans:
+            if position >= scan["symbol_count"]:
+                continue
             digit = scan["digits"][position]
             phases[Fraction(digit, scan["base"])].append({"base": scan["base"], "digit": digit})
         for phase, symbols in sorted(phases.items()):
@@ -347,6 +362,17 @@ def required_decimal_digits(max_base: int, symbol_count: int) -> int:
     return math.ceil(symbol_count * math.log10(max_base))
 
 
+def horizon_count(base: int, bits: int) -> int:
+    """Largest n with base**n <= 2**bits, corrected using exact integers."""
+    n = math.floor(bits / math.log2(base))
+    limit = 1 << bits
+    while base**n > limit:
+        n -= 1
+    while base**(n + 1) <= limit:
+        n += 1
+    return n
+
+
 def load_config(path: Path) -> dict[str, Any]:
     config = json.loads(path.read_text(encoding="utf-8"))
     if config.get("schema") != "stack.pi-radix-experiment" or config.get("version") != "1.0.0":
@@ -359,18 +385,25 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("bases must be a nonempty list of integers >= 2")
     if len(set(bases)) != len(bases):
         raise ValueError("bases must be unique")
+    if max(bases) > MAX_BASE:
+        raise ValueError(f"base limit is {MAX_BASE}")
     if type(count) is not int or count <= 0:
         raise ValueError("fractional_symbol_count must be positive")
     if type(horizon) is not int or horizon <= 0:
         raise ValueError("matched_information_horizon_bits must be positive")
+    if count > 100_000 or horizon > 1_000_000:
+        raise ValueError("bounded profile requires count <= 100000 and horizon <= 1000000")
     if not isinstance(lengths, list) or not lengths or any(type(length) is not int or length < 1 for length in lengths):
         raise ValueError("prime_block_lengths must be positive integers")
     if lengths != sorted(set(lengths)):
         raise ValueError("prime_block_lengths must be sorted and unique")
-    if any(math.floor(horizon / math.log2(base)) < max(lengths) for base in bases):
-        raise ValueError("matched information horizon is too small for configured blocks")
-    if max(bases) ** max(lengths) >= UINT64_LIMIT:
+    if max(lengths) > 63 or max(bases) ** max(lengths) >= UINT64_LIMIT:
         raise ValueError("configured block domain exceeds deterministic unsigned-64-bit primality")
+    matched_counts = [horizon_count(base, horizon) for base in bases]
+    if min(matched_counts) < max(lengths):
+        raise ValueError("matched information horizon is too small for configured blocks")
+    if max(matched_counts) > count:
+        raise ValueError("matched information horizon exceeds generated stream")
     return config
 
 
@@ -401,7 +434,7 @@ def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
     horizon = config["matched_information_horizon_bits"]
     matched_scans = []
     for base in bases:
-        matched_count = math.floor(horizon / math.log2(base))
+        matched_count = horizon_count(base, horizon)
         matched_scans.append(analyze_base(base, digit_runs[1][base][:matched_count], lengths))
     matched_summaries = []
     for scan in matched_scans:
@@ -447,7 +480,7 @@ def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         "hmmm": [
             "The matched-information profile uses logarithmic bit depth; it does not create a base-independent segmentation.",
             "Cross-base recurrence of a decoded prime does not establish a generating law.",
-            "No statistical claim about normality is licensed by 500 symbols per base."
+            "No statistical claim about normality is licensed by this finite prefix."
         ],
     }
     payload["receipt_sha256"] = sha256_bytes(canonical_json_bytes(payload))
@@ -459,6 +492,10 @@ def fraction_text(pair: list[int]) -> str:
 
 
 def render_report(receipt: dict[str, Any]) -> str:
+    count = receipt["experiment"]["fractional_symbol_count"]
+    lengths = receipt["experiment"]["prime_block_lengths"]
+    block_headers = " | ".join(f"L{length} eligible / prime" for length in lengths)
+    horizon = receipt["matched_information_profile"]["horizon_bits"]
     lines = [
         "# Pi radix prime scan v1",
         "",
@@ -468,15 +505,15 @@ def render_report(receipt: dict[str, Any]) -> str:
         "",
         "Base-independent digit law: **NOT_ESTABLISHED**",
         "",
-        "The first 500 fractional symbols of pi were generated twice at the recorded",
+        f"The first {count} fractional symbols of pi were generated twice at the recorded",
         "decimal precisions. Every symbol agreed before analysis. Each digit `d` in",
         "base `b` is also the exact unit-circle symbol",
         "`exp(2*pi*i*d/b)`; degrees and radians are derived coordinates, not identity.",
         "",
         "## Results",
         "",
-        "| Base | Factorization | phi(base) | Prime-valued symbols / prime digit-values | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime | Information bits |",
-        "|---:|---|---:|---:|---:|---:|---:|---:|",
+        f"| Base | Factorization | phi(base) | Prime-valued symbols / prime digit-values | {block_headers} | Resolution bits |",
+        "|---:|---|---:|---:|" + "---:|" * (len(lengths) + 1),
     ]
     for result in receipt["base_results"]:
         factors = " * ".join(
@@ -484,13 +521,13 @@ def render_report(receipt: dict[str, Any]) -> str:
             for prime, exponent in result["base_factorization"]
         )
         block_cells = []
-        for length in (2, 3, 4):
+        for length in lengths:
             block = result["blocks"][str(length)]
             block_cells.append(f'{block["terminal_gcd_eligible_count"]} / {block["prime_count"]}')
         lines.append(
             f'| {result["base"]} | {factors} | {result["totient"]} | '
-            f'{result["prime_valued_symbol_count"]} / {result["prime_digit_alphabet_count"]} | {block_cells[0]} | '
-            f'{block_cells[1]} | {block_cells[2]} | {result["information_depth_bits"]} |'
+            f'{result["prime_valued_symbol_count"]} / {result["prime_digit_alphabet_count"]} | '
+            + " | ".join(block_cells) + f' | {result["information_depth_bits"]} |'
         )
 
     recurrences = receipt["cross_base_results"]["decoded_prime_recurrences_minimum_block_length_2"]
@@ -506,7 +543,7 @@ def render_report(receipt: dict[str, Any]) -> str:
             "",
             "## Cross-base observations",
             "",
-            f"- Decoded prime values recurring in at least two bases, using canonical blocks of lengths 2--4: **{len(recurrences)}**.",
+            f"- Decoded prime values recurring in at least two bases, using configured canonical blocks of length >= 2: **{len(recurrences)}**.",
             f"- Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **{len(phases)}**.",
         ]
     )
@@ -533,18 +570,18 @@ def render_report(receipt: dict[str, Any]) -> str:
             "",
             f'This profile uses the longest whole-symbol prefix at or below **{matched["horizon_bits"]} bits** in every base.',
             "",
-            "| Base | Symbols used | Actual information bits | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime |",
-            "|---:|---:|---:|---:|---:|---:|",
+            f"| Base | Symbols used | Resolution bits | {block_headers} |",
+            "|" + "---:|" * (3 + len(lengths)),
         ]
     )
     for result in matched["base_results"]:
         block_cells = []
-        for length in (2, 3, 4):
+        for length in lengths:
             block = result["blocks"][str(length)]
             block_cells.append(f'{block["terminal_gcd_eligible_count"]} / {block["prime_count"]}')
         lines.append(
             f'| {result["base"]} | {result["symbol_count"]} | {result["information_depth_bits"]} | '
-            f'{block_cells[0]} | {block_cells[1]} | {block_cells[2]} |'
+            + " | ".join(block_cells) + " |"
         )
     lines.extend(
         [
@@ -572,9 +609,10 @@ def render_report(receipt: dict[str, Any]) -> str:
             "for a later law, not the law itself. Exact angular equality similarly shows",
             "shared circle position without making the surrounding digit streams identical.",
             "",
-            "The fixed 500-symbol scans span different information depths. The common",
-            "2,400-bit profile changes the prefix length by base and keeps that second",
+            f"The fixed {count}-symbol scans span different resolution depths. The common",
+            f"{horizon:,}-bit profile changes the prefix length by base and keeps that second",
             "comparison separate. Neither profile supplies a sampling theorem.",
+            "Resolution bits describe radix cell width, not measured entropy of pi.",
             "",
             "## Reproduction",
             "",
@@ -597,10 +635,13 @@ def render_report(receipt: dict[str, Any]) -> str:
 
 
 def write_outputs(receipt: dict[str, Any], output: Path, report: Path) -> None:
+    # Complete both renderings before modifying either artifact.
+    report_text = render_report(receipt)
+    receipt_text = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
     output.parent.mkdir(parents=True, exist_ok=True)
     report.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(receipt, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    report.write_text(render_report(receipt), encoding="utf-8")
+    output.write_text(receipt_text, encoding="utf-8")
+    report.write_text(report_text, encoding="utf-8")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

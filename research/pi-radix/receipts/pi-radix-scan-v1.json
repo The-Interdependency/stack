@@ -21783,9 +21783,9 @@
   "hmmm": [
     "The matched-information profile uses logarithmic bit depth; it does not create a base-independent segmentation.",
     "Cross-base recurrence of a decoded prime does not establish a generating law.",
-    "No statistical claim about normality is licensed by 500 symbols per base."
+    "No statistical claim about normality is licensed by this finite prefix."
   ],
-  "implementation_sha256": "281652b92faed4be05acc0786952b224a27142ee28141386fb82723f7ca908db",
+  "implementation_sha256": "d53f2a5664e46e5dc2a0f34adbcdf36b37f9d0282a9d1dfaa3a307b445e958e0",
   "matched_information_profile": {
     "base_results": [
       {
@@ -22269,7 +22269,7 @@
     ],
     "required_decimal_digits": 1730
   },
-  "receipt_sha256": "60e7ae00d1ef8d2c535c51e47951ca81dcf42a0921007014f1addf2476b97cd5",
+  "receipt_sha256": "b9dcf6c89a4e67eacd8b8dc1d62281b050055c83d1f4b368d551fe0b091a13c6",
   "schema": "stack.pi-radix-scan-receipt",
   "standing": "COMPUTATION",
   "version": "1.0.0"

@@ -7,6 +7,7 @@ import unittest
 from decimal import Decimal
 from fractions import Fraction
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,7 +20,7 @@ SPEC.loader.exec_module(pi_radix)
 # === CHECKS ===
 # id: check_pi_radix_precision_agreement
 #   proves: pi_radix_precision_agreement
-#   call: TestPiRadix::test_default_receipt_matches_regeneration
+#   call: self::test_default_receipt_matches_regeneration
 #   requires: python3
 #   timeout: natural_completion
 #   mutates: temporary_files
@@ -27,7 +28,7 @@ SPEC.loader.exec_module(pi_radix)
 #
 # id: check_pi_radix_exact_angular_identity
 #   proves: pi_radix_exact_angular_identity
-#   call: TestPiRadix::test_angular_symbol_is_exact
+#   call: self::test_angular_symbol_is_exact
 #   requires: python3
 #   timeout: natural_completion
 #   mutates: none
@@ -35,7 +36,7 @@ SPEC.loader.exec_module(pi_radix)
 #
 # id: check_pi_radix_prime_claim_bounded
 #   proves: pi_radix_prime_claim_bounded
-#   call: TestPiRadix::test_primality_and_terminal_sieve
+#   call: self::test_primality_and_terminal_sieve
 #   requires: python3
 #   timeout: natural_completion
 #   mutates: none
@@ -43,15 +44,89 @@ SPEC.loader.exec_module(pi_radix)
 #
 # id: check_pi_radix_receipt_deterministic
 #   proves: pi_radix_receipt_deterministic
-#   call: TestPiRadix::test_default_receipt_matches_regeneration
+#   call: self::test_default_receipt_matches_regeneration
 #   requires: python3
 #   timeout: natural_completion
 #   mutates: temporary_files
 #   cleanup: temporary_directory
+#
+# id: check_pi_radix_known_digits
+#   proves: pi_radix_precision_agreement
+#   call: self::test_base_digits_known_values
+#   mutates: none
+#   cleanup: none
+#
+# id: check_pi_radix_domain_limit
+#   proves: pi_radix_prime_claim_bounded
+#   call: self::test_config_rejects_unbounded_prime_domain
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
+#
+# id: check_pi_radix_config_guards
+#   proves: pi_radix_configuration_faithful
+#   call: self::test_config_guards
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
+#
+# id: check_pi_radix_custom_report
+#   proves: pi_radix_configuration_faithful
+#   call: self::test_custom_report_and_no_partial_render_write
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
+#
+# id: check_pi_radix_overlap
+#   proves: pi_radix_overlap_complete
+#   call: self::test_unequal_prefix_overlap
+#   mutates: none
+#   cleanup: none
 # === END CHECKS ===
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_config_guards(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        for change in (
+            {"fractional_symbol_count": 5, "matched_information_horizon_bits": 100, "bases": [30]},
+            {"bases": [1_000_000_007], "prime_block_lengths": [1]},
+        ):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "config.json"
+                path.write_text(json.dumps(original | change))
+                with self.assertRaises(ValueError):
+                    pi_radix.load_config(path)
+        with self.assertRaises(ValueError):
+            pi_radix.analyze_base(1_000_000_007, [1], [1])
+        self.assertEqual(pi_radix.horizon_count(4, 12), 6)
+        self.assertEqual(pi_radix.horizon_count(3, 12), 7)
+
+    def test_custom_report_and_no_partial_render_write(self) -> None:
+        config = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        config.update(bases=[30], fractional_symbol_count=30,
+                      matched_information_horizon_bits=100, prime_block_lengths=[1, 2])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "config.json"
+            path.write_text(json.dumps(config))
+            receipt = pi_radix.run_experiment(path)
+            report = pi_radix.render_report(receipt)
+            self.assertIn("first 30 fractional symbols", report)
+            self.assertIn("100-bit profile", report)
+            self.assertNotIn("L3 eligible", report)
+            output, projection = Path(directory) / "result.json", Path(directory) / "report.md"
+            output.write_text("unchanged")
+            projection.write_text("unchanged")
+            with patch.object(pi_radix, "render_report", side_effect=ValueError("injected")):
+                with self.assertRaises(ValueError):
+                    pi_radix.write_outputs(receipt, output, projection)
+            self.assertEqual(output.read_text(), "unchanged")
+            self.assertEqual(projection.read_text(), "unchanged")
+
+    def test_unequal_prefix_overlap(self) -> None:
+        scans = [pi_radix.analyze_base(base, [0] * length, [1, 2])
+                 for base, length in ((2, 12), (3, 7), (4, 6))]
+        matches = pi_radix.cross_base_results(scans)["aligned_exact_angular_phase_matches"]
+        self.assertEqual([m["position"] for m in matches], list(range(1, 8)))
+        self.assertEqual([s["base"] for s in matches[-1]["symbols"]], [2, 3])
+
     def test_base_digits_known_values(self) -> None:
         integer, decimal_digits = pi_radix.base_digits(Decimal("3.141592653589793238462643383279"), 10, 12)
         self.assertEqual(integer, 3)

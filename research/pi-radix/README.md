@@ -63,3 +63,26 @@ differs. Prime testing is deterministic for the bounded unsigned-64-bit block do
 Whether a useful invariant survives continued-fraction indexing or another
 base-independent segmentation remains open.
 The wheel is exact; the law allegedly riding it has not yet shown identification.
+
+## Recurrence controls
+
+The exploratory follow-up is frozen in `CONTROL_PLAN.md`. It compares the pi
+recurrence count to 199 same-number cross-radix controls and 199 conditional
+histogram shuffles. All samples use identical block selection rules. Read
+`docs/recurrence-controls-v1.md` for the results and limits; the matching JSON
+receipt records every replicate count, interval numerator, and source hashes.
+
+```bash
+python research/pi-radix/recurrence_controls.py
+```
+
+The 2400-bit horizon describes resolution, not entropy. SHAKE256 draws are a
+reproducible simulation model, not evidence that pi is random. The exact eight
+primes were selected after inspecting pi; the comparison tests the COUNT of
+recurring prime values, not a post-selected list of identities.
+
+Scanner review repair: oversized horizons and bases now fail before analysis;
+reports use configured lengths and labels; angular comparisons retain pairwise
+prefix overlap after a shorter third stream ends. Artifact hashes changed when
+regenerated; pi's 12/8 recurrence counts did not. The former receipt is retained
+in Git history at b4791f2bebf8218201d22e07131c8cbe74ddf4d8.

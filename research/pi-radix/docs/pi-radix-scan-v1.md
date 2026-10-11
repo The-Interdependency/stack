@@ -13,15 +13,15 @@ base `b` is also the exact unit-circle symbol
 
 ## Results
 
-| Base | Factorization | phi(base) | Prime-valued symbols / prime digit-values | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime | Information bits |
-|---:|---|---:|---:|---:|---:|---:|---:|
-| 30 | 2 * 3 * 5 | 8 | 175 / 10 | 123 / 74 | 123 / 48 | 125 / 37 | 2453.445297804260 |
-| 60 | 2^2 * 3 * 5 | 16 | 142 / 17 | 140 / 70 | 142 / 43 | 140 / 36 | 2953.445297804260 |
-| 359 | 359 | 358 | 96 / 71 | 497 / 48 | 496 / 34 | 495 / 24 | 4243.920016911526 |
-| 360 | 2^3 * 3^2 * 5 | 96 | 78 / 72 | 117 / 42 | 117 / 21 | 117 / 19 | 4245.926548164837 |
-| 361 | 19^2 | 342 | 102 / 72 | 468 / 41 | 467 / 32 | 466 / 21 | 4247.927513443585 |
-| 720 | 2^4 * 3^2 * 5 | 192 | 80 / 128 | 117 / 24 | 117 / 19 | 117 / 20 | 4745.926548164837 |
-| 2880 | 2^6 * 3^2 * 5 | 768 | 67 / 417 | 128 / 25 | 128 / 24 | 128 / 17 | 5745.926548164837 |
+| Base | Factorization | phi(base) | Prime-valued symbols / prime digit-values | L1 eligible / prime | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime | Resolution bits |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|
+| 30 | 2 * 3 * 5 | 8 | 175 / 10 | 481 / 175 | 123 / 74 | 123 / 48 | 125 / 37 | 2453.445297804260 |
+| 60 | 2^2 * 3 * 5 | 16 | 142 / 17 | 491 / 142 | 140 / 70 | 142 / 43 | 140 / 36 | 2953.445297804260 |
+| 359 | 359 | 358 | 96 / 71 | 499 / 96 | 497 / 48 | 496 / 34 | 495 / 24 | 4243.920016911526 |
+| 360 | 2^3 * 3^2 * 5 | 96 | 78 / 72 | 500 / 78 | 117 / 42 | 117 / 21 | 117 / 19 | 4245.926548164837 |
+| 361 | 19^2 | 342 | 102 / 72 | 499 / 102 | 468 / 41 | 467 / 32 | 466 / 21 | 4247.927513443585 |
+| 720 | 2^4 * 3^2 * 5 | 192 | 80 / 128 | 500 / 80 | 117 / 24 | 117 / 19 | 117 / 20 | 4745.926548164837 |
+| 2880 | 2^6 * 3^2 * 5 | 768 | 67 / 417 | 500 / 67 | 128 / 25 | 128 / 24 | 128 / 17 | 5745.926548164837 |
 
 For multi-symbol values, the terminal digit gives an exact sieve:
 `gcd(value, base) = gcd(last_digit, base)`. A block whose terminal digit
@@ -31,7 +31,7 @@ merely alphabet size.
 
 ## Cross-base observations
 
-- Decoded prime values recurring in at least two bases, using canonical blocks of lengths 2--4: **12**.
+- Decoded prime values recurring in at least two bases, using configured canonical blocks of length >= 2: **12**.
 - Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **9**.
 
 ### Recurrent decoded primes
@@ -69,15 +69,15 @@ merely alphabet size.
 
 This profile uses the longest whole-symbol prefix at or below **2400 bits** in every base.
 
-| Base | Symbols used | Actual information bits | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime |
-|---:|---:|---:|---:|---:|---:|
-| 30 | 489 | 2399.469501252566 | 121 / 73 | 121 / 47 | 123 / 37 |
-| 60 | 406 | 2398.197581817059 | 114 / 55 | 117 / 36 | 114 / 29 |
-| 359 | 282 | 2393.570889538100 | 279 / 30 | 278 / 23 | 277 / 12 |
-| 360 | 282 | 2394.702573164968 | 70 / 30 | 70 / 14 | 70 / 14 |
-| 361 | 282 | 2395.831117582182 | 263 / 22 | 262 / 16 | 261 / 9 |
-| 720 | 252 | 2391.946980275078 | 58 / 12 | 58 / 10 | 58 / 7 |
-| 2880 | 208 | 2390.305444036572 | 55 / 6 | 55 / 8 | 55 / 4 |
+| Base | Symbols used | Resolution bits | L1 eligible / prime | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime |
+|---:|---:|---:|---:|---:|---:|---:|
+| 30 | 489 | 2399.469501252566 | 470 / 173 | 121 / 73 | 121 / 47 | 123 / 37 |
+| 60 | 406 | 2398.197581817059 | 398 / 114 | 114 / 55 | 117 / 36 | 114 / 29 |
+| 359 | 282 | 2393.570889538100 | 281 / 46 | 279 / 30 | 278 / 23 | 277 / 12 |
+| 360 | 282 | 2394.702573164968 | 282 / 49 | 70 / 30 | 70 / 14 | 70 / 14 |
+| 361 | 282 | 2395.831117582182 | 281 / 63 | 263 / 22 | 262 / 16 | 261 / 9 |
+| 720 | 252 | 2391.946980275078 | 252 / 45 | 58 / 12 | 58 / 10 | 58 / 7 |
+| 2880 | 208 | 2390.305444036572 | 208 / 30 | 55 / 6 | 55 / 8 | 55 / 4 |
 
 - Recurrent decoded primes within the common information horizon: **8**.
 
@@ -100,9 +100,10 @@ A recurrence across bases is therefore a valid observation and a candidate
 for a later law, not the law itself. Exact angular equality similarly shows
 shared circle position without making the surrounding digit streams identical.
 
-The fixed 500-symbol scans span different information depths. The common
+The fixed 500-symbol scans span different resolution depths. The common
 2,400-bit profile changes the prefix length by base and keeps that second
 comparison separate. Neither profile supplies a sampling theorem.
+Resolution bits describe radix cell width, not measured entropy of pi.
 
 ## Reproduction
 
@@ -111,7 +112,7 @@ python research/pi-radix/pi_radix.py scan
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt SHA-256: `60e7ae00d1ef8d2c535c51e47951ca81dcf42a0921007014f1addf2476b97cd5`
+Receipt SHA-256: `b9dcf6c89a4e67eacd8b8dc1d62281b050055c83d1f4b368d551fe0b091a13c6`
 
 ## hmmm
 
