@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "dc2cac5ac1d609f7f72434514ec95a55e8020b0b9326c17883b1ef25e86baaa3",
+  "work_graph_sha256": "54291fd3f34a4d7d6e3be00bfe9066d7938ba760762e9e6aada02534d2d34178",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -439,6 +439,36 @@
       "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
       "authority": "origin/axis architecture and domain migration boundary",
       "relation": "architectural reference only; speculative binary implementation remains in Stack until graduation gates complete",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix",
+      "repository": "The-Interdependency/stack",
+      "commit": "ccf707f933a9611d7b7fe13a0417378d8b453a14",
+      "authority": "Stack-local bounded radix computation and evidence",
+      "relation": "exact radix expansion, prime-block and angular-coordinate experiment; no base-independent law or general prime authority",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix-metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
+      "authority": "METAPAT semantics and domain restraint",
+      "relation": "representation-versus-invariant consultation; root impact none and no status transfer",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "authority": "organization build, evidence and structural-update doctrine",
+      "relation": "pinned doctrine for the module, tests, research receipts and Stack transaction; no authority transfer",
       "authority_transfer": false,
       "canonical_release": false
     }
