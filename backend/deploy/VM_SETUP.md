@@ -120,9 +120,17 @@ operator action rather than writing an artifact.
 
 `stack-orchestrator-worker.service` keeps `MemoryDenyWriteExecute=true`. V8's
 JIT cannot run under it: Node dies with a V8 fatal error (SIGTRAP). The pinned
-skill-lib snapshot (`1b1a947`, after The-Interdependency/skill-lib#120) runs
-Node with `--jitless`, so the sandboxed probe and TypeScript extraction work
-under MDWE. `node` must also be on the unit's default PATH.
+skill-lib snapshot (`32a8a9f`; `--jitless` since The-Interdependency/skill-lib#120)
+runs Node with `--jitless`, so the sandboxed probe and TypeScript extraction
+work under MDWE. `node` must also be on the unit's default PATH.
+
+Since The-Interdependency/skill-lib#121 (in `32a8a9f`), any TypeScript reader
+or worker failure (nonzero exit, signal, incomplete output, refused flag) and
+any reader run past the 120-second default timeout makes the collector exit 3
+without writing, and the worker records it as a `reader-runtime-failed`
+refusal. A valid TypeScript file nested too deeply for the jitless reader is
+not a failure: stack does not pass `--strict`, so it publishes with a
+per-file `typescript_input_too_deep` diagnostic at exit 0.
 
 Create `/var/lib/stack-orchestrator/receipts` and
 `/var/backups/stack-orchestrator/postgres` owned by the service account after that
