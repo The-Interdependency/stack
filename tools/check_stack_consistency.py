@@ -51,7 +51,7 @@
 #   since: 2026-09-12
 #
 # id: zfae_candidate_preserves_current_authority
-#   given: the unimplemented neuronal-inference candidate is present
+#   given: this checkout declares the unimplemented neuronal-inference candidate
 #   then: both candidate projections retain explicit unassigned inference authority and axis-versus-node boundaries while BASE and the input lock retain current construction standing
 #   class: boundary
 #   since: 2026-10-11
@@ -469,8 +469,8 @@ def check_zfae_neuronal_candidate(findings: list[str], root: Path = ROOT) -> Non
     """
     workspace = root / "research" / "zfae"
     candidate = workspace / "UCNS_NEURONAL_INFERENCE.md"
-    if not candidate.exists():
-        return
+    # This gate is part of the candidate's declared projection closure. Retiring
+    # the candidate must retire this obligation too; a missing file is drift.
     try:
         for path in (candidate, workspace / "README.md"):
             text = " ".join(path.read_text(encoding="utf-8").split())

@@ -47,6 +47,11 @@ from check_stack_consistency import check_zfae_neuronal_candidate
 #   call: self::test_source_promotion_mutations
 #   mutates: filesystem
 #   cleanup: tempdir_teardown
+# id: zfae_candidate_missing_projection_witness
+#   proves: zfae_candidate_preserves_current_authority
+#   call: self::test_missing_candidate_projection
+#   mutates: filesystem
+#   cleanup: tempdir_teardown
 # === END CHECKS ===
 
 
@@ -100,9 +105,25 @@ def test_source_promotion_mutations():
             assert any(row.startswith(expected) for row in findings), findings
 
 
+def test_missing_candidate_projection():
+    for name in ("README.md", "UCNS_NEURONAL_INFERENCE.md", "BASE.json", "UCHC_INPUT.json"):
+        for operation in ("delete", "rename"):
+            with tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                path = _fixture(root) / name
+                if operation == "delete":
+                    path.unlink()
+                else:
+                    path.rename(path.with_name("retired-" + name))
+                findings = []
+                check_zfae_neuronal_candidate(findings, root)
+                assert any(row.startswith("zfae.candidate_inputs:") for row in findings), findings
+
+
 def load_tests(loader, tests, pattern):
     return unittest.TestSuite(unittest.FunctionTestCase(fn) for fn in (
         test_current_candidate_boundaries,
         test_candidate_projection_mutations,
         test_source_promotion_mutations,
+        test_missing_candidate_projection,
     ))
