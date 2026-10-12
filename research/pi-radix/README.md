@@ -115,6 +115,10 @@ when they loaded. Mid-run edits leave existing output files untouched. Apply the
 same unchanged-input requirement when regenerating independent verification.
 
 These resource limits reject infeasible requests rather than truncating evidence.
+Impossible horizons are rejected using the smallest radix and the admitted
+symbol count before any horizon-sized exact exponentiation. Phase summaries
+count distinct positions separately from `(position, reduced phase)` groups;
+multiple groups at one position do not create additional positions.
 The terminal gcd sieve retains `[1, 0]`, whose decoded value is the radix itself:
 it can be prime. Correcting this omission raises shared-number trial 192's
 fixed-500 recurrence count from 8 to 9, and the control mean from 11.111 to

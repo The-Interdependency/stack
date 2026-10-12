@@ -459,6 +459,11 @@ def validate_config(config: Any) -> dict[str, Any]:
     # extraction. Symbol count alone does not account for Decimal operand size.
     if 2 * len(bases) * count * (required + 180) > MAX_GENERATION_DIGIT_WORK:
         raise ValueError(f"aggregate generation digit work limit is {MAX_GENERATION_DIGIT_WORK}")
+    # The smallest base has the longest horizon prefix. ceil(log2(b**(count+1)))
+    # is exactly (b**(count+1)-1).bit_length(), without constructing 2**horizon
+    # or any horizon-sized power. count/precision were already admitted above.
+    if (min(bases) ** (count + 1) - 1).bit_length() <= horizon:
+        raise ValueError("matched information horizon exceeds generated stream")
     matched_counts = [horizon_count(base, horizon) for base in bases]
     if min(matched_counts) < max(lengths):
         raise ValueError("matched information horizon is too small for configured blocks")
@@ -610,7 +615,7 @@ def render_report(receipt: dict[str, Any]) -> str:
             "## Cross-base observations",
             "",
             f"- Decoded prime values recurring in at least two bases, using configured canonical blocks of length >= 2: **{len(recurrences)}**.",
-            f"- Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **{len(phases)}**.",
+            f"- Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **{len({item['position'] for item in phases})}** (**{len(phases)}** phase groups).",
         ]
     )
     if recurrences:

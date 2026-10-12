@@ -83,6 +83,42 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_oversized_horizon_rejected_before_exact_horizon_work(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "config.json"
+            config = original | dict(bases=list(range(2, 1414)), fractional_symbol_count=2,
+                                    matched_information_horizon_bits=1000000, prime_block_lengths=[1])
+            path.write_text(json.dumps(config))
+            with patch.object(pi_radix, "horizon_count", side_effect=AssertionError("expensive horizon work")), \
+                 patch.object(pi_radix, "chudnovsky_pi") as generate:
+                with self.assertRaisesRegex(ValueError, "horizon exceeds generated stream"):
+                    pi_radix.run_experiment(path)
+                generate.assert_not_called()
+            # Exact-power and between-power edges: floor(log_4(2**13)) is 6,
+            # whereas 14 bits admits a seventh symbol and must be rejected.
+            for horizon in (12, 13, 14):
+                config.update(bases=[4], fractional_symbol_count=6, matched_information_horizon_bits=horizon)
+                path.write_text(json.dumps(config))
+                if horizon == 14:
+                    with self.assertRaisesRegex(ValueError, "horizon exceeds generated stream"):
+                        pi_radix.load_config(path)
+                else:
+                    self.assertEqual(pi_radix.load_config(path), config)
+
+    def test_phase_report_counts_positions_separately_from_groups(self) -> None:
+        config = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        config.update(bases=list(range(2, 31)), fractional_symbol_count=100,
+                      matched_information_horizon_bits=100, prime_block_lengths=[1])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "config.json"
+            path.write_text(json.dumps(config))
+            receipt = pi_radix.run_experiment(path)
+            phases = receipt["cross_base_results"]["aligned_exact_angular_phase_matches"]
+            self.assertEqual(len(phases), 279)
+            self.assertEqual(len({row["position"] for row in phases}), 100)
+            self.assertIn("in at least two bases: **100** (**279** phase groups)", pi_radix.render_report(receipt))
+
     def test_scan_rejects_midrun_source_changes_without_publication(self) -> None:
         for target in ("config", "implementation"):
             with self.subTest(target=target), tempfile.TemporaryDirectory() as directory:

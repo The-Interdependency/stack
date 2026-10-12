@@ -34,7 +34,7 @@ merely alphabet size.
 ## Cross-base observations
 
 - Decoded prime values recurring in at least two bases, using configured canonical blocks of length >= 2: **12**.
-- Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **9**.
+- Aligned positions with exactly equal reduced unit-circle phase in at least two bases: **9** (**9** phase groups).
 
 ### Recurrent decoded primes
 
@@ -114,7 +114,7 @@ python research/pi-radix/pi_radix.py scan
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt SHA-256: `72cf5301d4b6b98b346e07fbd830c107eb320b8d71ccabf05895455c2f8dd66a`
+Receipt SHA-256: `3cd971c59a3eb33db9f9e918dde64fcb7cb4b9905f1bf7c50d644d3739c4de16`
 
 ## hmmm
 
