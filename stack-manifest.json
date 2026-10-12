@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "25484f63797a14015afb96e2c20e07a9220382be835fcd0edbe64df55234f0ad",
+  "work_graph_sha256": "86f9864182b45210cf37ab88593a19cbf406e19abd76c32c4340c7cdd5206c60",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -72,7 +72,8 @@
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
       "Weave has an explicit Stack-owned native binary sequence-cycle candidate with exact recovery; other profiles, private/public lifting, authentication/state and full-cipher security remain unresolved.",
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
-      "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement."
+      "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement.",
+      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes."
     ]
   },
   "research_participants": [
@@ -439,6 +440,36 @@
       "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
       "authority": "origin/axis architecture and domain migration boundary",
       "relation": "architectural reference only; speculative binary implementation remains in Stack until graduation gates complete",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix",
+      "repository": "The-Interdependency/stack",
+      "commit": "ccf707f933a9611d7b7fe13a0417378d8b453a14",
+      "authority": "Stack-local bounded radix computation and evidence",
+      "relation": "exact radix expansion, prime-block and angular-coordinate experiment; no base-independent law or general prime authority",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix-metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "34d954aa1e2092e615b03a180500f6b6977f501e",
+      "authority": "METAPAT semantics and domain restraint",
+      "relation": "representation-versus-invariant consultation; root impact none and no status transfer",
+      "authority_transfer": false,
+      "canonical_release": false
+    },
+    {
+      "workspace": "research/pi-radix/",
+      "participant_id": "pi-radix-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "authority": "organization build, evidence and structural-update doctrine",
+      "relation": "pinned doctrine for the module, tests, research receipts and Stack transaction; no authority transfer",
       "authority_transfer": false,
       "canonical_release": false
     }
