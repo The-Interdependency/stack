@@ -41,10 +41,17 @@ inside the separate root broker after Unix peer-credential verification.
 
 ## Human preflight
 
+Every `bash` block in this runbook is pasted into an interactive SSH shell, so each one
+runs inside a `( ... )` subshell. `set -e`, traps, `umask` and variables end with the
+block, and a failing command ends only that block, never your SSH session. Install
+blocks stop at the first error. Check blocks run every check and print `PASS` or `FAIL`
+for each one.
+
 From the already-working human recovery route (for example `ai.sh`), establish that the
 VM and recovery path are the intended ones before installing anything:
 
 ```bash
+(
 set -Eeuo pipefail
 
 test -r /etc/os-release
@@ -66,6 +73,7 @@ fi
 git -C "$STACK_ROOT" rev-parse HEAD
 python3 --version
 systemctl is-system-running || true
+)
 ```
 
 If the human recovery path is not known-good, systemd is absent, or the stack checkout
@@ -84,9 +92,11 @@ until steps 1 to 3 are done. Do them through the human SSH/OS Login/IAP path.
 ### 1. Provision a root-owned 0600 token
 
 ```bash
+(
 set -Eeuo pipefail
 sudo -n sh -c 'umask 077 && python3 -c "import secrets; print(secrets.token_urlsafe(32))" > /root/vm-mcp.token'
 sudo -n stat -c '%U:%G %a %n' /root/vm-mcp.token
+)
 ```
 
 Expect `root:root 600 /root/vm-mcp.token`. The token is 43 URL-safe characters (the
@@ -102,6 +112,7 @@ the same commit, because root's `git` refuses to read a checkout another user ow
 ("dubious ownership") and the installer would then record `SOURCE_COMMIT=hmmm`.
 
 ```bash
+(
 set -Eeuo pipefail
 umask 077
 
@@ -128,11 +139,14 @@ sudo -n \
   VM_MCP_PROFILE=personal-console \
   VM_MCP_ROOT=/srv/vm-mcp/workspace \
   VM_MCP_AUTH_TOKEN_FILE=/root/vm-mcp.token \
-  bash "$ROOT_SRC/skill-lib/vm-mcp/install.sh"; echo "rc=$?"
+  bash "$ROOT_SRC/skill-lib/vm-mcp/install.sh" || rc=$?
+echo "rc=${rc:-0}"
+[ "${rc:-0}" -eq 0 ] || exit "$rc"
 
 test "$(sudo -n cat /opt/vm-mcp/SOURCE_COMMIT)" = "$SKILL_LIB_SHA"
 sudo -n sysctl -n kernel.yama.ptrace_scope
 sudo -n stat -c '%U:%G %a %n' /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf /etc/credstore/vm-mcp-token
+)
 ```
 
 Expect `rc=0`, the matching `SOURCE_COMMIT`, a ptrace scope of `1` or higher,
@@ -141,6 +155,23 @@ The installer exits 3 on a bad or missing token, and exits 7 if the kernel has n
 LSM. On exit 7, enable Yama or stop as `hmmm`. Do not fall back to an unauthenticated or
 `read-only` listener to get access back. The installer also removes any old
 `VM_MCP_AUTH_TOKEN` from `/etc/vm-mcp.env`.
+
+The clean-up trap runs when the block's subshell ends, so both clones are removed
+whether the install succeeds or fails.
+
+**Every future installer rerun needs a token source too.** Without one, the installer
+exits 3 and changes nothing. If `/root/vm-mcp.token` has been deleted, pass the token
+the service already uses, `VM_MCP_AUTH_TOKEN_FILE=/etc/credstore/vm-mcp-token` (root,
+`0600`), or rotate: write a new `/root/vm-mcp.token` as in step 1, rerun with it, and
+update the client.
+
+If the Yama gate refuses at start (for example a later sysctl.d file sets
+`ptrace_scope` back to 0), or the token file is missing, `vm-mcp.service` stays down
+but loops in `activating (auto-restart)` with a rising `NRestarts`. It does not reach
+`failed`/`start-limit-hit`. The #123 scratch run saw this for the Yama gate; the
+missing-token case wasn't tested, but should behave the same (hmmm). `server.py`
+never runs, so the service stays fail-closed.
+Fix the cause, then run `systemctl restart vm-mcp.service`.
 
 The installer must not change ownership of an already-existing application checkout.
 Do not use `/srv/stack` as an excuse to transfer repository ownership to `vmmcp`.
@@ -156,56 +187,84 @@ watch the service fail closed) is deliberately left out on this VM. So is its st
 ### a. Unit file
 
 ```bash
-sudo -n systemd-analyze verify /etc/systemd/system/vm-mcp.service; echo "rc=$?"
-sudo -n systemctl cat vm-mcp.service | grep -E 'StandardInput|ExecStartPre'
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+rc=0; sudo -n systemd-analyze verify /etc/systemd/system/vm-mcp.service || rc=$?
+ok "unit verifies" 0 "$rc"
+unit=$(sudo -n systemctl cat vm-mcp.service || true)
+ok "privileged yama gate" 1 "$(grep -cxF 'ExecStartPre=+/opt/vm-mcp/.venv/bin/python -I /opt/vm-mcp/yama_gate.py' <<<"$unit" || true)"
+ok "token on stdin" 1 "$(grep -cxF 'StandardInput=file:/etc/credstore/vm-mcp-token' <<<"$unit" || true)"
 sudo -n systemctl show vm-mcp.service -p ExecStartPre
+)
 ```
 
-Expect `rc=0` with no error lines. Then expect
-`ExecStartPre=+/opt/vm-mcp/.venv/bin/python -I /opt/vm-mcp/yama_gate.py` (with the `+`)
-and `StandardInput=file:/etc/credstore/vm-mcp-token` in the unit, and `status=0` from
-`systemctl show`. Check the `+` and the file path with `systemctl cat`:
+Expect three `PASS` lines and no error lines from `systemd-analyze`. The unit must
+contain `ExecStartPre=+/opt/vm-mcp/.venv/bin/python -I /opt/vm-mcp/yama_gate.py` (with
+the `+`) and `StandardInput=file:/etc/credstore/vm-mcp-token`. The last line must show
+`status=0`. Check the `+` and the file path with `systemctl cat`:
 `systemctl show` drops the `+` and prints only `StandardInput=file`.
 
 ### b. Both services up and listening on loopback only
 
 ```bash
-timeout 60 sh -c "until ss -ltn | grep -q '127.0.0.1:8765 '; do sleep 1; done"
-systemctl is-active vm-mcp.service vm-mcp-admin.service
-sudo -n journalctl -u vm-mcp.service -b | grep -i yama-gate
-ss -ltnp | grep ':8765'
-sudo -n stat -c '%U %G %a %n' /run/vm-mcp /run/vm-mcp/admin.sock
-sudo -n systemctl show vm-mcp.service -p User -p Group --no-pager
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+rc=0; timeout 60 sh -c "until ss -ltn | grep -q '127.0.0.1:8765 '; do sleep 1; done" || rc=$?
+ok "listening within 60 s" 0 "$rc"
+ok "vm-mcp active" active "$(systemctl is-active vm-mcp.service || true)"
+ok "vm-mcp-admin active" active "$(systemctl is-active vm-mcp-admin.service || true)"
+j=$(sudo -n journalctl -u vm-mcp.service -b --no-pager) || j=READ-FAILED
+ok "no yama-gate refusals this boot" 0 "$(grep -ci -e yama-gate -e READ-FAILED <<<"$j" || true)"
+ok "one listener on :8765" 1 "$(ss -ltnH | awk '$4 ~ /:8765$/' | wc -l)"
+ok "listener is 127.0.0.1" 1 "$(ss -ltnH | awk '$4 == "127.0.0.1:8765"' | wc -l)"
+ok "/run/vm-mcp" "root vmmcp 750" "$(sudo -n stat -c '%U %G %a' /run/vm-mcp || true)"
+ok "admin.sock" "root vmmcp 660" "$(sudo -n stat -c '%U %G %a' /run/vm-mcp/admin.sock || true)"
+ok "service user" vmmcp "$(systemctl show -p User --value vm-mcp.service || true)"
+)
 ```
 
 Wait for the port first. The server took 3 to 5 seconds to listen on an e2-small,
-and every earlier request fails with curl `000`. Expect `active` twice, no yama-gate
-lines, and a single `127.0.0.1:8765` listener.
+and every earlier request fails with curl `000`. Expect every line to be `PASS`.
 
 ### c. The running server holds no token
 
 ```bash
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
 P=$(systemctl show -p MainPID --value vm-mcp.service); echo "pid=$P"
-sudo -n readlink /proc/$P/fd/0
-sudo -n ls -l /proc/$P/fd | grep -c credstore
-sudo -n sh -c "tr '\\0' '\\n' < /proc/$P/environ | grep -c AUTH_TOKEN="
-sudo -n grep -E '^(TracerPid|Uid):' /proc/$P/status
-id -u vmmcp
+U=$(id -u vmmcp)
+ok "fd 0 is /dev/null" /dev/null "$(sudo -n readlink /proc/$P/fd/0 || true)"
+fds=$(sudo -n ls -l /proc/$P/fd) || fds=READ-FAILED
+ok "no credstore fds" 0 "$(grep -c -e credstore -e READ-FAILED <<<"$fds" || true)"
+envs=$(sudo -n sh -c 'tr "\0" "\n" < /proc/$1/environ' _ "$P") || envs=READ-FAILED
+ok "no AUTH_TOKEN= in environment" 0 "$(grep -c -e AUTH_TOKEN= -e READ-FAILED <<<"$envs" || true)"
+ok "not traced" 0 "$(sudo -n awk '/^TracerPid:/{print $2}' /proc/$P/status || true)"
+ok "all uids are vmmcp" "$U $U $U $U" "$(sudo -n awk '/^Uid:/{print $2, $3, $4, $5}' /proc/$P/status || true)"
+)
 ```
 
-Expect `/dev/null`, `0`, `0`, `TracerPid: 0`, and every Uid field equal to `id -u vmmcp`.
+Expect five `PASS` lines. A check whose input can't be read prints `FAIL`, never a
+false `PASS`.
 `VM_MCP_AUTH_TOKEN_SOURCE=stdin` in the environment is a setting, not the token.
 
 ### d. No vmmcp-writable code
 
 ```bash
-sudo -n -u vmmcp find /opt/vm-mcp -writable 2>/dev/null | wc -l
-sudo -n find /opt/vm-mcp ! -user root | wc -l
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+w=$(sudo -n -u vmmcp find /opt/vm-mcp -writable) || w=READ-FAILED
+ok "nothing vmmcp-writable" 0 "$(grep -c . <<<"$w" || true)"
+o=$(sudo -n find /opt/vm-mcp ! -user root) || o=READ-FAILED
+ok "everything root-owned" 0 "$(grep -c . <<<"$o" || true)"
+m=$(sudo -n find /opt /opt/vm-mcp /opt/vm-mcp/.venv/pyvenv.cfg -maxdepth 0 -perm /022) || m=READ-FAILED
+ok "no group/world write" 0 "$(grep -c . <<<"$m" || true)"
 stat -c '%U %a %n' /opt /opt/vm-mcp /opt/vm-mcp/.venv/pyvenv.cfg
+)
 ```
 
-Expect `0`, `0`, and all three owned by `root` with no group or world write bit (for
-example `755` or `644`).
+Expect three `PASS` lines. All three paths must be owned by `root` with no group or
+world write bit (for example `755` or `644`). If `find` reports a directory it can't read, the check
+prints `FAIL`. Look at that directory's permissions before treating the result as a pass.
 
 ### e. HTTP authentication
 
@@ -213,6 +272,8 @@ The token goes into root-only header files, so it never appears in a command lin
 `/proc/*/cmdline`. curl reads a header file with `-H @FILE`.
 
 ```bash
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
 sudo -n sh -c 'umask 077
   printf "Authorization: Bearer %s\n" "$(cat /root/vm-mcp.token)" > /root/vm-mcp.auth
   printf "Authorization: bearer %s\n" "$(cat /root/vm-mcp.token)" > /root/vm-mcp.auth-lower
@@ -221,14 +282,15 @@ U=http://127.0.0.1:8765/mcp
 H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
 INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
 LIST='{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-curl -s -o /dev/null -w '%{http_code}\n' "${H[@]}" -d "$INIT" $U
-sudo -n curl -s -o /dev/null -w '%{http_code}\n' "${H[@]}" -H @/root/vm-mcp.auth-lower -d "$INIT" $U
-sudo -n curl -s -o /dev/null -w '%{http_code}\n' "${H[@]}" -H @/root/vm-mcp.auth-wrong -d "$INIT" $U
-curl -s -o /dev/null -w '%{http_code}\n' "${H[@]}" -d "$LIST" $U
+ok "no header" 401 "$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -d "$INIT" $U || true)"
+ok "lowercase bearer, real token" 200 "$(sudo -n curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -H @/root/vm-mcp.auth-lower -d "$INIT" $U || true)"
+ok "wrong token" 401 "$(sudo -n curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -H @/root/vm-mcp.auth-wrong -d "$INIT" $U || true)"
+ok "unauthenticated tools/list" 401 "$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -d "$LIST" $U || true)"
+)
 ```
 
-Expect `401` with no header, `200` with lowercase `bearer` and the real token, `401`
-with a wrong token, and `401` for an unauthenticated `tools/list`. The server accepts
+Expect four `PASS` lines. The header files stay in place for step f, which deletes
+them. The server accepts
 protocolVersion `2025-03-26`.
 
 ### f. admin_exec through MCP, with a broker receipt
@@ -237,16 +299,28 @@ The server is stateless (`stateless_http=True`). It returns no `Mcp-Session-Id`,
 `notifications/initialized` isn't needed. `admin_exec` takes `command` (required),
 `cwd` (default `/`) and `timeout_seconds` (default 60).
 
+Step f defines `U`, `H` and `LIST` itself, so it doesn't depend on step e's shell.
+It needs step e's `/root/vm-mcp.auth`.
+
 ```bash
-sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth -d "$LIST" $U | grep -o '"admin_exec"'
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+U=http://127.0.0.1:8765/mcp
+H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
+INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
+LIST='{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
+ok "admin_exec listed" 1 "$(sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth -d "$LIST" $U | grep -o '"admin_exec"' | sort -u | wc -l)"
 sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"admin_exec","arguments":{"command":"id -u","cwd":"/"}}}' $U
-printf %s 'id -u' | sha256sum
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"admin_exec","arguments":{"command":"id -u","cwd":"/"}}}' $U || true
+echo
+SHA=$(printf %s 'id -u' | sha256sum | cut -d' ' -f1)
+ok "broker receipt for id -u" 1 "$(sudo -n journalctl -u vm-mcp-admin.service -n 50 --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -F '"mode":"admin"' | grep -F '"run_as":"root"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
 sudo -n journalctl -u vm-mcp-admin.service -n 20 --no-pager
 sudo -n rm -f /root/vm-mcp.auth /root/vm-mcp.auth-lower /root/vm-mcp.auth-wrong
+)
 ```
 
-Expect `"admin_exec"` in the list. The call should return `ok: true` with mode `admin`,
+Expect both `PASS` lines. The call should return `ok: true` with mode `admin`,
 run-as `root`, uid `0`, exit code `0` and stdout `0`. Expect a broker journal line
 `{"event":"vm_mcp_exec","mode":"admin","run_as":"root","command_sha256":...,"exit_code":0}`
 whose `command_sha256` equals the `sha256sum` output. The receipt carries no peer PID.
@@ -283,12 +357,31 @@ URL, a tool argument, a prompt or a repository file:
 Authorization: Bearer <contents of /root/vm-mcp.token>
 ```
 
-Move the value from the VM into the client's secret store through the human path (for
-example, read `/root/vm-mcp.token` in an SSH session and paste it straight into the
-client's header or secret field). Afterwards, either delete `/root/vm-mcp.token` or keep
-it under your own secret handling. The service reads only `/etc/credstore/vm-mcp-token`.
-To rotate, write a new token file and rerun the step 2 installer command, then update
-the client. A client with no header, or a stale one, gets `401` on every call.
+Move the value from the VM to the client without printing it. Don't `cat` it in an
+interactive SSH session, because it would stay in the terminal scrollback. Run one of
+these from the machine where the client is configured. The token travels only through
+the pipe. Use your usual human access for `ssh` (for example `gcloud compute ssh VM
+--tunnel-through-iap --command '...'` for IAP/OS Login):
+
+```text
+# into the clipboard, then paste into the client's secret header field and clear the clipboard
+ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | pbcopy          # macOS
+ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | wl-copy         # Wayland (xclip -selection clipboard on X11)
+
+# or into a local 0600 file that the client's secret configuration reads
+(umask 077 && ssh VM 'sudo -n cat /root/vm-mcp.token' > ~/.config/vm-mcp/token)
+```
+
+**For an agent client** (ChatGPT, Claude, Codex, Grok Bot or similar), the token goes
+only in the MCP connector's secret or header configuration (`Authorization: Bearer ...`).
+Never type, paste or upload it into the conversation itself, and never ask the agent to
+read `/root/vm-mcp.token` through MCP. Anything in the conversation is model context.
+
+Afterwards, either delete `/root/vm-mcp.token` or keep it under your own secret
+handling. The service reads only `/etc/credstore/vm-mcp-token`. Remember that every
+installer rerun needs a token source (see step 2). To rotate, write a new token file
+as in step 1 and rerun the step 2 install block, then update the client. A client with
+no header, or a stale one, gets `401` on every call.
 
 Connection/product behavior changes over time; resolve it from the actual current client
 surface rather than freezing product-plan claims in this repository. hmmm: the exact
