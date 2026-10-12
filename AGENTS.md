@@ -24,6 +24,11 @@ projects may later graduate into their own repositories.
   multi-arity interleaving construction. Do not extend it or treat any passing test,
   vector, decoder audit, or measurement as evidence for the intended URPCS design.
 - `research/weave/` owns new Stack-local research into the full intended encryption system. Preserve all declared layers: hyperspace/gonol plaintext construction, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity last/first interleaving, and the intended asymmetric public/private relation. Read `SPECIFICATION.md` before implementation. Unresolved mechanics must fail closed as `hmmm`; do not reduce the project to its interleave layer or substitute a familiar cipher, codec, permutation generator, or URPCS mechanism.
+- `research/pi-radix/` owns bounded Stack-local computations over radix
+  representations of pi. It may report exact digit streams, decoded prime blocks,
+  terminal-gcd sieves and derived unit-circle coordinates. It does not own general
+  prime-number canon, transfer METAPAT or UCNS authority, establish pi normality,
+  or promote cross-base recurrence into a base-independent law.
 - `research/psfr/` is Psychosocial Fauna Research (PSFR), a stack-local pre-graduation
   research area. It preserves two non-collapsed tracks: host-transcendent pattern-lineage
   ecology and agency-displacement phenomenology. Preserve first-person/witness event
@@ -154,6 +159,8 @@ coherence; it does not replace workspace behavioral tests.
   lives in `research/weave/native_binary.py`; UCNS geometry is consumed, not
   redefined. UCHC binary graduation has not occurred. Private/public lifting,
   authentication/state and full-cipher security remain `hmmm`.
+- Pi radix research has measured finite cross-base recurrences; the segmentation
+  law, if any, that would make a result base-independent remains `hmmm`.
 - Project graduation automation remains unimplemented.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity

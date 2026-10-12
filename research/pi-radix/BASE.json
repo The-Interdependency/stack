@@ -1,0 +1,19 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "pi-radix",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "ccf707f933a9611d7b7fe13a0417378d8b453a14",
+  "canon_path": null,
+  "authority": "stack-local computation of prime-valued structures in radix representations of pi",
+  "standing": "stack-local-research",
+  "lifecycle": "incubating",
+  "authority_transfer": false,
+  "work_graph": "../../stack-manifest.json#research_participants[workspace=research/pi-radix/]",
+  "usage": "Run python research/pi-radix/pi_radix.py scan from the Stack root, then run the workspace tests and tools/check_stack_consistency.py.",
+  "hmmm": [
+    "No base-independent digit law is established by the bounded scan.",
+    "Fixed symbol count does not equal fixed information depth across bases.",
+    "The angular representation is exact geometry for each radix symbol; no UCNS identity or theorem status is claimed."
+  ]
+}

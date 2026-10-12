@@ -1,0 +1,27 @@
+name: pi-radix-research
+
+on:
+  pull_request:
+    paths:
+      - 'research/pi-radix/**'
+      - '.github/workflows/pi-radix-research.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/pi-radix/**'
+      - '.github/workflows/pi-radix-research.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; Node.js 24
+      - name: Run all pi-radix regressions
+        run: python -m unittest discover -s research/pi-radix/tests -v
+      - name: Compile research sources
+        run: python -m compileall -q research/pi-radix
+      - name: Replay complete receipts and independently verify every control count
+        run: python research/pi-radix/verify_evidence.py

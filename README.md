@@ -110,6 +110,17 @@ cat research/weave/SPECIFICATION.md
 cat research/weave/BASE.json
 ```
 
+Pi radix research lives at `research/pi-radix/`. It computes exact bounded radix
+expansions of pi, maps each symbol to its derived unit-circle coordinate, and measures
+prime-valued symbols and blocks across fixed-symbol and common-information profiles.
+The workspace owns its executable experiment and receipts only. It makes no normality,
+randomness, cryptographic-entropy, UCNS-identity, or base-independent-law claim.
+
+```bash
+python research/pi-radix/pi_radix.py scan
+python -m unittest discover -s research/pi-radix/tests -v
+```
+
 ### Change stack structure
 
 Any change that alters a participant, pin, authority, relation, research workspace,
@@ -142,6 +153,8 @@ URPCS is retired; its retained vectors and replay evidence establish behavior on
 of the substituted historical codec. No URPCS claim may be inferred from them.
 Weave is new stack-local research and remains specification-first; no
 confidentiality or production-security standing is implied by its placement.
+Pi radix is stack-local computational research; decoded prime recurrences remain
+finite evidence and do not establish a base-independent digit law.
 PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;

@@ -17,8 +17,9 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `7e2aeaee9aa9589b79471f1b43dbc9d3cbfb017455e3d5b462be582695a7a6c1`
+  `6cefb08422ba1bdb251520215e5def5bb0077e62946aa1502a9e93ff8d86a53f`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
+- Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -66,6 +67,9 @@ release identity.
 | `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | Stack-owned native binary sequence-cycle candidate; private/public derivation unresolved; no URPCS inheritance or security standing | no |
 | `research/weave/` | `The-Interdependency/ucns` | `905e66964a495d7596a577bb64e4158db9465864` | native exact axis-circle and Mobius geometry; source-verified unchanged mathematical producer for native_binary.py | no |
 | `research/weave/` | `The-Interdependency/uchc` | `4ad94e92be10d2c4c875a848addfda46f3c7cfdb` | origin/axis architecture and domain migration boundary; architectural reference only; speculative binary implementation remains in Stack until graduation gates complete | no |
+| `research/pi-radix/` | `The-Interdependency/stack` | `ccf707f933a9611d7b7fe13a0417378d8b453a14` | stack-local exact radix expansion, prime-block and angular-coordinate experiment; no base-independent law or general prime authority | no |
+| `research/pi-radix/` | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | domain-restraint consultation for representation versus invariant; root impact none and no status transfer | no |
+| `research/pi-radix/` | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | pinned build, evidence and structural-update doctrine; no authority transfer | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/english-gonol/` | `The-Interdependency/edcm` | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | exact repaired EDCM semantic metric-origin producer; preserves canonical O/L identities and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
@@ -233,6 +237,10 @@ construction.
 Weave is a new stack-local research component. It is not yet an
 independent repository, release, or security-reviewed cryptosystem.
 
+Pi radix is stack-local research. Its finite computations establish the recorded
+radix streams and prime-block observations only; representation recurrence does not
+establish a base-independent generating law.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
@@ -240,6 +248,7 @@ independent repository, release, or security-reviewed cryptosystem.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
+- Pi radix has no established base-independent segmentation law; fixed-symbol and common-information profiles remain bounded computations.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
 ## UCHC input candidate
