@@ -1,11 +1,11 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "7e2aeaee9aa9589b79471f1b43dbc9d3cbfb017455e3d5b462be582695a7a6c1",
+  "work_graph_sha256": "25484f63797a14015afb96e2c20e07a9220382be835fcd0edbe64df55234f0ad",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
-      "commit": "1b1a9473fcbaab16965af9907e4aafd12853a704",
+      "commit": "24029ca728c02d12bd887a28325cfa6e4e00d581",
       "authority": "organization-wide build and evidence doctrine",
       "relation": "full operational snapshot at stack root skill-lib/"
     },
