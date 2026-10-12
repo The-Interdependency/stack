@@ -22,6 +22,9 @@ import argparse
 import hashlib
 import json
 import math
+import os
+import stat
+import tempfile
 from collections import defaultdict
 from decimal import Decimal, localcontext
 from fractions import Fraction
@@ -705,14 +708,76 @@ def render_report(receipt: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def write_outputs(receipt: dict[str, Any], output: Path, report: Path) -> None:
+def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iterable[Path] = ()) -> None:
+    """Stage every artifact before replacing any; roll back caught I/O failures.
+
+    Aliased outputs and input/output collisions are rejected. A Git commit is
+    the atomic reader-visible publication boundary for the repository evidence;
+    separate filesystem paths cannot provide simultaneous visibility to readers.
+    """
+    targets = [(path.resolve(), data) for path, data in artifacts]
+    protected = [path.resolve() for path in protected_paths]
+    def aliases(left: Path, right: Path) -> bool:
+        return left == right or (left.exists() and right.exists() and left.samefile(right))
+    for index, (path, _) in enumerate(targets):
+        if any(aliases(path, other) for other, _ in targets[:index]):
+            raise ValueError("artifact destinations must not alias")
+        if any(aliases(path, other) for other in protected):
+            raise ValueError(f"artifact destination aliases an input: {path}")
+        if path.exists() and not path.is_file():
+            raise ValueError(f"artifact destination is not a regular file: {path}")
+    staged: dict[Path, Path] = {}
+    backups: dict[Path, Path | None] = {}
+    temporary: set[Path] = set()
+    published: list[Path] = []
+    def stage(path: Path, data: bytes, label: str, mode: int) -> Path:
+        descriptor, name = tempfile.mkstemp(prefix=f".{path.name}.{label}.", dir=path.parent)
+        candidate = Path(name)
+        temporary.add(candidate)
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        candidate.chmod(mode)
+        return candidate
+    try:
+        for path, data in targets:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            mode = stat.S_IMODE(path.stat().st_mode) if path.exists() else 0o644
+            backups[path] = stage(path, path.read_bytes(), "rollback", mode) if path.exists() else None
+            staged[path] = stage(path, data, "candidate", mode)
+        try:
+            for path, _ in targets:
+                os.replace(staged[path], path)
+                published.append(path)
+        except BaseException as error:
+            failures = []
+            for path in reversed(published):
+                backup = backups[path]
+                try:
+                    if backup is None:
+                        path.unlink()
+                    else:
+                        os.replace(backup, path)
+                except OSError as rollback_error:
+                    if backup is not None:
+                        temporary.discard(backup)  # Preserve recovery bytes.
+                    failures.append(f"{path}: {rollback_error}; backup={backup}")
+            if failures:
+                raise RuntimeError("artifact rollback incomplete: " + "; ".join(failures)) from error
+            raise
+    finally:
+        for path in temporary:
+            path.unlink(missing_ok=True)
+
+
+def write_outputs(receipt: dict[str, Any], output: Path, report: Path,
+                  protected_paths: Iterable[Path] = (Path(__file__), DEFAULT_CONFIG)) -> None:
     # Complete both renderings before modifying either artifact.
     report_text = render_report(receipt)
     receipt_text = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
-    output.parent.mkdir(parents=True, exist_ok=True)
-    report.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(receipt_text, encoding="utf-8")
-    report.write_text(report_text, encoding="utf-8")
+    publish_artifacts([(output, receipt_text.encode("utf-8")), (report, report_text.encode("utf-8"))],
+                      protected_paths)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -729,7 +794,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.command == "scan":
         receipt = run_experiment(args.config.resolve())
-        write_outputs(receipt, args.output.resolve(), args.report.resolve())
+        write_outputs(receipt, args.output.resolve(), args.report.resolve(),
+                      (args.config.resolve(), Path(__file__)))
         print(f'pi-radix: wrote {args.output} and {args.report}; receipt {receipt["receipt_sha256"]}')
         return 0
     raise AssertionError("unreachable command")

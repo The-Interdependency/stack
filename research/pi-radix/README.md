@@ -114,6 +114,15 @@ and control modules also reject disk bytes that differ from the source captured
 when they loaded. Mid-run edits leave existing output files untouched. Apply the
 same unchanged-input requirement when regenerating independent verification.
 
+Publication rejects identical, symlink-aliased, and hard-linked destinations,
+and rejects output/input collisions. It stages all rendered outputs and recovery
+copies before replacing any target, then restores prior files on a caught
+replacement failure. Failed restoration explicitly reports preserved backup paths.
+Readers needing atomic visibility of the complete evidence set must consume its
+Git commit; separate local paths do not switch simultaneously. Recovery after
+process termination or power loss remains `hmmm`, not a claimed filesystem-wide
+transaction. Regenerate and run the verification command after interrupted writes.
+
 These resource limits reject infeasible requests rather than truncating evidence.
 Impossible horizons are rejected using the smallest radix and the admitted
 symbol count before any horizon-sized exact exponentiation. Phase summaries

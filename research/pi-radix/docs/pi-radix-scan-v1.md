@@ -114,7 +114,7 @@ python research/pi-radix/pi_radix.py scan
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt SHA-256: `3cd971c59a3eb33db9f9e918dde64fcb7cb4b9905f1bf7c50d644d3739c4de16`
+Receipt SHA-256: `c68f6020cc71e599f260f5c583f10374b8ebbbfcc5aa8ce27582a440c4012bef`
 
 ## hmmm
 

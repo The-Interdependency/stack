@@ -45,6 +45,10 @@ import recurrence_controls as controls
 ROOT = Path(__file__).resolve().parent
 LOADED_SOURCE = Path(__file__).read_bytes()
 OUTPUT = ROOT / "receipts/independent-verification-v1.json"
+SOURCE_PATHS = (Path(__file__), ROOT / "pi_radix.py", ROOT / "recurrence_controls.py",
+                scan.DEFAULT_CONFIG, scan.DEFAULT_RECEIPT, controls.RECEIPT,
+                scan.DEFAULT_REPORT, controls.REPORT, ROOT / "CONTROL_PLAN.md",
+                ROOT / "tests/test_pi_radix.py", ROOT / "tests/test_recurrence_controls.py")
 
 
 def require(condition: bool, message: str) -> None:
@@ -108,10 +112,7 @@ def phase_pairs(streams):
 
 
 def verify():
-    sources = scan.source_snapshot((Path(__file__), ROOT / "pi_radix.py", ROOT / "recurrence_controls.py",
-                                    scan.DEFAULT_CONFIG, scan.DEFAULT_RECEIPT, controls.RECEIPT,
-                                    scan.DEFAULT_REPORT, controls.REPORT, ROOT / "CONTROL_PLAN.md",
-                                    ROOT / "tests/test_pi_radix.py", ROOT / "tests/test_recurrence_controls.py"))
+    sources = scan.source_snapshot(SOURCE_PATHS)
     for path, loaded in ((Path(__file__), LOADED_SOURCE), (ROOT / "pi_radix.py", scan.LOADED_SOURCE),
                          (ROOT / "recurrence_controls.py", controls.LOADED_SOURCE)):
         scan.require_loaded(path, loaded, sources)
@@ -183,7 +184,7 @@ if __name__ == "__main__":
     receipt = verify()
     rendered = json.dumps(receipt, sort_keys=True, indent=2) + "\n"
     if args.write:
-        OUTPUT.write_text(rendered)
+        scan.publish_artifacts([(OUTPUT, rendered.encode())], SOURCE_PATHS)
     else:
         require(OUTPUT.read_text() == rendered, "independent verification receipt differs")
     print(f"Verified {receipt['distinct_values_factored']} distinct integers and {receipt['control_counts_compared']} control counts")

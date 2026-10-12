@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import os
 import tempfile
 import unittest
 from decimal import Decimal
@@ -83,6 +84,73 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_publication_rejects_aliases_and_input_collisions(self) -> None:
+        receipt = json.loads(pi_radix.DEFAULT_RECEIPT.read_text())
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output, alias = root / "receipt", root / "alias"
+            output.write_bytes(b"old")
+            with self.assertRaisesRegex(ValueError, "must not alias"):
+                pi_radix.write_outputs(receipt, output, output)
+            alias.symlink_to(output)
+            with self.assertRaisesRegex(ValueError, "must not alias"):
+                pi_radix.write_outputs(receipt, output, alias)
+            alias.unlink()
+            os.link(output, alias)
+            with self.assertRaisesRegex(ValueError, "must not alias"):
+                pi_radix.write_outputs(receipt, output, alias)
+            with self.assertRaisesRegex(ValueError, "aliases an input"):
+                pi_radix.publish_artifacts([(alias, b"new")], [output])
+            self.assertEqual(output.read_bytes(), b"old")
+            self.assertEqual(alias.read_bytes(), b"old")
+
+    def test_publication_stages_all_targets_before_replacement(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output, report = root / "receipt", root / "reports" / "report"
+            report.parent.mkdir()
+            output.write_bytes(b"old receipt")
+            report.write_bytes(b"old report")
+            with self.assertRaisesRegex(ValueError, "not a regular file"):
+                pi_radix.publish_artifacts([(output, b"new"), (report.parent, b"invalid")])
+            original = pi_radix.tempfile.mkstemp
+            def deny_report_stage(*args, **kwargs):
+                if Path(kwargs["dir"]) == report.parent:
+                    raise PermissionError("report staging denied")
+                return original(*args, **kwargs)
+            with patch.object(pi_radix.tempfile, "mkstemp", side_effect=deny_report_stage):
+                with self.assertRaisesRegex(PermissionError, "report staging denied"):
+                    pi_radix.publish_artifacts([(output, b"new receipt"), (report, b"new report")])
+            self.assertEqual(output.read_bytes(), b"old receipt")
+            self.assertEqual(report.read_bytes(), b"old report")
+            self.assertFalse(list(root.rglob(".*")))
+
+    def test_publication_rolls_back_replacement_failure(self) -> None:
+        for existed in (True, False):
+            with self.subTest(existed=existed), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                output, report = root / "receipt", root / "report"
+                if existed:
+                    output.write_bytes(b"old receipt")
+                report.write_bytes(b"old report")
+                original = pi_radix.os.replace
+                def deny_report_replace(source, target):
+                    if target == report:
+                        raise PermissionError("report replacement denied")
+                    return original(source, target)
+                with patch.object(pi_radix.os, "replace", side_effect=deny_report_replace):
+                    with self.assertRaisesRegex(PermissionError, "report replacement denied"):
+                        pi_radix.publish_artifacts([(output, b"new receipt"), (report, b"new report")])
+                self.assertEqual(output.exists(), existed)
+                if existed:
+                    self.assertEqual(output.read_bytes(), b"old receipt")
+                self.assertEqual(report.read_bytes(), b"old report")
+                self.assertFalse(list(root.glob(".*")))
+                pi_radix.publish_artifacts([(output, b"new receipt"), (report, b"new report")])
+                self.assertEqual(output.read_bytes(), b"new receipt")
+                self.assertEqual(report.read_bytes(), b"new report")
+                self.assertFalse(list(root.glob(".*")))
+
     def test_oversized_horizon_rejected_before_exact_horizon_work(self) -> None:
         original = json.loads((ROOT / "EXPERIMENT.json").read_text())
         with tempfile.TemporaryDirectory() as directory:

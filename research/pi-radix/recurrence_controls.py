@@ -61,6 +61,9 @@ BITS = 8192
 SEED = "stack/pi-radix/controls/v1"
 RECEIPT = ROOT / "receipts/recurrence-controls-v1.json"
 REPORT = ROOT / "docs/recurrence-controls-v1.md"
+SOURCE_PATHS = (Path(__file__), ROOT / "pi_radix.py", scan.DEFAULT_CONFIG,
+                scan.DEFAULT_RECEIPT, ROOT / "CONTROL_PLAN.md",
+                ROOT / "tests/test_recurrence_controls.py", ROOT / "tests/test_pi_radix.py")
 
 
 class Draws:
@@ -159,10 +162,7 @@ def summary(observed: int, counts: list[int]) -> dict:
 def run_controls(trials: int = TRIALS) -> dict:
     if type(trials) is not int or not 1 <= trials <= TRIALS:
         raise ValueError("trial count outside fixed bounded plan")
-    sources = scan.source_snapshot((Path(__file__), ROOT / "pi_radix.py", scan.DEFAULT_CONFIG,
-                                    scan.DEFAULT_RECEIPT, ROOT / "CONTROL_PLAN.md",
-                                    ROOT / "tests/test_recurrence_controls.py",
-                                    ROOT / "tests/test_pi_radix.py"))
+    sources = scan.source_snapshot(SOURCE_PATHS)
     scan.require_loaded(Path(__file__), LOADED_SOURCE, sources)
     scan.require_loaded(ROOT / "pi_radix.py", scan.LOADED_SOURCE, sources)
     receipt = json.loads(sources[scan.DEFAULT_RECEIPT])
@@ -277,8 +277,8 @@ def render_report(result: dict) -> str:
 def main() -> None:
     result = run_controls()
     report = render_report(result)
-    RECEIPT.write_text(json.dumps(result, sort_keys=True, indent=2) + "\n")
-    REPORT.write_text(report)
+    scan.publish_artifacts([(RECEIPT, (json.dumps(result, sort_keys=True, indent=2) + "\n").encode()),
+                            (REPORT, report.encode())], SOURCE_PATHS)
     print(report)
 
 
