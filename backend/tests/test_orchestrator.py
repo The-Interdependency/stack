@@ -62,6 +62,8 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import os
+import re
+import signal
 from pathlib import Path
 import subprocess
 import tempfile
@@ -74,7 +76,8 @@ from backend.freshness import (
 )
 from backend.jobs import Acceptance, Job, JobLedger, Receipt
 from backend.msdmd import (
-    WORKER_PENDING, _clean_stale_siblings, build_spec, collector_failure, component_difference, evaluate, make, queue_make,
+    DEFAULT_IDENTITY_TIMEOUT_SECONDS, WORKER_PENDING, _clean_stale_siblings, build_spec, collector_failure,
+    generator_identity, component_difference, evaluate, make, queue_make,
     register_spec, run_job,
 )
 
@@ -121,6 +124,48 @@ p.add_argument("--source-commit", required=True)
 a = p.parse_args()
 Path(a.out).write_text(str(uuid.uuid4()) + "\n", encoding="utf-8")
 '''
+
+
+# Hangs like a collector whose run outlives stack's timeout. It starts one child
+# in its own process group (killed by the group signal) and one in its own
+# session, which it kills on SIGINT the way skill-lib's run_node does.
+HANGING_COLLECTOR = IDENTITY_PRELUDE.replace(
+    'if "--print-generator-identity" in sys.argv:',
+    'if "--print-generator-identity" in sys.argv and not __import__("os").environ.get("HANG_IDENTITY"):',
+) + r"""import os, signal, subprocess, sys, time
+from pathlib import Path
+pids = Path(os.environ["FAKE_PID_DIR"])
+same = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(600)"])
+own = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(600)"], start_new_session=True)
+(pids / "same").write_text(str(same.pid))
+(pids / "own").write_text(str(own.pid))
+if os.environ.get("IGNORE_SIGINT"):
+    signal.signal(signal.SIGINT, signal.SIG_IGN)
+(pids / "ready").write_text("1")
+try:
+    time.sleep(600)
+except KeyboardInterrupt:
+    os.killpg(own.pid, signal.SIGKILL)
+    raise
+"""
+
+
+def _alive(pid: int) -> bool:
+    try:
+        state = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0]
+    except (FileNotFoundError, ProcessLookupError, IndexError):
+        return False
+    return state not in {"Z", "X"}
+
+
+def _wait_dead(pid: int, seconds: float = 10.0) -> bool:
+    import time
+    deadline = time.monotonic() + seconds
+    while time.monotonic() < deadline:
+        if not _alive(pid):
+            return True
+        time.sleep(0.05)
+    return not _alive(pid)
 
 
 def _fake_generator(root: Path, content: str = FAKE_COLLECTOR) -> Path:
@@ -401,6 +446,69 @@ class FreshMakingTests(unittest.TestCase):
             self.assertNotEqual(report.state, "fresh")
             self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
 
+    def test_identity_timeout_defaults_above_skill_lib_probe_timeout(self):
+        # Review P2 on stack #82: skill-lib's own 120 s probe timeout must fire
+        # first so its diagnostics and process-group kill win the race.
+        vendored = (Path(__file__).resolve().parents[2] / "skill-lib" / "msdmd" / "native_code.py").read_text()
+        match = re.search(r"^TYPESCRIPT_TIMEOUT_SECONDS = ([0-9.]+)$", vendored, re.M)
+        self.assertIsNotNone(match)
+        self.assertEqual(180, DEFAULT_IDENTITY_TIMEOUT_SECONDS)
+        self.assertGreater(DEFAULT_IDENTITY_TIMEOUT_SECONDS, float(match.group(1)))
+        env = {k: v for k, v in os.environ.items() if k != "STACK_IDENTITY_TIMEOUT_SECONDS"}
+        with patch.dict(os.environ, env, clear=True), patch("backend.msdmd._run_in_group") as run:
+            run.return_value = subprocess.CompletedProcess([], 0, "sha256:" + "a" * 64 + "\n", "")
+            with tempfile.TemporaryDirectory() as tmp:
+                generator_identity(_fake_generator(Path(tmp) / "g"))
+            self.assertEqual(180, run.call_args.kwargs["timeout"])
+
+    def _assert_group_reaped(self, pids: Path):
+        for name in ("same", "own"):
+            pid = int((pids / name).read_text())
+            self.assertTrue(_wait_dead(pid), f"{name} child {pid} outlived stack's timeout")
+
+    def test_executor_timeout_kills_the_collector_process_group(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            pids = Path(tmp) / "pids"
+            pids.mkdir()
+            target, _, ledger, spec = self._runtime(Path(tmp), collector=HANGING_COLLECTOR)
+            job, _ = queue_make(ledger, spec["target"])
+            with patch.dict(os.environ, {"STACK_COMMAND_TIMEOUT_SECONDS": "2", "FAKE_PID_DIR": str(pids)}):
+                result = run_job(ledger, job.id)
+            self.assertEqual("failed", result.state)
+            self.assertIn("executor exceeded 2s", result.error or "")
+            self._assert_group_reaped(pids)
+            self.assertFalse((target / "ucns_msdmd.ts").exists())
+
+    def test_executor_timeout_sigkills_a_group_that_ignores_sigint(self):
+        with tempfile.TemporaryDirectory() as tmp, _unbound_env():
+            pids = Path(tmp) / "pids"
+            pids.mkdir()
+            _, _, ledger, spec = self._runtime(Path(tmp), collector=HANGING_COLLECTOR)
+            job, _ = queue_make(ledger, spec["target"])
+            with patch.dict(os.environ, {"STACK_COMMAND_TIMEOUT_SECONDS": "2", "FAKE_PID_DIR": str(pids),
+                                         "IGNORE_SIGINT": "1"}), \
+                 patch("backend.msdmd._INTERRUPT_GRACE_SECONDS", 0.5):
+                result = run_job(ledger, job.id)
+            self.assertEqual("failed", result.state)
+            self.assertIn("executor exceeded 2s", result.error or "")
+            # SIGKILL reaches the same-group child; the own-session child is
+            # beyond any group signal once its parent cannot handle SIGINT.
+            self.assertTrue(_wait_dead(int((pids / "same").read_text())))
+            own = int((pids / "own").read_text())
+            if _alive(own):
+                os.kill(own, signal.SIGKILL)
+
+    def test_identity_timeout_kills_the_probe_process_group(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pids = Path(tmp) / "pids"
+            pids.mkdir()
+            generator = _fake_generator(Path(tmp) / "g", HANGING_COLLECTOR)
+            with patch.dict(os.environ, {"STACK_IDENTITY_TIMEOUT_SECONDS": "2", "FAKE_PID_DIR": str(pids),
+                                         "HANG_IDENTITY": "1"}):
+                with self.assertRaisesRegex(ValueError, "timed out"):
+                    generator_identity(generator)
+            self._assert_group_reaped(pids)
+
     def test_exit_3_hint_covers_reader_failures_and_timeouts(self):
         # Since skill-lib#121 exit 3 is not only a missing runtime: a failed or
         # timed-out TypeScript reader/worker exits 3 too, and the operator hint
@@ -504,14 +612,15 @@ class FreshMakingTests(unittest.TestCase):
             (target / "ucns_msdmd.ts").write_text("tampered\n", encoding="utf-8")
             job, _ = queue_make(ledger, spec["target"])  # same key as the accepted run: re-queued repair
             self.assertEqual("queued", job.state)
-            real = subprocess.run
+            real = subprocess.Popen
 
+            # The collector is spawned with Popen in its own session.
             def no_memory(cmd, *args, **kwargs):
                 if "--out" in cmd:
                     raise OSError(12, "Cannot allocate memory")
                 return real(cmd, *args, **kwargs)
 
-            with patch("backend.msdmd.subprocess.run", side_effect=no_memory):
+            with patch("backend.msdmd.subprocess.Popen", side_effect=no_memory):
                 result = run_job(ledger, job.id)
                 self.assertEqual("failed", result.state)
                 self.assertIn("executor could not start: OSError", result.error or "")
@@ -527,7 +636,7 @@ class FreshMakingTests(unittest.TestCase):
                     raise OSError(12, "Cannot allocate memory")
                 return real(cmd, *args, **kwargs)
 
-            with patch("backend.msdmd.subprocess.run", side_effect=identity_no_memory):
+            with patch("backend.msdmd.subprocess.Popen", side_effect=identity_no_memory):
                 report = evaluate(ledger, spec["target"])
             self.assertEqual("hmmm", ledger.get_derivation(spec["target"])["generator"]["identity"])
             self.assertNotEqual("fresh", report.state)
