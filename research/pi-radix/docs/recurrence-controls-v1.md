@@ -6,7 +6,7 @@ Question: is the observed recurrence count exceptional under the fixed controls?
 
 | Control | Profile | Pi | Mean | Median | Central 95% range | >= Pi | Upper-tail rank |
 |---|---|---:|---:|---:|---|---:|---|
-| shared_number | fixed500 | 12 | 11.111 | 11 | 5–18 | 95/199 | 96/200 |
+| shared_number | fixed500 | 12 | 11.116 | 11 | 5–18 | 95/199 | 96/200 |
 | shared_number | matched2400 | 8 | 7.975 | 8 | 3–14 | 110/199 | 111/200 |
 | histogram_shuffle | fixed500 | 12 | 12.432 | 12 | 6–19 | 119/199 | 120/200 |
 | histogram_shuffle | matched2400 | 8 | 9.422 | 9 | 5–15 | 148/199 | 149/200 |
@@ -36,7 +36,7 @@ python research/pi-radix/recurrence_controls.py
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt payload SHA-256: `46a702a07e87bb3181af2da342e1112ea6f14726d9690aaf9a289fc2cec389b8`
+Receipt payload SHA-256: `070fd6a4e9789be72b5a13255a083b6ad636319e40d692286da5a438170206a6`
 
 ## hmmm
 

@@ -16,7 +16,7 @@ base `b` is also the exact unit-circle symbol
 | Base | Factorization | phi(base) | Prime-valued symbols / prime digit-values | L1 eligible / prime | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime | Resolution bits |
 |---:|---|---:|---:|---:|---:|---:|---:|---:|
 | 30 | 2 * 3 * 5 | 8 | 175 / 10 | 481 / 175 | 123 / 74 | 123 / 48 | 125 / 37 | 2453.445297804260 |
-| 60 | 2^2 * 3 * 5 | 16 | 142 / 17 | 491 / 142 | 140 / 70 | 142 / 43 | 140 / 36 | 2953.445297804260 |
+| 60 | 2^2 * 3 * 5 | 16 | 142 / 17 | 491 / 142 | 141 / 70 | 142 / 43 | 140 / 36 | 2953.445297804260 |
 | 359 | 359 | 358 | 96 / 71 | 499 / 96 | 497 / 48 | 496 / 34 | 495 / 24 | 4243.920016911526 |
 | 360 | 2^3 * 3^2 * 5 | 96 | 78 / 72 | 500 / 78 | 117 / 42 | 117 / 21 | 117 / 19 | 4245.926548164837 |
 | 361 | 19^2 | 342 | 102 / 72 | 499 / 102 | 468 / 41 | 467 / 32 | 466 / 21 | 4247.927513443585 |
@@ -25,7 +25,9 @@ base `b` is also the exact unit-circle symbol
 
 For multi-symbol values, the terminal digit gives an exact sieve:
 `gcd(value, base) = gcd(last_digit, base)`. A block whose terminal digit
-shares a factor with the base is composite in this domain. The contrast
+shares a factor with the base is composite except for `[1, 0]` in a
+prime radix, whose value is the radix itself. Eligibility retains this
+exception (and lets primality reject composite radices). The contrast
 between 359, 360, and 361 therefore measures base factorization rather than
 merely alphabet size.
 
@@ -72,7 +74,7 @@ This profile uses the longest whole-symbol prefix at or below **2400 bits** in e
 | Base | Symbols used | Resolution bits | L1 eligible / prime | L2 eligible / prime | L3 eligible / prime | L4 eligible / prime |
 |---:|---:|---:|---:|---:|---:|---:|
 | 30 | 489 | 2399.469501252566 | 470 / 173 | 121 / 73 | 121 / 47 | 123 / 37 |
-| 60 | 406 | 2398.197581817059 | 398 / 114 | 114 / 55 | 117 / 36 | 114 / 29 |
+| 60 | 406 | 2398.197581817059 | 398 / 114 | 115 / 55 | 117 / 36 | 114 / 29 |
 | 359 | 282 | 2393.570889538100 | 281 / 46 | 279 / 30 | 278 / 23 | 277 / 12 |
 | 360 | 282 | 2394.702573164968 | 282 / 49 | 70 / 30 | 70 / 14 | 70 / 14 |
 | 361 | 282 | 2395.831117582182 | 281 / 63 | 263 / 22 | 262 / 16 | 261 / 9 |
@@ -112,7 +114,7 @@ python research/pi-radix/pi_radix.py scan
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt SHA-256: `b9dcf6c89a4e67eacd8b8dc1d62281b050055c83d1f4b368d551fe0b091a13c6`
+Receipt SHA-256: `f49c8823aadd7711e108f5dfc1ce07d6b340f7b243d1243dbdfdac58321b1516`
 
 ## hmmm
 

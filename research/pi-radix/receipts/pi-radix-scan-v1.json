@@ -6428,7 +6428,7 @@
               "value": 1867
             }
           ],
-          "terminal_gcd_eligible_count": 140,
+          "terminal_gcd_eligible_count": 141,
           "window_count": 499
         },
         "3": {
@@ -21785,7 +21785,7 @@
     "Cross-base recurrence of a decoded prime does not establish a generating law.",
     "No statistical claim about normality is licensed by this finite prefix."
   ],
-  "implementation_sha256": "d53f2a5664e46e5dc2a0f34adbcdf36b37f9d0282a9d1dfaa3a307b445e958e0",
+  "implementation_sha256": "65d4f41b46220157e481daaa32254c114e373f6f146d39d725afa2b162e6b303",
   "matched_information_profile": {
     "base_results": [
       {
@@ -21827,7 +21827,7 @@
           "2": {
             "canonical_count": 397,
             "prime_count": 55,
-            "terminal_gcd_eligible_count": 114
+            "terminal_gcd_eligible_count": 115
           },
           "3": {
             "canonical_count": 396,
@@ -22269,7 +22269,7 @@
     ],
     "required_decimal_digits": 1730
   },
-  "receipt_sha256": "b9dcf6c89a4e67eacd8b8dc1d62281b050055c83d1f4b368d551fe0b091a13c6",
+  "receipt_sha256": "f49c8823aadd7711e108f5dfc1ce07d6b340f7b243d1243dbdfdac58321b1516",
   "schema": "stack.pi-radix-scan-receipt",
   "standing": "COMPUTATION",
   "version": "1.0.0"

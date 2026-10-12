@@ -46,6 +46,17 @@ import pi_radix as scan
 
 
 class TestControls(unittest.TestCase):
+    def test_prime_radix_zero_terminal_and_trial_192(self):
+        self.assertEqual(controls.recurrence({3: [1, 0], 2: [1, 1]})["primes"],
+                         [{"prime": 3, "bases": [2, 3]}])
+        self.assertEqual(controls.recurrence({4: [1, 0], 2: [1, 0, 0]})["count"], 0)
+        j = int.from_bytes(controls.Draws("shared/192").bytes(controls.BITS // 8), "big")
+        streams = {b: controls.interval_digits(j, controls.BITS, b, 500)
+                   for b in (30, 60, 359, 360, 361, 720, 2880)}
+        result = controls.recurrence(streams)
+        self.assertEqual(result["count"], 9)
+        self.assertIn({"prime": 359, "bases": [30, 359]}, result["primes"])
+
     def test_interval_and_boundary_failure(self):
         digits = controls.interval_digits(31415, 20, 10, 3)
         self.assertEqual(digits, [0, 2, 9])

@@ -123,9 +123,13 @@ def recurrence(streams: dict[int, list[int]]) -> dict:
         for length in (2, 3, 4):
             for start in range(len(digits) - length + 1):
                 block = digits[start:start + length]
-                if block[0] == 0 or math.gcd(block[-1], base) != 1:
+                if block[0] == 0:
                     continue
                 value = scan.decode_block(block, base)
+                # A canonical multi-symbol value is >= base. The sole prime
+                # sharing a divisor with the radix can therefore be base itself.
+                if value != base and math.gcd(block[-1], base) != 1:
+                    continue
                 if prime(value):
                     supports[value].add(base)
     rows = [{"prime": n, "bases": sorted(bases)}

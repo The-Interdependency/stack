@@ -86,3 +86,38 @@ reports use configured lengths and labels; angular comparisons retain pairwise
 prefix overlap after a shorter third stream ends. Artifact hashes changed when
 regenerated; pi's 12/8 recurrence counts did not. The former receipt is retained
 in Git history at b4791f2bebf8218201d22e07131c8cbe74ddf4d8.
+
+## Admission limits and independent verification
+
+The seven bases, 500-symbol streams, block lengths 1–4, and 2400-bit comparison
+remain unchanged. Custom scans admit bases 2–100000 and decoded values through
+`2^64 - 1` inclusive. Before generation, the validator enforces:
+
+- at most 100000 retained symbols across all bases per precision run;
+- at most 2000000 block-digit work units across both profiles, conservatively
+  counted as `2 * number_of_bases * symbol_count * sum(block_lengths)`;
+- at most 2000000 alphabet entries scanned across both profiles, counted as
+  `2 * sum(bases)`; the sieve also rejects oversized direct calls before allocation.
+
+These resource limits reject infeasible requests rather than truncating evidence.
+The terminal gcd sieve retains `[1, 0]`, whose decoded value is the radix itself:
+it can be prime. Correcting this omission raises shared-number trial 192's
+fixed-500 recurrence count from 8 to 9, and the control mean from 11.111 to
+11.116. Pi's 12/8 counts and the primary matched-horizon comparison are unchanged.
+
+To independently verify all canonical scan blocks and all 796 control counts,
+including the complete 199-replicate replay, install GNU coreutils (`factor`)
+and run:
+
+```bash
+python research/pi-radix/verify_evidence.py
+```
+
+The verifier uses direct place-value decoding, GNU factorization, a separate
+recurrence counter, and pairwise phase comparisons. It reuses the control draw,
+interval, and shuffle generation; it does not claim an independent implementation
+of those generators. The dedicated `pi-radix-research` workflow runs this gate.
+After intentional source changes, regenerate the scan and control artifacts
+with the commands above, then write the verification receipt with
+`python research/pi-radix/verify_evidence.py --write`. Verification failure leaves
+that receipt untouched. Counts remain finite-prefix computational evidence.

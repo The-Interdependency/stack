@@ -161,8 +161,6 @@ coherence; it does not replace workspace behavioral tests.
   authentication/state and full-cipher security remain `hmmm`.
 - Pi radix research has measured finite cross-base recurrences; the segmentation
   law, if any, that would make a result base-independent remains `hmmm`.
-- The complete root `skill-lib/` snapshot refresh remains separate because the current
-  provenance-bound fresh-making doctrine is newer than the local generator snapshot.
 - Project graduation automation remains unimplemented.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity

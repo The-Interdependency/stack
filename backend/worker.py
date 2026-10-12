@@ -42,6 +42,7 @@ from __future__ import annotations
 
 import os
 import socket
+import sys
 import time
 
 from .jobs import JobLedger
@@ -63,10 +64,24 @@ def run_once(ledger: JobLedger, *, executor: str = "local",
     job = ledger.claim_next(executor=executor, worker_id=worker_id, lease_seconds=lease_seconds)
     if job is None:
         return False
-    run_job(
-        ledger, job.id, worker_id=worker_id, executor=executor,
-        lease_seconds=lease_seconds,
-    )
+    try:
+        run_job(
+            ledger, job.id, worker_id=worker_id, executor=executor,
+            lease_seconds=lease_seconds,
+        )
+    except Exception as exc:
+        # One job's unexpected error is recorded on that job; it must not stop
+        # the worker loop. If the ledger itself is unreachable, crash so systemd
+        # restarts the service.
+        error = f"worker caught {type(exc).__name__}: {exc}"
+        print(f"stack worker: job {job.id}: {error}", file=sys.stderr, flush=True)
+        try:
+            current = ledger.get(job.id)
+            if current.state in {"leased", "running", "verifying"}:
+                ledger.fail(job.id, error=error,
+                            hmmm="unexpected executor error; inspect the worker journal, then retry")
+        except Exception:
+            raise exc
     return True
 
 

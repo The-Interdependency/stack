@@ -83,6 +83,62 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_aggregate_admission_precedes_generation(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        cases = [
+            (dict(bases=list(range(2, 100001)), fractional_symbol_count=100000,
+                  matched_information_horizon_bits=100000, prime_block_lengths=[1]), "symbol"),
+            (dict(bases=[2], fractional_symbol_count=1000,
+                  matched_information_horizon_bits=64, prime_block_lengths=list(range(1, 65))), "block"),
+            (dict(bases=list(range(90000, 90012)), fractional_symbol_count=2,
+                  matched_information_horizon_bits=17, prime_block_lengths=[1]), "sieve"),
+        ]
+        for changes, budget in cases:
+            with self.subTest(budget=budget), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "config.json"
+                path.write_text(json.dumps(original | changes))
+                with patch.object(pi_radix, "chudnovsky_pi") as generate, \
+                     patch.object(pi_radix, "prime_sieve") as sieve:
+                    with self.assertRaisesRegex(ValueError, f"aggregate .*{budget}"):
+                        pi_radix.run_experiment(path)
+                    generate.assert_not_called()
+                    sieve.assert_not_called()
+
+    def test_sieve_rejects_allocation_before_bytearray(self) -> None:
+        with patch("builtins.bytearray", side_effect=AssertionError("allocation attempted")):
+            for limit in (pi_radix.MAX_BASE, 1_000_000_007, 2**64):
+                with self.subTest(limit=limit), self.assertRaisesRegex(ValueError, "sieve limit"):
+                    pi_radix.prime_sieve(limit)
+        self.assertEqual(len(pi_radix.prime_sieve(pi_radix.MAX_BASE - 1)), 9592)
+
+    def test_u64_exact_power_domains(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        for base, width in ((2, 64), (4, 32), (16, 16)):
+            with self.subTest(base=base), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "config.json"
+                config = original | dict(bases=[base], fractional_symbol_count=width,
+                                        matched_information_horizon_bits=64, prime_block_lengths=[width])
+                path.write_text(json.dumps(config))
+                self.assertEqual(pi_radix.load_config(path), config)
+                result = pi_radix.run_experiment(path)
+                self.assertEqual(result["base_results"][0]["blocks"][str(width)]["window_count"], 1)
+                digits = [base - 1] * width
+                self.assertEqual(pi_radix.decode_block(digits, base), 2**64 - 1)
+                self.assertEqual(pi_radix.analyze_base(base, digits, [width])["blocks"][str(width)]["prime_count"], 0)
+                config.update(fractional_symbol_count=width + 1, prime_block_lengths=[width + 1])
+                path.write_text(json.dumps(config))
+                with self.assertRaisesRegex(ValueError, "unsigned-64-bit"):
+                    pi_radix.load_config(path)
+        self.assertTrue(pi_radix.is_prime_u64(2**64 - 59))
+        with self.assertRaises(ValueError):
+            pi_radix.is_prime_u64(2**64)
+
+    def test_prime_radix_terminal_exception(self) -> None:
+        for base in (2, 3, 359, 4, 360):
+            block = pi_radix.analyze_base(base, [1, 0], [2])["blocks"]["2"]
+            self.assertEqual(block["terminal_gcd_eligible_count"], 1)
+            self.assertEqual(block["prime_count"], int(base in (2, 3, 359)))
+
     def test_config_guards(self) -> None:
         original = json.loads((ROOT / "EXPERIMENT.json").read_text())
         for change in (
@@ -126,6 +182,15 @@ class TestPiRadix(unittest.TestCase):
         matches = pi_radix.cross_base_results(scans)["aligned_exact_angular_phase_matches"]
         self.assertEqual([m["position"] for m in matches], list(range(1, 8)))
         self.assertEqual([s["base"] for s in matches[-1]["symbols"]], [2, 3])
+        # Exact reduced nonzero equality must survive the shorter third stream,
+        # including when input ordering changes; singleton tails cannot match.
+        scans = [pi_radix.analyze_base(base, digits, [1]) for base, digits in
+                 ((4, [0, 2, 3]), (6, [1, 3]), (5, [1]))]
+        for ordered in (scans, list(reversed(scans))):
+            matches = pi_radix.cross_base_results(ordered)["aligned_exact_angular_phase_matches"]
+            self.assertEqual(len(matches), 1)
+            self.assertEqual((matches[0]["position"], matches[0]["turn"]), (2, [1, 2]))
+            self.assertEqual({s["base"] for s in matches[0]["symbols"]}, {4, 6})
 
     def test_base_digits_known_values(self) -> None:
         integer, decimal_digits = pi_radix.base_digits(Decimal("3.141592653589793238462643383279"), 10, 12)

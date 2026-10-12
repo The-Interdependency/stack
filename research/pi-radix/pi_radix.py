@@ -92,6 +92,12 @@ DEFAULT_RECEIPT = ROOT / "receipts" / "pi-radix-scan-v1.json"
 DEFAULT_REPORT = ROOT / "docs" / "pi-radix-scan-v1.md"
 UINT64_LIMIT = 1 << 64
 MAX_BASE = 100_000
+# Admission budgets bound retained symbols, block decoding/hit storage, and
+# repeated alphabet enumeration across both profiles. These are resource limits,
+# not scientific stopping rules; the frozen seven-base experiment fits in full.
+MAX_TOTAL_SYMBOLS = 100_000
+MAX_BLOCK_DIGIT_WORK = 2_000_000
+MAX_SIEVE_WORK = 2_000_000
 MR_BASES_64 = (2, 325, 9375, 28178, 450775, 9780504, 1795265022)
 
 
@@ -215,6 +221,8 @@ def is_prime_u64(number: int) -> bool:
 
 
 def prime_sieve(limit: int) -> list[int]:
+    if limit >= MAX_BASE:
+        raise ValueError(f"sieve limit must be below {MAX_BASE}")
     if limit < 2:
         return []
     flags = bytearray(b"\x01") * (limit + 1)
@@ -279,7 +287,7 @@ def analyze_base(base: int, digits: list[int], lengths: list[int]) -> dict[str, 
                 continue
             canonical_count += 1
             value = decode_block(block, base)
-            if length == 1 or math.gcd(block[-1], base) == 1:
+            if length == 1 or value == base or math.gcd(block[-1], base) == 1:
                 eligible_count += 1
             if is_prime_u64(value):
                 hit = {"position": start + 1, "digits": block, "value": value}
@@ -393,12 +401,20 @@ def load_config(path: Path) -> dict[str, Any]:
         raise ValueError("matched_information_horizon_bits must be positive")
     if count > 100_000 or horizon > 1_000_000:
         raise ValueError("bounded profile requires count <= 100000 and horizon <= 1000000")
+    if len(bases) * count > MAX_TOTAL_SYMBOLS:
+        raise ValueError(f"aggregate symbol limit is {MAX_TOTAL_SYMBOLS}")
+    if 2 * sum(bases) > MAX_SIEVE_WORK:
+        raise ValueError(f"aggregate sieve work limit is {MAX_SIEVE_WORK}")
     if not isinstance(lengths, list) or not lengths or any(type(length) is not int or length < 1 for length in lengths):
         raise ValueError("prime_block_lengths must be positive integers")
     if lengths != sorted(set(lengths)):
         raise ValueError("prime_block_lengths must be sorted and unique")
-    if max(lengths) > 63 or max(bases) ** max(lengths) >= UINT64_LIMIT:
+    if max(lengths) > 64 or max(bases) ** max(lengths) > UINT64_LIMIT:
         raise ValueError("configured block domain exceeds deterministic unsigned-64-bit primality")
+    # Matched prefixes cannot exceed count, so this safely bounds both profiles
+    # before expensive horizon arithmetic or pi generation begins.
+    if 2 * len(bases) * count * sum(lengths) > MAX_BLOCK_DIGIT_WORK:
+        raise ValueError(f"aggregate block digit work limit is {MAX_BLOCK_DIGIT_WORK}")
     matched_counts = [horizon_count(base, horizon) for base in bases]
     if min(matched_counts) < max(lengths):
         raise ValueError("matched information horizon is too small for configured blocks")
@@ -537,7 +553,9 @@ def render_report(receipt: dict[str, Any]) -> str:
             "",
             "For multi-symbol values, the terminal digit gives an exact sieve:",
             "`gcd(value, base) = gcd(last_digit, base)`. A block whose terminal digit",
-            "shares a factor with the base is composite in this domain. The contrast",
+            "shares a factor with the base is composite except for `[1, 0]` in a",
+            "prime radix, whose value is the radix itself. Eligibility retains this",
+            "exception (and lets primality reject composite radices). The contrast",
             "between 359, 360, and 361 therefore measures base factorization rather than",
             "merely alphabet size.",
             "",
