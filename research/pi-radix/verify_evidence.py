@@ -43,6 +43,7 @@ import recurrence_controls as controls
 # === END MODULE_BUILD ===
 
 ROOT = Path(__file__).resolve().parent
+LOADED_SOURCE = Path(__file__).read_bytes()
 OUTPUT = ROOT / "receipts/independent-verification-v1.json"
 
 
@@ -107,12 +108,19 @@ def phase_pairs(streams):
 
 
 def verify():
-    source = json.loads(scan.DEFAULT_RECEIPT.read_text())
-    control = json.loads(controls.RECEIPT.read_text())
+    sources = scan.source_snapshot((Path(__file__), ROOT / "pi_radix.py", ROOT / "recurrence_controls.py",
+                                    scan.DEFAULT_CONFIG, scan.DEFAULT_RECEIPT, controls.RECEIPT,
+                                    scan.DEFAULT_REPORT, controls.REPORT, ROOT / "CONTROL_PLAN.md",
+                                    ROOT / "tests/test_pi_radix.py", ROOT / "tests/test_recurrence_controls.py"))
+    for path, loaded in ((Path(__file__), LOADED_SOURCE), (ROOT / "pi_radix.py", scan.LOADED_SOURCE),
+                         (ROOT / "recurrence_controls.py", controls.LOADED_SOURCE)):
+        scan.require_loaded(path, loaded, sources)
+    source = json.loads(sources[scan.DEFAULT_RECEIPT])
+    control = json.loads(sources[controls.RECEIPT])
     require(scan.run_experiment() == source, "scan full replay differs")
     require(controls.run_controls() == control, "control full replay differs")
-    require(scan.render_report(source) == scan.DEFAULT_REPORT.read_text(), "scan report differs")
-    require(controls.render_report(control) == controls.REPORT.read_text(), "control report differs")
+    require(scan.render_report(source) == sources[scan.DEFAULT_REPORT].decode(), "scan report differs")
+    require(controls.render_report(control) == sources[controls.REPORT].decode(), "control report differs")
     oracle = Oracle()
     streams = {row["base"]: row["digits"] for row in source["base_results"]}
     sizes = {row["base"]: row["symbol_count"] for row in source["matched_information_profile"]["base_results"]}
@@ -155,13 +163,11 @@ def verify():
         rows.append(result)
         if (index + 1) % 25 == 0:
             print(f"independent verification: {index + 1}/199 trials", flush=True)
-    sources = [Path(__file__), ROOT / "pi_radix.py", ROOT / "recurrence_controls.py",
-               scan.DEFAULT_CONFIG, scan.DEFAULT_RECEIPT, controls.RECEIPT,
-               scan.DEFAULT_REPORT, controls.REPORT]
+    scan.require_unchanged(sources)
     return {
         "schema": "stack.pi-radix-independent-verification", "version": "1.0.0",
         "standing": "COMPUTATION", "oracle": "GNU coreutils factor; complete integer factorization",
-        "sources_sha256": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for p in sources},
+        "sources_sha256": {str(p.relative_to(ROOT)): hashlib.sha256(data).hexdigest() for p, data in sources.items()},
         "distinct_values_factored": len(oracle.primes), "control_counts_compared": len(rows) * 4,
         "classification_disagreements": 0, "recurrence_disagreements": 0,
         "observed": observed, "replicates": rows,

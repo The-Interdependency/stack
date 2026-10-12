@@ -55,6 +55,7 @@ import pi_radix as scan
 # === END CONTRACTS ===
 
 ROOT = Path(__file__).resolve().parent
+LOADED_SOURCE = Path(__file__).read_bytes()
 TRIALS = 199
 BITS = 8192
 SEED = "stack/pi-radix/controls/v1"
@@ -158,16 +159,22 @@ def summary(observed: int, counts: list[int]) -> dict:
 def run_controls(trials: int = TRIALS) -> dict:
     if type(trials) is not int or not 1 <= trials <= TRIALS:
         raise ValueError("trial count outside fixed bounded plan")
-    receipt = json.loads(scan.DEFAULT_RECEIPT.read_text())
+    sources = scan.source_snapshot((Path(__file__), ROOT / "pi_radix.py", scan.DEFAULT_CONFIG,
+                                    scan.DEFAULT_RECEIPT, ROOT / "CONTROL_PLAN.md",
+                                    ROOT / "tests/test_recurrence_controls.py",
+                                    ROOT / "tests/test_pi_radix.py"))
+    scan.require_loaded(Path(__file__), LOADED_SOURCE, sources)
+    scan.require_loaded(ROOT / "pi_radix.py", scan.LOADED_SOURCE, sources)
+    receipt = json.loads(sources[scan.DEFAULT_RECEIPT])
     payload = dict(receipt)
     claimed = payload.pop("receipt_sha256")
     if scan.sha256_bytes(scan.canonical_json_bytes(payload)) != claimed:
         raise ValueError("source receipt digest mismatch")
-    if receipt["implementation_sha256"] != scan.sha256_bytes((ROOT / "pi_radix.py").read_bytes()):
+    if receipt["implementation_sha256"] != scan.sha256_bytes(sources[ROOT / "pi_radix.py"]):
         raise ValueError("source receipt is stale against scanner")
-    if receipt["config_sha256"] != scan.sha256_bytes(scan.DEFAULT_CONFIG.read_bytes()):
+    if receipt["config_sha256"] != scan.sha256_bytes(sources[scan.DEFAULT_CONFIG]):
         raise ValueError("source receipt is stale against configuration")
-    config = scan.load_config(scan.DEFAULT_CONFIG)
+    config = scan.validate_config(json.loads(sources[scan.DEFAULT_CONFIG]))
     if (config["bases"] != [30, 60, 359, 360, 361, 720, 2880]
             or config["fractional_symbol_count"] != 500
             or config["matched_information_horizon_bits"] != 2400
@@ -208,11 +215,8 @@ def run_controls(trials: int = TRIALS) -> dict:
         "standing": "COMPUTATION", "inference": "EXPLORATORY_MODEL_COMPARISON",
         "seed": SEED, "interval_bits": BITS, "trials": trials,
         "primary": "shared_number/matched2400 upper-tail recurrence count",
-        "sources_sha256": {str(p.relative_to(ROOT)): scan.sha256_bytes(p.read_bytes())
-                           for p in (Path(__file__), ROOT / "pi_radix.py", scan.DEFAULT_CONFIG,
-                                     scan.DEFAULT_RECEIPT, ROOT / "CONTROL_PLAN.md",
-                                     ROOT / "tests/test_recurrence_controls.py",
-                                     ROOT / "tests/test_pi_radix.py")},
+        "sources_sha256": {str(p.relative_to(ROOT)): scan.sha256_bytes(data)
+                           for p, data in sources.items()},
         "observed": observed, "summaries": summaries, "replicates": rows,
         "hmmm": [
             "Pi was observed before this plan: ranks are exploratory, not confirmatory p-values.",
@@ -222,6 +226,7 @@ def run_controls(trials: int = TRIALS) -> dict:
         ],
     }
     result["receipt_sha256"] = scan.sha256_bytes(scan.canonical_json_bytes(result))
+    scan.require_unchanged(sources)
     return result
 
 

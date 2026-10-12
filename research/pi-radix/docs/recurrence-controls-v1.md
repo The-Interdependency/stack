@@ -36,7 +36,7 @@ python research/pi-radix/recurrence_controls.py
 python -m unittest discover -s research/pi-radix/tests -v
 ```
 
-Receipt payload SHA-256: `db021449653832e6620e947c63a4426fac55c1cd7d8a1232e6ff921b53d4eb60`
+Receipt payload SHA-256: `ea5f7ca02d5ce07e8bd57d916e7a3b3903c4ae586335fd08ccded9d67d2c5af2`
 
 ## hmmm
 

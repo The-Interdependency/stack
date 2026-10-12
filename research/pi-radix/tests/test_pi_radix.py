@@ -83,6 +83,38 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_scan_rejects_midrun_source_changes_without_publication(self) -> None:
+        for target in ("config", "implementation"):
+            with self.subTest(target=target), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source = root / "pi_radix.py"
+                source.write_bytes((ROOT / "pi_radix.py").read_bytes())
+                spec = importlib.util.spec_from_file_location("scan_snapshot_test", source)
+                subject = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(subject)
+                config = json.loads((ROOT / "EXPERIMENT.json").read_text())
+                config.update(bases=[30], fractional_symbol_count=30, matched_information_horizon_bits=100)
+                config_path = root / "config.json"
+                config_path.write_text(json.dumps(config))
+                output, report = root / "receipt.json", root / "report.md"
+                output.write_text("old receipt")
+                report.write_text("old report")
+                original = subject.chudnovsky_pi
+                changed = config_path if target == "config" else source
+                def edit_during_generation(precision):
+                    changed.write_bytes(changed.read_bytes() + b"\n")
+                    return original(precision)
+                with patch.object(subject, "chudnovsky_pi", side_effect=edit_during_generation):
+                    with self.assertRaisesRegex(ValueError, "source changed during execution"):
+                        subject.main(["scan", "--config", str(config_path), "--output", str(output), "--report", str(report)])
+                self.assertEqual(output.read_text(), "old receipt")
+                self.assertEqual(report.read_text(), "old report")
+                if target == "implementation":
+                    with patch.object(subject, "chudnovsky_pi") as generate:
+                        with self.assertRaisesRegex(ValueError, "differs from loaded implementation"):
+                            subject.run_experiment(config_path)
+                        generate.assert_not_called()
+
     def test_unimplemented_rules_rejected_before_generation(self) -> None:
         original = json.loads((ROOT / "EXPERIMENT.json").read_text())
         for field in pi_radix.SUPPORTED_RULES:

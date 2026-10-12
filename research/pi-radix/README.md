@@ -108,6 +108,12 @@ angular-symbol, and precision-verification rule strings from `EXPERIMENT.json`.
 Changing those labels cannot select a different algorithm. Unsupported or missing
 rules fail before generation, so receipts cannot claim behavior that was not run.
 
+Each evidence generator snapshots its source files before computing, uses those
+bytes for receipt hashes, and rejects sources changed before completion. Scanner
+and control modules also reject disk bytes that differ from the source captured
+when they loaded. Mid-run edits leave existing output files untouched. Apply the
+same unchanged-input requirement when regenerating independent verification.
+
 These resource limits reject infeasible requests rather than truncating evidence.
 The terminal gcd sieve retains `[1, 0]`, whose decoded value is the radix itself:
 it can be prime. Correcting this omission raises shared-number trial 192's

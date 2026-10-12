@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import math
+import shutil
 import sys
+import tempfile
 import unittest
 from collections import Counter
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -46,6 +50,28 @@ import pi_radix as scan
 
 
 class TestControls(unittest.TestCase):
+    def test_controls_reject_midrun_source_changes(self):
+        for changed_name in ("CONTROL_PLAN.md", "recurrence_controls.py", "receipts/pi-radix-scan-v1.json"):
+            with self.subTest(path=changed_name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory) / "pi-radix"
+                shutil.copytree(ROOT, root, ignore=shutil.ignore_patterns("__pycache__"))
+                def load(name):
+                    spec = importlib.util.spec_from_file_location(name, root / f"{name}.py")
+                    module = importlib.util.module_from_spec(spec)
+                    spec.loader.exec_module(module)
+                    return module
+                scanner = load("pi_radix")
+                with patch.dict(sys.modules, {"pi_radix": scanner}):
+                    subject = load("recurrence_controls")
+                original = subject.recurrence
+                def edit_during_count(streams):
+                    changed = root / changed_name
+                    changed.write_bytes(changed.read_bytes() + b"\n")
+                    return original(streams)
+                with patch.object(subject, "recurrence", side_effect=edit_during_count):
+                    with self.assertRaisesRegex(ValueError, "source changed during execution"):
+                        subject.run_controls(1)
+
     def test_prime_radix_zero_terminal_and_trial_192(self):
         self.assertEqual(controls.recurrence({3: [1, 0], 2: [1, 1]})["primes"],
                          [{"prime": 3, "bases": [2, 3]}])

@@ -87,6 +87,7 @@ from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parent
+LOADED_SOURCE = Path(__file__).read_bytes()
 DEFAULT_CONFIG = ROOT / "EXPERIMENT.json"
 DEFAULT_RECEIPT = ROOT / "receipts" / "pi-radix-scan-v1.json"
 DEFAULT_REPORT = ROOT / "docs" / "pi-radix-scan-v1.md"
@@ -115,6 +116,22 @@ def canonical_json_bytes(value: Any) -> bytes:
 
 def sha256_bytes(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def source_snapshot(paths: Iterable[Path]) -> dict[Path, bytes]:
+    """Capture receipt inputs before computation; never hash later substitutes."""
+    return {path: path.read_bytes() for path in paths}
+
+
+def require_unchanged(sources: dict[Path, bytes]) -> None:
+    for path, original in sources.items():
+        if path.read_bytes() != original:
+            raise ValueError(f"source changed during execution: {path}")
+
+
+def require_loaded(path: Path, loaded: bytes, sources: dict[Path, bytes]) -> None:
+    if sources[path] != loaded:
+        raise ValueError(f"source differs from loaded implementation: {path}")
 
 
 def n_fraction(value: Fraction) -> list[int]:
@@ -390,7 +407,10 @@ def horizon_count(base: int, bits: int) -> int:
 
 
 def load_config(path: Path) -> dict[str, Any]:
-    config = json.loads(path.read_text(encoding="utf-8"))
+    return validate_config(json.loads(path.read_bytes()))
+
+
+def validate_config(config: Any) -> dict[str, Any]:
     if not isinstance(config, dict):
         raise ValueError("experiment configuration must be an object")
     if config.get("schema") != "stack.pi-radix-experiment" or config.get("version") != "1.0.0":
@@ -448,7 +468,10 @@ def load_config(path: Path) -> dict[str, Any]:
 
 
 def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
-    config = load_config(config_path)
+    implementation = Path(__file__)
+    sources = source_snapshot((config_path, implementation))
+    require_loaded(implementation, LOADED_SOURCE, sources)
+    config = validate_config(json.loads(sources[config_path]))
     bases = config["bases"]
     count = config["fractional_symbol_count"]
     lengths = config["prime_block_lengths"]
@@ -500,8 +523,8 @@ def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         "standing": "COMPUTATION",
         "classification": "BASE_DEPENDENT_STRUCTURE_MEASURED",
         "base_independent_digit_law": "NOT_ESTABLISHED",
-        "config_sha256": sha256_bytes(config_path.read_bytes()),
-        "implementation_sha256": sha256_bytes(Path(__file__).read_bytes()),
+        "config_sha256": sha256_bytes(sources[config_path]),
+        "implementation_sha256": sha256_bytes(sources[implementation]),
         "precision_verification": {
             "required_decimal_digits": required,
             "executed_decimal_precisions": precisions,
@@ -524,6 +547,7 @@ def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
         ],
     }
     payload["receipt_sha256"] = sha256_bytes(canonical_json_bytes(payload))
+    require_unchanged(sources)
     return payload
 
 
