@@ -83,6 +83,37 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_unimplemented_rules_rejected_before_generation(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        for field in pi_radix.SUPPORTED_RULES:
+            for replacement in ("e" if field == "constant" else "unsupported rule", None):
+                with self.subTest(field=field, replacement=replacement), tempfile.TemporaryDirectory() as directory:
+                    config = original.copy()
+                    if replacement is None:
+                        del config[field]
+                    else:
+                        config[field] = replacement
+                    path = Path(directory) / "config.json"
+                    path.write_text(json.dumps(config))
+                    with patch.object(pi_radix, "chudnovsky_pi") as generate:
+                        with self.assertRaisesRegex(ValueError, f"unsupported {field}"):
+                            pi_radix.run_experiment(path)
+                        generate.assert_not_called()
+
+    def test_decimal_generation_work_rejected_before_generation(self) -> None:
+        original = json.loads((ROOT / "EXPERIMENT.json").read_text())
+        for bases, count, message in (([100000], 100000, "decimal precision"),
+                                      ([99999, 100000], 1600, "generation digit work")):
+            with self.subTest(bases=bases), tempfile.TemporaryDirectory() as directory:
+                config = original | dict(bases=bases, fractional_symbol_count=count,
+                                        matched_information_horizon_bits=17, prime_block_lengths=[1])
+                path = Path(directory) / "config.json"
+                path.write_text(json.dumps(config))
+                with patch.object(pi_radix, "chudnovsky_pi") as generate:
+                    with self.assertRaisesRegex(ValueError, message):
+                        pi_radix.run_experiment(path)
+                    generate.assert_not_called()
+
     def test_aggregate_admission_precedes_generation(self) -> None:
         original = json.loads((ROOT / "EXPERIMENT.json").read_text())
         cases = [

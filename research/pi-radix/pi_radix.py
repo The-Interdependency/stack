@@ -98,6 +98,14 @@ MAX_BASE = 100_000
 MAX_TOTAL_SYMBOLS = 100_000
 MAX_BLOCK_DIGIT_WORK = 2_000_000
 MAX_SIEVE_WORK = 2_000_000
+MAX_DECIMAL_DIGITS = 10_000
+MAX_GENERATION_DIGIT_WORK = 50_000_000
+SUPPORTED_RULES = {
+    "constant": "pi",
+    "canonical_block_rule": "the first symbol is nonzero",
+    "angular_symbol_rule": "digit d in base b maps to exp(2*pi*i*d/b); exact turn d/b, degrees 360*d/b, pi-radian coefficient 2*d/b",
+    "precision_verification": "generate independently at required decimal precision plus 80 and plus 180 guard digits; all requested symbols must agree",
+}
 MR_BASES_64 = (2, 325, 9375, 28178, 450775, 9780504, 1795265022)
 
 
@@ -383,8 +391,17 @@ def horizon_count(base: int, bits: int) -> int:
 
 def load_config(path: Path) -> dict[str, Any]:
     config = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(config, dict):
+        raise ValueError("experiment configuration must be an object")
     if config.get("schema") != "stack.pi-radix-experiment" or config.get("version") != "1.0.0":
         raise ValueError("unsupported experiment schema or version")
+    for field, implemented in SUPPORTED_RULES.items():
+        if config.get(field) != implemented:
+            raise ValueError(f"unsupported {field}: v1 implements {implemented!r}")
+    for field in ("questions", "nonclaims"):
+        values = config.get(field)
+        if not isinstance(values, list) or not values or any(not isinstance(v, str) or not v.strip() for v in values):
+            raise ValueError(f"{field} must contain nonempty text entries")
     bases = config.get("bases")
     lengths = config.get("prime_block_lengths")
     count = config.get("fractional_symbol_count")
@@ -415,6 +432,13 @@ def load_config(path: Path) -> dict[str, Any]:
     # before expensive horizon arithmetic or pi generation begins.
     if 2 * len(bases) * count * sum(lengths) > MAX_BLOCK_DIGIT_WORK:
         raise ValueError(f"aggregate block digit work limit is {MAX_BLOCK_DIGIT_WORK}")
+    required = required_decimal_digits(max(bases), count)
+    if required > MAX_DECIMAL_DIGITS:
+        raise ValueError(f"required decimal precision limit is {MAX_DECIMAL_DIGITS}")
+    # Bound both the Chudnovsky precision/term count and repeated high-precision
+    # extraction. Symbol count alone does not account for Decimal operand size.
+    if 2 * len(bases) * count * (required + 180) > MAX_GENERATION_DIGIT_WORK:
+        raise ValueError(f"aggregate generation digit work limit is {MAX_GENERATION_DIGIT_WORK}")
     matched_counts = [horizon_count(base, horizon) for base in bases]
     if min(matched_counts) < max(lengths):
         raise ValueError("matched information horizon is too small for configured blocks")

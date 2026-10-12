@@ -97,7 +97,16 @@ remain unchanged. Custom scans admit bases 2–100000 and decoded values through
 - at most 2000000 block-digit work units across both profiles, conservatively
   counted as `2 * number_of_bases * symbol_count * sum(block_lengths)`;
 - at most 2000000 alphabet entries scanned across both profiles, counted as
-  `2 * sum(bases)`; the sieve also rejects oversized direct calls before allocation.
+  `2 * sum(bases)`; the sieve also rejects oversized direct calls before allocation;
+- at most 10000 required decimal digits before guard digits, bounding the two
+  Chudnovsky calculations; and at most 50000000 generation digit-work units,
+  `2 * number_of_bases * symbol_count * (required_decimal_digits + 180)`,
+  bounding aggregate high-precision extraction as well as retained symbol count.
+
+Version 1 accepts only `constant: pi` and its implemented canonical-block,
+angular-symbol, and precision-verification rule strings from `EXPERIMENT.json`.
+Changing those labels cannot select a different algorithm. Unsupported or missing
+rules fail before generation, so receipts cannot claim behavior that was not run.
 
 These resource limits reject infeasible requests rather than truncating evidence.
 The terminal gcd sieve retains `[1, 0]`, whose decoded value is the radix itself:

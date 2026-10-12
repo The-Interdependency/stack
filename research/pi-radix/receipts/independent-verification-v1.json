@@ -2348,11 +2348,11 @@
   "schema": "stack.pi-radix-independent-verification",
   "sources_sha256": {
     "EXPERIMENT.json": "6e4ea3dd5884468c69ebe7d68a0c794d68bfaa1da838bb563a30be1853fd4d9f",
-    "docs/pi-radix-scan-v1.md": "5efa5605325fcddf2a53db61790108944f0b223ccc25723d37bca834ea87047e",
-    "docs/recurrence-controls-v1.md": "a9499873358990666c4bf975574e76ecb1ac7bbad691284b28987d0d98948691",
-    "pi_radix.py": "65d4f41b46220157e481daaa32254c114e373f6f146d39d725afa2b162e6b303",
-    "receipts/pi-radix-scan-v1.json": "31af8aafc6eda429c74948c79f0b5d5524be35de77d14c9d18ffe31732ba3609",
-    "receipts/recurrence-controls-v1.json": "ce558fd0f94e7b591f5f80f429c2a0054cd0c61b3a89fffc60984d767f848372",
+    "docs/pi-radix-scan-v1.md": "46f51875ce9585fdf37c9f7fe02ba77dd4371776f2aa390153155b3aa594f3c5",
+    "docs/recurrence-controls-v1.md": "2bb84f310d78961485a7e88f093f492ed6c95d63407e6eb56fed71a3428ba269",
+    "pi_radix.py": "7bece5f7807f40f11cbbdac4459734ea7d746fe5dcad4f633dd1399a3c586d56",
+    "receipts/pi-radix-scan-v1.json": "a30c2c92d165ce9df20f8ffcc28b304dafae9d8d97e726c24df3b0e3b19b2332",
+    "receipts/recurrence-controls-v1.json": "ccb8c967e953d3f6d43056f480c7ace4ec4f57cefc65586aa0634b38a83cfad6",
     "recurrence_controls.py": "a7d7473cbfd31deddc806e11158477cb87d15b5eba2bdb9297e84772b71643df",
     "verify_evidence.py": "6169b220119d002c5dcad64a325c75bb62cdf07f63f944ddbeb7828b26caa0b4"
   },
