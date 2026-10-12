@@ -475,7 +475,8 @@ def validate_config(config: Any) -> dict[str, Any]:
     return config
 
 
-def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
+def run_experiment(config_path: Path = DEFAULT_CONFIG, *,
+                   source_state: dict[Path, bytes] | None = None) -> dict[str, Any]:
     implementation = Path(__file__)
     sources = source_snapshot((config_path, implementation))
     require_loaded(implementation, LOADED_SOURCE, sources)
@@ -556,6 +557,9 @@ def run_experiment(config_path: Path = DEFAULT_CONFIG) -> dict[str, Any]:
     }
     payload["receipt_sha256"] = sha256_bytes(canonical_json_bytes(payload))
     require_unchanged(sources)
+    if source_state is not None:
+        source_state.clear()
+        source_state.update(sources)
     return payload
 
 
@@ -708,7 +712,8 @@ def render_report(receipt: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iterable[Path] = ()) -> None:
+def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iterable[Path] = (), *,
+                      source_state: dict[Path, bytes] | None = None) -> None:
     """Stage every artifact before replacing any; roll back caught I/O failures.
 
     Aliased outputs and input/output collisions are rejected. A Git commit is
@@ -716,7 +721,9 @@ def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iter
     separate filesystem paths cannot provide simultaneous visibility to readers.
     """
     targets = [(path.resolve(), data) for path, data in artifacts]
-    protected = [path.resolve() for path in protected_paths]
+    sources = dict(source_state or {})
+    require_unchanged(sources)
+    protected = [path.resolve() for path in (*protected_paths, *sources)]
     def aliases(left: Path, right: Path) -> bool:
         return left == right or (left.exists() and right.exists() and left.samefile(right))
     for index, (path, _) in enumerate(targets):
@@ -747,9 +754,11 @@ def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iter
             backups[path] = stage(path, path.read_bytes(), "rollback", mode) if path.exists() else None
             staged[path] = stage(path, data, "candidate", mode)
         try:
+            require_unchanged(sources)
             for path, _ in targets:
                 os.replace(staged[path], path)
                 published.append(path)
+            require_unchanged(sources)
         except BaseException as error:
             failures = []
             for path in reversed(published):
@@ -771,13 +780,15 @@ def publish_artifacts(artifacts: list[tuple[Path, bytes]], protected_paths: Iter
             path.unlink(missing_ok=True)
 
 
-def write_outputs(receipt: dict[str, Any], output: Path, report: Path,
-                  protected_paths: Iterable[Path] = (Path(__file__), DEFAULT_CONFIG)) -> None:
+def write_outputs(receipt: dict[str, Any], output: Path, report: Path, *,
+                  source_state: dict[Path, bytes]) -> None:
+    if not source_state:
+        raise ValueError("receipt publication requires the generator source snapshot")
     # Complete both renderings before modifying either artifact.
     report_text = render_report(receipt)
     receipt_text = json.dumps(receipt, indent=2, sort_keys=True) + "\n"
     publish_artifacts([(output, receipt_text.encode("utf-8")), (report, report_text.encode("utf-8"))],
-                      protected_paths)
+                      source_state=source_state)
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
@@ -793,9 +804,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv)
     if args.command == "scan":
-        receipt = run_experiment(args.config.resolve())
+        sources: dict[Path, bytes] = {}
+        receipt = run_experiment(args.config.resolve(), source_state=sources)
         write_outputs(receipt, args.output.resolve(), args.report.resolve(),
-                      (args.config.resolve(), Path(__file__)))
+                      source_state=sources)
         print(f'pi-radix: wrote {args.output} and {args.report}; receipt {receipt["receipt_sha256"]}')
         return 0
     raise AssertionError("unreachable command")

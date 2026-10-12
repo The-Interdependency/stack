@@ -84,21 +84,77 @@ SPEC.loader.exec_module(pi_radix)
 
 
 class TestPiRadix(unittest.TestCase):
+    def test_writer_rechecks_sources_after_generation_and_rendering(self) -> None:
+        for phase in ("after generation", "rendering"):
+            with self.subTest(phase=phase), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                config = json.loads(pi_radix.DEFAULT_CONFIG.read_text())
+                config.update(bases=[30], fractional_symbol_count=30, matched_information_horizon_bits=100)
+                config_path = root / "config.json"
+                config_path.write_text(json.dumps(config))
+                sources = {}
+                receipt = pi_radix.run_experiment(config_path, source_state=sources)
+                output, report = root / "receipt", root / "report"
+                output.write_bytes(b"old receipt")
+                report.write_bytes(b"old report")
+                def change_source():
+                    config_path.write_bytes(config_path.read_bytes() + b"\n")
+                original = pi_radix.render_report
+                def render_and_change(value):
+                    change_source()
+                    return original(value)
+                if phase == "after generation":
+                    change_source()
+                with patch.object(pi_radix, "render_report", side_effect=render_and_change if phase == "rendering" else original):
+                    with self.assertRaisesRegex(ValueError, "source changed during execution"):
+                        pi_radix.write_outputs(receipt, output, report, source_state=sources)
+                self.assertEqual(output.read_bytes(), b"old receipt")
+                self.assertEqual(report.read_bytes(), b"old report")
+
+    def test_publication_rechecks_sources_during_staging_and_replacement(self) -> None:
+        for phase in ("staging", "replacement"):
+            with self.subTest(phase=phase), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source, output, report = root / "source", root / "receipt", root / "report"
+                source.write_bytes(b"old source")
+                output.write_bytes(b"old receipt")
+                report.write_bytes(b"old report")
+                sources = pi_radix.source_snapshot([source])
+                original_stage, original_replace = pi_radix.tempfile.mkstemp, pi_radix.os.replace
+                def stage_and_change(*args, **kwargs):
+                    result = original_stage(*args, **kwargs)
+                    if phase == "staging" and kwargs["prefix"].startswith(".report.candidate."):
+                        source.write_bytes(b"changed source")
+                    return result
+                def replace_and_change(candidate, target):
+                    result = original_replace(candidate, target)
+                    if phase == "replacement" and target == output:
+                        source.write_bytes(b"changed source")
+                    return result
+                with patch.object(pi_radix.tempfile, "mkstemp", side_effect=stage_and_change), \
+                     patch.object(pi_radix.os, "replace", side_effect=replace_and_change):
+                    with self.assertRaisesRegex(ValueError, "source changed during execution"):
+                        pi_radix.publish_artifacts([(output, b"new receipt"), (report, b"new report")], source_state=sources)
+                self.assertEqual(output.read_bytes(), b"old receipt")
+                self.assertEqual(report.read_bytes(), b"old report")
+                self.assertFalse(list(root.glob(".*")))
+
     def test_publication_rejects_aliases_and_input_collisions(self) -> None:
         receipt = json.loads(pi_radix.DEFAULT_RECEIPT.read_text())
+        sources = pi_radix.source_snapshot([Path(pi_radix.__file__), pi_radix.DEFAULT_CONFIG])
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             output, alias = root / "receipt", root / "alias"
             output.write_bytes(b"old")
             with self.assertRaisesRegex(ValueError, "must not alias"):
-                pi_radix.write_outputs(receipt, output, output)
+                pi_radix.write_outputs(receipt, output, output, source_state=sources)
             alias.symlink_to(output)
             with self.assertRaisesRegex(ValueError, "must not alias"):
-                pi_radix.write_outputs(receipt, output, alias)
+                pi_radix.write_outputs(receipt, output, alias, source_state=sources)
             alias.unlink()
             os.link(output, alias)
             with self.assertRaisesRegex(ValueError, "must not alias"):
-                pi_radix.write_outputs(receipt, output, alias)
+                pi_radix.write_outputs(receipt, output, alias, source_state=sources)
             with self.assertRaisesRegex(ValueError, "aliases an input"):
                 pi_radix.publish_artifacts([(alias, b"new")], [output])
             self.assertEqual(output.read_bytes(), b"old")
@@ -329,7 +385,8 @@ class TestPiRadix(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "config.json"
             path.write_text(json.dumps(config))
-            receipt = pi_radix.run_experiment(path)
+            sources = {}
+            receipt = pi_radix.run_experiment(path, source_state=sources)
             report = pi_radix.render_report(receipt)
             self.assertIn("first 30 fractional symbols", report)
             self.assertIn("100-bit profile", report)
@@ -339,7 +396,7 @@ class TestPiRadix(unittest.TestCase):
             projection.write_text("unchanged")
             with patch.object(pi_radix, "render_report", side_effect=ValueError("injected")):
                 with self.assertRaises(ValueError):
-                    pi_radix.write_outputs(receipt, output, projection)
+                    pi_radix.write_outputs(receipt, output, projection, source_state=sources)
             self.assertEqual(output.read_text(), "unchanged")
             self.assertEqual(projection.read_text(), "unchanged")
 

@@ -2349,15 +2349,15 @@
   "sources_sha256": {
     "CONTROL_PLAN.md": "754bc985fd4b6a79a35b0217d7fddfe49cd94cff25467ce988f6bf2a9bb7b6bb",
     "EXPERIMENT.json": "6e4ea3dd5884468c69ebe7d68a0c794d68bfaa1da838bb563a30be1853fd4d9f",
-    "docs/pi-radix-scan-v1.md": "f019c2f4143e7539d7324bb2bea5eeff4eb075e4c81afc6533e176c37dc41f9b",
-    "docs/recurrence-controls-v1.md": "498373048a95d6de7654fbc768a2f442f6e740a1166385ccdf71d1a657924132",
-    "pi_radix.py": "2ea946ba663bcdc734693d5524f4dd6a08b0e44ed90beaaec2c1d3afa74f8a30",
-    "receipts/pi-radix-scan-v1.json": "4d9befa916d7b83d5337c2c699ffb62ecf951932c3fc33f889a6381a94a89465",
-    "receipts/recurrence-controls-v1.json": "31c793785c324e3d8b06d038648f4186f8cbe7d1ea0b37c3e75bdd635463b8cd",
-    "recurrence_controls.py": "c9b1594b4e140ac5f946bfcebaf26d043f8be0a5c65c3476ec14f4d51ed1b453",
-    "tests/test_pi_radix.py": "cd0a2abcc5626f73f8536e84d5ec74fa507a3fcbf00f2bca05246155d37911d9",
+    "docs/pi-radix-scan-v1.md": "f3c26cd91fd84e2d6bb5122c13c9dea2953e5656a797dcec0ccd6ea2b20fb30a",
+    "docs/recurrence-controls-v1.md": "d8e2a4463cd2745787a2e44839b972d8cfa88073bfbdeced57dd313d5031b153",
+    "pi_radix.py": "046657039bcef70964f6650a624df7c4a4caffda73861c9e2e38d4b222b84fd3",
+    "receipts/pi-radix-scan-v1.json": "1b3571c16f6db45b50b264771bd8754cd6222293dee4a93844b73c8f7c1bfb56",
+    "receipts/recurrence-controls-v1.json": "a08b9836acbe2bf91ddba1b44f6a63873e352a944abd9a092ed1809ee84d1ba7",
+    "recurrence_controls.py": "8561063bdea563525f914cba9063010d8bfe99ad8836dce3eb9e103e935e9fec",
+    "tests/test_pi_radix.py": "fc5a363499a77ec8af95c8b64e3e66f94bcc866462902c6f1a86f2141f9fdfb3",
     "tests/test_recurrence_controls.py": "e01e71308fb370f3c91aa44e89eaf049133b2502a6c15981b8384d31523012cf",
-    "verify_evidence.py": "292b03a16d516a5002ba19c5c7f698e7a67a0e3509541cf8b1a614756ee723b6"
+    "verify_evidence.py": "be556cbd58ec6241e766b3f5dd35a500a9c74ad7f98181a0163c53f8d060ad2f"
   },
   "standing": "COMPUTATION",
   "version": "1.0.0"

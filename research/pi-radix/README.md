@@ -113,6 +113,12 @@ bytes for receipt hashes, and rejects sources changed before completion. Scanner
 and control modules also reject disk bytes that differ from the source captured
 when they loaded. Mid-run edits leave existing output files untouched. Apply the
 same unchanged-input requirement when regenerating independent verification.
+The captured bytes travel through rendering and staging to publication. Inputs
+are checked again immediately before replacement and after the replacements;
+drift during publication rolls the outputs back. Python callers that publish a
+scan must pass one `source_state` dictionary to `run_experiment` and then to
+`write_outputs`; the CLI carries it automatically. Controls and independent
+verification follow the same publication contract.
 
 Publication rejects identical, symlink-aliased, and hard-linked destinations,
 and rejects output/input collisions. It stages all rendered outputs and recovery

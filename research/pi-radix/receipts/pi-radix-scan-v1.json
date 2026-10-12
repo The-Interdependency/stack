@@ -21785,7 +21785,7 @@
     "Cross-base recurrence of a decoded prime does not establish a generating law.",
     "No statistical claim about normality is licensed by this finite prefix."
   ],
-  "implementation_sha256": "2ea946ba663bcdc734693d5524f4dd6a08b0e44ed90beaaec2c1d3afa74f8a30",
+  "implementation_sha256": "046657039bcef70964f6650a624df7c4a4caffda73861c9e2e38d4b222b84fd3",
   "matched_information_profile": {
     "base_results": [
       {
@@ -22269,7 +22269,7 @@
     ],
     "required_decimal_digits": 1730
   },
-  "receipt_sha256": "c68f6020cc71e599f260f5c583f10374b8ebbbfcc5aa8ce27582a440c4012bef",
+  "receipt_sha256": "f87c27c7866eca6a02cb288def89f681b34d721ad5a8a59e23e8ade8ea644bd1",
   "schema": "stack.pi-radix-scan-receipt",
   "standing": "COMPUTATION",
   "version": "1.0.0"

@@ -111,7 +111,7 @@ def phase_pairs(streams):
     return matches
 
 
-def verify():
+def verify(*, source_state: dict[Path, bytes] | None = None):
     sources = scan.source_snapshot(SOURCE_PATHS)
     for path, loaded in ((Path(__file__), LOADED_SOURCE), (ROOT / "pi_radix.py", scan.LOADED_SOURCE),
                          (ROOT / "recurrence_controls.py", controls.LOADED_SOURCE)):
@@ -165,6 +165,9 @@ def verify():
         if (index + 1) % 25 == 0:
             print(f"independent verification: {index + 1}/199 trials", flush=True)
     scan.require_unchanged(sources)
+    if source_state is not None:
+        source_state.clear()
+        source_state.update(sources)
     return {
         "schema": "stack.pi-radix-independent-verification", "version": "1.0.0",
         "standing": "COMPUTATION", "oracle": "GNU coreutils factor; complete integer factorization",
@@ -181,10 +184,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--write", action="store_true")
     args = parser.parse_args()
-    receipt = verify()
+    sources: dict[Path, bytes] = {}
+    receipt = verify(source_state=sources)
     rendered = json.dumps(receipt, sort_keys=True, indent=2) + "\n"
     if args.write:
-        scan.publish_artifacts([(OUTPUT, rendered.encode())], SOURCE_PATHS)
+        scan.publish_artifacts([(OUTPUT, rendered.encode())], source_state=sources)
     else:
         require(OUTPUT.read_text() == rendered, "independent verification receipt differs")
+        scan.require_unchanged(sources)
     print(f"Verified {receipt['distinct_values_factored']} distinct integers and {receipt['control_counts_compared']} control counts")

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "9d5fb743f7a5074dc82d2121d971002263cd47e8858fa8373cef8ea66bea407b",
+  "work_graph_sha256": "6cefb08422ba1bdb251520215e5def5bb0077e62946aa1502a9e93ff8d86a53f",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -72,7 +72,8 @@
       "skill-lib remains a special operational snapshot at stack root rather than following the libs/research pair",
       "Weave has an explicit Stack-owned native binary sequence-cycle candidate with exact recovery; other profiles, private/public lifting, authentication/state and full-cipher security remain unresolved.",
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
-      "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement."
+      "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement.",
+      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes."
     ]
   },
   "research_participants": [

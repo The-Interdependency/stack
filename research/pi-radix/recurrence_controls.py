@@ -159,7 +159,7 @@ def summary(observed: int, counts: list[int]) -> dict:
     }
 
 
-def run_controls(trials: int = TRIALS) -> dict:
+def run_controls(trials: int = TRIALS, *, source_state: dict[Path, bytes] | None = None) -> dict:
     if type(trials) is not int or not 1 <= trials <= TRIALS:
         raise ValueError("trial count outside fixed bounded plan")
     sources = scan.source_snapshot(SOURCE_PATHS)
@@ -227,6 +227,9 @@ def run_controls(trials: int = TRIALS) -> dict:
     }
     result["receipt_sha256"] = scan.sha256_bytes(scan.canonical_json_bytes(result))
     scan.require_unchanged(sources)
+    if source_state is not None:
+        source_state.clear()
+        source_state.update(sources)
     return result
 
 
@@ -275,10 +278,11 @@ def render_report(result: dict) -> str:
 
 
 def main() -> None:
-    result = run_controls()
+    sources: dict[Path, bytes] = {}
+    result = run_controls(source_state=sources)
     report = render_report(result)
     scan.publish_artifacts([(RECEIPT, (json.dumps(result, sort_keys=True, indent=2) + "\n").encode()),
-                            (REPORT, report.encode())], SOURCE_PATHS)
+                            (REPORT, report.encode())], source_state=sources)
     print(report)
 
 
