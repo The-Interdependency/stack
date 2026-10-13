@@ -15,6 +15,14 @@ Repo-local copies may exist under:
 
 Propagation PRs should cite this repository and the source commit SHA.
 
+Selected propagation includes the transitive `depends_on` prerequisites from
+`skills.json`. For example, `python tools/propagate_skills.py ../a0 --skills
+agent-instantiation --apply` installs both the requested skill and `wdll`.
+Verify the result with `python tools/check_consumer_drift.py ../a0
+--require-vendored`: the checker requires that same dependency closure, including
+its canonical files and referenced doctrine. Missing prerequisites and invalid
+dependency graphs fail; unrelated unvendored skills remain outside the subset.
+
 ## Installed skills
 
 * `msdmd/` — Module Self-Declared Metadata Markdown
@@ -51,6 +59,7 @@ Propagation PRs should cite this repository and the source commit SHA.
 * `loop-eng/` — closed-loop engineering doctrine for repeatable Discover→Plan→Execute→Verify→Iterate workflows
 * `fresh-making/` — deterministic derivation freshness, minimal affected rebuild closure, executor-independent restoration, verification, and receipts
 * `action-calibration/` — action sizing doctrine for minimal decisive experiments, maximal coherent programs, prerequisite repair, and immediate containment
+* `wdll/` — executive job selection, state-transition scope, falsifiable completion, and strategic advancement for spawned work
 * `repo-audit-repair/` — evidence-led repository audit, classified findings, authorized repair, and terminal verification
 * `skill-build/` — skill authoring, compliance, and individualized test-suite question workflow
 * `skill-usage/` — evidence-bearing local invocation counts and maturity designations
@@ -83,6 +92,9 @@ detector (`.github/workflows/consumer-drift.yml`) checks:
 * `The-Interdependency/pubskill-lib`
 * `The-Interdependency/epac`
 * `The-Interdependency/stack`
+* `The-Interdependency/uchc`
+* `The-Interdependency/tiwcg`
+* `The-Interdependency/The-Interdependency.github.io`
 
 **Targets not in the drift matrix** (do not vendor a top-level subset yet, so
 `--require-vendored` would fail them):
@@ -127,7 +139,8 @@ Native reader runtimes must be installed where the collector runs, from the
 skill's own directory (`msdmd/` here, `.agents/skills/msdmd/` in consumers):
 `python -m pip install -r <skill>/requirements.txt` and
 `npm ci --ignore-scripts --prefix <skill>` (Node required). The collector exits
-**3** without writing when a runtime is missing (opt-out:
+**3** without writing when a runtime is missing or a native reader worker
+fails, prints no complete result or times out (opt-out:
 `--allow-missing-reader-runtimes`, which writes output marked
 `runtime-unavailable` and still warns) and **4** without writing when the
 `--import-path` helper is older than the schema-2 output

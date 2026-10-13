@@ -99,6 +99,18 @@ class WorkerSandboxRunTests(unittest.TestCase):
                 self.assertIn(expected, result.stderr)
                 self.assertNotIn("ARG:", result.stdout)
 
+    def test_module_build_marker_stands_alone(self):
+        # The END marker must be its own line, not fused with the Usage comment.
+        lines = SCRIPT.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(1, lines.count("# === MODULE_BUILD ==="))
+        self.assertEqual(1, lines.count("# === END MODULE_BUILD ==="))
+        end = lines.index("# === END MODULE_BUILD ===")
+        self.assertLess(lines.index("# === MODULE_BUILD ==="), end)
+        usage = [i for i, line in enumerate(lines) if line.startswith("# Usage:")]
+        self.assertEqual(1, len(usage))
+        self.assertGreater(usage[0], end)
+        self.assertFalse(any("END MODULE" in line and "Usage" in line for line in lines))
+
 
 if __name__ == "__main__":
     unittest.main()
