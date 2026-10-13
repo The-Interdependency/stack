@@ -1,5 +1,6 @@
-# ratios: loc_comments=285:29 imports_exports=12:30 calls_definitions=152:32
+# ratios: loc_comments=431:60 imports_exports=16:36 calls_definitions=246:43
 """Witnesses for the accepted thirteen-rule profile, including hostile records."""
+from contextlib import closing
 from copy import deepcopy
 from dataclasses import replace
 import json
@@ -12,6 +13,7 @@ from english_gonol.language.source import LexemeRecord, SenseRecord, SynsetRecor
 from english_gonol.structural_rules import segment, canonical
 from english_gonol.structural_construct import StructuralError, build, verify, _manifest
 from english_gonol.structural_query import StructuralField
+from english_gonol.hyperspace_construct import glyph_inventory
 
 # === CHECKS ===
 # id: check_structural_scalar_recovery
@@ -37,6 +39,36 @@ from english_gonol.structural_query import StructuralField
 # id: check_structural_replay
 #   proves: structural_complete_replay
 #   call: self::test_complete_rebuild_and_tamper
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_query_snapshot
+#   proves: structural_queries_keep_verified_snapshot
+#   call: self::test_external_changes_cannot_replace_verified_query_rows
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_snapshot_cleanup
+#   proves: structural_queries_keep_verified_snapshot
+#   call: self::test_verified_snapshot_closes_on_initialization_failure
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_snapshot_lifetime
+#   proves: structural_queries_keep_verified_snapshot
+#   call: self::test_verified_snapshot_readonly_and_close
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_evidence_canonical_bytes
+#   proves: structural_complete_replay
+#   call: self::test_resealed_noncanonical_evidence_is_rejected
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_metadata_canonical_bytes
+#   proves: structural_complete_replay
+#   call: self::test_resealed_noncanonical_metadata_is_rejected
+#   mutates: filesystem
+#   cleanup: pytest_tmp_path
+# id: check_structural_glyph_axis_inventory
+#   proves: structural_atomic_recovery
+#   call: self::test_word_glyph_axes_follow_inventory
 #   mutates: filesystem
 #   cleanup: pytest_tmp_path
 # === END CHECKS ===
@@ -248,7 +280,7 @@ def test_completeness_requires_boolean(tmp_path, value):
 def test_resealed_metadata_boundary_refuses(tmp_path, key, value):
     root = tmp_path / "state"
     make(root)
-    reseal(root, lambda db: db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, json.dumps(value))))
+    reseal(root, lambda db: db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, canonical(value).decode("utf-8"))))
     with pytest.raises(StructuralError):
         verify(root)
 
@@ -258,7 +290,7 @@ def test_resealed_pinned_source_claim_requires_all_evidence(tmp_path):
     root = tmp_path / "state"
     make(root)
     def change(db):
-        db.execute("UPDATE meta SET value=? WHERE key='source'", (json.dumps(PINNED_SOURCE),))
+        db.execute("UPDATE meta SET value=? WHERE key='source'", (canonical(PINNED_SOURCE).decode("utf-8"),))
         db.execute("UPDATE meta SET value='true' WHERE key='complete_corpus'")
     reseal(root, change)
     with pytest.raises(StructuralError, match="source evidence digest"):
@@ -276,7 +308,7 @@ def test_unused_included_source_evidence_cannot_be_resealed(tmp_path, kind, fiel
     def change(db):
         payload = json.loads(db.execute("SELECT payload FROM evidence WHERE kind=? AND ordinal=0", (kind,)).fetchone()[0])
         payload[field] = value
-        db.execute("UPDATE evidence SET payload=? WHERE kind=? AND ordinal=0", (json.dumps(payload), kind))
+        db.execute("UPDATE evidence SET payload=? WHERE kind=? AND ordinal=0", (canonical(payload).decode("utf-8"), kind))
     reseal(root, change)
     with pytest.raises(StructuralError, match="source evidence digest"):
         verify(root)
@@ -376,4 +408,163 @@ def test_ascii_single_quote_is_a_terminal_closer(punctuation_field, text):
     assert not query["refusals"]
     assert punctuation_field.compose(query, relation="sentence")["standing"] == "logically-closed"
     assert punctuation_field.replay(query) == query
-# ratios: loc_comments=285:29 imports_exports=12:30 calls_definitions=152:32
+
+
+@pytest.mark.parametrize("operation", ["update", "replace"])
+@pytest.mark.parametrize("timing", ["before-first-query", "after-first-query"])
+def test_external_changes_cannot_replace_verified_query_rows(tmp_path, monkeypatch, operation, timing):
+    from english_gonol import structural_query
+    root = tmp_path / "state"
+    make(root)
+    path = root / "construct.db"
+    replacement = tmp_path / "replacement.db"
+    replacement.write_bytes(path.read_bytes())
+    if operation == "update":
+        # WAL permits a committed writer while the verified reader stays open.
+        with closing(sqlite3.connect(path)) as db:
+            assert db.execute("PRAGMA journal_mode=WAL").fetchone() == ("wal",)
+    with StructuralField(root) as original:
+        expected_word = original.word("geometry")
+        rid = original.db.execute("SELECT MIN(id) FROM records WHERE kind='definition'").fetchone()[0]
+        expected_definition = original.definition(rid)
+        expected_query = original.construct("geometry")
+        expected_manifest = original.manifest
+    mutations = []
+
+    def mutate():
+        target = path if operation == "update" else replacement
+        with closing(sqlite3.connect(target)) as db:
+            db.execute("UPDATE words SET surface='forged' WHERE surface='geometry'")
+            db.execute("UPDATE records SET text='forged' WHERE kind='definition'")
+            db.commit()
+        if operation == "replace":
+            replacement.replace(path)
+        mutations.append(operation)
+
+    original_canonical = structural_query.canonical
+    def mutate_after_verification(value):
+        if timing == "before-first-query" and not mutations:
+            mutate()
+        return original_canonical(value)
+    monkeypatch.setattr(structural_query, "canonical", mutate_after_verification)
+    with StructuralField(root) as field:
+        if timing == "after-first-query":
+            assert field.word("geometry") == expected_word
+            assert field.definition(rid) == expected_definition
+            mutate()
+        assert mutations == [operation]
+        assert field.word("geometry") == expected_word
+        assert field.definition(rid) == expected_definition
+        assert field.construct("geometry") == expected_query
+        assert field.manifest == expected_manifest
+        assert "forged" not in field.words
+    with pytest.raises(StructuralError, match="receipt"):
+        verify(root)
+
+
+@pytest.mark.parametrize("stage", ["verification", "initialization"])
+def test_verified_snapshot_closes_on_initialization_failure(tmp_path, monkeypatch, stage):
+    from english_gonol import structural_construct, structural_query
+    root = tmp_path / "state"
+    make(root)
+    connections = []
+    original_open = structural_construct.open_readonly
+    def track_open(path):
+        db = original_open(path)
+        connections.append(db)
+        return db
+    monkeypatch.setattr(structural_construct, "open_readonly", track_open)
+    if stage == "verification":
+        manifest = json.loads((root / "manifest.json").read_bytes())
+        manifest["receipt_sha256"] = "forged"
+        (root / "manifest.json").write_bytes(canonical(manifest))
+    else:
+        def refuse_inventory(_db):
+            raise StructuralError("inventory failure")
+        monkeypatch.setattr(structural_query, "glyph_inventory", refuse_inventory)
+    with pytest.raises(StructuralError):
+        StructuralField(root)
+    assert len(connections) == 1
+    with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+        connections[0].execute("SELECT 1")
+
+
+def test_verified_snapshot_readonly_and_close(tmp_path):
+    root = tmp_path / "state"
+    make(root)
+    with StructuralField(root) as field:
+        assert field.db.in_transaction
+        with pytest.raises(sqlite3.OperationalError, match="readonly"):
+            field.db.execute("UPDATE words SET surface='forged'")
+    with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+        field.db.execute("SELECT 1")
+    field.close()
+    with pytest.raises(RuntimeError, match="caller failure"):
+        with StructuralField(root) as field:
+            raise RuntimeError("caller failure")
+    with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+        field.db.execute("SELECT 1")
+
+
+@pytest.mark.parametrize("kind", ["lexeme", "synset"])
+@pytest.mark.parametrize("variant", ["pretty", "escape", "duplicate-key"])
+def test_resealed_noncanonical_evidence_is_rejected(tmp_path, kind, variant):
+    root = tmp_path / "state"
+    make(root)
+    def change(db):
+        raw = db.execute("SELECT payload FROM evidence WHERE kind=? AND ordinal=0", (kind,)).fetchone()[0]
+        item = json.loads(raw)
+        if variant == "pretty":
+            mutated = json.dumps(item, ensure_ascii=False, indent=2, sort_keys=True)
+        elif variant == "escape":
+            mutated = raw.replace("geometry", "\\u0067eometry")
+        else:
+            key = next(iter(item))
+            mutated = "{" + canonical(key).decode() + ":" + canonical(item[key]).decode() + "," + raw[1:]
+        assert mutated != raw and json.loads(mutated) == item
+        db.execute("UPDATE evidence SET payload=? WHERE kind=? AND ordinal=0", (mutated, kind))
+    reseal(root, change)
+    with pytest.raises(StructuralError, match="noncanonical source evidence"):
+        verify(root)
+    with pytest.raises(StructuralError, match="noncanonical source evidence"):
+        StructuralField(root)
+
+
+@pytest.mark.parametrize("carrier", [False, True])
+def test_word_glyph_axes_follow_inventory(tmp_path, carrier):
+    root = tmp_path / "state"
+    positions = {c: i for i, c in enumerate("ytromge.")} if carrier else {}
+    build(snapshot(), out_dir=root, public_position=positions.get, producer={"standing": "fixture-only"})
+    with StructuralField(root) as field:
+        word = field.word("geometry")
+        inventory = glyph_inventory(field.db)
+        assert word["glyph_axis_set"] == sorted({inventory[c].axis_index for c in "geometry"})
+        assert word["glyph_axis_set"] != sorted(set(word["glyph_ids"]))
+        assert word["glyph_axis_set"] == (list(range(7)) if carrier else sorted({gid - 1 for gid in word["glyph_ids"]}))
+        assert word["occurrence_count"] == 8
+        assert word["glyph_ids"][1] == word["glyph_ids"][4]
+        assert word["glyph_origin"] == "O_G"
+        assert word["gonal_order"] == "hmmm:UCNS_OPERATION_REQUIRED"
+
+
+@pytest.mark.parametrize("variant", ["pretty", "escape", "duplicate-key"])
+def test_resealed_noncanonical_metadata_is_rejected(tmp_path, variant):
+    root = tmp_path / "state"
+    make(root)
+    def change(db):
+        raw = db.execute("SELECT value FROM meta WHERE key='producer'").fetchone()[0]
+        item = json.loads(raw)
+        if variant == "pretty":
+            mutated = json.dumps(item, ensure_ascii=False, indent=2, sort_keys=True)
+        elif variant == "escape":
+            mutated = raw.replace("fixture", "\\u0066ixture")
+        else:
+            mutated = '{"standing":"fixture-only",' + raw[1:]
+        assert mutated != raw and json.loads(mutated) == item
+        db.execute("UPDATE meta SET value=? WHERE key='producer'", (mutated,))
+    reseal(root, change)
+    with pytest.raises(StructuralError, match="noncanonical metadata"):
+        verify(root)
+    with pytest.raises(StructuralError, match="noncanonical metadata"):
+        StructuralField(root)
+# ratios: loc_comments=431:60 imports_exports=16:36 calls_definitions=246:43

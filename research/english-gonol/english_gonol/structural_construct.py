@@ -1,4 +1,4 @@
-# ratios: loc_comments=364:50 imports_exports=15:6 calls_definitions=210:15
+# ratios: loc_comments=377:51 imports_exports=15:6 calls_definitions=218:16
 """Complete English structural construction and byte-stable replay.
 
 Usage: python -m english_gonol.structural_construct build --source-root PATH
@@ -8,7 +8,7 @@ The source/profile/producer identity is part of the graph, not a renderer flag.
 from __future__ import annotations
 
 import argparse
-from contextlib import closing
+from contextlib import closing, contextmanager
 from dataclasses import asdict
 from hashlib import sha256
 import json
@@ -57,7 +57,7 @@ from english_gonol.structural_rules import (
 #   then: preserve constituent direct/chain relations, definition succession and explicit unresolved compound origins
 # id: structural_complete_replay
 #   given: a materialized structural field
-#   then: reconstruct every source text and verify graph bytes, source evidence, policy, counts and receipt
+#   then: reconstruct every source text and verify canonical graph/evidence bytes, policy, counts and receipt in one stable read transaction
 # === END CONTRACTS ===
 
 SCHEMA = "english-gonol.structural-construct"
@@ -264,13 +264,15 @@ def _schema(db: sqlite3.Connection) -> list:
                       "WHERE name NOT GLOB 'sqlite_*' ORDER BY type,name").fetchall()
 
 
-def verify(out_dir: str | Path) -> dict:
-    """Verify complete canonical rows and independently recover all source spans."""
+@contextmanager
+def _verified_connection(out_dir: str | Path):
+    """Keep verification and subsequent reads on one snapshot until closed."""
     root = Path(out_dir)
     manifest = json.loads((root / "manifest.json").read_bytes())
     if (manifest.get("schema"), manifest.get("version")) != (SCHEMA, VERSION):
         raise StructuralError("schema/version mismatch")
     with closing(open_readonly(root / "construct.db")) as db:
+        db.execute("BEGIN")
         with closing(sqlite3.connect(":memory:")) as expected:
             expected.executescript(SQL)
             if _schema(db) != _schema(expected):
@@ -280,6 +282,9 @@ def verify(out_dir: str | Path) -> dict:
             raise StructuralError("table set mismatch")
         if db.execute("PRAGMA integrity_check").fetchone() != ("ok",) or db.execute("PRAGMA foreign_key_check").fetchone():
             raise StructuralError("database integrity failure")
+        for _key, value in db.execute("SELECT key,value FROM meta"):
+            if value != _encoded(json.loads(value)):
+                raise StructuralError("noncanonical metadata payload")
         if _manifest(db) != manifest:
             raise StructuralError("receipt or manifest mismatch")
         meta = manifest["metadata"]
@@ -350,7 +355,13 @@ def verify(out_dir: str | Path) -> dict:
                     raise StructuralError("lexical origin mismatch")
             if state != ("attached" if origin is not None else "hmmm:compound-lexical-origin"):
                 raise StructuralError("origin status mismatch")
-    return manifest
+        yield db, manifest
+
+
+def verify(out_dir: str | Path) -> dict:
+    """Verify canonical rows and source spans, then close the read snapshot."""
+    with _verified_connection(out_dir) as (_db, manifest):
+        return manifest
 
 
 def _verify_source(db: sqlite3.Connection, meta: dict) -> None:
@@ -360,7 +371,12 @@ def _verify_source(db: sqlite3.Connection, meta: dict) -> None:
         rows = db.execute("SELECT ordinal,payload FROM evidence WHERE kind=? ORDER BY ordinal", (kind,)).fetchall()
         if [r[0] for r in rows] != list(range(len(rows))):
             raise StructuralError("source evidence order mismatch")
-        evidence[kind] = [json.loads(r[1]) for r in rows]
+        evidence[kind] = []
+        for _ordinal, payload in rows:
+            item = json.loads(payload)
+            if payload != _encoded(item):
+                raise StructuralError("noncanonical source evidence payload")
+            evidence[kind].append(item)
     evidence_sha256 = _evidence_digest(
         (kind, i, item) for kind in ("lexeme", "synset")
         for i, item in enumerate(evidence[kind]))
@@ -453,4 +469,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-# ratios: loc_comments=364:50 imports_exports=15:6 calls_definitions=210:15
+# ratios: loc_comments=377:51 imports_exports=15:6 calls_definitions=218:16
