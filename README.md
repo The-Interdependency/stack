@@ -110,6 +110,17 @@ cat research/weave/SPECIFICATION.md
 cat research/weave/BASE.json
 ```
 
+Pi radix research lives at `research/pi-radix/`. It computes exact bounded radix
+expansions of pi, maps each symbol to its derived unit-circle coordinate, and measures
+prime-valued symbols and blocks across fixed-symbol and common-information profiles.
+The workspace owns its executable experiment and receipts only. It makes no normality,
+randomness, cryptographic-entropy, UCNS-identity, or base-independent-law claim.
+
+```bash
+python research/pi-radix/pi_radix.py scan
+python -m unittest discover -s research/pi-radix/tests -v
+```
+
 ### Change stack structure
 
 Any change that alters a participant, pin, authority, relation, research workspace,
@@ -142,6 +153,8 @@ URPCS is retired; its retained vectors and replay evidence establish behavior on
 of the substituted historical codec. No URPCS claim may be inferred from them.
 Weave is new stack-local research and remains specification-first; no
 confidentiality or production-security standing is implied by its placement.
+Pi radix is stack-local computational research; decoded prime recurrences remain
+finite evidence and do not establish a base-independent digit law.
 PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
@@ -239,15 +252,13 @@ Pinned and vendored components keep their own licenses:
 | `libs/pcea/` | MIT | `libs/pcea/LICENSE` (Copyright (c) 2026 Erin Patrick Spencer) |
 | `libs/ptcna/` | MPL-2.0 | `libs/ptcna/LICENSE`, pinned from The-Interdependency/ptcna |
 | `libs/ucns/` | `hmmm`: no `LICENSE` at pinned commit `828c0b8` | Upstream ucns carries MPL-2.0 again from 2026-09-11; a refresh of this pin would bring it in |
-| `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, `data-visualization/`) are listed in `skill-lib/ATTRIBUTION.md`; the Apache-2.0 text is in [`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) |
+| `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, and `data-visualization/SKILL.md` only) are listed in `skill-lib/ATTRIBUTION.md`. The other files in `skill-lib/data-visualization/` are original to skill-lib under MPL-2.0. The Apache-2.0 text is in [`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) |
 
-The Apache-2.0 text now sits inside the snapshot, at
-[`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt). It came in
-through a licensing-only sync from The-Interdependency/skill-lib `e6e3e5c` (the
-skill-lib#110 merge). That sync copied only `skill-lib/LICENSES/Apache-2.0.txt` and
-`skill-lib/ATTRIBUTION.md`. Every other file in `skill-lib/` is unchanged, and the
-doctrine and MSDMD generator pin stays at `fb3b53a` (see `stack-manifest.json` and
-`backend/fresh-making-provenance.json`). The root
+The whole `skill-lib/` snapshot, including
+[`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) and
+`skill-lib/ATTRIBUTION.md`, is an exact copy of The-Interdependency/skill-lib
+`1b1a947`. The doctrine and MSDMD generator pin is that same commit (see
+`stack-manifest.json` and `backend/fresh-making-provenance.json`). The root
 [`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) is the same text.
 
 `hmmm` (not yet decided): the license status of `ahbg/`, `research/`, `media/` and
@@ -295,9 +306,6 @@ a licensing map, not legal advice.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the
   resilience baseline.
 - Organization aggregate and website-projection derivation specs are not yet registered.
-- The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
-  pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
-  snapshot refresh would also import unrelated doctrine changes.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity
 and detailed design attribution remain unresolved; see

@@ -7,7 +7,7 @@ from __future__ import annotations
 #   module_kind: adapter
 #   summary: applies fresh-making to repo-owned MSDMD collections with exact identities, independent rerender verification, rollback-safe publication, and PostgreSQL acceptance
 #   owner: stack
-#   public_surface: build_spec, register_spec, evaluate, queue_make, run_job, make, retry_job
+#   public_surface: build_spec, register_spec, evaluate, queue_make, run_job, make, retry_job, generator_identity, generator_components, component_difference, collector_failure
 #   auth_boundary: write
 #   storage_boundary: write
 #   network_boundary: none
@@ -43,6 +43,21 @@ from __future__ import annotations
 #   given: executor candidate and independent verifier output match under unchanged exact identities
 #   then: output is published and PostgreSQL accepts one receipt; acceptance failure restores the previous artifact
 #   class: evidence
+#
+# id: stack_msdmd_collector_refusal_fails_closed
+#   given: the collector exits 3 (reader runtime missing), 4 (target schema helper older than the output) or 5 (git cannot list visible files or the root is git-ignored)
+#   then: the attempt is recorded as failed in the ledger with the exit code and an operator action, nothing is published, and the prior accepted artifact remains the freshness authority
+#   class: verification
+#
+# id: stack_msdmd_target_cannot_shadow_collector
+#   given: the inspected target carries its own msdmd/ package or a module named like a collector import
+#   then: the pinned collector and identity probe run from the generator root with python -P, so target code never runs and cannot publish
+#   class: security
+#
+# id: stack_msdmd_identity_observed_where_executed
+#   given: an operator shell queues or reads a derivation from an environment that differs from the worker's
+#   then: the shell never probes or re-keys the generator identity; the executing worker records it with its components, and any mismatch names the differing components
+#   class: provenance
 # === END CONTRACTS ===
 
 from datetime import datetime, timezone
@@ -51,9 +66,12 @@ import json
 import os
 from pathlib import Path
 import re
+import signal
+import stat
 import subprocess
 import sys
 import tempfile
+import time
 from typing import Any
 
 from .freshness import (
@@ -77,36 +95,159 @@ def sha256_file(path: str | Path) -> str:
     return digest.hexdigest()
 
 
-def tree_sha256(root: str | Path, *, suffixes: tuple[str, ...] = (".py",)) -> str:
-    base = Path(root).resolve()
-    if not base.is_dir():
-        raise FileNotFoundError(base)
-    files = sorted(p for p in base.rglob("*") if p.is_file() and (not suffixes or p.suffix in suffixes))
-    if not files:
-        raise ValueError(f"no generator files found under {base}")
-    digest = hashlib.sha256()
-    for path in files:
-        digest.update(path.relative_to(base).as_posix().encode())
-        digest.update(b"\0")
-        digest.update(path.read_bytes())
-        digest.update(b"\0")
-    return digest.hexdigest()
-
-
 def resolve_git_head(root: str | Path) -> str | None:
-    proc = subprocess.run(
-        ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
-        text=True, capture_output=True, check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(Path(root).resolve()), "rev-parse", "HEAD"],
+            text=True, capture_output=True, check=False,
+        )
+    except OSError:
+        return None
     value = proc.stdout.strip() if proc.returncode == 0 else ""
     return value if _SHA40.fullmatch(value) else None
 
 
+_GENERATOR_IDENTITY = re.compile(r"^sha256:([0-9a-f]{64})$")
+
+# Collector exit statuses that refuse the run before anything is written
+# (skill-lib msdmd/collect.py). Each fails the attempt closed; nothing publishes.
+COLLECTOR_REFUSALS: dict[int, tuple[str, str]] = {
+    3: ("reader-runtime-missing",
+        "install the MSDMD native reader runtimes for STACK_SKILL_LIB_ROOT (backend/ops/install_msdmd_runtime.sh), then retry"),
+    4: ("schema-helper-outdated",
+        "propagate the current skill-lib msdmd skill into the target so .agents/skills/msdmd/collection.ts exports MSDMD_COLLECTION_HELPER_VERSION, then retry"),
+    5: ("git-visibility-unavailable",
+        "give the worker git on PATH and a readable target checkout that no enclosing repository ignores, then retry"),
+}
+
+
+def exit_description(returncode: int) -> str:
+    """Name a child's end: ``exit N`` or ``killed by SIGNAME`` (negative return)."""
+    if returncode < 0:
+        try:
+            return f"killed by {signal.Signals(-returncode).name}"
+        except ValueError:
+            return f"killed by signal {-returncode}"
+    return f"exit {returncode}"
+
+
+def collector_failure(stage: str, proc: subprocess.CompletedProcess[str]) -> tuple[str, str | None]:
+    """Return the ledger ``(error, hmmm)`` for a nonzero collector exit."""
+    detail = (proc.stderr or proc.stdout or "").strip()
+    refusal = COLLECTOR_REFUSALS.get(proc.returncode)
+    if refusal is None:
+        # Unmapped exits and signal deaths still name the status they ended with.
+        status = exit_description(proc.returncode)
+        error = f"{stage} failed ({status})" + (f": {detail}" if detail else "")
+        if proc.returncode < 0:
+            return error, (f"msdmd {stage} {status}: check the worker's memory and sandbox limits "
+                           "(journalctl -u stack-orchestrator-worker), then retry")
+        return error, None
+    detail = detail or f"{stage} failed"
+    code, action = refusal
+    return (f"{stage} refused by collector (exit {proc.returncode}, {code}): {detail}",
+            f"msdmd exit {proc.returncode} ({code}): {action}")
+
+
+def _collector_env(generator_root: str | Path) -> dict[str, str]:
+    env = os.environ.copy()
+    root = str(Path(generator_root))
+    env["PYTHONPATH"] = root if not env.get("PYTHONPATH") else os.pathsep.join((root, env["PYTHONPATH"]))
+    return env
+
+
+def _collector_command(*args: str) -> list[str]:
+    """Return the interpreter command for the pinned collector.
+
+    ``python -m`` puts the working directory ahead of ``PYTHONPATH``, so every
+    collector process runs with ``cwd`` set to the generator root, never the
+    inspected target, and with ``-P`` (Python 3.11+) so no working directory
+    is added to ``sys.path`` at all. A target-level ``msdmd/collect.py`` or
+    ``yaml.py`` therefore cannot shadow the pinned collector or its imports.
+    """
+    safe_path = ["-P"] if sys.version_info >= (3, 11) else []
+    return [sys.executable, *safe_path, "-m", "msdmd.collect", *args]
+
+
 def generator_identity(generator_root: str | Path) -> str:
-    package = Path(generator_root).resolve() / "msdmd"
+    """Return the pinned collector's own fingerprint as 64 hex digits.
+
+    Delegates to ``python -m msdmd.collect --print-generator-identity`` with the
+    same interpreter, ``-P`` flag, ``cwd`` (the generator root, never a target)
+    and ``PYTHONPATH`` as the collector runs, so the identity covers every
+    collector source (Python, TypeScript worker, npm manifest/lock, schema
+    assets, requirements) plus the Python minor, reader package, Node and
+    TypeScript versions. A collector that cannot report it fails closed.
+    """
+    root = Path(generator_root).resolve()
+    package = root / "msdmd"
     if not (package / "collect.py").is_file():
         raise FileNotFoundError(f"MSDMD collector not found: {package / 'collect.py'}")
-    return tree_sha256(package)
+    try:
+        proc = subprocess.run(
+            _collector_command("--print-generator-identity"),
+            cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
+            timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise ValueError(f"MSDMD generator identity timed out: {exc}") from exc
+    except OSError as exc:
+        # Spawn failures (ENOMEM, EAGAIN, a missing interpreter) fail closed.
+        raise ValueError(f"MSDMD generator identity could not start: {type(exc).__name__}: {exc}") from exc
+    match = _GENERATOR_IDENTITY.fullmatch(proc.stdout.strip())
+    if proc.returncode != 0 or not match:
+        detail = (proc.stderr or proc.stdout or "no output").strip()[:500]
+        raise ValueError(f"MSDMD collector at {root} cannot report --print-generator-identity "
+                         f"({exit_description(proc.returncode)}): {detail}")
+    return match.group(1)
+
+
+def generator_components(generator_root: str | Path) -> dict[str, Any] | None:
+    """Return the collector's identity components (``--print-generator-identity --json``).
+
+    Diagnostic only: the identity itself always comes from
+    :func:`generator_identity`. ``None`` when the collector cannot report them.
+    """
+    root = Path(generator_root).resolve()
+    try:
+        proc = subprocess.run(
+            _collector_command("--print-generator-identity", "--json"),
+            cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
+            timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
+        )
+        value = json.loads(proc.stdout) if proc.returncode == 0 else None
+    except (OSError, ValueError, subprocess.TimeoutExpired):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _short(value: Any) -> str:
+    text = json.dumps(value, sort_keys=True) if isinstance(value, (dict, list)) else str(value)
+    return text if len(text) <= 24 else text[:21] + "..."
+
+
+def component_difference(recorded: dict[str, Any] | None, current: dict[str, Any] | None) -> str:
+    """Name the identity components that differ, e.g. ``node: v24.15.0 -> absent``."""
+    if not isinstance(recorded, dict) or not isinstance(current, dict):
+        side = "recorded" if not isinstance(recorded, dict) else "current"
+        return f"components unavailable ({side} components were not reported)"
+    differences = []
+    for key in sorted(set(recorded) | set(current)):
+        before, after = recorded.get(key), current.get(key)
+        if before == after:
+            continue
+        if isinstance(before, dict) and isinstance(after, dict):
+            for sub in sorted(set(before) | set(after)):
+                if before.get(sub) != after.get(sub):
+                    differences.append(f"{key}.{sub}: {_short(before.get(sub))} -> {_short(after.get(sub))}")
+        else:
+            differences.append(f"{key}: {_short(before)} -> {_short(after)}")
+    return "components differ: " + "; ".join(differences) if differences else "no reported component differs"
+
+
+# Generator identity placeholder for a derivation registered from an operator
+# shell before the executing worker has observed its own collector identity.
+WORKER_PENDING = "worker-pending"
 
 
 def _validate_runtime(repo: str, root: Path, generator_root: Path, out: Path) -> None:
@@ -133,12 +274,18 @@ def _dirty_path(line: str) -> str:
 
 
 def _unrelated_dirty(root: Path, ignored: set[str]) -> list[str]:
-    proc = subprocess.run(
-        ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"],
-        text=True, capture_output=True, check=False,
-    )
+    # A worktree whose status cannot be read is never assumed clean.
+    try:
+        proc = subprocess.run(
+            ["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"],
+            text=True, capture_output=True, check=False,
+        )
+    except OSError as exc:
+        raise ConstraintError(f"git status could not run in {root}: {type(exc).__name__}: {exc}") from exc
     if proc.returncode != 0:
-        return []
+        detail = (proc.stderr or proc.stdout or "no output").strip()[:300]
+        raise ConstraintError(f"git status failed in {root} ({exit_description(proc.returncode)}): {detail}; "
+                              "cannot prove the target worktree is clean")
     return [line for line in proc.stdout.splitlines() if _dirty_path(line) not in ignored]
 
 
@@ -157,7 +304,16 @@ def _source_sha(spec: dict[str, Any]) -> str:
 
 
 def build_spec(*, repo: str, root: str | Path, generator_root: str | Path,
-               out: str | Path | None = None, source_sha: str | None = None) -> dict[str, Any]:
+               out: str | Path | None = None, source_sha: str | None = None,
+               observe_generator: bool = True, recorded: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return an exact MSDMD derivation spec.
+
+    The generator identity is environment-bound (interpreter, reader packages,
+    Node, TypeScript), so it is observed only where the collector executes.
+    ``observe_generator=False`` (an operator shell that only queues) never
+    probes: it carries the identity a worker already recorded on ``recorded``
+    for the same generator root, or :data:`WORKER_PENDING`.
+    """
     root_path = Path(root).expanduser().resolve()
     generator_path = Path(generator_root).expanduser().resolve()
     if not root_path.is_dir():
@@ -168,27 +324,42 @@ def build_spec(*, repo: str, root: str | Path, generator_root: str | Path,
     output = Path(out) if out is not None else Path(f"{repo}_msdmd.ts")
     output = (output if output.is_absolute() else root_path / output).resolve()
     _validate_runtime(repo, root_path, generator_path, output)
-    gen = generator_identity(generator_path)
+    if observe_generator:
+        gen_identity = f"sha256:{generator_identity(generator_path)}"
+        components = generator_components(generator_path)
+    elif (recorded and recorded.get("runtime", {}).get("generator_root") == str(generator_path)
+          and _GENERATOR_IDENTITY.fullmatch(str(recorded.get("generator", {}).get("identity", "")))):
+        gen_identity = recorded["generator"]["identity"]
+        components = recorded["runtime"].get("generator_components")
+    else:
+        gen_identity, components = WORKER_PENDING, None
     return {
         "schema": SPEC_SCHEMA, "version": SPEC_VERSION,
         "target": f"msdmd:{repo}", "kind": "msdmd.collection",
         "inputs": [{"name": "repository", "identity": _source_identity(resolved)}],
         "generator": {
-            "identity": f"sha256:{gen}",
+            "identity": gen_identity,
             "command": "python -m msdmd.collect --root <root> --repo <repo> --out <candidate> --source-commit <sha>",
         },
         "outputs": [{"path": output.name}],
-        "verifier": {"identity": f"sha256:{gen}", "command": "independent-rerender-byte-compare@1"},
+        "verifier": {"identity": gen_identity, "command": "independent-rerender-byte-compare@1"},
         "depends_on": [],
         "runtime": {
             "repo": repo, "root": str(root_path), "out": str(output),
             "generator_root": str(generator_path),
+            "generator_components": components,
             "source_identity_mode": "git" if resolve_git_head(root_path) else "explicit",
         },
     }
 
 
-def refresh_identities(spec: dict[str, Any]) -> dict[str, Any]:
+def refresh_identities(spec: dict[str, Any], *, observe_generator: bool = True) -> dict[str, Any]:
+    """Refresh the source identity and, where the collector executes, the generator's.
+
+    ``observe_generator=False`` is for operator-shell reads and queueing: the
+    recorded generator identity is kept as the worker last observed it, so a
+    shell with a different PATH, Node or venv never re-keys the derivation.
+    """
     if spec.get("kind") != "msdmd.collection":
         raise ValueError(f"unsupported derivation kind: {spec.get('kind')}")
     current = json.loads(json.dumps(spec))
@@ -196,12 +367,18 @@ def refresh_identities(spec: dict[str, Any]) -> dict[str, Any]:
     if runtime.get("source_identity_mode") == "git":
         head = resolve_git_head(runtime["root"])
         current["inputs"][0]["identity"] = _source_identity(head) if head else "hmmm"
+    if not observe_generator:
+        return current
     try:
         gen = generator_identity(runtime["generator_root"])
     except (FileNotFoundError, ValueError):
         current["generator"]["identity"] = current["verifier"]["identity"] = "hmmm"
+        runtime["generator_components"] = None
     else:
-        current["generator"]["identity"] = current["verifier"]["identity"] = f"sha256:{gen}"
+        identity = f"sha256:{gen}"
+        if identity != spec["generator"].get("identity") or not runtime.get("generator_components"):
+            runtime["generator_components"] = generator_components(runtime["generator_root"])
+        current["generator"]["identity"] = current["verifier"]["identity"] = identity
     return current
 
 
@@ -212,13 +389,12 @@ def register_spec(ledger: JobLedger, spec: dict[str, Any]) -> dict[str, Any]:
 
 def _run_collector(spec: dict[str, Any], output: Path, timeout: int) -> subprocess.CompletedProcess[str]:
     runtime = spec["runtime"]
-    env = os.environ.copy()
-    generator_root = str(Path(runtime["generator_root"]))
-    env["PYTHONPATH"] = generator_root if not env.get("PYTHONPATH") else os.pathsep.join((generator_root, env["PYTHONPATH"]))
+    env = _collector_env(runtime["generator_root"])
+    # cwd is the trusted generator root: the target is only ever --root.
     return subprocess.run(
-        [sys.executable, "-m", "msdmd.collect", "--root", runtime["root"],
-         "--repo", runtime["repo"], "--out", str(output), "--source-commit", _source_sha(spec)],
-        cwd=runtime["root"], env=env, text=True, capture_output=True,
+        _collector_command("--root", runtime["root"], "--repo", runtime["repo"],
+                           "--out", str(output), "--source-commit", _source_sha(spec)),
+        cwd=runtime["generator_root"], env=env, text=True, capture_output=True,
         check=False, timeout=timeout,
     )
 
@@ -231,8 +407,20 @@ def _verify_runtime(spec: dict[str, Any], ignored: set[str] | None = None) -> No
     head = resolve_git_head(root)
     if head is None or head != _source_sha(spec):
         raise ConstraintError(f"source checkout differs from desired commit: expected={_source_sha(spec)} current={head}")
-    if f"sha256:{generator_identity(generator_root)}" != spec["generator"]["identity"]:
-        raise ConstraintError("generator identity differs from derivation spec")
+    if spec["generator"]["identity"] == WORKER_PENDING:
+        raise ConstraintError("generator identity is worker-pending: no worker has observed it yet; queue this "
+                              "target for the worker (--queue-only), or pass --record-identity-here on a host "
+                              "whose shell is the executor")
+    try:
+        current_generator = generator_identity(generator_root)
+    except ValueError as exc:
+        raise ConstraintError(str(exc)) from exc
+    if f"sha256:{current_generator}" != spec["generator"]["identity"]:
+        difference = component_difference(runtime.get("generator_components"), generator_components(generator_root))
+        raise ConstraintError(
+            f"generator identity differs from derivation spec: recorded={spec['generator']['identity']} "
+            f"here=sha256:{current_generator}; {difference}. Identities are observed by the executing "
+            "worker; compare in its environment (backend/ops/worker_sandbox_run.sh)")
     ignored_names = {out.name} | (ignored or set())
     dirty = _unrelated_dirty(root, ignored_names)
     if dirty:
@@ -240,8 +428,8 @@ def _verify_runtime(spec: dict[str, Any], ignored: set[str] | None = None) -> No
         raise ConstraintError(f"unrelated target worktree changes are present: {detail}")
 
 
-def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
-    spec = refresh_identities(ledger.get_derivation(target))
+def evaluate(ledger: JobLedger, target: str, *, observe_generator: bool = True) -> FreshnessReport:
+    spec = refresh_identities(ledger.get_derivation(target), observe_generator=observe_generator)
     register_spec(ledger, spec)
     report = base_report(ledger, spec)
     if report.state != "fresh":
@@ -264,20 +452,20 @@ def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
         return FreshnessReport(target, "making-fresh", "output-tampered", report.desired_freshness_key,
                                report.accepted_freshness_key, receipt.id, None,
                                "output digest differs from accepted receipt", [])
-    verify_path = output.with_name(f".{output.name}.fresh-status-verify")
+    verify_path = _status_verify_path(output)
     try:
         try:
             _verify_runtime(spec, {verify_path.name})
             proc = _run_collector(spec, verify_path, int(os.environ.get("STACK_VERIFY_TIMEOUT_SECONDS", "900")))
-        except (ConstraintError, FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        except (ConstraintError, OSError, subprocess.TimeoutExpired) as exc:
             return FreshnessReport(target, "hmmm", "verifier-unavailable", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
                                    "current verifier cannot establish freshness", [str(exc)])
         if proc.returncode != 0:
-            detail = (proc.stderr or proc.stdout or "verifier failed").strip()
+            error, action = collector_failure("verifier", proc)
             return FreshnessReport(target, "hmmm", "verifier-failed", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
-                                   "current verifier failed", [detail])
+                                   "current verifier failed", [error] + ([action] if action else []))
         if not verify_path.is_file() or sha256_file(verify_path) != actual:
             return FreshnessReport(target, "making-fresh", "verifier-mismatch", report.desired_freshness_key,
                                    report.accepted_freshness_key, receipt.id, None,
@@ -289,13 +477,15 @@ def evaluate(ledger: JobLedger, target: str) -> FreshnessReport:
                            "identities, SQL receipt, output digest, and independent rerender agree", [])
 
 
-def queue_make(ledger: JobLedger, target: str, *, executor: str = "local") -> tuple[Job | None, FreshnessReport]:
+def queue_make(ledger: JobLedger, target: str, *, executor: str = "local",
+               observe_generator: bool = True) -> tuple[Job | None, FreshnessReport]:
     if executor != "local":
         raise ValueError(f"executor not implemented: {executor}")
-    report = evaluate(ledger, target)
+    report = evaluate(ledger, target, observe_generator=observe_generator)
     if report.state == "fresh" or report.state in {"blocked", "hmmm"}:
         return None, report
-    key = freshness_key(ledger.get_derivation(target))
+    registered = ledger.get_derivation(target)
+    key = freshness_key(registered)
     active = ledger.active_job_for_target(target)
     if active and active.freshness_key != key:
         if active.state == "queued":
@@ -304,8 +494,33 @@ def queue_make(ledger: JobLedger, target: str, *, executor: str = "local") -> tu
             return None, FreshnessReport(target, "making-fresh", "obsolete-attempt-finishing", key,
                                          report.accepted_freshness_key, report.receipt_id, active.id,
                                          "older-key attempt must terminate before replacement work", [])
-    return ledger.enqueue(kind="fresh.make", target=target, freshness_key=key,
-                          payload={"target": target}, executor=executor), report
+    job = ledger.enqueue(kind="fresh.make", target=target, freshness_key=key,
+                         payload=_job_payload(registered), executor=executor)
+    if job.state in {"succeeded", "failed", "hmmm", "cancelled"}:
+        # Same key as an earlier terminal attempt (a repair, or a run that was
+        # held): asking for freshness again re-queues it as a later attempt.
+        job = ledger.retry(job.id, executor=executor)
+    return job, report
+
+
+def _job_payload(spec: dict[str, Any]) -> dict[str, Any]:
+    # The identities the key was computed from, so a moved key can say what moved.
+    return {"target": spec["target"], "generator_identity": spec["generator"]["identity"],
+            "inputs": spec["inputs"]}
+
+
+def _moved(job: Job, queued: dict[str, Any], current: dict[str, Any]) -> str:
+    """Describe which identities moved between queueing and execution."""
+    parts = []
+    queued_inputs = job.payload.get("inputs", queued["inputs"])
+    if queued_inputs != current["inputs"]:
+        parts.append(f"source: {_short(queued_inputs)} -> {_short(current['inputs'])}")
+    queued_generator = job.payload.get("generator_identity", queued["generator"]["identity"])
+    if queued_generator != current["generator"]["identity"]:
+        parts.append(f"generator: {queued_generator} -> {current['generator']['identity']} ("
+                     + component_difference(queued["runtime"].get("generator_components"),
+                                            current["runtime"].get("generator_components")) + ")")
+    return "; ".join(parts) or "spec fields other than source and generator identity changed"
 
 
 def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) -> Path:
@@ -319,6 +534,70 @@ def _receipt_projection(ledger: JobLedger, payload: dict[str, Any], job: Job) ->
     return path
 
 
+_SPAWN_HMMM = "the collector process could not be spawned (for example ENOMEM); check worker memory limits, then retry"
+
+
+# Suffixes of the hidden siblings this adapter writes beside the artifact:
+# ``.<out>.<rand>.candidate`` / ``.verify`` (_temp_output),
+# ``.<out>.<job>.accepted-backup`` (run_job) and ``.<out>.fresh-status-verify``.
+_OWN_SIBLING_SUFFIXES = (".candidate", ".verify", ".accepted-backup")
+# The pinned collector writes ``--out`` through ``tempfile.mkstemp(prefix=".msdmd-")``
+# in the artifact's directory (skill-lib msdmd/collect.py); a collector killed
+# mid-write leaves exactly this name behind in the target root.
+_COLLECTOR_TEMP = re.compile(r"\.msdmd-[a-z0-9_]{8}")
+
+
+def _clean_stale_siblings(ledger: JobLedger, spec: dict[str, Any], max_age_seconds: int) -> list[str]:
+    """Remove this adapter's own leftovers that are older than one lease.
+
+    A worker or collector killed mid-run leaves hidden candidate, verify,
+    rollback or collector temp (``.msdmd-XXXXXXXX``) files beside the artifact;
+    the dirty-worktree check would then hold every later attempt. Only regular
+    files matching those exact names that are older than ``max_age_seconds``
+    are touched. A stale rollback copy that still holds the
+    accepted bytes, while the artifact does not, is restored rather than
+    deleted (the crash happened between publish and SQL acceptance).
+    """
+    output = Path(spec["runtime"]["out"])
+    prefix = f".{output.name}."
+    cutoff = time.time() - max_age_seconds
+    accepted_digest = None
+    acceptance = ledger.get_acceptance(spec["target"])
+    if acceptance is not None:
+        try:
+            accepted_digest = ledger.get_receipt(acceptance.receipt_id).output_sha256
+        except KeyError:
+            accepted_digest = None
+    cleaned: list[str] = []
+    for path in sorted(output.parent.iterdir()):
+        rest = path.name[len(prefix):] if path.name.startswith(prefix) else ""
+        ours = bool(rest) and (rest == "fresh-status-verify" or rest.endswith(_OWN_SIBLING_SUFFIXES))
+        if not ours and not _COLLECTOR_TEMP.fullmatch(path.name):
+            continue
+        try:
+            info = path.lstat()
+        except FileNotFoundError:
+            continue
+        if not stat.S_ISREG(info.st_mode) or info.st_mtime > cutoff:
+            continue
+        if (rest.endswith(".accepted-backup") and accepted_digest
+                and sha256_file(path) == accepted_digest
+                and (not output.is_file() or sha256_file(output) != accepted_digest)):
+            os.replace(path, output)
+            cleaned.append(f"restored {path.name}")
+            continue
+        path.unlink(missing_ok=True)
+        cleaned.append(f"removed {path.name}")
+    if cleaned:
+        print(f"stack msdmd: {spec['target']}: stale siblings: {'; '.join(cleaned)}", file=sys.stderr, flush=True)
+    return cleaned
+
+
+def _status_verify_path(output: Path) -> Path:
+    """Sibling that ``evaluate`` (fresh status) rerenders into."""
+    return output.with_name(f".{output.name}.fresh-status-verify")
+
+
 def _temp_output(output: Path, suffix: str) -> Path:
     fd, name = tempfile.mkstemp(prefix=f".{output.name}.", suffix=suffix, dir=output.parent)
     os.close(fd)
@@ -328,7 +607,15 @@ def _temp_output(output: Path, suffix: str) -> Path:
 
 
 def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
-            executor: str | None = None, lease_seconds: int | None = None) -> Job:
+            executor: str | None = None, lease_seconds: int | None = None,
+            observe_generator: bool = True) -> Job:
+    """Execute one fresh.make job.
+
+    The worker observes and records the generator identity
+    (``observe_generator=True``). Operator-shell runs pass ``False``: they keep
+    the worker-recorded identity and hold (with the differing components)
+    unless this environment reproduces it, so they never re-key the derivation.
+    """
     job = ledger.get(job_id)
     if job.kind != "fresh.make":
         raise ValueError(f"unsupported job kind: {job.kind}")
@@ -345,18 +632,41 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
         raise ValueError(f"job must be queued/leased before execution: {job.state}")
     job = ledger.start(job.id, worker_id=worker_id)
 
-    spec = refresh_identities(ledger.get_derivation(job.target))
+    # The executing worker is the only place the generator identity is observed.
+    queued = ledger.get_derivation(job.target)
+    spec = refresh_identities(queued, observe_generator=observe_generator)
     register_spec(ledger, spec)
     key = freshness_key(spec)
     if key != job.freshness_key:
-        return ledger.fail(job.id, error=f"desired freshness key moved: queued={job.freshness_key} current={key}",
+        moved = _moved(job, queued, spec)
+        if (observe_generator and job.payload.get("generator_identity") == WORKER_PENDING
+                and job.payload.get("inputs", queued["inputs"]) == spec["inputs"]
+                and _GENERATOR_IDENTITY.fullmatch(spec["generator"]["identity"])):
+            # Queued from a shell before any worker observed the generator: the
+            # placeholder key can never publish, so supersede it once under the
+            # identity this worker observed. Later moves still need an operator.
+            failed = ledger.fail(job.id, error=f"superseded: queued before the executing worker observed "
+                                                f"its generator identity; re-queued under {spec['generator']['identity']}")
+            replacement = ledger.enqueue(kind="fresh.make", target=job.target, freshness_key=key,
+                                         payload=_job_payload(spec), executor=executor)
+            if replacement.state in {"succeeded", "failed", "hmmm", "cancelled"}:
+                ledger.retry(replacement.id, executor=executor)
+            return failed
+        return ledger.fail(job.id, error=f"desired freshness key moved: queued={job.freshness_key} current={key}; {moved}",
                            hmmm="enqueue current identities after obsolete attempt terminates")
     try:
-        _verify_runtime(spec)
+        _clean_stale_siblings(ledger, spec, lease_seconds)
+    except OSError as exc:
+        return ledger.hold(job.id, constraint=f"stale sibling cleanup failed: {type(exc).__name__}: {exc}")
+    output = Path(spec["runtime"]["out"])
+    # A concurrent `fresh status` rerenders into this sibling; it is ours and
+    # must not hold the worker's job as an unrelated worktree change.
+    status_verify = _status_verify_path(output).name
+    try:
+        _verify_runtime(spec, {status_verify})
     except (ConstraintError, FileNotFoundError) as exc:
         return ledger.hold(job.id, constraint=str(exc))
 
-    output = Path(spec["runtime"]["out"])
     output.parent.mkdir(parents=True, exist_ok=True)
     candidate, verifier = _temp_output(output, ".candidate"), _temp_output(output, ".verify")
     rollback = output.with_name(f".{output.name}.{job.id}.accepted-backup")
@@ -368,13 +678,17 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             proc = _run_collector(spec, candidate, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"executor exceeded {timeout}s: {exc}")
+        except OSError as exc:
+            return ledger.fail(job.id, error=f"executor could not start: {type(exc).__name__}: {exc}",
+                               hmmm=_SPAWN_HMMM)
         if proc.returncode != 0:
-            return ledger.fail(job.id, error=(proc.stderr or proc.stdout or "executor failed").strip())
+            error, action = collector_failure("executor", proc)
+            return ledger.fail(job.id, error=error, hmmm=action)
         if not candidate.is_file():
             return ledger.fail(job.id, error="executor reported success without candidate output")
 
         try:
-            _verify_runtime(spec, {candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name, status_verify})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
         ledger.heartbeat(job.id, worker_id=worker_id, lease_seconds=lease_seconds)
@@ -383,8 +697,12 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             verify_proc = _run_collector(spec, verifier, timeout)
         except subprocess.TimeoutExpired as exc:
             return ledger.fail(job.id, error=f"verifier exceeded {timeout}s: {exc}")
+        except OSError as exc:
+            return ledger.fail(job.id, error=f"verifier could not start: {type(exc).__name__}: {exc}",
+                               hmmm=_SPAWN_HMMM)
         if verify_proc.returncode != 0:
-            return ledger.fail(job.id, error=(verify_proc.stderr or verify_proc.stdout or "verifier failed").strip())
+            error, action = collector_failure("verifier", verify_proc)
+            return ledger.fail(job.id, error=error, hmmm=action)
         if not verifier.is_file():
             return ledger.fail(job.id, error="verifier reported success without output")
         digest = sha256_file(candidate)
@@ -392,7 +710,7 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
             return ledger.fail(job.id, error="executor candidate and independent verifier output differ",
                                hmmm="generation is nondeterministic or executor/verifier environments diverge")
         try:
-            _verify_runtime(spec, {candidate.name, verifier.name})
+            _verify_runtime(spec, {candidate.name, verifier.name, status_verify})
         except (ConstraintError, FileNotFoundError) as exc:
             return ledger.hold(job.id, constraint=str(exc))
 
@@ -426,22 +744,29 @@ def run_job(ledger: JobLedger, job_id: str, *, worker_id: str = "operator",
 
 
 def make(ledger: JobLedger, target: str, *, executor: str = "local",
-         worker_id: str = "operator") -> tuple[Job | None, FreshnessReport]:
-    job, before = queue_make(ledger, target, executor=executor)
+         worker_id: str = "operator", observe_generator: bool = True) -> tuple[Job | None, FreshnessReport]:
+    """Queue and run one target. Operator shells pass ``observe_generator=False``.
+
+    In that mode a ``worker-pending`` derivation is only queued (the worker
+    must observe the identity first); otherwise the job runs here and holds
+    unless this environment reproduces the worker-recorded identity.
+    """
+    job, before = queue_make(ledger, target, executor=executor, observe_generator=observe_generator)
     if job is None:
         return None, before
-    if job.state in {"succeeded", "failed", "hmmm", "cancelled"}:
-        job = ledger.retry(job.id, executor=executor)
     if job.state in {"leased", "running", "verifying"}:
-        return job, evaluate(ledger, target)
-    result = run_job(ledger, job.id, worker_id=worker_id, executor=executor)
-    return result, evaluate(ledger, target)
+        return job, evaluate(ledger, target, observe_generator=observe_generator)
+    if not observe_generator and ledger.get_derivation(target)["generator"]["identity"] == WORKER_PENDING:
+        return job, evaluate(ledger, target, observe_generator=False)
+    result = run_job(ledger, job.id, worker_id=worker_id, executor=executor, observe_generator=observe_generator)
+    return result, evaluate(ledger, target, observe_generator=observe_generator)
 
 
 def retry_job(ledger: JobLedger, job_id: str, *, executor: str = "local",
-              worker_id: str = "operator") -> Job:
+              worker_id: str = "operator", observe_generator: bool = True) -> Job:
     queued = ledger.retry(job_id, executor=executor)
-    return run_job(ledger, queued.id, worker_id=worker_id, executor=executor)
+    return run_job(ledger, queued.id, worker_id=worker_id, executor=executor,
+                   observe_generator=observe_generator)
 
 
 def registered_affected_closure(ledger: JobLedger, changed_targets: list[str]) -> list[str]:
