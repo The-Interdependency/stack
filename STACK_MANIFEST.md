@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `6cefb08422ba1bdb251520215e5def5bb0077e62946aa1502a9e93ff8d86a53f`
+  `b7cd4a9b8f1908166024b4ebf8e3fa040f97d4f4cbbff190702a9553a6665e45`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -45,7 +45,7 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `1b1a9473fcbaab16965af9907e4aafd12853a704` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/skill-lib` | `023ae12bb19ced1a4f2494ed6507fc31285a5b8e` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |

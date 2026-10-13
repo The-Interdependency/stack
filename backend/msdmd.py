@@ -112,8 +112,13 @@ _GENERATOR_IDENTITY = re.compile(r"^sha256:([0-9a-f]{64})$")
 # Collector exit statuses that refuse the run before anything is written
 # (skill-lib msdmd/collect.py). Each fails the attempt closed; nothing publishes.
 COLLECTOR_REFUSALS: dict[int, tuple[str, str]] = {
-    3: ("reader-runtime-missing",
-        "install the MSDMD native reader runtimes for STACK_SKILL_LIB_ROOT (backend/ops/install_msdmd_runtime.sh), then retry"),
+    # Exit 3 covers a missing reader runtime and, since skill-lib#121, any
+    # TypeScript reader or worker failure and a reader past --typescript-timeout.
+    3: ("reader-runtime-failed",
+        "a native reader runtime is missing, or the TypeScript reader or its worker failed or timed out; "
+        "read the collector error above, check node and typescript for STACK_SKILL_LIB_ROOT "
+        "(rerun backend/ops/install_msdmd_runtime.sh and its sandboxed probe), and check the "
+        "worker's memory, sandbox and time limits (journalctl -u stack-orchestrator-worker), then retry"),
     4: ("schema-helper-outdated",
         "propagate the current skill-lib msdmd skill into the target so .agents/skills/msdmd/collection.ts exports MSDMD_COLLECTION_HELPER_VERSION, then retry"),
     5: ("git-visibility-unavailable",
@@ -169,6 +174,57 @@ def _collector_command(*args: str) -> list[str]:
     return [sys.executable, *safe_path, "-m", "msdmd.collect", *args]
 
 
+# skill-lib's own probe and TypeScript worker timeout is 120 s; stack's identity
+# limit sits above it so the collector's timeout, with its own diagnostics and
+# process-group kill, fires first.
+DEFAULT_IDENTITY_TIMEOUT_SECONDS = 180
+# After a stack timeout the collector's group first gets SIGINT, which skill-lib
+# turns into a kill of the Node worker's own session (run_node), then SIGKILL.
+_INTERRUPT_GRACE_SECONDS = 5.0
+
+
+def _identity_timeout() -> int:
+    return int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", str(DEFAULT_IDENTITY_TIMEOUT_SECONDS)))
+
+
+def _signal_group(pgid: int, signum: int) -> None:
+    try:
+        os.killpg(pgid, signum)
+    except (ProcessLookupError, PermissionError):
+        pass
+
+
+def _run_in_group(argv: list[str], *, cwd: str | Path, env: dict[str, str],
+                  timeout: float) -> subprocess.CompletedProcess[str]:
+    """Run ``argv`` like ``subprocess.run(capture_output=True, text=True)`` in its own session.
+
+    On ``timeout`` (or any interruption) the whole process group is signalled,
+    not just the direct child: SIGINT first so the collector can kill the Node
+    worker session it started, then SIGKILL after a short grace. Raises
+    ``subprocess.TimeoutExpired`` once the group is gone.
+    """
+    with subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                          cwd=cwd, env=env, text=True, start_new_session=True) as process:
+        try:
+            stdout, stderr = process.communicate(timeout=timeout)
+        except BaseException:
+            _signal_group(process.pid, signal.SIGINT)  # start_new_session: pgid == pid
+            try:
+                process.wait(timeout=_INTERRUPT_GRACE_SECONDS)
+            except subprocess.TimeoutExpired:
+                pass
+            _signal_group(process.pid, signal.SIGKILL)
+            try:
+                process.kill()
+            except ProcessLookupError:
+                pass
+            # Reap the direct child without draining its pipes: a descendant
+            # that left the group could otherwise hold them open indefinitely.
+            process.wait()
+            raise
+    return subprocess.CompletedProcess(argv, process.returncode, stdout, stderr)
+
+
 def generator_identity(generator_root: str | Path) -> str:
     """Return the pinned collector's own fingerprint as 64 hex digits.
 
@@ -184,10 +240,9 @@ def generator_identity(generator_root: str | Path) -> str:
     if not (package / "collect.py").is_file():
         raise FileNotFoundError(f"MSDMD collector not found: {package / 'collect.py'}")
     try:
-        proc = subprocess.run(
+        proc = _run_in_group(
             _collector_command("--print-generator-identity"),
-            cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
-            timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
+            cwd=root, env=_collector_env(root), timeout=_identity_timeout(),
         )
     except subprocess.TimeoutExpired as exc:
         raise ValueError(f"MSDMD generator identity timed out: {exc}") from exc
@@ -210,10 +265,9 @@ def generator_components(generator_root: str | Path) -> dict[str, Any] | None:
     """
     root = Path(generator_root).resolve()
     try:
-        proc = subprocess.run(
+        proc = _run_in_group(
             _collector_command("--print-generator-identity", "--json"),
-            cwd=root, env=_collector_env(root), text=True, capture_output=True, check=False,
-            timeout=int(os.environ.get("STACK_IDENTITY_TIMEOUT_SECONDS", "120")),
+            cwd=root, env=_collector_env(root), timeout=_identity_timeout(),
         )
         value = json.loads(proc.stdout) if proc.returncode == 0 else None
     except (OSError, ValueError, subprocess.TimeoutExpired):
@@ -391,11 +445,12 @@ def _run_collector(spec: dict[str, Any], output: Path, timeout: int) -> subproce
     runtime = spec["runtime"]
     env = _collector_env(runtime["generator_root"])
     # cwd is the trusted generator root: the target is only ever --root.
-    return subprocess.run(
+    # Own session: a stack timeout (STACK_COMMAND_TIMEOUT_SECONDS or
+    # STACK_VERIFY_TIMEOUT_SECONDS) kills the collector's whole group.
+    return _run_in_group(
         _collector_command("--root", runtime["root"], "--repo", runtime["repo"],
                            "--out", str(output), "--source-commit", _source_sha(spec)),
-        cwd=runtime["generator_root"], env=env, text=True, capture_output=True,
-        check=False, timeout=timeout,
+        cwd=runtime["generator_root"], env=env, timeout=timeout,
     )
 
 

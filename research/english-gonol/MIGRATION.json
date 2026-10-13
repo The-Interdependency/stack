@@ -19,7 +19,7 @@
   },
   "current_candidate": {
     "repository": "The-Interdependency/uchc",
-    "source_commit": "f9396b6e88c943cde506f457280ae86b6d9c4120",
+    "source_commit": "927d6c2d85d8b1d84c2654c3b00d17c889dae558",
     "package": "uchc",
     "version": "0.1.0a2",
     "wheel": "uchc-0.1.0a2-py3-none-any.whl",

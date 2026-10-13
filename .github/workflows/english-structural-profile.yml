@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/uchc
-          ref: f9396b6e88c943cde506f457280ae86b6d9c4120
+          ref: 927d6c2d85d8b1d84c2654c3b00d17c889dae558
           path: _deps/uchc-candidate
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
