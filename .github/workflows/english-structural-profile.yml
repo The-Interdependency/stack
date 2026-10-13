@@ -30,14 +30,32 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/stack
-          ref: ba76bc4e4346dd0704d47012474e8bcbe5ddef0b
+          ref: d2e4c1de55d0b93810a62e799453a9b11270ce46
           path: _deps/forge
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/uchc
-          ref: 9ee73b721145a7c5ef7ba035b132cc336f81d051
+          ref: f9396b6e88c943cde506f457280ae86b6d9c4120
           path: _deps/uchc-candidate
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/metapat
+          ref: 8abffcd7766069fc835872974de31b086c6af337
+          path: _deps/metapat
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/skill-lib
+          ref: 023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+          path: _deps/skill-lib
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/uchc
+          ref: 519cae068a0544d6094cda0fadbfcf36793d2549
+          path: _deps/uchc-baseline
           persist-credentials: false
       - name: Verify immutable forge extraction and work graph
         env:
@@ -56,7 +74,9 @@ jobs:
           assert all(graph['boundaries'][flag] is False for flag in ['authority_transfer', 'proof_status_transfer', 'measurement_status_transfer'])
           identity = {k: graph[k] for k in ('repositories', 'boundaries')}
           assert hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(',', ':')).encode()).hexdigest() == graph['work_graph_sha256']
-          for repository, checkout in [('The-Interdependency/stack', '_deps/forge'), ('The-Interdependency/ucns', '_deps/ucns'), ('globalwordnet/english-wordnet', '_deps/oewn')]:
+          participants = [('The-Interdependency/stack', '_deps/forge'), ('The-Interdependency/ucns', '_deps/ucns'), ('globalwordnet/english-wordnet', '_deps/oewn'), ('The-Interdependency/metapat', '_deps/metapat'), ('The-Interdependency/skill-lib', '_deps/skill-lib'), ('The-Interdependency/uchc', '_deps/uchc-baseline')]
+          assert {r['repository'] for r in repositories} == {r for r, _ in participants}
+          for repository, checkout in participants:
               expected = next(r['commit'] for r in graph['repositories'] if r['repository'] == repository)
               assert subprocess.check_output(['git', '-C', checkout, 'rev-parse', 'HEAD'], text=True).strip() == expected, repository
           source = next(r['commit'] for r in graph['repositories'] if r['repository'] == 'The-Interdependency/stack')
@@ -75,9 +95,15 @@ jobs:
           for name in files:
               assert (candidate_root / name).read_bytes() == (root / name).read_bytes(), name
           extraction = json.loads((candidate_root / 'experiments/structural-profile-v1/extraction.json').read_text())
-          assert extraction['source_commit'] == source
-          assert extraction['files'] == hashes
-          assert extraction['work_graph_sha256'] == graph['work_graph_sha256']
+          expected_extraction = {
+              'schema': 'uchc.structural-profile-extraction', 'version': '1.0.0',
+              'source_repository': 'The-Interdependency/stack', 'source_commit': source,
+              'source_root': 'research/english-gonol', 'target_root': 'human/english',
+              'authority_transfer': False, 'files': hashes,
+              'hmmm': ['Stable release, consumer migration and domain graduation remain incomplete.'],
+              'work_graph_sha256': graph['work_graph_sha256'],
+          }
+          assert json.dumps(extraction, sort_keys=True, separators=(',', ':')) == json.dumps(expected_extraction, sort_keys=True, separators=(',', ':'))
           for name in ['manifest.json', 'query.json', 'verification.json']:
               assert (candidate_root / 'experiments/structural-profile-v1' / name).read_bytes() == (root / 'experiments/structural-profile-v1' / name).read_bytes(), name
           for field, receipt in [('version', 'candidate_version'), ('candidate_immutable_identity', 'candidate_wheel_sha256'), ('implementation_sha256', 'implementation_sha256'), ('construct_db_sha256', 'construct_db_sha256'), ('logical_receipt', 'logical_receipt'), ('work_graph_sha256', 'work_graph_sha256')]:
@@ -202,7 +228,7 @@ jobs:
           assert verification['tests']['clean_installed_structural'] == tests['structural']['tests']
           record = {'schema': 'english.structural-hosted-replay', 'commit': os.environ['REPLAY_COMMIT'], 'run_id': os.environ['REPLAY_RUN'], 'python': platform.python_version(), 'sqlite': sqlite3.sqlite_version, 'local_evidence_python': verification['python'], 'local_evidence_sqlite': verification['sqlite'], 'verification_sha256': digest(root / 'experiments/structural-profile-v1/verification.json'), 'construct_db_sha256': digest('_state/first/construct.db'), 'logical_receipt': manifest['receipt_sha256'], 'candidate_wheel_sha256': digest(wheel), 'work_graph_sha256': graph['work_graph_sha256'], 'tests': tests, 'scope': 'hosted source and clean-wheel artifact equivalence; local domain and combined-suite totals and native-attachment observations remain separately scoped historical observations'}
           record['source_checkout'] = {key: subprocess.check_output(['git', 'rev-parse', revision], text=True).strip() for key, revision in [('commit', 'HEAD'), ('tree', 'HEAD^{tree}')]}
-          record['participants'] = {checkout: subprocess.check_output(['git', '-C', checkout, 'rev-parse', 'HEAD'], text=True).strip() for checkout in ['_deps/forge', '_deps/ucns', '_deps/oewn']}
+          record['participants'] = {checkout: subprocess.check_output(['git', '-C', checkout, 'rev-parse', 'HEAD'], text=True).strip() for checkout in ['_deps/forge', '_deps/ucns', '_deps/oewn', '_deps/metapat', '_deps/skill-lib', '_deps/uchc-baseline']}
           record['manifest_sha256'] = digest('_state/first/manifest.json')
           record['query_sha256'] = digest('_state/query.json')
           pathlib.Path('_state/hosted-replay.json').write_text(json.dumps(record, indent=2) + '\n')
