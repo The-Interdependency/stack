@@ -8,7 +8,7 @@ consumes it.
 ## Work-graph identity
 
 ```text
-skill-lib producer: The-Interdependency/skill-lib@24029ca728c02d12bd887a28325cfa6e4e00d581
+skill-lib producer: The-Interdependency/skill-lib@023ae12bb19ced1a4f2494ed6507fc31285a5b8e
 stack consumer:     this stack checkout
 relation:           canonical vm-mcp runtime -> stack VM operations
 runtime authority:  skill-lib owns vm-mcp implementation; stack owns its deployment/use
@@ -81,7 +81,10 @@ is ambiguous, stop as `hmmm`.
 
 ## Install the exact canonical personal console
 
-`24029ca` is The-Interdependency/skill-lib#123 (squash merge). From that commit on,
+The pinned `023ae12` is the merge of The-Interdependency/skill-lib#127, on top of #123
+(`24029ca`). #127 hardens the installer and makes the server check its token
+descriptor: fd 0 must be a regular file owned by root with no group or other bits. The
+installer's `/etc/credstore/vm-mcp-token` (root, `0600`) satisfies that. From #123 on,
 vm-mcp refuses every HTTP request, loopback included, that lacks
 `Authorization: Bearer <token>`. Before it, any local process could reach
 `admin_exec` through the loopback listener. A VM running an older vm-mcp (for example
@@ -114,9 +117,10 @@ the same commit, because root's `git` refuses to read a checkout another user ow
 ```bash
 (
 set -Eeuo pipefail
+trap 'echo "FAIL step 2 at line $LINENO (exit $?)" >&2' ERR
 umask 077
 
-SKILL_LIB_SHA=24029ca728c02d12bd887a28325cfa6e4e00d581
+SKILL_LIB_SHA=023ae12bb19ced1a4f2494ed6507fc31285a5b8e
 BOOTSTRAP_DIR="$(mktemp -d)"
 ROOT_SRC="$(sudo -n mktemp -d /root/vm-mcp-src.XXXXXX)"
 trap 'rm -rf "$BOOTSTRAP_DIR"; sudo -n rm -rf "$ROOT_SRC"' EXIT
@@ -156,7 +160,8 @@ LSM. On exit 7, enable Yama or stop as `hmmm`. Do not fall back to an unauthenti
 `read-only` listener to get access back. The installer also removes any old
 `VM_MCP_AUTH_TOKEN` from `/etc/vm-mcp.env`.
 
-The clean-up trap runs when the block's subshell ends, so both clones are removed
+If any command fails, the ERR trap prints `FAIL step 2 at line N`, using the line number bash
+reports, and the block stops. The clean-up trap runs when the block's subshell ends, so both clones are removed
 whether the install succeeds or fails.
 
 **Every future installer rerun needs a token source too.** Without one, the installer
@@ -179,7 +184,9 @@ Do not use `/srv/stack` as an excuse to transfer repository ownership to `vmmcp`
 ## Verify the authority split before connecting a client
 
 These are the skill-lib#123 checklist steps, corrected by the scratch-VM run at
-`046c4cf` (Oct 11, 2026). vm-mcp at `24029ca` is identical to `046c4cf`. Run them as
+`046c4cf` (Oct 11, 2026). vm-mcp at `24029ca` is identical to `046c4cf`. `023ae12` adds
+#127 on top, which the scratch run did not cover (hmmm), so a FAIL here may be new
+behaviour, not an install mistake. Run them as
 root through the human path. The scratch run's step 8 (setting `ptrace_scope` to 0 to
 watch the service fail closed) is deliberately left out on this VM. So is its step 9
 (reinstalling as `read-only`), because it would change the deployed profile.
@@ -300,11 +307,14 @@ The server is stateless (`stateless_http=True`). It returns no `Mcp-Session-Id`,
 `cwd` (default `/`) and `timeout_seconds` (default 60).
 
 Step f defines `U`, `H` and `LIST` itself, so it doesn't depend on step e's shell.
-It needs step e's `/root/vm-mcp.auth`.
+It needs step e's `/root/vm-mcp.auth`. It looks for the receipt only in journal lines
+written after the block started, so an earlier `id -u` call can't satisfy it.
 
 ```bash
 (
 ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+START=$(date '+%Y-%m-%d %H:%M:%S')
+ok "step e header file present" yes "$(sudo -n test -s /root/vm-mcp.auth && echo yes || echo no)"
 U=http://127.0.0.1:8765/mcp
 H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
 INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
@@ -314,13 +324,13 @@ sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth \
   -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"admin_exec","arguments":{"command":"id -u","cwd":"/"}}}' $U || true
 echo
 SHA=$(printf %s 'id -u' | sha256sum | cut -d' ' -f1)
-ok "broker receipt for id -u" 1 "$(sudo -n journalctl -u vm-mcp-admin.service -n 50 --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -F '"mode":"admin"' | grep -F '"run_as":"root"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
-sudo -n journalctl -u vm-mcp-admin.service -n 20 --no-pager
+ok "broker receipt for id -u since $START" 1 "$(sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -F '"mode":"admin"' | grep -F '"run_as":"root"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
+sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager
 sudo -n rm -f /root/vm-mcp.auth /root/vm-mcp.auth-lower /root/vm-mcp.auth-wrong
 )
 ```
 
-Expect both `PASS` lines. The call should return `ok: true` with mode `admin`,
+Expect three `PASS` lines. The call should return `ok: true` with mode `admin`,
 run-as `root`, uid `0`, exit code `0` and stdout `0`. Expect a broker journal line
 `{"event":"vm_mcp_exec","mode":"admin","run_as":"root","command_sha256":...,"exit_code":0}`
 whose `command_sha256` equals the `sha256sum` output. The receipt carries no peer PID.
@@ -361,7 +371,7 @@ Move the value from the VM to the client without printing it. Don't `cat` it in 
 interactive SSH session, because it would stay in the terminal scrollback. Run one of
 these from the machine where the client is configured. The token travels only through
 the pipe. Use your usual human access for `ssh` (for example `gcloud compute ssh VM
---tunnel-through-iap --command '...'` for IAP/OS Login):
+--zone ZONE --tunnel-through-iap --command '...'` for IAP/OS Login):
 
 ```text
 # into the clipboard, then paste into the client's secret header field and clear the clipboard
@@ -369,7 +379,13 @@ ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | pbcopy          # macOS
 ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | wl-copy         # Wayland (xclip -selection clipboard on X11)
 
 # or into a local 0600 file that the client's secret configuration reads
-(umask 077 && ssh VM 'sudo -n cat /root/vm-mcp.token' > ~/.config/vm-mcp/token)
+(umask 077 && mkdir -p -m 700 ~/.config/vm-mcp && rm -f ~/.config/vm-mcp/token &&
+  ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' > ~/.config/vm-mcp/token)
+
+# the same through IAP
+(umask 077 && mkdir -p -m 700 ~/.config/vm-mcp && rm -f ~/.config/vm-mcp/token &&
+  gcloud compute ssh VM --zone ZONE --tunnel-through-iap \
+    --command 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' > ~/.config/vm-mcp/token)
 ```
 
 **For an agent client** (ChatGPT, Claude, Codex, Grok Bot or similar), the token goes
@@ -452,7 +468,15 @@ sudo -n systemctl restart vm-mcp.service
 Under `read-only`, `tools/list` still advertises `admin_exec`, `user_exec` and
 `shell_exec`. Calling them returns `PermissionError` ("host execution is disabled"),
 `vm-mcp-admin` is inactive and `admin.sock` is gone. Bearer authentication stays
-required. The installer's `99-zz-vm-mcp-ptrace.conf` stays in place.
+required.
+
+This `sed` rollback does not run the installer, so `/etc/sysctl.d/99-zz-vm-mcp-ptrace.conf`
+stays in place and the ptrace scope stays at 1 or higher. To remove it too, rerun the
+step 2 install block with `VM_MCP_PROFILE=read-only` and a token source. Since
+skill-lib#127, the installer's read-only path deletes only its own
+`99-zz-vm-mcp-ptrace.conf`, and only after `/etc/vm-mcp.env` is written and
+`vm-mcp.service` has restarted successfully. A file it didn't write is kept, with a
+warning. The live ptrace scope is left as it is until the next reboot or `sysctl --system`.
 
 Full MCP stop:
 

@@ -82,6 +82,23 @@ class VmContactRunbookTests(unittest.TestCase):
                     with self.subTest(line=line, text=text):
                         self.assertIn("|| true", text)
 
+    def test_install_blocks_report_where_set_e_stopped_them(self):
+        # A block that stops under set -e and cleans up with an EXIT trap must
+        # also say so: an ERR trap that prints FAIL.
+        for line, block in self.blocks:
+            if re.search(r"(?m)^\s*trap\s.*\bEXIT\b", block):
+                with self.subTest(line=line):
+                    self.assertRegex(block, r"(?m)^\s*trap\s+'echo \"FAIL [^']*\$LINENO[^']*'\s+ERR\b")
+
+    def test_broker_receipt_check_only_counts_this_run(self):
+        for line, block in self.blocks:
+            if "broker receipt" in block:
+                with self.subTest(line=line):
+                    self.assertRegex(block, r"(?m)^START=\$\(date ")
+                    self.assertNotRegex(block, r"journalctl -u vm-mcp-admin\.service -n ")
+                    self.assertIn('--since "$START"', block)
+                    self.assertIn("test -s /root/vm-mcp.auth", block)
+
 
 if __name__ == "__main__":
     unittest.main()
