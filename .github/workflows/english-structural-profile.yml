@@ -30,13 +30,22 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/stack
-          ref: 0e8f59c7b9afdd0c3e9a173841b1bcc4f58dcac2
+          ref: bf3c8816ce4fc64ad26aaf61488aeb22a91e3351
           path: _deps/forge
           persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/uchc
+          ref: 3fcbc0a8c83c10f58bbe22f85f628b233636452e
+          path: _deps/uchc-candidate
+          persist-credentials: false
       - name: Verify immutable forge extraction and work graph
+        env:
+          PYTHONPATH: research/english-gonol
         run: |
           python - <<'PYTHON'
           import hashlib, json, pathlib, subprocess
+          from english_gonol.structural_construct import IMPLEMENTATION_FILES
           root = pathlib.Path('research/english-gonol')
           forge = pathlib.Path('_deps/forge/research/english-gonol')
           graph = json.loads((root / 'docs/structural-profile-work-graph.json').read_text())
@@ -44,11 +53,37 @@ jobs:
           assert hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(',', ':')).encode()).hexdigest() == graph['work_graph_sha256']
           source = next(r['commit'] for r in graph['repositories'] if r['repository'] == 'The-Interdependency/stack')
           assert subprocess.check_output(['git', '-C', '_deps/forge', 'rev-parse', 'HEAD'], text=True).strip() == source
-          files = ['english_gonol/structural_rules.py', 'english_gonol/structural_construct.py', 'english_gonol/structural_query.py', 'tests/test_structural_profile.py']
+          files = ['english_gonol/' + name for name in IMPLEMENTATION_FILES] + ['tests/test_structural_profile.py']
           hashes = {}
           for name in files:
               assert (root / name).read_bytes() == (forge / name).read_bytes(), name
               hashes[name] = hashlib.sha256((root / name).read_bytes()).hexdigest()
+          migration = json.loads((root / 'MIGRATION.json').read_text())
+          verification = json.loads((root / 'experiments/structural-profile-v1/verification.json').read_text())
+          candidate = migration['current_candidate']
+          candidate_root = pathlib.Path('_deps/uchc-candidate/human/english')
+          assert migration['forge']['source_commit'] == source
+          assert candidate['source_commit'] == subprocess.check_output(['git', '-C', '_deps/uchc-candidate', 'rev-parse', 'HEAD'], text=True).strip()
+          for name in files:
+              assert (candidate_root / name).read_bytes() == (root / name).read_bytes(), name
+          extraction = json.loads((candidate_root / 'experiments/structural-profile-v1/extraction.json').read_text())
+          assert extraction['source_commit'] == source
+          assert extraction['files'] == hashes
+          assert extraction['work_graph_sha256'] == graph['work_graph_sha256']
+          for name in ['manifest.json', 'query.json', 'verification.json']:
+              assert (candidate_root / 'experiments/structural-profile-v1' / name).read_bytes() == (root / 'experiments/structural-profile-v1' / name).read_bytes(), name
+          for field, receipt in [('version', 'candidate_version'), ('candidate_immutable_identity', 'candidate_wheel_sha256'), ('implementation_sha256', 'implementation_sha256'), ('construct_db_sha256', 'construct_db_sha256'), ('logical_receipt', 'logical_receipt'), ('work_graph_sha256', 'work_graph_sha256')]:
+              assert candidate[field] == verification[receipt], field
+          assert migration['distribution']['version'] == candidate['version']
+          assert migration['distribution']['candidate_immutable_identity'] == candidate['candidate_immutable_identity']
+          lock = json.loads(pathlib.Path('research/zfae/UCHC_INPUT.json').read_text())
+          historical = migration['historical_input_candidate']
+          assert historical['source_commit'] == lock['source_commit']
+          assert historical['candidate_immutable_identity'] == lock['wheel_sha256']
+          assert historical['logical_receipt'] == lock['logical_receipt']
+          assert migration['state'] == 'extracted'
+          assert migration['gates']['exact_candidate_forge_verification'].startswith('hmmm:')
+          assert migration['distribution']['published_immutable_identity'] == 'hmmm'
           PYTHON
       - uses: actions/setup-python@v7.0.0
         with:

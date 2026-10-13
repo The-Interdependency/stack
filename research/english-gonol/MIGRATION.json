@@ -10,7 +10,7 @@
   },
   "forge": {
     "repository": "The-Interdependency/stack",
-    "source_commit": "ca190204de25de240662bb438af80c8dc405cea6",
+    "source_commit": "bf3c8816ce4fc64ad26aaf61488aeb22a91e3351",
     "source_path": "research/english-gonol"
   },
   "future_authority": {
@@ -19,19 +19,25 @@
   },
   "current_candidate": {
     "repository": "The-Interdependency/uchc",
-    "source_commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+    "source_commit": "3fcbc0a8c83c10f58bbe22f85f628b233636452e",
     "package": "uchc",
-    "version": "0.1.0a1",
-    "wheel": "uchc-0.1.0a1-py3-none-any.whl",
-    "candidate_immutable_identity": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
-    "construct_db_sha256": "af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b",
-    "logical_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57"
+    "version": "0.1.0a2",
+    "wheel": "uchc-0.1.0a2-py3-none-any.whl",
+    "candidate_immutable_identity": "74edb253be25b7309879c01725b6f3496f48037f548bcd8fee85d10a07352189",
+    "profile": "english.structural/1",
+    "implementation_sha256": "457f40b669a6757998e61f4b449706f102017a91cc3dd6f20a0d7f31d3ce3923",
+    "construct_db_sha256": "59406a8527bf6b580eb6d6ab7ff2093b1a53dfa0a2536cd2d5bc35d9aa68772f",
+    "logical_receipt": "0117d5b1bdb0d0ad6401989a7fe1773d943249d03d2280d95a4faecdc9feab20",
+    "work_graph_sha256": "5c07f2efe02a6c3ab536710e8f86e9811369bc4744d0795ac9f9e2d45e76083c",
+    "verification_receipt": "research/english-gonol/experiments/structural-profile-v1/verification.json",
+    "extraction_receipt": "human/english/experiments/structural-profile-v1/extraction.json",
+    "standing": "extracted structural candidate; source/clean-wheel equivalence verified; existing consumer migration pending"
   },
   "distribution": {
     "kind": "python-wheel candidate; stable publication surface hmmm",
     "artifact": "uchc",
-    "version": "0.1.0a1",
-    "candidate_immutable_identity": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
+    "version": "0.1.0a2",
+    "candidate_immutable_identity": "74edb253be25b7309879c01725b6f3496f48037f548bcd8fee85d10a07352189",
     "published_immutable_identity": "hmmm",
     "published_matches_verified_candidate": "hmmm"
   },
@@ -48,15 +54,15 @@
     }
   ],
   "gates": {
-    "public_api": "pass for current extracted candidate",
-    "independent_tests": "pass for current extracted candidate",
-    "clean_build_install": "pass for current extracted candidate",
+    "public_api": "pass for structural 0.1.0a2 candidate; see verification receipt",
+    "independent_tests": "pass for structural 0.1.0a2 candidate; see verification receipt",
+    "clean_build_install": "pass for structural 0.1.0a2 candidate; see verification receipt",
     "license_distribution_rights": "pass: FSL-1.1-ALv2 recorded in UCHC",
     "release_ownership_authority": "pass for repository-owned candidate; stable distribution action not performed",
     "provenance_preserved": "pass",
-    "exact_candidate_forge_verification": "pass: integration/uchc and research/zfae/UCHC_INPUT.json bind the candidate wheel",
+    "exact_candidate_forge_verification": "hmmm: structural source/clean-wheel complete-build equivalence passed; existing integration/uchc and ZFAE consumer remains pinned to historical 0.1.0a1 and has not verified structural 0.1.0a2",
     "stable_release": "hmmm",
-    "downstream_reconsumption": "hmmm: candidate wheel consumption exists, released-artifact reconsumption does not"
+    "downstream_reconsumption": "hmmm: historical 0.1.0a1 candidate consumption is separate; structural 0.1.0a2 consumer migration and released-artifact reconsumption are pending"
   },
   "transition_receipt": "hmmm",
   "supersedes": {
@@ -71,6 +77,44 @@
     "scoped authority-transition receipt",
     "exact geometry of definition-axis orthogonality",
     "cross-origin angles",
-    "continuum lift-selection law"
-  ]
+    "continuum lift-selection law",
+    "Structural 0.1.0a2 migration of the historical Stack/ZFAE input consumer and its exact-candidate forge integration gate"
+  ],
+  "historical_input_candidate": {
+    "repository": "The-Interdependency/uchc",
+    "source_commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+    "package": "uchc",
+    "version": "0.1.0a1",
+    "wheel": "uchc-0.1.0a1-py3-none-any.whl",
+    "candidate_immutable_identity": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
+    "construct_db_sha256": "af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b",
+    "logical_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57"
+  },
+  "historical_input_candidate_gate_evidence": {
+    "forge": {
+      "repository": "The-Interdependency/stack",
+      "source_commit": "ca190204de25de240662bb438af80c8dc405cea6",
+      "source_path": "research/english-gonol"
+    },
+    "distribution": {
+      "kind": "python-wheel candidate; stable publication surface hmmm",
+      "artifact": "uchc",
+      "version": "0.1.0a1",
+      "candidate_immutable_identity": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
+      "published_immutable_identity": "hmmm",
+      "published_matches_verified_candidate": "hmmm"
+    },
+    "gates": {
+      "public_api": "pass for current extracted candidate",
+      "independent_tests": "pass for current extracted candidate",
+      "clean_build_install": "pass for current extracted candidate",
+      "license_distribution_rights": "pass: FSL-1.1-ALv2 recorded in UCHC",
+      "release_ownership_authority": "pass for repository-owned candidate; stable distribution action not performed",
+      "provenance_preserved": "pass",
+      "exact_candidate_forge_verification": "pass: integration/uchc and research/zfae/UCHC_INPUT.json bind the candidate wheel",
+      "stable_release": "hmmm",
+      "downstream_reconsumption": "hmmm: candidate wheel consumption exists, released-artifact reconsumption does not"
+    },
+    "scope": "Historical 0.1.0a1 input consumer; not evidence for structural 0.1.0a2 integration"
+  }
 }
