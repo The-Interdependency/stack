@@ -40,16 +40,22 @@ Do not invent an implicit rotation, translation or scale law to turn the stored
 origin name into a completion claim. Record the implemented transport and its
 evidence here when available; keep specification and implementation distinct.
 
-### 2. Where does a multiword lexical entry's definition attach?
+### 2. Compound definition attachment: SPACE — specified; witness outstanding
 
-The source stage preserves compound entries and definitions with their exact
-source ownership; it does not invent a single-word origin for a multiword entry.
-Does its closed lexical construction supply that origin, and by what attachment
-operation? The ordinal builder can position its participants without pretending
-that local positions settle the origin relation.
+Operator answer to the compound definition-origin question: `2. space`.
+SPACE supplies the attachment reference for a multiword lexical entry's
+definition, as it does for nested frames in answer 1. Do not ask the operator
+to select that reference again or substitute a constituent word as the origin.
 
-Completion witness: every compound definition has a source-bound attachment that
-preserves its entry, constituent order and definition succession.
+Preserve the compound entry's exact source ownership, constituent order and
+definition succession. Apply the specified SPACE reference when implementing
+its attachment; naming the reference does not establish evaluated transport.
+
+Completion witness: every compound definition has a source-bound SPACE
+attachment that preserves its entry, constituent order and definition
+succession. Record the implemented attachment and independent verification here
+when available; the reference is specified, while that witness remains
+outstanding.
 
 ### 3. How does this visible-circle construction lift into native Mobius state?
 
@@ -97,7 +103,7 @@ no silent reinterpretation of previously constructed objects.
 
 ## hmmm
 
-SPACE is the specified nested attachment reference; its cross-frame transport
-witness remains outstanding. Questions 2–5 remain open. Merge closes source
-integration and default selection, not these implementation/evidence boundaries
-or downstream migration.
+SPACE is the specified attachment reference for both nested frames and compound
+definitions. Their transport/attachment witnesses remain outstanding. Questions
+3–5 remain open. Merge closes source integration and default selection, not
+these implementation/evidence boundaries or downstream migration.
