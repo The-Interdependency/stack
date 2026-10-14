@@ -91,13 +91,15 @@ class VmContactRunbookTests(unittest.TestCase):
                     self.assertRegex(block, r"(?m)^\s*trap\s+'echo \"FAIL [^']*\$LINENO[^']*'\s+ERR\b")
 
     def test_broker_receipt_check_only_counts_this_run(self):
-        for line, block in self.blocks:
-            if "broker receipt" in block:
-                with self.subTest(line=line):
-                    self.assertRegex(block, r"(?m)^START=\$\(date ")
-                    self.assertNotRegex(block, r"journalctl -u vm-mcp-admin\.service -n ")
-                    self.assertIn('--since "$START"', block)
-                    self.assertIn("test -s /root/vm-mcp.auth", block)
+        blocks = [block for _, block in self.blocks if "broker receipt" in block]
+        self.assertEqual(len(blocks), 1)
+        block = blocks[0]
+        self.assertIn("START = str(time.time())", block)
+        self.assertIn('"--since", "@" + START', block)
+        self.assertIn('receipt.get("request_id") == result["request_id"]', block)
+        self.assertIn('receipt.get("mode") == "admin"', block)
+        self.assertIn('receipt.get("run_as") == "root"', block)
+        self.assertIn("CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()", block)
 
 
 if __name__ == "__main__":

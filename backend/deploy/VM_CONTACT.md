@@ -114,108 +114,196 @@ Principles:
 
 ### U1. Inventory and back up (read-only on the VM's state)
 
-Writes only into a new root-only directory. Token values are blanked in the printed
-copy; the raw backup stays root `0600` and is never printed.
+This writes only a new root-only backup and publishes the latest pointer **after**
+all copies, archive reads, and state checks succeed. Do not run concurrent upgrades
+or change the units/configuration between U1 and U4. An incomplete backup is not a
+rollback point. The backup/staging filesystems must support the recorded ownership,
+permissions, ACLs and extended attributes; any tar/copy warning blocks acceptance.
+The supported baseline has an existing `vmmcp` account and stable
+`active`/`inactive` services with `enabled`, `disabled`, `static`, or absent units;
+external install-tree symlinks (except standard venv interpreter links) and
+other states stop as `hmmm` before any service is stopped. Masked, linked, runtime-
+enabled, or transient units need a separately reviewed recovery plan.
 
 ```bash
 (
 set -Eeuo pipefail
-B=/root/vm-mcp-upgrade.$(date +%Y%m%d-%H%M%S)
-sudo -n install -d -o root -g root -m 0700 "$B"
-sudo -n sh -c 'echo "'"$B"'" > /root/vm-mcp-upgrade.latest; chmod 600 /root/vm-mcp-upgrade.latest'
-# raw backups (root-only, never printed)
-sudo -n sh -c "umask 077
-  cp -a /etc/vm-mcp.env '$B/vm-mcp.env' 2>/dev/null || true
-  cp -a /etc/systemd/system/vm-mcp.service /etc/systemd/system/vm-mcp-admin.service '$B/' 2>/dev/null || true
-  cp -a /etc/systemd/system/vm-mcp.service.d '$B/vm-mcp.service.d' 2>/dev/null || true
-  cp -a /etc/credstore/vm-mcp-token '$B/credstore-token' 2>/dev/null || true
-  cp -a /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf '$B/' 2>/dev/null || true
-  tar -C /opt -cpf '$B/opt-vm-mcp.tar' vm-mcp 2>/dev/null || true
-  systemctl is-active vm-mcp-admin.service > '$B/broker-was' 2>/dev/null || true"
-# printed inventory (no secrets)
-sudo -n sh -c "{
-  echo '--- /etc/vm-mcp.env (token values blanked)'
-  sed -E 's/^([A-Z_]*TOKEN[A-Z_]*)=.*/\1=<blanked>/' /etc/vm-mcp.env 2>/dev/null || echo 'absent'
-  echo '--- version';            cat /opt/vm-mcp/SOURCE_COMMIT 2>/dev/null || echo 'absent'
-  echo '--- vmmcp passwd';       getent passwd vmmcp || echo 'absent'
-  echo '--- units';              systemctl is-active vm-mcp.service vm-mcp-admin.service || true
-  systemctl is-enabled vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
-  echo '--- listeners';          ss -ltnH | awk '\$4 ~ /:8765\$/'
-  echo '--- unix sockets';       ls -l /run/vm-mcp 2>/dev/null || echo 'none'
-  echo '--- drop-ins';           cat /etc/systemd/system/vm-mcp.service.d/*.conf 2>/dev/null || echo 'none'
-  echo '--- token file present'; test -s /etc/credstore/vm-mcp-token && echo yes || echo no
-  echo '--- ptrace_scope';       sysctl -n kernel.yama.ptrace_scope 2>/dev/null || echo 'no yama'
-} | tee '$B/inventory.txt'"
-)
-```
+sudo -n python3 -I - <<'PY'
+# U1 snapshot: keep raw environment and credentials inside the root-only archive.
+import hashlib, json, os, pathlib, pwd, re, subprocess, tarfile, tempfile
 
-Record from the output: version, `VM_MCP_ROOT`, the vmmcp home (field 6 of the passwd
-line), `VM_MCP_PROFILE`, `VM_MCP_SHELL_ENABLED`, and which units are active/enabled.
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
 
-### U2. Derive the preserved target
-
-The effective profile is resolved exactly as vm-mcp's `profiles.resolve_profile` does:
-an explicit `VM_MCP_PROFILE` wins; if it is empty, `VM_MCP_SHELL_ENABLED` true
-(`1/true/yes/on`) means `workspace`, otherwise `read-only`. The new installer drops
-`VM_MCP_SHELL_ENABLED`, so the resolved profile must be passed explicitly or a
-legacy `workspace` VM would silently lose its shell. The privileged broker unit
-(`vm-mcp-admin.service`) is enabled by the installer only for `personal-console`;
-if the inventory shows that unit enabled or active, the existing profile must already
-be `personal-console`, and it is preserved as such.
-
-```bash
-(
-set -Eeuo pipefail
-B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
-sudo -n env B="$B" python3 - <<'PY'
-import os, re, subprocess
-B = os.environ["B"]; env = {}
-try:
-    for line in open(f"{B}/vm-mcp.env"):
-        m = re.match(r'^\s*([A-Z_]+)=(.*)$', line.rstrip("\n"))
-        if m: env[m[1]] = m[2].strip().strip('"')
-except FileNotFoundError:
-    pass
-prof = env.get("VM_MCP_PROFILE", "").strip().lower()
-if not prof:
-    prof = "workspace" if env.get("VM_MCP_SHELL_ENABLED", "").strip().lower() in {"1","true","yes","on"} else "read-only"
-def unit_on(u):
-    r = lambda *a: subprocess.run(["systemctl", *a, u], capture_output=True, text=True).stdout.strip()
-    return r("is-active") == "active" or r("is-enabled") == "enabled"
-broker = unit_on("vm-mcp-admin.service")
-if broker and prof != "personal-console":
-    raise SystemExit(f"hmmm: broker unit is on but resolved profile is {prof}; stop and decide explicitly")
-root = env.get("VM_MCP_ROOT") or "/srv/vm-mcp/workspace"
-home = subprocess.run(["getent","passwd","vmmcp"],capture_output=True,text=True).stdout.split(":")
-home = home[5] if len(home) > 5 else ""
-if home and home != f"{root.rstrip('/')}/.vm-mcp-home":
-    raise SystemExit(f"hmmm: vmmcp home {home} is not under VM_MCP_ROOT {root}; stop and decide explicitly")
-port = env.get("VM_MCP_PORT", "8765")
-with open(f"{B}/target.env", "w") as f:
-    os.fchmod(f.fileno(), 0o600)
-    f.write(f"TARGET_ROOT={root}\nTARGET_PROFILE={prof}\nTARGET_PORT={port}\n")
-print(open(f"{B}/target.env").read(), end="")
+os.umask(0o077)
+paths = ["opt/vm-mcp", "etc/vm-mcp.env",
+         "etc/systemd/system/vm-mcp.service", "etc/systemd/system/vm-mcp-admin.service",
+         "etc/systemd/system/vm-mcp.service.d", "etc/systemd/system/vm-mcp-admin.service.d",
+         "etc/credstore/vm-mcp-token", "etc/sysctl.d/99-zz-vm-mcp-ptrace.conf"]
+B = pathlib.Path(tempfile.mkdtemp(prefix="vm-mcp-upgrade.", dir="/root"))
+account = pwd.getpwnam("vmmcp")  # absent account: stop, do not invent a rollback
+units = {}
+for unit in ("vm-mcp.service", "vm-mcp-admin.service"):
+    result = subprocess.run(["systemctl", "show", unit, "--property=LoadState,ActiveState,UnitFileState"],
+                            check=True, text=True, capture_output=True)
+    state = dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
+    if state.get("LoadState") == "not-found":
+        state["UnitFileState"] = "absent"
+    if (state.get("LoadState") not in {"loaded", "not-found"}
+        or state.get("ActiveState") not in {"active", "inactive"}
+        or state.get("UnitFileState") not in {"enabled", "disabled", "static", "absent"}):
+        raise SystemExit("hmmm: unsupported or transitional unit state; no upgrade: " + unit)
+    units[unit] = state
+present = [p for p in paths if os.path.lexists("/" + p)]
+# The installer can follow these locations while writing; a symlink baseline
+# would require backing up external referents, which this transaction does not own.
+for path in present:
+    require(not pathlib.Path('/' + path).is_symlink(), 'hmmm: deployment artifact symlink needs separate recovery plan')
+for directory in ("/etc/systemd/system/vm-mcp.service.d", "/etc/systemd/system/vm-mcp-admin.service.d"):
+    if pathlib.Path(directory).is_dir():
+        require(not any((p.is_symlink() for p in pathlib.Path(directory).rglob('*'))), 'hmmm: drop-in symlink needs separate recovery plan')
+install_tree = pathlib.Path("/opt/vm-mcp").resolve()
+for entry in install_tree.rglob("*") if install_tree.is_dir() else []:
+    if not entry.is_symlink():
+        continue
+    referent = entry.resolve()
+    if referent == install_tree or install_tree in referent.parents:
+        continue  # internal referent is part of this same archive
+    relative = entry.relative_to(install_tree).as_posix()
+    interpreter = (re.fullmatch(r"\.venv/bin/python(?:[0-9]+(?:\.[0-9]+)?)?", relative)
+                   and referent.parent in {pathlib.Path("/usr/bin").resolve(), pathlib.Path("/usr/local/bin").resolve()}
+                   and re.fullmatch(r"python[0-9]+(?:\.[0-9]+)?", referent.name))
+    require(interpreter, "hmmm: install-tree symlink escapes backup; separate recovery plan required")
+archive = B / "state.tar"
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "-C", "/", "-cpf", str(archive), "--", *present], check=True, capture_output=True)
+require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
+# Read every byte, not just the archive header; tar --compare also detects changed sources.
+with tarfile.open(archive, "r:") as saved:
+    for member in saved:
+        if member.isfile():
+            with saved.extractfile(member) as content:
+                while content.read(1024 * 1024):
+                    pass
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--compare", "-f", str(archive), "-C", "/"], check=True, capture_output=True)
+require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
+h = hashlib.sha256()
+with archive.open("rb") as stream:
+    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+        h.update(chunk)
+archive_digest = h.hexdigest()
+manifest = {"paths": paths, "present": present, "units": units,
+            "home": account.pw_dir, "uid": account.pw_uid,
+            "archive_sha256": archive_digest}
+(B / "state.json").write_text(json.dumps(manifest, indent=2) + "\n")
+# Copy the environment for the non-evaluating target parser; never print arbitrary env/drop-ins.
+if "etc/vm-mcp.env" in present:
+    with tarfile.open(archive, "r:") as saved:
+        with saved.extractfile("etc/vm-mcp.env") as source:
+            (B / "vm-mcp.env").write_bytes(source.read())
+summary = {"backup": str(B), "home": account.pw_dir, "units": units,
+           "present": present, "environment": "saved privately; token values never printed"}
+(B / "inventory.json").write_text(json.dumps(summary, indent=2) + "\n")
+print(json.dumps(summary, indent=2))
+# The marker and atomic latest-pointer publication happen last.
+(B / "COMPLETE").write_text("complete\n")
+pointer = pathlib.Path("/root/vm-mcp-upgrade.latest.new")
+pointer.write_text(str(B) + "\n")
+pointer.replace("/root/vm-mcp-upgrade.latest")
 PY
 )
 ```
 
-The printed `TARGET_ROOT` must be the inventoried `VM_MCP_ROOT` and an existing,
-non-empty directory; `TARGET_PROFILE` must equal the resolved current profile. **To
-change either, edit `$B/target.env` by hand and note the decision in the run log.**
-That is the only sanctioned way to move to a new workspace or another profile.
+The raw archive and private environment copy contain secrets. Do not print, upload,
+or attach them to a PR. Printed inventory is an allowlist, so even indented token
+assignments and secrets inside unit drop-ins are never copied to a terminal log.
+### U2. Derive the preserved target
 
-### U3. Token
+Resolve the profile like `profiles.resolve_profile`: explicit profile wins; otherwise
+legacy `VM_MCP_SHELL_ENABLED=1/true/yes/on` means `workspace`, else `read-only`.
+Store values as JSON, never shell source or `eval`. Unsupported multiline or ambiguous
+environment syntax stops rather than guessing a root or losing configuration.
 
-Run step 1 above unchanged. If `/etc/credstore/vm-mcp-token` already exists and the
-connected client uses it, you may instead pass it as the token source in U4
-(`VM_MCP_AUTH_TOKEN_FILE=/etc/credstore/vm-mcp-token`) to avoid a client update.
+```bash
+(
+set -Eeuo pipefail
+sudo -n python3 -I - <<'PY'
+# U2 target: parse data, never execute environment assignments.
+import json, os, pathlib, re, shlex
+
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
+
+os.umask(0o077)
+B = pathlib.Path(pathlib.Path("/root/vm-mcp-upgrade.latest").read_text().strip())
+require((B / 'COMPLETE').read_text() == 'complete\n', 'incomplete backup')
+state = json.loads((B / "state.json").read_text())
+env = {}
+source = B / "vm-mcp.env"
+for line in source.read_text().splitlines() if source.exists() else []:
+    if not line.strip() or line.lstrip().startswith(("#", ";")):
+        continue
+    match = re.fullmatch(r'\s*([A-Z_][A-Z_0-9]*)\s*=(.*)', line)
+    if not match:
+        raise SystemExit("hmmm: unsupported environment syntax; review privately")
+    key, raw = match.groups()
+    try:
+        words = shlex.split(raw, comments=False, posix=True)
+    except ValueError:
+        raise SystemExit("hmmm: multiline/invalid environment value; review privately")
+    if len(words) > 1 or raw.rstrip().endswith("\\"):
+        raise SystemExit("hmmm: ambiguous environment value; review privately")
+    env[key] = words[0] if words else ""
+profile = env.get("VM_MCP_PROFILE", "").strip().lower()
+if not profile:
+    profile = "workspace" if env.get("VM_MCP_SHELL_ENABLED", "").strip().lower() in {"1", "true", "yes", "on"} else "read-only"
+if profile not in {"read-only", "workspace", "personal-console"}:
+    raise SystemExit("hmmm: unknown profile")
+broker = state["units"]["vm-mcp-admin.service"]
+if (broker["ActiveState"] == "active" or broker["UnitFileState"] == "enabled") and profile != "personal-console":
+    raise SystemExit("hmmm: broker state conflicts with resolved profile")
+root = env.get("VM_MCP_ROOT") or "/srv/vm-mcp/workspace"
+if state["home"] != root.rstrip("/") + "/.vm-mcp-home":
+    raise SystemExit("hmmm: existing home differs from installer convention; stop and review")
+target = {"root": root, "profile": profile, "port": env.get("VM_MCP_PORT", "8765"),
+          "admin_socket": env.get("VM_MCP_ADMIN_SOCKET", "/run/vm-mcp/admin.sock"),
+          "token_file": "/etc/credstore/vm-mcp-token" if "etc/credstore/vm-mcp-token" in state["present"] else "/root/vm-mcp.token"}
+(B / "target.json").write_text(json.dumps(target, indent=2) + "\n")
+print(json.dumps(target, indent=2))
+PY
+)
+```
+
+Check the printed root, profile, port and socket against the existing configuration.
+To deliberately change them, edit the root-only `$B/target.json` through the human
+path and record the decision. This JSON is data, including spaces and shell
+metacharacters; it is never evaluated. The pinned installer's workspace drop-in
+cannot safely represent every systemd path (whitespace, `%`, backslashes or quotes),
+so U4 stops for those roots **before downtime**. Resolve that producer limitation
+separately rather than changing the workspace silently or consuming an unmerged fix.
+The same fail-closed boundary applies to non-default admin sockets: the pinned
+broker unit hardcodes `/run/vm-mcp/admin.sock` and does not read the environment
+file. Passing `VM_MCP_ADMIN_SOCKET` alone cannot preserve both endpoints. U2 records
+the actual socket, but U4 refuses a custom socket before downtime; use a separately
+reviewed producer/deployment fix rather than silently changing it.
+### U3. Select and validate the token source
+
+The default target reuses `/etc/credstore/vm-mcp-token` when present, avoiding a client
+update. Otherwise provision a token using fresh-install step 1 below. If choosing a
+different existing file, write its absolute path into `target.json`'s `token_file`,
+or set `VM_MCP_AUTH_TOKEN_FILE=/absolute/path` when running U4. U4 persists that
+selected path before installation; verification reads the same path. No token value
+belongs in JSON, shell arguments, logs, or chat. Token permissions, owner, descriptor
+identity and format are checked before the services stop, and again by the installer.
 
 ### U4. Stop, install with the preserved target, restart
 
-`usermod` refuses a user with running processes (installer exit 8, seen on a real
-upgrade), so both units are stopped immediately before the install. **Expect a brief
-MCP outage**, typically under a minute (the test suite runs first, before the stop).
-Human SSH/OS Login/IAP access is unaffected. Run it from the human path, not through MCP.
+Run from the known-good human recovery path, never through MCP. Source tests and
+preflight complete before stopping units. Expect an MCP outage; package installation
+or download failures can make it longer than a minute. The installer starts/enables
+the main unit and starts/enables the broker only for `personal-console`; approving
+this step includes that target activation. U6 restores prior activation/enablement.
 
 ```bash
 (
@@ -223,69 +311,132 @@ set -Eeuo pipefail
 trap 'echo "FAIL step U4 at line $LINENO (exit $?)" >&2' ERR
 umask 077
 SKILL_LIB_SHA=023ae12bb19ced1a4f2494ed6507fc31285a5b8e
-B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
-eval "$(sudo -n cat "$B/target.env")"
-sudo -n test -d "$TARGET_ROOT"
-TOKEN_FILE=${TOKEN_FILE:-/root/vm-mcp.token}
-
 BOOTSTRAP_DIR="$(mktemp -d)"
 ROOT_SRC="$(sudo -n mktemp -d /root/vm-mcp-src.XXXXXX)"
 trap 'rm -rf "$BOOTSTRAP_DIR"; sudo -n rm -rf "$ROOT_SRC"' EXIT
 git clone --quiet --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$BOOTSTRAP_DIR/skill-lib"
 git -C "$BOOTSTRAP_DIR/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
+test "$(git -C "$BOOTSTRAP_DIR/skill-lib" rev-parse HEAD)" = "$SKILL_LIB_SHA"
 (cd "$BOOTSTRAP_DIR/skill-lib" && PYTHONPATH=vm-mcp python3 -W error::ResourceWarning -m unittest discover -s vm-mcp/tests -p 'test_*.py')
 sudo -n git clone --quiet https://github.com/The-Interdependency/skill-lib.git "$ROOT_SRC/skill-lib"
 sudo -n git -C "$ROOT_SRC/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
 test "$(sudo -n git -C "$ROOT_SRC/skill-lib" rev-parse HEAD)" = "$SKILL_LIB_SHA"
+# Only the token PATH is passed; the token value is never an argument/environment value.
+sudo -n env ROOT_SRC="$ROOT_SRC" TOKEN_OVERRIDE="${VM_MCP_AUTH_TOKEN_FILE:-}" python3 -I - <<'PY'
+# U4 preflight and install: every target value remains a subprocess argument or env value.
+import hashlib, json, os, pathlib, pwd, re, stat, subprocess, time
 
-echo "stopping vm-mcp units at $(date '+%F %T %Z')"
-sudo -n systemctl stop vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
-timeout 30 sh -c 'while pgrep -u vmmcp >/dev/null; do sleep 1; done' || {
-  echo "hmmm: vmmcp still has processes:"; pgrep -a -u vmmcp; exit 8; }
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
 
-sudo -n env -u VM_MCP_AUTH_TOKEN -u VM_MCP_AUTH_TOKEN_STDIN \
-  VM_MCP_PROFILE="$TARGET_PROFILE" VM_MCP_ROOT="$TARGET_ROOT" VM_MCP_PORT="$TARGET_PORT" \
-  VM_MCP_AUTH_TOKEN_FILE="$TOKEN_FILE" \
-  bash "$ROOT_SRC/skill-lib/vm-mcp/install.sh" || rc=$?
-echo "rc=${rc:-0}"
-[ "${rc:-0}" -eq 0 ] || exit "$rc"
-test "$(sudo -n cat /opt/vm-mcp/SOURCE_COMMIT)" = "$SKILL_LIB_SHA"
-sudo -n sed -E 's/^([A-Z_]*TOKEN[A-Z_]*)=.*/\1=<blanked>/' /etc/vm-mcp.env
-getent passwd vmmcp | cut -d: -f6
+B = pathlib.Path(pathlib.Path("/root/vm-mcp-upgrade.latest").read_text().strip())
+require((B / 'COMPLETE').read_text() == 'complete\n', 'incomplete backup')
+state = json.loads((B / "state.json").read_text())
+target = json.loads((B / "target.json").read_text())
+account = pwd.getpwnam("vmmcp")
+require((account.pw_uid, account.pw_dir) == (state['uid'], state['home']), 'service account changed; repeat U1')
+if os.environ.get("TOKEN_OVERRIDE"):
+    target["token_file"] = os.environ["TOKEN_OVERRIDE"]
+require(set(target) == {'root', 'profile', 'port', 'admin_socket', 'token_file'}, 'unknown target fields')
+require(all((isinstance(v, str) and '\n' not in v and ('\r' not in v) and ('\x00' not in v) for v in target.values())), 'invalid target value')
+require(target['profile'] in {'read-only', 'workspace', 'personal-console'}, 'invalid profile')
+require(target["admin_socket"] == "/run/vm-mcp/admin.sock", "hmmm: pinned broker unit cannot preserve a custom socket; stop before downtime")
+require(re.fullmatch('[0-9]+', target['port']) and 1 <= int(target['port']) <= 65535, 'invalid port')
+require(all((target[k].startswith('/') for k in ('root', 'admin_socket', 'token_file'))), 'paths must be absolute')
+root = pathlib.Path(target["root"]).resolve()
+install = pathlib.Path("/opt/vm-mcp").resolve()
+require(root != pathlib.Path('/') and root != install and (root not in install.parents) and (install not in root.parents), 'workspace overlaps install')
+require(root.is_dir() and any((p.name != '.vm-mcp-home' for p in root.iterdir())), 'workspace must exist and be nonempty')
+require(not re.search('[\\s%\\\\"\']', target['root']), 'hmmm: pinned installer cannot represent this workspace drop-in safely')
+# Verify the completed archive without touching the live deployment.
+h = hashlib.sha256()
+with (B / "state.tar").open("rb") as stream:
+    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+        h.update(chunk)
+require(h.hexdigest() == state['archive_sha256'], 'backup checksum mismatch')
+# Detect configuration/code changes since inventory before overwriting them.
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--compare", "-f", str(B / "state.tar"), "-C", "/"], check=True, capture_output=True)
+require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
+for path in set(state["paths"]) - set(state["present"]):
+    require(not os.path.lexists('/' + path), 'previously absent artifact appeared; repeat U1')
+for unit, prior in state["units"].items():
+    result = subprocess.run(["systemctl", "show", unit, "--property=LoadState,ActiveState,UnitFileState"], check=True, text=True, capture_output=True)
+    now = dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
+    if now.get("LoadState") == "not-found":
+        now["UnitFileState"] = "absent"
+    require(now == prior, 'unit state changed; repeat U1')
+# Same one-open descriptor/owner/permission contract as the canonical installer.
+fd = os.open(target["token_file"], os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+with os.fdopen(fd, "rb") as token_file:
+    opened = os.fstat(token_file.fileno())
+    named = os.lstat(target["token_file"])
+    require(stat.S_ISREG(opened.st_mode) and stat.S_ISREG(named.st_mode), 'token is not regular')
+    require((opened.st_dev, opened.st_ino) == (named.st_dev, named.st_ino), 'token path changed')
+    require(opened.st_uid == 0 and stat.S_IMODE(opened.st_mode) & 63 == 0, 'unsafe token owner/mode')
+    token = token_file.readline(258).removesuffix(b"\n")
+    require(re.fullmatch(b'[A-Za-z0-9_-]{32,256}', token), 'invalid token format')
+del token
+(B / "target.json").write_text(json.dumps(target, indent=2) + "\n")
+for unit, prior in state["units"].items():
+    if prior["LoadState"] != "not-found":
+        subprocess.run(["systemctl", "stop", unit], check=True)
+# Bounded safety wait: usermod must never race a remaining vmmcp process.
+for attempt in range(31):
+    probe = subprocess.run(["pgrep", "-u", str(state["uid"])], capture_output=True)
+    if probe.returncode == 1:
+        break
+    require(probe.returncode == 0, 'could not check service processes')
+    if attempt == 30:
+        raise SystemExit("hmmm: vmmcp processes remain; stop and use U6")
+    time.sleep(1)
+env = {k: v for k, v in os.environ.items() if not k.startswith("VM_MCP_")}
+env.update(VM_MCP_ROOT=target["root"], VM_MCP_PROFILE=target["profile"],
+           VM_MCP_PORT=target["port"], VM_MCP_ADMIN_SOCKET=target["admin_socket"],
+           VM_MCP_AUTH_TOKEN_FILE=target["token_file"])
+result = subprocess.run(["bash", os.environ["ROOT_SRC"] + "/skill-lib/vm-mcp/install.sh"], env=env)
+print("rc=" + str(result.returncode))
+if result.returncode:
+    raise SystemExit(result.returncode)
+require(pathlib.Path('/opt/vm-mcp/SOURCE_COMMIT').read_text().strip() == '023ae12bb19ced1a4f2494ed6507fc31285a5b8e', 'wrong installed source')
+PY
 )
 ```
 
-Expect `rc=0`, the env showing the preserved `VM_MCP_ROOT` and `VM_MCP_PROFILE`, and
-the unchanged home. On a `read-only` or `workspace` target the installer leaves the
-broker unit disabled, as before; on `personal-console` it re-enables it.
-
-**If U4 fails**, the VM's MCP path is down (fail-closed), not open. Restore the
-pre-upgrade state with U6 and restart. Installer exits 3 (token), 5 (root not a
-directory), 7 (no Yama) and 8 (busy user) happen before any file under `/opt` or
-`/etc/systemd` is touched; then only the restart at the end of U6 is needed.
-
+Expect `rc=0`. The Python result is initialized by the actual invocation, so an
+interactive shell's old `rc` cannot turn success into failure. On any failure after
+stopping, keep using the human recovery path and use U6 or fix forward. Do not infer
+"nothing changed" from an installer exit code: even busy-user/root failures may
+follow ptrace-file or package changes. U6 restores the inventoried deployment files
+and service-user home, but does not undo package-manager changes or lower live Yama
+policy. Never restore old unauthenticated code without considering that exposure.
 ### U5. Checks for the upgrade case
 
-Run checks a–f below in order (f after e), adapted to `TARGET_PROFILE`:
+Run checks a–f below in order. Their b/e/f blocks load the persisted JSON target,
+including custom port, socket, selected token source and profile. For non-personal
+profiles the broker must be inactive and the privileged call must be policy-refused,
+with no receipt for that probe. A failing check is not acceptance.
 
-| check | `personal-console` | `workspace` / `read-only` |
-|---|---|---|
-| a | as written | as written |
-| b | as written | broker unit `inactive`, `/run/vm-mcp/admin.sock` absent; all other lines as written |
-| c, d, e | as written | as written (bearer auth is required in every profile) |
-| f | as written | the call in f must be refused by policy (`ok: false`) and no broker receipt may appear |
-
-Also confirm preservation:
+Also confirm preservation (read-only):
 
 ```bash
 (
-ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-B=$(sudo -n cat /root/vm-mcp-upgrade.latest); eval "$(sudo -n cat "$B/target.env")"
-ok "root preserved"    "$TARGET_ROOT"    "$(sudo -n sed -nE 's/^VM_MCP_ROOT="?([^"]*)"?$/\1/p' /etc/vm-mcp.env)"
-ok "profile preserved" "$TARGET_PROFILE" "$(sudo -n sed -nE 's/^VM_MCP_PROFILE=(.*)$/\1/p' /etc/vm-mcp.env)"
-ok "home preserved"    "${TARGET_ROOT%/}/.vm-mcp-home" "$(getent passwd vmmcp | cut -d: -f6)"
-ok "workspace drop-in" "ReadWritePaths=$TARGET_ROOT" "$(grep -x "ReadWritePaths=$TARGET_ROOT" /etc/systemd/system/vm-mcp.service.d/workspace.conf)"
-ok "workspace not emptied" yes "$(sudo -n find "$TARGET_ROOT" -mindepth 1 -maxdepth 1 ! -name .vm-mcp-home | grep -q . && echo yes || echo no)"
+set -Eeuo pipefail
+sudo -n python3 -I - <<'PY'
+import json, pathlib, pwd, shlex
+B = pathlib.Path(pathlib.Path("/root/vm-mcp-upgrade.latest").read_text().strip())
+target = json.loads((B / "target.json").read_text())
+env = {}
+for line in pathlib.Path("/etc/vm-mcp.env").read_text().splitlines():
+    if "=" in line and not line.lstrip().startswith("#"):
+        key, value = line.split("=", 1)
+        words = shlex.split(value)
+        env[key.strip()] = words[0] if len(words) == 1 else ""
+for key, field in (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"), ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket")):
+    print(("PASS " if env.get(key) == target[field] else "FAIL ") + key + " preserved")
+print(("PASS " if pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home" else "FAIL ") + "target service home")
+print(("PASS " if any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()) else "FAIL ") + "workspace not empty")
+PY
 )
 ```
 
@@ -295,32 +446,37 @@ ok "workspace not emptied" yes "$(sudo -n find "$TARGET_ROOT" -mindepth 1 -maxde
 but in that mode it has no source checkout, so its fixed-install-root and
 workspace-overlap checks would fail falsely; and `--repo` alone turns `--skip-install`
 off (it would reinstall). Never pass `--destructive` or `--reinstall-readonly` on a
-real VM. Its step 3/7 expectations assume `personal-console`; on other profiles read
-those lines with the table above. Run the source checks separately against a 023ae12
+real VM. Its step 3/7 expectations assume `personal-console`; use the executable profile-aware
+checks b/f below instead of interpreting those false failures as acceptance. Run the source checks separately against a 023ae12
 checkout:
 
 ```bash
 (
 ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-S=$(mktemp -d); trap 'rm -rf "$S"; sudo -n rm -f /root/.vm-mcp-t127' EXIT
+trap 'echo "FAIL source checks at line $LINENO (exit $?)" >&2' ERR
+S=$(mktemp -d)
+P=$(sudo -n mktemp /root/vm-mcp-token-probe.XXXXXX)
+trap 'rm -rf "$S"; sudo -n rm -f "$P"' EXIT
 git clone -q --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$S/sl"
 git -C "$S/sl" checkout -q --detach 023ae12bb19ced1a4f2494ed6507fc31285a5b8e
 I="$S/sl/vm-mcp/install.sh"
-ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I")"
-ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I")"
+ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I" || true)"
+ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I" || true)"
 sed -n '/^check_work_root() {/,/^}/p' "$I" > "$S/cwr.sh"
 for bad in / /opt /opt/vm-mcp /opt/vm-mcp/x /opt/vm-mcp/../vm-mcp; do
   ok "overlap $bad rejected" 1 "$(bash -c '. "$1"; check_work_root "$2" /opt/vm-mcp 2>/dev/null && echo 0 || echo 1' _ "$S/cwr.sh" "$bad")"
 done
-B=$(sudo -n cat /root/vm-mcp-upgrade.latest); eval "$(sudo -n cat "$B/target.env")"
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
+TARGET_ROOT=$(sudo -n python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["root"])' "$B/target.json")
+TARGET_PROFILE=$(sudo -n python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["profile"])' "$B/target.json")
 ok "preserved root $TARGET_ROOT accepted" 0 "$(bash -c '. "$1"; check_work_root "$2" /opt/vm-mcp 2>/dev/null && echo 0 || echo 1' _ "$S/cwr.sh" "$TARGET_ROOT")"
 # token descriptor owner/mode check, against the installed code, with a throwaway file
-probe() { sudo -n sh -c 'cd /opt/vm-mcp && .venv/bin/python -I -c "import sys; sys.path.insert(0,\".\"); import auth; auth._read_stdin_token()" < /root/.vm-mcp-t127' >/dev/null 2>&1 && echo accepted || echo refused; }
-sudo -n sh -c 'umask 077; head -c 48 /dev/urandom | base64 -w0 > /root/.vm-mcp-t127; echo >> /root/.vm-mcp-t127'
+probe() { sudo -n sh -c 'cd /opt/vm-mcp && .venv/bin/python -I -c "import sys; sys.path.insert(0,\".\"); import auth; auth._read_stdin_token()" < "$1"' _ "$P" >/dev/null 2>&1 && echo accepted || echo refused; }
+sudo -n sh -c 'umask 077; head -c 48 /dev/urandom | base64 -w0 > "$1"; echo >> "$1"' _ "$P"
 ok "token file 0600 root" accepted "$(probe)"
-sudo -n chmod 0640 /root/.vm-mcp-t127; ok "token file 0640 refused" refused "$(probe)"
-sudo -n chmod 0604 /root/.vm-mcp-t127; ok "token file 0604 refused" refused "$(probe)"
-sudo -n chmod 0600 /root/.vm-mcp-t127; sudo -n chown vmmcp /root/.vm-mcp-t127; ok "token file owned by vmmcp refused" refused "$(probe)"
+sudo -n chmod 0640 "$P"; ok "token file 0640 refused" refused "$(probe)"
+sudo -n chmod 0604 "$P"; ok "token file 0604 refused" refused "$(probe)"
+sudo -n chmod 0600 "$P"; sudo -n chown vmmcp "$P"; ok "token file owned by vmmcp refused" refused "$(probe)"
 # step 9 sysctl handling, observed without changing the profile
 if [ "$TARGET_PROFILE" = read-only ]; then
   ok "read-only: installer's own ptrace sysctl removed" absent "$(test -e /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf && echo present || echo absent)"
@@ -336,39 +492,95 @@ a profile change) and stays covered by the scratch-VM run.
 
 ### U6. Roll back to the inventoried state
 
-Restores the env, units, drop-ins, sysctl file and code exactly as backed up in U1.
-**This returns the VM to its pre-upgrade code, so endpoints that were not
-token-protected before are unprotected again.** Prefer fixing forward; use this only
-to recover service. For a profile-only rollback, use the `sed` rollback below instead.
+This is a recovery operation through the human path. **Old code may be
+unauthenticated.** Prefer fixing forward; restoring a previously active old service
+reopens that old exposure. Units that were inactive or disabled remain so. Review
+that security consequence before running this block. It restores only the declared
+deployment artifacts and service-user home, not application/workspace data, installed
+OS packages, or a lowered live `ptrace_scope`. Do not use the profile-only `sed`
+example later in this document as an upgrade rollback.
 
 ```bash
 (
 set -Eeuo pipefail
-B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
-sudo -n test -f "$B/inventory.txt"
-sudo -n systemctl stop vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
-sudo -n sh -c "set -e
-  if [ -f '$B/opt-vm-mcp.tar' ]; then rm -rf /opt/vm-mcp.rollback-old; mv /opt/vm-mcp /opt/vm-mcp.rollback-old 2>/dev/null || true; tar -C /opt -xpf '$B/opt-vm-mcp.tar'; fi
-  [ -f '$B/vm-mcp.env' ] && install -o root -g root -m 0600 '$B/vm-mcp.env' /etc/vm-mcp.env
-  for u in vm-mcp.service vm-mcp-admin.service; do
-    if [ -f '$B/'\$u ]; then install -m 0644 '$B/'\$u /etc/systemd/system/\$u; else rm -f /etc/systemd/system/\$u; fi
-  done
-  rm -rf /etc/systemd/system/vm-mcp.service.d
-  [ -d '$B/vm-mcp.service.d' ] && cp -a '$B/vm-mcp.service.d' /etc/systemd/system/
-  if [ -f '$B/99-zz-vm-mcp-ptrace.conf' ]; then install -m 0644 '$B/99-zz-vm-mcp-ptrace.conf' /etc/sysctl.d/; else rm -f /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf; fi
-  if [ -f '$B/credstore-token' ]; then install -o root -g root -m 0600 '$B/credstore-token' /etc/credstore/vm-mcp-token; else rm -f /etc/credstore/vm-mcp-token; fi
-  systemctl daemon-reload"
-# start what was running before
-if [ "$(sudo -n cat "$B/broker-was" 2>/dev/null)" = active ]; then sudo -n systemctl start vm-mcp-admin.service; fi
-sudo -n systemctl start vm-mcp.service
-systemctl is-active vm-mcp.service vm-mcp-admin.service || true
+sudo -n python3 -I - <<'PY'
+# U6 rollback: validate and stage completely before touching the live deployment.
+import hashlib, json, os, pathlib, pwd, shutil, subprocess, tarfile, tempfile
+
+def require(condition, message):
+    if not condition:
+        raise AssertionError(message)
+
+os.umask(0o077)
+B = pathlib.Path(pathlib.Path("/root/vm-mcp-upgrade.latest").read_text().strip())
+require((B / 'COMPLETE').read_text() == 'complete\n', 'incomplete backup')
+state = json.loads((B / "state.json").read_text())
+paths = ["opt/vm-mcp", "etc/vm-mcp.env",
+         "etc/systemd/system/vm-mcp.service", "etc/systemd/system/vm-mcp-admin.service",
+         "etc/systemd/system/vm-mcp.service.d", "etc/systemd/system/vm-mcp-admin.service.d",
+         "etc/credstore/vm-mcp-token", "etc/sysctl.d/99-zz-vm-mcp-ptrace.conf"]
+require(state['paths'] == paths and set(state['present']) <= set(paths), 'invalid backup manifest')
+require(pwd.getpwnam('vmmcp').pw_uid == state['uid'], 'service account identity changed')
+h = hashlib.sha256()
+with (B / "state.tar").open("rb") as stream:
+    for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+        h.update(chunk)
+require(h.hexdigest() == state['archive_sha256'], 'backup checksum mismatch')
+staging = pathlib.Path(tempfile.mkdtemp(prefix="restore.", dir=B))
+# Archive was made by U1 from exact paths, without following symlinks.
+# Root-only backup ownership and checksum are trust prerequisites, not tar sandboxing.
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "-xpf", str(B / "state.tar"), "-C", str(staging)], check=True, capture_output=True)
+require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
+for path in state["present"]:
+    require(os.path.lexists(staging / path), 'missing staged artifact')
+# Keep the staging and displaced upgraded artifacts for recovery if copying fails.
+displaced = pathlib.Path(tempfile.mkdtemp(prefix="displaced.", dir=B))
+for unit in state["units"]:
+    result = subprocess.run(["systemctl", "show", unit, "--property=LoadState", "--value"], check=True, text=True, capture_output=True)
+    if result.stdout.strip() != "not-found":
+        subprocess.run(["systemctl", "stop", unit], check=True)
+        subprocess.run(["systemctl", "disable", unit], check=True)
+probe = subprocess.run(["pgrep", "-u", str(state["uid"])], capture_output=True)
+require(probe.returncode == 1, 'vmmcp processes remain; no files restored')
+for path in paths:
+    live = pathlib.Path("/") / path
+    if os.path.lexists(live):
+        saved = displaced / path
+        saved.parent.mkdir(parents=True, exist_ok=True)
+        # Move across filesystems if needed; preserve this inspection copy.
+        shutil.move(str(live), str(saved))
+    if path in state["present"]:
+        live.parent.mkdir(parents=True, exist_ok=True)
+        copy_result = subprocess.run(["cp", "-a", "--", str(staging / path), str(live)], check=True, capture_output=True)
+        require(not copy_result.stderr, "hmmm: restore copy warned; leave services down and inspect")
+    else:
+        require(not os.path.lexists(live), 'new artifact was not removed')
+subprocess.run(["usermod", "--home", state["home"], "vmmcp"], check=True)
+subprocess.run(["systemctl", "daemon-reload"], check=True)
+for unit, prior in state["units"].items():
+    if prior["UnitFileState"] == "enabled":
+        subprocess.run(["systemctl", "enable", unit], check=True)
+# Restore active state separately from boot enablement, broker before HTTP.
+for unit in ("vm-mcp-admin.service", "vm-mcp.service"):
+    if state["units"][unit]["ActiveState"] == "active":
+        subprocess.run(["systemctl", "start", unit], check=True)
+for unit, prior in state["units"].items():
+    result = subprocess.run(["systemctl", "show", unit, "--property=LoadState,ActiveState,UnitFileState"], check=True, text=True, capture_output=True)
+    now = dict(line.split("=", 1) for line in result.stdout.splitlines() if "=" in line)
+    if now.get("LoadState") == "not-found":
+        now["UnitFileState"] = "absent"
+    require(now == prior, 'rollback unit state differs: ' + unit)
+require(pwd.getpwnam('vmmcp').pw_dir == state['home'], 'home was not restored')
+print("PASS deployment rollback; preserved upgraded artifacts in " + str(displaced))
+PY
 )
 ```
 
-Afterwards compare `systemctl is-active` and the blanked env with `$B/inventory.txt`.
-The live `ptrace_scope` is not lowered. `/opt/vm-mcp.rollback-old` keeps the
-upgraded tree for inspection; remove it by hand once you are done.
-
+Keep the backup and displaced artifacts root-only until recovery is verified. If
+restoration fails, leave services down and inspect through the human recovery path;
+do not claim rollback success from a partial copy. The complete staged backup and
+separately retained upgraded artifacts remain available. Workspace content is not
+reverted or deleted; U4's installer changes there may need a separate reviewed repair.
 ### Worked example: a VM from an earlier vm-mcp release
 
 A real upgrade on Oct 13, 2026 met this layout:
@@ -396,9 +608,9 @@ With this section:
 3. U4 stops the old service (brief outage), installs 023ae12 with those values, and
    the installer removes its own ptrace sysctl file again because the target is
    `read-only`.
-4. U5 expects the read-only column of the table, the preservation block all `PASS`,
+4. U5 expects the read-only profile-aware checks, the preservation block all `PASS`,
    and the read-only step 9 line `absent`.
-5. Any other profile for that VM is a separate, explicit decision in `target.env`.
+5. Any other profile for that VM is a separate, explicit decision in `target.json`.
 
 ## Install the exact canonical personal console
 
@@ -460,6 +672,7 @@ sudo -n git clone --quiet https://github.com/The-Interdependency/skill-lib.git "
 sudo -n git -C "$ROOT_SRC/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
 test "$(sudo -n git -C "$ROOT_SRC/skill-lib" rev-parse HEAD)" = "$SKILL_LIB_SHA"
 
+rc=0
 sudo -n \
   VM_MCP_PROFILE=personal-console \
   VM_MCP_ROOT=/srv/vm-mcp/workspace \
@@ -532,27 +745,102 @@ the `+`) and `StandardInput=file:/etc/credstore/vm-mcp-token`. The last line mus
 `status=0`. Check the `+` and the file path with `systemctl cat`:
 `systemctl show` drops the `+` and prints only `StandardInput=file`.
 
-### b. Both services up and listening on loopback only
+### b. Profile-appropriate services and loopback listener
+
+Each of b, e and f independently loads the root-only `target.json` from U2/U3
+through `/root/vm-mcp-upgrade.latest`. A missing pointer means fresh-install defaults;
+a present but unreadable or invalid pointer/target is a failure, never a default.
+The loader reads data as JSON, never shell code. The token default is the installed
+credstore file, so a deleted fresh-install staging token does not break checks.
 
 ```bash
 (
-ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-rc=0; timeout 60 sh -c "until ss -ltn | grep -q '127.0.0.1:8765 '; do sleep 1; done" || rc=$?
-ok "listening within 60 s" 0 "$rc"
-ok "vm-mcp active" active "$(systemctl is-active vm-mcp.service || true)"
-ok "vm-mcp-admin active" active "$(systemctl is-active vm-mcp-admin.service || true)"
-j=$(sudo -n journalctl -u vm-mcp.service -b --no-pager) || j=READ-FAILED
-ok "no yama-gate refusals this boot" 0 "$(grep -ci -e yama-gate -e READ-FAILED <<<"$j" || true)"
-ok "one listener on :8765" 1 "$(ss -ltnH | awk '$4 ~ /:8765$/' | wc -l)"
-ok "listener is 127.0.0.1" 1 "$(ss -ltnH | awk '$4 == "127.0.0.1:8765"' | wc -l)"
-ok "/run/vm-mcp" "root vmmcp 750" "$(sudo -n stat -c '%U %G %a' /run/vm-mcp || true)"
-ok "admin.sock" "root vmmcp 660" "$(sudo -n stat -c '%U %G %a' /run/vm-mcp/admin.sock || true)"
-ok "service user" vmmcp "$(systemctl show -p User --value vm-mcp.service || true)"
+sudo -n python3 -I - <<'PY'
+import json, os, stat
+from pathlib import Path
+
+def private_text(path):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd) as stream:
+        st = os.fstat(stream.fileno())
+        if not stat.S_ISREG(st.st_mode) or st.st_uid != 0 or st.st_mode & 0o077:
+            raise ValueError("expected a root-only regular file")
+        return stream.read()
+
+def load_target():
+    pointer = Path("/root/vm-mcp-upgrade.latest")
+    if not os.path.lexists(pointer):
+        return 8765, "personal-console", "/run/vm-mcp/admin.sock", "/etc/credstore/vm-mcp-token"
+    B = Path(private_text(pointer).strip())
+    if not B.is_absolute():
+        raise ValueError("invalid upgrade backup path")
+    target = json.loads(private_text(B / "target.json"))
+    port = int(target["port"])
+    profile, socket, token = (target[k] for k in ("profile", "admin_socket", "token_file"))
+    if not 1 <= port <= 65535 or profile not in {"read-only", "workspace", "personal-console"}:
+        raise ValueError("invalid upgrade target")
+    if any(not isinstance(v, str) or not v.startswith("/") or "\n" in v or "\x00" in v for v in (socket, token)):
+        raise ValueError("invalid target path")
+    return port, profile, socket, token
+
+try:
+    CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()
+except (OSError, ValueError, KeyError, TypeError):
+    raise SystemExit("FAIL reading preserved verification target; repair U2/U3 before continuing")
+failures = []
+def check(label, probe):
+    try:
+        passed = bool(probe())
+    except Exception:
+        passed = False
+    print(("PASS " if passed else "FAIL ") + label)
+    if not passed:
+        failures.append(label)
+import grp, subprocess, time
+
+def run(*args):
+    result = subprocess.run(args, capture_output=True, text=True)
+    if result.returncode:
+        raise OSError("inspection command failed")
+    return result.stdout.strip()
+
+def listeners():
+    return [line.split()[3] for line in run("ss", "-ltnH").splitlines()
+            if len(line.split()) >= 4 and line.split()[3].rsplit(":", 1)[-1] == str(CHECK_PORT)]
+
+def await_listener():
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        if f"127.0.0.1:{CHECK_PORT}" in listeners():
+            return True
+        time.sleep(1)
+    return False
+
+def boundary(path, mode, kind):
+    st = os.lstat(path)
+    return (kind(st.st_mode) and st.st_uid == 0 and st.st_gid == grp.getgrnam("vmmcp").gr_gid
+            and stat.S_IMODE(st.st_mode) == mode)
+
+check("listening within 60 s", await_listener)
+check("vm-mcp active", lambda: run("systemctl", "is-active", "vm-mcp.service") == "active")
+check("one listener, loopback only", lambda: listeners() == [f"127.0.0.1:{CHECK_PORT}"])
+check("service user", lambda: run("systemctl", "show", "-p", "User", "--value", "vm-mcp.service") == "vmmcp")
+if CHECK_PROFILE == "personal-console":
+    check("vm-mcp-admin active", lambda: run("systemctl", "is-active", "vm-mcp-admin.service") == "active")
+    check("broker directory root:vmmcp 750", lambda: boundary(Path(CHECK_SOCKET).parent, 0o750, stat.S_ISDIR))
+    check("broker socket root:vmmcp 660", lambda: boundary(CHECK_SOCKET, 0o660, stat.S_ISSOCK))
+else:
+    check("broker inactive for lower-authority profile", lambda:
+          run("systemctl", "show", "-p", "ActiveState", "--value", "vm-mcp-admin.service") == "inactive")
+    check("no broker socket for lower-authority profile", lambda: not os.path.lexists(CHECK_SOCKET))
+raise SystemExit(bool(failures))
+PY
 )
 ```
 
-Wait for the port first. The server took 3 to 5 seconds to listen on an e2-small,
-and every earlier request fails with curl `000`. Expect every line to be `PASS`.
+Wait for the selected port first. Expect every check to pass. Lower-authority
+profiles require an inactive broker and no socket; they do not require or enable
+root execution. Inspection errors count as failures.
 
 ### c. The running server holds no token
 
@@ -596,84 +884,296 @@ prints `FAIL`. Look at that directory's permissions before treating the result a
 
 ### e. HTTP authentication
 
-The token goes into root-only header files, so it never appears in a command line or
-`/proc/*/cmdline`. curl reads a header file with `-H @FILE`.
+The selected root-only token file is read inside the root Python process. Headers
+remain in memory, never in argv, shell variables, or persistent header files. Local
+requests explicitly bypass proxy environment settings.
 
 ```bash
 (
-ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-sudo -n sh -c 'umask 077
-  printf "Authorization: Bearer %s\n" "$(cat /root/vm-mcp.token)" > /root/vm-mcp.auth
-  printf "Authorization: bearer %s\n" "$(cat /root/vm-mcp.token)" > /root/vm-mcp.auth-lower
-  printf "Authorization: Bearer wrong-token-wrong-token-wrong-token\n" > /root/vm-mcp.auth-wrong'
-U=http://127.0.0.1:8765/mcp
-H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
-INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
-LIST='{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-ok "no header" 401 "$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -d "$INIT" $U || true)"
-ok "lowercase bearer, real token" 200 "$(sudo -n curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -H @/root/vm-mcp.auth-lower -d "$INIT" $U || true)"
-ok "wrong token" 401 "$(sudo -n curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -H @/root/vm-mcp.auth-wrong -d "$INIT" $U || true)"
-ok "unauthenticated tools/list" 401 "$(curl -s -o /dev/null -w '%{http_code}' "${H[@]}" -d "$LIST" $U || true)"
+sudo -n python3 -I - <<'PY'
+import json, os, stat
+from pathlib import Path
+
+def private_text(path):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd) as stream:
+        st = os.fstat(stream.fileno())
+        if not stat.S_ISREG(st.st_mode) or st.st_uid != 0 or st.st_mode & 0o077:
+            raise ValueError("expected a root-only regular file")
+        return stream.read()
+
+def load_target():
+    pointer = Path("/root/vm-mcp-upgrade.latest")
+    if not os.path.lexists(pointer):
+        return 8765, "personal-console", "/run/vm-mcp/admin.sock", "/etc/credstore/vm-mcp-token"
+    B = Path(private_text(pointer).strip())
+    if not B.is_absolute():
+        raise ValueError("invalid upgrade backup path")
+    target = json.loads(private_text(B / "target.json"))
+    port = int(target["port"])
+    profile, socket, token = (target[k] for k in ("profile", "admin_socket", "token_file"))
+    if not 1 <= port <= 65535 or profile not in {"read-only", "workspace", "personal-console"}:
+        raise ValueError("invalid upgrade target")
+    if any(not isinstance(v, str) or not v.startswith("/") or "\n" in v or "\x00" in v for v in (socket, token)):
+        raise ValueError("invalid target path")
+    return port, profile, socket, token
+
+try:
+    CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()
+except (OSError, ValueError, KeyError, TypeError):
+    raise SystemExit("FAIL reading preserved verification target; repair U2/U3 before continuing")
+failures = []
+def check(label, probe):
+    try:
+        passed = bool(probe())
+    except Exception:
+        passed = False
+    print(("PASS " if passed else "FAIL ") + label)
+    if not passed:
+        failures.append(label)
+import re
+import urllib.request, urllib.error
+U = f"http://127.0.0.1:{CHECK_PORT}/mcp"
+try:
+    token = private_text(TOKEN_FILE).splitlines()[0]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{32,256}", token):
+        raise ValueError("invalid token")
+except (OSError, ValueError, IndexError):
+    raise SystemExit("FAIL reading selected root-only token file")
+INIT = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+    "protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "check", "version": "0"}}}
+LIST = {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}
+def request(payload, credential=None, scheme="Bearer"):
+    headers = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+    if credential is not None:
+        headers["Authorization"] = f"{scheme} {credential}"
+    req = urllib.request.Request(U, data=json.dumps(payload).encode(), headers=headers)
+    # Do not route a local credential through HTTP_PROXY/HTTPS_PROXY.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    try:
+        with opener.open(req, timeout=15) as response:
+            return response.status, response.read().decode()
+    except urllib.error.HTTPError as error:
+        return error.code, ""
+check("no header", lambda: request(INIT)[0] == 401)
+check("lowercase bearer, selected token", lambda: request(INIT, token, "bearer")[0] == 200)
+check("wrong token", lambda: request(INIT, "wrong-token-wrong-token-wrong-token")[0] == 401)
+check("unauthenticated tools/list", lambda: request(LIST)[0] == 401)
+raise SystemExit(bool(failures))
+PY
 )
 ```
 
-Expect four `PASS` lines. The header files stay in place for step f, which deletes
-them. The server accepts
-protocolVersion `2025-03-26`.
+Expect four `PASS` lines. Nothing from this shell must survive for f. The server
+accepts protocolVersion `2025-03-26`.
 
-### f. Privileged tool through MCP, with a broker receipt
+### f. Profile and privileged result through MCP, with a matching receipt
 
-The server is stateless (`stateless_http=True`). It returns no `Mcp-Session-Id`, and
-`notifications/initialized` isn't needed. The privileged tool (name in
-`/root/vm-mcp.priv-tool`) takes `command` (required), `cwd` (default `/`) and
-`timeout_seconds` (default 60).
+The pinned server is stateless (`stateless_http=True`); there is no session header
+or initialized notification to carry between calls. This block reads its own target
+and token, verifies `vm_info`, and requires a harmless uniquely tagged privileged
+probe to receive the canonical policy refusal for `read-only` and `workspace`,
+without a broker receipt. Tools being listed does not mean those profiles permit them.
 
-Step f defines `U`, `H` and `LIST` itself, so it doesn't depend on step e's shell.
-It needs step e's `/root/vm-mcp.auth`. It looks for the receipt only in journal lines
-written after the block started, so an earlier `id -u` call can't satisfy it.
+For `personal-console`, parse JSON or SSE JSON-RPC envelopes, then the actual
+structured tool result. Assert root stdout, successful exit, `admin` mode, root
+identity and no timeout; then match the exact returned request ID to a new journal
+receipt with the same mode, run-as identity, digest and terminal status. Digest-only
+or older `id -u` receipts cannot satisfy this check.
 
 ```bash
 (
-ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-START=$(date '+%Y-%m-%d %H:%M:%S')
-ok "step e header file present" yes "$(sudo -n test -s /root/vm-mcp.auth && echo yes || echo no)"
-U=http://127.0.0.1:8765/mcp
-H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
-INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
-LIST='{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-T=$(sudo -n cat /root/vm-mcp.priv-tool)
-ok "privileged tool listed" 1 "$(sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth -d "$LIST" $U | grep -o "\"$T\"" | sort -u | wc -l)"
-sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"'"$T"'","arguments":{"command":"id -u","cwd":"/"}}}' $U || true
-echo
-SHA=$(printf %s 'id -u' | sha256sum | cut -d' ' -f1)
-ok "broker receipt for id -u since $START" 1 "$(sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
-sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager
-sudo -n rm -f /root/vm-mcp.auth /root/vm-mcp.auth-lower /root/vm-mcp.auth-wrong
+sudo -n python3 -I - <<'PY'
+import json, os, stat
+from pathlib import Path
+
+def private_text(path):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd) as stream:
+        st = os.fstat(stream.fileno())
+        if not stat.S_ISREG(st.st_mode) or st.st_uid != 0 or st.st_mode & 0o077:
+            raise ValueError("expected a root-only regular file")
+        return stream.read()
+
+def load_target():
+    pointer = Path("/root/vm-mcp-upgrade.latest")
+    if not os.path.lexists(pointer):
+        return 8765, "personal-console", "/run/vm-mcp/admin.sock", "/etc/credstore/vm-mcp-token"
+    B = Path(private_text(pointer).strip())
+    if not B.is_absolute():
+        raise ValueError("invalid upgrade backup path")
+    target = json.loads(private_text(B / "target.json"))
+    port = int(target["port"])
+    profile, socket, token = (target[k] for k in ("profile", "admin_socket", "token_file"))
+    if not 1 <= port <= 65535 or profile not in {"read-only", "workspace", "personal-console"}:
+        raise ValueError("invalid upgrade target")
+    if any(not isinstance(v, str) or not v.startswith("/") or "\n" in v or "\x00" in v for v in (socket, token)):
+        raise ValueError("invalid target path")
+    return port, profile, socket, token
+
+try:
+    CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()
+except (OSError, ValueError, KeyError, TypeError):
+    raise SystemExit("FAIL reading preserved verification target; repair U2/U3 before continuing")
+failures = []
+def check(label, probe):
+    try:
+        passed = bool(probe())
+    except Exception:
+        passed = False
+    print(("PASS " if passed else "FAIL ") + label)
+    if not passed:
+        failures.append(label)
+import re
+import urllib.request, urllib.error
+U = f"http://127.0.0.1:{CHECK_PORT}/mcp"
+try:
+    token = private_text(TOKEN_FILE).splitlines()[0]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{32,256}", token):
+        raise ValueError("invalid token")
+except (OSError, ValueError, IndexError):
+    raise SystemExit("FAIL reading selected root-only token file")
+INIT = {"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {
+    "protocolVersion": "2025-03-26", "capabilities": {}, "clientInfo": {"name": "check", "version": "0"}}}
+LIST = {"jsonrpc": "2.0", "id": 2, "method": "tools/list"}
+def request(payload, credential=None, scheme="Bearer"):
+    headers = {"Content-Type": "application/json", "Accept": "application/json, text/event-stream"}
+    if credential is not None:
+        headers["Authorization"] = f"{scheme} {credential}"
+    req = urllib.request.Request(U, data=json.dumps(payload).encode(), headers=headers)
+    # Do not route a local credential through HTTP_PROXY/HTTPS_PROXY.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    try:
+        with opener.open(req, timeout=15) as response:
+            return response.status, response.read().decode()
+    except urllib.error.HTTPError as error:
+        return error.code, ""
+import hashlib, subprocess, time
+START = str(time.time())
+
+def rpc(payload):
+    status, body = request(payload, token)
+    if status != 200:
+        raise ValueError("MCP HTTP request failed")
+    try:
+        messages = [json.loads(body)]
+    except ValueError:
+        messages = [json.loads(event[5:].strip()) for event in body.splitlines() if event.startswith("data:")]
+    replies = [m for m in messages if isinstance(m, dict) and m.get("id") == payload["id"]]
+    if len(replies) != 1 or "error" in replies[0]:
+        raise ValueError("missing or failed JSON-RPC result")
+    result = replies[0]["result"]
+    if result.get("isError", False):
+        raise ValueError("MCP tool error")
+    return result
+
+def tool_result(result):
+    value = result.get("structuredContent")
+    if value is None:
+        texts = [c["text"] for c in result.get("content", []) if c.get("type") == "text"]
+        if len(texts) != 1:
+            raise ValueError("missing structured tool result")
+        value = json.loads(texts[0])
+    if not isinstance(value, dict):
+        raise ValueError("invalid tool result")
+    return value
+
+def call(name, arguments, identity):
+    return tool_result(rpc({"jsonrpc": "2.0", "id": identity, "method": "tools/call",
+                           "params": {"name": name, "arguments": arguments}}))
+
+def target_matches():
+    info = call("vm_info", {}, 3)
+    return (info.get("ok") is True and info.get("profile") == CHECK_PROFILE
+            and info.get("admin_socket") == CHECK_SOCKET)
+
+check("authenticated profile and broker path", target_matches)
+if failures:
+    raise SystemExit(1)  # Do not attempt privilege after a target mismatch.
+# Lower profiles must return the canonical policy refusal, not a transport error.
+if CHECK_PROFILE != "personal-console":
+    import uuid
+    probe_command = "id -u # vm-mcp-policy-check-" + uuid.uuid4().hex
+    probe_digest = hashlib.sha256(probe_command.encode()).hexdigest()
+    def refused():
+        denied = call("admin_exec", {"command": probe_command, "cwd": "/"}, 4)
+        return (denied.get("ok") is False and denied.get("error_type") == "PermissionError"
+                and denied.get("error") == "host execution is disabled; set VM_MCP_PROFILE=personal-console")
+    check("privileged call refused by profile policy", refused)
+    def no_probe_receipt():
+        journal = subprocess.run(["journalctl", "-u", "vm-mcp-admin.service", "--since", "@" + START,
+                                  "--no-pager", "-o", "cat"], capture_output=True, text=True)
+        if journal.returncode:
+            return False
+        for line in journal.stdout.splitlines():
+            try:
+                receipt = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(receipt, dict) and receipt.get("command_sha256") == probe_digest:
+                return False
+        return True
+    check("no broker receipt for refused probe", no_probe_receipt)
+    raise SystemExit(bool(failures))
+T = "admin_exec"  # canonical skill-lib 023ae12 server.py
+check("privileged tool listed", lambda: T in {t["name"] for t in rpc(LIST)["tools"]})
+SHA = hashlib.sha256(b"id -u").hexdigest()
+result = {}
+def root_result():
+    result.update(call(T, {"command": "id -u", "cwd": "/"}, 4))
+    return (result.get("ok") is True and result.get("mode") == "admin"
+            and result.get("run_as") == "root" and type(result.get("uid")) is int and result["uid"] == 0
+            and type(result.get("exit_code")) is int and result["exit_code"] == 0
+            and result.get("stdout") == "0\n" and result.get("timed_out") is False
+            and result.get("stdout_truncated") is False and result.get("command_sha256") == SHA
+            and result.get("cwd") == "/" and bool(result.get("request_id")))
+check("privileged root stdout, identity, mode and exit", root_result)
+
+def receipt_matches():
+    journal = subprocess.run(["journalctl", "-u", "vm-mcp-admin.service", "--since", "@" + START,
+                              "--no-pager", "-o", "cat"], capture_output=True, text=True)
+    if journal.returncode or not result.get("request_id"):
+        return False
+    for line in journal.stdout.splitlines():
+        try:
+            receipt = json.loads(line)
+        except ValueError:
+            continue
+        if (isinstance(receipt, dict) and receipt.get("event") == "vm_mcp_exec"
+                and receipt.get("request_id") == result["request_id"]
+                and receipt.get("mode") == "admin" and receipt.get("run_as") == "root"
+                and receipt.get("cwd") == "/" and receipt.get("command_sha256") == SHA
+                and type(receipt.get("exit_code")) is int and receipt["exit_code"] == 0
+                and receipt.get("timed_out") is False):
+            return True
+    return False
+check("broker receipt bound to this root call", receipt_matches)
+raise SystemExit(bool(failures))
+PY
 )
 ```
 
-Expect three `PASS` lines. The call should return `ok: true`, exit code `0`, and the
-mode, identity and stdout that skill-lib's `vm-mcp/SKILL.md` documents for the
-privileged tool. Expect a broker journal line with `"event":"vm_mcp_exec"` whose
-`command_sha256` equals the `sha256sum` output and whose `exit_code` is `0`. The receipt carries no peer PID.
-The broker checks vm-mcp's systemd MainPID on every request and logs only rejections,
-so a successful call is the evidence that the check passed.
+Expect four `PASS` lines for `personal-console`; lower profiles produce three `PASS` lines
+including the canonical policy refusal and absence of a probe receipt. Any `FAIL` makes the block exit nonzero.
+The broker receipt has no peer PID; the pinned broker verifies the service MainPID
+before execution, so only a successful root result plus its receipt proves this path.
 
-Acceptance requires all of a to f, plus:
+Acceptance requires a through f for the selected target:
 
 ```text
-MCP listener:       127.0.0.1:8765 only
-vm-mcp.service:     User=vmmcp; non-root hardening retained; no token in its environment or fds
-profile:            personal-console
-vm-mcp-admin:       separate privileged unit; AF_UNIX only
-/run/vm-mcp:        root:vmmcp mode 750
-admin.sock:         root:vmmcp mode 660
+MCP listener:       127.0.0.1:<selected port> only
+vm-mcp.service:     User=vmmcp; non-root hardening retained; no token in environment or fds
+profile:            preserved target, or fresh-install personal-console
+personal-console:   separate privileged unit; selected AF_UNIX socket only
+broker directory:   root:vmmcp mode 750
+broker socket:      root:vmmcp mode 660
+lower profiles:     broker inactive; selected socket absent; privileged probe policy-refused
 HTTP:               401 without or with a wrong bearer token
 human recovery:     still independently usable
 ```
 
-A listener on `0.0.0.0:8765` or a VM public/private interface is a stop condition.
+A listener on a wildcard or a VM public/private interface at the selected port is
+a stop condition. Repository mock tests verify this runbook, not live VM acceptance.
 
 ## Connect the MCP client privately
 
