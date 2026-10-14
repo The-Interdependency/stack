@@ -1,4 +1,4 @@
-# Ordinal construction: answers still needed
+# Ordinal construction: answers and remaining work
 
 The selected implementation is `english.ordinal/1`; inspect it with
 `PYTHONPATH=research/english-gonol python -m english_gonol profile`.
@@ -18,19 +18,27 @@ and orders its word carrier by sequences of public-gonol indexes. These are
 explicit implementation choices, not discovered semantic laws. This merge keeps
 them fixed; changing either requires a new profile and rebuilt receipts.
 
-## Construction questions, ordered by dependency
+## Construction answers and questions, ordered by dependency
 
-### 1. How do nested local frames become one geometric construction?
+### 1. Nested attachment: SPACE — specified; transport unverified
 
-The current operation retains a closed word and places that participant within
-a parent. It does not specify the translation, orientation or scale transporting
-the word's interior frame into the parent's frame. What exact relation supplies
-that attachment, including which origin and radius are inherited?
+Operator answer to the nested-frame attachment question: `1. space`.
+SPACE supplies the attachment reference between a closed construction's local
+frame and its consuming frame. Do not ask the operator to select that reference
+again. The already-specified ordinal-distance and carrier-angle laws remain in
+force; this answer does not authorize substituting a different construction.
 
-Current behavior: preserve separate local frames and their links. Do not add an
-implicit rotation, translation or scale law. Completion witness: an explicit UCNS
-transport with nested-order recovery and a tested composition law. This is the
-highest-leverage unanswered geometric question.
+In `../english_gonol/ordinal_construct.py`, both `Factory.word` and
+`Factory.record` already declare `origin='SPACE'`; `_independent_frame` checks
+the same origin in frame rows and closure receipts. That existing declaration
+is not an evaluated transport between frames.
+
+Current behavior: preserve separate local frames and their links. Remaining
+implementation/evidence boundary: an explicit UCNS transport using the specified
+SPACE attachment, with nested-order recovery and a tested composition law.
+Do not invent an implicit rotation, translation or scale law to turn the stored
+origin name into a completion claim. Record the implemented transport and its
+evidence here when available; keep specification and implementation distinct.
 
 ### 2. Where does a multiword lexical entry's definition attach?
 
@@ -89,5 +97,7 @@ no silent reinterpretation of previously constructed objects.
 
 ## hmmm
 
-Merge closes source integration and default selection. It does not manufacture
-answers to the five construction questions or mark downstream migration complete.
+SPACE is the specified nested attachment reference; its cross-frame transport
+witness remains outstanding. Questions 2–5 remain open. Merge closes source
+integration and default selection, not these implementation/evidence boundaries
+or downstream migration.
