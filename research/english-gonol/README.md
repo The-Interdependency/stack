@@ -63,6 +63,11 @@ sealed admission and explicitly historical replay; retention grants no current
 geometry authority. The supported CLI rejects retired profile commands and does
 not silently return an old artifact when the ordinal constructor is unavailable.
 
+The prior definition method and applicable functions remain required: reconstruct
+them over the new base rather than discard their meanings or restore their old
+geometry. [Answer 4](docs/ordinal-questions.md) owns this inheritance instruction,
+its inspected source bindings and the outstanding preservation/replay witnesses.
+
 Historical documentation and evidence:
 
 - [Full construct v2](docs/full-construct-v2.md) and `experiments/full-construct-v2/`.
@@ -93,7 +98,8 @@ metrics are not renamed as ordinal measurements.
 ## hmmm
 
 [Answers and remaining work](docs/ordinal-questions.md) separate the settled
-radius/angle rule and SPACE references from outstanding implementation witnesses.
-Native Mobius integration is not required by this profile. Questions 4 and 5
-concern operator actions and vocabulary growth; attachment verification and
-downstream inference evidence remain engineering/evidence boundaries.
+radius/angle rule, SPACE references and inherited definition method from
+outstanding implementation witnesses. Native Mobius integration is not required
+by this profile. Only question 5, vocabulary growth, remains a construction
+question; attachment verification, definition reconstruction/replay and downstream
+inference evidence remain engineering/evidence boundaries.

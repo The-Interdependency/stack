@@ -38,6 +38,15 @@ Arbitrary circular placement is not an isometry of a high-dimensional simplex.
 SPACE's scalar angle is zero; the local frame center is the radial reference.
 A SPACE occurrence is not silently placed at radius zero or discarded.
 
+## Inherited definitions
+
+[Answer 4](ordinal-questions.md) specifies reuse of the prior definition method
+and applicable functions, reconstructed over the new base. Preserve meaning,
+source associations and ordered interiors; replace the old carrier/geometry
+bindings. The source audit and required preservation/replay witnesses live in
+that answer. This instruction is settled; reconstruction verification remains
+engineering work, not a request for new operator semantics.
+
 ## Artifact
 
 `build` creates a new directory only:
@@ -110,9 +119,10 @@ small local fixture the full construct.
 
 The layout choices are explicit and replaceable only through a new profile and
 full rebuild. The [answers and remaining work](ordinal-questions.md) record the
-specified SPACE attachments, excluded native Mobius integration, remaining
-operator/admission questions and engineering witnesses. Local placement does not
-establish attachment transport, operator behavior, inference quality or UCHC release.
+specified SPACE attachments, excluded native Mobius integration, inherited
+definition method, remaining admission question and engineering witnesses.
+Local placement does not establish attachment transport, inherited-definition
+reconstruction, operator behavior, inference quality or UCHC release.
 Earlier complete-corpus receipts establish only their recorded implementation.
 Every implementation change requires its own hosted construction and replay;
 inspect the exact run, tested merge tree and generated manifest before assigning

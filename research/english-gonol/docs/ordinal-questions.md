@@ -66,15 +66,49 @@ construction questions nor completion or merge prerequisites for this profile.
 This scope decision does not claim a verified lift, retire UCNS native Mobius
 work, or remove the SPACE attachment obligations in answers 1 and 2.
 
-### 4. Which admitted operator positions perform which actions?
+### 4. Operator definitions: inherit and reconstruct on the new base — specified; replay outstanding
 
-A numeral, mathematical sign or logical operator currently receives an exact
-scalar identity and angle. Admission does not implement arithmetic, implication,
-quantification or any other action. What source-owned operation supplies each
-function, and how does applying it change a construction?
+Operator answer: "define them the same way the previous iteration did. most of
+that part of the previous implementation should still apply, just requires
+iteration over the new base."
 
-Current behavior: preserve literal position and occurrence only. Completion
-witness: declared operations with positive and adversarial behavioral tests.
+Preserve the previous definition content, source-backed glyph/function
+associations, constitutive relations and implemented behavior wherever compatible
+with the replacement. Reconstruct those definitions and their ordered interiors
+through the expanded public gonol and ordinal law. Changed carrier positions,
+arity, placement and receipts are not changes of meaning. Retain exact scalar
+identity, multiple applicable definitions, order, multiplicity and provenance.
+Do not ask the operator to redesign this layer or introduce a separate arithmetic
+or logical evaluator as a prerequisite for the requested inheritance.
+
+Inspected inheritance sources at Stack commit
+`ee130be77537419040973a665bd47fbb833328e2`:
+
+- `../english_gonol/language/data/character_definitions_v1.json` owns the curated
+  character-definition payload, explicitly marked candidate evidence rather than
+  linguistic or cultural canon. Its `-` has both operator and punctuation roles;
+  digit number-name links and the other declared definition fields are retained.
+- `../english_gonol/language/character_definitions.py` loads those definitions,
+  retains overlapping roles, fills uncovered legacy carrier members with explicit
+  `hmmm`, and constructs character/definition closures. Its `PUBLIC_GONOL_157`
+  coverage loop and imported historical `construct_gonol` are old-base bindings,
+  not supported geometry for the replacement. General arithmetic or logical
+  evaluation is not established merely by this table's operator-class labels.
+
+Implementation work: separate reusable definition inputs and applicable behavior
+from the retired carrier/constructor binding, enumerate the actual expanded
+carrier, and reconstruct with the selected constructor. For additional scalars,
+apply the prior source-backed definition/admission method wherever it resolves an
+entry; leave genuinely unavailable definitions explicitly `hmmm`. Neither copy
+an old index as a new address nor invent meanings from a symbol's appearance.
+
+Completion witness: complete new-carrier coverage; comparison showing unchanged
+inherited definition content, roles, source associations and applicable behavior;
+new-profile angles/radii and receipts; exact recovery of definition interiors;
+and explicit unresolved entries. Regressions must detect a lost role of `-`,
+changed digit number-name linkage, stale 157-position coverage, old-constructor
+fallback and claimed resolution of an inherited `hmmm`. This record resolves the
+instruction; it does not claim that reconstruction or its replay has run.
 
 ### 5. How should previously unseen words and future carrier members enter?
 
@@ -90,6 +124,8 @@ no silent reinterpretation of previously constructed objects.
 
 ## Engineering work, not questions to send back to the operator
 
+- Reconstruct inherited definitions/functions over the new base and verify their
+  preservation as specified in answer 4; this is not a new operator-design question.
 - Separate the source-admission helper closure from the historical builder modules
   before physically removing those modules. They are retired as new-construction
   routes now; deleting dependencies first would break the replacement's verifier.
@@ -104,6 +140,8 @@ no silent reinterpretation of previously constructed objects.
 ## hmmm
 
 SPACE is the specified attachment reference for both nested frames and compound
-definitions. Their transport/attachment witnesses remain outstanding. Only
-questions 4 and 5 remain open. Merge closes source integration and default
-selection, not these implementation/evidence boundaries or downstream migration.
+definitions. Native Mobius integration is excluded; prior operator definitions
+are inherited and reconstructed on the new base. Only question 5 remains open.
+SPACE attachment and inherited-definition reconstruction/replay witnesses remain
+outstanding. Merge closes source integration and default selection, not these
+implementation/evidence boundaries or downstream migration.
