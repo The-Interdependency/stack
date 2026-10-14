@@ -61,6 +61,7 @@ PROFILE = 'english.ordinal/1'
 UNICODE_VERSION = '18.0.0'
 UCD_FILES = ('UnicodeData.txt', 'DerivedCoreProperties.txt')
 UCD_MAX_BYTES = 10_000_000
+JSON_MAX_BYTES = 64_000_000
 # Exact complete Unicode 18.0.0 release bytes, retained in the full-corpus artifact.
 # Admission pins content, not a header, local registry, or minimal ASCII subset.
 UCD_RELEASE_SHA256 = {
@@ -326,8 +327,37 @@ def _json_write(path, value):
     Path(path).write_bytes(canonical(value) + b'\n')
 
 
+def _read_bounded_regular(path: Path, limit: int, label: str) -> bytes:
+    """Snapshot one bounded regular file without following links or blocking on special files."""
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError(f'{label} must be a regular nonsymlink file: {path.name}')
+    if before.st_size > limit:
+        raise ValueError(f'{label} exceeds read budget: {path.name}')
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    try:
+        fd = os.open(path, flags)
+    except OSError as error:
+        raise ValueError(f'{label} changed or cannot be opened: {path.name}') from error
+    with os.fdopen(fd, 'rb') as stream:
+        opened = os.fstat(stream.fileno())
+        if (not stat.S_ISREG(opened.st_mode)
+                or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino)):
+            raise ValueError(f'{label} changed or is not regular: {path.name}')
+        if opened.st_size > limit:
+            raise ValueError(f'{label} exceeds read budget: {path.name}')
+        raw = stream.read(limit + 1)
+        after = os.fstat(stream.fileno())
+        if len(raw) > limit:
+            raise ValueError(f'{label} exceeds read budget: {path.name}')
+        if (len(raw) != opened.st_size
+                or (after.st_size, after.st_mtime_ns) != (opened.st_size, opened.st_mtime_ns)):
+            raise ValueError(f'{label} changed during bounded read: {path.name}')
+    return raw
+
+
 def _json_read(path):
-    raw = Path(path).read_bytes()
+    raw = _read_bounded_regular(Path(path), JSON_MAX_BYTES, 'JSON artifact')
     value = json.loads(raw)
     if raw != canonical(value) + b'\n':
         raise ValueError('noncanonical JSON artifact')
