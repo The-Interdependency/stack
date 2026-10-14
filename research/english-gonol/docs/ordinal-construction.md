@@ -1,7 +1,7 @@
 # English ordinal construction — replacement profile
 
 Operator request: radial distance is repeated halving by occurrence ordinal;
-angle is defined by the newly expanded public gonol. This profile constructs
+angle is defined by the newly expanded public gonol. This selected replacement profile constructs
 that law instead of reinterpreting the previous orthogonal or overlap metrics.
 
 ## Public gonol
@@ -69,10 +69,10 @@ python -m english_gonol.structural_construct build \
   --source-root /path/to/pinned-oewn/src/yaml \
   --ucns-source-root /path/to/pinned-admission-carrier \
   --out-dir /path/to/new-admission
-python -m english_gonol.ordinal_construct build \
+python -m english_gonol build \
   /path/to/new-admission /path/to/unicode-18-ucd /path/to/new-geometry
-python -m english_gonol.ordinal_construct verify /path/to/new-geometry
-python -m english_gonol.ordinal_construct query /path/to/new-geometry 'the geometry'
+python -m english_gonol verify /path/to/new-geometry
+python -m english_gonol query /path/to/new-geometry 'the geometry'
 ```
 
 Full corpus means the source verifier has replayed the exact 73-file OEWN tree
@@ -87,8 +87,9 @@ Unicode file or unit-test success alone is not complete-corpus evidence.
 artifact verification; UCNS owns the geometric law. `tests/test_ordinal_construct.py`
 owns fixture/property regressions. The workflow owns explicit input acquisition
 and full replay. `ordinal-work-graph.json` binds input ownership and exact source
-states. No root Stack participant, release pin, UCHC graduation or website is
-changed. The candidate source commit is recorded by hosted evidence, avoiding a
+states. The supported entrypoint and retirement are declared in `../ACTIVE_CONSTRUCTION.json`.
+No root Stack participant, release pin, UCHC graduation or website is
+changed. The construction source commit is recorded by hosted evidence, avoiding a
 self-referential committed head hash.
 
 Expected working footprint is below 4 GiB; the hosted runner checks free disk
@@ -104,4 +105,5 @@ The layout choices are explicit and replaceable only through a new profile and
 full rebuild. Native Mobius lift, global transport/definition-origin attachment,
 operator function semantics, inference quality and UCHC release remain separate
 questions. Local placement does not manufacture evidence for those questions.
-A complete hosted receipt must exist before claiming complete-corpus success.
+Complete hosted construction and replay have succeeded. See `ordinal-questions.md`
+for unresolved construction laws and the separate downstream migration work.

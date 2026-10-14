@@ -1,8 +1,12 @@
 name: English ordinal affixiation
 on:
+  workflow_dispatch:
   pull_request:
     paths:
       - 'research/english-gonol/english_gonol/ordinal_construct.py'
+      - 'research/english-gonol/english_gonol/__main__.py'
+      - 'research/english-gonol/ACTIVE_CONSTRUCTION.json'
+      - 'research/english-gonol/tests/test_active_construction.py'
       - 'research/english-gonol/tests/test_ordinal_construct.py'
       - 'research/english-gonol/docs/ordinal-*'
       - '.github/workflows/english-ordinal-affixiation.yml'
@@ -17,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -105,6 +109,7 @@ jobs:
           _inputs/ucns/.venv/bin/python -m pytest -q \
             _inputs/ucns/tests/test_ordinal_affixiation.py \
             research/english-gonol/tests/test_ordinal_construct.py \
+            research/english-gonol/tests/test_active_construction.py \
             | tee _evidence/tests.txt
       - name: Build complete source admission then the replacement geometry
         env:
@@ -114,7 +119,7 @@ jobs:
             --source-root _inputs/oewn/src/yaml \
             --ucns-source-root _inputs/admission-carrier \
             --out-dir _admission 2> _evidence/admission-resources.txt
-          /usr/bin/time -v _inputs/ucns/.venv/bin/python -m english_gonol.ordinal_construct build \
+          /usr/bin/time -v _inputs/ucns/.venv/bin/python -m english_gonol build \
             _admission _inputs/ucd _constructed \
             2> _evidence/geometry-resources.txt | tee _evidence/full-verification.json
           mkdir -p _constructed/licenses
@@ -137,7 +142,7 @@ jobs:
         env:
           PYTHONPATH: research/english-gonol
         run: |
-          _inputs/ucns/.venv/bin/python -m english_gonol.ordinal_construct query \
+          _inputs/ucns/.venv/bin/python -m english_gonol query \
             _constructed 'the geometry' > _evidence/query.json
       - name: Retain evidence even after a deterministic failure
         if: always()
