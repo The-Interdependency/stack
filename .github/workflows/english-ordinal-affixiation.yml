@@ -11,6 +11,7 @@ on:
       - 'research/english-gonol/tests/test_active_construction.py'
       - 'research/english-gonol/tests/test_ordinal_construct.py'
       - 'research/english-gonol/tests/test_ordinal_definitions.py'
+      - 'research/english-gonol/tests/test_ordinal_source_inputs.py'
       - 'research/english-gonol/docs/ordinal-*'
       - '.github/workflows/english-ordinal-affixiation.yml'
 permissions:
@@ -109,13 +110,24 @@ jobs:
               'unicode.org/Public/18.0.0/ucd/UnicodeData.txt':'_inputs/ucd/UnicodeData.txt',
               'unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt':'_inputs/ucd/DerivedCoreProperties.txt',
           }
+          baseline_key=('The-Interdependency/stack','e3eb83764355b4b760a79323cda6a6d75c3a501a')
+          expected=set(git_roots) | {(name,None) for name in artifact_roots} | {baseline_key}
+          seen=set()
           for item in graph['repositories']:
               key=(item['repository'],item.get('commit'))
+              assert key in expected and key not in seen, f'unmapped or duplicate participant: {key}'
+              seen.add(key)
               if key in git_roots:
                   assert subprocess.check_output(['git','-C',git_roots[key],'rev-parse','HEAD'],text=True).strip()==item['commit']
               elif item['repository'] in artifact_roots:
                   raw=pathlib.Path(artifact_roots[item['repository']]).read_bytes()
                   assert hashlib.sha256(raw).hexdigest()==item['artifact_sha256']
+              elif key==baseline_key:
+                  # The actual consumed files are byte-compared to this commit below.
+                  assert subprocess.check_output(['git','rev-parse',item['commit']+'^{commit}'],text=True).strip()==item['commit']
+              else:
+                  raise AssertionError(f'unverified participant: {key}')
+          assert seen==expected, 'participant graph omits acquired inputs'
           active_base=json.loads(pathlib.Path('research/english-gonol/BASE.json').read_text())
           selected=active_base['active_construction']['source_commit']
           assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
@@ -148,6 +160,7 @@ jobs:
             _inputs/ucns/tests/test_ordinal_affixiation.py \
             research/english-gonol/tests/test_ordinal_construct.py \
             research/english-gonol/tests/test_ordinal_definitions.py \
+            research/english-gonol/tests/test_ordinal_source_inputs.py \
             research/english-gonol/tests/test_active_construction.py \
             | tee _evidence/tests.txt
       - name: Build complete source admission then the replacement geometry
