@@ -30,13 +30,13 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/stack
-          ref: fd819e7ebd8f1571b4bca6589fe493077f3e6495
+          ref: b7e4f50bdeaf23ccd04a446ab3ac59e373fb57da
           path: _deps/forge
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/uchc
-          ref: b02760e01c7c7c52697b57ef889128eb25b8162d
+          ref: c18d984438bc30764edb05fd5ccc05691958a24e
           path: _deps/uchc-candidate
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
@@ -115,6 +115,20 @@ jobs:
           assert historical['source_commit'] == lock['source_commit']
           assert historical['candidate_immutable_identity'] == lock['wheel_sha256']
           assert historical['logical_receipt'] == lock['logical_receipt']
+          # The UCHC candidate pins this forge commit, so the forge-side work graph
+          # cannot hash the candidate without a cycle; a separate receipt binds it.
+          receipt = json.loads((root / 'experiments/structural-profile-v1/candidate-receipt.json').read_text())
+          body = {k: v for k, v in receipt.items() if k != 'receipt_sha256'}
+          assert set(body) == {'schema', 'version', 'work_graph_sha256', 'candidate'}
+          assert (receipt['schema'], receipt['version']) == ('english.structural-candidate-receipt', '1.0.0')
+          assert hashlib.sha256(json.dumps(body, sort_keys=True, separators=(',', ':')).encode()).hexdigest() == receipt['receipt_sha256']
+          assert receipt['work_graph_sha256'] == graph['work_graph_sha256']
+          bound = receipt['candidate']
+          assert set(bound) == {'repository', 'commit', 'wheel', 'wheel_sha256'}
+          assert bound['repository'] == 'The-Interdependency/uchc'
+          assert bound['commit'] == candidate['source_commit'] == subprocess.check_output(['git', '-C', '_deps/uchc-candidate', 'rev-parse', 'HEAD'], text=True).strip()
+          assert bound['wheel'] == candidate['wheel']
+          assert bound['wheel_sha256'] == candidate['candidate_immutable_identity'] == verification['candidate_wheel_sha256']
           assert migration['state'] == 'extracted'
           assert migration['gates']['exact_candidate_forge_verification'].startswith('hmmm:')
           assert migration['distribution']['published_immutable_identity'] == 'hmmm'
@@ -219,6 +233,9 @@ jobs:
           assert verification['forge_source_commit'] == next(r['commit'] for r in graph['repositories'] if r['repository'] == 'The-Interdependency/stack')
           wheel = pathlib.Path('_state/dist') / ('uchc-' + verification['candidate_version'] + '-py3-none-any.whl')
           assert verification['candidate_wheel_sha256'] == digest(wheel)
+          candidate_receipt = json.loads((root / 'experiments/structural-profile-v1/candidate-receipt.json').read_text())
+          assert candidate_receipt['candidate']['wheel_sha256'] == digest(wheel)
+          assert wheel.name == candidate_receipt['candidate']['wheel']
           tests = {}
           for name, expected in [('structural', verification['tests']['structural_included_in_english']), ('installed', verification['tests']['clean_installed_structural'])]:
               suites = list(ET.parse('_state/' + name + '.xml').getroot().iter('testsuite'))
@@ -230,6 +247,7 @@ jobs:
           record['source_checkout'] = {key: subprocess.check_output(['git', 'rev-parse', revision], text=True).strip() for key, revision in [('commit', 'HEAD'), ('tree', 'HEAD^{tree}')]}
           record['participants'] = {checkout: subprocess.check_output(['git', '-C', checkout, 'rev-parse', 'HEAD'], text=True).strip() for checkout in ['_deps/forge', '_deps/ucns', '_deps/oewn', '_deps/metapat', '_deps/skill-lib', '_deps/uchc-baseline']}
           record['manifest_sha256'] = digest('_state/first/manifest.json')
+          record['candidate_receipt_sha256'] = candidate_receipt['receipt_sha256']
           record['query_sha256'] = digest('_state/query.json')
           pathlib.Path('_state/hosted-replay.json').write_text(json.dumps(record, indent=2) + '\n')
           print(json.dumps(record))
