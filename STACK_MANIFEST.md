@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `70578d9ee468b21165b7bc7fedaf799fb6e84245246302ff25cbc7139deb0635`
+  `21c6c86927a1d8bf29b965af4d2ade83f1e085c1f9857062895e687e00b5ec7b`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -62,13 +62,15 @@ and four-view records below remain historical evidence, not current geometry.
 Use `PYTHONPATH=research/english-gonol python -m english_gonol profile` to inspect
 selection, and see [the supported build](research/english-gonol/README.md).
 
-| Participant ID | Repository | Exact commit | Relation |
+| Participant ID | Source | Exact identity | Relation |
 |---|---|---|---|
 | `ordinal-source` | `The-Interdependency/stack` | `37adccb4c079199d915a49e475af0f426fed0943` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
 | `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
 | `ordinal-admission` | `The-Interdependency/stack` | `e3eb83764355b4b760a79323cda6a6d75c3a501a` | unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry |
 | `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
 | `ordinal-corpus` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | all exact pinned source records consumed by the ordinal construction |
+| `ordinal-unicode-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | exact immutable Unicode 18.0.0 numeric-category release file consumed by public-gonol admission |
+| `ordinal-unicode-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | exact immutable Unicode 18.0.0 Math-property release file consumed by public-gonol admission |
 | `ordinal-doctrine` | `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | separately pinned ordinal work graph doctrine; root operational snapshot remains unchanged |
 
 UCNS #241 merged at `6ebbf970ad13a0d2e1c13bd65c496b671e740185`;
