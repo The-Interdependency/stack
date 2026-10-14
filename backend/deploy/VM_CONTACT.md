@@ -41,6 +41,10 @@ inside the separate root broker after Unix peer-credential verification.
 
 ## Human preflight
 
+If vm-mcp is already installed on the VM (`/opt/vm-mcp` or `/etc/vm-mcp.env` exists),
+run the preflight, then follow **Upgrading a VM that already has vm-mcp** instead of
+steps 1–2.
+
 Every `bash` block in this runbook is pasted into an interactive SSH shell, so each one
 runs inside a `( ... )` subshell. `set -e`, traps, `umask` and variables end with the
 block, and a failing command ends only that block, never your SSH session. Install
@@ -78,6 +82,317 @@ systemctl is-system-running || true
 
 If the human recovery path is not known-good, systemd is absent, or the stack checkout
 is ambiguous, stop as `hmmm`.
+
+## Upgrading a VM that already has vm-mcp
+
+Use this section instead of a fresh install whenever `/opt/vm-mcp` or `/etc/vm-mcp.env`
+already exists. A rerun of `install.sh` is **not** history-preserving on its own: it
+takes `VM_MCP_ROOT` and `VM_MCP_PROFILE` only from its environment (defaulting to
+`/srv/vm-mcp/workspace` and `read-only`), rewrites `/etc/vm-mcp.env` from scratch, and
+drops keys it does not know (for example the legacy `VM_MCP_SHELL_ENABLED`). Its
+`usermod` also fails with exit 8 while any `vmmcp` process is running. The steps below
+(U1–U6) make the upgrade preserve what the VM already has, and they replace steps 1–2
+for this case. Checks a–f and the #127 checks then follow, adapted in U5.
+
+Principles:
+
+- **Preserve by default.** The existing workspace root, service-user home, profile and
+  privileged components carry over unchanged. The upgrade only changes the code and
+  token-protects every local endpoint.
+- **No new empty workspace.** The service is never pointed at a different
+  `VM_MCP_ROOT` unless the operator writes that choice into the target file in U2.
+- **No silent profile change.** A different profile is a separate, explicit decision
+  recorded in U2, never a side effect of the installer's defaults.
+- **Token everywhere.** After the upgrade every HTTP request, loopback included,
+  needs the bearer token, whatever the profile.
+
+### U1. Inventory and back up (read-only on the VM's state)
+
+Writes only into a new root-only directory. Token values are blanked in the printed
+copy; the raw backup stays root `0600` and is never printed.
+
+```bash
+(
+set -Eeuo pipefail
+B=/root/vm-mcp-upgrade.$(date +%Y%m%d-%H%M%S)
+sudo -n install -d -o root -g root -m 0700 "$B"
+sudo -n sh -c 'echo "'"$B"'" > /root/vm-mcp-upgrade.latest; chmod 600 /root/vm-mcp-upgrade.latest'
+# raw backups (root-only, never printed)
+sudo -n sh -c "umask 077
+  cp -a /etc/vm-mcp.env '$B/vm-mcp.env' 2>/dev/null || true
+  cp -a /etc/systemd/system/vm-mcp.service /etc/systemd/system/vm-mcp-admin.service '$B/' 2>/dev/null || true
+  cp -a /etc/systemd/system/vm-mcp.service.d '$B/vm-mcp.service.d' 2>/dev/null || true
+  cp -a /etc/credstore/vm-mcp-token '$B/credstore-token' 2>/dev/null || true
+  cp -a /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf '$B/' 2>/dev/null || true
+  tar -C /opt -cpf '$B/opt-vm-mcp.tar' vm-mcp 2>/dev/null || true
+  systemctl is-active vm-mcp-admin.service > '$B/broker-was' 2>/dev/null || true"
+# printed inventory (no secrets)
+sudo -n sh -c "{
+  echo '--- /etc/vm-mcp.env (token values blanked)'
+  sed -E 's/^([A-Z_]*TOKEN[A-Z_]*)=.*/\1=<blanked>/' /etc/vm-mcp.env 2>/dev/null || echo 'absent'
+  echo '--- version';            cat /opt/vm-mcp/SOURCE_COMMIT 2>/dev/null || echo 'absent'
+  echo '--- vmmcp passwd';       getent passwd vmmcp || echo 'absent'
+  echo '--- units';              systemctl is-active vm-mcp.service vm-mcp-admin.service || true
+  systemctl is-enabled vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
+  echo '--- listeners';          ss -ltnH | awk '\$4 ~ /:8765\$/'
+  echo '--- unix sockets';       ls -l /run/vm-mcp 2>/dev/null || echo 'none'
+  echo '--- drop-ins';           cat /etc/systemd/system/vm-mcp.service.d/*.conf 2>/dev/null || echo 'none'
+  echo '--- token file present'; test -s /etc/credstore/vm-mcp-token && echo yes || echo no
+  echo '--- ptrace_scope';       sysctl -n kernel.yama.ptrace_scope 2>/dev/null || echo 'no yama'
+} | tee '$B/inventory.txt'"
+)
+```
+
+Record from the output: version, `VM_MCP_ROOT`, the vmmcp home (field 6 of the passwd
+line), `VM_MCP_PROFILE`, `VM_MCP_SHELL_ENABLED`, and which units are active/enabled.
+
+### U2. Derive the preserved target
+
+The effective profile is resolved exactly as vm-mcp's `profiles.resolve_profile` does:
+an explicit `VM_MCP_PROFILE` wins; if it is empty, `VM_MCP_SHELL_ENABLED` true
+(`1/true/yes/on`) means `workspace`, otherwise `read-only`. The new installer drops
+`VM_MCP_SHELL_ENABLED`, so the resolved profile must be passed explicitly or a
+legacy `workspace` VM would silently lose its shell. The privileged broker unit
+(`vm-mcp-admin.service`) is enabled by the installer only for `personal-console`;
+if the inventory shows that unit enabled or active, the existing profile must already
+be `personal-console`, and it is preserved as such.
+
+```bash
+(
+set -Eeuo pipefail
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
+sudo -n env B="$B" python3 - <<'PY'
+import os, re, subprocess
+B = os.environ["B"]; env = {}
+try:
+    for line in open(f"{B}/vm-mcp.env"):
+        m = re.match(r'^\s*([A-Z_]+)=(.*)$', line.rstrip("\n"))
+        if m: env[m[1]] = m[2].strip().strip('"')
+except FileNotFoundError:
+    pass
+prof = env.get("VM_MCP_PROFILE", "").strip().lower()
+if not prof:
+    prof = "workspace" if env.get("VM_MCP_SHELL_ENABLED", "").strip().lower() in {"1","true","yes","on"} else "read-only"
+def unit_on(u):
+    r = lambda *a: subprocess.run(["systemctl", *a, u], capture_output=True, text=True).stdout.strip()
+    return r("is-active") == "active" or r("is-enabled") == "enabled"
+broker = unit_on("vm-mcp-admin.service")
+if broker and prof != "personal-console":
+    raise SystemExit(f"hmmm: broker unit is on but resolved profile is {prof}; stop and decide explicitly")
+root = env.get("VM_MCP_ROOT") or "/srv/vm-mcp/workspace"
+home = subprocess.run(["getent","passwd","vmmcp"],capture_output=True,text=True).stdout.split(":")
+home = home[5] if len(home) > 5 else ""
+if home and home != f"{root.rstrip('/')}/.vm-mcp-home":
+    raise SystemExit(f"hmmm: vmmcp home {home} is not under VM_MCP_ROOT {root}; stop and decide explicitly")
+port = env.get("VM_MCP_PORT", "8765")
+with open(f"{B}/target.env", "w") as f:
+    os.fchmod(f.fileno(), 0o600)
+    f.write(f"TARGET_ROOT={root}\nTARGET_PROFILE={prof}\nTARGET_PORT={port}\n")
+print(open(f"{B}/target.env").read(), end="")
+PY
+)
+```
+
+The printed `TARGET_ROOT` must be the inventoried `VM_MCP_ROOT` and an existing,
+non-empty directory; `TARGET_PROFILE` must equal the resolved current profile. **To
+change either, edit `$B/target.env` by hand and note the decision in the run log.**
+That is the only sanctioned way to move to a new workspace or another profile.
+
+### U3. Token
+
+Run step 1 above unchanged. If `/etc/credstore/vm-mcp-token` already exists and the
+connected client uses it, you may instead pass it as the token source in U4
+(`VM_MCP_AUTH_TOKEN_FILE=/etc/credstore/vm-mcp-token`) to avoid a client update.
+
+### U4. Stop, install with the preserved target, restart
+
+`usermod` refuses a user with running processes (installer exit 8, seen on a real
+upgrade), so both units are stopped immediately before the install. **Expect a brief
+MCP outage**, typically under a minute (the test suite runs first, before the stop).
+Human SSH/OS Login/IAP access is unaffected. Run it from the human path, not through MCP.
+
+```bash
+(
+set -Eeuo pipefail
+trap 'echo "FAIL step U4 at line $LINENO (exit $?)" >&2' ERR
+umask 077
+SKILL_LIB_SHA=023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
+eval "$(sudo -n cat "$B/target.env")"
+sudo -n test -d "$TARGET_ROOT"
+TOKEN_FILE=${TOKEN_FILE:-/root/vm-mcp.token}
+
+BOOTSTRAP_DIR="$(mktemp -d)"
+ROOT_SRC="$(sudo -n mktemp -d /root/vm-mcp-src.XXXXXX)"
+trap 'rm -rf "$BOOTSTRAP_DIR"; sudo -n rm -rf "$ROOT_SRC"' EXIT
+git clone --quiet --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$BOOTSTRAP_DIR/skill-lib"
+git -C "$BOOTSTRAP_DIR/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
+(cd "$BOOTSTRAP_DIR/skill-lib" && PYTHONPATH=vm-mcp python3 -W error::ResourceWarning -m unittest discover -s vm-mcp/tests -p 'test_*.py')
+sudo -n git clone --quiet https://github.com/The-Interdependency/skill-lib.git "$ROOT_SRC/skill-lib"
+sudo -n git -C "$ROOT_SRC/skill-lib" checkout --quiet --detach "$SKILL_LIB_SHA"
+test "$(sudo -n git -C "$ROOT_SRC/skill-lib" rev-parse HEAD)" = "$SKILL_LIB_SHA"
+
+echo "stopping vm-mcp units at $(date '+%F %T %Z')"
+sudo -n systemctl stop vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
+timeout 30 sh -c 'while pgrep -u vmmcp >/dev/null; do sleep 1; done' || {
+  echo "hmmm: vmmcp still has processes:"; pgrep -a -u vmmcp; exit 8; }
+
+sudo -n env -u VM_MCP_AUTH_TOKEN -u VM_MCP_AUTH_TOKEN_STDIN \
+  VM_MCP_PROFILE="$TARGET_PROFILE" VM_MCP_ROOT="$TARGET_ROOT" VM_MCP_PORT="$TARGET_PORT" \
+  VM_MCP_AUTH_TOKEN_FILE="$TOKEN_FILE" \
+  bash "$ROOT_SRC/skill-lib/vm-mcp/install.sh" || rc=$?
+echo "rc=${rc:-0}"
+[ "${rc:-0}" -eq 0 ] || exit "$rc"
+test "$(sudo -n cat /opt/vm-mcp/SOURCE_COMMIT)" = "$SKILL_LIB_SHA"
+sudo -n sed -E 's/^([A-Z_]*TOKEN[A-Z_]*)=.*/\1=<blanked>/' /etc/vm-mcp.env
+getent passwd vmmcp | cut -d: -f6
+)
+```
+
+Expect `rc=0`, the env showing the preserved `VM_MCP_ROOT` and `VM_MCP_PROFILE`, and
+the unchanged home. On a `read-only` or `workspace` target the installer leaves the
+broker unit disabled, as before; on `personal-console` it re-enables it.
+
+**If U4 fails**, the VM's MCP path is down (fail-closed), not open. Restore the
+pre-upgrade state with U6 and restart. Installer exits 3 (token), 5 (root not a
+directory), 7 (no Yama) and 8 (busy user) happen before any file under `/opt` or
+`/etc/systemd` is touched; then only the restart at the end of U6 is needed.
+
+### U5. Checks for the upgrade case
+
+Run checks a–f below in order (f after e), adapted to `TARGET_PROFILE`:
+
+| check | `personal-console` | `workspace` / `read-only` |
+|---|---|---|
+| a | as written | as written |
+| b | as written | broker unit `inactive`, `/run/vm-mcp/admin.sock` absent; all other lines as written |
+| c, d, e | as written | as written (bearer auth is required in every profile) |
+| f | as written | the call in f must be refused by policy (`ok: false`) and no broker receipt may appear |
+
+Also confirm preservation:
+
+```bash
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest); eval "$(sudo -n cat "$B/target.env")"
+ok "root preserved"    "$TARGET_ROOT"    "$(sudo -n sed -nE 's/^VM_MCP_ROOT="?([^"]*)"?$/\1/p' /etc/vm-mcp.env)"
+ok "profile preserved" "$TARGET_PROFILE" "$(sudo -n sed -nE 's/^VM_MCP_PROFILE=(.*)$/\1/p' /etc/vm-mcp.env)"
+ok "home preserved"    "${TARGET_ROOT%/}/.vm-mcp-home" "$(getent passwd vmmcp | cut -d: -f6)"
+ok "workspace drop-in" "ReadWritePaths=$TARGET_ROOT" "$(grep -x "ReadWritePaths=$TARGET_ROOT" /etc/systemd/system/vm-mcp.service.d/workspace.conf)"
+ok "workspace not emptied" yes "$(sudo -n find "$TARGET_ROOT" -mindepth 1 -maxdepth 1 ! -name .vm-mcp-home | grep -q . && echo yes || echo no)"
+)
+```
+
+#### #127 non-destructive checks on an existing install
+
+`vm-mcp-127-check.sh --skip-install` checks the installed tree without reinstalling,
+but in that mode it has no source checkout, so its fixed-install-root and
+workspace-overlap checks would fail falsely; and `--repo` alone turns `--skip-install`
+off (it would reinstall). Never pass `--destructive` or `--reinstall-readonly` on a
+real VM. Its step 3/7 expectations assume `personal-console`; on other profiles read
+those lines with the table above. Run the source checks separately against a 023ae12
+checkout:
+
+```bash
+(
+ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
+S=$(mktemp -d); trap 'rm -rf "$S"; sudo -n rm -f /root/.vm-mcp-t127' EXIT
+git clone -q --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$S/sl"
+git -C "$S/sl" checkout -q --detach 023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+I="$S/sl/vm-mcp/install.sh"
+ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I")"
+ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I")"
+sed -n '/^check_work_root() {/,/^}/p' "$I" > "$S/cwr.sh"
+for bad in / /opt /opt/vm-mcp /opt/vm-mcp/x /opt/vm-mcp/../vm-mcp; do
+  ok "overlap $bad rejected" 1 "$(bash -c '. "$1"; check_work_root "$2" /opt/vm-mcp 2>/dev/null && echo 0 || echo 1' _ "$S/cwr.sh" "$bad")"
+done
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest); eval "$(sudo -n cat "$B/target.env")"
+ok "preserved root $TARGET_ROOT accepted" 0 "$(bash -c '. "$1"; check_work_root "$2" /opt/vm-mcp 2>/dev/null && echo 0 || echo 1' _ "$S/cwr.sh" "$TARGET_ROOT")"
+# token descriptor owner/mode check, against the installed code, with a throwaway file
+probe() { sudo -n sh -c 'cd /opt/vm-mcp && .venv/bin/python -I -c "import sys; sys.path.insert(0,\".\"); import auth; auth._read_stdin_token()" < /root/.vm-mcp-t127' >/dev/null 2>&1 && echo accepted || echo refused; }
+sudo -n sh -c 'umask 077; head -c 48 /dev/urandom | base64 -w0 > /root/.vm-mcp-t127; echo >> /root/.vm-mcp-t127'
+ok "token file 0600 root" accepted "$(probe)"
+sudo -n chmod 0640 /root/.vm-mcp-t127; ok "token file 0640 refused" refused "$(probe)"
+sudo -n chmod 0604 /root/.vm-mcp-t127; ok "token file 0604 refused" refused "$(probe)"
+sudo -n chmod 0600 /root/.vm-mcp-t127; sudo -n chown vmmcp /root/.vm-mcp-t127; ok "token file owned by vmmcp refused" refused "$(probe)"
+# step 9 sysctl handling, observed without changing the profile
+if [ "$TARGET_PROFILE" = read-only ]; then
+  ok "read-only: installer's own ptrace sysctl removed" absent "$(test -e /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf && echo present || echo absent)"
+else
+  ok "shell profile: ptrace sysctl present" "root:root 644" "$(stat -c '%U:%G %a' /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf 2>/dev/null)"
+fi
+)
+```
+
+The step 9 check is observational: on a `read-only` target the U4 install itself
+exercises #127's removal path; on other profiles it is not exercised (that would need
+a profile change) and stays covered by the scratch-VM run.
+
+### U6. Roll back to the inventoried state
+
+Restores the env, units, drop-ins, sysctl file and code exactly as backed up in U1.
+**This returns the VM to its pre-upgrade code, so endpoints that were not
+token-protected before are unprotected again.** Prefer fixing forward; use this only
+to recover service. For a profile-only rollback, use the `sed` rollback below instead.
+
+```bash
+(
+set -Eeuo pipefail
+B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
+sudo -n test -f "$B/inventory.txt"
+sudo -n systemctl stop vm-mcp.service vm-mcp-admin.service 2>/dev/null || true
+sudo -n sh -c "set -e
+  if [ -f '$B/opt-vm-mcp.tar' ]; then rm -rf /opt/vm-mcp.rollback-old; mv /opt/vm-mcp /opt/vm-mcp.rollback-old 2>/dev/null || true; tar -C /opt -xpf '$B/opt-vm-mcp.tar'; fi
+  [ -f '$B/vm-mcp.env' ] && install -o root -g root -m 0600 '$B/vm-mcp.env' /etc/vm-mcp.env
+  for u in vm-mcp.service vm-mcp-admin.service; do
+    if [ -f '$B/'\$u ]; then install -m 0644 '$B/'\$u /etc/systemd/system/\$u; else rm -f /etc/systemd/system/\$u; fi
+  done
+  rm -rf /etc/systemd/system/vm-mcp.service.d
+  [ -d '$B/vm-mcp.service.d' ] && cp -a '$B/vm-mcp.service.d' /etc/systemd/system/
+  if [ -f '$B/99-zz-vm-mcp-ptrace.conf' ]; then install -m 0644 '$B/99-zz-vm-mcp-ptrace.conf' /etc/sysctl.d/; else rm -f /etc/sysctl.d/99-zz-vm-mcp-ptrace.conf; fi
+  if [ -f '$B/credstore-token' ]; then install -o root -g root -m 0600 '$B/credstore-token' /etc/credstore/vm-mcp-token; else rm -f /etc/credstore/vm-mcp-token; fi
+  systemctl daemon-reload"
+# start what was running before
+if [ "$(sudo -n cat "$B/broker-was" 2>/dev/null)" = active ]; then sudo -n systemctl start vm-mcp-admin.service; fi
+sudo -n systemctl start vm-mcp.service
+systemctl is-active vm-mcp.service vm-mcp-admin.service || true
+)
+```
+
+Afterwards compare `systemctl is-active` and the blanked env with `$B/inventory.txt`.
+The live `ptrace_scope` is not lowered. `/opt/vm-mcp.rollback-old` keeps the
+upgraded tree for inspection; remove it by hand once you are done.
+
+### Worked example: a VM from an earlier vm-mcp release
+
+A real upgrade on Oct 13, 2026 met this layout:
+
+```text
+version:          pre-#123 vm-mcp (no token)
+/etc/vm-mcp.env:  VM_MCP_ROOT="/srv/a0/workspaces", VM_MCP_PORT=8765,
+                  VM_MCP_SHELL_ENABLED=0, no VM_MCP_PROFILE, no token key
+vmmcp home:       /srv/a0/workspaces/.vm-mcp-home
+units:            vm-mcp.service active (running for days); broker unit inactive
+listener:         127.0.0.1:8765
+```
+
+Following the fresh-install steps 1–2 verbatim failed with `usermod: user vmmcp is
+currently used by process …` and exit 8, after the tests passed and the ptrace sysctl
+file was written but before any code, unit or env changed; the old service kept
+running. Had it succeeded, it would also have moved the service to an empty
+`/srv/vm-mcp/workspace` and changed the profile.
+
+With this section:
+
+1. U1 records the layout above.
+2. U2 resolves the profile from the legacy flag (`VM_MCP_SHELL_ENABLED=0` →
+   `read-only`) and writes `TARGET_ROOT=/srv/a0/workspaces`, `TARGET_PROFILE=read-only`.
+3. U4 stops the old service (brief outage), installs 023ae12 with those values, and
+   the installer removes its own ptrace sysctl file again because the target is
+   `read-only`.
+4. U5 expects the read-only column of the table, the preservation block all `PASS`,
+   and the read-only step 9 line `absent`.
+5. Any other profile for that VM is a separate, explicit decision in `target.env`.
 
 ## Install the exact canonical personal console
 
@@ -499,5 +814,8 @@ Login/IAP recovery as part of MCP rollback.
   skill-lib follow-up.
 - Tools a profile disallows are still registered and listed. Tracked as a skill-lib
   follow-up.
+- Installer reruns are not history-preserving by themselves (root/profile defaults,
+  dropped legacy keys, busy-user `usermod`). The upgrade section works around this;
+  installer-side fixes are tracked as a skill-lib follow-up.
 - The broad `personal-console` profile is intentional for this single-owner deployment;
   it should not be silently generalized to shared or multi-owner hosts.
