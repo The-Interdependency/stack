@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "f4acf6c40732f486388ed43df896d6e21590f1bf567310a0f45814c56d506268",
+  "work_graph_sha256": "70578d9ee468b21165b7bc7fedaf799fb6e84245246302ff25cbc7139deb0635",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -73,7 +73,8 @@
       "Weave has an explicit Stack-owned native binary sequence-cycle candidate with exact recovery; other profiles, private/public lifting, authentication/state and full-cipher security remain unresolved.",
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
       "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement.",
-      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes."
+      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes.",
+      "English ordinal/1 is the selected local construction; nested frame transport, compound origin attachment, native Mobius lift, operator actions and downstream migration remain unresolved."
     ]
   },
   "research_participants": [
@@ -472,6 +473,66 @@
       "relation": "pinned doctrine for the module, tests, research receipts and Stack transaction; no authority transfer",
       "authority_transfer": false,
       "canonical_release": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-source",
+      "repository": "The-Interdependency/stack",
+      "commit": "37adccb4c079199d915a49e475af0f426fed0943",
+      "authority": "English construction and supported entrypoint",
+      "relation": "exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-geometry",
+      "repository": "The-Interdependency/ucns",
+      "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
+      "authority": "generic exact ordinal geometry",
+      "relation": "merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-admission",
+      "repository": "The-Interdependency/stack",
+      "commit": "e3eb83764355b4b760a79323cda6a6d75c3a501a",
+      "authority": "English source admission and independent replay",
+      "relation": "unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-admission-carrier",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
+      "authority": "historical carrier provenance",
+      "relation": "inherited scalar identity admission only; these historical angles do not supply the replacement placement",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-corpus",
+      "repository": "globalwordnet/english-wordnet",
+      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+      "authority": "complete English corpus evidence",
+      "relation": "all exact pinned source records consumed by the ordinal construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-doctrine",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128",
+      "authority": "build and evidence discipline",
+      "relation": "separately pinned ordinal work graph doctrine; root operational snapshot remains unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
     }
   ]
 }

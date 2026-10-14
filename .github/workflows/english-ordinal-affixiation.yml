@@ -1,0 +1,175 @@
+name: English ordinal affixiation
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'research/english-gonol/english_gonol/**'
+      - 'research/english-gonol/ACTIVE_CONSTRUCTION.json'
+      - 'research/english-gonol/BASE.json'
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
+      - 'research/english-gonol/tests/test_active_construction.py'
+      - 'research/english-gonol/tests/test_ordinal_construct.py'
+      - 'research/english-gonol/docs/ordinal-*'
+      - '.github/workflows/english-ordinal-affixiation.yml'
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+jobs:
+  full-corpus:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb
+          path: _inputs/ucns
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 4f863ad37096b7baab8f62820ad5cb937b62a3a7
+          path: _inputs/admission-carrier
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: globalwordnet/english-wordnet
+          ref: dc343f2683279ecbb13fab4e2fd778d7b162d287
+          path: _inputs/oewn
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/skill-lib
+          ref: e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128
+          path: _inputs/skill-lib
+          persist-credentials: false
+          sparse-checkout: |
+            wdll
+            gonol-build
+            msdmd
+            meta-module-build
+            interdependent-work-graph
+            tools/skill_usage.py
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.14'
+      - name: Preflight resources and install exact build dependencies
+        run: |
+          python - <<'PY'
+          import json, pathlib, platform, shutil, sqlite3
+          free = shutil.disk_usage('.').free
+          # Source, two verified SQLite bundles, dependencies and retained evidence.
+          assert free >= 4 * 1024**3, '4 GiB working space required before full build'
+          print(json.dumps({'python':platform.python_version(),'sqlite':sqlite3.sqlite_version,'free_bytes':free}))
+          PY
+          python -m pip install uv==0.11.18 PyYAML==6.0.2
+          uv sync --project _inputs/ucns --locked --python python --extra test
+          uv pip install --python _inputs/ucns/.venv/bin/python PyYAML==6.0.2
+      - name: Verify exact participant graph and unchanged source reader
+        env:
+          PYTHONPATH: research/english-gonol
+        run: |
+          git fetch --no-tags --depth=1 origin e3eb83764355b4b760a79323cda6a6d75c3a501a
+          _inputs/ucns/.venv/bin/python - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          from english_gonol.structural_construct import IMPLEMENTATION_FILES
+          graph=json.loads(pathlib.Path('research/english-gonol/docs/ordinal-work-graph.json').read_text())
+          body={k:graph[k] for k in ('repositories','boundaries')}
+          assert hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':')).encode()).hexdigest()==graph['work_graph_sha256']
+          roots={'The-Interdependency/ucns':'_inputs/ucns','globalwordnet/english-wordnet':'_inputs/oewn','The-Interdependency/skill-lib':'_inputs/skill-lib'}
+          for item in graph['repositories']:
+              if item['repository'] in roots:
+                  assert subprocess.check_output(['git','-C',roots[item['repository']],'rev-parse','HEAD'],text=True).strip()==item['commit']
+          active_base=json.loads(pathlib.Path('research/english-gonol/BASE.json').read_text())
+          selected=active_base['active_construction']['source_commit']
+          assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
+          subprocess.run(['git','fetch','--no-tags','--depth=1','origin',selected],check=True)
+          for relative in ('english_gonol/ordinal_construct.py','english_gonol/__main__.py',
+                           'ACTIVE_CONSTRUCTION.json','docs/ordinal-work-graph.json'):
+              path='research/english-gonol/'+relative
+              assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',selected+':'+path]),path
+          base=next(r['commit'] for r in graph['repositories'] if r['repository']=='The-Interdependency/stack')
+          for name in IMPLEMENTATION_FILES:
+              path='research/english-gonol/english_gonol/'+name
+              assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',base+':'+path]),path
+          PY
+      - name: Acquire declared Unicode release and license
+        env:
+          SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p _inputs/ucd _evidence
+          for name in UnicodeData.txt DerivedCoreProperties.txt ReadMe.txt; do
+            curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+              "https://www.unicode.org/Public/18.0.0/ucd/$name" -o "_inputs/ucd/$name"
+          done
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            https://www.unicode.org/license.txt -o _inputs/ucd/LICENSE-Unicode.txt
+          sha256sum _inputs/ucd/* | tee _evidence/unicode-acquisition.sha256
+          git rev-parse HEAD > _evidence/stack-tested-merge.txt
+          printf '%s\n' "$SOURCE_HEAD" > _evidence/stack-head.txt
+          git -C _inputs/ucns rev-parse HEAD > _evidence/ucns-head.txt
+          git -C _inputs/oewn rev-parse HEAD > _evidence/corpus-head.txt
+          # CI source provenance is separate from the artifact verifier's data contract.
+          cp research/english-gonol/docs/ordinal-work-graph.json _evidence/source-work-graph.json
+      - name: Unit and cross-repository geometry tests
+        env:
+          PYTHONPATH: research/english-gonol
+        run: |
+          _inputs/ucns/.venv/bin/python -m pytest -q \
+            _inputs/ucns/tests/test_ordinal_affixiation.py \
+            research/english-gonol/tests/test_ordinal_construct.py \
+            research/english-gonol/tests/test_active_construction.py \
+            | tee _evidence/tests.txt
+      - name: Build complete source admission then the replacement geometry
+        env:
+          PYTHONPATH: research/english-gonol
+        run: |
+          /usr/bin/time -v _inputs/ucns/.venv/bin/python -m english_gonol.structural_construct build \
+            --source-root _inputs/oewn/src/yaml \
+            --ucns-source-root _inputs/admission-carrier \
+            --out-dir _admission 2> _evidence/admission-resources.txt
+          /usr/bin/time -v _inputs/ucns/.venv/bin/python -m english_gonol build \
+            _admission _inputs/ucd _constructed \
+            2> _evidence/geometry-resources.txt | tee _evidence/full-verification.json
+          mkdir -p _constructed/licenses
+          cp _inputs/oewn/LICENSE.md _constructed/licenses/OEWN-LICENSE.md
+          cp _inputs/oewn/README.md _constructed/licenses/OEWN-README.md
+          cp _inputs/ucd/LICENSE-Unicode.txt _constructed/licenses/
+          cp _inputs/ucd/ReadMe.txt _constructed/licenses/Unicode-ReadMe.txt
+          cp _constructed/public-gonol.json _constructed/manifest.json _constructed/verification.json _evidence/
+          python - <<'PY'
+          import json,pathlib
+          p=json.loads(pathlib.Path('_constructed/public-gonol.json').read_text())
+          n=len(p['identities'])
+          lines=['index\tcodepoint\tscalar_json\tangle_turns']
+          lines += [f'{i}\tU+{ord(c):04X}\t{json.dumps(c,ensure_ascii=False)}\t{i}/{n}' for i,c in enumerate(p['identities'])]
+          pathlib.Path('_evidence/public-gonol.tsv').write_text('\n'.join(lines)+'\n')
+          print(json.dumps(p['admission_counts'],indent=2))
+          PY
+      - name: Exercise source-exact text query on the completed field
+        env:
+          PYTHONPATH: research/english-gonol
+        run: |
+          _inputs/ucns/.venv/bin/python -m english_gonol query \
+            _constructed 'the geometry' > _evidence/query.json
+      - name: Retain evidence even after a deterministic failure
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: english-ordinal-evidence
+          path: _evidence/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Retain the actual completed construction, including constitutive source
+        if: success()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: english-ordinal-construction
+          path: _constructed/
+          if-no-files-found: error
+          retention-days: 30

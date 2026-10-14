@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `f4acf6c40732f486388ed43df896d6e21590f1bf567310a0f45814c56d506268`
+  `70578d9ee468b21165b7bc7fedaf799fb6e84245246302ff25cbc7139deb0635`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -52,6 +52,31 @@ meaning used by that repository.
 | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
 | `The-Interdependency/epac` | `949cb1cb304927942966c9fb396caf6227120e7f` | v0.1.0 | independent implementation and public-contract authority for EPAC | immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated |
+
+## Selected English ordinal construction
+
+`english.ordinal/1` replaces the previous completed-geometry default in
+`research/english-gonol/`. The exact implementation baseline and its inputs are
+research participants; no canonical `libs/` pin is refreshed. The earlier v2
+and four-view records below remain historical evidence, not current geometry.
+Use `PYTHONPATH=research/english-gonol python -m english_gonol profile` to inspect
+selection, and see [the supported build](research/english-gonol/README.md).
+
+| Participant ID | Repository | Exact commit | Relation |
+|---|---|---|---|
+| `ordinal-source` | `The-Interdependency/stack` | `37adccb4c079199d915a49e475af0f426fed0943` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
+| `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
+| `ordinal-admission` | `The-Interdependency/stack` | `e3eb83764355b4b760a79323cda6a6d75c3a501a` | unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry |
+| `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
+| `ordinal-corpus` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | all exact pinned source records consumed by the ordinal construction |
+| `ordinal-doctrine` | `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | separately pinned ordinal work graph doctrine; root operational snapshot remains unchanged |
+
+UCNS #241 merged at `6ebbf970ad13a0d2e1c13bd65c496b671e740185`;
+the source consumer remains pinned to the tested producer bytes above. The
+source-admission closure remains support, not an alternate completed geometry.
+[ACTIVE_CONSTRUCTION.json](research/english-gonol/ACTIVE_CONSTRUCTION.json) owns
+default selection and [the question record](research/english-gonol/docs/ordinal-questions.md)
+separates unanswered construction laws from remaining engineering work.
 
 ## Research-Only Composition Participants
 
@@ -221,9 +246,10 @@ release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec
 Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
 
 English Gonol Construction remains stack-local research, not EDCM and not an independent
-canonical release. Its v2 full pinned-corpus construction/replay survived with compact
-committed evidence; that result establishes the construction/replay only, not semantic
-quality, geometry canon, or measurement validity.
+canonical release. The selected `english.ordinal/1` local construction is distinct
+from the historical v2 and four-view receipts. Complete source and ordinal replay
+establish construction/recovery, not semantic quality, general geometry canon or
+measurement validity.
 
 Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
@@ -244,7 +270,7 @@ establish a base-independent generating law.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
+- English Gonol Construction has selected exact local ordinal geometry; global frame transport, compound origins, native Mobius lift, operator actions and independent release remain unresolved.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.

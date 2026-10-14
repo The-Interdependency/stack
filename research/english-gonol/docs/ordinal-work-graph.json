@@ -1,0 +1,43 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
+      "authority": "generic exact ordinal geometry",
+      "relation": "new producer; no English semantic authority"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "e3eb83764355b4b760a79323cda6a6d75c3a501a",
+      "authority": "English source admission and construction forge",
+      "relation": "unchanged structural-source baseline; candidate source bound by generated implementation digest and observed head"
+    },
+    {
+      "repository": "globalwordnet/english-wordnet",
+      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+      "authority": "complete English corpus evidence",
+      "relation": "all exact pinned source records"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128",
+      "authority": "build discipline",
+      "relation": "current loaded governing contracts"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "English supplies exact participants and explicit ordering policy; UCNS supplies geometry only",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Native Mobius lift and global frame attachment remain unresolved.",
+      "Balanced scalar insertion and composite angular ordering are declared profile choices.",
+      "The historical admission carrier is pinned separately in preserved source metadata; its angles are not consumed by the new constructor."
+    ]
+  },
+  "work_graph_sha256": "7d0ec15d06ed32c29f8352afb63b3b73be340f1dace935f1da4e43b207a483b0"
+}

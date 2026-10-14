@@ -1,168 +1,105 @@
 # English Gonol Construction
 
-## Structural profile v1 — new construction entrypoint
+## Active construction: ordinal affixiation
 
-The operator-ratified [structural profile](docs/structural-profile-v1.md) replaces
-non-whitespace runs for new structural work. It builds the complete pinned
-corpus, keeps punctuation outside word identity, preserves ordered shared
-participations, and exposes read-only query/replay through
-`english_gonol.structural_query.StructuralField`. Start with the commands in
-that document and the [exact input graph](docs/structural-profile-work-graph.json).
-The v2 results below remain historical and are not receipts for the new profile.
-Stack owns the implementation; UCHC carries the extracted candidate. Geometry,
-compound lexical origins and graduation retain their explicit hmmm boundaries.
+`english.ordinal/1` is the selected replacement for new English construction.
+[ACTIVE_CONSTRUCTION.json](ACTIVE_CONSTRUCTION.json) owns that selection.
+Distance follows repeated ordinal halving; angle comes from the expanded public
+gonol. Closed interiors, order, multiplicity, whitespace and source provenance
+remain recoverable. There is no fallback to previous geometry.
 
+```bash
+export PYTHONPATH=research/english-gonol
+python -m english_gonol profile
+python -m english_gonol build /path/to/admission /path/to/ucd /path/to/new-output
+python -m english_gonol verify /path/to/new-output
+python -m english_gonol query /path/to/new-output 'the geometry'
+```
 
-Stack-local research component for English lexical/gonol construction.
+Use the exact UCNS and source identities, dependency setup and admission commands
+in [ordinal construction](docs/ordinal-construction.md). The **English ordinal
+affixiation** GitHub workflow can also be run manually from Actions. It builds
+and independently replays the complete pinned corpus through the supported
+entrypoint. An existing output directory is never overwritten.
+
+The prior full construction recorded 4,698 public scalar positions, 103,053 closed
+words, 420,006 frames and 4,792,299 placements. A changed implementation requires
+a new exact-source build and replay; prior receipts do not certify current bytes. Source and geometry receipts belong
+to `english.ordinal/1`; old counts and receipts are not interchangeable with it.
+These counts establish constructed scope, not semantic or inference quality.
 
 ## Authority
 
-```text
-METAPAT  -> affixiation semantics
-UCNS     -> gonol / Möbius / Public Gonol geometry
-English  -> text admission and linguistic/semantic construction
-EDCM     -> measurement/evaluation only
-```
+UCNS owns geometric objects and the ordinal operation. Stack owns this English
+construction and its source/admission profile. METAPAT owns affixiation semantics;
+EDCM may measure completed outputs but does not define them. Selecting this
+profile does not graduate UCHC or refresh the root `libs/` snapshots. The exact
+work graph in `docs/ordinal-work-graph.json` binds the consumed geometry separately.
 
-English construction consumes UCNS geometry; it does not invent geometry or
-move English semantics into UCNS.
+## Identity and scale
 
-## Historical v2 invariants
+In this text-domain construction, every admitted character is a gonol:
+one exact scalar -> one shared character identity; one exact surface -> one shared word identity.
+Once closed, a gonol is atomic at an admissible consuming scale, while its ordered
+interior remains recoverable. This does not impose a mandatory adjacent-scale ladder.
 
-```text
-every admitted character is a gonol
-one exact scalar  -> one shared character identity
-one exact surface -> one shared word identity
+Authority routing remains METAPAT -> affixiation semantics; UCNS -> exact geometry;
+English Gonol Construction -> text-domain participants; EDCM -> measurement/evaluation only.
+Construction/recovery does not validate EDCM measurement. See
+[the language boundary](docs/GONOL_LANGUAGE_BOUNDARY.md).
 
-glyph axes
-  -> ordered glyph-axis tensor
-  -> closed word
-  -> word axis
-```
+## Replaced and retained
 
-Once closed, a gonol is atomic at an admissible consuming scale. Reuse preserves
-identity while order, multiplicity, relation, source position, and provenance
-remain recoverable.
+The structural-only build is **deprecated as a completed geometric construction**.
+`structural_construct` remains the verified source-admission/replay stage consumed
+by the replacement, not a competing geometry. `StructuralField` inspects that
+source stage only. Its 13-file sealed import closure remains unchanged so existing
+source evidence remains independently replayable.
 
-The Stack-forged Hilbert inference candidate treats those already-declared axes
-as mathematical basis directions rather than inserting Cartesian coordinates.
-A word's ordered glyph-axis construction is preserved when the closed word
-becomes its own higher-scale axis. Exact construct identity travels with every
-basis axis. See [Hilbert inference candidate](docs/hilbert-inference.md).
+Full construct v2, orthogonal-axis placement and constituent-overlap views are
+**historical, not supported routes for new construction**. Their old build commands
+are removed from this entrypoint and usage path. Retained source modules support
+sealed admission and explicitly historical replay; retention grants no current
+geometry authority. The supported CLI rejects retired profile commands and does
+not silently return an old artifact when the ordinal constructor is unavailable.
 
-This mathematical use of vector is domain-qualified as `HilbertStateVector`.
-It is not METAPAT `Vector` and not a UCNS displacement vector. The canonical
-scalar field, cross-origin inner products, amplitudes/phases and inference
-operators remain unresolved.
+The prior definition method and applicable functions remain required: reconstruct
+them over the new base rather than discard their meanings or restore their old
+geometry. [Answer 4](docs/ordinal-questions.md) owns this inheritance instruction,
+its inspected source bindings and the outstanding preservation/replay witnesses.
 
-Corpus occurrences, sense ids, and synset ids are evidence/provenance, not
-independent gonols. Definitions are word-anchored constructions: each retains
-the shared word origin, exact ordered constituent word/whitespace-character
-identities, source ordinal, direct binding, and chain predecessor.
+Historical documentation and evidence:
 
-## Full construct v2 — sealed historical profile
+- [Full construct v2](docs/full-construct-v2.md) and `experiments/full-construct-v2/`.
+- [Four-view audit](docs/hyperspace-views-full-v1.md) and `FULL_VIEW_AUDIT.json`.
+- [Hilbert candidate](docs/hilbert-inference.md), a separately declared historical
+  representation, not the new relational geometry or evidence of inference quality.
 
-`english_gonol.full_construct_run` builds the complete pinned OEWN 2025 corpus
-without promoting bookkeeping into geometry.
+The previous active profile's [segmentation contract](docs/structural-profile-v1.md)
+remains the source-admission contract. Punctuation is not silently folded into word
+identity; raw source, shared words, exact scalars and ordered participation survive.
+Any future source-rule alteration needs its own profile and complete replay.
 
-```text
-word origin -> D1 -> D2 -> ... -> Dn     # chain topology
-word origin -> D1, D2, ... Dn            # direct topology
-
-ordinal evidence
-+ semantic evidence
-+ exact sentence-context evidence
--> preponderance relative to the rest of the sentence in which the word appears
--> hmmm until UCNS derives the displacement geometry
-```
-
-Definitions preserve their source exactly: every maximal non-whitespace run
-reuses one shared word identity and every whitespace scalar reuses one shared
-character identity. No normalization is applied.
-
-The builder does not create sentence/sense/synset/n-gram singleton objects,
-occurrence-object ledgers, closure graphs, synthetic relation circles,
-tangencies, attention frames, or duplicate JSON copies of the database. It does
-not synthesize weights, displacement vectors, Cartesian coordinates, centers,
-radii, motion, or tangency. The separate Hilbert candidate constructs
-mathematical state vectors from axes already declared by this construction; it
-does not supply a displacement law.
-
-### Verified full-corpus result
-
-Evidence is committed in `experiments/full-construct-v2/`.
-
-- 118 shared character identities
-- 164,864 shared word identities
-- 1,739,949 ordered word-character references
-- 185,155 word-anchored definitions
-- 3,535,375 exact ordered definition components
-- 866,183 resolved semantic evidence rows
-- 0 unresolved semantic evidence rows
-- SQLite integrity: `ok`
-- logical receipt: `12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57`
-- generated database: 306,331,648 bytes
-- build wall time: 1:34.79
-- peak RSS: 286,692 KiB
-
-The database itself remains generated state; the compact manifest, integrity
-receipt, and resource receipt are committed.
-
-## Run historical v2
+## Tests and migration
 
 ```bash
-python -m english_gonol.full_construct_run \
-  --source-root /path/to/oewn-2025/src/yaml \
-  --ucns-source-root /path/to/ucns \
-  --out-dir experiments/full-construct-v2
+python -m pytest -q research/english-gonol/tests
 ```
 
-Tests:
+Use the UCNS dependency specified by the work graph. The new default's tests cover
+ordinal-only routing, retired-command rejection, selection mismatch and no-compute
+profile/help. Geometry tests and full-corpus replay remain separate witnesses.
 
-```bash
-python -m pytest -q tests
-```
-
-See [`docs/full-construct-v2.md`](docs/full-construct-v2.md).
-
-## Four-view full-corpus audit
-
-The [complete view report](docs/hyperspace-views-full-v1.md) covers all **164,864 words**,
-all fifteen nonempty view combinations, and three complete address-renumbering controls.
-Native and independent evidence agree exactly, including per-word native reconstruction.
-The synthesis distinguishes 137,013 values. Removing view 1, 2, or 3 loses 10,267,
-20,042, or 125,813 distinctions respectively; removing view 4 loses none.
-
-View 1 is nullable constituent-overlap metadata, view 2 is the terminal phase/frame,
-view 3 carries coarse address/provenance information, and view 4 is a derivable witness.
-Their inference usefulness requires a task beyond distinctness. The frozen protocol is
-[`FULL_VIEW_AUDIT.json`](FULL_VIEW_AUDIT.json); complete receipts are in
-[`experiments/hyperspace-views-full-v1/`](experiments/hyperspace-views-full-v1/).
-The report contains the exact source/database bindings and full replay commands.
-
-## Historical research
-
-The orthogonal-carrier sweep and earlier definition-affixiation run remain
-separate experiments and supply no placement law to v2. The falsified
-`full_singleton_run.py` architecture and its UCNS singleton-axis support were
-deleted rather than retained as an active precedent.
-
-## Migration standing
-
-The current lifecycle record is [`MIGRATION.json`](MIGRATION.json). UCHC is
-extracted and has a clean-installed immutable candidate verified in Stack, but
-stable publication, released-artifact reconsumption, severance of the local
-implementation path and a scoped authority-transition receipt remain incomplete.
-Stack therefore remains the implementation forge for this new candidate.
+[MIGRATION.json](MIGRATION.json) retains the UCHC extraction/release standing.
+Older pinned consumers are not silently upgraded by this source merge. They must
+consume the new profile explicitly and replay their own contracts; historical
+metrics are not renamed as ordinal measurements.
 
 ## hmmm
 
-The exact UCNS law mapping ordinal + semantic + sentence-context evidence to
-geometric displacement remains unresolved. No English-layer rule may fill that
-boundary with invented weights, directions, distances, displacement vectors,
-Cartesian coordinates, centers, radii, tangencies, or motion.
-
-For the Hilbert candidate, the canonical scalar field (`R` or `C`),
-cross-origin inner products/angles, amplitudes/phases, learned inference
-operators, sense selection, sentence-axis promotion and completed UCHC
-graduation remain unresolved.
+[Answers and remaining work](docs/ordinal-questions.md) separate the settled
+radius/angle rule, SPACE references and inherited definition method from
+outstanding implementation witnesses. Native Mobius integration is not required
+by this profile. Only question 5, vocabulary growth, remains a construction
+question; attachment verification, definition reconstruction/replay and downstream
+inference evidence remain engineering/evidence boundaries.

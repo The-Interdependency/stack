@@ -1,0 +1,29 @@
+{
+  "schema": "english.active-construction/1",
+  "active_profile": "english.ordinal/1",
+  "status": "selected-for-new-English-construction",
+  "entrypoint": "python -m english_gonol",
+  "implementation": "english_gonol.ordinal_construct",
+  "geometry_authority": "The-Interdependency/ucns",
+  "geometry_commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
+  "producer_merge": "6ebbf970ad13a0d2e1c13bd65c496b671e740185",
+  "input_graph": "docs/ordinal-work-graph.json",
+  "questions": "docs/ordinal-questions.md",
+  "deprecated_as_completed_geometry": [
+    "english_gonol.full_construct_run",
+    "english_gonol.structural_construct",
+    "orthogonal-axis or constituent-overlap substitutes"
+  ],
+  "retained_support": {
+    "english_gonol.structural_construct": "source admission and independent source replay only",
+    "english_gonol.structural_query": "source structure inspection only",
+    "historical_source_modules": "sealed admission import closure and explicitly historical replay; not supported new-construction routes"
+  },
+  "fallback": "none",
+  "selection_scope": "local ordinal geometry and recursive recovery, not semantic quality or independent UCHC release",
+  "hmmm": [
+    "Global frame transport and compound definition-origin attachment remain unresolved.",
+    "Native Mobius lift, operator actions and inference quality are not established.",
+    "Historical consumers require explicit migration; a merge is not a deployment."
+  ]
+}
