@@ -3,7 +3,7 @@
 Usage: python -m unittest backend.tests.test_vm_contact_verification
 Executes the published Python snippets with file, HTTP, process and time boundaries
 mocked. No VM access, real credentials, service changes or network requests occur.
-Pinned result schema: skill-lib@023ae12 vm-mcp/admin_broker.py:execute_request.
+Pinned result schema: skill-lib@e74ce1e vm-mcp/admin_broker.py:execute_request.
 These tests prove runbook checks, not live deployment acceptance.
 """
 from __future__ import annotations

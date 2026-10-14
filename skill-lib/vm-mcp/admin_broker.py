@@ -1,4 +1,4 @@
-# ratios: loc_comments=231:60 imports_exports=16:3 calls_definitions=101:11
+# ratios: loc_comments=234:60 imports_exports=17:3 calls_definitions=102:11
 """Root-side Unix-socket execution broker for vm-mcp personal-console mode.
 
 Usage guidance:
@@ -25,6 +25,8 @@ import time
 import uuid
 from pathlib import Path
 from typing import Any
+
+from first_use import INSTALL_FLAG, claim_install_marker
 
 # === MODULE_BUILD ===
 # id: vm_mcp_personal_console_broker
@@ -226,6 +228,8 @@ def execute_request(request: dict[str, Any]) -> dict[str, Any]:
         "stderr_truncated": stderr_truncated,
         "output_limit_bytes_per_stream": limit,
     }
+    if mode == "admin":
+        result[INSTALL_FLAG] = claim_install_marker()
     print(
         json.dumps({
             "event": "vm_mcp_exec",
@@ -320,4 +324,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=231:60 imports_exports=16:3 calls_definitions=101:11
+# ratios: loc_comments=234:60 imports_exports=17:3 calls_definitions=102:11

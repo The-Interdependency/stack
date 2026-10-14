@@ -28,7 +28,7 @@ import types
 import unittest
 
 RUNBOOK = Path(__file__).resolve().parents[1] / "deploy" / "VM_CONTACT.md"
-PIN = "023ae12bb19ced1a4f2494ed6507fc31285a5b8e"
+PIN = "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128"
 UNITS = ("vm-mcp.service", "vm-mcp-admin.service")
 
 

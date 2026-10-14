@@ -75,12 +75,13 @@ class VmContactRunbookTests(unittest.TestCase):
                     self.assertRegex(block, r"(?m)^\s*%s=" % name, f"block at line {line} uses ${name} without defining it")
 
     def test_expected_empty_checks_cannot_fail_the_block(self):
-        # A bare `grep -c` (exit 1 on zero matches) must be guarded by `|| true`.
+        # A bare `grep -c` (exit 1 on zero matches) must be guarded by `|| true`
+        # inside the same command substitution, so the count is still printed.
         for line, block in self.blocks:
             for text in block.splitlines():
                 if "grep -c" in text:
                     with self.subTest(line=line, text=text):
-                        self.assertIn("|| true", text)
+                        self.assertRegex(text, r"\$\(grep -c[^()]*\|\| true\)")
 
     def test_install_blocks_report_where_set_e_stopped_them(self):
         # A block that stops under set -e and cleans up with an EXIT trap must
