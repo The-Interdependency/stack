@@ -188,3 +188,32 @@ def test_auxiliary_source_graph_is_outside_verified_construction():
                 if 'research/english-gonol/docs/ordinal-work-graph.json' in words:
                     copies.append(words[-1])
     assert copies == ['_evidence/source-work-graph.json']
+
+
+def test_full_workflow_uses_baseline_owned_admission_inventory():
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    steps = workflow['jobs']['full-corpus']['steps']
+    command = next(step['run'] for step in steps
+                   if step.get('name') == 'Verify exact participant graph and unchanged source reader')
+    assert "git','show',base+':'+baseline_path" in command
+    assert "ast.literal_eval(assignment.value)" in command
+    assert "from english_gonol.structural_construct import IMPLEMENTATION_FILES" not in command
+
+
+def test_general_workflow_isolates_ordinal_ucns_package():
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-gonol.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    steps = workflow['jobs']['english-gonol-tests']['steps']
+    install = next(step['run'] for step in steps if step.get('name') == 'Install construction prerequisites')
+    historical = next(step['run'] for step in steps if step.get('name') == 'Historical English Gonol tests')
+    ordinal = next(step['run'] for step in steps if step.get('name') == 'Isolated ordinal construction tests')
+    assert './_deps/ucns-ordinal' not in install.splitlines()[0]
+    assert '_deps/ordinal-venv' in install
+    assert '--ignore=tests/test_ordinal_construct.py' in historical
+    assert '--ignore=tests/test_active_construction.py' in historical
+    assert '../../_deps/ordinal-venv/bin/python' in ordinal
