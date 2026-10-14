@@ -416,7 +416,12 @@ class UpgradeRecoveryTests(unittest.TestCase):
             self.vm.execute("U5")
         self.assertEqual(failure.exception.code, 1)
         self.vm.home = target["root"] + "/.vm-mcp-home"
+        # The preserved root may be empty, but it must still exist.
         self.vm.path("/srv/existing/data.txt").unlink()
+        with self.assertRaises(SystemExit) as ok:
+            self.vm.execute("U5")
+        self.assertEqual(ok.exception.code, 0)
+        shutil.rmtree(self.vm.path("/srv/existing"))
         with self.assertRaises(SystemExit) as failure:
             self.vm.execute("U5")
         self.assertEqual(failure.exception.code, 1)
