@@ -140,3 +140,51 @@ def test_workflow_tests_merge_tree_and_binds_selected_source_bytes():
                        if step.get('name') == 'Acquire declared Unicode release and license')
     assert 'stack-tested-merge.txt' in acquisition['run']
     assert 'SOURCE_HEAD' in acquisition['env']
+
+
+def test_provenance_repins_trigger_exact_source_gate():
+    from fnmatch import fnmatch
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    filters = workflow['on']['pull_request']['paths']
+    for path in ('research/english-gonol/BASE.json', 'stack-manifest.json',
+                 'STACK_MANIFEST.md', 'research/english-gonol/ACTIVE_CONSTRUCTION.json',
+                 'research/english-gonol/docs/ordinal-work-graph.json'):
+        assert any(fnmatch(path, pattern) for pattern in filters), path
+
+
+def test_selection_and_source_graph_are_exact_pinned_inputs():
+    import ast
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    steps = workflow['jobs']['full-corpus']['steps']
+    command = next(step['run'] for step in steps
+                   if step.get('name') == 'Verify exact participant graph and unchanged source reader')
+    python = command.split("<<'PY'\n", 1)[1].rsplit('\nPY', 1)[0]
+    tree = ast.parse(python)
+    loop = next(node for node in ast.walk(tree) if isinstance(node, ast.For)
+                and isinstance(node.target, ast.Name) and node.target.id == 'relative')
+    inputs = ast.literal_eval(loop.iter)
+    assert set(inputs) == {'english_gonol/ordinal_construct.py', 'english_gonol/__main__.py',
+                           'ACTIVE_CONSTRUCTION.json', 'docs/ordinal-work-graph.json'}
+    assert any(isinstance(node, ast.Assert) for node in loop.body)
+
+
+def test_auxiliary_source_graph_is_outside_verified_construction():
+    import shlex
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    copies = []
+    for step in workflow['jobs']['full-corpus']['steps']:
+        for line in step.get('run', '').splitlines():
+            if line.strip().startswith('cp '):
+                words = shlex.split(line)
+                if 'research/english-gonol/docs/ordinal-work-graph.json' in words:
+                    copies.append(words[-1])
+    assert copies == ['_evidence/source-work-graph.json']

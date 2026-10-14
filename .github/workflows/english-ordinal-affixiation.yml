@@ -5,6 +5,9 @@ on:
     paths:
       - 'research/english-gonol/english_gonol/**'
       - 'research/english-gonol/ACTIVE_CONSTRUCTION.json'
+      - 'research/english-gonol/BASE.json'
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
       - 'research/english-gonol/tests/test_active_construction.py'
       - 'research/english-gonol/tests/test_ordinal_construct.py'
       - 'research/english-gonol/docs/ordinal-*'
@@ -86,8 +89,9 @@ jobs:
           selected=active_base['active_construction']['source_commit']
           assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
           subprocess.run(['git','fetch','--no-tags','--depth=1','origin',selected],check=True)
-          for name in ('ordinal_construct.py','__main__.py'):
-              path='research/english-gonol/english_gonol/'+name
+          for relative in ('english_gonol/ordinal_construct.py','english_gonol/__main__.py',
+                           'ACTIVE_CONSTRUCTION.json','docs/ordinal-work-graph.json'):
+              path='research/english-gonol/'+relative
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',selected+':'+path]),path
           base=next(r['commit'] for r in graph['repositories'] if r['repository']=='The-Interdependency/stack')
           for name in IMPLEMENTATION_FILES:
@@ -110,6 +114,8 @@ jobs:
           printf '%s\n' "$SOURCE_HEAD" > _evidence/stack-head.txt
           git -C _inputs/ucns rev-parse HEAD > _evidence/ucns-head.txt
           git -C _inputs/oewn rev-parse HEAD > _evidence/corpus-head.txt
+          # CI source provenance is separate from the artifact verifier's data contract.
+          cp research/english-gonol/docs/ordinal-work-graph.json _evidence/source-work-graph.json
       - name: Unit and cross-repository geometry tests
         env:
           PYTHONPATH: research/english-gonol
@@ -135,7 +141,6 @@ jobs:
           cp _inputs/oewn/README.md _constructed/licenses/OEWN-README.md
           cp _inputs/ucd/LICENSE-Unicode.txt _constructed/licenses/
           cp _inputs/ucd/ReadMe.txt _constructed/licenses/Unicode-ReadMe.txt
-          cp research/english-gonol/docs/ordinal-work-graph.json _constructed/
           cp _constructed/public-gonol.json _constructed/manifest.json _constructed/verification.json _evidence/
           python - <<'PY'
           import json,pathlib

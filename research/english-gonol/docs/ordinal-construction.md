@@ -56,6 +56,12 @@ A SPACE occurrence is not silently placed at radius zero or discarded.
 The hosted workflow also retains source licenses, an exact angular TSV, query
 output and resource receipts. It writes no repository files and does not merge.
 Old structural receipts are never presented as receipts for this geometry.
+The source work graph is CI provenance, retained separately as
+`source-work-graph.json` in the evidence archive and bound to the selected source
+commit by CI. It is not packaged as construction data or covered by the artifact
+verifier's `SURVIVED` result. The construction verifier covers its declared
+manifest, carrier registries, Unicode inputs, source admission and geometry;
+auxiliary licensing text is not a geometry or authority claim.
 
 ## Execute
 
