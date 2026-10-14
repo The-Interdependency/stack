@@ -89,8 +89,9 @@ def test_active_inputs_are_registered_in_root_provenance():
                if r['workspace'] == 'research/english-gonol/']
     keyed = {r['participant_id']: r for r in records}
     assert len(keyed) == len(records), 'duplicate source-qualified participant'
-    source_pairs = {(r['repository'], r['commit']) for r in records}
-    assert all((r['repository'], r['commit']) in source_pairs
+    exact_identity = lambda r: r.get('commit') or r.get('artifact_sha256')
+    source_pairs = {(r['repository'], exact_identity(r)) for r in records}
+    assert all((r['repository'], exact_identity(r)) in source_pairs
                for r in graph['repositories'])
     assert keyed['ordinal-geometry']['commit'] == profile['geometry_commit']
     assert base['ucns_prerequisite']['commit'] == profile['geometry_commit']
@@ -102,9 +103,11 @@ def test_active_inputs_are_registered_in_root_provenance():
     assert digest == manifest['work_graph_sha256']
     assert digest in human
     for participant_id, record in keyed.items():
-        assert record['commit'] in human
+        assert exact_identity(record) in human
         if participant_id.startswith('ordinal-'):
             assert participant_id in human
+    assert keyed['ordinal-unicode-data']['artifact_sha256'] == implementation.UCD_RELEASE_SHA256['UnicodeData.txt']
+    assert keyed['ordinal-unicode-math']['artifact_sha256'] == implementation.UCD_RELEASE_SHA256['DerivedCoreProperties.txt']
 
 
 def test_full_workflow_covers_admission_dependencies():
