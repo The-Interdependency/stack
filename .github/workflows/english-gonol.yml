@@ -73,13 +73,21 @@ jobs:
           path: _deps/ucns-carrier
           persist-credentials: false
 
+      - name: Checkout pinned ordinal geometry producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb
+          path: _deps/ucns-ordinal
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
           python-version: "3.12"
 
       - name: Install construction prerequisites
-        run: python -m pip install --disable-pip-version-check pytest PyYAML
+        run: python -m pip install --disable-pip-version-check pytest PyYAML ./_deps/ucns-ordinal
 
       - name: Verify all pinned source identities
         run: |
@@ -88,6 +96,7 @@ jobs:
           test "$(git -C _deps/oewn rev-parse HEAD)" = "dc343f2683279ecbb13fab4e2fd778d7b162d287"
           test "$(git -C _deps/edcm-metric-origin rev-parse HEAD)" = "0873c105799681ea1f7ccb3e619d1f7aebbd85e0"
           test "$(git -C _deps/ucns-carrier rev-parse HEAD)" = "4f863ad37096b7baab8f62820ad5cb937b62a3a7"
+          test "$(git -C _deps/ucns-ordinal rev-parse HEAD)" = "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb"
 
       - name: Preflight full-corpus resources
         run: |
