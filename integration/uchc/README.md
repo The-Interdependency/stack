@@ -12,6 +12,13 @@ The source commit and physical wheel/database hashes are pinned in
 historical research records. Root work-graph projections include the new
 candidate separately, preserving the old experiments and authority boundaries.
 
+This consumer remains pinned to the historical `0.1.0a1` input candidate.
+The separate current `0.1.0a2` structural candidate and its source/wheel replay
+are recorded in `research/english-gonol/MIGRATION.json`. Their equivalence
+does not migrate this consumer or establish its `0.1.0a2` gate 8. Keep the
+existing lock and its historical receipts unchanged until a separately verified
+consumer migration.
+
 ## Usage guidance
 
 Verify the wheel SHA-256 against the lock before installing into a clean venv:
