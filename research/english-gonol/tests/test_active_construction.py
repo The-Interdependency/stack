@@ -105,3 +105,18 @@ def test_active_inputs_are_registered_in_root_provenance():
         assert record['commit'] in human
         if participant_id.startswith('ordinal-'):
             assert participant_id in human
+
+
+def test_full_workflow_covers_admission_dependencies():
+    from fnmatch import fnmatch
+    import yaml
+    workspace = Path(entry.__file__).resolve().parents[1]
+    root = workspace.parents[1]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    filters = workflow['on']['pull_request']['paths']
+    closure = {'structural_construct.py', 'structural_rules.py', 'structural_query.py'}
+    closure.update(p.name for p in (workspace / 'english_gonol').glob('*.py'))
+    for name in closure:
+        path = f'research/english-gonol/english_gonol/{name}'
+        assert any(fnmatch(path, pattern) for pattern in filters), path

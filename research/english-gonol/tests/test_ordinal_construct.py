@@ -83,6 +83,20 @@
 #   timeout: 60
 #   mutates: temporary fixture files only
 #   cleanup: pytest tmp_path
+# id: english_ordinal_release_hash_binding
+#   proves: english_expanded_repertoire
+#   call: self::test_fixture_cannot_claim_production_release
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files only
+#   cleanup: pytest tmp_path
+# id: english_ordinal_manifest_claim_binding
+#   proves: english_complete_geometry_replay
+#   call: self::test_modified_manifest_refuses_before_source_replay
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files only
+#   cleanup: pytest tmp_path
 # === END CHECKS ===
 
 """Fixture tests are not full Unicode or corpus receipts; hosted build supplies those."""
@@ -90,10 +104,13 @@ from fractions import Fraction
 import sqlite3
 import pytest
 from english_gonol.ordinal_construct import (
-    Factory, LOGIC, SQL, UNICODE_VERSION, repertoire, scalar, unicode_admission,
+    Factory, LOGIC, SQL, UCD_FILES, scalar, _parse_unicode_properties, _layout_repertoire,
     _write_frame, _independent_frame, _producer_check,
 )
 from ucns.ordinal_affixiation import Carrier, Participant, affixiate
+from english_gonol import ordinal_construct as implementation
+
+FIXTURE_VERSION = 'fixture-not-a-unicode-release'
 
 
 def ucd_fixture(tmp_path):
@@ -104,18 +121,28 @@ def ucd_fixture(tmp_path):
                  ';'.join(['2160', 'ROMAN NUMERAL ONE', 'Nl'] + [''] * 12)])
     (tmp_path / 'UnicodeData.txt').write_text('\n'.join(rows) + '\n')
     (tmp_path / 'DerivedCoreProperties.txt').write_text(
-        f'# DerivedCoreProperties-{UNICODE_VERSION}.txt\n002B ; Math\n003C..003E ; Math\n2200 ; Math\n')
+        f'# DerivedCoreProperties-{FIXTURE_VERSION}.txt\n002B ; Math\n003C..003E ; Math\n2200 ; Math\n')
     return tmp_path
 
 
+def parse_fixture(path):
+    return _parse_unicode_properties({name: (path / name).read_bytes() for name in UCD_FILES},
+                                     FIXTURE_VERSION)
+
+
+def fixture_repertoire(corpus, legacy, path):
+    numbers, maths, hashes = parse_fixture(path)
+    return _layout_repertoire(corpus, legacy, numbers, maths, hashes, FIXTURE_VERSION)
+
+
 def factory_fixture(tmp_path):
-    public = repertoire(tuple(' ABCé\u0301'), tuple(' ABC'), ucd_fixture(tmp_path))
+    public = fixture_repertoire(tuple(' ABCé\u0301'), tuple(' ABC'), ucd_fixture(tmp_path))
     return Factory(public, {1: 'ABA', 2: 'C', 3: 'é', 4: 'A\u0301'}, 'fixture-source')
 
 
 def test_union_and_layout(tmp_path):
     ucd = ucd_fixture(tmp_path)
-    public = repertoire(tuple(' é\u0301'), tuple(' ABC'), ucd)
+    public = fixture_repertoire(tuple(' é\u0301'), tuple(' ABC'), ucd)
     values = public['identities']
     assert values[0] == ' '
     assert [c for c in values if c in ' ABC'] == list(' ABC')
@@ -124,33 +151,33 @@ def test_union_and_layout(tmp_path):
     anchors = [values.index(c) for c in ' ABC'] + [len(values)]
     counts = [b-a-1 for a,b in zip(anchors, anchors[1:])]
     assert max(counts) - min(counts) <= 1
-    assert public == repertoire(tuple(' é\u0301'), tuple(' ABC'), ucd)
+    assert public == fixture_repertoire(tuple(' é\u0301'), tuple(' ABC'), ucd)
 
 
 def test_supplementary_scalar_not_utf16_units(tmp_path):
-    public = repertoire(('𝟠',), tuple(' A'), ucd_fixture(tmp_path))
+    public = fixture_repertoire(('𝟠',), tuple(' A'), ucd_fixture(tmp_path))
     assert public['identities'].count('𝟠') == 1
     assert scalar('𝟠') == '𝟠'
 
 
 def test_no_normalization(tmp_path):
-    public = repertoire(('é','e','\u0301'), tuple(' A'), ucd_fixture(tmp_path))
+    public = fixture_repertoire(('é','e','\u0301'), tuple(' A'), ucd_fixture(tmp_path))
     assert all(c in public['identities'] for c in ('é','e','\u0301'))
 
 
 def test_wrong_version_refuses(tmp_path):
     root = ucd_fixture(tmp_path)
     path = root / 'DerivedCoreProperties.txt'
-    path.write_text(path.read_text().replace(UNICODE_VERSION, '17.0.0'))
+    path.write_text(path.read_text().replace(FIXTURE_VERSION, '17.0.0'))
     with pytest.raises(ValueError, match='release'):
-        unicode_admission(root)
+        parse_fixture(root)
 
 
 def test_missing_property_data_refuses(tmp_path):
     root = ucd_fixture(tmp_path)
     (root / 'UnicodeData.txt').write_text('')
     with pytest.raises(ValueError, match='incomplete'):
-        unicode_admission(root)
+        parse_fixture(root)
 
 
 def test_unclosed_unicode_range_refuses(tmp_path):
@@ -158,17 +185,17 @@ def test_unclosed_unicode_range_refuses(tmp_path):
     with (root / 'UnicodeData.txt').open('a') as stream:
         stream.write(';'.join(['3000', '<FIXTURE, First>', 'No'] + ['']*12) + '\n')
     with pytest.raises(ValueError, match='unterminated'):
-        unicode_admission(root)
+        parse_fixture(root)
 
 
 def test_invalid_scalar_and_anchor_refusal(tmp_path):
     root = ucd_fixture(tmp_path)
     for bad in ('', 'ab', '\ud800'):
         with pytest.raises(ValueError):
-            repertoire((bad,), tuple(' A'), root)
+            fixture_repertoire((bad,), tuple(' A'), root)
     for bad in (('A',), (' ', 'A', 'A')):
         with pytest.raises(ValueError):
-            repertoire(('A',), bad, root)
+            fixture_repertoire(('A',), bad, root)
 
 
 def test_word_and_recursive_record(tmp_path):
@@ -231,3 +258,69 @@ def test_unknown_word_refuses(tmp_path):
 
 def test_geometry_producer_bytes_are_bound():
     _producer_check()
+
+
+def test_fixture_cannot_claim_production_release(tmp_path):
+    root = ucd_fixture(tmp_path)
+    # Even the expected production header and minimum ASCII values are insufficient.
+    path = root / 'DerivedCoreProperties.txt'
+    path.write_text(path.read_text().replace(FIXTURE_VERSION, implementation.UNICODE_VERSION))
+    with pytest.raises(ValueError, match='release hash mismatch'):
+        implementation.unicode_admission(root)
+    with pytest.raises(ValueError, match='release hash mismatch'):
+        implementation.repertoire(('A',), (' ', 'A'), root)
+
+
+def test_fixture_layout_is_not_labelled_as_unicode_release(tmp_path):
+    assert factory_fixture(tmp_path).public['unicode_version'] == FIXTURE_VERSION
+
+
+def manifest_fixture():
+    from pathlib import Path
+    return {
+        'schema': implementation.PROFILE, 'source_receipt': 'a' * 64,
+        'source': {'fixture': True}, 'ucns_commit': implementation.UCNS_COMMIT,
+        'implementation_sha256': implementation.file_hash(Path(implementation.__file__)),
+        'public_sha256': 'b' * 64, 'glyph_carrier_receipt': 'c' * 64,
+        'word_carrier_receipt': 'd' * 64, 'counts': {'frames': 1, 'placements': 1},
+        'geometry_receipt': 'e' * 64, 'hmmm': list(implementation.MANIFEST_BOUNDARIES),
+    }
+
+
+def test_manifest_shape_check_is_not_full_verification():
+    # This checks only the schema. No source or geometry survival claim is emitted.
+    assert implementation._validate_manifest(manifest_fixture()) is None
+
+
+@pytest.mark.parametrize('mutation', [
+    lambda m: m.pop('hmmm'),
+    lambda m: m.update(hmmm=[]),
+    lambda m: m.update(hmmm=['everything is proven']),
+    lambda m: m.update(canonical=True),
+    lambda m: m.update(proof_status='SURVIVED'),
+    lambda m: m.update(counts={'frames': True, 'placements': 1}),
+    lambda m: m.update(counts={'frames': 1, 'placements': 1, 'extra': 1}),
+    lambda m: m.update(source_receipt='not a digest'),
+])
+def test_modified_manifest_refuses_before_source_replay(tmp_path, mutation):
+    value = manifest_fixture()
+    mutation(value)
+    implementation._json_write(tmp_path / 'manifest.json', value)
+    with pytest.raises(ValueError, match='manifest'):
+        implementation.verify(tmp_path)
+
+
+def test_nonobject_manifest_refuses(tmp_path):
+    implementation._json_write(tmp_path / 'manifest.json', [])
+    with pytest.raises(ValueError, match='manifest schema'):
+        implementation.verify(tmp_path)
+
+
+def test_second_unicode_file_is_independently_hash_bound(tmp_path, monkeypatch):
+    from hashlib import sha256
+    root = ucd_fixture(tmp_path)
+    # Allow only the first synthetic file, then prove the second still refuses.
+    monkeypatch.setitem(implementation.UCD_RELEASE_SHA256, 'UnicodeData.txt',
+                        sha256((root / 'UnicodeData.txt').read_bytes()).hexdigest())
+    with pytest.raises(ValueError, match='DerivedCoreProperties.txt'):
+        implementation.unicode_admission(root)

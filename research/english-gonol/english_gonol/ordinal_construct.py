@@ -58,6 +58,22 @@ from ucns.ordinal_affixiation import Carrier, Participant, affixiate
 PROFILE = 'english.ordinal/1'
 UNICODE_VERSION = '18.0.0'
 UCD_FILES = ('UnicodeData.txt', 'DerivedCoreProperties.txt')
+# Exact complete Unicode 18.0.0 release bytes, retained in the full-corpus artifact.
+# Admission pins content, not a header, local registry, or minimal ASCII subset.
+UCD_RELEASE_SHA256 = {
+    'UnicodeData.txt': '0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950',
+    'DerivedCoreProperties.txt': '09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9',
+}
+MANIFEST_BOUNDARIES = (
+    'Local frame placement is constructed; global origin attachment is not inferred.',
+    'Layout recipes are explicit profile choices, not discovered semantic laws.',
+    'Native Mobius lift and inference quality remain untested.',
+)
+MANIFEST_KEYS = frozenset((
+    'schema', 'source_receipt', 'source', 'ucns_commit', 'implementation_sha256',
+    'public_sha256', 'glyph_carrier_receipt', 'word_carrier_receipt', 'counts',
+    'geometry_receipt', 'hmmm',
+))
 LOGIC = tuple('¬∧∨⊻⊼⊽→←↔⇒⇐⇔∀∃∄⊢⊣⊤⊥⊨⊭⊬⊮⊯≡≠=<>≤≥')
 LAYOUT = 'legacy-anchor-balanced-insertion/1'
 WORD_LAYOUT = 'lexicographic-public-gonol-index-sequences/1'
@@ -112,12 +128,11 @@ def _range(value: str) -> range:
     return range(first, last + 1)
 
 
-def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
-    """Read numeric categories and the derived Math property, never host Unicode."""
+def _parse_unicode_properties(blobs: dict[str, bytes], version: str):
+    """Parse supplied property syntax; this helper establishes no release identity."""
     numbers: set[str] = set()
     maths: set[str] = set()
     pending = None
-    blobs = {name: (ucd / name).read_bytes() for name in UCD_FILES}
     if any(len(raw) > 10_000_000 for raw in blobs.values()):
         raise ValueError('Unicode input exceeds per-file acquisition budget')
     data = blobs[UCD_FILES[0]].decode('utf-8')
@@ -149,7 +164,7 @@ def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
     if pending is not None:
         raise ValueError('unterminated UnicodeData range')
     derived = blobs[UCD_FILES[1]].decode('utf-8')
-    if f'DerivedCoreProperties-{UNICODE_VERSION}.txt' not in derived[:4096]:
+    if f'DerivedCoreProperties-{version}.txt' not in derived[:4096]:
         raise ValueError('Unicode release header mismatch')
     for line in derived.splitlines():
         body = line.split('#', 1)[0].strip()
@@ -163,13 +178,22 @@ def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
     return numbers, maths, {name: sha256(blobs[name]).hexdigest() for name in UCD_FILES}
 
 
-def repertoire(corpus: tuple[str, ...], legacy: tuple[str, ...], ucd: Path) -> dict:
-    """Expand the repertoire without assigning Unicode categories geometric roles."""
+
+def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
+    """Admit only the complete pinned release; never trust a self-declared header."""
+    blobs = {name: (ucd / name).read_bytes() for name in UCD_FILES}
+    for name, raw in blobs.items():
+        if sha256(raw).hexdigest() != UCD_RELEASE_SHA256[name]:
+            raise ValueError(f'Unicode release hash mismatch: {name}; complete pinned release required')
+    return _parse_unicode_properties(blobs, UNICODE_VERSION)
+
+
+def _layout_repertoire(corpus, legacy, numbers, maths, hashes, unicode_version):
+    """Lay out already admitted identities; fixture callers must label their source."""
     for c in (*corpus, *legacy):
         scalar(c)
     if len(set(legacy)) != len(legacy) or not legacy or legacy[0] != ' ':
         raise ValueError('legacy anchors must be unique with SPACE first')
-    numbers, maths, hashes = unicode_admission(ucd)
     admitted = set(corpus) | set(legacy) | numbers | maths | set(LOGIC)
     extras = sorted(admitted - set(legacy), key=ord)
     order: list[str] = []
@@ -179,7 +203,7 @@ def repertoire(corpus: tuple[str, ...], legacy: tuple[str, ...], ucd: Path) -> d
                             (i + 1) * len(extras) // len(legacy)])
     if len(order) != len(admitted) or set(order) != admitted:
         raise AssertionError('repertoire union lost or duplicated a scalar')
-    return {'schema': 'english.public-gonol/1', 'unicode_version': UNICODE_VERSION,
+    return {'schema': 'english.public-gonol/1', 'unicode_version': unicode_version,
             'layout': LAYOUT, 'normalization': 'none', 'origin_scalar': ' ',
             'corpus_scalars': sorted(corpus, key=ord), 'legacy_anchors': list(legacy),
             'unicode_files_sha256': hashes, 'logical_supplement': list(LOGIC),
@@ -188,6 +212,12 @@ def repertoire(corpus: tuple[str, ...], legacy: tuple[str, ...], ucd: Path) -> d
                                  'logical_supplement': len(set(LOGIC)),
                                  'additional_to_legacy': len(extras), 'union': len(order)},
             'identities': order}
+
+
+def repertoire(corpus: tuple[str, ...], legacy: tuple[str, ...], ucd: Path) -> dict:
+    """Expand the repertoire only after authenticating the complete Unicode release."""
+    numbers, maths, hashes = unicode_admission(ucd)
+    return _layout_repertoire(corpus, legacy, numbers, maths, hashes, UNICODE_VERSION)
 
 
 class Factory:
@@ -323,9 +353,7 @@ def build(admission: Path, ucd: Path, output: Path) -> dict:
                             'glyph_carrier_receipt': factory.glyph_carrier.receipt,
                             'word_carrier_receipt': factory.word_carrier.receipt,
                             'counts': counts, 'geometry_receipt': _geometry_receipt(geometry),
-                            'hmmm': ['Local frame placement is constructed; global origin attachment is not inferred.',
-                                     'Layout recipes are explicit profile choices, not discovered semantic laws.',
-                                     'Native Mobius lift and inference quality remain untested.']}
+                            'hmmm': list(MANIFEST_BOUNDARIES)}
             _json_write(stage / 'manifest.json', manifest)
         report = verify(stage)
         _json_write(stage / 'verification.json', report)
@@ -361,15 +389,34 @@ def _independent_frame(kind, frame_id, identity, relation, source_receipt, refs,
     return (kind, frame_id, identity, 'SPACE', relation, source, receipt, n), stored
 
 
-def verify(output: Path) -> dict:
-    """Replay every source and placement; structural bytes alone never prove new geometry."""
-    from english_gonol.structural_construct import _verified_connection, open_readonly, _schema
-    _producer_check()
-    manifest = _json_read(output / 'manifest.json')
+def _validate_manifest(manifest: object) -> None:
+    """Reject unsupported claims before source replay; this alone proves no geometry."""
+    if type(manifest) is not dict or set(manifest) != MANIFEST_KEYS:
+        raise ValueError('manifest schema keys differ from the exact profile')
     if manifest['schema'] != PROFILE or manifest['ucns_commit'] != UCNS_COMMIT:
         raise ValueError('profile/geometry producer mismatch')
     if manifest['implementation_sha256'] != file_hash(Path(__file__)):
         raise ValueError('implementation changed; rebuild explicitly')
+    if manifest['hmmm'] != list(MANIFEST_BOUNDARIES):
+        raise ValueError('manifest boundary claims differ from the exact profile')
+    counts = manifest['counts']
+    if (type(counts) is not dict or set(counts) != {'frames', 'placements'}
+            or any(type(v) is not int or v <= 0 for v in counts.values())):
+        raise ValueError('manifest counts must be positive integer frame/placement counts')
+    for key in ('source_receipt', 'public_sha256', 'glyph_carrier_receipt',
+                'word_carrier_receipt', 'geometry_receipt'):
+        value = manifest[key]
+        if (type(value) is not str or len(value) != 64
+                or any(c not in '0123456789abcdef' for c in value)):
+            raise ValueError(f'manifest digest is invalid: {key}')
+
+
+def verify(output: Path) -> dict:
+    """Replay every source and placement; structural bytes alone never prove new geometry."""
+    _producer_check()
+    manifest = _json_read(output / 'manifest.json')
+    _validate_manifest(manifest)
+    from english_gonol.structural_construct import _verified_connection, open_readonly, _schema
     with _verified_connection(output / 'admission') as verified:
         source, source_manifest = verified
         if not source_manifest['metadata']['complete_corpus']:
@@ -433,7 +480,7 @@ def verify(output: Path) -> dict:
                 'scope': 'complete pinned corpus; source recovery plus every local placement',
                 'public_gonol_size': len(public['identities']), 'words': len(words),
                 **counts, 'manifest_sha256': digest(manifest),
-                'source_receipt': manifest['source_receipt'], 'hmmm': manifest['hmmm']}
+                'source_receipt': manifest['source_receipt'], 'hmmm': list(MANIFEST_BOUNDARIES)}
 
 
 def query(output: Path, text: str) -> dict:
