@@ -528,7 +528,10 @@ def check(label, passed):
 for key, field in (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"), ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket")):
     check(key + " preserved", env.get(key) == target[field])
 check("target service home", pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home")
-check("workspace not empty", any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()))
+state = json.loads((B / "state.json").read_text())
+preserved = pathlib.Path(target["root"]).resolve() == pathlib.Path(state["home"]).parent.resolve()
+check("workspace exists" + (" (preserved root, may be empty)" if preserved else " and is not empty"),
+      pathlib.Path(target["root"]).is_dir() and (preserved or any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir())))
 unit_result = subprocess.run(["systemctl", "show", "vm-mcp.service",
                               "--property=ReadWritePaths,ProtectSystem"], check=True, text=True, capture_output=True)
 unit = dict(line.split("=", 1) for line in unit_result.stdout.splitlines() if "=" in line)
