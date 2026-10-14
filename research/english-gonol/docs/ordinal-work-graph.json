@@ -9,6 +9,12 @@
       "relation": "new producer; no English semantic authority"
     },
     {
+      "repository": "The-Interdependency/ucns",
+      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
+      "authority": "historical scalar-admission carrier",
+      "relation": "retained source-admission carrier only; historical angles are not consumed by the replacement constructor"
+    },
+    {
       "repository": "The-Interdependency/stack",
       "commit": "e3eb83764355b4b760a79323cda6a6d75c3a501a",
       "authority": "English source admission and construction forge",
@@ -19,6 +25,18 @@
       "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
       "authority": "complete English corpus evidence",
       "relation": "all exact pinned source records"
+    },
+    {
+      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
+      "authority": "Unicode 18.0.0 numeric-category source",
+      "relation": "immutable release file identity consumed by public-gonol admission"
+    },
+    {
+      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
+      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
+      "authority": "Unicode 18.0.0 Math-property source",
+      "relation": "immutable release file identity consumed by public-gonol admission"
     },
     {
       "repository": "The-Interdependency/skill-lib",
@@ -39,5 +57,5 @@
       "The historical admission carrier is pinned separately in preserved source metadata; its angles are not consumed by the new constructor."
     ]
   },
-  "work_graph_sha256": "7d0ec15d06ed32c29f8352afb63b3b73be340f1dace935f1da4e43b207a483b0"
+  "work_graph_sha256": "5d92bd50ce35e27ea81b815f3b90cead901fcf6eb275c56ec3e451ce7ba3d219"
 }
