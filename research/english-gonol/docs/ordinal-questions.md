@@ -57,14 +57,14 @@ succession. Record the implemented attachment and independent verification here
 when available; the reference is specified, while that witness remains
 outstanding.
 
-### 3. How does this visible-circle construction lift into native Mobius state?
+### 3. Native Mobius integration: not required
 
-The new local law supplies exact visible turns. The missing operation must state
-how those turns carry frame/sheet state and preserve the native distinction
-between a 360-degree visible return and a 720-degree complete local return.
-No ad-hoc doubled angle supplies that proof.
-
-Completion witness: native-state transport and return tests, not a rendering.
+Operator answer to the native Mobius integration question: `3. not required`.
+Native Mobius lifting, sheet-state transport and 360/720-degree return tests are
+outside the required scope of `english.ordinal/1`. They are neither outstanding
+construction questions nor completion or merge prerequisites for this profile.
+This scope decision does not claim a verified lift, retire UCNS native Mobius
+work, or remove the SPACE attachment obligations in answers 1 and 2.
 
 ### 4. Which admitted operator positions perform which actions?
 
@@ -104,6 +104,6 @@ no silent reinterpretation of previously constructed objects.
 ## hmmm
 
 SPACE is the specified attachment reference for both nested frames and compound
-definitions. Their transport/attachment witnesses remain outstanding. Questions
-3–5 remain open. Merge closes source integration and default selection, not
-these implementation/evidence boundaries or downstream migration.
+definitions. Their transport/attachment witnesses remain outstanding. Only
+questions 4 and 5 remain open. Merge closes source integration and default
+selection, not these implementation/evidence boundaries or downstream migration.

@@ -109,9 +109,10 @@ small local fixture the full construct.
 ## hmmm
 
 The layout choices are explicit and replaceable only through a new profile and
-full rebuild. Native Mobius lift, global transport/definition-origin attachment,
-operator function semantics, inference quality and UCHC release remain separate
-questions. Local placement does not manufacture evidence for those questions.
+full rebuild. The [answers and remaining work](ordinal-questions.md) record the
+specified SPACE attachments, excluded native Mobius integration, remaining
+operator/admission questions and engineering witnesses. Local placement does not
+establish attachment transport, operator behavior, inference quality or UCHC release.
 Earlier complete-corpus receipts establish only their recorded implementation.
 Every implementation change requires its own hosted construction and replay;
 inspect the exact run, tested merge tree and generated manifest before assigning

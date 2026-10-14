@@ -92,7 +92,8 @@ metrics are not renamed as ordinal measurements.
 
 ## hmmm
 
-[Questions and remaining work](docs/ordinal-questions.md) distinguish missing
-construction laws from engineering work. The radius/angle rule is settled;
-global frame transport, compound origins, native Mobius lift, operator actions
-and downstream inference evidence remain open.
+[Answers and remaining work](docs/ordinal-questions.md) separate the settled
+radius/angle rule and SPACE references from outstanding implementation witnesses.
+Native Mobius integration is not required by this profile. Questions 4 and 5
+concern operator actions and vocabulary growth; attachment verification and
+downstream inference evidence remain engineering/evidence boundaries.
