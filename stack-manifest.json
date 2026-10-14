@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "70578d9ee468b21165b7bc7fedaf799fb6e84245246302ff25cbc7139deb0635",
+  "work_graph_sha256": "21c6c86927a1d8bf29b965af4d2ade83f1e085c1f9857062895e687e00b5ec7b",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -521,6 +521,26 @@
       "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
       "authority": "complete English corpus evidence",
       "relation": "all exact pinned source records consumed by the ordinal construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-unicode-data",
+      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
+      "authority": "Unicode 18.0.0 numeric-category source",
+      "relation": "exact immutable release file consumed by expanded public-gonol admission",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-unicode-math",
+      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
+      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
+      "authority": "Unicode 18.0.0 Math-property source",
+      "relation": "exact immutable release file consumed by expanded public-gonol admission",
       "canonical_release": false,
       "authority_transfer": false
     },
