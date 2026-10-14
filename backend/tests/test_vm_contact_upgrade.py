@@ -174,7 +174,9 @@ class SyntheticVM:
                 return super().__new__(cls, vm.path(Path(*parts)))
 
             def __init__(self, *parts):
-                super().__init__(vm.path(Path(*parts)))
+                # pathlib initializes in __new__ on 3.11, in __init__ on 3.12+.
+                if type(Path()).__init__ is not object.__init__:
+                    super().__init__(vm.path(Path(*parts)))
 
             def open(self, *args, **kwargs):
                 return vm.path(self).open(*args, **kwargs)
