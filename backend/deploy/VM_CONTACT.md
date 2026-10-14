@@ -8,7 +8,7 @@ consumes it.
 ## Work-graph identity
 
 ```text
-skill-lib producer: The-Interdependency/skill-lib@acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
+skill-lib producer: The-Interdependency/skill-lib@e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128
 stack consumer:     this stack checkout
 relation:           canonical vm-mcp runtime -> stack VM operations
 runtime authority:  skill-lib owns vm-mcp implementation; stack owns its deployment/use
@@ -222,7 +222,7 @@ Human SSH/OS Login/IAP access is unaffected. Run it from the human path, not thr
 set -Eeuo pipefail
 trap 'echo "FAIL step U4 at line $LINENO (exit $?)" >&2' ERR
 umask 077
-SKILL_LIB_SHA=acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
+SKILL_LIB_SHA=e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128
 B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
 eval "$(sudo -n cat "$B/target.env")"
 sudo -n test -d "$TARGET_ROOT"
@@ -259,9 +259,23 @@ Expect `rc=0`, the env showing the preserved `VM_MCP_ROOT` and `VM_MCP_PROFILE`,
 the unchanged home. On a `read-only` or `workspace` target the installer leaves the
 broker unit disabled, as before; on `personal-console` it re-enables it.
 
+From #131 (`e74ce1e`) a rerun over an existing install is upgrade-safe:
+
+- Workspace root, profile, port and socket default to the existing `/etc/vm-mcp.env`.
+  U4 still passes the U2 target explicitly; it should match what is installed.
+- Changing the root or profile needs `VM_MCP_ALLOW_RECONFIGURE=1`. Without it a
+  mismatch is refused (exit 3) before anything changes. U4 does not set it: if U4 is
+  refused, U2's target differs from the installed one, so stop and compare rather than
+  adding the override.
+- Before anything is overwritten, the previous install is copied to a root-only
+  directory under `/var/backups/vm-mcp/`; the installer prints the path. That is an
+  extra copy alongside U1's backup, not a replacement for it.
+- If that backup fails the installer exits 9 with nothing changed.
+
 **If U4 fails**, the VM's MCP path is down (fail-closed), not open. Restore the
-pre-upgrade state with U6 and restart. Installer exits 3 (token), 5 (root not a
-directory), 7 (no Yama) and 8 (busy user) happen before any file under `/opt` or
+pre-upgrade state with U6 and restart. Installer exits 3 (token, or a settings change
+without `VM_MCP_ALLOW_RECONFIGURE=1`), 5 (root not a directory), 7 (no Yama), 8 (busy
+user) and 9 (backup failed) happen before any file under `/opt` or
 `/etc/systemd` is touched; then only the restart at the end of U6 is needed.
 
 ### U5. Checks for the upgrade case
@@ -297,7 +311,7 @@ workspace-overlap checks would fail falsely; and `--repo` alone turns `--skip-in
 off (it would reinstall). Never pass `--destructive` or `--reinstall-readonly` on a
 real VM. Its step 3/7 expectations assume `personal-console`; on other profiles read
 those lines with the table above. Run the source checks separately against the pinned
-`acd5e9f` checkout (#130 does not change the installer's install-root or work-root
+`e74ce1e` checkout (#130 and #131 do not change the installer's install-root or work-root
 checks, or the token descriptor check):
 
 ```bash
@@ -305,7 +319,7 @@ checks, or the token descriptor check):
 ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
 S=$(mktemp -d); trap 'rm -rf "$S"; sudo -n rm -f /root/.vm-mcp-t127' EXIT
 git clone -q --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$S/sl"
-git -C "$S/sl" checkout -q --detach acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
+git -C "$S/sl" checkout -q --detach e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128
 I="$S/sl/vm-mcp/install.sh"
 ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I" || true)"
 ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I" || true)"
@@ -394,7 +408,7 @@ With this section:
 1. U1 records the layout above.
 2. U2 resolves the profile from the legacy flag (`VM_MCP_SHELL_ENABLED=0` →
    `read-only`) and writes `TARGET_ROOT=/srv/a0/workspaces`, `TARGET_PROFILE=read-only`.
-3. U4 stops the old service (brief outage), installs acd5e9f with those values, and
+3. U4 stops the old service (brief outage), installs e74ce1e with those values, and
    the installer removes its own ptrace sysctl file again because the target is
    `read-only`.
 4. U5 expects the read-only column of the table, the preservation block all `PASS`,
@@ -403,9 +417,10 @@ With this section:
 
 ## Install the exact canonical personal console
 
-The pinned `acd5e9f` is skill-lib main after #130 (a first-use context notice from
+The pinned `e74ce1e` is the merge of The-Interdependency/skill-lib#131 (upgrade-safe
+installer reruns, see U4), on top of #130 (`acd5e9f`, a first-use context notice from
 vm-mcp; its privileged components record a one-time marker in a new root-only state
-directory), on top of #127 (`023ae12`) and #123 (`24029ca`).
+directory), #127 (`023ae12`) and #123 (`24029ca`).
 #127 hardens the installer and makes the server check its token
 descriptor: fd 0 must be a regular file owned by root with no group or other bits. The
 installer's `/etc/credstore/vm-mcp-token` (root, `0600`) satisfies that. From #123 on,
@@ -444,7 +459,7 @@ set -Eeuo pipefail
 trap 'echo "FAIL step 2 at line $LINENO (exit $?)" >&2' ERR
 umask 077
 
-SKILL_LIB_SHA=acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
+SKILL_LIB_SHA=e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128
 BOOTSTRAP_DIR="$(mktemp -d)"
 ROOT_SRC="$(sudo -n mktemp -d /root/vm-mcp-src.XXXXXX)"
 trap 'rm -rf "$BOOTSTRAP_DIR"; sudo -n rm -rf "$ROOT_SRC"' EXIT
@@ -509,7 +524,7 @@ Do not use `/srv/stack` as an excuse to transfer repository ownership to `vmmcp`
 
 These are the skill-lib#123 checklist steps, corrected by the scratch-VM run at
 `046c4cf` (Oct 11, 2026). vm-mcp at `24029ca` is identical to `046c4cf`. `023ae12` adds
-#127 and `acd5e9f` adds #130 on top; the scratch run covered neither (hmmm), so a FAIL here may be new
+#127, `acd5e9f` adds #130 and `e74ce1e` adds #131 on top; the scratch run covered none of them (hmmm), so a FAIL here may be new
 behaviour, not an install mistake. Run them as
 root through the human path. The scratch run's step 8 (setting `ptrace_scope` to 0 to
 watch the service fail closed) is deliberately left out on this VM. So is its step 9
