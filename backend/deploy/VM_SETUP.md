@@ -120,7 +120,7 @@ operator action rather than writing an artifact.
 
 `stack-orchestrator-worker.service` keeps `MemoryDenyWriteExecute=true`. V8's
 JIT cannot run under it: Node dies with a V8 fatal error (SIGTRAP). The pinned
-skill-lib snapshot (`023ae12`; `--jitless` since The-Interdependency/skill-lib#120)
+skill-lib snapshot (`321e721`; `--jitless` since The-Interdependency/skill-lib#120)
 runs Node with `--jitless`, so the sandboxed probe and TypeScript extraction
 work under MDWE. `node` must also be on the unit's default PATH.
 

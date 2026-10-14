@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "skill": "stack-update",
   "source_repository": "The-Interdependency/skill-lib",
-  "source_commit": "a7b95f891d2e88c62e61524dc52a2e1577c9983d",
+  "source_commit": "321e721fb660e0fea5bb8c37d943611963039a57",
   "source_path": "stack-update/SKILL.md",
-  "source_blob_sha": "a1e914893fa047e28d039050395937a1cf6e0138",
+  "source_blob_sha": "9ec21b07d01a099021778a0c8774b810c2619d63",
   "authority_transfer": false,
   "relation": "repo-local consumed copy; canonical doctrine remains in source repository"
 }

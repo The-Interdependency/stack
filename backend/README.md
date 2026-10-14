@@ -218,8 +218,11 @@ Skipped PostgreSQL tests are deployment gates, not passes.
 
 `fresh-making-provenance.json` binds this runtime to exact `skill-lib` fresh-making
 doctrine. The root `skill-lib/` snapshot and the doctrine pin are the same skill-lib
-commit; the comparison records that `fresh-making/SKILL.md` is unchanged from the
-previous doctrine pin.
+commit. The `023ae12..321e721` operational refresh changes
+`fresh-making/SKILL.md` while preserving the exact `msdmd/` generator sources.
+The cumulative comparison retains earlier generator-change evidence.
+`deploy/VM_CONTACT.md` keeps its separately pinned `023ae12` bootstrap and acceptance
+evidence; a source refresh does not deploy or requalify that VM runtime.
 
 ## hmmm
 
