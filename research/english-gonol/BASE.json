@@ -6,8 +6,8 @@
   "source_commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
   "ucns_prerequisite": {
     "repository": "The-Interdependency/ucns",
-    "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
-    "relation": "English Gonol Construction consumes UCNS geometry; UCNS owns geometry and representation"
+    "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
+    "relation": "selected English ordinal construction consumes exact UCNS geometry; root libs/ucns and the extraction source remain historical pins"
   },
   "canon_path": "../../libs/edcm",
   "authority": "stack-local research component (extracted from The-Interdependency/edcm)",
@@ -23,6 +23,18 @@
     "repository": "The-Interdependency/edcm",
     "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
     "relation": "exact EDCM semantic metric-origin producer with canonical O/L split; does not refresh the historical extraction source or libs/edcm pin",
+    "authority_transfer": false
+  },
+  "historical_ucns_prerequisite": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "relation": "English Gonol Construction consumes UCNS geometry; UCNS owns geometry and representation"
+  },
+  "active_construction": {
+    "selection": "ACTIVE_CONSTRUCTION.json",
+    "source_repository": "The-Interdependency/stack",
+    "source_commit": "0e0ea9ebe64803e810793dd4780253d7d202fecc",
+    "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
     "authority_transfer": false
   }
 }

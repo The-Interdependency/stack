@@ -35,6 +35,18 @@ EDCM may measure completed outputs but does not define them. Selecting this
 profile does not graduate UCHC or refresh the root `libs/` snapshots. The exact
 work graph in `docs/ordinal-work-graph.json` binds the consumed geometry separately.
 
+## Identity and scale
+
+In this text-domain construction, every admitted character is a gonol:
+one exact scalar -> one shared character identity; one exact surface -> one shared word identity.
+Once closed, a gonol is atomic at an admissible consuming scale, while its ordered
+interior remains recoverable. This does not impose a mandatory adjacent-scale ladder.
+
+Authority routing remains METAPAT -> affixiation semantics; UCNS -> exact geometry;
+English Gonol Construction -> text-domain participants; EDCM -> measurement/evaluation only.
+Construction/recovery does not validate EDCM measurement. See
+[the language boundary](docs/GONOL_LANGUAGE_BOUNDARY.md).
+
 ## Replaced and retained
 
 The structural-only build is **deprecated as a completed geometric construction**.

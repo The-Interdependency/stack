@@ -74,3 +74,34 @@ def test_active_selection_matches_exact_constructor():
     assert profile['fallback'] == 'none'
     assert profile['deprecated_as_completed_geometry']
     assert profile['hmmm']
+
+
+def test_active_inputs_are_registered_in_root_provenance():
+    import hashlib
+    workspace = Path(entry.__file__).resolve().parents[1]
+    root = workspace.parents[1]
+    profile = entry.active_profile()
+    manifest = json.loads((root / 'stack-manifest.json').read_text())
+    base = json.loads((workspace / 'BASE.json').read_text())
+    graph = json.loads((workspace / profile['input_graph']).read_text())
+    human = (root / 'STACK_MANIFEST.md').read_text()
+    records = [r for r in manifest['research_participants']
+               if r['workspace'] == 'research/english-gonol/']
+    keyed = {r['participant_id']: r for r in records}
+    assert len(keyed) == len(records), 'duplicate source-qualified participant'
+    source_pairs = {(r['repository'], r['commit']) for r in records}
+    assert all((r['repository'], r['commit']) in source_pairs
+               for r in graph['repositories'])
+    assert keyed['ordinal-geometry']['commit'] == profile['geometry_commit']
+    assert base['ucns_prerequisite']['commit'] == profile['geometry_commit']
+    assert base['active_construction']['selection'] == 'ACTIVE_CONSTRUCTION.json'
+    assert base['active_construction']['source_commit'] == keyed['ordinal-source']['commit']
+    assert all(r['authority_transfer'] is False for r in records)
+    payload = {k: manifest[k] for k in ('repositories', 'research_participants', 'boundaries')}
+    digest = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    assert digest == manifest['work_graph_sha256']
+    assert digest in human
+    for participant_id, record in keyed.items():
+        assert record['commit'] in human
+        if participant_id.startswith('ordinal-'):
+            assert participant_id in human

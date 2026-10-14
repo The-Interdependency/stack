@@ -88,8 +88,9 @@ artifact verification; UCNS owns the geometric law. `tests/test_ordinal_construc
 owns fixture/property regressions. The workflow owns explicit input acquisition
 and full replay. `ordinal-work-graph.json` binds input ownership and exact source
 states. The supported entrypoint and retirement are declared in `../ACTIVE_CONSTRUCTION.json`.
-No root Stack participant, release pin, UCHC graduation or website is
-changed. The construction source commit is recorded by hosted evidence, avoiding a
+The root research-participant manifest and English BASE explicitly record the
+selected source and inputs. Canonical release pins, UCHC graduation and the website
+remain unchanged. The construction source commit is recorded by hosted evidence, avoiding a
 self-referential committed head hash.
 
 Expected working footprint is below 4 GiB; the hosted runner checks free disk
