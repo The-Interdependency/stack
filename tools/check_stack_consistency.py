@@ -120,9 +120,14 @@ def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
         if not HEX40.fullmatch(commit):
             error(findings, "repository.commit", f"{entry.get('repository')}: invalid commit {commit!r}")
     for entry in manifest.get("research_participants", []):
-        commit = entry.get("commit", "")
-        if not HEX40.fullmatch(commit):
+        commit = entry.get("commit")
+        artifact_sha256 = entry.get("artifact_sha256")
+        if (commit is None) == (artifact_sha256 is None):
+            error(findings, "research.identity", f"{entry.get('workspace')}:{entry.get('participant_id')}: exactly one of commit or artifact_sha256 is required")
+        elif commit is not None and not HEX40.fullmatch(str(commit)):
             error(findings, "research.commit", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid commit {commit!r}")
+        elif artifact_sha256 is not None and re.fullmatch(r"[0-9a-f]{64}", str(artifact_sha256)) is None:
+            error(findings, "research.artifact_sha256", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid artifact_sha256 {artifact_sha256!r}")
         if entry.get("authority_transfer") is not False:
             error(findings, "research.authority_transfer", f"{entry.get('workspace')}:{entry.get('participant_id')} must keep authority_transfer=false")
 
@@ -166,15 +171,18 @@ def check_research_participants(
         participant_id = str(entry.get("participant_id", ""))
         repository = str(entry.get("repository", ""))
         commit = str(entry.get("commit", ""))
+        artifact_sha256 = str(entry.get("artifact_sha256", ""))
         key = (workspace, participant_id)
         if key in keys:
             error(findings, "research.duplicate", f"duplicate research participant {key!r}")
         keys.add(key)
-        sources.add((workspace, repository, commit))
+        if commit:
+            sources.add((workspace, repository, commit))
         if workspace and workspace not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention workspace {workspace!r}")
-        if commit and commit not in human:
-            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
+        identity = commit or artifact_sha256
+        if identity and identity not in human:
+            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research identity {identity!r}")
     return keys, sources
 
 
