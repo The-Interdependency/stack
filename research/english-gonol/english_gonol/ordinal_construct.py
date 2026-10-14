@@ -18,9 +18,11 @@ from functools import lru_cache
 from hashlib import sha256
 from itertools import groupby
 import json
+import os
 from pathlib import Path
 import shutil
 import sqlite3
+import stat
 import tempfile
 
 from ucns.ordinal_affixiation import Carrier, Participant, affixiate
@@ -46,7 +48,7 @@ from ucns.ordinal_affixiation import Carrier, Participant, affixiate
 # === CONTRACTS ===
 # id: english_expanded_repertoire
 #   given: complete corpus scalars, exact inherited carrier, pinned Unicode properties
-#   then: every required scalar is admitted once; SPACE stays first; registry is reproducible
+#   then: every required scalar is admitted once; registry is reproducible
 # id: english_recursive_ordinal_geometry
 #   given: closed words and exact source components
 #   then: UCNS places by ordinal radius and declared carrier angle while interiors remain recoverable
@@ -58,6 +60,7 @@ from ucns.ordinal_affixiation import Carrier, Participant, affixiate
 PROFILE = 'english.ordinal/1'
 UNICODE_VERSION = '18.0.0'
 UCD_FILES = ('UnicodeData.txt', 'DerivedCoreProperties.txt')
+UCD_MAX_BYTES = 10_000_000
 # Exact complete Unicode 18.0.0 release bytes, retained in the full-corpus artifact.
 # Admission pins content, not a header, local registry, or minimal ASCII subset.
 UCD_RELEASE_SHA256 = {
@@ -133,7 +136,7 @@ def _parse_unicode_properties(blobs: dict[str, bytes], version: str):
     numbers: set[str] = set()
     maths: set[str] = set()
     pending = None
-    if any(len(raw) > 10_000_000 for raw in blobs.values()):
+    if any(len(raw) > UCD_MAX_BYTES for raw in blobs.values()):
         raise ValueError('Unicode input exceeds per-file acquisition budget')
     data = blobs[UCD_FILES[0]].decode('utf-8')
     for line in data.splitlines():
@@ -179,13 +182,47 @@ def _parse_unicode_properties(blobs: dict[str, bytes], version: str):
 
 
 
-def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
-    """Admit only the complete pinned release; never trust a self-declared header."""
-    blobs = {name: (ucd / name).read_bytes() for name in UCD_FILES}
+def _read_unicode_file(path: Path) -> bytes:
+    """Snapshot a bounded regular file; do not follow symlinks or block on FIFOs."""
+    before = path.lstat()
+    if not stat.S_ISREG(before.st_mode):
+        raise ValueError(f'Unicode input must be a regular nonsymlink file: {path.name}')
+    if before.st_size > UCD_MAX_BYTES:
+        raise ValueError(f'Unicode input exceeds acquisition budget: {path.name}')
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    try:
+        fd = os.open(path, flags)
+    except OSError as error:
+        raise ValueError(f'Unicode input changed or cannot be opened: {path.name}') from error
+    with os.fdopen(fd, 'rb') as stream:
+        opened = os.fstat(stream.fileno())
+        if (not stat.S_ISREG(opened.st_mode)
+                or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino)):
+            raise ValueError(f'Unicode input changed or is not regular: {path.name}')
+        if opened.st_size > UCD_MAX_BYTES:
+            raise ValueError(f'Unicode input exceeds acquisition budget: {path.name}')
+        raw = stream.read(UCD_MAX_BYTES + 1)
+        after = os.fstat(stream.fileno())
+        if len(raw) > UCD_MAX_BYTES:
+            raise ValueError(f'Unicode input exceeds acquisition budget: {path.name}')
+        if (len(raw) != opened.st_size
+                or (after.st_size, after.st_mtime_ns) != (opened.st_size, opened.st_mtime_ns)):
+            raise ValueError(f'Unicode input changed during bounded read: {path.name}')
+    return raw
+
+
+def _verified_unicode_blobs(ucd: Path) -> dict[str, bytes]:
+    """Acquire and authenticate a bounded snapshot before any artifact copying."""
+    blobs = {name: _read_unicode_file(ucd / name) for name in UCD_FILES}
     for name, raw in blobs.items():
         if sha256(raw).hexdigest() != UCD_RELEASE_SHA256[name]:
             raise ValueError(f'Unicode release hash mismatch: {name}; complete pinned release required')
-    return _parse_unicode_properties(blobs, UNICODE_VERSION)
+    return blobs
+
+
+def unicode_admission(ucd: Path) -> tuple[set[str], set[str], dict]:
+    """Admit only the complete pinned release; never trust a self-declared header."""
+    return _parse_unicode_properties(_verified_unicode_blobs(ucd), UNICODE_VERSION)
 
 
 def _layout_repertoire(corpus, legacy, numbers, maths, hashes, unicode_version):
@@ -299,10 +336,11 @@ def _json_read(path):
 
 def build(admission: Path, ucd: Path, output: Path) -> dict:
     """Consume complete source admission, create a fresh self-contained geometry bundle."""
-    from english_gonol.structural_construct import _verified_connection
     _producer_check()
     if output.exists():
         raise ValueError('output exists; select a new directory')
+    unicode_blobs = _verified_unicode_blobs(ucd)
+    from english_gonol.structural_construct import _verified_connection
     output.parent.mkdir(parents=True, exist_ok=True)
     stage = Path(tempfile.mkdtemp(prefix='.ordinal-', dir=output.parent))
     try:
@@ -316,7 +354,7 @@ def build(admission: Path, ucd: Path, output: Path) -> dict:
             _json_write(stage / 'admission' / 'manifest.json', source_manifest)
             (stage / 'ucd').mkdir()
             for name in UCD_FILES:
-                shutil.copyfile(ucd / name, stage / 'ucd' / name)
+                (stage / 'ucd' / name).write_bytes(unicode_blobs[name])
             chars, words = _inventory(source_db)
             legacy = tuple(source_manifest['metadata']['producer']['carrier'])
             public = repertoire(tuple(chars.values()), legacy, stage / 'ucd')
