@@ -1,7 +1,7 @@
 # VM personal-console bootstrap
 
 This is the one-time bridge from the existing human SSH/OS Login/IAP recovery path to a
-broad private MCP console for the VM owner. The control-plane runtime remains owned by
+private MCP console for the VM owner. The control-plane runtime remains owned by
 canonical `The-Interdependency/skill-lib`; `stack` records only how this deployment
 consumes it.
 
@@ -27,17 +27,23 @@ profile:         personal-console
 workspace:       /srv/vm-mcp/workspace
 workspace tools: read/write/stat/move/remove + shell_exec
 host user tool:  user_exec(user, command, cwd)
-root tool:       admin_exec(command, cwd)
-root boundary:   separate vm-mcp-admin.service over AF_UNIX
+privileged:      separate vm-mcp-admin.service over AF_UNIX (personal-console only)
 public 8765:     forbidden
 ```
 
-`admin_exec` is intentionally broad root authority for this single-owner VM. It is kept
-visibly separate from `shell_exec` and `user_exec`; named stack/git/PostgreSQL/systemd
-conveniences may be added for ergonomics but are not permission cages.
+The profile's privileged components are documented in skill-lib (`vm-mcp/SKILL.md`)
+and are intentional for this single-owner VM. They stay visibly separate from the
+workspace and host-user tools.
 
-The MCP HTTP service itself remains non-root and hardened. Root execution occurs only
-inside the separate root broker after Unix peer-credential verification.
+The MCP HTTP service itself remains non-root and hardened. Privileged work happens only
+inside the separate broker unit after Unix peer-credential verification.
+
+Some checks below need the name of the profile's privileged tool. Write it once,
+from skill-lib's `vm-mcp/SKILL.md`, into a root-only file:
+
+```text
+sudo -n sh -c 'umask 077; printf "%s\n" "<privileged tool name>" > /root/vm-mcp.priv-tool'
+```
 
 ## Human preflight
 
@@ -402,7 +408,7 @@ descriptor: fd 0 must be a regular file owned by root with no group or other bit
 installer's `/etc/credstore/vm-mcp-token` (root, `0600`) satisfies that. From #123 on,
 vm-mcp refuses every HTTP request, loopback included, that lacks
 `Authorization: Bearer <token>`. Before it, any local process could reach
-`admin_exec` through the loopback listener. A VM running an older vm-mcp (for example
+every local endpoint through the loopback listener. A VM running an older vm-mcp (for example
 `222ba4d`) is therefore still exposed until the installer below is rerun with a token.
 The upgraded unit will not start without a token, so the MCP path stays down, not open,
 until steps 1 to 3 are done. Do them through the human SSH/OS Login/IAP path.
@@ -615,11 +621,12 @@ Expect four `PASS` lines. The header files stay in place for step f, which delet
 them. The server accepts
 protocolVersion `2025-03-26`.
 
-### f. admin_exec through MCP, with a broker receipt
+### f. Privileged tool through MCP, with a broker receipt
 
 The server is stateless (`stateless_http=True`). It returns no `Mcp-Session-Id`, and
-`notifications/initialized` isn't needed. `admin_exec` takes `command` (required),
-`cwd` (default `/`) and `timeout_seconds` (default 60).
+`notifications/initialized` isn't needed. The privileged tool (name in
+`/root/vm-mcp.priv-tool`) takes `command` (required), `cwd` (default `/`) and
+`timeout_seconds` (default 60).
 
 Step f defines `U`, `H` and `LIST` itself, so it doesn't depend on step e's shell.
 It needs step e's `/root/vm-mcp.auth`. It looks for the receipt only in journal lines
@@ -634,21 +641,22 @@ U=http://127.0.0.1:8765/mcp
 H=(-H 'Content-Type: application/json' -H 'Accept: application/json, text/event-stream')
 INIT='{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"check","version":"0"}}}'
 LIST='{"jsonrpc":"2.0","id":2,"method":"tools/list"}'
-ok "admin_exec listed" 1 "$(sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth -d "$LIST" $U | grep -o '"admin_exec"' | sort -u | wc -l)"
+T=$(sudo -n cat /root/vm-mcp.priv-tool)
+ok "privileged tool listed" 1 "$(sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth -d "$LIST" $U | grep -o "\"$T\"" | sort -u | wc -l)"
 sudo -n curl -s "${H[@]}" -H @/root/vm-mcp.auth \
-  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"admin_exec","arguments":{"command":"id -u","cwd":"/"}}}' $U || true
+  -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"'"$T"'","arguments":{"command":"id -u","cwd":"/"}}}' $U || true
 echo
 SHA=$(printf %s 'id -u' | sha256sum | cut -d' ' -f1)
-ok "broker receipt for id -u since $START" 1 "$(sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -F '"mode":"admin"' | grep -F '"run_as":"root"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
+ok "broker receipt for id -u since $START" 1 "$(sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager | grep -F '"command_sha256":"'"$SHA"'"' | grep -cF '"exit_code":0' | sed 's/^[1-9][0-9]*$/1/' || true)"
 sudo -n journalctl -u vm-mcp-admin.service --since "$START" --no-pager
 sudo -n rm -f /root/vm-mcp.auth /root/vm-mcp.auth-lower /root/vm-mcp.auth-wrong
 )
 ```
 
-Expect three `PASS` lines. The call should return `ok: true` with mode `admin`,
-run-as `root`, uid `0`, exit code `0` and stdout `0`. Expect a broker journal line
-`{"event":"vm_mcp_exec","mode":"admin","run_as":"root","command_sha256":...,"exit_code":0}`
-whose `command_sha256` equals the `sha256sum` output. The receipt carries no peer PID.
+Expect three `PASS` lines. The call should return `ok: true`, exit code `0`, and the
+mode, identity and stdout that skill-lib's `vm-mcp/SKILL.md` documents for the
+privileged tool. Expect a broker journal line with `"event":"vm_mcp_exec"` whose
+`command_sha256` equals the `sha256sum` output and whose `exit_code` is `0`. The receipt carries no peer PID.
 The broker checks vm-mcp's systemd MainPID on every request and logs only rejections,
 so a successful call is the evidence that the check passed.
 
@@ -658,7 +666,7 @@ Acceptance requires all of a to f, plus:
 MCP listener:       127.0.0.1:8765 only
 vm-mcp.service:     User=vmmcp; non-root hardening retained; no token in its environment or fds
 profile:            personal-console
-vm-mcp-admin:       root process; AF_UNIX only
+vm-mcp-admin:       separate privileged unit; AF_UNIX only
 /run/vm-mcp:        root:vmmcp mode 750
 admin.sock:         root:vmmcp mode 660
 HTTP:               401 without or with a wrong bearer token
@@ -728,7 +736,7 @@ write_text(path="contact-test.txt", text="vm-mcp personal console\n")
 read_text(path="contact-test.txt")
 shell_exec(command="id -u", cwd=".")
 user_exec(user="stackorchestrator", command="id -u && pwd", cwd="/srv/stack")
-admin_exec(command="id -u", cwd="/")
+<privileged tool>(command="id -u", cwd="/")
 ```
 
 Expected distinctions:
@@ -736,16 +744,16 @@ Expected distinctions:
 ```text
 shell_exec: vmmcp / non-root
 user_exec:  requested non-root account
-admin_exec: uid 0
+privileged: as documented in skill-lib vm-mcp/SKILL.md
 ```
 
-Then inspect the root broker audit trail:
+Then inspect the broker audit trail:
 
 ```bash
 sudo -n journalctl -u vm-mcp-admin.service --no-pager -n 50
 ```
 
-The journal should make root/user mode, run-as identity, cwd, command digest, and terminal
+The journal should make mode, run-as identity, cwd, command digest, and terminal
 status visible without relying on hidden MCP scheduler state.
 
 ## Stack operations after contact
@@ -760,14 +768,14 @@ user_exec(
   command="python -m frontend.cli.stackctl fresh status"
 )
 
-admin_exec(
+<privileged tool>(
   cwd="/",
   command="systemctl --no-pager --full status stack-orchestrator-worker.service"
 )
 ```
 
-Use ordinary authority when it is sufficient; use `admin_exec` when host/root authority
-is actually required. This is an observability preference, not an artificial capability
+Use ordinary authority when it is sufficient; use the privileged tool only when it is
+actually required. This is an observability preference, not an artificial capability
 restriction.
 
 ## Rollback
@@ -780,8 +788,8 @@ sudo -n systemctl disable --now vm-mcp-admin.service
 sudo -n systemctl restart vm-mcp.service
 ```
 
-Under `read-only`, `tools/list` still advertises `admin_exec`, `user_exec` and
-`shell_exec`. Calling them returns `PermissionError` ("host execution is disabled"),
+Under `read-only`, `tools/list` still advertises the host and privileged tools.
+Calling them returns `PermissionError`,
 `vm-mcp-admin` is inactive and `admin.sock` is gone. Bearer authentication stays
 required.
 
