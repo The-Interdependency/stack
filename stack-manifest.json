@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "21c6c86927a1d8bf29b965af4d2ade83f1e085c1f9857062895e687e00b5ec7b",
+  "work_graph_sha256": "a28ff770ccb5c7cdae017272dd47e3bacb0b7054b07ebe7086fe26d534aaebb6",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -74,7 +74,7 @@
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
       "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement.",
       "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes.",
-      "English ordinal/1 is the selected local construction; nested frame transport, compound origin attachment, native Mobius lift, operator actions and downstream migration remain unresolved."
+      "English ordinal/1 is selected with inherited definitions reconstructed on its expanded base. SPACE attachment references are specified; global transport, vocabulary growth, source-uncovered definitions and downstream migration remain unresolved. Native Mobius integration is not required."
     ]
   },
   "research_participants": [
@@ -478,7 +478,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "ordinal-source",
       "repository": "The-Interdependency/stack",
-      "commit": "37adccb4c079199d915a49e475af0f426fed0943",
+      "commit": "2ba7131c5931cccbd779ed08b59f8a2a356729d4",
       "authority": "English construction and supported entrypoint",
       "relation": "exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority",
       "canonical_release": false,

@@ -33,7 +33,7 @@
   "active_construction": {
     "selection": "ACTIVE_CONSTRUCTION.json",
     "source_repository": "The-Interdependency/stack",
-    "source_commit": "37adccb4c079199d915a49e475af0f426fed0943",
+    "source_commit": "2ba7131c5931cccbd779ed08b59f8a2a356729d4",
     "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
     "authority_transfer": false
   }

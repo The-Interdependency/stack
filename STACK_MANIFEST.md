@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `21c6c86927a1d8bf29b965af4d2ade83f1e085c1f9857062895e687e00b5ec7b`
+  `a28ff770ccb5c7cdae017272dd47e3bacb0b7054b07ebe7086fe26d534aaebb6`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -64,7 +64,7 @@ selection, and see [the supported build](research/english-gonol/README.md).
 
 | Participant ID | Source | Exact identity | Relation |
 |---|---|---|---|
-| `ordinal-source` | `The-Interdependency/stack` | `37adccb4c079199d915a49e475af0f426fed0943` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
+| `ordinal-source` | `The-Interdependency/stack` | `2ba7131c5931cccbd779ed08b59f8a2a356729d4` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
 | `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
 | `ordinal-admission` | `The-Interdependency/stack` | `e3eb83764355b4b760a79323cda6a6d75c3a501a` | unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry |
 | `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
@@ -272,7 +272,7 @@ establish a base-independent generating law.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- English Gonol Construction has selected exact local ordinal geometry; global frame transport, compound origins, native Mobius lift, operator actions and independent release remain unresolved.
+- English Gonol Construction has selected exact ordinal geometry with inherited definitions reconstructed on the expanded base. SPACE references are specified; global transport, vocabulary growth, source-uncovered definitions, downstream migration and independent release still need their own evidence. Native Mobius integration is not required.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
