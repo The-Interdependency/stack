@@ -408,3 +408,57 @@ def test_build_refuses_oversize_ucd_before_source_or_copy(tmp_path):
     with pytest.raises(ValueError, match='acquisition budget'):
         implementation.build(tmp_path / 'missing-admission', path, output)
     assert not output.parent.exists()
+
+
+@pytest.mark.parametrize('kind', ['symlink', 'directory', 'fifo'])
+def test_json_read_refuses_nonregular_inputs(tmp_path, kind):
+    path = tmp_path / 'manifest.json'
+    if kind == 'symlink':
+        target = tmp_path / 'target.json'
+        target.write_bytes(b'{}\n')
+        path.symlink_to(target)
+    elif kind == 'directory':
+        path.mkdir()
+    else:
+        if not hasattr(implementation.os, 'mkfifo'):
+            pytest.skip('platform has no FIFO filesystem objects')
+        implementation.os.mkfifo(path)
+    with pytest.raises(ValueError, match='regular nonsymlink'):
+        implementation._json_read(path)
+
+
+def test_json_read_refuses_oversize_before_open(tmp_path, monkeypatch):
+    path = tmp_path / 'manifest.json'
+    with path.open('wb') as stream:
+        stream.truncate(65)
+    monkeypatch.setattr(implementation, 'JSON_MAX_BYTES', 64)
+    def forbidden_open(*args, **kwargs):
+        raise AssertionError('oversize JSON artifact was opened')
+    monkeypatch.setattr(implementation.os, 'open', forbidden_open)
+    with pytest.raises(ValueError, match='read budget'):
+        implementation._json_read(path)
+
+
+def test_json_stream_read_is_capped_if_file_grows(tmp_path, monkeypatch):
+    from contextlib import contextmanager
+    path = tmp_path / 'manifest.json'
+    path.write_bytes(b'{}\n')
+    monkeypatch.setattr(implementation, 'JSON_MAX_BYTES', 32)
+    fdopen = implementation.os.fdopen
+    requested = []
+    @contextmanager
+    def tracked_open(fd, mode):
+        with fdopen(fd, mode) as stream:
+            class Tracked:
+                def fileno(self):
+                    return stream.fileno()
+                def read(self, count):
+                    requested.append(count)
+                    with path.open('ab') as writer:
+                        writer.write(b'x' * 64)
+                    return stream.read(count)
+            yield Tracked()
+    monkeypatch.setattr(implementation.os, 'fdopen', tracked_open)
+    with pytest.raises(ValueError, match='read budget'):
+        implementation._json_read(path)
+    assert requested == [33]
