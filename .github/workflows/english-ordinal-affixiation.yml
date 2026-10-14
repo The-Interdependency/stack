@@ -76,15 +76,27 @@ jobs:
         run: |
           git fetch --no-tags --depth=1 origin e3eb83764355b4b760a79323cda6a6d75c3a501a
           _inputs/ucns/.venv/bin/python - <<'PY'
-          import hashlib,json,pathlib,subprocess
-          from english_gonol.structural_construct import IMPLEMENTATION_FILES
+          import ast,hashlib,json,pathlib,subprocess
           graph=json.loads(pathlib.Path('research/english-gonol/docs/ordinal-work-graph.json').read_text())
           body={k:graph[k] for k in ('repositories','boundaries')}
           assert hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':')).encode()).hexdigest()==graph['work_graph_sha256']
-          roots={'The-Interdependency/ucns':'_inputs/ucns','globalwordnet/english-wordnet':'_inputs/oewn','The-Interdependency/skill-lib':'_inputs/skill-lib'}
+          git_roots={
+              ('The-Interdependency/ucns','a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb'):'_inputs/ucns',
+              ('The-Interdependency/ucns','4f863ad37096b7baab8f62820ad5cb937b62a3a7'):'_inputs/admission-carrier',
+              ('globalwordnet/english-wordnet','dc343f2683279ecbb13fab4e2fd778d7b162d287'):'_inputs/oewn',
+              ('The-Interdependency/skill-lib','e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128'):'_inputs/skill-lib',
+          }
+          artifact_roots={
+              'unicode.org/Public/18.0.0/ucd/UnicodeData.txt':'_inputs/ucd/UnicodeData.txt',
+              'unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt':'_inputs/ucd/DerivedCoreProperties.txt',
+          }
           for item in graph['repositories']:
-              if item['repository'] in roots:
-                  assert subprocess.check_output(['git','-C',roots[item['repository']],'rev-parse','HEAD'],text=True).strip()==item['commit']
+              key=(item['repository'],item.get('commit'))
+              if key in git_roots:
+                  assert subprocess.check_output(['git','-C',git_roots[key],'rev-parse','HEAD'],text=True).strip()==item['commit']
+              elif item['repository'] in artifact_roots:
+                  raw=pathlib.Path(artifact_roots[item['repository']]).read_bytes()
+                  assert hashlib.sha256(raw).hexdigest()==item['artifact_sha256']
           active_base=json.loads(pathlib.Path('research/english-gonol/BASE.json').read_text())
           selected=active_base['active_construction']['source_commit']
           assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
@@ -94,6 +106,14 @@ jobs:
               path='research/english-gonol/'+relative
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',selected+':'+path]),path
           base=next(r['commit'] for r in graph['repositories'] if r['repository']=='The-Interdependency/stack')
+          baseline_path='research/english-gonol/english_gonol/structural_construct.py'
+          baseline_source=subprocess.check_output(['git','show',base+':'+baseline_path],text=True)
+          tree=ast.parse(baseline_source)
+          assignment=next(node for node in tree.body if isinstance(node,(ast.Assign,ast.AnnAssign))
+                          and ((isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='IMPLEMENTATION_FILES' for t in node.targets))
+                               or (isinstance(node,ast.AnnAssign) and isinstance(node.target,ast.Name) and node.target.id=='IMPLEMENTATION_FILES')))
+          IMPLEMENTATION_FILES=tuple(ast.literal_eval(assignment.value))
+          assert IMPLEMENTATION_FILES, 'pinned admission closure must be nonempty'
           for name in IMPLEMENTATION_FILES:
               path='research/english-gonol/english_gonol/'+name
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',base+':'+path]),path
