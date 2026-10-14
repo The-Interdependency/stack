@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "doctrine": {
     "repository": "The-Interdependency/skill-lib",
-    "commit": "321e721fb660e0fea5bb8c37d943611963039a57",
+    "commit": "acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0",
     "path": "fresh-making/SKILL.md",
     "relation": "exact governing fresh-making doctrine for the stack backend"
   },
   "local_generator_snapshot": {
     "repository": "The-Interdependency/skill-lib",
-    "commit": "321e721fb660e0fea5bb8c37d943611963039a57",
+    "commit": "acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0",
     "path": "skill-lib/",
     "relation": "stack-local pinned snapshot used by the default MSDMD generator root"
   },
   "evidence": {
-    "skill_lib_compare": "1b1a9473fcbaab16965af9907e4aafd12853a704..321e721fb660e0fea5bb8c37d943611963039a57",
+    "skill_lib_compare": "1b1a9473fcbaab16965af9907e4aafd12853a704..acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0",
     "fresh_making_doctrine_changed_in_range": true,
     "msdmd_generator_changed_in_range": true,
     "doctrine_and_snapshot_same_commit": true,
@@ -28,12 +28,12 @@
       "skill-lib#127 (023ae12): vm-mcp only (install hardening and the server's fd 0 owner/mode check); msdmd/ is unchanged from 24029ca, so the collector sources and generator identity are the same as at 24029ca",
       "collector sources changed in 1b1a947..24029ca (#121, #124), so the generator identity and every MSDMD derivation re-key relative to 1b1a947"
     ],
-    "snapshot_refresh_compare": "023ae12bb19ced1a4f2494ed6507fc31285a5b8e..321e721fb660e0fea5bb8c37d943611963039a57",
+    "snapshot_refresh_compare": "321e721fb660e0fea5bb8c37d943611963039a57..acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0",
     "snapshot_refresh_msdmd_generator_changed": false,
     "snapshot_refresh_notes": [
-      "skill-lib#128: refresh the exact operational snapshot and narrative doctrine; fresh-making/SKILL.md changed, while msdmd/ source bytes are unchanged from 023ae12.",
+      "skill-lib#129 and #130 (321e721..acd5e9f): the repo-managed work launcher (tools/) and a vm-mcp first-use context notice; fresh-making/SKILL.md and msdmd/ source bytes are unchanged from 321e721.",
       "The cumulative comparison and prior generator-change evidence above are retained; this refresh itself does not change the MSDMD generator source identity.",
-      "backend/deploy/VM_CONTACT.md retains its separately pinned 023ae12 vm-mcp bootstrap and acceptance evidence. This source refresh does not deploy, requalify, or change the VM runtime identity."
+      "backend/deploy/VM_CONTACT.md now pins the same acd5e9f for its vm-mcp bootstrap and checks. Its acceptance evidence (the #123 scratch-VM run and the #127 checks) predates #130; this source refresh does not deploy, requalify, or change the VM runtime identity."
     ]
   },
   "boundaries": {

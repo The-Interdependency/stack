@@ -8,7 +8,7 @@ consumes it.
 ## Work-graph identity
 
 ```text
-skill-lib producer: The-Interdependency/skill-lib@023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+skill-lib producer: The-Interdependency/skill-lib@acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
 stack consumer:     this stack checkout
 relation:           canonical vm-mcp runtime -> stack VM operations
 runtime authority:  skill-lib owns vm-mcp implementation; stack owns its deployment/use
@@ -222,7 +222,7 @@ Human SSH/OS Login/IAP access is unaffected. Run it from the human path, not thr
 set -Eeuo pipefail
 trap 'echo "FAIL step U4 at line $LINENO (exit $?)" >&2' ERR
 umask 077
-SKILL_LIB_SHA=023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+SKILL_LIB_SHA=acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
 B=$(sudo -n cat /root/vm-mcp-upgrade.latest)
 eval "$(sudo -n cat "$B/target.env")"
 sudo -n test -d "$TARGET_ROOT"
@@ -296,18 +296,19 @@ but in that mode it has no source checkout, so its fixed-install-root and
 workspace-overlap checks would fail falsely; and `--repo` alone turns `--skip-install`
 off (it would reinstall). Never pass `--destructive` or `--reinstall-readonly` on a
 real VM. Its step 3/7 expectations assume `personal-console`; on other profiles read
-those lines with the table above. Run the source checks separately against a 023ae12
-checkout:
+those lines with the table above. Run the source checks separately against the pinned
+`acd5e9f` checkout (#130 does not change the installer's install-root or work-root
+checks, or the token descriptor check):
 
 ```bash
 (
 ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
 S=$(mktemp -d); trap 'rm -rf "$S"; sudo -n rm -f /root/.vm-mcp-t127' EXIT
 git clone -q --filter=blob:none https://github.com/The-Interdependency/skill-lib.git "$S/sl"
-git -C "$S/sl" checkout -q --detach 023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+git -C "$S/sl" checkout -q --detach acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
 I="$S/sl/vm-mcp/install.sh"
-ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I")"
-ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I")"
+ok "fixed install root" 0 "$(grep -c VM_MCP_INSTALL_ROOT "$I" || true)"
+ok "INSTALL_ROOT=/opt/vm-mcp" 1 "$(grep -cx 'INSTALL_ROOT=/opt/vm-mcp' "$I" || true)"
 sed -n '/^check_work_root() {/,/^}/p' "$I" > "$S/cwr.sh"
 for bad in / /opt /opt/vm-mcp /opt/vm-mcp/x /opt/vm-mcp/../vm-mcp; do
   ok "overlap $bad rejected" 1 "$(bash -c '. "$1"; check_work_root "$2" /opt/vm-mcp 2>/dev/null && echo 0 || echo 1' _ "$S/cwr.sh" "$bad")"
@@ -393,7 +394,7 @@ With this section:
 1. U1 records the layout above.
 2. U2 resolves the profile from the legacy flag (`VM_MCP_SHELL_ENABLED=0` →
    `read-only`) and writes `TARGET_ROOT=/srv/a0/workspaces`, `TARGET_PROFILE=read-only`.
-3. U4 stops the old service (brief outage), installs 023ae12 with those values, and
+3. U4 stops the old service (brief outage), installs acd5e9f with those values, and
    the installer removes its own ptrace sysctl file again because the target is
    `read-only`.
 4. U5 expects the read-only column of the table, the preservation block all `PASS`,
@@ -402,8 +403,10 @@ With this section:
 
 ## Install the exact canonical personal console
 
-The pinned `023ae12` is the merge of The-Interdependency/skill-lib#127, on top of #123
-(`24029ca`). #127 hardens the installer and makes the server check its token
+The pinned `acd5e9f` is skill-lib main after #130 (a first-use context notice from
+vm-mcp; its privileged components record a one-time marker in a new root-only state
+directory), on top of #127 (`023ae12`) and #123 (`24029ca`).
+#127 hardens the installer and makes the server check its token
 descriptor: fd 0 must be a regular file owned by root with no group or other bits. The
 installer's `/etc/credstore/vm-mcp-token` (root, `0600`) satisfies that. From #123 on,
 vm-mcp refuses every HTTP request, loopback included, that lacks
@@ -441,7 +444,7 @@ set -Eeuo pipefail
 trap 'echo "FAIL step 2 at line $LINENO (exit $?)" >&2' ERR
 umask 077
 
-SKILL_LIB_SHA=023ae12bb19ced1a4f2494ed6507fc31285a5b8e
+SKILL_LIB_SHA=acd5e9fa1386a81ef2a915ce3b33fe3cfc2ba9b0
 BOOTSTRAP_DIR="$(mktemp -d)"
 ROOT_SRC="$(sudo -n mktemp -d /root/vm-mcp-src.XXXXXX)"
 trap 'rm -rf "$BOOTSTRAP_DIR"; sudo -n rm -rf "$ROOT_SRC"' EXIT
@@ -506,7 +509,7 @@ Do not use `/srv/stack` as an excuse to transfer repository ownership to `vmmcp`
 
 These are the skill-lib#123 checklist steps, corrected by the scratch-VM run at
 `046c4cf` (Oct 11, 2026). vm-mcp at `24029ca` is identical to `046c4cf`. `023ae12` adds
-#127 on top, which the scratch run did not cover (hmmm), so a FAIL here may be new
+#127 and `acd5e9f` adds #130 on top; the scratch run covered neither (hmmm), so a FAIL here may be new
 behaviour, not an install mistake. Run them as
 root through the human path. The scratch run's step 8 (setting `ptrace_scope` to 0 to
 watch the service fail closed) is deliberately left out on this VM. So is its step 9
