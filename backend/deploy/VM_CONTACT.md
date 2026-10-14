@@ -130,7 +130,35 @@ enabled, or transient units need a separately reviewed recovery plan.
 set -Eeuo pipefail
 sudo -n python3 -I - <<'PY'
 # U1 snapshot: keep raw environment and credentials inside the root-only archive.
-import hashlib, json, os, pathlib, pwd, re, subprocess, tarfile, tempfile
+import hashlib, json, os, pathlib, pwd, re, stat, subprocess, tarfile, tempfile
+
+def deployment_manifest(paths):
+    """Read names, content and preservation metadata without following symlinks."""
+    records = {}
+    pending = [pathlib.Path("/") / p for p in paths]
+    while pending:
+        path = pending.pop()
+        if not os.path.lexists(path):
+            continue
+        info = os.lstat(path)
+        record = {"kind": stat.S_IFMT(info.st_mode), "mode": stat.S_IMODE(info.st_mode),
+                  "uid": info.st_uid, "gid": info.st_gid, "mtime_ns": info.st_mtime_ns,
+                  "xattrs": {name: os.getxattr(path, name, follow_symlinks=False).hex()
+                             for name in sorted(os.listxattr(path, follow_symlinks=False))}}
+        if stat.S_ISLNK(info.st_mode):
+            record["link"] = os.readlink(path)
+        elif stat.S_ISDIR(info.st_mode):
+            pending.extend(path.iterdir())
+        elif stat.S_ISREG(info.st_mode):
+            digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            record["sha256"] = digest.hexdigest()
+        else:
+            raise SystemExit("hmmm: unsupported special file in deployment snapshot")
+        records[str(path)] = record
+    return records
 
 def require(condition, message):
     if not condition:
@@ -175,6 +203,7 @@ for entry in install_tree.rglob("*") if install_tree.is_dir() else []:
                    and referent.parent in {pathlib.Path("/usr/bin").resolve(), pathlib.Path("/usr/local/bin").resolve()}
                    and re.fullmatch(r"python[0-9]+(?:\.[0-9]+)?", referent.name))
     require(interpreter, "hmmm: install-tree symlink escapes backup; separate recovery plan required")
+before = deployment_manifest(paths)
 archive = B / "state.tar"
 tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "-C", "/", "-cpf", str(archive), "--", *present], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
@@ -192,7 +221,8 @@ with archive.open("rb") as stream:
     for chunk in iter(lambda: stream.read(1024 * 1024), b""):
         h.update(chunk)
 archive_digest = h.hexdigest()
-manifest = {"paths": paths, "present": present, "units": units,
+require(deployment_manifest(paths) == before, "deployment changed during backup; repeat U1")
+manifest = {"deployment": before, "paths": paths, "present": present, "units": units,
             "home": account.pw_dir, "uid": account.pw_uid,
             "archive_sha256": archive_digest}
 (B / "state.json").write_text(json.dumps(manifest, indent=2) + "\n")
@@ -326,6 +356,34 @@ sudo -n env ROOT_SRC="$ROOT_SRC" TOKEN_OVERRIDE="${VM_MCP_AUTH_TOKEN_FILE:-}" py
 # U4 preflight and install: every target value remains a subprocess argument or env value.
 import hashlib, json, os, pathlib, pwd, re, stat, subprocess, time
 
+def deployment_manifest(paths):
+    """Read names, content and preservation metadata without following symlinks."""
+    records = {}
+    pending = [pathlib.Path("/") / p for p in paths]
+    while pending:
+        path = pending.pop()
+        if not os.path.lexists(path):
+            continue
+        info = os.lstat(path)
+        record = {"kind": stat.S_IFMT(info.st_mode), "mode": stat.S_IMODE(info.st_mode),
+                  "uid": info.st_uid, "gid": info.st_gid, "mtime_ns": info.st_mtime_ns,
+                  "xattrs": {name: os.getxattr(path, name, follow_symlinks=False).hex()
+                             for name in sorted(os.listxattr(path, follow_symlinks=False))}}
+        if stat.S_ISLNK(info.st_mode):
+            record["link"] = os.readlink(path)
+        elif stat.S_ISDIR(info.st_mode):
+            pending.extend(path.iterdir())
+        elif stat.S_ISREG(info.st_mode):
+            digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            record["sha256"] = digest.hexdigest()
+        else:
+            raise SystemExit("hmmm: unsupported special file in deployment snapshot")
+        records[str(path)] = record
+    return records
+
 def require(condition, message):
     if not condition:
         raise AssertionError(message)
@@ -355,7 +413,9 @@ with (B / "state.tar").open("rb") as stream:
     for chunk in iter(lambda: stream.read(1024 * 1024), b""):
         h.update(chunk)
 require(h.hexdigest() == state['archive_sha256'], 'backup checksum mismatch')
-# Detect configuration/code changes since inventory before overwriting them.
+# Detect additions and ACL/xattr/content drift, including entries tar --compare ignores.
+require(deployment_manifest(state["paths"]) == state["deployment"], "deployment changed; repeat U1")
+# Also compare archived payloads before overwriting them.
 tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "--compare", "-f", str(B / "state.tar"), "-C", "/"], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
 for path in set(state["paths"]) - set(state["present"]):
@@ -423,7 +483,7 @@ Also confirm preservation (read-only):
 (
 set -Eeuo pipefail
 sudo -n python3 -I - <<'PY'
-import json, pathlib, pwd, shlex
+import json, pathlib, pwd, shlex, subprocess
 B = pathlib.Path(pathlib.Path("/root/vm-mcp-upgrade.latest").read_text().strip())
 target = json.loads((B / "target.json").read_text())
 env = {}
@@ -441,6 +501,13 @@ for key, field in (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"), ("VM_
     check(key + " preserved", env.get(key) == target[field])
 check("target service home", pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home")
 check("workspace not empty", any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()))
+unit_result = subprocess.run(["systemctl", "show", "vm-mcp.service",
+                              "--property=ReadWritePaths,ProtectSystem"], check=True, text=True, capture_output=True)
+unit = dict(line.split("=", 1) for line in unit_result.stdout.splitlines() if "=" in line)
+write_paths = shlex.split(unit.get("ReadWritePaths", ""))
+check("effective ProtectSystem=strict", unit.get("ProtectSystem") == "strict")
+check("effective workspace write boundary", len(write_paths) == 1
+      and str(pathlib.Path(write_paths[0]).resolve()) == str(pathlib.Path(target["root"]).resolve()))
 raise SystemExit(bool(failures))
 PY
 )
@@ -511,7 +578,35 @@ example later in this document as an upgrade rollback.
 set -Eeuo pipefail
 sudo -n python3 -I - <<'PY'
 # U6 rollback: validate and stage completely before touching the live deployment.
-import hashlib, json, os, pathlib, pwd, shutil, subprocess, tarfile, tempfile
+import hashlib, json, os, pathlib, pwd, shutil, stat, subprocess, tarfile, tempfile
+
+def deployment_manifest(paths):
+    """Read names, content and preservation metadata without following symlinks."""
+    records = {}
+    pending = [pathlib.Path("/") / p for p in paths]
+    while pending:
+        path = pending.pop()
+        if not os.path.lexists(path):
+            continue
+        info = os.lstat(path)
+        record = {"kind": stat.S_IFMT(info.st_mode), "mode": stat.S_IMODE(info.st_mode),
+                  "uid": info.st_uid, "gid": info.st_gid, "mtime_ns": info.st_mtime_ns,
+                  "xattrs": {name: os.getxattr(path, name, follow_symlinks=False).hex()
+                             for name in sorted(os.listxattr(path, follow_symlinks=False))}}
+        if stat.S_ISLNK(info.st_mode):
+            record["link"] = os.readlink(path)
+        elif stat.S_ISDIR(info.st_mode):
+            pending.extend(path.iterdir())
+        elif stat.S_ISREG(info.st_mode):
+            digest = hashlib.sha256()
+            with path.open("rb") as stream:
+                for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(chunk)
+            record["sha256"] = digest.hexdigest()
+        else:
+            raise SystemExit("hmmm: unsupported special file in deployment snapshot")
+        records[str(path)] = record
+    return records
 
 def require(condition, message):
     if not condition:
@@ -561,6 +656,7 @@ for path in paths:
         require(not copy_result.stderr, "hmmm: restore copy warned; leave services down and inspect")
     else:
         require(not os.path.lexists(live), 'new artifact was not removed')
+require(deployment_manifest(paths) == state["deployment"], "restored deployment metadata/content differs; leave services down")
 subprocess.run(["usermod", "--home", state["home"], "vmmcp"], check=True)
 subprocess.run(["systemctl", "daemon-reload"], check=True)
 for unit, prior in state["units"].items():
@@ -1197,10 +1293,11 @@ header in the client's secret or secure-header settings for this server, never i
 URL, a tool argument, a prompt or a repository file:
 
 ```text
-Authorization: Bearer <contents of /root/vm-mcp.token>
+Authorization: Bearer <contents of /etc/credstore/vm-mcp-token>
 ```
 
-Move the value from the VM to the client without printing it. Don't `cat` it in an
+Use the installed `/etc/credstore/vm-mcp-token` copy for every client transfer,
+regardless of the original U3/U4 token source. Move its value without printing it. Don't `cat` it in an
 interactive SSH session, because it would stay in the terminal scrollback. Run one of
 these from the machine where the client is configured. The token travels only through
 the pipe. Use your usual human access for `ssh` (for example `gcloud compute ssh VM
@@ -1208,26 +1305,29 @@ the pipe. Use your usual human access for `ssh` (for example `gcloud compute ssh
 
 ```text
 # into the clipboard, then paste into the client's secret header field and clear the clipboard
-ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | pbcopy          # macOS
-ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' | wl-copy         # Wayland (xclip -selection clipboard on X11)
+ssh VM 'sudo -n cat /etc/credstore/vm-mcp-token' | tr -d '\n' | pbcopy          # macOS
+ssh VM 'sudo -n cat /etc/credstore/vm-mcp-token' | tr -d '\n' | wl-copy         # Wayland (xclip -selection clipboard on X11)
 
 # or into a local 0600 file that the client's secret configuration reads
 (umask 077 && mkdir -p -m 700 ~/.config/vm-mcp && rm -f ~/.config/vm-mcp/token &&
-  ssh VM 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' > ~/.config/vm-mcp/token)
+  ssh VM 'sudo -n cat /etc/credstore/vm-mcp-token' | tr -d '\n' > ~/.config/vm-mcp/token)
 
 # the same through IAP
 (umask 077 && mkdir -p -m 700 ~/.config/vm-mcp && rm -f ~/.config/vm-mcp/token &&
   gcloud compute ssh VM --zone ZONE --tunnel-through-iap \
-    --command 'sudo -n cat /root/vm-mcp.token' | tr -d '\n' > ~/.config/vm-mcp/token)
+    --command 'sudo -n cat /etc/credstore/vm-mcp-token' | tr -d '\n' > ~/.config/vm-mcp/token)
 ```
 
 **For an agent client** (ChatGPT, Claude, Codex, Grok Bot or similar), the token goes
 only in the MCP connector's secret or header configuration (`Authorization: Bearer ...`).
 Never type, paste or upload it into the conversation itself, and never ask the agent to
-read `/root/vm-mcp.token` through MCP. Anything in the conversation is model context.
+read `/etc/credstore/vm-mcp-token` through MCP. Anything in the conversation is model context.
 
-Afterwards, either delete `/root/vm-mcp.token` or keep it under your own secret
-handling. The service reads only `/etc/credstore/vm-mcp-token`. Remember that every
+Never delete the installed `/etc/credstore/vm-mcp-token`: the service needs it.
+A separate provisioning source such as `/root/vm-mcp.token` can be retained under
+your secret handling or deleted after successful client setup. If deleting the
+selected upgrade source, first change `target.json`'s `token_file` to the installed
+copy so later e/f checks still have their selected source. Remember that every
 installer rerun needs a token source (see step 2). To rotate, write a new token file
 as in step 1 and rerun the step 2 install block, then update the client. A client with
 no header, or a stale one, gets `401` on every call.

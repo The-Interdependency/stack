@@ -10,6 +10,7 @@ from __future__ import annotations
 import builtins
 from contextlib import redirect_stdout
 import copy
+from decimal import Decimal
 import hashlib
 import io
 import itertools
@@ -55,6 +56,8 @@ class SyntheticVM:
         self.install_rc = 0
         self.running_processes = False
         self.installer_env = None
+        self.write_paths = "/srv/existing"
+        self.protect_system = "strict"
         self.target_at_first_stop = None
         for directory in ("/root", "/etc", "/opt", "/srv/existing"):
             self.path(directory).mkdir(parents=True, exist_ok=True)
@@ -106,7 +109,14 @@ class SyntheticVM:
                     raise subprocess.CalledProcessError(2, args)
                 with tarfile.open(self.path(args[args.index("-cpf") + 1]), "w") as archive:
                     for name in args[args.index("--") + 1:]:
-                        archive.add(self.path("/" + name), arcname=name)
+                        def metadata(info):
+                            actual = self.path("/" + info.name)
+                            ns = actual.lstat().st_mtime_ns
+                            info.pax_headers["mtime"] = str(Decimal(ns) / Decimal(1000000000))
+                            for key in os.listxattr(actual, follow_symlinks=False):
+                                info.pax_headers["TEST.xattr." + key] = os.getxattr(actual, key, follow_symlinks=False).hex()
+                            return info
+                        archive.add(self.path("/" + name), arcname=name, filter=metadata)
             elif "--compare" in args:
                 if self.fail_compare:
                     raise subprocess.CalledProcessError(1, args)
@@ -115,7 +125,15 @@ class SyntheticVM:
                     raise subprocess.CalledProcessError(2, args)
                 with tarfile.open(self.path(args[args.index("-xpf") + 1])) as archive:
                     # Only synthetic archive entries created by this fixture.
-                    archive.extractall(self.path(args[args.index("-C") + 1]), filter="data")
+                    stage = self.path(args[args.index("-C") + 1])
+                    archive.extractall(stage, filter="data")
+                    for member in archive.getmembers():
+                        restored = stage / member.name
+                        ns = int(Decimal(member.pax_headers["mtime"]) * Decimal(1000000000))
+                        os.utime(restored, ns=(ns, ns), follow_symlinks=False)
+                        for key, value in member.pax_headers.items():
+                            if key.startswith("TEST.xattr."):
+                                os.setxattr(restored, key[len("TEST.xattr."):], bytes.fromhex(value), follow_symlinks=False)
             else:
                 raise AssertionError("unmodelled tar invocation")
         elif args[0] == "systemctl":
@@ -127,7 +145,9 @@ class SyntheticVM:
             else:
                 unit = args[2]
                 state = self.units[unit]
-                if action == "show":
+                if action == "show" and "--property=ReadWritePaths,ProtectSystem" in args:
+                    result.stdout = "ReadWritePaths=" + self.write_paths + "\nProtectSystem=" + self.protect_system + "\n"
+                elif action == "show":
                     result.stdout = (state["LoadState"] + "\n" if "--value" in args else
                                      "".join(k + "=" + v + "\n" for k, v in state.items()))
                 elif action == "stop":
@@ -188,15 +208,18 @@ class SyntheticVM:
                 return super().replace(vm.path(target))
 
         def root_stat(value):
-            values = list(value)
-            values[4] = 0  # Synthetic fixture credential owner; never inspect real tokens.
-            return os.stat_result(values)
+            fields = {name: getattr(value, name) for name in dir(value) if name.startswith("st_")}
+            fields["st_uid"] = 0  # Only fixture ownership is modeled as root.
+            return types.SimpleNamespace(**fields)
 
         fake_os = types.SimpleNamespace(
             environ=self.env.copy(), umask=lambda mode: None,
             path=types.SimpleNamespace(lexists=lambda p: os.path.lexists(self.path(p))),
             open=lambda p, flags: os.open(self.path(p), flags), fdopen=os.fdopen,
             fstat=lambda fd: root_stat(os.fstat(fd)), lstat=lambda p: root_stat(os.lstat(self.path(p))),
+            listxattr=lambda p, **kw: os.listxattr(self.path(p), **kw),
+            getxattr=lambda p, name, **kw: os.getxattr(self.path(p), name, **kw),
+            readlink=lambda p: os.readlink(self.path(p)),
             O_RDONLY=os.O_RDONLY, O_NOFOLLOW=os.O_NOFOLLOW, O_NONBLOCK=os.O_NONBLOCK)
         modules = dict(hashlib=hashlib, json=json, re=re, shlex=shlex, stat=stat,
                        tarfile=tarfile, os=fake_os,
@@ -422,6 +445,7 @@ class UpgradeRecoveryTests(unittest.TestCase):
             source.mkdir()
             fixture = source / "fixture"
             fixture.write_bytes(b"synthetic metadata fixture")
+            os.utime(fixture, ns=(1700000000123456789, 1700000000123456789))
             try:
                 os.setxattr(fixture, "user.vm_mcp_fixture", b"preserved")
             except OSError as error:
@@ -441,6 +465,7 @@ class UpgradeRecoveryTests(unittest.TestCase):
                 extra = ["--xattrs-exclude=*"] if exclude else []
                 tar(*extra, "-xpf", archive, "-C", restored)
                 self.assertEqual((restored / "fixture").read_bytes(), fixture.read_bytes())
+                self.assertEqual((restored / "fixture").stat().st_mtime_ns, fixture.stat().st_mtime_ns)
                 if exclude:
                     self.assertNotIn("user.vm_mcp_fixture", os.listxattr(restored / "fixture"))
                 else:
@@ -493,6 +518,72 @@ int fsetxattr(int fd, const char *n, const void *v, size_t s, int f) { return re
                 selected = log.read_text().splitlines() if log.exists() else []
                 self.assertEqual(selected, ["security.capability"] if include_all else [])
                 self.assertNotIn("security.capability", os.listxattr(dest / "fixture"))
+
+    def test_recursive_additions_and_metadata_drift_block_install(self):
+        for drift in ("added_dropin", "added_code", "xattr", "mode"):
+            with self.subTest(drift=drift), tempfile.TemporaryDirectory() as directory:
+                vm = SyntheticVM(directory)
+                vm.write("/etc/systemd/system/vm-mcp.service.d/workspace.conf", "original drop-in")
+                vm.execute("U1")
+                vm.execute("U2")
+                vm.commands.clear()
+                if drift == "added_dropin":
+                    vm.write("/etc/systemd/system/vm-mcp.service.d/new.conf", "unexpected override")
+                elif drift == "added_code":
+                    vm.write("/opt/vm-mcp/new.py", "unexpected module")
+                elif drift == "xattr":
+                    os.setxattr(vm.path("/opt/vm-mcp/old.py"), "user.fixture", b"changed")
+                else:
+                    vm.path("/opt/vm-mcp/old.py").chmod(0o600)
+                with self.assertRaisesRegex(AssertionError, "deployment changed"):
+                    vm.execute("U4")
+                self.assertFalse(any(args[0] in {"bash", "usermod", "cp"} or
+                                     (args[0] == "systemctl" and args[1] != "show") for args, _ in vm.commands))
+                self.assertIsNone(vm.installer_env)
+
+    def test_manifest_detects_addition_even_with_parent_mtime_restored(self):
+        self.snapshot_target()
+        parent = self.vm.path("/opt/vm-mcp")
+        before = parent.stat()
+        self.vm.write("/opt/vm-mcp/added.py", "not in archive")
+        os.utime(parent, ns=(before.st_atime_ns, before.st_mtime_ns))
+        with self.assertRaisesRegex(AssertionError, "deployment changed"):
+            self.vm.execute("U4")
+        self.assertEqual(self.destructive(), [])
+
+    def test_effective_unit_boundary_mismatch_blocks_acceptance(self):
+        self.snapshot_target()
+        target = self.vm.target()
+        self.vm.write("/etc/vm-mcp.env", "\n".join(key + "=" + shlex.quote(target[field]) for key, field in
+            (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"),
+             ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket"))))
+        for paths in ("", "/wrong", "/srv/existing /", "/srv/existing /tmp"):
+            self.vm.write_paths = paths
+            with self.subTest(paths=paths), self.assertRaises(SystemExit) as error:
+                self.vm.execute("U5")
+            self.assertEqual(error.exception.code, 1)
+        self.vm.write_paths = target["root"]
+        self.vm.protect_system = "no"
+        with self.assertRaises(SystemExit) as error:
+            self.vm.execute("U5")
+        self.assertEqual(error.exception.code, 1)
+        self.assertEqual(self.destructive(), [])
+
+    def test_client_transfer_commands_use_installed_token_copy(self):
+        section = RUNBOOK.read_text().split("## Connect the MCP client privately", 1)[1].split("## First end-to-end calls", 1)[0]
+        transfer_lines = [line for line in section.splitlines() if "cat " in line]
+        self.assertGreaterEqual(len(transfer_lines), 4)
+        for line in transfer_lines:
+            self.assertIn("cat /etc/credstore/vm-mcp-token", line)
+            self.assertNotIn("cat /root/vm-mcp.token", line)
+
+    def test_manifest_logic_is_identical_for_snapshot_preflight_and_rollback(self):
+        import ast
+        manifests = []
+        for step in ("U1", "U4", "U6"):
+            node = next(n for n in ast.parse(payload(step)).body if isinstance(n, ast.FunctionDef) and n.name == "deployment_manifest")
+            manifests.append(ast.dump(node, include_attributes=False))
+        self.assertEqual(manifests, [manifests[0]] * 3)
 
     def test_corrupt_backup_never_stops_or_displaces_live_artifacts(self):
         self.snapshot_target()
