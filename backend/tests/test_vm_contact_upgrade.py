@@ -198,6 +198,11 @@ class SyntheticVM:
                 if type(Path()).__init__ is not object.__init__:
                     super().__init__(vm.path(Path(*parts)))
 
+            def with_segments(self, *parts):
+                # 3.12+ derives child/glob paths through this hook; they are already
+                # sandbox-resolved, so return plain paths (matching 3.11 behaviour).
+                return type(Path())(*parts)
+
             def open(self, *args, **kwargs):
                 return vm.path(self).open(*args, **kwargs)
 
@@ -311,6 +316,74 @@ class UpgradeRecoveryTests(unittest.TestCase):
             self.vm.execute("U1")
         self.assertEqual(self.vm.backup(), old)
         self.assertEqual((old / "COMPLETE").read_text(), "complete\n")
+
+    def set_target_root(self, root):
+        target = self.vm.target()
+        target["root"] = root
+        (self.vm.backup() / "target.json").write_text(json.dumps(target))
+        return target
+
+    def installed(self):
+        return any(args[0] == "bash" for args, _ in self.vm.commands)
+
+    def test_u4_accepts_preserved_empty_root(self):
+        self.snapshot_target()
+        self.vm.path("/srv/existing/data.txt").unlink()
+        self.vm.commands.clear()
+        self.vm.execute("U4")
+        self.assertTrue(self.installed())
+        self.assertEqual(self.vm.installer_env["VM_MCP_ROOT"], "/srv/existing")
+
+    def test_u4_refuses_preserved_missing_root(self):
+        self.snapshot_target()
+        shutil.rmtree(self.vm.path("/srv/existing"))
+        self.vm.commands.clear()
+        with self.assertRaisesRegex(AssertionError, "must exist and be a directory"):
+            self.vm.execute("U4")
+        self.assertEqual(self.destructive(), [])
+
+    def test_u4_refuses_preserved_root_that_is_a_file(self):
+        self.snapshot_target()
+        shutil.rmtree(self.vm.path("/srv/existing"))
+        self.vm.write("/srv/existing", "not a directory")
+        self.vm.commands.clear()
+        with self.assertRaisesRegex(AssertionError, "must exist and be a directory"):
+            self.vm.execute("U4")
+        self.assertEqual(self.destructive(), [])
+
+    def test_u4_refuses_changed_empty_root(self):
+        self.snapshot_target()
+        self.vm.path("/srv/other").mkdir(parents=True)
+        self.set_target_root("/srv/other")
+        self.vm.commands.clear()
+        with self.assertRaisesRegex(AssertionError, "changed workspace root must exist and be nonempty"):
+            self.vm.execute("U4")
+        self.assertEqual(self.destructive(), [])
+
+    def test_u4_changed_nonempty_root_passes_the_workspace_guard(self):
+        self.snapshot_target()
+        self.vm.write("/srv/other/data.txt", "fixture")
+        self.set_target_root("/srv/other")
+        self.vm.commands.clear()
+        self.vm.execute("U4")
+        self.assertEqual(self.vm.installer_env["VM_MCP_ROOT"], "/srv/other")
+
+    def test_u5_fails_on_changed_empty_root(self):
+        self.snapshot_target()
+        self.vm.path("/srv/other").mkdir(parents=True)
+        target = self.set_target_root("/srv/other")
+        self.vm.write("/etc/vm-mcp.env", "".join(key + "=" + shlex.quote(target[field]) + "\n" for key, field in
+            (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"),
+             ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket"))))
+        self.vm.home = "/srv/other/.vm-mcp-home"
+        self.vm.write_paths = "/srv/other"
+        with self.assertRaises(SystemExit) as failure:
+            self.vm.execute("U5")
+        self.assertEqual(failure.exception.code, 1)
+        self.vm.write("/srv/other/data.txt", "fixture")
+        with self.assertRaises(SystemExit) as ok:
+            self.vm.execute("U5")
+        self.assertEqual(ok.exception.code, 0)
 
     def test_shell_metacharacters_and_spaces_roundtrip_without_evaluation(self):
         root = '/srv/a workspace;$(touch /tmp/never-created)`id`'

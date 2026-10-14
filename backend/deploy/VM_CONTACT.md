@@ -469,6 +469,7 @@ PY
 The workspace guard accepts the preserved (inventoried) root whether or not it holds
 data; it must still exist and be a directory. Only a root changed in `target.json`
 must also be nonempty, so an edit cannot silently point the service at an empty one.
+A root counts as preserved when it resolves to the parent of the U1 state's service-user home.
 
 Expect `rc=0`. The Python result is initialized by the actual invocation, so an
 interactive shell's old `rc` cannot turn success into failure. On any failure after
