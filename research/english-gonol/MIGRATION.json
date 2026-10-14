@@ -10,7 +10,7 @@
   },
   "forge": {
     "repository": "The-Interdependency/stack",
-    "source_commit": "d2e4c1de55d0b93810a62e799453a9b11270ce46",
+    "source_commit": "fd819e7ebd8f1571b4bca6589fe493077f3e6495",
     "source_path": "research/english-gonol"
   },
   "future_authority": {
@@ -19,16 +19,16 @@
   },
   "current_candidate": {
     "repository": "The-Interdependency/uchc",
-    "source_commit": "927d6c2d85d8b1d84c2654c3b00d17c889dae558",
+    "source_commit": "b02760e01c7c7c52697b57ef889128eb25b8162d",
     "package": "uchc",
     "version": "0.1.0a2",
     "wheel": "uchc-0.1.0a2-py3-none-any.whl",
-    "candidate_immutable_identity": "32058e461ebcdb436a2b76b207ed40bc7a309fe74c00f07f5c87e48c67c1b292",
+    "candidate_immutable_identity": "97e1ae14a9022e3c6445fd1cbeb4907c32e9ca80423231ea779fb18eea69e7ce",
     "profile": "english.structural/1",
-    "implementation_sha256": "b6db9e9f4d75e4bafbc82f1b8ef4ac13bb74f193f137710c111e81301c24cbef",
-    "construct_db_sha256": "6b8817d0e777fc172e2808054761c78816afe2e51222867cc9e93c14551f80ec",
-    "logical_receipt": "92daff3ea9945e32686c6cc3335692f90b7b96ec742ab971a3257a50ac1b0c99",
-    "work_graph_sha256": "0f79bafa08cbdf404a4defeec9b56cd71ba612f277a247476e33d95bebf24338",
+    "implementation_sha256": "6d3d8504e0159f191caa40755877c7fec78ff11a0c514b3fa5e0813aed8a6879",
+    "construct_db_sha256": "a8b5ba045334ee38a56e118e555c946aacc84daad5df649ec1add3ef29deb9c7",
+    "logical_receipt": "7a942fda57763279d6592befda6e4f3295332a0b12450b05076109ffe58b2e0d",
+    "work_graph_sha256": "e1bcff433d405fb17507cf513f391dddb50f284d8702b57dbacb7599ea71b6a7",
     "verification_receipt": "research/english-gonol/experiments/structural-profile-v1/verification.json",
     "extraction_receipt": "human/english/experiments/structural-profile-v1/extraction.json",
     "standing": "extracted structural candidate; source/clean-wheel equivalence verified; existing consumer migration pending"
@@ -37,7 +37,7 @@
     "kind": "python-wheel candidate; stable publication surface hmmm",
     "artifact": "uchc",
     "version": "0.1.0a2",
-    "candidate_immutable_identity": "32058e461ebcdb436a2b76b207ed40bc7a309fe74c00f07f5c87e48c67c1b292",
+    "candidate_immutable_identity": "97e1ae14a9022e3c6445fd1cbeb4907c32e9ca80423231ea779fb18eea69e7ce",
     "published_immutable_identity": "hmmm",
     "published_matches_verified_candidate": "hmmm"
   },
