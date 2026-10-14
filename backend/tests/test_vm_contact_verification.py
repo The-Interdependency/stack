@@ -43,7 +43,7 @@ class VerificationTests(unittest.TestCase):
     def exercise(self, section="f", target=None, root_result=None, receipt=None, *,
                  sse=False, text_content=False, rpc_error=False, tool_error=False,
                  journal_failure=False, info_override=None, pointer=True, bad_target=False,
-                 listeners=None, broker_active=None, socket_exists=None, lower_result=None):
+                 listeners=None, broker_active=None, socket_exists=None, lower_result=None, resolved_root=None):
         target = copy.deepcopy(TARGET if target is None else target)
         root_result = copy.deepcopy(ROOT_RESULT if root_result is None else root_result)
         receipt = copy.deepcopy(RECEIPT if receipt is None else receipt)
@@ -53,7 +53,7 @@ class VerificationTests(unittest.TestCase):
                      (isinstance(node, ast.FunctionDef) and node.name == "private_text")]
         requests, commands, reads = [], [], []
         effective = target if pointer else dict(TARGET, port=8765, profile="personal-console",
-                                               admin_socket="/run/vm-mcp/admin.sock",
+                                               root="/srv/vm-mcp/workspace", admin_socket="/run/vm-mcp/admin.sock",
                                                token_file="/etc/credstore/vm-mcp-token")
 
         def private_text(path):
@@ -83,7 +83,8 @@ class VerificationTests(unittest.TestCase):
                 name = payload["params"]["name"]
                 if name == "vm_info":
                     value = {"ok": True, "profile": effective["profile"],
-                             "admin_socket": effective["admin_socket"]}
+                             "admin_socket": effective["admin_socket"],
+                             "root": effective["root"], "root_exists": True}
                     value.update(info_override or {})
                 else:
                     self.assertEqual(name, "admin_exec")
@@ -143,6 +144,7 @@ class VerificationTests(unittest.TestCase):
         with ExitStack() as stack:
             stack.enter_context(patch("os.path.lexists", side_effect=lexists))
             stack.enter_context(patch("os.lstat", side_effect=lstat))
+            stack.enter_context(patch("pathlib.Path.resolve", lambda p, strict=False: Path(resolved_root or str(p))))
             stack.enter_context(patch("grp.getgrnam", return_value=types.SimpleNamespace(gr_gid=123)))
             stack.enter_context(patch("subprocess.run", side_effect=run))
             stack.enter_context(patch("urllib.request.build_opener", return_value=types.SimpleNamespace(open=open_request)))
@@ -206,10 +208,20 @@ class VerificationTests(unittest.TestCase):
                 self.assertEqual(self.exercise(sse=sse, text_content=text_content)[0], 0)
 
     def test_profile_or_socket_mismatch_prevents_privilege(self):
-        for override in ({"profile": "workspace"}, {"admin_socket": "/wrong"}):
+        for override in ({"profile": "workspace"}, {"admin_socket": "/wrong"},
+                         {"root": "/wrong-workspace"}, {"root_exists": False}, {"root": None}):
             code, _, requests, _, _ = self.exercise(info_override=override)
             self.assertTrue(code)
             self.assertFalse(any(b'admin_exec' in req.data for req in requests))
+
+    def test_effective_workspace_must_match_resolved_target(self):
+        target = dict(TARGET, root="/fixture-alias")
+        self.assertEqual(self.exercise(target=target, resolved_root="/fixture-real",
+                                       info_override={"root": "/fixture-real"})[0], 0)
+        code, _, requests, *_ = self.exercise(target=target, resolved_root="/fixture-real",
+                                              info_override={"root": "/fixture-alias"})
+        self.assertTrue(code)
+        self.assertFalse(any(b'admin_exec' in req.data for req in requests))
 
     def test_bad_root_response_cannot_pass_on_matching_digest(self):
         for key, value in (("stdout", "1000\n"), ("mode", "user"), ("run_as", "someone"),

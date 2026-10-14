@@ -176,7 +176,7 @@ for entry in install_tree.rglob("*") if install_tree.is_dir() else []:
                    and re.fullmatch(r"python[0-9]+(?:\.[0-9]+)?", referent.name))
     require(interpreter, "hmmm: install-tree symlink escapes backup; separate recovery plan required")
 archive = B / "state.tar"
-tar_result = subprocess.run(["tar", "--acls", "--xattrs", "-C", "/", "-cpf", str(archive), "--", *present], check=True, capture_output=True)
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "-C", "/", "-cpf", str(archive), "--", *present], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
 # Read every byte, not just the archive header; tar --compare also detects changed sources.
 with tarfile.open(archive, "r:") as saved:
@@ -185,7 +185,7 @@ with tarfile.open(archive, "r:") as saved:
             with saved.extractfile(member) as content:
                 while content.read(1024 * 1024):
                     pass
-tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--compare", "-f", str(archive), "-C", "/"], check=True, capture_output=True)
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "--compare", "-f", str(archive), "-C", "/"], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
 h = hashlib.sha256()
 with archive.open("rb") as stream:
@@ -356,7 +356,7 @@ with (B / "state.tar").open("rb") as stream:
         h.update(chunk)
 require(h.hexdigest() == state['archive_sha256'], 'backup checksum mismatch')
 # Detect configuration/code changes since inventory before overwriting them.
-tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--compare", "-f", str(B / "state.tar"), "-C", "/"], check=True, capture_output=True)
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "--compare", "-f", str(B / "state.tar"), "-C", "/"], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
 for path in set(state["paths"]) - set(state["present"]):
     require(not os.path.lexists('/' + path), 'previously absent artifact appeared; repeat U1')
@@ -432,10 +432,16 @@ for line in pathlib.Path("/etc/vm-mcp.env").read_text().splitlines():
         key, value = line.split("=", 1)
         words = shlex.split(value)
         env[key.strip()] = words[0] if len(words) == 1 else ""
+failures = []
+def check(label, passed):
+    print(("PASS " if passed else "FAIL ") + label)
+    if not passed:
+        failures.append(label)
 for key, field in (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"), ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket")):
-    print(("PASS " if env.get(key) == target[field] else "FAIL ") + key + " preserved")
-print(("PASS " if pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home" else "FAIL ") + "target service home")
-print(("PASS " if any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()) else "FAIL ") + "workspace not empty")
+    check(key + " preserved", env.get(key) == target[field])
+check("target service home", pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home")
+check("workspace not empty", any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()))
+raise SystemExit(bool(failures))
 PY
 )
 ```
@@ -529,7 +535,7 @@ require(h.hexdigest() == state['archive_sha256'], 'backup checksum mismatch')
 staging = pathlib.Path(tempfile.mkdtemp(prefix="restore.", dir=B))
 # Archive was made by U1 from exact paths, without following symlinks.
 # Root-only backup ownership and checksum are trust prerequisites, not tar sandboxing.
-tar_result = subprocess.run(["tar", "--acls", "--xattrs", "-xpf", str(B / "state.tar"), "-C", str(staging)], check=True, capture_output=True)
+tar_result = subprocess.run(["tar", "--acls", "--xattrs", "--xattrs-include=*", "-xpf", str(B / "state.tar"), "-C", str(staging)], check=True, capture_output=True)
 require(not tar_result.stderr, "hmmm: archive operation warned; inspect backup/storage before continuing")
 for path in state["present"]:
     require(os.path.lexists(staging / path), 'missing staged artifact')
@@ -971,7 +977,7 @@ accepts protocolVersion `2025-03-26`.
 
 The pinned server is stateless (`stateless_http=True`); there is no session header
 or initialized notification to carry between calls. This block reads its own target
-and token, verifies `vm_info`, and requires a harmless uniquely tagged privileged
+and token, verifies `vm_info` (including the resolved root and its existence), and requires a harmless uniquely tagged privileged
 probe to receive the canonical policy refusal for `read-only` and `workspace`,
 without a broker receipt. Tools being listed does not mean those profiles permit them.
 
@@ -998,7 +1004,7 @@ def private_text(path):
 def load_target():
     pointer = Path("/root/vm-mcp-upgrade.latest")
     if not os.path.lexists(pointer):
-        return 8765, "personal-console", "/run/vm-mcp/admin.sock", "/etc/credstore/vm-mcp-token"
+        return 8765, "personal-console", "/run/vm-mcp/admin.sock", "/etc/credstore/vm-mcp-token", str(Path("/srv/vm-mcp/workspace").resolve())
     B = Path(private_text(pointer).strip())
     if not B.is_absolute():
         raise ValueError("invalid upgrade backup path")
@@ -1009,10 +1015,13 @@ def load_target():
         raise ValueError("invalid upgrade target")
     if any(not isinstance(v, str) or not v.startswith("/") or "\n" in v or "\x00" in v for v in (socket, token)):
         raise ValueError("invalid target path")
-    return port, profile, socket, token
+    root = target["root"]
+    if not isinstance(root, str) or not root.startswith("/") or any(c in root for c in ("\n", "\r", "\0")):
+        raise ValueError("invalid workspace root")
+    return port, profile, socket, token, str(Path(root).resolve())
 
 try:
-    CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()
+    CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE, CHECK_ROOT = load_target()
 except (OSError, ValueError, KeyError, TypeError):
     raise SystemExit("FAIL reading preserved verification target; repair U2/U3 before continuing")
 failures = []
@@ -1085,9 +1094,10 @@ def call(name, arguments, identity):
 def target_matches():
     info = call("vm_info", {}, 3)
     return (info.get("ok") is True and info.get("profile") == CHECK_PROFILE
-            and info.get("admin_socket") == CHECK_SOCKET)
+            and info.get("admin_socket") == CHECK_SOCKET
+            and info.get("root") == CHECK_ROOT and info.get("root_exists") is True)
 
-check("authenticated profile and broker path", target_matches)
+check("authenticated profile, broker path and resolved workspace root", target_matches)
 if failures:
     raise SystemExit(1)  # Do not attempt privilege after a target mismatch.
 # Lower profiles must return the canonical policy refusal, not a transport error.

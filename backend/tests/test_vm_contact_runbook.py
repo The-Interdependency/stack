@@ -99,7 +99,7 @@ class VmContactRunbookTests(unittest.TestCase):
         self.assertIn('receipt.get("request_id") == result["request_id"]', block)
         self.assertIn('receipt.get("mode") == "admin"', block)
         self.assertIn('receipt.get("run_as") == "root"', block)
-        self.assertIn("CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE = load_target()", block)
+        self.assertIn("CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE, CHECK_ROOT = load_target()", block)
 
 
 if __name__ == "__main__":

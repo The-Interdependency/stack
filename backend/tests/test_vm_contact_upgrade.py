@@ -371,6 +371,129 @@ class UpgradeRecoveryTests(unittest.TestCase):
             self.vm.execute("U4")
         self.assertEqual(self.destructive(), [])
 
+    def test_preservation_checks_exit_nonzero_for_each_mismatch(self):
+        self.snapshot_target()
+        target = self.vm.target()
+        def environment():
+            return "\n".join(key + "=" + shlex.quote(target[field]) for key, field in
+                (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"),
+                 ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket"))) + "\n"
+        self.vm.write("/etc/vm-mcp.env", environment())
+        with self.assertRaises(SystemExit) as ok:
+            self.vm.execute("U5")
+        self.assertEqual(ok.exception.code, 0)
+        for key in ("VM_MCP_ROOT", "VM_MCP_PROFILE", "VM_MCP_PORT", "VM_MCP_ADMIN_SOCKET"):
+            self.vm.write("/etc/vm-mcp.env", environment() + key + "=/wrong\n")
+            with self.subTest(key=key), self.assertRaises(SystemExit) as failure:
+                self.vm.execute("U5")
+            self.assertEqual(failure.exception.code, 1)
+        self.vm.write("/etc/vm-mcp.env", environment())
+        self.vm.home = "/wrong-home"
+        with self.assertRaises(SystemExit) as failure:
+            self.vm.execute("U5")
+        self.assertEqual(failure.exception.code, 1)
+        self.vm.home = target["root"] + "/.vm-mcp-home"
+        self.vm.path("/srv/existing/data.txt").unlink()
+        with self.assertRaises(SystemExit) as failure:
+            self.vm.execute("U5")
+        self.assertEqual(failure.exception.code, 1)
+        self.assertEqual(self.destructive(), [])
+
+    def test_every_archive_phase_requests_all_xattr_namespaces(self):
+        self.snapshot_target()
+        self.vm.execute("U4")
+        self.vm.execute("U6")
+        commands = [args for args, _ in self.vm.commands if args[0] == "tar"]
+        self.assertGreaterEqual(len(commands), 4)
+        for args in commands:
+            self.assertIn("--xattrs-include=*", args)
+
+    def test_real_gnu_tar_roundtrips_xattrs_and_detects_exclusion_control(self):
+        # Only user metadata on disposable files; never grant a file capability.
+        if not shutil.which("tar") or not hasattr(os, "setxattr"):
+            self.skipTest("GNU tar/xattr support unavailable")
+        version = subprocess.run(["tar", "--version"], capture_output=True, text=True, check=True)
+        if "GNU tar" not in version.stdout:
+            self.skipTest("GNU tar required for metadata witness")
+        # This witness isolates xattrs; ACL warnings are covered by fail-closed mocks.
+        with tempfile.TemporaryDirectory(prefix=".xattr-witness-", dir=RUNBOOK.parent) as directory:
+            root = Path(directory)
+            source = root / "source"
+            source.mkdir()
+            fixture = source / "fixture"
+            fixture.write_bytes(b"synthetic metadata fixture")
+            try:
+                os.setxattr(fixture, "user.vm_mcp_fixture", b"preserved")
+            except OSError as error:
+                self.skipTest("fixture filesystem xattrs unavailable: " + str(error.errno))
+            archive = root / "state.tar"
+            flags = ["--xattrs", "--xattrs-include=*"]
+            def tar(*args):
+                result = subprocess.run(["tar", *flags, *map(str, args)], capture_output=True, check=True)
+                self.assertFalse(result.stderr, result.stderr)
+            tar("-cpf", archive, "-C", source, "fixture")
+            tar("--compare", "-f", archive, "-C", source)
+            with tarfile.open(archive) as saved:
+                self.assertEqual(saved.getmember("fixture").pax_headers["SCHILY.xattr.user.vm_mcp_fixture"], "preserved")
+            for exclude in (False, True):
+                restored = root / ("excluded" if exclude else "restored")
+                restored.mkdir()
+                extra = ["--xattrs-exclude=*"] if exclude else []
+                tar(*extra, "-xpf", archive, "-C", restored)
+                self.assertEqual((restored / "fixture").read_bytes(), fixture.read_bytes())
+                if exclude:
+                    self.assertNotIn("user.vm_mcp_fixture", os.listxattr(restored / "fixture"))
+                else:
+                    self.assertEqual(os.getxattr(restored / "fixture", "user.vm_mcp_fixture"), b"preserved")
+
+    def test_real_gnu_tar_selects_nonuser_xattrs_without_granting_capabilities(self):
+        # Exercise GNU tar's actual default-vs-include namespace selection while
+        # replacing only setxattr syscalls. No capability is installed on a file.
+        if not shutil.which("tar") or not shutil.which("cc") or not hasattr(os, "listxattr"):
+            self.skipTest("GNU tar, C compiler and xattr inspection required")
+        version = subprocess.run(["tar", "--version"], capture_output=True, text=True, check=True)
+        if "GNU tar" not in version.stdout:
+            self.skipTest("GNU tar required for namespace selection witness")
+        with tempfile.TemporaryDirectory(prefix="nonuser-xattr-witness-") as directory:
+            root = Path(directory)
+            source = root / "record_xattr.c"
+            source.write_text(r'''#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+static int record(const char *name) {
+    FILE *out = fopen(getenv("XATTR_LOG"), "a");
+    if (!out) return -1;
+    fprintf(out, "%s\n", name);
+    fclose(out);
+    return 0;
+}
+int setxattr(const char *p, const char *n, const void *v, size_t s, int f) { return record(n); }
+int lsetxattr(const char *p, const char *n, const void *v, size_t s, int f) { return record(n); }
+int fsetxattr(int fd, const char *n, const void *v, size_t s, int f) { return record(n); }
+''')
+            library = root / "record_xattr.so"
+            subprocess.run(["cc", "-shared", "-fPIC", "-o", str(library), str(source)],
+                           check=True, capture_output=True)
+            archive = root / "synthetic.tar"
+            with tarfile.open(archive, "w", format=tarfile.PAX_FORMAT) as saved:
+                member = tarfile.TarInfo("fixture")
+                member.size = 1
+                # Intentionally invalid capability bytes, even if interception fails.
+                member.pax_headers["SCHILY.xattr.security.capability"] = "synthetic-not-a-capability"
+                saved.addfile(member, io.BytesIO(b"x"))
+            for include_all in (False, True):
+                dest = root / str(include_all)
+                dest.mkdir()
+                log = root / (str(include_all) + ".log")
+                env = dict(os.environ, LD_PRELOAD=str(library), XATTR_LOG=str(log))
+                flags = ["--xattrs-include=*"] if include_all else []
+                result = subprocess.run(["tar", "--xattrs", *flags, "-xf", str(archive), "-C", str(dest)],
+                                        env=env, capture_output=True, check=True)
+                self.assertFalse(result.stderr, result.stderr)
+                selected = log.read_text().splitlines() if log.exists() else []
+                self.assertEqual(selected, ["security.capability"] if include_all else [])
+                self.assertNotIn("security.capability", os.listxattr(dest / "fixture"))
+
     def test_corrupt_backup_never_stops_or_displaces_live_artifacts(self):
         self.snapshot_target()
         (self.vm.backup() / "state.tar").write_bytes(b"corrupt")
