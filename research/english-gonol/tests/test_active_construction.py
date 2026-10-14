@@ -120,3 +120,23 @@ def test_full_workflow_covers_admission_dependencies():
     for name in closure:
         path = f'research/english-gonol/english_gonol/{name}'
         assert any(fnmatch(path, pattern) for pattern in filters), path
+
+
+def test_workflow_tests_merge_tree_and_binds_selected_source_bytes():
+    import yaml
+    workspace = Path(entry.__file__).resolve().parents[1]
+    root = workspace.parents[1]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(),
+                         Loader=yaml.BaseLoader)
+    steps = workflow['jobs']['full-corpus']['steps']
+    checkout = next(step for step in steps if step.get('uses', '').startswith('actions/checkout@'))
+    assert 'ref' not in checkout.get('with', {}), 'PR tests must use the generated merge tree'
+    graph_check = next(step['run'] for step in steps
+                       if step.get('name') == 'Verify exact participant graph and unchanged source reader')
+    assert "['active_construction']['source_commit']" in graph_check
+    assert "['git','show',selected+':'+path]" in graph_check
+    assert "pathlib.Path(path).read_bytes()==subprocess.check_output" in graph_check
+    acquisition = next(step for step in steps
+                       if step.get('name') == 'Acquire declared Unicode release and license')
+    assert 'stack-tested-merge.txt' in acquisition['run']
+    assert 'SOURCE_HEAD' in acquisition['env']

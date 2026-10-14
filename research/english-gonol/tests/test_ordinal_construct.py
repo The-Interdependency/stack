@@ -324,3 +324,87 @@ def test_second_unicode_file_is_independently_hash_bound(tmp_path, monkeypatch):
                         sha256((root / 'UnicodeData.txt').read_bytes()).hexdigest())
     with pytest.raises(ValueError, match='DerivedCoreProperties.txt'):
         implementation.unicode_admission(root)
+
+
+def test_unicode_read_refuses_oversize_before_open(tmp_path, monkeypatch):
+    path = tmp_path / 'oversize.txt'
+    with path.open('wb') as stream:
+        stream.truncate(implementation.UCD_MAX_BYTES + 1)
+    def forbidden_open(*args, **kwargs):
+        raise AssertionError('oversize file was opened')
+    monkeypatch.setattr(implementation.os, 'open', forbidden_open)
+    with pytest.raises(ValueError, match='acquisition budget'):
+        implementation._read_unicode_file(path)
+
+
+@pytest.mark.parametrize('kind', ['symlink', 'directory', 'fifo'])
+def test_unicode_read_refuses_nonregular_inputs(tmp_path, kind):
+    path = tmp_path / 'input'
+    if kind == 'symlink':
+        target = tmp_path / 'target'
+        target.write_bytes(b'not a release')
+        path.symlink_to(target)
+    elif kind == 'directory':
+        path.mkdir()
+    else:
+        if not hasattr(implementation.os, 'mkfifo'):
+            pytest.skip('platform has no FIFO filesystem objects')
+        implementation.os.mkfifo(path)
+    with pytest.raises(ValueError, match='regular nonsymlink'):
+        implementation._read_unicode_file(path)
+
+
+def test_unicode_stream_read_is_capped_even_when_file_grows(tmp_path, monkeypatch):
+    from contextlib import contextmanager
+    path = tmp_path / 'growing.txt'
+    path.write_bytes(b'x')
+    monkeypatch.setattr(implementation, 'UCD_MAX_BYTES', 32)
+    fdopen = implementation.os.fdopen
+    requested = []
+    @contextmanager
+    def tracked_open(fd, mode):
+        with fdopen(fd, mode) as stream:
+            class Tracked:
+                def fileno(self):
+                    return stream.fileno()
+                def read(self, count):
+                    requested.append(count)
+                    with path.open('ab') as writer:
+                        writer.write(b'x' * 64)
+                    return stream.read(count)
+            yield Tracked()
+    monkeypatch.setattr(implementation.os, 'fdopen', tracked_open)
+    with pytest.raises(ValueError, match='acquisition budget'):
+        implementation._read_unicode_file(path)
+    assert requested == [33]
+
+
+def test_unicode_input_replacement_during_open_refuses(tmp_path, monkeypatch):
+    path = tmp_path / 'swapped.txt'
+    path.write_bytes(b'first')
+    replacement = tmp_path / 'replacement'
+    replacement.write_bytes(b'second')
+    original_open = implementation.os.open
+    def replacing_open(name, flags):
+        replacement.replace(path)
+        return original_open(name, flags)
+    monkeypatch.setattr(implementation.os, 'open', replacing_open)
+    with pytest.raises(ValueError, match='changed'):
+        implementation._read_unicode_file(path)
+
+
+def test_bounded_unicode_snapshot_preserves_exact_bytes(tmp_path):
+    path = tmp_path / 'regular.txt'
+    path.write_bytes(b'exact\x00bytes\n')
+    assert implementation._read_unicode_file(path) == b'exact\x00bytes\n'
+
+
+def test_build_refuses_oversize_ucd_before_source_or_copy(tmp_path):
+    path = tmp_path / 'ucd'
+    path.mkdir()
+    with (path / 'UnicodeData.txt').open('wb') as stream:
+        stream.truncate(implementation.UCD_MAX_BYTES + 1)
+    output = tmp_path / 'must-not-be-created' / 'output'
+    with pytest.raises(ValueError, match='acquisition budget'):
+        implementation.build(tmp_path / 'missing-admission', path, output)
+    assert not output.parent.exists()

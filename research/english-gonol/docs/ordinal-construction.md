@@ -106,5 +106,10 @@ The layout choices are explicit and replaceable only through a new profile and
 full rebuild. Native Mobius lift, global transport/definition-origin attachment,
 operator function semantics, inference quality and UCHC release remain separate
 questions. Local placement does not manufacture evidence for those questions.
-Complete hosted construction and replay have succeeded. See `ordinal-questions.md`
-for unresolved construction laws and the separate downstream migration work.
+Earlier complete-corpus receipts establish only their recorded implementation.
+Every implementation change requires its own hosted construction and replay;
+inspect the exact run, tested merge tree and generated manifest before assigning
+that standing. CI compares the selected source pin with the actual module bytes.
+Unicode inputs are regular nonsymlink files, read within the acquisition budget
+and matched to both pinned complete-release hashes before parsing or copying.
+See `ordinal-questions.md` for unresolved construction laws and migration work.

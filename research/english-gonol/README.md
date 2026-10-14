@@ -22,8 +22,9 @@ affixiation** GitHub workflow can also be run manually from Actions. It builds
 and independently replays the complete pinned corpus through the supported
 entrypoint. An existing output directory is never overwritten.
 
-The delivered full construction has 4,698 public scalar positions, 103,053 closed
-words, 420,006 frames and 4,792,299 placements. Source and geometry receipts belong
+The prior full construction recorded 4,698 public scalar positions, 103,053 closed
+words, 420,006 frames and 4,792,299 placements. A changed implementation requires
+a new exact-source build and replay; prior receipts do not certify current bytes. Source and geometry receipts belong
 to `english.ordinal/1`; old counts and receipts are not interchangeable with it.
 These counts establish constructed scope, not semantic or inference quality.
 

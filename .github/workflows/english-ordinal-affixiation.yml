@@ -20,7 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -83,12 +82,21 @@ jobs:
           for item in graph['repositories']:
               if item['repository'] in roots:
                   assert subprocess.check_output(['git','-C',roots[item['repository']],'rev-parse','HEAD'],text=True).strip()==item['commit']
+          active_base=json.loads(pathlib.Path('research/english-gonol/BASE.json').read_text())
+          selected=active_base['active_construction']['source_commit']
+          assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
+          subprocess.run(['git','fetch','--no-tags','--depth=1','origin',selected],check=True)
+          for name in ('ordinal_construct.py','__main__.py'):
+              path='research/english-gonol/english_gonol/'+name
+              assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',selected+':'+path]),path
           base=next(r['commit'] for r in graph['repositories'] if r['repository']=='The-Interdependency/stack')
           for name in IMPLEMENTATION_FILES:
               path='research/english-gonol/english_gonol/'+name
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',base+':'+path]),path
           PY
       - name: Acquire declared Unicode release and license
+        env:
+          SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           mkdir -p _inputs/ucd _evidence
           for name in UnicodeData.txt DerivedCoreProperties.txt ReadMe.txt; do
@@ -98,7 +106,8 @@ jobs:
           curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
             https://www.unicode.org/license.txt -o _inputs/ucd/LICENSE-Unicode.txt
           sha256sum _inputs/ucd/* | tee _evidence/unicode-acquisition.sha256
-          git rev-parse HEAD > _evidence/stack-head.txt
+          git rev-parse HEAD > _evidence/stack-tested-merge.txt
+          printf '%s\n' "$SOURCE_HEAD" > _evidence/stack-head.txt
           git -C _inputs/ucns rev-parse HEAD > _evidence/ucns-head.txt
           git -C _inputs/oewn rev-parse HEAD > _evidence/corpus-head.txt
       - name: Unit and cross-repository geometry tests

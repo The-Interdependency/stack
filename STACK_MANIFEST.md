@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `74e65b830160887dd2ea27d84cb6b53b91135339b64acb7d51d0f8c407569297`
+  `70578d9ee468b21165b7bc7fedaf799fb6e84245246302ff25cbc7139deb0635`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -64,7 +64,7 @@ selection, and see [the supported build](research/english-gonol/README.md).
 
 | Participant ID | Repository | Exact commit | Relation |
 |---|---|---|---|
-| `ordinal-source` | `The-Interdependency/stack` | `0e0ea9ebe64803e810793dd4780253d7d202fecc` | selected ordinal implementation and default route; source baseline is not independent UCHC release authority |
+| `ordinal-source` | `The-Interdependency/stack` | `37adccb4c079199d915a49e475af0f426fed0943` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
 | `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
 | `ordinal-admission` | `The-Interdependency/stack` | `e3eb83764355b4b760a79323cda6a6d75c3a501a` | unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry |
 | `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
