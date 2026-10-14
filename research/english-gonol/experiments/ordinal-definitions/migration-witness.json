@@ -1,0 +1,31 @@
+{
+  "schema": "english.ordinal-definition-migration-witness/1",
+  "status": "SURVIVED",
+  "scope": "Every expanded-carrier character and inherited definition; all ten number-name interiors match prior complete corpus word receipts",
+  "public_gonol_size": 4698,
+  "source_words": 103053,
+  "source_receipt": "26ab095f73306ff4fbd9f67d1c282c1df79f926bb75cc081c879db8a6989b58a",
+  "public_gonol_sha256": "dc8740a258b95688882b70d4faaa8b96b8f903990f459f4804e779879fca043d",
+  "definition_receipt": "4889437942cbbc9b9c6d7cb85f466b753669ac2169f6eda3da621ba96c4ed80e",
+  "counts": {
+    "characters": 4698,
+    "definitions": 4757,
+    "number_names": 10,
+    "unresolved": 4643
+  },
+  "behavior": {
+    "hyphen_roles": ["operator", "punctuation"],
+    "3_number_name": "three",
+    "try_ing": "preserve-y",
+    "try_ed": "y-to-i"
+  },
+  "source_table_sha256": "ba431162c065a033d60f66bfb84d62d93f55ca6ca954ec59756c4bacc854827d",
+  "source_loader_sha256": "0fe9c8a0ee263c008e530e3df2b521ad4ccb08c50c59939872d7b6fcb9f8e67c",
+  "implementation_sha256": "8fac12851ab018ccc6355dddf8bf67b52e70706a21c9020ad8dc555a9395d8f9",
+  "local_checks": {"passed": 85, "failed": 0, "scope": "new definition tests, current ordinal tests, packaged pinned UCNS ordinal tests; unused historical constructor import poisoned in local harness"},
+  "hmmm": [
+    "Uses supplied complete source/geometry databases, not current whole-repository CI or a new full-corpus admission replay.",
+    "New scalar definitions absent from the inherited source remain explicitly unresolved.",
+    "SPACE local-frame and definition-source links are preserved; global geometric transport is not established."
+  ]
+}

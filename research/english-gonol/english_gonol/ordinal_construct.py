@@ -43,7 +43,7 @@ from ucns.ordinal_affixiation import Carrier, Participant, affixiate
 #   tests: tests/test_ordinal_construct.py
 #   rollout: explicit replacement profile english.ordinal/1; legacy receipts remain historical
 #   rollback: remove candidate import/output; no silent profile downgrade
-#   unresolved: native Mobius lift, global frame attachment, semantic interpretation
+#   unresolved: global SPACE-frame transport, source-uncovered definitions, semantic interpretation
 # === END MODULE_BUILD ===
 # === CONTRACTS ===
 # id: english_expanded_repertoire
@@ -71,12 +71,12 @@ UCD_RELEASE_SHA256 = {
 MANIFEST_BOUNDARIES = (
     'Local frame placement is constructed; global origin attachment is not inferred.',
     'Layout recipes are explicit profile choices, not discovered semantic laws.',
-    'Native Mobius lift and inference quality remain untested.',
+    'Native Mobius lift is not required; inference quality remains untested.',
 )
 MANIFEST_KEYS = frozenset((
     'schema', 'source_receipt', 'source', 'ucns_commit', 'implementation_sha256',
     'public_sha256', 'glyph_carrier_receipt', 'word_carrier_receipt', 'counts',
-    'geometry_receipt', 'hmmm',
+    'geometry_receipt', 'character_definitions_receipt', 'hmmm',
 ))
 LOGIC = tuple('¬∧∨⊻⊼⊽→←↔⇒⇐⇔∀∃∄⊢⊣⊤⊥⊨⊭⊬⊮⊯≡≠=<>≤≥')
 LAYOUT = 'legacy-anchor-balanced-insertion/1'
@@ -389,6 +389,9 @@ def build(admission: Path, ucd: Path, output: Path) -> dict:
             legacy = tuple(source_manifest['metadata']['producer']['carrier'])
             public = repertoire(tuple(chars.values()), legacy, stage / 'ucd')
             factory = Factory(public, words, source_manifest['receipt_sha256'])
+            from english_gonol.ordinal_definitions import build_definitions
+            definitions = build_definitions(factory)
+            _json_write(stage / 'character-definitions.json', definitions)
             _json_write(stage / 'public-gonol.json', public)
             _json_write(stage / 'word-carrier.json', {
                 'layout': WORD_LAYOUT, 'identities': list(factory.word_carrier.identities),
@@ -421,6 +424,7 @@ def build(admission: Path, ucd: Path, output: Path) -> dict:
                             'glyph_carrier_receipt': factory.glyph_carrier.receipt,
                             'word_carrier_receipt': factory.word_carrier.receipt,
                             'counts': counts, 'geometry_receipt': _geometry_receipt(geometry),
+                            'character_definitions_receipt': digest(definitions),
                             'hmmm': list(MANIFEST_BOUNDARIES)}
             _json_write(stage / 'manifest.json', manifest)
         report = verify(stage)
@@ -472,7 +476,7 @@ def _validate_manifest(manifest: object) -> None:
             or any(type(v) is not int or v <= 0 for v in counts.values())):
         raise ValueError('manifest counts must be positive integer frame/placement counts')
     for key in ('source_receipt', 'public_sha256', 'glyph_carrier_receipt',
-                'word_carrier_receipt', 'geometry_receipt'):
+                'word_carrier_receipt', 'geometry_receipt', 'character_definitions_receipt'):
         value = manifest[key]
         if (type(value) is not str or len(value) != 64
                 or any(c not in '0123456789abcdef' for c in value)):
@@ -505,6 +509,11 @@ def verify(output: Path) -> dict:
         if (factory.glyph_carrier.receipt != manifest['glyph_carrier_receipt'] or
                 factory.word_carrier.receipt != manifest['word_carrier_receipt']):
             raise ValueError('carrier receipt mismatch')
+        from english_gonol.ordinal_definitions import verify_definitions
+        definitions = _json_read(output / 'character-definitions.json')
+        if digest(definitions) != manifest['character_definitions_receipt']:
+            raise ValueError('character definition receipt mismatch')
+        definition_layer = verify_definitions(factory, definitions)
         word_receipts = {}
         character_ids = {c: cid for cid, c in chars.items()}
         with closing(open_readonly(output / 'geometry.db')) as db:
@@ -547,7 +556,8 @@ def verify(output: Path) -> dict:
         return {'schema': 'english.ordinal-verification/1', 'status': 'SURVIVED',
                 'scope': 'complete pinned corpus; source recovery plus every local placement',
                 'public_gonol_size': len(public['identities']), 'words': len(words),
-                **counts, 'manifest_sha256': digest(manifest),
+                **counts, 'character_definitions': dict(definition_layer.counts),
+                'manifest_sha256': digest(manifest),
                 'source_receipt': manifest['source_receipt'], 'hmmm': list(MANIFEST_BOUNDARIES)}
 
 

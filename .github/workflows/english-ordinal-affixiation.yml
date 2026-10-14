@@ -10,6 +10,7 @@ on:
       - 'STACK_MANIFEST.md'
       - 'research/english-gonol/tests/test_active_construction.py'
       - 'research/english-gonol/tests/test_ordinal_construct.py'
+      - 'research/english-gonol/tests/test_ordinal_definitions.py'
       - 'research/english-gonol/docs/ordinal-*'
       - '.github/workflows/english-ordinal-affixiation.yml'
 permissions:
@@ -70,6 +71,24 @@ jobs:
           python -m pip install uv==0.11.18 PyYAML==6.0.2
           uv sync --project _inputs/ucns --locked --python python --extra test
           uv pip install --python _inputs/ucns/.venv/bin/python PyYAML==6.0.2
+      - name: Acquire declared Unicode release and license
+        env:
+          SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p _inputs/ucd _evidence
+          for name in UnicodeData.txt DerivedCoreProperties.txt ReadMe.txt; do
+            curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+              "https://www.unicode.org/Public/18.0.0/ucd/$name" -o "_inputs/ucd/$name"
+          done
+          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
+            https://www.unicode.org/license.txt -o _inputs/ucd/LICENSE-Unicode.txt
+          sha256sum _inputs/ucd/* | tee _evidence/unicode-acquisition.sha256
+          git rev-parse HEAD > _evidence/stack-tested-merge.txt
+          printf '%s\n' "$SOURCE_HEAD" > _evidence/stack-head.txt
+          git -C _inputs/ucns rev-parse HEAD > _evidence/ucns-head.txt
+          git -C _inputs/oewn rev-parse HEAD > _evidence/corpus-head.txt
+          # CI source provenance is separate from the artifact verifier's data contract.
+          cp research/english-gonol/docs/ordinal-work-graph.json _evidence/source-work-graph.json
       - name: Verify exact participant graph and unchanged source reader
         env:
           PYTHONPATH: research/english-gonol
@@ -102,6 +121,9 @@ jobs:
           assert len(selected)==40 and all(c in '0123456789abcdef' for c in selected)
           subprocess.run(['git','fetch','--no-tags','--depth=1','origin',selected],check=True)
           for relative in ('english_gonol/ordinal_construct.py','english_gonol/__main__.py',
+                           'english_gonol/ordinal_definitions.py',
+                           'english_gonol/language/character_definitions.py',
+                           'english_gonol/language/data/character_definitions_v1.json',
                            'ACTIVE_CONSTRUCTION.json','docs/ordinal-work-graph.json'):
               path='research/english-gonol/'+relative
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',selected+':'+path]),path
@@ -118,24 +140,6 @@ jobs:
               path='research/english-gonol/english_gonol/'+name
               assert pathlib.Path(path).read_bytes()==subprocess.check_output(['git','show',base+':'+path]),path
           PY
-      - name: Acquire declared Unicode release and license
-        env:
-          SOURCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
-        run: |
-          mkdir -p _inputs/ucd _evidence
-          for name in UnicodeData.txt DerivedCoreProperties.txt ReadMe.txt; do
-            curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
-              "https://www.unicode.org/Public/18.0.0/ucd/$name" -o "_inputs/ucd/$name"
-          done
-          curl --fail --location --retry 3 --proto '=https' --tlsv1.2 \
-            https://www.unicode.org/license.txt -o _inputs/ucd/LICENSE-Unicode.txt
-          sha256sum _inputs/ucd/* | tee _evidence/unicode-acquisition.sha256
-          git rev-parse HEAD > _evidence/stack-tested-merge.txt
-          printf '%s\n' "$SOURCE_HEAD" > _evidence/stack-head.txt
-          git -C _inputs/ucns rev-parse HEAD > _evidence/ucns-head.txt
-          git -C _inputs/oewn rev-parse HEAD > _evidence/corpus-head.txt
-          # CI source provenance is separate from the artifact verifier's data contract.
-          cp research/english-gonol/docs/ordinal-work-graph.json _evidence/source-work-graph.json
       - name: Unit and cross-repository geometry tests
         env:
           PYTHONPATH: research/english-gonol
@@ -143,6 +147,7 @@ jobs:
           _inputs/ucns/.venv/bin/python -m pytest -q \
             _inputs/ucns/tests/test_ordinal_affixiation.py \
             research/english-gonol/tests/test_ordinal_construct.py \
+            research/english-gonol/tests/test_ordinal_definitions.py \
             research/english-gonol/tests/test_active_construction.py \
             | tee _evidence/tests.txt
       - name: Build complete source admission then the replacement geometry

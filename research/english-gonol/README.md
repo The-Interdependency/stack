@@ -63,10 +63,12 @@ sealed admission and explicitly historical replay; retention grants no current
 geometry authority. The supported CLI rejects retired profile commands and does
 not silently return an old artifact when the ordinal constructor is unavailable.
 
-The prior definition method and applicable functions remain required: reconstruct
-them over the new base rather than discard their meanings or restore their old
-geometry. [Answer 4](docs/ordinal-questions.md) owns this inheritance instruction,
-its inspected source bindings and the outstanding preservation/replay witnesses.
+The selected build reconstructs the inherited definition layer over the expanded
+carrier in required `character-definitions.json`, bound by its manifest digest.
+Independent replay checks every entry, relation, placement and closed interior;
+verified entries reuse the previous final-y behavior. The historical constructor
+is never used for these closures. [Answer 4](docs/ordinal-questions.md) owns the
+source bindings, preservation tests, complete-carrier witness and remaining unknowns.
 
 Historical documentation and evidence:
 
@@ -97,9 +99,8 @@ metrics are not renamed as ordinal measurements.
 
 ## hmmm
 
-[Answers and remaining work](docs/ordinal-questions.md) separate the settled
-radius/angle rule, SPACE references and inherited definition method from
-outstanding implementation witnesses. Native Mobius integration is not required
-by this profile. Only question 5, vocabulary growth, remains a construction
-question; attachment verification, definition reconstruction/replay and downstream
-inference evidence remain engineering/evidence boundaries.
+[Answers and remaining work](docs/ordinal-questions.md) distinguish the implemented
+inherited definitions from current-head full-corpus and downstream evidence.
+SPACE is the specified attachment reference; global transport still needs its
+witness. Native Mobius integration is not required. Vocabulary growth is the
+remaining construction question; source-uncovered definitions remain explicit.

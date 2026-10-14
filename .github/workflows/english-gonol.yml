@@ -122,11 +122,12 @@ jobs:
         run: |
           python -m pytest -q tests \
             --ignore=tests/test_ordinal_construct.py \
+            --ignore=tests/test_ordinal_definitions.py \
             --ignore=tests/test_active_construction.py
 
       - name: Isolated ordinal construction tests
         working-directory: research/english-gonol
-        run: ../../_deps/ordinal-venv/bin/python -m pytest -q tests/test_ordinal_construct.py tests/test_active_construction.py
+        run: ../../_deps/ordinal-venv/bin/python -m pytest -q tests/test_ordinal_construct.py tests/test_ordinal_definitions.py tests/test_active_construction.py
 
       - name: Retain full-corpus metric-origin evidence
         uses: actions/upload-artifact@v7.0.1

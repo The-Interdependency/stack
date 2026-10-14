@@ -283,7 +283,8 @@ def manifest_fixture():
         'implementation_sha256': implementation.file_hash(Path(implementation.__file__)),
         'public_sha256': 'b' * 64, 'glyph_carrier_receipt': 'c' * 64,
         'word_carrier_receipt': 'd' * 64, 'counts': {'frames': 1, 'placements': 1},
-        'geometry_receipt': 'e' * 64, 'hmmm': list(implementation.MANIFEST_BOUNDARIES),
+        'geometry_receipt': 'e' * 64, 'character_definitions_receipt': 'f' * 64,
+        'hmmm': list(implementation.MANIFEST_BOUNDARIES),
     }
 
 
