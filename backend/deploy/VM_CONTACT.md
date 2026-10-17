@@ -405,7 +405,10 @@ require(all((target[k].startswith('/') for k in ('root', 'admin_socket', 'token_
 root = pathlib.Path(target["root"]).resolve()
 install = pathlib.Path("/opt/vm-mcp").resolve()
 require(root != pathlib.Path('/') and root != install and (root not in install.parents) and (install not in root.parents), 'workspace overlaps install')
-require(root.is_dir() and any((p.name != '.vm-mcp-home' for p in root.iterdir())), 'workspace must exist and be nonempty')
+# A preserved root (the inventoried one) may be empty; a newly chosen root must hold data.
+preserved = root == pathlib.Path(state['home']).parent.resolve()
+require(root.is_dir(), 'workspace must exist and be a directory')
+require(preserved or any((p.name != '.vm-mcp-home' for p in root.iterdir())), 'a changed workspace root must exist and be nonempty')
 require(not re.search('[\\s%\\\\"\']', target['root']), 'hmmm: pinned installer cannot represent this workspace drop-in safely')
 # Verify the completed archive without touching the live deployment.
 h = hashlib.sha256()
@@ -462,6 +465,11 @@ require(pathlib.Path('/opt/vm-mcp/SOURCE_COMMIT').read_text().strip() == 'e74ce1
 PY
 )
 ```
+
+The workspace guard accepts the preserved (inventoried) root whether or not it holds
+data; it must still exist and be a directory. Only a root changed in `target.json`
+must also be nonempty, so an edit cannot silently point the service at an empty one.
+A root counts as preserved when it resolves to the parent of the U1 state's service-user home.
 
 Expect `rc=0`. The Python result is initialized by the actual invocation, so an
 interactive shell's old `rc` cannot turn success into failure. On any failure after
@@ -521,7 +529,10 @@ def check(label, passed):
 for key, field in (("VM_MCP_ROOT", "root"), ("VM_MCP_PROFILE", "profile"), ("VM_MCP_PORT", "port"), ("VM_MCP_ADMIN_SOCKET", "admin_socket")):
     check(key + " preserved", env.get(key) == target[field])
 check("target service home", pwd.getpwnam("vmmcp").pw_dir == target["root"].rstrip("/") + "/.vm-mcp-home")
-check("workspace not empty", any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir()))
+state = json.loads((B / "state.json").read_text())
+preserved = pathlib.Path(target["root"]).resolve() == pathlib.Path(state["home"]).parent.resolve()
+check("workspace exists" + (" (preserved root, may be empty)" if preserved else " and is not empty"),
+      pathlib.Path(target["root"]).is_dir() and (preserved or any(p.name != ".vm-mcp-home" for p in pathlib.Path(target["root"]).iterdir())))
 unit_result = subprocess.run(["systemctl", "show", "vm-mcp.service",
                               "--property=ReadWritePaths,ProtectSystem"], check=True, text=True, capture_output=True)
 unit = dict(line.split("=", 1) for line in unit_result.stdout.splitlines() if "=" in line)
