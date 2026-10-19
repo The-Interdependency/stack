@@ -391,10 +391,6 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-if __name__ == "__main__":
-    raise SystemExit(main())
-
-
 def field_to_presentation(field: Any, *, plane_id: str = "plane-0") -> dict[str, Any]:
     """Project engine field state into a strict presentation snapshot.
 
@@ -459,6 +455,23 @@ def uchc_http_query(uchc: Any, operation: str, body: Mapping[str, Any]) -> Any:
                 raise ProtocolError("UCHC input requires source_id")
             return uchc.resolve_text(source, source_id=source_id).to_dict()
         return uchc.construct(source)
+    if operation == "english.exact_utf8":
+        import base64
+        data = body.get("utf8_base64")
+        source_id = body.get("source_id")
+        if type(data) is not str or type(source_id) is not str or not source_id:
+            raise ProtocolError("UTF-8 query needs utf8_base64 and source_id")
+        raw = base64.b64decode(data, validate=True)
+        if len(raw) > 65536:
+            raise ProtocolError("UCHC input exceeds transport byte limit")
+        return uchc.resolve_utf8(raw, source_id=source_id).to_dict()
+    if operation == "english.definition_candidates":
+        frame = body.get("frame")
+        if not isinstance(frame, dict):
+            raise ProtocolError("definition candidate query requires native frame")
+        raw = json.dumps(frame, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=False).encode("utf-8")
+        return uchc.definition_candidates(uchc.replay(raw))
     if operation == "english.word":
         surface = body.get("surface")
         if type(surface) is not str:
@@ -486,3 +499,7 @@ def uchc_http_query(uchc: Any, operation: str, body: Mapping[str, Any]) -> Any:
         return uchc.compose(frame, relation=("ordered-text" if operation ==
             "english.ordered_text_composition" else "sentence"))
     raise ProtocolError(f"UCHC operation {operation!r} is not exposed over HTTP")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
