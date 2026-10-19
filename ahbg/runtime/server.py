@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import json
 import threading
+from contextlib import ExitStack
 from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -50,6 +51,8 @@ class LiveSession:
     agent: Any
     out_dir: Path
     result: Any | None = None
+    language_evidence: tuple[Mapping[str, Any], ...] = ()
+    language_messages: tuple[Mapping[str, Any], ...] = ()
     # Turn-stepping state is replayed from persisted events on each request
     # so an HTTP client can always reload the exact canonical state.
 
@@ -70,9 +73,10 @@ class LiveSession:
             opened=field,
             chain=chain,
             config=self.config,
-            turn_messages=(),
+            turn_messages=self.language_messages,
             capabilities=capabilities,
             ledger=self._ledger,
+            language_evidence=self.language_evidence,
         ).as_dict()
 
     def _fresh_field(self):
@@ -142,6 +146,8 @@ class LiveSession:
 
         _keep.dump_field(field, chain, self.out_dir / "state")
         done = field.turn >= self.config.turns
+        self.language_evidence = ()
+        self.language_messages = ()
         next_observation = None if done else self.start_observation()
         return effect.as_dict(), next_observation, done
 
@@ -167,7 +173,15 @@ class _Sessions:
         return gate.as_dict()
 
 
-def make_server(port: int = 8765) -> ThreadingHTTPServer:
+def make_server(port: int = 8765, *, bind: str = "127.0.0.1",
+                uchc: Any | None = None) -> ThreadingHTTPServer:
+    """Operator-selected local read-only UCHC queries plus the game HTTP bridge.
+
+    There is intentionally no HTTP wheel/database path selection. Untrusted
+    clients cannot load different modules or corpus artifacts.
+    """
+    if uchc is not None and bind not in {"127.0.0.1", "::1", "localhost"}:
+        raise ValueError("UCHC HTTP endpoint requires loopback binding")
     sessions = _Sessions()
 
     class Handler(BaseHTTPRequestHandler):
@@ -204,6 +218,13 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
         def do_GET(self) -> None:  # noqa: N802
             parsed = urlparse(self.path)
             parts = [part for part in parsed.path.split("/") if part]
+            if parts == ["uchc", "capabilities"]:
+                if uchc is None:
+                    self._json({"error": "UCHC not configured"}, 404)
+                else:
+                    self._json({"capabilities": uchc.capabilities,
+                                "provenance": uchc.provenance})
+                return
             if parts == ["board.html"] or parts == ["board.js"] or parts == ["board.css"] or parts == ["sample_snapshot.json"]:
                 self._static(parts[0])
                 return
@@ -239,6 +260,50 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
             parsed = urlparse(self.path)
             parts = [part for part in parsed.path.split("/") if part]
             try:
+                if parts == ["uchc", "query"]:
+                    if uchc is None:
+                        self._json({"error": "UCHC not configured"}, 404)
+                        return
+                    body = self._read_json()
+                    if not isinstance(body, Mapping):
+                        raise ProtocolError("UCHC query must be an object")
+                    operation = body.get("operation")
+                    if type(operation) is not str:
+                        raise ProtocolError("UCHC operation must be text")
+                    uchc.require_capability(operation)
+                    result = uchc_http_query(uchc, operation, body)
+                    self._json({"standing": "source-bound", "operation": operation,
+                                "result": result, "provenance": uchc.provenance})
+                    return
+                if len(parts) == 3 and parts[0] == "session" and parts[2] == "language":
+                    if uchc is None:
+                        self._json({"error": "UCHC not configured"}, 404)
+                        return
+                    session = sessions.get(parts[1])
+                    if session is None:
+                        self._json({"error": "unknown session"}, 404)
+                        return
+                    body = self._read_json()
+                    if not isinstance(body, Mapping) or type(body.get("text")) is not str:
+                        raise ProtocolError("language evidence requires text")
+                    if len(body["text"].encode("utf-8")) > 65536:
+                        raise ProtocolError("language evidence exceeds transport byte limit")
+                    messages = (*session.language_messages, {"text": body["text"],
+                                                             "source": "http-language"})
+                    prefix = f"ahbg:{session.session_id}:turn:{session._field.turn if hasattr(session, '_field') else 0}"
+                    annotated = uchc.annotate_messages(list(messages), source_prefix=prefix)
+                    session.language_messages = messages
+                    session.language_evidence = annotated
+                    # Immutable evidence feed is separate from game mechanic state.
+                    session.out_dir.mkdir(parents=True, exist_ok=True)
+                    with (session.out_dir / "language.jsonl").open("a", encoding="utf-8") as stream:
+                        stream.write(json.dumps({"turn": session._field.turn,
+                                                 "provenance": uchc.provenance,
+                                                 "evidence": annotated[-1]},
+                                                ensure_ascii=False, sort_keys=True) + "\n")
+                    self._json({"evidence": annotated[-1],
+                                "observation": session.start_observation()})
+                    return
                 if parts == ["session"]:
                     body = self._read_json()
                     seed = int(body.get("seed", 1))
@@ -269,7 +334,7 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
                     self._json({"effect": effect, "observation": next_observation, "done": done})
                     return
                 self._json({"error": "not found"}, 404)
-            except ProtocolError as exc:
+            except (ProtocolError, ValueError, UnicodeError) as exc:
                 self._json({"error": str(exc)}, 422)
             except Exception as exc:  # pragma: no cover - defensive bridge surface
                 self._json({"error": f"{type(exc).__name__}: {exc}"}, 500)
@@ -277,7 +342,7 @@ def make_server(port: int = 8765) -> ThreadingHTTPServer:
         def log_message(self, *args: Any) -> None:  # quiet bridge
             return
 
-    return ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    return ThreadingHTTPServer((bind, port), Handler)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -286,15 +351,43 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="AHBG runtime HTTP bridge")
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--bind", default="127.0.0.1")
+    parser.add_argument("--uchc-database", type=Path)
+    parser.add_argument("--uchc-lock", type=Path)
+    parser.add_argument("--uchc-structural-field", type=Path)
+    parser.add_argument("--uchc-structural-lock", type=Path)
+    parser.add_argument("--uchc-require-complete", action="store_true")
+    parser.add_argument("--uchc-max-text-bytes", type=int, default=65536)
     args = parser.parse_args(argv)
 
-    server = make_server(args.port)
-    server.server_address = (args.bind, args.port)
-    print(f"ahbg runtime bridge on http://{args.bind}:{args.port}")
-    try:
-        server.serve_forever()
-    finally:
-        server.server_close()
+    with ExitStack() as stack:
+        if args.uchc_database is not None and args.uchc_structural_field is not None:
+            parser.error("UCHC versions cannot coexist in one Python interpreter")
+        reader = None
+        if args.uchc_database is not None:
+            if args.uchc_structural_lock is not None:
+                parser.error("a structural lock cannot select the input wheel")
+            from ahbg.integration.uchc import UchcSession, UchcSettings, DEFAULT_LOCK
+            reader = stack.enter_context(UchcSession(UchcSettings(
+                args.uchc_database, args.uchc_lock or DEFAULT_LOCK,
+                args.uchc_require_complete, args.uchc_max_text_bytes)))
+        elif args.uchc_structural_field is not None:
+            if args.uchc_lock is not None:
+                parser.error("an input lock cannot select the structural wheel")
+            from ahbg.integration.uchc_structural import (
+                UchcStructuralSession, UchcStructuralSettings, DEFAULT_STRUCTURAL_LOCK
+            )
+            reader = stack.enter_context(UchcStructuralSession(UchcStructuralSettings(
+                args.uchc_structural_field,
+                args.uchc_structural_lock or DEFAULT_STRUCTURAL_LOCK,
+                args.uchc_require_complete, args.uchc_max_text_bytes)))
+        elif args.uchc_lock is not None or args.uchc_structural_lock is not None:
+            parser.error("UCHC lock requires selected database or structural field")
+        server = make_server(args.port, bind=args.bind, uchc=reader)
+        try:
+            print(f"ahbg runtime bridge on http://{args.bind}:{args.port}")
+            server.serve_forever()
+        finally:
+            server.server_close()
     return 0
 
 
@@ -349,3 +442,47 @@ def field_to_presentation(field: Any, *, plane_id: str = "plane-0") -> dict[str,
         "feed": [{"turn": field.turn, "text": f"plane turn {field.turn}"}],
         "motions": [],
     }
+
+
+def uchc_http_query(uchc: Any, operation: str, body: Mapping[str, Any]) -> Any:
+    """One native operation; no action/geometry substitutions or file loading."""
+    from dataclasses import asdict
+    if operation in {"english.exact_text", "english.structural_construct"}:
+        source = body.get("text")
+        if type(source) is not str:
+            raise ProtocolError("UCHC query text must be str")
+        if len(source.encode("utf-8")) > 65536:
+            raise ProtocolError("UCHC query text exceeds transport byte limit")
+        if operation == "english.exact_text":
+            source_id = body.get("source_id")
+            if type(source_id) is not str or not source_id:
+                raise ProtocolError("UCHC input requires source_id")
+            return uchc.resolve_text(source, source_id=source_id).to_dict()
+        return uchc.construct(source)
+    if operation == "english.word":
+        surface = body.get("surface")
+        if type(surface) is not str:
+            raise ProtocolError("UCHC word surface must be str")
+        item = uchc.word(surface)
+        return None if item is None else asdict(item) if hasattr(item, "__dataclass_fields__") else item
+    if operation == "english.definition":
+        identity = body.get("identity")
+        if type(identity) is not int or identity < 1:
+            raise ProtocolError("UCHC definition identity must be positive integer")
+        item = uchc.definition(identity)
+        return asdict(item) if hasattr(item, "__dataclass_fields__") else item
+    if operation in {"english.frame_replay", "english.replay"}:
+        frame = body.get("frame")
+        if not isinstance(frame, dict):
+            raise ProtocolError("UCHC replay requires a native frame object")
+        recovered = uchc.replay(json.dumps(frame, sort_keys=True,
+                                    separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+                              if operation == "english.frame_replay" else frame)
+        return recovered.to_dict() if hasattr(recovered, "to_dict") else recovered
+    if operation in {"english.ordered_text_composition", "english.sentence_composition"}:
+        frame = body.get("frame")
+        if not isinstance(frame, dict):
+            raise ProtocolError("UCHC composition requires a native frame object")
+        return uchc.compose(frame, relation=("ordered-text" if operation ==
+            "english.ordered_text_composition" else "sentence"))
+    raise ProtocolError(f"UCHC operation {operation!r} is not exposed over HTTP")
