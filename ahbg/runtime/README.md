@@ -55,7 +55,9 @@ PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime play \
   --uchc-database /artifacts/construct.db
 ```
 
-This requires the exact installed wheel and verified complete corpus in the
+Or use `--uchc-structural-field /artifacts/structural-field` with the separately
+pinned UCHC `0.1.0a2` wheel. Both versions cannot load into one Python process.
+This requires the selected exact installed wheel and verified complete corpus in the
 [UCHC integration contract](../integration/UCHC.md). Messages retain their raw
 text; `language_evidence` adds only construction/admission observations, and
 `result.json` records the original UCHC identities and receipts. Missing or
