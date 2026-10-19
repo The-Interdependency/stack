@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
+          UCHC_CORPUS_REQUIRED=1 UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
             .clean/bin/python -I -m pytest -q stack/integration/uchc/tests/test_input.py --junitxml=evidence/integration.xml
           .clean/bin/python -I producer/tools/verify_inference_corpus.py \
             --database evidence/construct/construct.db \
