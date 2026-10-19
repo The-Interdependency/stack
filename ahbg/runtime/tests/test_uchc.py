@@ -100,6 +100,32 @@ class UchcRuntimeTests(unittest.TestCase):
         self.assertNotIn("uchc_evidence", result.turn_records[0])
         self.assertNotIn("uchc", result.config)
 
+    def test_structural_uchc_selects_separate_pinned_artifact(self):
+        agent = Agent()
+        fake = FakeVerifiedSession()
+        with patch("ahbg.integration.uchc_structural.UchcStructuralSession",
+                   return_value=fake) as opened:
+            result = run_plane(agent=agent, config=RuntimeConfig(
+                seed=5, turns=1, turn_messages={0: [{"text": "alpha"}]},
+                uchc_structural_field="/data/structural"
+            ), out_dir=self.root)
+        self.assertEqual(result.final_turn, 1)
+        self.assertEqual(opened.call_args.args[0].field_dir,
+                         Path("/data/structural"))
+        self.assertEqual(result.config["uchc"]["profile"], "english.structural/1")
+        self.assertEqual(agent.observations[0]["language_evidence"][0]
+                         ["message_ordinal"], 0)
+
+    def test_incompatible_candidate_versions_refuse_before_gameplay(self):
+        with self.assertRaisesRegex(ProtocolError, "mutually exclusive"):
+            run_plane(agent=Agent(), config=RuntimeConfig(
+                uchc_database="/a", uchc_structural_field="/b"
+            ), out_dir=self.root)
+        with self.assertRaisesRegex(ProtocolError, "input lock"):
+            run_plane(agent=Agent(), config=RuntimeConfig(
+                uchc_structural_field="/b", uchc_lock="/old"
+            ), out_dir=self.root)
+
     def test_uchc_settings_without_database_fail_closed(self):
         for settings in (
             RuntimeConfig(turns=0, uchc_lock="custom.json"),
