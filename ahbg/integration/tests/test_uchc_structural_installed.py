@@ -42,7 +42,9 @@ class StructuralInstalledTests(unittest.TestCase):
     def setUpClass(cls):
         raw = os.getenv("UCHC_STRUCTURAL_FIELD")
         if not raw:
-            raise AssertionError("UCHC_STRUCTURAL_FIELD is required (complete producer field)")
+            if os.environ.get("UCHC_CORPUS_REQUIRED") == "1":
+                raise AssertionError("UCHC_STRUCTURAL_FIELD is required (complete producer field)")
+            raise unittest.SkipTest("Full-corpus installed wheel gate runs in dedicated CI")
         cls.field_dir = Path(raw)
         cls.lock = ROOT / "ahbg" / "integration" / "UCHC_STRUCTURAL.json"
 
