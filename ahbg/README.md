@@ -20,6 +20,16 @@ The AHBG board is a **game projection of UCNS geometry**, not an independently i
 
 For implementation, depend on the canonical `ucns` package/source. In stack, `libs/ucns/` is the pinned canonical repository view and `research/ucns/` is noncanonical stack-local research; neither permits silently forking the geometry.
 
+## Native UCHC language construction
+
+AHBG now has an **optional native UCHC consumer**. A pinned clean-installed UCHC
+wheel supplies exact language input, source-bound word and definition records,
+full recovery, replay, and admission receipts. AHBG can inspect these results
+and pass read-only evidence to agents without defining new geometry, meanings,
+game actions, or consciousness criteria. Invalid wheel/database/receipt identity
+fails closed. See [the executable UCHC integration contract](integration/UCHC.md)
+and its full-corpus acceptance gate.
+
 ## Two coordination modes — do not mix them
 
 AHBG now has two different work modes.
