@@ -99,6 +99,7 @@ jobs:
       - name: Consume full native structural field inside AHBG
         env:
           UCHC_STRUCTURAL_FIELD: ${{ github.workspace }}/_state/structural
+          UCHC_CORPUS_REQUIRED: '1'
         run: |
           set -euo pipefail
           .uchc-a2/bin/python -m unittest discover -s ahbg/integration/tests \
