@@ -74,6 +74,7 @@ jobs:
               assert hashlib.file_digest(f, 'sha256').hexdigest() == lock['wheel_sha256']
           PY
           python -m venv .uchc-a2
+          .uchc-a2/bin/python -m pip install PyYAML==6.0.2
           .uchc-a2/bin/python -m pip install --no-index --no-deps /tmp/ahbg-uchc-a2-dist/uchc-0.1.0a2-py3-none-any.whl
       - name: Build and verify full structural corpus through installed UCHC
         run: |
