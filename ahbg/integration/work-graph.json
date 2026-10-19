@@ -45,8 +45,10 @@
       "reviewed_commit": "229110f92aac17f81ab8ccddbda813ca9b93af9a",
       "authority": "source-bound language construction and candidate inference input",
       "relation": "optional-observation-evidence-peer",
-      "integration": "not-in-core-mechanics",
-      "decision": "UCHC may later annotate language-bearing observations with source-bound construction evidence. It does not decide actions, truth, or consciousness and its falsified admission-cube harmonic hypothesis is not imported."
+      "integration": "receipt-bound-input-adapter-implemented; installed-wheel/full-corpus acceptance pending",
+      "decision": "AHBG reads exact UCHC native English construction through Stack's candidate-wheel verifier, attaches recoverable admission/definition receipts to language-bearing observations, and preserves unknowns. No action selection, neural readiness, sense selection, semantic truth, or geometry authority is transferred. The artifact is pinned independently of the Stack global UCHC view.",
+      "artifact_source_commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+      "artifact_lock": "research/zfae/UCHC_INPUT.json"
     },
     {
       "repository": "The-Interdependency/metapat",
@@ -90,6 +92,7 @@
     "Define and test the exact EDCM-to-TIWCG/AHBG conflict-state mapping before EDCM readouts can alter committed game state.",
     "Exercise the current-A0 HTTP adapter against a deployed exact A0 commit and preserve the resulting live provider/tool provenance receipt.",
     "Decide, as a separate AHBG integration change, whether AHBG adopts the native-first MSDMD readers now carried by the stack skill-lib snapshot.",
-    "The benchmark can produce evidence relevant to theories of nonhuman consciousness; no repository currently supplies a validated rule that turns AHBG behavior into a consciousness determination."
+    "The benchmark can produce evidence relevant to theories of nonhuman consciousness; no repository currently supplies a validated rule that turns AHBG behavior into a consciousness determination.",
+    "UCHC 0.1.0a2 structural profile, ordinal construction, and independent domain graduation require their own verified consumer migrations; they are not silently substituted for the current 0.1.0a1 input lock."
   ]
 }
