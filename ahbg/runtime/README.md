@@ -19,15 +19,16 @@ UCNS plane -> observe -> plan -> simultaneous resolution
   observe/plan/act contract for mobile/embedded clients.
 - `entitlements.py` — one entitlement, `benchmark_lab`; basic play and harness
   connectivity are free.
+- `../integration/uchc.py` — optional verified native UCHC text/word/definition/replay consumer. Input receipts enter observations and persisted run evidence; no semantic action authority. [Full contract](../integration/UCHC.md).
 - `engine.py` — binds the frozen engine modules by file path so
   `ahbg.runtime` and `ahbg.grok` never fight over the `ahbg` package name.
 
 ## Capability bound
 
-Advertised capabilities: `observe`, `plan`, `relocate`. `construct`/build is
-regulatory in the frozen engine — recorded as deferred, never emitted as an
-executable intent. The runtime rejects any intent outside an agent's advertised
-capabilities. A0 uses exactly this interface; there is no privileged A0 path.
+Advertised capabilities: `observe`, `plan`, `relocate`, `construct`. The runtime
+only executes construction against the UCNS-derived construction ledger and
+only accepts intents within the agent's advertised capabilities. A0 uses the
+same interface; there is no privileged A0 path.
 
 ## Usage guidance
 
@@ -45,6 +46,20 @@ PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime.server --port 8765
 # tests
 python -m unittest discover -s ahbg/runtime/tests -q
 ```
+
+## Optional UCHC consumption
+
+```bash
+PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime play \
+  --agent a0 --turns 8 --out /tmp/ahbg-uchc \
+  --uchc-database /artifacts/construct.db
+```
+
+This requires the exact installed wheel and verified complete corpus in the
+[UCHC integration contract](../integration/UCHC.md). Messages retain their raw
+text; `language_evidence` adds only construction/admission observations, and
+`result.json` records the original UCHC identities and receipts. Missing or
+altered inputs fail before the plane starts; partial admission stays explicit.
 
 ## Subprocess harness protocol
 
@@ -64,7 +79,6 @@ absent.
 
 ## hmmm
 
-- UCNS construction authority: `construct` remains regulatory until UCNS
-  defines construction state; the loop records defer effects and never builds.
+- UCHC sense selection, ordinal/structural v2 migration, and independent domain graduation are outside this candidate wheel; no invented behavior fills these gaps.
 - Store publication signing, submission assets, and a release HTTPS runtime
   URL remain outside this pass.
