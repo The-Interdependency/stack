@@ -54,13 +54,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--turns", type=int, default=8)
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--out", default="/tmp/ahbg-runtime-out")
+    parser.add_argument("--uchc-database", help="verified full-corpus UCHC a1 construct.db")
+    parser.add_argument("--uchc-structural-field", help="verified full-corpus UCHC a2 structural directory")
+    parser.add_argument("--uchc-structural-lock", help="trusted immutable structural a2 lock")
+    parser.add_argument("--uchc-lock", help="trusted immutable UCHC wheel/construct lock")
+    parser.add_argument("--uchc-require-complete", action="store_true")
+    parser.add_argument("--uchc-max-text-bytes", type=int)
     args = parser.parse_args(argv)
 
     agent = _agent_from_args(args)
     try:
         result = run_plane(
             agent=agent,
-            config=RuntimeConfig(seed=args.seed, turns=args.turns),
+            config=RuntimeConfig(seed=args.seed, turns=args.turns,
+                uchc_database=args.uchc_database, uchc_lock=args.uchc_lock,
+                uchc_structural_field=args.uchc_structural_field,
+                uchc_structural_lock=args.uchc_structural_lock,
+                uchc_require_complete=args.uchc_require_complete,
+                uchc_max_text_bytes=args.uchc_max_text_bytes),
             out_dir=Path(args.out),
         )
     finally:
