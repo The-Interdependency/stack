@@ -62,6 +62,8 @@ class RuntimeConfig:
     deadline_ms: int = 5000
     injection_handling: str = "enforce-refusal"
     uchc_database: str | None = None
+    uchc_structural_field: str | None = None
+    uchc_structural_lock: str | None = None
     uchc_lock: str | None = None
     uchc_require_complete: bool = False
     uchc_max_text_bytes: int | None = None
@@ -74,11 +76,18 @@ class RuntimeConfig:
             "entitlements": list(self.entitlements),
             "deadline_ms": self.deadline_ms,
             "injection_handling": self.injection_handling,
-            **({"uchc": {"database": self.uchc_database,
+            **({"uchc": {"profile": "english.input/1",
+                          "database": self.uchc_database,
                           "lock": self.uchc_lock,
                           "require_complete": self.uchc_require_complete,
                           "max_text_bytes": self.uchc_max_text_bytes}}
-               if self.uchc_database is not None else {}),
+               if self.uchc_database is not None else
+               {"uchc": {"profile": "english.structural/1",
+                         "field_dir": self.uchc_structural_field,
+                         "lock": self.uchc_structural_lock,
+                         "require_complete": self.uchc_require_complete,
+                         "max_text_bytes": self.uchc_max_text_bytes}}
+               if self.uchc_structural_field is not None else {}),
             "turn_messages": {
                 str(turn): [dict(message) for message in messages]
                 for turn, messages in self.turn_messages.items()
@@ -219,10 +228,28 @@ def run_plane(
 ) -> RunResult:
     """Run AHBG with optional, fully verified native UCHC language evidence."""
     cfg = config or RuntimeConfig()
+    if cfg.uchc_database is not None and cfg.uchc_structural_field is not None:
+        raise ProtocolError("UCHC candidate versions are mutually exclusive in one Python process")
+    if cfg.uchc_structural_field is not None:
+        if cfg.uchc_lock is not None:
+            raise ProtocolError("input lock cannot be applied to the structural profile")
+        from ahbg.integration.uchc_structural import (
+            UchcStructuralSession, UchcStructuralSettings, DEFAULT_STRUCTURAL_LOCK
+        )
+        with UchcStructuralSession(UchcStructuralSettings(
+            field_dir=Path(cfg.uchc_structural_field),
+            lock=Path(cfg.uchc_structural_lock) if cfg.uchc_structural_lock else DEFAULT_STRUCTURAL_LOCK,
+            require_complete=cfg.uchc_require_complete,
+            max_text_bytes=cfg.uchc_max_text_bytes,
+        )) as uchc:
+            return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=uchc)
     if cfg.uchc_database is None:
-        if cfg.uchc_lock is not None or cfg.uchc_require_complete or cfg.uchc_max_text_bytes is not None:
-            raise ProtocolError("UCHC settings require uchc_database")
+        if (cfg.uchc_lock is not None or cfg.uchc_structural_lock is not None
+                or cfg.uchc_require_complete or cfg.uchc_max_text_bytes is not None):
+            raise ProtocolError("UCHC settings require uchc_database or uchc_structural_field")
         return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=None)
+    if cfg.uchc_structural_lock is not None:
+        raise ProtocolError("structural lock cannot be applied to input profile")
     from ahbg.integration.uchc import UchcSession, UchcSettings, DEFAULT_LOCK
     with UchcSession(UchcSettings(
         database=Path(cfg.uchc_database),
