@@ -67,10 +67,59 @@ with UchcSession(UchcSettings(Path("/artifacts/construct.db"))) as uchc:
     print(uchc.capabilities)
 ```
 
+## Structural profile (separate exact wheel)
+
+The **newer** UCHC `0.1.0a2` is also independently consumable. Its real
+`StructuralField` performs text construction, admitted word/definition
+recovery, exact record replay, and registered ordered-text/sentence composition.
+It preserves both definition constituent topologies and definition succession.
+It never supplies missing UCNS geometric displacement.
+
+The exact candidate identities are in
+[`UCHC_STRUCTURAL.json`](UCHC_STRUCTURAL.json): UCHC source
+`c18d984438bc30764edb05fd5ccc05691958a24e`, wheel hash
+`7f05fbbb...`, complete 711,983,104-byte structural database hash
+`13ba2411...`, logical receipt `26ab095f...`. The consumer verifies the
+**full** stored identities, not the abbreviated identifiers printed here.
+
+Build the full structural field through the exact wheel as specified in
+[`ahbg-uchc-structural.yml`](../../.github/workflows/ahbg-uchc-structural.yml),
+then run:
+
+```bash
+PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime play \
+  --agent a0 --turns 3 --out /tmp/ahbg-uchc-structural \
+  --uchc-structural-field /artifacts/structural-field
+```
+
+Native Python surface:
+
+```python
+from pathlib import Path
+from ahbg.integration.uchc_structural import (
+    UchcStructuralSession, UchcStructuralSettings
+)
+
+with UchcStructuralSession(
+    UchcStructuralSettings(Path("/artifacts/structural-field"))
+) as uchc:
+    graph = uchc.construct("Dr. creates geometry.")
+    assert uchc.replay(graph) == graph
+    word = uchc.word("geometry")
+    relation = uchc.compose(graph, relation="ordered-text")
+```
+
+The input and structural profiles use **different pinned wheel versions and
+different databases**. One Python process selects exactly one; attempting to
+activate both fails explicitly. Multiple profiles can be compared through
+separately installed processes without redefining their geometric authority.
+
 ## Runtime integration
 
 Set `RuntimeConfig.uchc_database` (or `--uchc-database`) to activate native
-language evidence; leave it unset to run AHBG without an installed UCHC wheel.
+input evidence, or `uchc_structural_field` (or `--uchc-structural-field`) for the
+separately pinned structural profile; leave both unset to run AHBG without an
+installed UCHC wheel.
 An optional `uchc_lock` selects an explicitly trusted artifact lock.
 `uchc_require_complete=True` rejects unadmitted glyphs/words rather than
 concealing them. `uchc_max_text_bytes` is an optional explicit memory bound:
@@ -110,17 +159,20 @@ explicitly enabled, which raises `UchcConsumerError`.
 Fast wiring gate:
 `PYTHONPATH=.:libs/ucns/src python -m unittest discover -s ahbg/runtime/tests -q`
 
-Real producer acceptance gate:
+Real input producer acceptance gate:
 `.github/workflows/uchc-input.yml`, including
 `ahbg/integration/tests/test_uchc_installed.py` against the **complete**
-source-pinned corpus. A mocked reader alone is not sufficient evidence.
+source-pinned corpus. Structural acceptance independently executes
+`.github/workflows/ahbg-uchc-structural.yml` against the distinct complete
+UCHC `0.1.0a2` field. A mocked reader alone is not sufficient evidence.
 
 ## hmmm
 
-UCHC `0.1.0a2` structural admission, new ordinal construction, polyglot label
-layer, binary producer and Hilbert frame bridge have **separate** implementation
-and/or publication gates. This consumer must fail closed rather than silently
-substitute them for the already locked `0.1.0a1` input package. AHBG may adopt
+UCHC `0.1.0a2` structural admission now has its own independent AHBG
+consumer and complete-corpus gate. The new ordinal construction, polyglot
+label layer, binary producer and Hilbert frame bridge still have separate
+implementation and/or publication gates. No unfinished machinery may be
+silently substituted for either pinned candidate package. AHBG may adopt
 each only after its source and wheel/producer receipt, native semantics and
 full-corpus or full-domain replay have been verified, with an explicit lock
 migration. Independent UCHC graduation remains incomplete.
