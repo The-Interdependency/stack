@@ -143,6 +143,37 @@ definition IDs and all native word identities. Semantic selection is not
 licensed. Unknown input is retained as `PARTIAL` unless strict admission is
 explicitly enabled, which raises `UchcConsumerError`.
 
+## Local HTTP and mobile access
+
+AHBG's built-in HTTP bridge can now expose the same UCHC package selected by
+its **operator**. Clients never choose wheel paths, source commits or a corpus.
+
+```bash
+PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime.server \
+  --port 8765 --uchc-database /artifacts/construct.db
+
+# Or run the separate a2 structural profile instead:
+PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime.server \
+  --port 8765 --uchc-structural-field /artifacts/structural-field
+```
+
+`GET /uchc/capabilities` returns exact supported operations and provenance.
+`POST /uchc/query` with a named supported native operation returns its real
+source-bound results (English text, UTF-8, word, definition, definition
+candidates, replay, structural construction, and allowed compositions).
+
+`POST /session/{id}/language` accepts
+`{"text":"original text"}`, builds native evidence and includes it in the
+next agent observation alongside the unchanged raw message. Its source-bound
+evidence is also appended to `language.jsonl` next to the persisted game
+state, with full UCHC artifact identity. The source evidence is read-only
+with respect to game rules/actions.
+
+HTTP UCHC is restricted to **loopback binding**, because this adapter does not
+provide authorization for remote callers. Inputs have an explicit 64 KiB HTTP
+transport ceiling; malformed operations and unsupported semantic inference
+fail with a request error instead of inventing an answer.
+
 ## Rejection and proof
 
 - Missing UCHC wheel, editable/source-shadowed installation, wrong version,
