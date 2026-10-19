@@ -43,6 +43,10 @@ PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime play \
 # HTTP bridge for the Android surface / any JSON client
 PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime.server --port 8765
 
+# local-only HTTP UCHC native query and session evidence
+PYTHONPATH=.:libs/ucns/src python -m ahbg.runtime.server \\
+    --port 8765 --uchc-structural-field /artifacts/structural-field
+
 # tests
 python -m unittest discover -s ahbg/runtime/tests -q
 ```
