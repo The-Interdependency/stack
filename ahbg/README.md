@@ -22,9 +22,10 @@ For implementation, depend on the canonical `ucns` package/source. In stack, `li
 
 ## Native UCHC language construction
 
-AHBG now has an **optional native UCHC consumer**. A pinned clean-installed UCHC
-wheel supplies exact language input, source-bound word and definition records,
-full recovery, replay, and admission receipts. AHBG can inspect these results
+AHBG now has an **optional native UCHC consumer**. Separately pinned clean-installed
+UCHC candidate wheels supply exact English input and structural constructions,
+source-bound word and definition records, full recovery, replay, local closure,
+and admission receipts. AHBG can inspect these results
 and pass read-only evidence to agents without defining new geometry, meanings,
 game actions, or consciousness criteria. Invalid wheel/database/receipt identity
 fails closed. See [the executable UCHC integration contract](integration/UCHC.md)
