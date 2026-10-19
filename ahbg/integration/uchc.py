@@ -136,6 +136,50 @@ class UchcSession:
             raise UchcConsumerError("UTF-8 input must be bytes")
         return self.resolve_text(raw.decode("utf-8", errors="strict"), source_id=source_id)
 
+    @property
+    def capabilities(self) -> dict[str, str]:
+        """Exact AHBG-facing operations, not a claim about unshipped UCHC work."""
+        self._require_open()
+        return {
+            "english.exact_text": "AVAILABLE",
+            "english.exact_utf8": "AVAILABLE",
+            "english.word": "AVAILABLE",
+            "english.definition": "AVAILABLE",
+            "english.definition_candidates": "AVAILABLE",
+            "english.frame_replay": "AVAILABLE",
+            "english.structural_profile_v2": "NOT_IN_PINNED_ARTIFACT",
+            "english.ordinal": "NOT_IN_PINNED_ARTIFACT",
+            "polyglot.labels": "NOT_IN_PINNED_ARTIFACT",
+            "binary.native_sequences": "NOT_IN_PINNED_ARTIFACT",
+            "hilbert.frame_bridge": "UNIMPLEMENTED",
+            "semantic.sense_selection": "UNIMPLEMENTED",
+        }
+
+    def require_capability(self, operation: str) -> None:
+        status = self.capabilities.get(operation, "UNKNOWN_OPERATION")
+        if status != "AVAILABLE":
+            raise UchcConsumerError(f"UCHC {operation!r} refused: {status}")
+
+    def definition_candidates(self, frame: Any) -> dict[int, list[dict[str, Any]]]:
+        """Recover every native candidate definition for admitted frame words.
+
+        No sense is chosen, no lexical content is reconstructed in AHBG.
+        """
+        corpus = self._require_open()
+        if corpus.replay(frame.to_bytes()) != frame:
+            raise UchcConsumerError("definition candidate frame does not replay")
+        records: dict[int, list[dict[str, Any]]] = {}
+        for word in frame.words:
+            native = []
+            for identity in word.definition_ids:
+                definition = corpus.definition(identity)
+                recovered = corpus.recover_definition(definition)
+                if recovered != definition.text:
+                    raise UchcConsumerError("candidate definition recovery mismatch")
+                native.append({"record": asdict(definition), "recovered": recovered})
+            records[word.gonol.word_id] = native
+        return records
+
     def word(self, surface: str) -> Any:
         return self._require_open().word(surface)
 
