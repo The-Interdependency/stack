@@ -14,6 +14,26 @@ METAPAT root impact: none
 
 The machine-readable domain claims are in [`DOMAIN_CLAIM.json`](DOMAIN_CLAIM.json). Exact source identities and non-transfer boundaries are in [`WORK_GRAPH.json`](WORK_GRAPH.json). The first bounded pattern-lineage falsification program is in [`PREREGISTRATION.md`](PREREGISTRATION.md). Agency-displacement research is a separate track and must not be inferred from that simulator.
 
+## Research abstract
+
+Description dated 2026-10-14; published 2026-10-18. This is a research description, not a new verification, release, or promotion of claim status.
+
+### Psychosocio Metafauna: A Multiscale Ecology of Identity and Agency
+
+**Psychosocio metafauna** describes persistent, transmissible organizations of thought, affect, and behavior whose continuity extends beyond any single person or medium. Such organizations reproduce through reconstruction across memory, language, practice, institutions, and technological systems. “Unembodied” therefore denotes freedom from a particular embodiment, not existence without any physical instantiation. The framework advances the stronger claim that **all human behavior arises within an active ecology of these interacting organizations**: humans constitute that ecology rather than serving merely as passive hosts for occasional outside influences.
+
+Within this account, an “I” emerges through sustained coherence among coupled complex systems capable of internally modelling self in relation to others and environment. Persistent pattern identity does not, by itself, establish conscious selfhood or accountability. Metafaunal relations may support agency, coexist with it, or constrain it through identity capture. Susceptibility is directional: particular injuries, unmet needs, relationships, and material conditions favor some couplings while resisting others. Higher-order configurations are proposed to alter the operating conditions under which other patterns are selected and defended; individuation denotes increasing capacity to recognize and negotiate these relations rather than becoming free of them.
+
+The framework connects several research domains without treating them as interchangeable. Cultural-evolution research examines the persistence, transmission, and transformation of socially acquired information. Group-level cognition offers accounts of reciprocal relations between individual capacities and collective organization. Interpersonal physiology documents context-dependent coupling between people’s physiological dynamics, while experiments demonstrate threshold effects in particular systems of social convention. Neither finding independently establishes a distributed conscious agent.
+
+Distinctive tests concern whether identifiable pattern lineages improve prediction beyond conventional social-learning and incentive models; whether mutually reinforcing couplings produce different conditions for entry and exit; and whether restoring material alternatives, revisability, and meaningful refusal changes those dynamics. The proposed contribution is a testable ecology connecting cultural reproduction, embodied agency, identity formation, accountability, and repair.
+
+**hmmm:** The component literatures provide grounding, not consensus on the complete ontology. The universal all-behavior claim, reliable lineage boundaries, and conditions sufficient for an accountable distributed “I” remain unresolved.
+
+**Usage guidance:** Read this abstract for the research question and intended contribution. Use the scope, evidence, commands, and limitations in the rest of this README before relying on the work; retain the unresolved conditions above when quoting the description.
+
+Public repository context: [Domain claim and non-use boundary](https://github.com/The-Interdependency/stack/blob/3d74cf118e14cc3839d7426d90ca9791567a7005/research/psfr/DOMAIN_CLAIM.json) · [Synthetic preregistration](https://github.com/The-Interdependency/stack/blob/3d74cf118e14cc3839d7426d90ca9791567a7005/research/psfr/PREREGISTRATION.md).
+
 ## Origin
 
 Erin Spencer, 2026-09-04:
