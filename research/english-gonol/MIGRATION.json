@@ -116,5 +116,17 @@
       "downstream_reconsumption": "hmmm: candidate wheel consumption exists, released-artifact reconsumption does not"
     },
     "scope": "Historical 0.1.0a1 input consumer; not evidence for structural 0.1.0a2 integration"
+  },
+  "ordinal_extension": {
+    "state": "stabilizing",
+    "source_path": "research/english-gonol/english_gonol/ordinal_construction.py",
+    "proposal_provenance": "docs/ordinal-source.json",
+    "work_graph": "docs/ordinal-work-graph.json",
+    "extraction_target": "The-Interdependency/uchc PR #10; exact source/test and behavior equivalence required",
+    "authority_transfer": false,
+    "hmmm": [
+      "a3 clean-wheel/forge equivalence is a separate candidate gate; existing a1/a2 receipts do not verify it",
+      "stable publication, released-artifact reconsumption and graduation remain incomplete"
+    ]
   }
 }

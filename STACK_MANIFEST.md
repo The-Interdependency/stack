@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `88049d2bcc65315fde82e4713a424e20b1537ff68d46b42285ce4bc0b461b3f4`
+  `58a9f32d8987a5c492de96eb5e10c3303da3e07a1fb721eda623bac7f3b0385e`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -280,3 +280,16 @@ sequences, retains native whole/occurrence-circle relations, uses scoped numeral
 references and prime-route bit partitions, and reverses the completed rounds.
 See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
 and all-cost accounting. This is construction/recovery, not established encryption.
+
+## English ordinal candidate
+
+The candidate remains in `research/english-gonol/`; UCHC verifies an exact extraction.
+See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.md).
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `ed0b0760f05cd975a7a811f8abeb70a11d09f00b` | Public Gonol and ordinal geometry; exact native producer |
+| `The-Interdependency/uchc` | `c514e1a2a3f3da5ffae9ebf76d67a1d348845842` | unmerged ordinal proposal; not English implementation authority; source provenance preserved before rehoming and review repairs |
+| `The-Interdependency/skill-lib` | `e46accffcb67a10630516d486c89e67f6ad19c7a` | build, extraction and review discipline; governing source; no geometry authority |
+
+No authority, semantic standing or graduation status transfers.

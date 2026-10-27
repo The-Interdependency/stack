@@ -1,5 +1,11 @@
 # English Gonol Construction
 
+## Ordinal candidate
+
+The [ordinal candidate](docs/ordinal-geometry.md) now lives in the active Stack
+forge and consumes the pinned UCNS Public Gonol and ordinal operators. Start
+there for usage, original UCHC proposal provenance, extraction and replay gates.
+
 ## Structural profile v1 — new construction entrypoint
 
 The operator-ratified [structural profile](docs/structural-profile-v1.md) replaces
