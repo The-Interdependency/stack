@@ -5,6 +5,9 @@
 The [ordinal candidate](docs/ordinal-geometry.md) now lives in the active Stack
 forge and consumes the pinned UCNS Public Gonol and ordinal operators. Start
 there for usage, original UCHC proposal provenance, extraction and replay gates.
+The [2026-10-27 decisions](docs/ordinal-decisions-2026-10-27.md) record the
+ratified parent-bearing direction, whole-lexical definition ownership and
+permission for a newly versioned carrier to rebase bearings.
 
 ## Structural profile v1 — new construction entrypoint
 

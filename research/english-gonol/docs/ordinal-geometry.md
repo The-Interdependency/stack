@@ -28,6 +28,12 @@ Only UCNS computes those placements. Missing bearings refuse; SPACE-spanning
 queries retain word interiors and explicitly leave their parent frame unresolved.
 Every returned word/interior carries the verified UCNS producer identities.
 
+The [2026-10-27 ratified decisions](ordinal-decisions-2026-10-27.md) select
+construction-derived parent bearing through SPACE, whole-lexical definition
+ownership, and permission to rebase glyph bearings in a new carrier version.
+The exact bearing rule, forward origin implementation and expanded carrier
+specification remain distinct implementation boundaries.
+
 ## Extraction and verification
 
 Make implementation changes here first. UCHC pins an exact Stack commit and
@@ -48,6 +54,9 @@ No AHBG lock, historical English receipt, or global `libs/ucns` pin changes.
 
 ## hmmm
 
-- Bearings for Unicode scalars absent from the selected Public Gonol.
-- Angular attachment of closed words and transport across SPACE seams.
+- Expanded carrier inventory/order and bearings for missing Unicode scalars;
+  rebasing in a new version is authorized by the linked decision.
+- Exact construction-derived parent bearing through SPACE; the dependency is
+  chosen, while its numerical rule remains unresolved.
+- Whole-lexical-owner implementation and full-corpus replay; ownership is chosen.
 - Stable publication, released-artifact reconsumption and domain graduation.
