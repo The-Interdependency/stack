@@ -41,6 +41,40 @@ the whole source lexical construction. Ordered constituents, punctuation,
 multiplicity, sense/synset provenance and successive-definition relations remain
 recoverable. Selecting one constituent silently would violate this decision.
 
+## Compound joining clarification
+
+Erin specified: “bull + shit the 'l' in bull becomes the space that the 's' in
+shit sits on.” When asked about distance, Erin clarified: “distance is
+unchanged, this preserves the compound joining. the angle changes,
+demonstrating the join”.
+
+For this explicitly declared compound join:
+
+- The terminal `l` occurrence in `bull` supplies the local SPACE attachment
+  reference for `shit`. This means the second `l` occurrence, not every
+  occurrence of the shared glyph identity.
+- `s` retains its established ordinal radial distance. The join changes its
+  angular placement relative to the attachment reference.
+- Compound joining preserves established radial distances and the recoverable
+  interiors of the component constructions. It is a separate operation from
+  appending glyphs with successive radial halving.
+- The terminal occurrence keeps its identity and participation in `bull` while
+  serving the SPACE role at this join. It is not deleted or relabeled globally.
+- The compound relation must retain its declared component boundary and order.
+  This example does not authorize automatic splitting of arbitrary words or
+  applying the rule to every ordinary inter-word SPACE.
+
+The symbolic invariant is `radius_after_join == radius_before_join`. The
+angular change carries the join. The earlier either/or framing about placing
+`s` on the same spatial point or moving its radial origin must not be treated
+as an accepted coordinate transform.
+
+The attachment occurrence and radial invariant are now specified. The exact
+angular composition remains to be expressed in UCNS: selecting the terminal
+occurrence as SPACE does not by itself state whether angles are added,
+aligned, or otherwise composed. No particular rotation formula or translation
+is claimed here, and no numerical join implementation is claimed complete.
+
 ## What the current source establishes
 
 The inspected inputs are:
@@ -55,9 +89,12 @@ The inspected inputs are:
 At that UCNS revision, `Participant.closed(carrier, interior)` requires an
 explicit carrier. `Placement.turn` obtains the angle from that carrier. Neither
 derives a parent bearing from the closed interior or its SPACE attachment.
-Consequently the first decision resolves the intended dependency, while its
-exact angular rule remains missing. A last-glyph angle, centroid, hash, lexical
-index or shared zero angle is not implicitly authorized by this answer.
+The compound clarification above now selects the terminal glyph occurrence
+as the SPACE attachment reference and preserves radial distance. It supersedes
+the earlier unqualified warning about using a terminal-glyph reference. It
+does not collapse the entire word into that glyph or supply the remaining
+angular composition formula. Centroid, hash, lexical-index and shared-zero
+substitutions remain unauthorized.
 
 The current structural profile still returns
 `hmmm:compound-lexical-origin` for the 57,155 affected definition records in its
@@ -67,9 +104,13 @@ decision record does not retrospectively change those rows or receipts.
 
 ## Implementation and failure conditions
 
-1. Implement the explicit construction-derived bearing rule in UCNS when its
-   operands and operation are established. English must consume it. Reject any
-   substitute word carrier that lacks that construction-derived authority.
+1. Implement the distance-preserving compound attachment in UCNS when the
+   exact angular composition is established. English supplies the declared
+   compound relation and consumes that geometry. Verify the terminal
+   occurrence, unchanged radii, changed attachment angle and recovery of both
+   interiors. Fail on radial recontraction, selection of the wrong repeated
+   glyph occurrence, lost component boundaries, or reuse of an old receipt for
+   changed placements. Do not substitute an unrelated word carrier.
 2. Represent the whole closed lexical owner in the forward English profile.
    Preserve each constituent and each original definition relation; never pass
    a lexical-entry identifier off as a word identifier. Verify all affected
@@ -87,8 +128,10 @@ it does not reverse this ratification or erase historical evidence.
 
 ## hmmm
 
-- Exact rule deriving a closed construction's parent bearing from its SPACE
-  attachment and internal geometry.
+- Exact angular composition at the declared compound join; terminal-occurrence
+  SPACE attachment and preserved radial distance are settled.
+- Any generalization of this compound rule to other nested or ordinary
+  inter-word attachments.
 - Whole-lexical-owner implementation and complete-corpus replay.
 - Exact expanded carrier inventory/order and the resulting versioned geometry.
 - Hosted verification, stable publication and domain graduation.

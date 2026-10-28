@@ -31,8 +31,11 @@ Every returned word/interior carries the verified UCNS producer identities.
 The [2026-10-27 ratified decisions](ordinal-decisions-2026-10-27.md) select
 construction-derived parent bearing through SPACE, whole-lexical definition
 ownership, and permission to rebase glyph bearings in a new carrier version.
-The exact bearing rule, forward origin implementation and expanded carrier
-specification remain distinct implementation boundaries.
+The same record now fixes compound joining at the terminal glyph occurrence:
+it serves as SPACE for the next component, radial distance stays unchanged,
+and angular placement changes to express the join. Exact angular composition,
+forward origin implementation and expanded carrier specification remain
+distinct implementation boundaries.
 
 ## Extraction and verification
 
@@ -56,7 +59,7 @@ No AHBG lock, historical English receipt, or global `libs/ucns` pin changes.
 
 - Expanded carrier inventory/order and bearings for missing Unicode scalars;
   rebasing in a new version is authorized by the linked decision.
-- Exact construction-derived parent bearing through SPACE; the dependency is
-  chosen, while its numerical rule remains unresolved.
+- Exact angular composition for the compound join. Its terminal-occurrence
+  SPACE reference and unchanged radial distance are settled.
 - Whole-lexical-owner implementation and full-corpus replay; ownership is chosen.
 - Stable publication, released-artifact reconsumption and domain graduation.
