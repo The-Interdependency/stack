@@ -28,14 +28,17 @@ Only UCNS computes those placements. Missing bearings refuse; SPACE-spanning
 queries retain word interiors and explicitly leave their parent frame unresolved.
 Every returned word/interior carries the verified UCNS producer identities.
 
-The [2026-10-27 ratified decisions](ordinal-decisions-2026-10-27.md) select
+The [ratified decisions, clarified 2026-10-28](ordinal-decisions-2026-10-27.md) select
 construction-derived parent bearing through SPACE, whole-lexical definition
 ownership, and permission to rebase glyph bearings in a new carrier version.
-The same record now fixes compound joining at the terminal glyph occurrence:
-it serves as SPACE for the next component, radial distance stays unchanged,
-and angular placement changes to express the join. Exact angular composition,
-forward origin implementation and expanded carrier specification remain
-distinct implementation boundaries.
+The same record fixes word origins at their attachments and the preceding
+placed letter's direction as the next frame's SPACE direction. Every glyph
+begins as SPACE and retains that SPACE storage together with its glyph.
+For the declared compound join, the terminal occurrence supplies attachment
+while established component-local radii remain unchanged. Native storage,
+frame transport, both-view recovery and the expanded carrier specification
+remain implementation boundaries. The executable ordinal candidate described
+above has not yet implemented these forward requirements.
 
 ## Extraction and verification
 
@@ -59,7 +62,8 @@ No AHBG lock, historical English receipt, or global `libs/ucns` pin changes.
 
 - Expanded carrier inventory/order and bearings for missing Unicode scalars;
   rebasing in a new version is authorized by the linked decision.
-- Exact angular composition for the compound join. Its terminal-occurrence
-  SPACE reference and unchanged radial distance are settled.
+- Native per-glyph SPACE co-retention, inherited direction/attachment transport
+  and reversible common-origin/local-origin views. These requirements are
+  selected; their implementation and verification remain pending.
 - Whole-lexical-owner implementation and full-corpus replay; ownership is chosen.
 - Stable publication, released-artifact reconsumption and domain graduation.

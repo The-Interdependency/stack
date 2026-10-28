@@ -1,8 +1,9 @@
-# English ordinal decisions — 2026-10-27
+# English ordinal decisions — 2026-10-27, clarified 2026-10-28
 
-**Standing:** Erin Spencer ratified the three requirements below. This records
-the chosen direction; it is not evidence that the resulting construction has
-been implemented or replayed. Do not ask these policy questions again.
+**Standing:** Erin Spencer ratified the policy requirements and subsequent
+attachment, SPACE-direction and retained-SPACE requirements below. These are
+construction requirements, not claims of native implementation or replay.
+Do not reopen the selected requirements as unanswered policy questions.
 
 ## Scope and authority
 
@@ -53,8 +54,8 @@ For this explicitly declared compound join:
 - The terminal `l` occurrence in `bull` supplies the local SPACE attachment
   reference for `shit`. This means the second `l` occurrence, not every
   occurrence of the shared glyph identity.
-- `s` retains its established ordinal radial distance. The join changes its
-  angular placement relative to the attachment reference.
+- `s` retains its established ordinal radial distance in the incoming local
+  frame. The join changes that frame's attachment and angular placement.
 - Compound joining preserves established radial distances and the recoverable
   interiors of the component constructions. It is a separate operation from
   appending glyphs with successive radial halving.
@@ -64,37 +65,128 @@ For this explicitly declared compound join:
   This example does not authorize automatic splitting of arbitrary words or
   applying the rule to every ordinary inter-word SPACE.
 
-The symbolic invariant is `radius_after_join == radius_before_join`. The
-angular change carries the join. The earlier either/or framing about placing
-`s` on the same spatial point or moving its radial origin must not be treated
-as an accepted coordinate transform.
+The symbolic invariant is `local_radius_after_join == local_radius_before_join`.
+The 2026-10-28 origin-at-attachment clarification below fixes the local-frame
+reading of that invariant. Distances measured from a different parent origin
+need not stay unchanged. `s` has its retained nonzero local radius; making the
+terminal `l` the incoming origin does not place `s` on top of that `l`.
 
-The attachment occurrence and radial invariant are now specified.
+### Superseded complete-join interpretation
 
-### Derived angular-reference candidate
+The earlier angular-reference formula at
+`c17ed27a935a5583880f2a29d79f9152f2362ea3` kept all spatial origins together.
+Its exact-turn angle shift remains useful as a projected view, but an
+angle-only shared-origin drawing is not the complete origin-at-attachment
+construction now requested. The earlier projections and receipts retain their
+historical scope; they do not verify the forward transport or retained storage.
 
-Given the existing convention that glyph angles are measured relative to
-SPACE, a concrete candidate is to re-express the incoming closed component
-with the terminal occurrence as its angular reference. In exact turns:
+## SPACE direction and retained storage — 2026-10-28
+
+### Domain-bound meanings
+
+These records scope the operative terms before attaching conversational
+provenance. They concern forward UCNS geometry consumed by English research;
+Stack records the requirements without acquiring UCNS geometry authority.
+
+| Field | Retained SPACE | Superposition |
+|---|---|---|
+| Surface form | SPACE, SPACE storage | super positioned with the glyph |
+| Term id | `ucns.ordinal_attachment.retained_space` | `ucns.ordinal_attachment.space_glyph_superposition` |
+| Claiming domain | UCNS construction/frame geometry | UCNS construction/frame geometry |
+| Claimed sense | The SPACE support from which a glyph occurrence begins, retained with its origin and zero-angle reference after the glyph is placed. | The retained SPACE support and the glyph coexist at that occurrence; adding the glyph does not erase its SPACE storage. |
+| Scope | Forward glyph and word-attachment requirements in this record. | The same forward construction scope. |
+| Claim type / status | Specialized / ratified requirement; native representation pending. | Specialized / ratified requirement; native representation pending. |
+| Included uses | Preserving each occurrence's SPACE support, origin, direction, identity and attachment relation. | Preserving SPACE and glyph together through placement, closure, view conversion and later attachment. |
+| Excluded uses | Automatically inserting a literal U+0020 into the glyph sequence; treating unconstructed potential as an already constructed glyph. | Destructive replacement of SPACE; an extra sequential text character; an undeclared arithmetic operation inferred from the word alone. |
+| Neighbors | Public Gonol SPACE position, literal SPACE seam, local origin, local zero-angle direction, definition origin. | Retained interior, glyph identity, occurrence, rendering and storage representation. |
+| Known collisions / resolution | The literal text character and retained geometric SPACE role are distinct; the existing literal-SPACE admission rule is not changed by this requirement. | This bounded co-retention sense is explicit; no other domain's mechanism or operation is imported. |
+| Effective version | 2026-10-28 | 2026-10-28 |
+| Supersedes | A complete word-attachment interpretation with all origins forced to coincide. | Any forward representation that discards the initial SPACE when assigning its glyph. |
+| Authority source | The operator statements and accepted antecedent below. | The operator statement below. |
+| Handle identity | Not applicable. | Not applicable. |
+| Unresolved | Exact native SPACE/storage representation and frame transport. | Exact native representation and validation of co-retention. |
+
+### Ratification and antecedent
+
+Erin stated: “origin at the attachment is definitely a thing for words.”
+
+The proposed SPACE-direction rule was: the preceding letter's placement
+direction becomes the next frame's SPACE direction; the next glyph's carrier
+angle is measured relative to that inherited direction. Erin then replied:
+
+> I agree with your space direction rule; every glyph begins as space; the storage never goes away but instead it's super positioned with the glyph
+
+The accepted requirements are:
+
+1. A word's local origin is at its declared attachment. For the declared
+   `bull + shit` join, the second `l` occurrence supplies the incoming SPACE
+   attachment, while the whole closed lexical construction retains definition
+   ownership.
+2. The preceding placed letter's direction supplies the next frame's SPACE
+   direction. A point alone is not the angular datum: retain both the local
+   origin and its oriented SPACE reference.
+3. Every glyph occurrence begins as SPACE. Placing its glyph preserves that
+   same underlying SPACE storage, origin and reference together with the glyph.
+   Retaining a bare glyph label and later inventing a replacement SPACE record
+   does not demonstrate that storage was preserved.
+4. Preserve individual occurrences, including repeated glyphs, their ordered
+   attachments and their closed interiors. A display may emphasize the glyph
+   without deleting the SPACE it shares.
+5. Keep glyph-building halving distinct from joining already closed components.
+   Appending a glyph still follows the declared ordinal halving rule; the
+   compound join preserves the components' established local radii.
+
+The direction rule no longer remains an unselected policy. Native executable
+transport, representation and verification remain unfinished.
+
+### Exact directional consequence and view contract
+
+Let `theta_i` be occurrence i's exact carrier turn relative to its own SPACE,
+and let `space_heading_i` express that SPACE direction in the parent frame.
+The accepted direction rule has the following consequence, modulo one turn:
 
 ```text
-delta_join = angle(left_terminal_occurrence) - angle(incoming_SPACE)
-radius_after(g) = radius_before(g)
-angle_after(g) = (angle_before(g) + delta_join) mod 1 turn
+placed_heading_i = space_heading_i + theta_i
+space_heading_(i+1) = placed_heading_i
 ```
 
-Apply the same angular offset to the incoming component to preserve its
-internal angular differences. Preserve both component interiors and bind the
-join transform into the new compound receipt. The outgoing component's
-placements remain intact. This candidate is an angular reference change; no
-translation of a radial origin or additional ordinal contraction is included.
+The first SPACE heading comes from the word's declared attachment frame.
+Repeated glyphs retain the same local carrier turn while their parent-frame
+headings can differ. This does not change the historical carrier or its old
+receipts.
 
-This formula is GPT's explicit derivation from the stated reference change and
-the existing SPACE-relative angle convention, not an additional quoted user
-instruction or a tested implementation. It supplies a falsifiable candidate:
-any changed radius, changed internal angular difference, wrong terminal
-occurrence, lost interior or unrecoverable join invalidates it. It must be
-implemented with UCNS geometry and verified before claiming executed joining.
+A planar display can express a placement as
+`point_i = origin_i + local_radius_i * unit(placed_heading_i)`.
+That display equation does not supply a missing native cross-frame transport
+operation or select further sheet/lift behavior. Local origins and attachment
+sites must be retained explicitly, rather than inferred from a flattened
+drawing.
+
+The common-origin concentric view and the view retaining individual origins
+are proposed views of one construction. A valid correspondence must recover
+the ordered occurrences, local radii, local carrier turns, retained SPACE
+supports and attachment/frame relations. Coincident rendered points must not
+merge occurrences. Conversion that omits accumulated rotations, throws away
+SPACE, or recreates lost frame information from glyph names alone fails this
+contract. Coordinate-only round-trip examples do not establish storage
+preservation or native implementation.
+
+### Retention and failure obligations
+
+Native validation must observe SPACE before and after glyph placement and
+establish that the same support remains with the glyph. It must also verify:
+
+- the inherited SPACE direction and exact local carrier turn at each occurrence;
+- local radii under both glyph appending and closed-component joining;
+- independent identities for repeated occurrences and their SPACE supports;
+- recovery through both proposed views without flattening away the frame graph;
+- preservation through nesting, serialization and a new versioned receipt.
+
+Fail if assigning a glyph overwrites or drops its SPACE support, if SPACE is
+silently added as an extra text occurrence, if angle inheritance resets to the
+global zero, or if an old receipt is reused for a changed construction.
+A native storage representation must be implemented before claiming these
+retention obligations have been executed.
 
 ## What the current source establishes
 
@@ -110,12 +202,16 @@ The inspected inputs are:
 At that UCNS revision, `Participant.closed(carrier, interior)` requires an
 explicit carrier. `Placement.turn` obtains the angle from that carrier. Neither
 derives a parent bearing from the closed interior or its SPACE attachment.
-The compound clarification above now selects the terminal glyph occurrence
-as the SPACE attachment reference and preserves radial distance. It supersedes
-the earlier unqualified warning about using a terminal-glyph reference. It
-does not collapse the entire word into that glyph or supply the remaining
-angular composition formula. Centroid, hash, lexical-index and shared-zero
+The clarified requirements select the terminal attachment, inherited SPACE
+direction and retained per-glyph SPACE storage. They do not collapse the whole
+word into its terminal glyph. Centroid, hash, lexical-index and shared-zero
 substitutions remain unauthorized.
+
+The inspected ordinal implementation stores `Construction.origin` as a string
+and each `Participant` as a carrier/identity with an optional closed interior.
+It does not yet retain the initial SPACE storage for each primitive occurrence
+or implement the selected inherited per-occurrence orientation and attachment
+transport. A word-level `origin='SPACE'` label is not proof of that retention.
 
 The current structural profile still returns
 `hmmm:compound-lexical-origin` for the 57,155 affected definition records in its
@@ -125,12 +221,12 @@ decision record does not retrospectively change those rows or receipts.
 
 ## Implementation and failure conditions
 
-1. Implement the distance-preserving compound attachment in UCNS when the
-   exact angular composition is established. English supplies the declared
-   compound relation and consumes that geometry. Verify the terminal
-   occurrence, unchanged radii, changed attachment angle and recovery of both
-   interiors. Fail on radial recontraction, selection of the wrong repeated
-   glyph occurrence, lost component boundaries, or reuse of an old receipt for
+1. Implement the selected attachment, inherited SPACE direction and retained
+   per-glyph SPACE support in UCNS. English supplies declared relations and
+   consumes that geometry. Verify the terminal occurrence, unchanged compound
+   local radii, correct directional composition, continuously retained SPACE
+   supports and both component interiors. Fail on radial recontraction, a wrong
+   repeated occurrence, lost storage/boundaries, or reuse of an old receipt for
    changed placements. Do not substitute an unrelated word carrier.
 2. Represent the whole closed lexical owner in the forward English profile.
    Preserve each constituent and each original definition relation; never pass
@@ -149,9 +245,9 @@ it does not reverse this ratification or erase historical evidence.
 
 ## hmmm
 
-- The derived angular-reference candidate needs native UCNS implementation and
-  verification against the intended compound join. Terminal-occurrence SPACE
-  attachment and preserved radial distance are settled.
+- Native SPACE/storage representation, inherited frame transport, both-view
+  recovery and verification. Word origin at attachment, preceding-placement
+  SPACE direction and SPACE/glyph co-retention are settled requirements.
 - Any generalization of this compound rule to other nested or ordinary
   inter-word attachments.
 - Whole-lexical-owner implementation and complete-corpus replay.
