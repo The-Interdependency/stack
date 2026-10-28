@@ -69,11 +69,32 @@ angular change carries the join. The earlier either/or framing about placing
 `s` on the same spatial point or moving its radial origin must not be treated
 as an accepted coordinate transform.
 
-The attachment occurrence and radial invariant are now specified. The exact
-angular composition remains to be expressed in UCNS: selecting the terminal
-occurrence as SPACE does not by itself state whether angles are added,
-aligned, or otherwise composed. No particular rotation formula or translation
-is claimed here, and no numerical join implementation is claimed complete.
+The attachment occurrence and radial invariant are now specified.
+
+### Derived angular-reference candidate
+
+Given the existing convention that glyph angles are measured relative to
+SPACE, a concrete candidate is to re-express the incoming closed component
+with the terminal occurrence as its angular reference. In exact turns:
+
+```text
+delta_join = angle(left_terminal_occurrence) - angle(incoming_SPACE)
+radius_after(g) = radius_before(g)
+angle_after(g) = (angle_before(g) + delta_join) mod 1 turn
+```
+
+Apply the same angular offset to the incoming component to preserve its
+internal angular differences. Preserve both component interiors and bind the
+join transform into the new compound receipt. The outgoing component's
+placements remain intact. This candidate is an angular reference change; no
+translation of a radial origin or additional ordinal contraction is included.
+
+This formula is GPT's explicit derivation from the stated reference change and
+the existing SPACE-relative angle convention, not an additional quoted user
+instruction or a tested implementation. It supplies a falsifiable candidate:
+any changed radius, changed internal angular difference, wrong terminal
+occurrence, lost interior or unrecoverable join invalidates it. It must be
+implemented with UCNS geometry and verified before claiming executed joining.
 
 ## What the current source establishes
 
@@ -128,8 +149,9 @@ it does not reverse this ratification or erase historical evidence.
 
 ## hmmm
 
-- Exact angular composition at the declared compound join; terminal-occurrence
-  SPACE attachment and preserved radial distance are settled.
+- The derived angular-reference candidate needs native UCNS implementation and
+  verification against the intended compound join. Terminal-occurrence SPACE
+  attachment and preserved radial distance are settled.
 - Any generalization of this compound rule to other nested or ordinary
   inter-word attachments.
 - Whole-lexical-owner implementation and complete-corpus replay.
