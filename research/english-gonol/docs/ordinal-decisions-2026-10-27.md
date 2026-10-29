@@ -1,9 +1,10 @@
-# English ordinal decisions — 2026-10-27, clarified 2026-10-28
+# English ordinal decisions — 2026-10-27, clarified through 2026-10-29
 
-**Standing:** Erin Spencer ratified the policy requirements and subsequent
-attachment, SPACE-direction and retained-SPACE requirements below. These are
-construction requirements, not claims of native implementation or replay.
-Do not reopen the selected requirements as unanswered policy questions.
+**Standing:** Erin Spencer ratified the policy, attachment and SPACE-direction
+requirements below. SPACE remaining with each glyph is a construction
+assumption; a separately stored SPACE object is not a selected requirement.
+The disk-stack view is a proposed explanation whose projection remains open.
+These statements do not claim native implementation or replay.
 
 ## Scope and authority
 
@@ -78,35 +79,35 @@ The earlier angular-reference formula at
 Its exact-turn angle shift remains useful as a projected view, but an
 angle-only shared-origin drawing is not the complete origin-at-attachment
 construction now requested. The earlier projections and receipts retain their
-historical scope; they do not verify the forward transport or retained storage.
+historical scope; they do not verify the forward transport or SPACE assumption.
 
-## SPACE direction and retained storage — 2026-10-28
+## SPACE direction and persistence — clarified 2026-10-29
 
 ### Domain-bound meanings
 
 These records scope the operative terms before attaching conversational
 provenance. They concern forward UCNS geometry consumed by English research;
-Stack records the requirements without acquiring UCNS geometry authority.
+Stack records the requirements and assumptions without acquiring UCNS authority.
 
 | Field | Retained SPACE | Superposition |
 |---|---|---|
 | Surface form | SPACE, SPACE storage | super positioned with the glyph |
 | Term id | `ucns.ordinal_attachment.retained_space` | `ucns.ordinal_attachment.space_glyph_superposition` |
 | Claiming domain | UCNS construction/frame geometry | UCNS construction/frame geometry |
-| Claimed sense | The SPACE support from which a glyph occurrence begins, retained with its origin and zero-angle reference after the glyph is placed. | The retained SPACE support and the glyph coexist at that occurrence; adding the glyph does not erase its SPACE storage. |
-| Scope | Forward glyph and word-attachment requirements in this record. | The same forward construction scope. |
-| Claim type / status | Specialized / ratified requirement; native representation pending. | Specialized / ratified requirement; native representation pending. |
-| Included uses | Preserving each occurrence's SPACE support, origin, direction, identity and attachment relation. | Preserving SPACE and glyph together through placement, closure, view conversion and later attachment. |
-| Excluded uses | Automatically inserting a literal U+0020 into the glyph sequence; treating unconstructed potential as an already constructed glyph. | Destructive replacement of SPACE; an extra sequential text character; an undeclared arithmetic operation inferred from the word alone. |
+| Claimed sense | A glyph begins as SPACE; its underlying SPACE and frame reference remain assumed in the construction after placement. | SPACE and the glyph coexist in the construction's interpretation. |
+| Scope | Forward glyph and word attachments in this record. | The same forward construction scope. |
+| Claim type / status | Specialized / construction assumption; storage representation open. | Specialized / construction assumption; storage representation open. |
+| Included uses | Preserving or deriving the occurrence's SPACE role, origin, direction and attachment relation. | Interpreting glyph placement without erasing the underlying SPACE role. |
+| Excluded uses | Automatically inserting a literal U+0020; requiring an additional stored object or field merely because the assumption is present. | Destructive conceptual replacement of SPACE; an extra sequential text character; an undeclared arithmetic operation. |
 | Neighbors | Public Gonol SPACE position, literal SPACE seam, local origin, local zero-angle direction, definition origin. | Retained interior, glyph identity, occurrence, rendering and storage representation. |
-| Known collisions / resolution | The literal text character and retained geometric SPACE role are distinct; the existing literal-SPACE admission rule is not changed by this requirement. | This bounded co-retention sense is explicit; no other domain's mechanism or operation is imported. |
-| Effective version | 2026-10-28 | 2026-10-28 |
-| Supersedes | A complete word-attachment interpretation with all origins forced to coincide. | Any forward representation that discards the initial SPACE when assigning its glyph. |
-| Authority source | The operator statements and accepted antecedent below. | The operator statement below. |
+| Known collisions / resolution | Literal text SPACE and the geometric SPACE role remain distinct; the literal-SPACE admission rule is unchanged. | Conceptual coexistence does not itself prescribe separate allocation, serialization or object identity. |
+| Effective version | 2026-10-29 clarification | 2026-10-29 clarification |
+| Supersedes | The assistant's 2026-10-28 claim that every SPACE support must be stored explicitly. | The assistant's promotion of conceptual coexistence into mandatory native storage. |
+| Authority source | The operator statements and accepted antecedent below. | The operator statements below. |
 | Handle identity | Not applicable. | Not applicable. |
-| Unresolved | Exact native SPACE/storage representation and frame transport. | Exact native representation and validation of co-retention. |
+| Unresolved | Which relations are implicit, derived or stored; exact native frame transport. | Representation and verification of the assumption without prescribing redundant records. |
 
-### Ratification and antecedent
+### Accepted direction and corrected storage interpretation
 
 Erin stated: “origin at the attachment is definitely a thing for words.”
 
@@ -116,34 +117,41 @@ angle is measured relative to that inherited direction. Erin then replied:
 
 > I agree with your space direction rule; every glyph begins as space; the storage never goes away but instead it's super positioned with the glyph
 
-The accepted requirements are:
+The assistant interpreted this as requiring explicit per-occurrence SPACE
+storage. Erin corrected that interpretation on 2026-10-29:
+
+> I'm not sure it's required to store such; but the assumption is there.
+
+The correction changes the representation claim, without withdrawing the
+accepted word attachment or direction rule:
 
 1. A word's local origin is at its declared attachment. For the declared
    `bull + shit` join, the second `l` occurrence supplies the incoming SPACE
    attachment, while the whole closed lexical construction retains definition
    ownership.
 2. The preceding placed letter's direction supplies the next frame's SPACE
-   direction. A point alone is not the angular datum: retain both the local
-   origin and its oriented SPACE reference.
-3. Every glyph occurrence begins as SPACE. Placing its glyph preserves that
-   same underlying SPACE storage, origin and reference together with the glyph.
-   Retaining a bare glyph label and later inventing a replacement SPACE record
-   does not demonstrate that storage was preserved.
-4. Preserve individual occurrences, including repeated glyphs, their ordered
-   attachments and their closed interiors. A display may emphasize the glyph
-   without deleting the SPACE it shares.
+   direction. A point alone is not the angular datum: both location and oriented
+   SPACE reference must be available, whether stored or derived.
+3. Every glyph beginning as SPACE, with SPACE remaining alongside it, is the
+   working construction assumption. This does not require a separately stored
+   SPACE object, a particular field, or preserving a runtime object's identity.
+   An implicit or derived representation remains admissible if it supplies the
+   declared relations without guessing.
+4. Preserve individual occurrences, including repeated glyphs, their order,
+   attachments and closed interiors. A display may emphasize the glyph while
+   leaving the assumed SPACE role implicit.
 5. Keep glyph-building halving distinct from joining already closed components.
-   Appending a glyph still follows the declared ordinal halving rule; the
-   compound join preserves the components' established local radii.
+   Appending a glyph follows the declared ordinal halving rule; the compound
+   join preserves the components' established local radii.
 
-The direction rule no longer remains an unselected policy. Native executable
-transport, representation and verification remain unfinished.
+The direction rule is selected. Native executable transport and verification
+remain unfinished; explicit SPACE storage is not an additional acceptance gate.
 
-### Exact directional consequence and view contract
+### Directional consequence and view contract
 
 Let `theta_i` be occurrence i's exact carrier turn relative to its own SPACE,
-and let `space_heading_i` express that SPACE direction in the parent frame.
-The accepted direction rule has the following consequence, modulo one turn:
+and let `space_heading_i` express that SPACE direction in a common planar
+orientation. The accepted direction rule gives, modulo one turn:
 
 ```text
 placed_heading_i = space_heading_i + theta_i
@@ -157,36 +165,59 @@ receipts.
 
 A planar display can express a placement as
 `point_i = origin_i + local_radius_i * unit(placed_heading_i)`.
-That display equation does not supply a missing native cross-frame transport
-operation or select further sheet/lift behavior. Local origins and attachment
-sites must be retained explicitly, rather than inferred from a flattened
-drawing.
+This equation neither defines a depth projection nor supplies missing native
+cross-frame transport or further sheet/lift behavior. Origins, orientations and
+attachment sites must be available from the construction; this does not require
+storing each as a separate field.
 
 The common-origin concentric view and the view retaining individual origins
-are proposed views of one construction. A valid correspondence must recover
-the ordered occurrences, local radii, local carrier turns, retained SPACE
-supports and attachment/frame relations. Coincident rendered points must not
-merge occurrences. Conversion that omits accumulated rotations, throws away
-SPACE, or recreates lost frame information from glyph names alone fails this
-contract. Coordinate-only round-trip examples do not establish storage
-preservation or native implementation.
+are proposed views of one construction. Their correspondence must recover the
+ordered occurrences, local radii, local carrier turns and attachment/frame
+relations consistently with the SPACE assumption. Coincident rendered points
+must not merge occurrences. Exact derivation from sufficient construction data
+is allowed. A flattened drawing is insufficient if it loses required relations.
+Coordinate-only round trips do not establish native implementation.
 
-### Retention and failure obligations
+### Disk-stack view — proposed 2026-10-29
 
-Native validation must observe SPACE before and after glyph placement and
-establish that the same support remains with the glyph. It must also verify:
+Erin added:
+
+> how else would the angle change for each progressively smaller halving? think of them as stacks of disks. adding a disk makes the bottom disk farther away  viewed from  above.
+
+This introduces a depth-based view of the halving construction. One possible
+reading follows the newest top disk: earlier disks remain in the stack and
+recede relative to that moving viewpoint. This could connect depth in one view
+with smaller concentric projections in another, without an extra stored SPACE
+record for each glyph.
+
+That reading is a candidate interpretation, not a selected camera or transport
+law. Disk sizes, spacing, alignment, viewpoint motion, projection and the sense
+of “angle” remain unresolved. Distinguish the glyph's local carrier angle, its
+parent-frame heading, and an observer's line-of-sight angle or angular size.
+
+For a conventional centered perspective model, increasing depth changes
+apparent size; depth alone does not rotate a glyph's bearing around the disk.
+With equal physical radii, projected radius is proportional to inverse depth.
+Exact projected halving would therefore require doubling depth. Adding equal
+disk thicknesses alone does not establish that rule. These are checks on that
+particular projection model, not constraints already selected by the operator.
+
+### Representation-neutral verification
+
+Native validation must establish:
 
 - the inherited SPACE direction and exact local carrier turn at each occurrence;
 - local radii under both glyph appending and closed-component joining;
-- independent identities for repeated occurrences and their SPACE supports;
-- recovery through both proposed views without flattening away the frame graph;
-- preservation through nesting, serialization and a new versioned receipt.
+- distinguishable repeated occurrences and their attachment relations;
+- recovery through both proposed views for the declared representation;
+- preservation of required information through nesting and serialization,
+  with a new versioned receipt for changed geometry.
 
-Fail if assigning a glyph overwrites or drops its SPACE support, if SPACE is
-silently added as an extra text occurrence, if angle inheritance resets to the
-global zero, or if an old receipt is reused for a changed construction.
-A native storage representation must be implemented before claiming these
-retention obligations have been executed.
+Fail if required relations cannot be recovered, if SPACE is silently inserted
+as an extra text occurrence, if selected direction inheritance resets to global
+zero, or if an old receipt is reused for a changed construction. Absence of a
+separate SPACE record is not by itself a failure. The disk-stack hypothesis
+requires its own specified projection and checks before implementation claims.
 
 ## What the current source establishes
 
@@ -202,16 +233,18 @@ The inspected inputs are:
 At that UCNS revision, `Participant.closed(carrier, interior)` requires an
 explicit carrier. `Placement.turn` obtains the angle from that carrier. Neither
 derives a parent bearing from the closed interior or its SPACE attachment.
-The clarified requirements select the terminal attachment, inherited SPACE
-direction and retained per-glyph SPACE storage. They do not collapse the whole
-word into its terminal glyph. Centroid, hash, lexical-index and shared-zero
-substitutions remain unauthorized.
+The clarified requirements select the terminal attachment and inherited SPACE
+direction; SPACE persistence remains an assumption with representation open.
+They do not collapse the whole word into its terminal glyph. Centroid, hash,
+lexical-index and shared-zero substitutions remain unauthorized.
 
 The inspected ordinal implementation stores `Construction.origin` as a string
 and each `Participant` as a carrier/identity with an optional closed interior.
-It does not yet retain the initial SPACE storage for each primitive occurrence
-or implement the selected inherited per-occurrence orientation and attachment
-transport. A word-level `origin='SPACE'` label is not proof of that retention.
+No separate initial-SPACE object per primitive occurrence is represented.
+That absence alone does not violate the clarified assumption. The inspected
+source does not implement the selected inherited per-occurrence orientation
+and attachment transport; a word-level `origin='SPACE'` label does not
+establish those behaviors.
 
 The current structural profile still returns
 `hmmm:compound-lexical-origin` for the 57,155 affected definition records in its
@@ -221,13 +254,14 @@ decision record does not retrospectively change those rows or receipts.
 
 ## Implementation and failure conditions
 
-1. Implement the selected attachment, inherited SPACE direction and retained
-   per-glyph SPACE support in UCNS. English supplies declared relations and
-   consumes that geometry. Verify the terminal occurrence, unchanged compound
-   local radii, correct directional composition, continuously retained SPACE
-   supports and both component interiors. Fail on radial recontraction, a wrong
-   repeated occurrence, lost storage/boundaries, or reuse of an old receipt for
-   changed placements. Do not substitute an unrelated word carrier.
+1. Implement the selected attachment and inherited SPACE direction in UCNS,
+   consistently with the SPACE assumption. Choose stored or derived relations
+   only as needed by the representation. English supplies declared relations
+   and consumes that geometry. Verify the terminal occurrence, unchanged
+   compound local radii, correct directional composition and both component
+   interiors. Fail on radial recontraction, a wrong repeated occurrence,
+   unrecoverable relations/boundaries, or reuse of an old receipt for changed
+   placements. Do not substitute an unrelated word carrier.
 2. Represent the whole closed lexical owner in the forward English profile.
    Preserve each constituent and each original definition relation; never pass
    a lexical-entry identifier off as a word identifier. Verify all affected
@@ -245,9 +279,11 @@ it does not reverse this ratification or erase historical evidence.
 
 ## hmmm
 
-- Native SPACE/storage representation, inherited frame transport, both-view
-  recovery and verification. Word origin at attachment, preceding-placement
-  SPACE direction and SPACE/glyph co-retention are settled requirements.
+- Native inherited frame transport, both-view recovery and verification.
+  Word origin at attachment and preceding-placement SPACE direction are
+  selected. SPACE/glyph coexistence is assumed; explicit storage is not required.
+- The disk-stack projection, depth/halving relation and which angle changes.
+- Which origins, orientations and SPACE relations need storage versus derivation.
 - Any generalization of this compound rule to other nested or ordinary
   inter-word attachments.
 - Whole-lexical-owner implementation and complete-corpus replay.

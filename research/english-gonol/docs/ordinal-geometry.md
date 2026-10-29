@@ -28,17 +28,20 @@ Only UCNS computes those placements. Missing bearings refuse; SPACE-spanning
 queries retain word interiors and explicitly leave their parent frame unresolved.
 Every returned word/interior carries the verified UCNS producer identities.
 
-The [ratified decisions, clarified 2026-10-28](ordinal-decisions-2026-10-27.md) select
-construction-derived parent bearing through SPACE, whole-lexical definition
-ownership, and permission to rebase glyph bearings in a new carrier version.
-The same record fixes word origins at their attachments and the preceding
-placed letter's direction as the next frame's SPACE direction. Every glyph
-begins as SPACE and retains that SPACE storage together with its glyph.
-For the declared compound join, the terminal occurrence supplies attachment
-while established component-local radii remain unchanged. Native storage,
-frame transport, both-view recovery and the expanded carrier specification
-remain implementation boundaries. The executable ordinal candidate described
-above has not yet implemented these forward requirements.
+The [decisions, clarified through 2026-10-29](ordinal-decisions-2026-10-27.md)
+select construction-derived parent bearing through SPACE, whole-lexical
+definition ownership, and permission to rebase bearings in a new carrier version.
+Word origins sit at their attachments; the preceding placed letter's direction
+becomes the next frame's SPACE direction. Every glyph beginning as SPACE, with
+SPACE remaining alongside it, is a construction assumption. This does not
+require a separately stored SPACE object; relations may be implicit or derived.
+
+For the declared compound join, established component-local radii remain
+unchanged. Native frame transport, reversible views and the expanded carrier
+specification remain open implementation work. The disk-stack picture is a
+proposed depth interpretation; projection and the meaning of the changing angle
+are unresolved. The executable candidate above does not implement the selected
+inherited direction and attachment transport.
 
 ## Extraction and verification
 
@@ -62,8 +65,9 @@ No AHBG lock, historical English receipt, or global `libs/ucns` pin changes.
 
 - Expanded carrier inventory/order and bearings for missing Unicode scalars;
   rebasing in a new version is authorized by the linked decision.
-- Native per-glyph SPACE co-retention, inherited direction/attachment transport
-  and reversible common-origin/local-origin views. These requirements are
-  selected; their implementation and verification remain pending.
+- Native inherited direction/attachment transport and reversible common-origin/
+  local-origin views; implementation and verification remain pending.
+- The SPACE assumption's representation may be implicit or derived. Separate
+  storage is not required. The proposed disk-stack projection remains open.
 - Whole-lexical-owner implementation and full-corpus replay; ownership is chosen.
 - Stable publication, released-artifact reconsumption and domain graduation.
