@@ -22,6 +22,15 @@ accounting, budgets and exact source lock. These choices are not universal laws.
 [The numeral layer](NUMERAL_CONSTRUCTION.md) separately records length-bearing
 integers, Unicode references and exact prime recipes.
 
+[The private/public candidate](PRIVATE_PUBLIC.md) derives an expanded public
+polynomial from private native circle displacements. A public-only sender evaluates
+it over the real cycle record; the recipient reverses exact square roots using
+private native state. A public coefficient-decomposition attack also recovers
+exactly, falsifying this candidate's private necessity. Run
+`python private_public.py --sources /checkouts --require-distinction` to reproduce
+the attack and failing acceptance gate. The earlier input-partition-only probe
+has been replaced; no candidate failure transfers to all intended Weave relations.
+
 `native_binary.py` is the Stack-owned binary-origin/sequence candidate, consuming
 actual source-verified UCNS `AxisCirclePosition` and `NativeMobiusState` objects.
 UCHC supplies the origin/axis architecture reference; the premature UCHC #7
