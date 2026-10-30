@@ -1,0 +1,50 @@
+name: English recursive attachment
+on:
+  pull_request:
+    paths: ['research/english-gonol/**', '.github/workflows/english-recursive-attachment.yml']
+  push:
+    branches: [main]
+    paths: ['research/english-gonol/**', '.github/workflows/english-recursive-attachment.yml']
+permissions:
+  contents: read
+jobs:
+  native-consumer:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 9cc00771e54336d58ee377faeec87a3a33dbd4bf
+          path: _deps/ucns
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12.14'
+      - name: Install exact native producer and tools
+        run: |
+          test "$(git -C _deps/ucns rev-parse HEAD)" = 9cc00771e54336d58ee377faeec87a3a33dbd4bf
+          python -m pip install ./_deps/ucns pytest==8.3.5 PyYAML==6.0.2
+      - name: Check native consumer and graph identity
+        env:
+          PYTHONPATH: research/english-gonol
+        run: |
+          python -m pytest -c /dev/null -q research/english-gonol/ordinal_tests/test_attachment_construction.py --junitxml=attachment.xml
+          python - <<'PY'
+          import json, hashlib, xml.etree.ElementTree as E
+          from pathlib import Path
+          from english_gonol.attachment_construction import authority
+          graph = json.loads(Path('research/english-gonol/docs/recursive-work-graph.json').read_text())
+          assert authority()['commit'] == next(r['commit'] for r in graph['repositories'] if r['repository'] == 'The-Interdependency/ucns')
+          assert graph['work_graph_sha256'] == hashlib.sha256(json.dumps({k: graph[k] for k in ('repositories','boundaries')}, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+          suites = list(E.parse('attachment.xml').getroot().iter('testsuite'))
+          assert sum(int(s.get('tests', 0)) for s in suites) == 5
+          assert all(int(s.get(k, 0)) == 0 for s in suites for k in ('failures','errors','skipped'))
+          PY
+      - uses: actions/upload-artifact@v7.0.1
+        if: always()
+        with:
+          name: english-recursive-attachment
+          path: attachment.xml

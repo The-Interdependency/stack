@@ -128,5 +128,12 @@
       "a3 clean-wheel/forge equivalence is a separate candidate gate; existing a1/a2 receipts do not verify it",
       "stable publication, released-artifact reconsumption and graduation remain incomplete"
     ]
+  },
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
   }
 }

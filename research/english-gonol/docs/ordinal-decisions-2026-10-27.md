@@ -3,8 +3,9 @@
 **Standing:** Erin Spencer ratified the policy, attachment and SPACE-direction
 requirements below. SPACE remaining with each glyph is a construction
 assumption; a separately stored SPACE object is not a selected requirement.
-The disk-stack view is a proposed explanation whose projection remains open.
-These statements do not claim native implementation or replay.
+Each halving represents another disk; sentences recursively stack closed words
+using the same operation. The native implementation is described in
+[recursive-stack.md](recursive-stack.md). A physical camera model remains open.
 
 ## Scope and authority
 
@@ -144,8 +145,8 @@ accepted word attachment or direction rule:
    Appending a glyph follows the declared ordinal halving rule; the compound
    join preserves the components' established local radii.
 
-The direction rule is selected. Native executable transport and verification
-remain unfinished; explicit SPACE storage is not an additional acceptance gate.
+The direction rule is selected and implemented by the native attachment profile.
+Explicit SPACE storage is not an additional acceptance gate.
 
 ### Directional consequence and view contract
 
@@ -178,29 +179,24 @@ must not merge occurrences. Exact derivation from sufficient construction data
 is allowed. A flattened drawing is insufficient if it loses required relations.
 Coordinate-only round trips do not establish native implementation.
 
-### Disk-stack view — proposed 2026-10-29
+### Recursive disk-stack rule — clarified 2026-10-29
 
-Erin added:
+Erin specified: “each halving represents another disk.” The clarified sentence
+rule is: “from words, sentences stack like glyphs into words.” This settles the
+recursive operation. For `n` participants, zero-based occurrence `i` has disk
+depth `n-i` and parent radius `R / 2**(n-i)`. Appending a participant halves the
+earlier parent radii and advances their depths. A closed child's internal
+geometry is retained; a word is one participant in its parent stack.
 
-> how else would the angle change for each progressively smaller halving? think of them as stacks of disks. adding a disk makes the bottom disk farther away  viewed from  above.
+The common-origin view shows each ordered ray from the root; the attached-origin
+view places each origin at the preceding endpoint. Both retain the root SPACE
+orientation. They express the same construction and need not be congruent.
 
-This introduces a depth-based view of the halving construction. One possible
-reading follows the newest top disk: earlier disks remain in the stack and
-recede relative to that moving viewpoint. This could connect depth in one view
-with smaller concentric projections in another, without an extra stored SPACE
-record for each glyph.
-
-That reading is a candidate interpretation, not a selected camera or transport
-law. Disk sizes, spacing, alignment, viewpoint motion, projection and the sense
-of “angle” remain unresolved. Distinguish the glyph's local carrier angle, its
-parent-frame heading, and an observer's line-of-sight angle or angular size.
-
-For a conventional centered perspective model, increasing depth changes
-apparent size; depth alone does not rotate a glyph's bearing around the disk.
-With equal physical radii, projected radius is proportional to inverse depth.
-Exact projected halving would therefore require doubling depth. Adding equal
-disk thicknesses alone does not establish that rule. These are checks on that
-particular projection model, not constraints already selected by the operator.
+The exact functional deriving a closed word's bearing was not specified.
+The implementation exposes root-to-endpoint and final accumulated heading as
+explicit comparison candidates, without a default. This narrow remaining choice
+does not reopen whether sentences use the recursive stack. A physical observer
+projection or camera law is not required to implement the selected recurrence.
 
 ### Representation-neutral verification
 
@@ -216,10 +212,9 @@ Native validation must establish:
 Fail if required relations cannot be recovered, if SPACE is silently inserted
 as an extra text occurrence, if selected direction inheritance resets to global
 zero, or if an old receipt is reused for a changed construction. Absence of a
-separate SPACE record is not by itself a failure. The disk-stack hypothesis
-requires its own specified projection and checks before implementation claims.
+separate SPACE record is not by itself a failure. Physical projection claims require their own specified camera model and checks.
 
-## What the current source establishes
+## Historical source inspection before native integration
 
 The inspected inputs are:
 
@@ -246,11 +241,10 @@ source does not implement the selected inherited per-occurrence orientation
 and attachment transport; a word-level `origin='SPACE'` label does not
 establish those behaviors.
 
-The current structural profile still returns
+The sealed historical structural profile returns
 `hmmm:compound-lexical-origin` for the 57,155 affected definition records in its
-sealed complete-corpus evidence. Ownership is now decided; the typed origin
-implementation and its full-corpus verification remain to be performed. A
-decision record does not retrospectively change those rows or receipts.
+sealed complete-corpus evidence. The forward recursive profile overlays a typed whole lexical owner and audits
+every definition. It does not retrospectively change those rows or receipts.
 
 ## Implementation and failure conditions
 
@@ -279,15 +273,10 @@ it does not reverse this ratification or erase historical evidence.
 
 ## hmmm
 
-- Native inherited frame transport, both-view recovery and verification.
-  Word origin at attachment and preceding-placement SPACE direction are
-  selected. SPACE/glyph coexistence is assumed; explicit storage is not required.
-- The disk-stack projection, depth/halving relation and which angle changes.
-- Which origins, orientations and SPACE relations need storage versus derivation.
-- Any generalization of this compound rule to other nested or ordinary
-  inter-word attachments.
-- Whole-lexical-owner implementation and complete-corpus replay.
-- Exact expanded carrier inventory/order and the resulting versioned geometry.
+- Select the precise construction-derived closed-word bearing functional.
+- Numerical definition attachment, beyond the implemented typed lexical owner.
+- Native sheet/lift behavior and any physical observer projection.
+- Exact expanded carrier inventory/order and versioned reconstruction.
 - Hosted verification, stable publication and domain graduation.
 
-Record generated by GPT from Erin Spencer's prompt and conversation context.
+GPT generated; context, prompt Erin Spencer.

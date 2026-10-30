@@ -1,4 +1,9 @@
-# English ordinal candidate in the Stack forge
+# Historical English ordinal v1 profile
+
+Forward construction uses [recursive attachment](recursive-stack.md). The
+`english.ordinal/1` interface and its SPACE-seam partial results remain historical
+replay behavior. Sentence stacking is specified; new frame transport is implemented.
+The implementation-pending statements below describe that older profile only.
 
 Stack owns this candidate's English implementation and public-contract research.
 UCNS owns its Public Gonol carrier, ordinal geometry, native objects and receipts.

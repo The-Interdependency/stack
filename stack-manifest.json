@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "58a9f32d8987a5c492de96eb5e10c3303da3e07a1fb721eda623bac7f3b0385e",
+  "work_graph_sha256": "38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -500,6 +500,46 @@
       "commit": "e46accffcb67a10630516d486c89e67f6ad19c7a",
       "authority": "build, extraction and review discipline",
       "relation": "governing source; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+      "authority": "native recursive planar attachment and exact expression geometry",
+      "relation": "exact producer; historical ordinal modules unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "f19389bd7b15e6540f812ec47d67274e429daec5",
+      "authority": "English construction forge pending domain graduation",
+      "relation": "input baseline; output extraction must pin the resulting forge commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "f2528c7f4cc182912df11b92fa355b16231b1fb5",
+      "authority": "verified extraction consumer baseline",
+      "relation": "input baseline; candidate output identity is separate",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
+      "authority": "build and verification discipline",
+      "relation": "resolved governing skills; no geometry authority",
       "canonical_release": false,
       "authority_transfer": false
     }

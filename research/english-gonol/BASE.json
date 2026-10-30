@@ -30,5 +30,12 @@
     "proposal_provenance": "docs/ordinal-source.json",
     "authority": "Stack English implementation candidate; UCNS owns geometry",
     "authority_transfer": false
+  },
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
   }
 }
