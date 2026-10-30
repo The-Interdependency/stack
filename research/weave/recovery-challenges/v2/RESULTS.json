@@ -1,0 +1,17 @@
+{
+  "generation": {
+    "planned": 1841,
+    "verified": 1841,
+    "failures": [],
+    "seconds": 168.323,
+    "workers": 4
+  },
+  "ciphertext_bytes": 9166558,
+  "min_wire_bytes": 143,
+  "max_wire_bytes": 72704,
+  "sum_case_seconds": 669.666,
+  "archive_bytes": 5404943,
+  "archive_sha256": "8c1d7a9ad6347ec2e00a098f19c20ed8f5a1f55315a030e47f31742ffb8ea7b1",
+  "receiver_boundary": "Fresh -I subprocess; explicit inputs, not an OS sandbox.",
+  "security_result": "NO_ATTACKS_RUN; selected-material round trips only."
+}

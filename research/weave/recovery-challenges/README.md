@@ -2,9 +2,14 @@
 
 GPT generated; context, prompt Erin Spencer.
 
-This directory contains actual, unmodified outputs from the implemented Weave
-native sequence-cycle candidate. Give another model this directory and the
-public source links below. Keep the evaluator's answer/material bundle separate.
+This directory contains versioned Weave recovery experiments. The current set is
+[v2/README.md](v2/README.md): 1,841 files, component/composition coverage and a
+seven-level per-file disclosure ladder. Its README is operator-only: release one
+level-zero directory to a fresh attacker context. Keep evaluator material separate.
+
+The v1 instructions below retain their original public-source exposure policy.
+The user subsequently reported external exact recovery of all eight v1 files;
+that report has not been independently replayed here. It is not a v2 result.
 
 ## Start here
 
@@ -18,7 +23,8 @@ eight binary `.wvc` files in [v1/ciphertexts/](v1/ciphertexts/).
 - The plaintexts are fresh synthetic prose, JSON, repeated blocks and binary data.
   No personal documents or existing public demo plaintexts were used.
 - All eight files were recovered exactly by separate authorized receiver processes.
-  No public-only recovery trial has yet been run against this pack.
+  At generation, no attacker trial had been run; the later user-reported 8/8 result
+  is recorded above.
 
 Run from `v1/` to verify download integrity:
 
@@ -119,6 +125,7 @@ Keep v1 bytes immutable. Add new attempts or changed exposure policies in a new
 version and verify authorized recovery before publication. Rollback removes only
 this challenge directory; it changes no cipher source or authority.
 
-hmmm: independent recovery is pending. Exact authorized round trips establish
+hmmm: the reported v1 recovery has not been independently replayed here. Exact authorized round trips establish
 that these files have recoverable answers; they do not establish secrecy,
 asymmetry, authentication or cryptographic strength.
+
