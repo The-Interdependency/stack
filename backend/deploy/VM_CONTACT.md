@@ -490,7 +490,9 @@ From #131 (`e74ce1e`) a rerun over an existing install is upgrade-safe:
 - Before anything is overwritten, the previous install is copied to a root-only
   directory under `/var/backups/vm-mcp/`; the installer prints the path. That is an
   extra copy alongside U1's backup, not a replacement for it.
-- If that backup fails the installer exits 9 with nothing changed.
+- If that backup fails the installer exits 9 before changing any installed file. U4
+  has already stopped the units by then, so the MCP path is down: use U6 to restore
+  the prior activation.
 
 Exit order in the pinned installer: 3 (token, or a settings change without the
 override) and 7 (Yama precheck) come before the installer's backup; 9 means that
@@ -753,7 +755,7 @@ The pinned `e74ce1e` is the merge of The-Interdependency/skill-lib#131 (upgrade-
 installer reruns, see U4), on top of #130 (`acd5e9f`, a first-use context notice from
 vm-mcp; its privileged components record a one-time marker in a new root-only state
 directory), #127 (`023ae12`) and #123 (`24029ca`).
- #127 hardens the installer and makes the server check its token
+#127 hardens the installer and makes the server check its token
 descriptor: fd 0 must be a regular file owned by root with no group or other bits. The
 installer's `/etc/credstore/vm-mcp-token` (root, `0600`) satisfies that. From #123 on,
 vm-mcp refuses every HTTP request, loopback included, that lacks
@@ -1006,7 +1008,9 @@ false `PASS`.
 ```bash
 (
 ok() { if [ "$2" = "$3" ]; then echo "PASS $1"; else echo "FAIL $1 (want $2, got $3)"; fi; }
-w=$(sudo -n -u vmmcp find /opt/vm-mcp -writable) || w=READ-FAILED
+# Directories vmmcp cannot search (root-only __pycache__) are pruned: nothing in them is
+# reachable by vmmcp. Any other find error still sets READ-FAILED.
+w=$(sudo -n -u vmmcp find /opt/vm-mcp -type d ! -executable -prune -o -writable -print) || w=READ-FAILED
 ok "nothing vmmcp-writable" 0 "$(grep -c . <<<"$w" || true)"
 o=$(sudo -n find /opt/vm-mcp ! -user root) || o=READ-FAILED
 ok "everything root-owned" 0 "$(grep -c . <<<"$o" || true)"
@@ -1017,8 +1021,12 @@ stat -c '%U %a %n' /opt /opt/vm-mcp /opt/vm-mcp/.venv/pyvenv.cfg
 ```
 
 Expect three `PASS` lines. All three paths must be owned by `root` with no group or
-world write bit (for example `755` or `644`). If `find` reports a directory it can't read, the check
-prints `FAIL`. Look at that directory's permissions before treating the result as a pass.
+world write bit (for example `755` or `644`). The first check skips directories that
+`vmmcp` cannot enter, such as the root-only `__pycache__`, because `vmmcp` can reach
+nothing inside them; those directories themselves are not writable by `vmmcp` either.
+If `find` still reports an error (for example a directory `vmmcp` can enter but not
+list), the check prints `FAIL`. Look at that directory's permissions before treating
+the result as a pass.
 
 ### e. HTTP authentication
 
