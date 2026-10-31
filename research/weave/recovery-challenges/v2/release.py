@@ -1,4 +1,4 @@
-# ratios: loc_comments=17:159 imports_exports=7:7 calls_definitions=50:7
+# ratios: loc_comments=18:161 imports_exports=8:7 calls_definitions=52:7
 """Operator-only staged exports and exact-byte grading.
 
 Run: python release.py release --private /operator --id OPAQUE_ID --level 0 --out /new/attempt
@@ -36,6 +36,7 @@ import argparse
 import json
 import shutil
 import operations as o
+import build
 from matrix import LINE
 
 BASE = '''# Exact-byte recovery attempt
@@ -54,6 +55,7 @@ in the bytes is fair evidence. There is no promise that every file conceals its 
 
 
 def read_case(root, case_id):
+    root = build.private_root(root)
     plan = json.loads((root/'private.json').read_text())
     matches = [r for r in plan['cases'] if r['id'] == case_id]
     if len(matches) != 1:
@@ -144,13 +146,14 @@ def copy_sources(destination):
 def export(root, case_id, level, out):
     if type(level) is not int or level not in range(7):
         raise ValueError('level must be an integer zero through six')
-    root, out = root.resolve(), out.absolute()
-    if out.is_symlink() or out.exists() or out.resolve().is_relative_to(root):
-        raise ValueError('use a new output directory outside the private archive')
+    root, out = build.private_root(root), build.outside_checkout(out)
+    if out.exists() or out.is_relative_to(root):
+        raise ValueError('use a new output directory outside the private archive and checkout')
     row = read_case(root, case_id)
     wire_path = root/'ciphertexts'/f'{case_id}.bin'
     if wire_path.is_symlink():
         raise ValueError('ciphertext may not be a symlink')
+    wire_path = build.private_path(root, 'ciphertexts', f'{case_id}.bin')
     out.mkdir(mode=0o700, parents=True)
     shutil.copyfile(wire_path, out/'challenge.bin')
     (out/'README.md').write_text(clue_text(row, level))
@@ -195,4 +198,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# ratios: loc_comments=17:159 imports_exports=7:7 calls_definitions=50:7
+# ratios: loc_comments=18:161 imports_exports=8:7 calls_definitions=52:7

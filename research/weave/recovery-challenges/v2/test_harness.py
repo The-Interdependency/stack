@@ -1,4 +1,4 @@
-# ratios: loc_comments=215:34 imports_exports=23:2 calls_definitions=136:14
+# ratios: loc_comments=217:34 imports_exports=24:2 calls_definitions=137:14
 """Independent coverage/disclosure witnesses; no attacker success is inferred.
 
 Run: python test_harness.py --private /operator --receipt /operator/harness.json
@@ -47,6 +47,7 @@ import time
 import unittest
 import zipfile
 import operations as o
+import build
 import matrix
 import release
 import transport_cases as t
@@ -252,13 +253,14 @@ def main():
     parser.add_argument('--private', type=Path, required=True)
     parser.add_argument('--receipt', type=Path, required=True)
     parser.add_argument('--require-full-weave', action='store_true')
-    args = parser.parse_args(); PRIVATE = args.private
+    args = parser.parse_args(); PRIVATE = build.private_root(args.private)
+    receipt_path = build.outside_checkout(args.receipt)
     start = time.monotonic()
     result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(Harness))
     receipt = {'tests': result.testsRun, 'failures': len(result.failures), 'errors': len(result.errors),
         'harness_passed': result.wasSuccessful(), 'full_weave_coverage': 'INCOMPLETE',
         'seconds': round(time.monotonic()-start, 3), 'observations': OBSERVATIONS}
-    args.receipt.write_text(json.dumps(receipt, indent=2)+'\n')
+    build.save(receipt_path, receipt)
     print(json.dumps({k: v for k,v in receipt.items() if k!='observations'}))
     if not result.wasSuccessful():
         return 1
@@ -267,4 +269,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=215:34 imports_exports=23:2 calls_definitions=136:14
+# ratios: loc_comments=217:34 imports_exports=24:2 calls_definitions=137:14

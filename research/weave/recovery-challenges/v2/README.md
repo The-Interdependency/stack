@@ -148,7 +148,37 @@ python3 build.py freeze --private /absolute/new-private-directory
 python3 build.py generate --private /absolute/new-private-directory --workers 4
 ```
 
-Generation emits resumable per-case checkpoints. Packaging writes new public
+Generation emits resumable per-case checkpoints. If a ciphertext exists without
+its receipt, generation recomputes its frozen case, compares the complete bytes,
+and runs a fresh receiver before recording success. It preserves the ciphertext's
+bytes and filesystem identity. Conflicting ciphertext, failed/malformed receipts,
+or inconsistent generation reports require operator inspection; they are never
+silently overwritten or resampled. Completed generation can be repeated without
+rewriting its original report. Checkpoints publish atomically without replacement;
+an interruption may leave a harmless hidden temporary file, never an accepted
+partial checkpoint. Use one generation process per operator archive.
+
+Private roots and their artifact paths are resolved before use, including `..`
+and symlinks. Private children must remain within the admitted archive. All staged
+exports and harness receipts must also remain outside the public checkout; exports
+must be outside the private archive. Use operator-owned directories: these path
+checks are not an OS sandbox against a process concurrently replacing filesystem
+ancestors. Do not put the private archive inside the packaged `source/` checkout.
+
+Run the synthetic integrity regressions without private challenge answers:
+
+```sh
+python3 research/weave/recovery-challenges/v2/test_regressions.py
+```
+
+Run from the repository root after supplying the two exact UCNS files named in
+SOURCE.json under `sources/ucns/src/ucns/`; copy them from the private archive's
+`source/sources/` tree or from UCNS commit `905e66964a495d7596a577bb64e4158db9465864`.
+The source-lock check rejects substitutions. The Weave workflow performs the same
+setup from its pinned UCNS checkout. [REVIEW_REPAIR.md](REVIEW_REPAIR.md) records
+the PR #94 defect reproductions and same-corpus replay, separately from attacks.
+
+Packaging writes new public
 artifacts exclusively and refuses to overwrite a frozen archive. Use a separate
 version/directory for a new experiment. The selected private profiles here are
 research inputs; no native public/private derivation law is implied.

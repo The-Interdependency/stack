@@ -1,11 +1,12 @@
-# ratios: loc_comments=159:32 imports_exports=16:7 calls_definitions=81:7
+# ratios: loc_comments=211:38 imports_exports=16:11 calls_definitions=114:11
 """Freeze, generate and verify actual challenges without publishing their answers.
 
 Usage: python build.py freeze --private /absolute/operator
        python build.py generate --private /absolute/operator --workers 4
        python build.py package --private /absolute/operator
-Generation resumes only completed, hash-checked checkpoints. Failed planned cases
-remain visible and prevent packaging; no cap relaxation or silent resampling.
+Generation resumes hash-checked checkpoints and verifies orphaned ciphertexts
+against the frozen result before reconstructing receipts. Conflicts are retained.
+Private paths resolve outside the checkout; use an operator-owned directory.
 """
 # === MODULE_BUILD ===
 # id: challenge_build
@@ -54,15 +55,51 @@ def canonical(value):
 
 
 def save(path, value):
+    publish(path, (json.dumps(value, indent=2)+'\n').encode())
+
+
+def publish(path, data):
+    """Publish a complete checkpoint exclusively; never replace existing evidence."""
     path = Path(path)
-    with path.open('x') as out:
-        json.dump(value, out, indent=2)
-        out.write('\n')
+    fd, temporary = tempfile.mkstemp(prefix='.'+path.name+'.', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'wb') as out:
+            out.write(data)
+            out.flush()
+            os.fsync(out.fileno())
+        os.link(temporary, path)
+    finally:
+        os.unlink(temporary)
+
+
+def outside_checkout(path):
+    """Canonicalize parent traversal and symlinks before any private write."""
+    path = Path(path).resolve()
+    if path.is_relative_to(o.CHECKOUT.resolve()):
+        raise ValueError('private artifacts must live outside the checkout')
+    return path
+
+
+def private_path(root, *parts):
+    """Keep every private child in the admitted archive, including existing links."""
+    root = outside_checkout(root)
+    path = outside_checkout(root.joinpath(*parts))
+    if not path.is_relative_to(root):
+        raise ValueError('private artifact escapes the private archive')
+    return path
+
+
+def private_root(root):
+    root = outside_checkout(root)
+    for name in ('private.json', 'ciphertexts', 'receipts', 'generation.json'):
+        private_path(root, name)
+    return root
 
 
 def freeze(root):
-    if not root.is_absolute() or root == o.CHECKOUT or root.is_relative_to(o.CHECKOUT):
-        raise ValueError('private fixtures must live outside the checkout')
+    if not root.is_absolute():
+        raise ValueError('private fixtures require an absolute path')
+    root = private_root(root)
     root.mkdir(mode=0o700, parents=True, exist_ok=False)
     os.chmod(root, 0o700)
     rows = matrix.schedules()
@@ -82,12 +119,16 @@ def freeze(root):
 
 
 def one_case(root_text, row):
-    root = Path(root_text); start = time.monotonic()
-    receipt_path = root/'receipts'/f"{row['id']}.json"
-    wire_path = root/'ciphertexts'/f"{row['id']}.bin"
+    root = private_root(root_text); start = time.monotonic()
+    case_id = row['id']
+    if not isinstance(case_id, str) or len(case_id) != 16 or any(c not in '0123456789abcdef' for c in case_id):
+        raise ValueError('invalid opaque case ID')
+    receipt_path = private_path(root, 'receipts', f'{case_id}.json')
+    wire_path = private_path(root, 'ciphertexts', f'{case_id}.bin')
     if receipt_path.exists():
         receipt = json.loads(receipt_path.read_text())
-        if receipt['status'] == 'VERIFIED' and sha256(wire_path.read_bytes()).hexdigest() == receipt['wire_sha256']:
+        if (receipt['id'] == case_id and receipt['status'] == 'VERIFIED'
+                and sha256(wire_path.read_bytes()).hexdigest() == receipt['wire_sha256']):
             return receipt
         raise ValueError('checkpoint invalid or failed; inspect without silently regenerating')
     try:
@@ -98,6 +139,16 @@ def one_case(root_text, row):
             wire = transport(message, row['schedule'], p)
         else:
             wire = o.execute(message, row['schedule'], p)
+    except Exception as error:
+        receipt = {'id': case_id, 'status': 'FAILED', 'error': str(error),
+                   'seconds': round(time.monotonic()-start, 6)}
+        save(receipt_path, receipt)
+        return receipt
+    # Recompute from the frozen row, then compare actual bytes, not an absent
+    # receipt or a claimed digest. A mismatch must not create a FAILED checkpoint.
+    if wire_path.exists() and wire_path.read_bytes() != wire:
+        raise ValueError('orphaned ciphertext conflicts with frozen result')
+    try:
         request = {k: row[k] for k in ('family', 'schedule', 'parameters')}
         request['wire_hex'] = wire.hex()
         # The subprocess receives no message, answer digest, prediction salt or trace.
@@ -110,19 +161,25 @@ def one_case(root_text, row):
                 raise RuntimeError('receiver failed: ' + completed.stderr.decode(errors='replace')[-2000:])
             if (folder/'restored.bin').read_bytes() != message:
                 raise AssertionError('fresh receiver did not recover exact bytes')
-        with wire_path.open('xb') as out:
-            out.write(wire)
-        receipt = {'id': row['id'], 'status': 'VERIFIED', 'wire_bytes': len(wire),
-                   'wire_sha256': sha256(wire).hexdigest(), 'message_bytes': len(message),
-                   'seconds': round(time.monotonic()-start, 6), 'fresh_receiver': True}
     except Exception as error:
-        receipt = {'id': row['id'], 'status': 'FAILED', 'error': str(error),
+        receipt = {'id': case_id, 'status': 'FAILED', 'error': str(error),
                    'seconds': round(time.monotonic()-start, 6)}
+        save(receipt_path, receipt)
+        return receipt
+    if wire_path.exists():
+        if wire_path.read_bytes() != wire:
+            raise ValueError('ciphertext changed during receiver verification')
+    else:
+        publish(wire_path, wire)
+    receipt = {'id': case_id, 'status': 'VERIFIED', 'wire_bytes': len(wire),
+               'wire_sha256': sha256(wire).hexdigest(), 'message_bytes': len(message),
+               'seconds': round(time.monotonic()-start, 6), 'fresh_receiver': True}
     save(receipt_path, receipt)
     return receipt
 
 
 def generate(root, workers):
+    root = private_root(root)
     if not 1 <= workers <= 4:
         raise ValueError('one through four workers allowed')
     plan = json.loads((root/'private.json').read_text()); rows = plan['cases']
@@ -138,21 +195,30 @@ def generate(root, workers):
     report = {'planned': len(rows), 'verified': sum(r['status']=='VERIFIED' for r in results),
               'failures': [r for r in results if r['status']!='VERIFIED'],
               'seconds': round(time.monotonic()-started, 3), 'workers': workers}
-    save(root/'generation.json', report)
+    report_path = private_path(root, 'generation.json')
+    if report_path.exists():
+        previous = json.loads(report_path.read_text())
+        if any(previous[key] != report[key] for key in ('planned', 'verified', 'failures')):
+            raise ValueError('generation report conflicts with checked receipts')
+        report = previous
+    else:
+        save(report_path, report)
     print(json.dumps(report), flush=True)
     return 0 if not report['failures'] else 1
 
 
 def package(root):
+    root = private_root(root)
     plan = json.loads((root/'private.json').read_text())
     generation = json.loads((root/'generation.json').read_text())
     rows = plan['cases']; receipts = []
     if generation['verified'] != len(rows) or generation['failures']:
         raise ValueError('planned failures forbid a misleading complete archive')
     for row in rows:
-        receipt = json.loads((root/'receipts'/f"{row['id']}.json").read_text())
-        wire = (root/'ciphertexts'/f"{row['id']}.bin").read_bytes()
-        if sha256(wire).hexdigest() != receipt['wire_sha256']:
+        receipt = json.loads(private_path(root, 'receipts', f"{row['id']}.json").read_text())
+        wire = private_path(root, 'ciphertexts', f"{row['id']}.bin").read_bytes()
+        if (receipt['id'] != row['id'] or receipt['status'] != 'VERIFIED'
+                or sha256(wire).hexdigest() != receipt['wire_sha256']):
             raise ValueError('checkpoint wire drift')
         receipts.append(receipt)
     with zipfile.ZipFile(o.HERE/'blind-pack.zip', 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
@@ -163,7 +229,7 @@ def package(root):
         sums = []
         for receipt in sorted(receipts, key=lambda r: r['id']):
             name = receipt['id']+'.bin'
-            archive.write(root/'ciphertexts'/name, 'files/'+name)
+            archive.write(private_path(root, 'ciphertexts', name), 'files/'+name)
             sums.append(receipt['wire_sha256']+'  files/'+name)
         archive.writestr('SHA256SUMS', '\n'.join(sums)+'\n')
     accepted, refused = matrix.transport_schedules()
@@ -207,4 +273,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=159:32 imports_exports=16:7 calls_definitions=81:7
+# ratios: loc_comments=211:38 imports_exports=16:11 calls_definitions=114:11
