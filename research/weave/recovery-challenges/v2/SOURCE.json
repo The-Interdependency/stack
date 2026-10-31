@@ -1,0 +1,251 @@
+{
+  "schema": "weave.challenge-sources/v2",
+  "stack_commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+  "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "git_blob": "6a757df08fb76483dcc8293c5feb6defc1b9616d"
+    },
+    {
+      "path": "research/weave/ASSEMBLY.md",
+      "git_blob": "715c170f63e8a8d0ae667c199270f1bf180b7402"
+    },
+    {
+      "path": "research/weave/BASE.json",
+      "git_blob": "9b0bbf160a16803a79b5fbd8b9fda2357ca9358e"
+    },
+    {
+      "path": "research/weave/CYCLE.md",
+      "git_blob": "e704297d381aad0f9198597446f1748a6b910290"
+    },
+    {
+      "path": "research/weave/CYCLE_NATIVE.json",
+      "git_blob": "0997b017c58c3c689800832a8b67340160f7b5f3"
+    },
+    {
+      "path": "research/weave/CYCLE_WORK_GRAPH.json",
+      "git_blob": "897c118910bb0b4efee30da73c06a1602f8129d6"
+    },
+    {
+      "path": "research/weave/EIGHT_CIRCLE.md",
+      "git_blob": "ca8cdcb90edebb88e20f1458eb94fe3eff357abc"
+    },
+    {
+      "path": "research/weave/IMPLEMENTATION_PLAN.json",
+      "git_blob": "8850400b2540114f7aacfba43020126b286e9a70"
+    },
+    {
+      "path": "research/weave/IMPLEMENTED.md",
+      "git_blob": "b3facf6aea05abcaf4a632b4d3acbd53915680fc"
+    },
+    {
+      "path": "research/weave/NATIVE_BINARY_PROVENANCE.json",
+      "git_blob": "09de2fa7103cf48a5427f4cd15d134baf3ef9a8c"
+    },
+    {
+      "path": "research/weave/NUMERAL_CONSTRUCTION.md",
+      "git_blob": "a99ef97228de17eb7bda605ddd6935763300e3b2"
+    },
+    {
+      "path": "research/weave/PLAN.md",
+      "git_blob": "23840a6d93d358699f2412a4c671195319cbf672"
+    },
+    {
+      "path": "research/weave/QUESTIONS.md",
+      "git_blob": "f076a1e136cf1cdfed36a705a4f35e231f542eb6"
+    },
+    {
+      "path": "research/weave/README.md",
+      "git_blob": "aa5e6eb52739c65f33a0d396fff29548d8ce3cc9"
+    },
+    {
+      "path": "research/weave/REPORT.md",
+      "git_blob": "0cd31df78708608f0bd770dfbf0308d4243cd3b3"
+    },
+    {
+      "path": "research/weave/SPECIFICATION.md",
+      "git_blob": "db347b53c742a2448e3dec109178e55d735dd750"
+    },
+    {
+      "path": "research/weave/affixiation.py",
+      "git_blob": "047ae47a565cb986ff6f8888b19a0d269c13f3f7"
+    },
+    {
+      "path": "research/weave/assembly.py",
+      "git_blob": "bbabc1c6109442a9f24ebd3b6b702053cbef42ad"
+    },
+    {
+      "path": "research/weave/cycle.py",
+      "git_blob": "9730d6058e9e997b6b081c1614019810755b5194"
+    },
+    {
+      "path": "research/weave/cycle_native.py",
+      "git_blob": "8d011a15234f8583fb0968c8fc80c63c308f2054"
+    },
+    {
+      "path": "research/weave/evidence/review-repair-v1.json",
+      "git_blob": "93bcac46901122576b11e20b32c20faaadb79ae0"
+    },
+    {
+      "path": "research/weave/evidence/transport-v1.json",
+      "git_blob": "408faedadec42368a0e2ef4cc2a20ac543319af4"
+    },
+    {
+      "path": "research/weave/lab.py",
+      "git_blob": "88e3d1802e7a48a2e836c2d4519fb3c97ae0449a"
+    },
+    {
+      "path": "research/weave/native_binary.py",
+      "git_blob": "6a6ba9f57b83b62116a57113a5c6358fab7e7831"
+    },
+    {
+      "path": "research/weave/numeral.py",
+      "git_blob": "1e9b7f12b1d7dc20413e737ceb36696d34a59980"
+    },
+    {
+      "path": "research/weave/prime_schedule.py",
+      "git_blob": "667ff6afe7510fa373d164a2fb4992acabd94106"
+    },
+    {
+      "path": "research/weave/probe.py",
+      "git_blob": "ae2eb456a31782f3663b52139b4b39c654f1e28e"
+    },
+    {
+      "path": "research/weave/profiles/cycle-v1.json",
+      "git_blob": "372d1420a9cc59c86d2813af926c75eca315b14d"
+    },
+    {
+      "path": "research/weave/profiles/transport.json",
+      "git_blob": "bf0255cb2da7d536642e057aa5a23fadc78d9b01"
+    },
+    {
+      "path": "research/weave/run.py",
+      "git_blob": "7aabc5278f6ef5613492b595610888d6e89b5589"
+    },
+    {
+      "path": "research/weave/safe_output.py",
+      "git_blob": "2c84a5d46adadb88285ba1e3e8db26417f26f6f2"
+    },
+    {
+      "path": "research/weave/stages/__init__.py",
+      "git_blob": "f64d970f6c9f79b17d56d3f2f3e710b5c4f52569"
+    },
+    {
+      "path": "research/weave/stages/api.py",
+      "git_blob": "15e5973aa8eedd168c25d3aa42aa1b80da36a156"
+    },
+    {
+      "path": "research/weave/stages/auth.py",
+      "git_blob": "dc3cd804143f245893f6e33e860d79827d447644"
+    },
+    {
+      "path": "research/weave/stages/bind.py",
+      "git_blob": "ecc711f0f52305c055ee2afb276866bda9149e80"
+    },
+    {
+      "path": "research/weave/stages/corpus.py",
+      "git_blob": "f9a6ca808614c62ea33e3806266a22a25b469e80"
+    },
+    {
+      "path": "research/weave/stages/gonol.py",
+      "git_blob": "d49b786b7a5d60fa5a7f6b070ec826e327617767"
+    },
+    {
+      "path": "research/weave/stages/inter.py",
+      "git_blob": "e89d9b38adf928e54b51cdf1e7ccc8cce4cca3c2"
+    },
+    {
+      "path": "research/weave/stages/join.py",
+      "git_blob": "4f95f04170f9c1a5392984eef323c7c927df3a17"
+    },
+    {
+      "path": "research/weave/stages/key.py",
+      "git_blob": "353aeb053cf018decebab277c86279c6e20174d7"
+    },
+    {
+      "path": "research/weave/stages/split.py",
+      "git_blob": "f0d67a812274c95d0eed703faa7c84d0dc2ed774"
+    },
+    {
+      "path": "research/weave/stages/whole.py",
+      "git_blob": "30b37381d2d4c0f0acf42ed5227903a8606b6449"
+    },
+    {
+      "path": "research/weave/test.py",
+      "git_blob": "7d2941ab0d97feb6e2c4a589314abb1bdd2e477c"
+    },
+    {
+      "path": "research/weave/tests/test_admission_order.py",
+      "git_blob": "38a25f0416ad1dbe7e9c685c60d0a741c2afbcb1"
+    },
+    {
+      "path": "research/weave/tests/test_assembly.py",
+      "git_blob": "ae1b1106fb7bd546ccaaa8a8a3aceed3589976d0"
+    },
+    {
+      "path": "research/weave/tests/test_binary_origin.py",
+      "git_blob": "e2f704c7b143ce375023795e33bdcb731c25e9d8"
+    },
+    {
+      "path": "research/weave/tests/test_cycle.py",
+      "git_blob": "dbd6901b905527747658f7d9217d2e4cb9ddd905"
+    },
+    {
+      "path": "research/weave/tests/test_cycle_repairs.py",
+      "git_blob": "21cf7d7d1c2e511e34c61dbac76e0da66cd33f0c"
+    },
+    {
+      "path": "research/weave/tests/test_final_findings.py",
+      "git_blob": "c05bbe9364960b278a944c760289d11a7cb4a0e5"
+    },
+    {
+      "path": "research/weave/tests/test_numeral.py",
+      "git_blob": "3f1765f4b1d6d13a8f9eef9b5887ec28791e5539"
+    },
+    {
+      "path": "research/weave/tests/test_numeral_replay.py",
+      "git_blob": "b5eb999de2f8ac86edd9a9e1cbeacd4bcd8b4eb9"
+    },
+    {
+      "path": "research/weave/tests/test_numeral_review.py",
+      "git_blob": "b6dd1bef891885cde5da7b189811ba008f1ce901"
+    },
+    {
+      "path": "research/weave/tests/test_review_closure.py",
+      "git_blob": "8d2be65eaba88eefcdc135a479627e17f4f4f313"
+    },
+    {
+      "path": "research/weave/tests/test_terminal_records.py",
+      "git_blob": "788ace9312b894332d6e47c5f00b28cabec1f678"
+    },
+    {
+      "path": "research/weave/tests/test_transport.py",
+      "git_blob": "93dab34fc2903766d88f4ad70bcb5a6b9bde6801"
+    },
+    {
+      "path": "research/weave/transport.py",
+      "git_blob": "a15ba4e6fa3179ba61604e9142df616077e11b79"
+    },
+    {
+      "path": "research/weave/twin_ray_engine.py",
+      "git_blob": "b1726a91f1677e04029cbf6e6a6998eb6eb6d8a0"
+    },
+    {
+      "path": "sources/ucns/src/ucns/axis_circle.py",
+      "git_blob": "768777c8eca6e65537fdbab2003835d6f4f40569"
+    },
+    {
+      "path": "sources/ucns/src/ucns/direct_mobius.py",
+      "git_blob": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+    },
+    {
+      "path": "stack-manifest.json",
+      "git_blob": "39a0983020e6eb25219ecf11f8c46f11aafb68bf"
+    },
+    {
+      "path": "STACK_MANIFEST.md",
+      "git_blob": "fd878562a15e89d889424548aa98665d8af5a4d5"
+    }
+  ]
+}
