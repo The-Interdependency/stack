@@ -24,5 +24,18 @@
     "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
     "relation": "exact EDCM semantic metric-origin producer with canonical O/L split; does not refresh the historical extraction source or libs/edcm pin",
     "authority_transfer": false
+  },
+  "ordinal_candidate": {
+    "work_graph": "docs/ordinal-work-graph.json",
+    "proposal_provenance": "docs/ordinal-source.json",
+    "authority": "Stack English implementation candidate; UCNS owns geometry",
+    "authority_transfer": false
+  },
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
   }
 }

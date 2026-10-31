@@ -1,5 +1,12 @@
 # English Gonol Construction
 
+## Ordinal candidate
+
+The active [recursive attachment profile](docs/recursive-stack.md) consumes
+native UCNS stacks, closed compound joins and reversible origin views.
+Sentences stack closed words through the same operation that stacks glyphs.
+The [ordinal v1 profile](docs/ordinal-geometry.md) remains historical replay.
+
 ## Structural profile v1 — new construction entrypoint
 
 The operator-ratified [structural profile](docs/structural-profile-v1.md) replaces
