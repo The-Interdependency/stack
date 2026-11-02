@@ -254,9 +254,12 @@ def test_unregistered_or_modified_fixture_fails_closed(tmp_path, mutation):
 
 
 def test_registered_producer_and_all_projections_agree():
-    workspace = origins.FIXTURE.parent
+    workspace = Path(__file__).resolve().parents[1]
     stack = workspace.parents[1]
     fixture = origins.load_metric_origin_specs()
+    assert origins.FIXTURE.read_bytes() == (workspace / "EDCM_METRIC_ORIGINS_SOURCE.json").read_bytes()
+    packaged = json.loads(origins.BASE.read_text())["metric_origin_source"]
+    assert packaged == json.loads((workspace / "BASE.json").read_text())["metric_origin_source"]
     producer = fixture["producer_commit"]
     graph = json.loads((workspace / "docs/work-graphs/metric-origin-space-v0.json").read_text())
     participant = next(x for x in graph["repositories"] if x["repository"] == fixture["producer_repository"])
