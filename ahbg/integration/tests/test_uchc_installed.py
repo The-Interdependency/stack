@@ -2,6 +2,8 @@
 
 Run only in the existing UCHC full-corpus acceptance job, with
 UCHC_INPUT_DATABASE pointing to the verified complete construct.db.
+Set UCHC_INPUT_LOCK to verify a migration candidate before changing the active
+consumer lock. The default remains the historical ZFAE lock.
 """
 from __future__ import annotations
 
@@ -43,7 +45,9 @@ class InstalledUchcTests(unittest.TestCase):
                 raise AssertionError("UCHC_INPUT_DATABASE is required: full-corpus gate not configured")
             raise unittest.SkipTest("Full-corpus installed wheel gate runs in dedicated CI")
         cls.database = Path(raw)
-        cls.lock = ROOT / "research" / "zfae" / "UCHC_INPUT.json"
+        cls.lock = Path(os.environ.get(
+            "UCHC_INPUT_LOCK", ROOT / "research" / "zfae" / "UCHC_INPUT.json"
+        ))
 
     def settings(self, **extra):
         return UchcSettings(database=self.database, lock=self.lock, **extra)
