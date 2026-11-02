@@ -1,0 +1,42 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "ed0b0760f05cd975a7a811f8abeb70a11d09f00b",
+      "authority": "Public Gonol and ordinal geometry",
+      "relation": "exact native producer"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+      "authority": "English construction forge pending UCHC graduation",
+      "relation": "starting forge baseline; this change adds the ordinal candidate"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "c514e1a2a3f3da5ffae9ebf76d67a1d348845842",
+      "authority": "unmerged ordinal proposal; not English implementation authority",
+      "relation": "source provenance preserved before rehoming and review repairs"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "e46accffcb67a10630516d486c89e67f6ad19c7a",
+      "authority": "build, extraction and review discipline",
+      "relation": "governing source; no geometry authority"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "UCNS defines geometry; Stack owns the English candidate; UCHC may verify an extraction.",
+    "agent_scope": "english-ordinal-review-repair",
+    "hmmm": [
+      "Missing Public Gonol bearings and higher word frames remain unresolved.",
+      "Verified extraction is not stable publication, released-artifact reconsumption or domain graduation."
+    ]
+  },
+  "work_graph_sha256": "7cbf5bbef94a934731a5d5fee73af627f3466388692ec37b246e1ce09c0c9078"
+}

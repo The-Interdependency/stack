@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "88049d2bcc65315fde82e4713a424e20b1537ff68d46b42285ce4bc0b461b3f4",
+  "work_graph_sha256": "38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -472,6 +472,76 @@
       "relation": "pinned doctrine for the module, tests, research receipts and Stack transaction; no authority transfer",
       "authority_transfer": false,
       "canonical_release": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "ed0b0760f05cd975a7a811f8abeb70a11d09f00b",
+      "authority": "Public Gonol and ordinal geometry",
+      "relation": "exact native producer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-proposal",
+      "repository": "The-Interdependency/uchc",
+      "commit": "c514e1a2a3f3da5ffae9ebf76d67a1d348845842",
+      "authority": "unmerged ordinal proposal; not English implementation authority",
+      "relation": "source provenance preserved before rehoming and review repairs",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "ordinal-doctrine",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "e46accffcb67a10630516d486c89e67f6ad19c7a",
+      "authority": "build, extraction and review discipline",
+      "relation": "governing source; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+      "authority": "native recursive planar attachment and exact expression geometry",
+      "relation": "exact producer; historical ordinal modules unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "f19389bd7b15e6540f812ec47d67274e429daec5",
+      "authority": "English construction forge pending domain graduation",
+      "relation": "input baseline; output extraction must pin the resulting forge commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "f2528c7f4cc182912df11b92fa355b16231b1fb5",
+      "authority": "verified extraction consumer baseline",
+      "relation": "input baseline; candidate output identity is separate",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
+      "authority": "build and verification discipline",
+      "relation": "resolved governing skills; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
     }
   ]
 }
