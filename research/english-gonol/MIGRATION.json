@@ -135,5 +135,15 @@
     "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
     "authority_transfer": false,
     "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
+  },
+  "package_candidate": {
+    "repository": "The-Interdependency/uchc",
+    "source_commit": "b1d2c62fd55d2898bb37cba9ebec862c9a8d5980",
+    "version": "0.1.0",
+    "wheel_sha256": "856d7bf01d9c55266ce3d50a20fcc7dd1e4efc729fad85120ccbf387b3454415",
+    "lock": "integration/uchc/candidate-0.1.0.json",
+    "extraction_source_commit": "ca69c60032a079585ccb89d5cc7aba67f637df55",
+    "standing": "exact package candidate; publication and authority transition pending",
+    "authority_transfer": false
   }
 }
