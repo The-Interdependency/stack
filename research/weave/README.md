@@ -46,6 +46,13 @@ minimal exact UCNS files under `sources/`. Existing files are never overwritten;
 ordinary write/flush/close failures leave no partial destination. The output is
 an experimental representation, not safe storage for secrets.
 
+## Glyph-axis construction view
+
+[Whole glyphs. New axes.](docs/glyph-axis-infographic/README.md) illustrates the
+whole-glyph unit, 90-degree address rotation, exact counts through eight axes,
+and preserved slice/column coordinates. PNG, SVG, PDF and a source-bound replay
+are included. This is construction documentation, separate from the cycle profile.
+
 ## Evidence boundaries
 
 `SPECIFICATION.md` preserves the full intended system and latest clarification.
