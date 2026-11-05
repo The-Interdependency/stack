@@ -1,0 +1,77 @@
+{
+  "schema": "weave.recovery-checks/v2",
+  "baseline": {
+    "status": "PASSED",
+    "tests": 176,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "source_unchanged": true,
+    "source_sha256": "b1766c496ac3919c1b497108e6e9e9e5c459fa79b5d117dca7e45f7918909342"
+  },
+  "harness": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "harness_passed": true,
+    "full_weave_coverage": "INCOMPLETE",
+    "seconds": 2.282,
+    "observations": {
+      "typed_order_refusals": 602,
+      "corpus_boundary": "Official wrong/missing corpus refusal; corpus-free extraction from normalized frame still succeeds.",
+      "sequence_discovery": "Independent partition restoration and native A composition witnessed.",
+      "disclosures": {
+        "case_level_text_checks": 12887,
+        "materialized_family_level_exports": 28,
+        "standalone_last_level_receivers": 4
+      },
+      "unmet_full_weave": {
+        "whole_message_private_gonol": "No arbitrary-message/private-gonol forward/inverse law.",
+        "private_gonol_binding": "stages/bind.py supplies a declaration, no operator.",
+        "asymmetric_key_relation": "stages/key.py requires a caller-supplied law; none exists.",
+        "cryptographic_thread_dependency": "Occurrence lanes exist; complementary secret reconstruction does not.",
+        "native_corpus_key_binding": "Normalization validates corpus/padding; private reconstruction binding is absent.",
+        "authentication": "stages/auth.py declares Q10 but provides no authenticator.",
+        "replay_state": "No stateful replay rejection mechanism is implemented."
+      },
+      "twin_ray": "Different messages have identical public faces; full private records contain message-bearing fields. No recoverable public-face challenge claimed.",
+      "native_circles": {
+        "whole_origin_circle": true,
+        "occurrence_circles": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "equivalent_schedules_witnessed": [
+        "BB=identity",
+        "RR=identity",
+        "BR=RB",
+        "BBB=B",
+        "RRR=R"
+      ],
+      "prime_components": "Exact base-2/base-10 spans, prime-index recursion, recipe numeral and section routes witnessed.",
+      "public_boundary": "All 1841 exact wire outputs plus only generic README and ciphertext checksums; no extra answer artifacts."
+    }
+  },
+  "ratios": {
+    "source_files": 6,
+    "verified_fields": 36,
+    "drift": 0,
+    "misplaced": 0,
+    "gaps": 0
+  },
+  "full_weave_gate_exit_code": 2,
+  "full_weave_gate_meaning": "Expected unmet implementation obligations, not an encryption test pass",
+  "source_admission": {
+    "original_files_git_blob_checked": 61,
+    "algorithm_source_changed": false
+  },
+  "setup_failures_resolved": [
+    "Initial partial checkout omitted stack-manifest.json, then STACK_MANIFEST.md; both exact pinned originals materialized before final 176-test pass."
+  ]
+}

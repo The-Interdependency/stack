@@ -43,6 +43,14 @@ jobs:
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/test.py --receipt "$RUNNER_TEMP/weave-check.json"
           cat "$RUNNER_TEMP/weave-check.json"
           PYTHONDONTWRITEBYTECODE=1 python3 research/weave/cycle.py demo | tee "$RUNNER_TEMP/weave-demo.json"
+      - name: Verify challenge containment and interrupted checkpoints
+        run: |
+          set -euo pipefail
+          # SOURCE.json checks these exact producer bytes before importing adapters.
+          mkdir -p sources/ucns/src/ucns
+          cp .weave-inputs/ucns/src/ucns/axis_circle.py sources/ucns/src/ucns/
+          cp .weave-inputs/ucns/src/ucns/direct_mobius.py sources/ucns/src/ucns/
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/recovery-challenges/v2/test_regressions.py
       - name: Package tracked research source and observed evidence
         if: always()
         run: |
