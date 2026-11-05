@@ -10,6 +10,7 @@ Standing: **construction illustration, exact combinatorial counts, and a checked
 
 ## Use the figure
 
+- [Animated GIF](glyph-axis-animation.gif): 42-second loop through the address turn, eight-square stack, three slice views, and eight-axis grouping.
 - [PNG](glyph-axis-infographic.png): phone viewing and sharing.
 - [SVG](glyph-axis-infographic.svg): scalable, editable vector artwork. Letterforms are paths for consistent rendering; this page supplies accessible text.
 - [PDF](glyph-axis-infographic.pdf): zooming and print.
@@ -89,6 +90,26 @@ python research/weave/docs/glyph-axis-infographic/render.py \
 The script verifies the producer's Git blob, constructs the eight native participants, checks all 64 moves and four-turn identity, derives the full 2–8 axis table, then exports the figure and evidence. It does not fetch sources, modify UCNS or execute a cipher. `--output` writes the named exports in that directory; select a new directory when retaining an earlier run. Rendering versions are recorded because export bytes can depend on Matplotlib and fonts. Geometry/count checks are exact and independent of display rounding.
 
 The figure labels supply color-independent distinctions: BEFORE/AFTER, coordinate ordinals, occurrence #2, P, and all axis/fixed-coordinate labels. The publication review includes text contrast, grayscale, color-vision-deficiency simulation and a semantic check. Automated contrast is a rendering check, not a claim of universal perceptual accessibility.
+
+## Animated companion
+
+![The 8 by 8 glyph array turns clockwise while the glyph labels remain upright; eight squares stack along z; the same occurrence is viewed in three coordinate planes; eight groups at each subsequent level extend the counts through eight axes.](glyph-axis-animation.gif)
+
+The animation uses the same exact native producer and illustrative carrier as the static figure. First, it follows Ω occurrence #2 through the square turn. After stacking, it explicitly switches focus to Ω occurrence #234 at `(x=2,y=5,z=3)`. The three slice views preserve that occurrence and all other cube memberships. The x–z and y–z views highlight the **same physical z-line**, which is counted once.
+
+The final frames show **grouping schematics**, not projections of a physical eight-dimensional object or native UCNS closure. Each new axis gives eight coordinate choices, and each slot contains the complete previous arrangement. Counts displayed during slot highlighting always describe the completed set of eight slots. Labels, coordinates, ordinals and outlines supplement color. The static PNG/PDF above provide a motion-free alternative.
+
+Reproduce the animation from the Stack root:
+
+```bash
+python research/weave/docs/glyph-axis-infographic/animate.py \
+  --ucns-source /checkouts/ucns/src/ucns/ordinal_affixiation.py \
+  --output /tmp/glyph-axis-animation
+```
+
+The renderer imports the sibling `render.py` and verifies the exact UCNS source before drawing. It checks 64 square occurrences and four-turn recovery, then constructs 512 native cube occurrences and checks all 1,536 memberships across the three complete slice families. It writes the GIF and [animation-evidence.json](animation-evidence.json), which records source/font hashes, exact counts, duration, decoded frame count and output digest. All GIF frames are decoded before success is reported. Pillow may coalesce identical adjacent frames; the complete timeline duration is checked separately.
+
+The source-bound static figure remains unchanged. Animation production begins from Stack commit `dceea8fd9996363e192c255d790f92312773cb1f`; the existing [work graph](work-graph.json) retains source ownership. Python, Pillow, Matplotlib and font versions can affect export bytes. Use a new output directory to preserve a prior replay.
 
 ## hmmm
 

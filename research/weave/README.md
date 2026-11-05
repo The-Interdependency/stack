@@ -50,7 +50,7 @@ an experimental representation, not safe storage for secrets.
 
 [Whole glyphs. New axes.](docs/glyph-axis-infographic/README.md) illustrates the
 whole-glyph unit, 90-degree address rotation, exact counts through eight axes,
-and preserved slice/column coordinates. PNG, SVG, PDF and a source-bound replay
+and preserved slice/column coordinates. GIF, PNG, SVG, PDF and source-bound replays
 are included. This is construction documentation, separate from the cycle profile.
 
 ## Evidence boundaries
