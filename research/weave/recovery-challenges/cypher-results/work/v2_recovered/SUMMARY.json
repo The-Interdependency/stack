@@ -1,0 +1,74 @@
+{
+  "recovered": 554,
+  "total_blind": 1841,
+  "unrecovered": 1287,
+  "prediction_families": [
+    [
+      "I expect recovery once the permutation rules and selected order are known.",
+      344
+    ],
+    [
+      "I expect recovery after the lane rules and route controls are disclosed.",
+      92
+    ],
+    [
+      "I expect early recovery by testing reflections; even repetitions can cancel.",
+      68
+    ],
+    [
+      "I expect source-guided recovery; hidden placement and order may delay the attempt.",
+      29
+    ],
+    [
+      "I expect early recovery because the literal containers retain the message bytes.",
+      21
+    ]
+  ],
+  "unrecovered_magic": [
+    [
+      "opaque",
+      497
+    ],
+    [
+      "id:WLN1",
+      301
+    ],
+    [
+      "id:WNM\u0001",
+      186
+    ],
+    [
+      "id:WRA1",
+      158
+    ],
+    [
+      "id:WNC\u0001",
+      106
+    ],
+    [
+      "B:WRA1",
+      20
+    ],
+    [
+      "B:WNC\u0001",
+      9
+    ],
+    [
+      "B:WNM\u0001",
+      7
+    ],
+    [
+      "id:WVC\u0001",
+      3
+    ]
+  ],
+  "scripts": [
+    "crack_v2b.py",
+    "crack_v2_S.py",
+    "crack_v2_transport.py",
+    "crack_v2_N1S.py",
+    "crack_v2_Asmall.py"
+  ],
+  "branch_tip": "0a5320a4075a09c788298d9969b610bab208ddaa",
+  "blind_pack_unchanged": true
+}
