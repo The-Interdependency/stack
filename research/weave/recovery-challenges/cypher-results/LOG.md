@@ -371,3 +371,106 @@ Re-ran small WRA1 cover+peel (src≤350): +0. Count still **554 / 1841**.
 - Proven: C+template does not uniquely determine plaintext without corpus;
   C-free transport already exhausted; count 554 unchanged.
 - Guessed: none claimed this round.
+
+---------------------------------------------------------------------------
+## Round 9 — N/U→A, opaque peel, A-parallel (Nov 8, 2026, America/Los_Angeles)
+
+User raised shared weekly ceiling to **80% total**; stop soft around 76–78%.
+Exclusions unchanged (only recovery-challenges + SOURCE-pinned public code;
+no corpora / private profiles / operator archive / `/workspace/cy` / other org
+research / teammate bots). Blind-pack tip still `0a5320a407…` (ciphertexts
+unchanged vs `bd54c789`).
+
+### Interrupt recovery (this pass)
+Prior run interrupted mid-batch. Measured usage at recovery start: **55.3%**
+(well under soft stop). Inspected own shells: terminal `428949` (WRA1 src
+400–2500 parallel, 4 workers) was still running; no duplicate launch. Batch
+finished cleanly: +1 (`8021bf986cc8ee0d.bin`) → **608 / 1841**. No cracker
+processes remain afterward.
+
+### Recoveries this round (554 → 608, +54)
+Methods / scripts (all under `/workspace/cypher/work/`):
+- `crack_v2_NA_fast.py` / `crack_v2_NA_cont.py` — N/U-first then inner WRA1
+  cover+peel
+- `crack_v2_opaque_fast.py` — opaque W/S reveal after B/R
+- `crack_v2_A_parallel.py` + inline WRA1 parallel cover (src bands, SIGALRM
+  timeouts on `try_cover`) — raised source-guided/A family
+
+Strict validation unchanged: `Prediction ` + 32 hex + known second line
+`my human needs my help`. Re-validated all on-disk `.txt`: **608 good, 0 bad**.
+IDs refreshed in `work/v2_recovered/RECOVERED_IDS.txt`; `SUMMARY.json` updated.
+
+### Family counts (608)
+| Family | Count |
+|---|---:|
+| permutation / selected order | 348 |
+| lane rules / route controls | 92 |
+| source-guided / A | 79 |
+| reflections cancel | 68 |
+| literal containers | 21 |
+
+### Unrecovered (1233)
+| Tag | Count | Blocker |
+|---|---:|---|
+| opaque | 485 | Deep/mixed schedules beyond cheap W/S |
+| WLN1 | 301 | C + private `corpus_hex` (see Round 8 correction) |
+| WNM | 176 | Deeper mixes / nested A |
+| WRA1 | 159 | Larger/nested spaces; cover timeouts |
+| WNC | 109 | Nested / post-S recipes |
+| WVC | 3 | Full random multi-round profiles |
+
+### Round 8 C/WLN1 wording correction (carried)
+Free L/R deque+template finds template-compatible **non-unique** preimages;
+n=1128 < 2048 corpus bits ⇒ free L/R overapproximates real C. Unique
+byte-exact recovery still needs `corpus_hex` under allowed materials. Do **not**
+overstate “ciphertext shorter than key ⇒ impossible.” Not a proof that secrets
+are always required in every model — only that this attack does not uniquely
+recover without corpus.
+
+### Failed / halted avenues
+- Unbounded `try_cover` hung → fixed with SIGALRM per-file timeouts.
+- GeneratorExit / recursion / unsound fail-memo on earlier C search (Round 8).
+- C-bearing WLN1 unique recovery still blocked without corpus.
+- Large WRA1 src>2500 / deep nested A not exhaustively searched (cost).
+- Interrupted parallel batch recovered and completed; do not relaunch duplicates.
+
+### Proven vs guessed
+- Proven: +54 new byte-exact under strict filter; N/U→A and opaque W/S peel
+  work without private archive; validated total **608/1841**.
+- Guessed: none claimed as wins without independent validation.
+
+### Usage (Round 9 recovery pass)
+Start of this completion pass: **55.3%** shared weekly Premium
+(CheckSubscriptionUsage). Soft stop 76–78%; headroom sufficient for validate +
+docs only after batch exit. No pushes / external messages.
+
+### v1 preserved
+`/workspace/cypher/work/{a,b}0*.recovered` untouched.
+
+
+---------------------------------------------------------------------------
+## Publication evidence correction — Nov 8, 2026 evening (America/Los_Angeles)
+
+Append-only clarification for website/publication readers. Historical round
+entries above are retained byte-for-byte as written at the time; this section
+corrects overclaim language rather than rewriting them.
+
+1. **v2 counts (427 → 554 → 608)** are counts of on-disk outputs that satisfy
+   the strict expected form `Prediction <32-hex>: …` plus the common second
+   line `my human needs my help`. They are **not** independently confirmed
+   byte-exact matches against excluded original plaintexts or the evaluator
+   archive. Calling them "byte-exact" in Rounds 5–9 overstated the evidence.
+2. **v1** remains separately root-verified: reconstructed message-origin roots
+   match the 32-byte values in each WVC header (see REPRODUCE.md). That check
+   does not apply to v2's Prediction/phrase filter.
+3. Round 9's "+54 new byte-exact under strict filter" should be read as
+   **+54 new format-valid candidates**. Unrecovered remainder: **1233**.
+4. Round 8's failed C/WLN1 attack shows non-unique preimages under the free
+   L/R+template model without `corpus_hex`. That is **not** a general proof
+   that those ciphertexts are secure against every method.
+5. Access boundary for published work: recovery-challenges public materials +
+   SOURCE-pinned public code only; no corpora, private profiles, originals,
+   operator/evaluator archive, or `/workspace/cy`.
+6. Personal/shared weekly usage percentages appear in operational notes for
+   budget discipline; they are not cryptographic evidence and are not part of
+   any canonical skill-lib doctrine text.

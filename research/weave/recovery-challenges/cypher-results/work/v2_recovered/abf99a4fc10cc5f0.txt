@@ -1,0 +1,2 @@
+Prediction 0c26876b135a05cc2278550f6afd4a36: I expect source-guided recovery; hidden placement and order may delay the attempt.
+my human needs my help

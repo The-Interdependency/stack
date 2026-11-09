@@ -47,24 +47,35 @@ python3 crack_v2_S.py             # S catalog brute
 python3 crack_v2_transport.py     # C-free transport (strict Prediction/line check)
 python3 crack_v2_N1S.py           # N/U-first then S(/S)
 python3 crack_v2_Asmall.py        # WRA1 space cover for small src_len + peel
-# optional deeper: nested U after A cover (inline in re-exam session)
-ls v2_recovered/*.txt | grep -v RECOVERED | wc -l
+python3 crack_v2_NA_fast.py       # N/U-first then inner WRA1
+python3 crack_v2_opaque_fast.py   # opaque after B/R via W/S
+python3 crack_v2_A_parallel.py    # parallel WRA1 cover bands (use timeouts)
+# optional: crack_v2_NA_cont.py continuation; SIGALRM on try_cover
+ls v2_recovered/*.txt | grep -v RECOVERED | wc -l   # expect 608
 ```
 
-## Recovered (proven, this re-exam)
+## Candidate outputs (format-validated; evidence limits)
 
-**554 / 1841** byte-exact plaintexts with
+**608 / 1841** candidate plaintexts pass a **strict format filter only**:
 `Prediction <32-hex>: …\nmy human needs my help\n`.
 
-Prior claim 427 still holds (subset); re-exam added transport C-free, N→S order,
-and small-WRA1 space cover.
+This is **not** an independent byte-exact comparison to the excluded original
+plaintexts or evaluator answers. Prior Cypher reports that called these
+"byte-exact" overclaimed relative to that stronger standard. The outputs remain
+useful cryptanalysis candidates under the allowed materials; they are not
+owner-oracle confirmed. v1 recoveries are separately root-verified (see
+REPRODUCE.md) and should not be conflated with this v2 filter.
+
+The earlier 427 / 554 counts remain historical subsets under the same format
+filter (plus false-positive tightening after Round 5); Round 9 raised the
+on-disk format-valid set to 608.
 
 | Family (prediction text) | Count |
 |---|---:|
-| permutation rules / selected order | 344 |
+| permutation rules / selected order | 348 |
 | lane rules and route controls | 92 |
+| source-guided / hidden placement (A) | 79 |
 | reflections cancel | 68 |
-| source-guided / hidden placement (A) | 29 |
 | literal containers (N/U) | 21 |
 
 IDs: `work/v2_recovered/RECOVERED_IDS.txt`. Summary: `SUMMARY.json`.
@@ -82,15 +93,15 @@ IDs: `work/v2_recovered/RECOVERED_IDS.txt`. Summary: `SUMMARY.json`.
 Transport brute can emit cyclic shifts that merely *contain* the known line.
 Accept only `startswith("Prediction ")` and `lines[1]=="my human needs my help"`.
 
-## Unrecovered (~1287)
+## Unrecovered (1233)
 
-| Class | ~Count | Blocker |
+| Class | Count | Blocker |
 |---|---:|---|
-| opaque (no magic after B/R) | 497 | Deep/mixed schedules |
-| WLN1 | 301 | Almost all need **C** + `corpus_hex` |
-| WNM | 186+7B | Deeper mixes / A after N / 3×S |
-| WRA1 | 158+20B | Larger `src_len` space search; nested A |
-| WNC | 106+9B | Nested / post-S / recipes |
+| opaque (no magic after B/R) | 485 | Deep/mixed schedules beyond cheap W/S |
+| WLN1 | 301 | C + private `corpus_hex` (non-unique without it) |
+| WNM | 176 | Deeper mixes / A after N |
+| WRA1 | 159 | Larger `src_len` / nested A; cover timeouts |
+| WNC | 109 | Nested / post-S / recipes |
 | WVC | 3 | Full random multi-round profiles |
 
 ## v1 → v2 (unchanged algorithms; harder packaging)
@@ -135,3 +146,22 @@ search (`work/crack_v2_C_core.py`). **Proven:** without `corpus_hex`, deque
 preimages under the template are **not unique** (and n=1128 < 2048 corpus bits
 means any L/R string is corpus-realizable), so byte-exact recovery is blocked.
 Count remains **554 / 1841**. Usage this round ~11.3% → ~14.2% weekly.
+
+## Round 9 note (Nov 8)
+
+Raised **format-valid** count **554 → 608** (+54) via N/U→inner WRA1, opaque W/S
+peel, and parallel A cover (`crack_v2_NA_fast.py`, `crack_v2_opaque_fast.py`,
+`crack_v2_A_parallel.py`). Strict Prediction/known-line filter; 0 bad files on
+disk. Interrupt recovery: finished leftover shell `428949` (+1) without duplicate
+compute. Soft stop 76–78% of 80% ceiling; this pass started ~55.3% weekly.
+C/WLN1: unique recovery still needs corpus under allowed materials (Round 8
+non-uniqueness result stands; do not overclaim impossibility). No pushes that
+day.
+
+### Evidence correction (publication, Nov 8 evening)
+
+"Validated" / earlier "byte-exact" wording for v2 means **format filter only**,
+not oracle comparison to excluded originals. Failed C attacks are not a proof
+of security. Reproducibility gaps remain: some Round 6 nested-U steps were
+inline; scripts assume `/workspace/cypher` absolute paths; historical LOG
+entries retain superseded claims for audit.
