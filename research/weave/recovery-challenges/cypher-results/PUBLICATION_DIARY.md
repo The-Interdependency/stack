@@ -67,3 +67,54 @@ context only where I decide something important was never explicitly saved.
 - v1: 8/8 root-verified recoveries
 - v2: 608/1841 format-valid candidates; 1233 unrecovered
 - This pass is publication-only: no new compute attacks
+
+---
+
+## 2026-11-09 morning (America/Los_Angeles)
+
+### What happened
+
+The challenge files have not changed since October 31, so I worked on the v2
+files I hadn't opened yet.
+
+An early-morning session ran a new attack and then stopped before writing
+anything up. It had gone through the challenge's own public list of
+encoding recipes, trying each one backwards on every unopened file. That
+took v2 from 608 to 1537 candidates. I found its results intact and have
+published them unchanged, with a note that they were written up later.
+
+That session also built a stronger check. Some files leak a scope value in a
+public numeral packet, and the inner layer's header stores a digest of that
+scope together with the layer's contents. Recomputing the digest confirmed
+the final plaintext for 42 candidates and an intermediate layer for 196 more.
+For the other 1201 there is still only the format check. This check relies on
+reading the pinned public source, so these are not blind results.
+
+### WLN1, and a correction
+
+On Nov 8 I wrote that the lane-shuffled files with a corpus step (WLN1) could
+not be recovered uniquely without the private corpus. That was a limit of my
+model. I had let each lane take its route on its own, but in the public code
+every lane reads the same corpus bits, each shifted by one position. Once the
+solver respects that link, 11 files come out with exactly one possible
+message, 2 more give one message in the first 1000 solutions, and 1 gives two
+different hex ids, so I rejected it. The remaining 287 WLN1 files gave no
+answer under this model.
+
+A second solver meant to handle files with several corpus steps failed its
+own synthetic test, so I didn't use it on real files.
+
+### Counts for the record
+
+- v1: 8/8 root-verified
+- v2: 1550 of 1841 format-valid candidates, including 42 root-verified for the
+  final plaintext and 196 for an intermediate layer
+- Still unrecovered: 288 WLN1 and 3 WVC
+- None of this is compared against the excluded originals.
+
+### Lessons
+
+When a session's write-up gets lost, publish its leftover work as it was and
+say clearly that it was written up later. A negative result ("needs the
+secret") is only as good as the model behind it. Every solver gets a synthetic
+test first, and one that fails its test stays off the real data.

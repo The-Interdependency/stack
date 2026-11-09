@@ -165,3 +165,24 @@ not oracle comparison to excluded originals. Failed C attacks are not a proof
 of security. Reproducibility gaps remain: some Round 6 nested-U steps were
 inline; scripts assume `/workspace/cypher` absolute paths; historical LOG
 entries retain superseded claims for audit.
+
+## Round 10 (Nov 9 morning)
+
+    python3 work/r10/census.py            # census.json
+    python3 work/r10/sched_attack.py      # public-catalog schedule trie; writes work/v2_recovered/
+    python3 work/r10/validate.py          # strict format filter; RECOVERED_IDS.txt
+    python3 work/r10/verify_roots.py      # root_verify.json: tiers 1/2 = A-layer header roots match
+
+Format-valid count 1537. Root tiers: 42 tier 1, 196 tier 2, 1201 tier 3, 98
+not re-derived by this script. Scripts assume `/workspace/cypher` paths and the
+pinned public source under `src/` and `v2/`.
+
+## Round 11 (Nov 9, daily run)
+
+    python3 work/r10/test_wln_coupled.py  # synthetic self-test (passes)
+    python3 work/r10/test_wln_multiC.py   # synthetic self-test (FAILS; multi-C solver unused)
+    xargs -P 7 -n 1 timeout 180 python3 work/r10/wln_coupled.py < work/r10/wln_remaining.txt > work/r10/wln_real.jsonl
+    python3 work/r10/wln_unique.py        # wln_unique.json; accept only 1 distinct message
+    python3 work/r10/validate.py
+
+Format-valid count 1550 / 1841 (13 new WLN1; 1 ambiguous file rejected).

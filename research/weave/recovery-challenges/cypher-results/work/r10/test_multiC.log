@@ -1,0 +1,5 @@
+('X', 'C') 3 nsol 0 match [] steps 3000001 exhausted True
+('X', 'C', 'C') 3 nsol 0 match [] steps 3000001 exhausted True
+('C', 'X', 'C') 5 nsol 0 match [] steps 3000001 exhausted True
+('X', 'C', 'C', 'C') 7 nsol 0 match [] steps 3000001 exhausted True
+('C', 'X') 3 nsol 0 match [] steps 3000001 exhausted True

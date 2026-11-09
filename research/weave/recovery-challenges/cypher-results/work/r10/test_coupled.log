@@ -1,0 +1,4 @@
+Counter({'none': 2441, 'ok': 885}) []
+('X', 'C') 3 [True, True, True] 642
+not accepted ('X', 'I', 'C')
+not accepted ('X', 'C', 'I')

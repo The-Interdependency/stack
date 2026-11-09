@@ -474,3 +474,79 @@ corrects overclaim language rather than rewriting them.
 6. Personal/shared weekly usage percentages appear in operational notes for
    budget discipline; they are not cryptographic evidence and are not part of
    any canonical skill-lib doctrine text.
+
+
+---------------------------------------------------------------------------
+## Round 10 — Nov 9, 2026 morning (America/Los_Angeles), pre-reset window
+
+Recorded after the fact by the Nov 9 10:00 run: the 07:00 pre-reset run did the
+compute below but ended (run marked failed) before logging or publishing. Its
+artifacts were found intact under `work/r10/` and are published unchanged.
+
+- `work/r10/census.py` → `census.json`: per-file reachability census of the
+  public v2 wire formats (blind files only).
+- `work/r10/sched_attack.py` + `fastA.py`: walk the trie of reversed schedules
+  from the PUBLIC `v2/matrix.py` catalog with public inverses (B, R, W, N, U,
+  A analytic space recovery, S over 30 public specs). Run logs `run1.log`,
+  `run2.log`, `progress.jsonl`; 28-file retry list `retry.txt`.
+- Result: **608 → 1537** format-valid candidates (+929, files in `work/r10/new/`
+  and merged into `work/v2_recovered/`). `validate.py` → `validate_out.json`:
+  0 bad, 0 orphans. Remaining after Round 10: WLN1 301, WVC 3.
+- `work/r10/verify_roots.py` → `root_verify.json` (independent re-derivation
+  plus header-root check). U packets publicly expose the per-case `scope`; A
+  (WRA1) headers store `message_origin = digest(schema, version, scope, length,
+  sha256(A input))`. Recomputing that with pinned public `native_binary.ByteOrigin`:
+  - Tier 1 (verified A input IS the candidate plaintext): **42**
+  - Tier 2 (a verified A layer lies on the recovery path): **196**
+  - Tier 3 (format filter only): **1201**
+  - Re-derivation not reproduced by this script: 93 no-hit, 5 timeout (these
+    were found by earlier round scripts; not counted as failures, not verified).
+  Tier 1/2 are digest-level checks of a layer using source-informed public code;
+  they are not L0 blind results and not comparisons to excluded originals.
+- WLN1 work started in Round 10: `wln_coupled.py` (single C, lanes coupled by
+  a shared corpus window) and `wln_multiC.py` (1–3 C stages). Not run on real
+  files in Round 10.
+
+## Round 11 — Nov 9, 2026 ~10:10–10:40 (America/Los_Angeles), daily check
+
+Challenge branch `codex/weave-recovery-challenges-v1-20261029` still at
+`0a5320a4075a…`; no new or changed challenge files. Usage at start 0.1% of the
+shared weekly limit (reset just occurred); session ceiling frozen at ~49.9%.
+Rechecked mid-session at 0.6%.
+
+- Synthetic self-tests (random corpora, public forward code, not challenge data):
+  - `test_wln_coupled.py`: single-C solver recovers the planted message
+    (`test_coupled.log`). Some test schedules are not in the public catalog.
+  - `test_wln_multiC.py`: **multi-C solver FAILS its own self-test** — 0
+    solutions on all five planted cases, budget hit while reporting
+    "exhausted" (`test_multiC.log`). Treated as broken; not run on real data.
+- Ran `wln_coupled.py` on all 301 remaining WLN1 files (180 s cap per file,
+  `wln_real.jsonl`): 14 files produced template-consistent messages; 287 none.
+- `wln_unique.py` → `wln_unique.json`: re-solved each hit with maxsol=1000,
+  20M-step budget, across every matching parameter set:
+  - 11 files: exactly one distinct message, search exhaustive for each
+    matching parameter set.
+  - 2 files (`15775eebc4c7ffb1`, `cc7443d364e0de10`): one distinct message
+    among the first 1000 corpus-window solutions; search not exhaustive.
+  - 1 file (`3e0d65a6a011c174`): **two** distinct hex ids (differ in two hex
+    digits) — ambiguous, NOT accepted.
+- Accepted 13 as format-valid candidates (`work/r11_new/`, merged into
+  `work/v2_recovered/`). `validate.py` → `validate_out_r11.json`:
+  **1550 / 1841**, 0 bad, 0 orphans. Remaining: WLN1 288, WVC 3.
+  (`validate_out.json` restored to the Round 10 snapshot; Round 10 copy also
+  kept as `validate_out_r10.json`.)
+
+### Correction to Round 8 / Round 9 WLN1 wording
+Round 8 found non-unique preimages for C-bearing WLN1 under a model that let
+each lane's left/right route vary freely. The public `transport_cases.contexts`
+makes every lane read the same corpus window shifted by one bit per lane; using
+that coupling, 11 files have a unique template-consistent message without the
+corpus. So "unique recovery needs `corpus_hex`" was a limit of the earlier model,
+not of the files. The remaining 288 WLN1 files are not shown secure either.
+
+### Proven vs guessed
+- Proven (reproducible from published scripts): the 13 messages are consistent
+  with the public template and the wire under the public transport code; 11 are
+  unique within the searched parameter sets.
+- Not proven: byte-exact match to excluded originals; that the parameter sets
+  searched include the true one for the 287 no-hit files.
