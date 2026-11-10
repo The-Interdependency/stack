@@ -550,3 +550,63 @@ not of the files. The remaining 288 WLN1 files are not shown secure either.
   unique within the searched parameter sets.
 - Not proven: byte-exact match to excluded originals; that the parameter sets
   searched include the true one for the 287 no-hit files.
+
+
+---------------------------------------------------------------------------
+## Round 12 — Nov 10, 2026 ~1:51–2:20 AM (America/Los_Angeles)
+
+Goal: recover the remaining 288 WLN1 + 3 WVC left after Round 11. Shared weekly
+usage at start 19.2%; session cap ~55%.
+
+### What was wrong with the earlier multi-C solver
+`work/r10/wln_multiC.py` reported 0 solutions on five planted cases and was
+treated as broken. Replaying a planted corpus window through its waiter/trace
+logic shows the *model* is fine: the true window satisfies every template
+constraint. The same planted `XC` case (seed 7, `os.urandom` corpus) also
+exhausts `wln_coupled.solve`'s 3M-step DFS with 0 hits. So the failure is
+incomplete search (a large compatible-end tree), not a wrong transition. This
+does not make the older logs wrong about "not used on real data" — that
+decision was correct given the failing self-test as written.
+
+### Single-C DP (`work/r12/wln_dp.py`)
+Replaced DFS with a DP over shared window prefixes (state = per-lane left
+counts). Hex id uniqueness is checked by searching 0-9a-f at each of the 32
+id bytes, using `_exists` with those bits forced. Conservative: only messages
+that are both accepting windows and hex-valid are counted.
+
+Synthetic fixtures (public `transport_cases.run`, `random.randbytes` corpora,
+not challenge data) in `work/r12/test_synth.py`:
+- `XC` thread_count 3/5/7, seeds 7/1/3: status `unique` and byte-equal to the
+  planted message. Seed 7 is the case that exhausted 3M-step DFS.
+- Single-lane `C`: status `ambiguous` (same non-uniqueness Round 8 saw under
+  a free L/R model).
+
+### Applied to the 288 remaining WLN1 (m≥3 lanes live at C)
+`python3 work/r12/run_1c.py 3` → `work/r12/run_1c.jsonl` (17s).
+- **1 unique:** `1d27398c8e1086e8.bin`, schedule `JWXIC` (three matching
+  parameter sets agreed). Format-valid candidate
+  `Prediction 1395a37c21cc440681655653a4c6ce14: …`. Not an A-layer
+  root check — tier-3 format+uniqueness only.
+- **1 ambiguous:** `3e0d65a6a011c174.bin` on `WIXCJ` — the same file Round 11
+  rejected for two hex ids. Still rejected.
+- **286 none** under every catalog 1-C layout with m≥3 at C.
+
+`validate.py`: **1551 / 1841**, 0 bad, 0 orphans. Remaining: WLN1 287, WVC 3.
+
+### Multi-C
+A unit-propagating waiter search (`work/r12/wln_multi.py`) still **times out**
+on planted `CC`, `CCC`, and `XCC` (3M-step budget, ~16–30s, result `None` /
+`timeout`). A Z3 array encoding of single-lane `CC` was killed by the OS
+(memory). Neither was run on challenge files.
+
+The 3 remaining WVC files share the public `CYCLE_NATIVE.json` digest
+`cdf11526…` with v1; they were not opened this round. Recovering them still
+appears to need per-file random profile parameters beyond the v1 group-A/B
+leaks.
+
+### Proven vs guessed
+- Proven (reproducible scripts + synthetics): DP recovers planted single-C
+  XC messages uniquely; one new challenge file is the unique hex-valid
+  preimage under every matching m≥3 1-C catalog layout.
+- Not proven: match to excluded originals; that remaining WLN1 files are
+  secure (most are likely multi-C or other unsolved schedules).

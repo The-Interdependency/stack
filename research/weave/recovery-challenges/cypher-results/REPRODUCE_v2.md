@@ -186,3 +186,18 @@ pinned public source under `src/` and `v2/`.
     python3 work/r10/validate.py
 
 Format-valid count 1550 / 1841 (13 new WLN1; 1 ambiguous file rejected).
+
+## Round 12 (Nov 10, early morning)
+
+    python3 work/r12/test_synth.py        # single-C DP synthetics (must pass)
+    python3 work/r12/run_1c.py 3          # remaining WLN1, m>=3 at C; run_1c.jsonl
+    python3 work/r10/validate.py          # 1551 / 1841; validate_out.json
+
+Do **not** run `work/r12/wln_multi.py` / `work/r12/test_multi_synth.py` on
+challenge files: planted CC/CCC/XCC existence checks time out (see LOG
+Round 12). `work/r10/test_wln_multiC.py` remains a failing DFS self-test;
+the DP above replaces DFS only for exactly-one-C.
+
+New format-valid candidate: `work/v2_recovered/1d27398c8e1086e8.txt`
+(JWXIC, unique under the hex-filtered DP). Root-tier script was not re-run;
+tiers stay 42 / 196 from Round 10.

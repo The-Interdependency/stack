@@ -1,0 +1,24 @@
+{
+ "validated_count": 1551,
+ "bad": [],
+ "orphans": [],
+ "families": {
+  "permutation / selected order": 796,
+  "source-guided / A": 513,
+  "literal containers": 68,
+  "reflections cancel": 68,
+  "lane rules / route controls": 106
+ },
+ "unrecovered_by_tag_before_r10": {
+  "opaque": 485,
+  "WNM": 176,
+  "WNC": 109,
+  "WRA1": 159,
+  "WLN1": 301,
+  "WVC": 3
+ },
+ "unrecovered_by_tag_after": {
+  "WLN1": 287,
+  "WVC": 3
+ }
+}

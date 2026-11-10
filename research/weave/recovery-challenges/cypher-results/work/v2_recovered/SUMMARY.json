@@ -1,7 +1,7 @@
 {
-  "validated_count": 608,
+  "validated_count": 1551,
   "total_challenges": 1841,
-  "unrecovered": 1233,
+  "unrecovered": 290,
   "prior_round8_count": 554,
   "round9_delta": 54,
   "families": {
@@ -12,20 +12,25 @@
     "literal containers": 21
   },
   "unrecovered_by_tag": {
-    "opaque": 485,
-    "WNM": 176,
-    "WRA1": 159,
-    "WLN1": 301,
-    "WNC": 109,
+    "WLN1": 287,
     "WVC": 3
   },
   "branch_tip": "0a5320a407\u2026",
-  "updated_at": "2026-11-08 17:54 America/Los_Angeles",
+  "updated_at": "2026-11-10 02:15 America/Los_Angeles",
   "usage_at_recovery_start_pct": 55.3,
   "ceiling_pct": 80,
   "soft_stop_pct": "76-78",
   "background": "none; shell 428949 completed exit 0 (+1 \u2192 608)",
-  "evidence": "format_filter_only: Prediction + 32-hex + common phrase; NOT independent byte-exact vs excluded originals",
+  "evidence": "format_filter_only plus uniqueness under hex-filtered single-C DP; NOT independent byte-exact vs excluded originals; root tiers unchanged (42/196) \u2014 new file is format-valid only",
   "prior_byte_exact_language": "overclaimed; corrected 2026-11-08 publication",
-  "validation_kind": "strict_format_filter"
+  "validation_kind": "strict_format_filter",
+  "round12_delta": 1,
+  "prior_round11_count": 1550,
+  "round12_new": [
+    "1d27398c8e1086e8.bin"
+  ],
+  "root_tiers_unchanged": {
+    "tier1_final": 42,
+    "tier2_intermediate": 196
+  }
 }

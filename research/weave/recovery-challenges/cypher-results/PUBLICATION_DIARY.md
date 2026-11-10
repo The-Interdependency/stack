@@ -118,3 +118,82 @@ When a session's write-up gets lost, publish its leftover work as it was and
 say clearly that it was written up later. A negative result ("needs the
 secret") is only as good as the model behind it. Every solver gets a synthetic
 test first, and one that fails its test stays off the real data.
+
+---
+
+## 2026-11-10 early morning (America/Los_Angeles)
+
+Written last, after the rest of this session's notes and scripts.
+
+### What I tried
+
+I went after the 291 files that were still closed: 288 lane-framed (WLN1)
+ones and 3 full-cycle (WVC) ones. The previous solver for files that pass
+through several corpus steps had failed its own practice test, so I started
+there.
+
+The practice test was harsher than the code deserved, and also not harsh
+enough. Walking a planted secret window through the old solver shows the
+steps themselves are right: the true window fits. The same planted file also
+exhausts the older single-step search after three million guesses and finds
+nothing. The search was getting lost in a tree of look-alike choices, not
+applying the wrong rule. I am leaving the old "failed its test, unused"
+decision in place — that was the right call with the evidence we had — and
+recording the finer point here.
+
+I replaced the guess-and-backtrack search, for files with exactly one corpus
+step, with a systematic pass over the shared window. Then I asked, for each
+digit of the 32-character id, which hex characters can still appear. If
+exactly one complete id survives, I keep it. I tested this on homemade files
+first, encoded with the public code and random dummy corpora, never the
+challenge files. It recovered the planted message for the split-then-corpus
+recipe that had exhausted the old search, at several thread counts and
+seeds. A single-lane corpus step, as before, does not pin down a unique id,
+and the new code reports that instead of inventing an answer.
+
+### What I recovered
+
+I ran that single-step method on all 288 leftover WLN1 files, but only for
+recipes where at least three lanes are live during the corpus step (the
+coupling that makes uniqueness possible). One file came out with a single
+id, under the public recipe JWXIC, and three different parameter settings
+agreed. I accepted it as a format-valid candidate, the same standard as the
+other v2 outputs: a Prediction line, a 32-digit hex id, and the shared
+second line. I did not re-run the header-digest check on it, so it is not
+one of the 42 (or 196) digest-confirmed recoveries.
+
+One other file produced two possible ids. It is the same file I already
+rejected on November 9, and I rejected it again.
+
+The other 286 WLN1 files produced no answer under any matching single-step
+recipe with three or more live lanes.
+
+### What I did not use
+
+I wrote another attempt at files with two or three corpus steps and tested
+it on planted files first. It ran out of time on CC, CCC, and XCC without
+deciding whether a solution existed. An experiment with a general-purpose
+solver on a two-step file was killed for using too much memory. I did not
+run either of those against the real leftover files.
+
+I did not open the three leftover WVC files beyond reading their outer
+magic and the public cycle-document digest they share with v1. They still
+look like they need per-file random profile values I do not have.
+
+### Counts for the record
+
+- v1: 8/8 root-verified (unchanged)
+- v2: 1551 of 1841 format-valid candidates, including 42 digest-confirmed
+  for the final plaintext and 196 for an intermediate layer (those two
+  digest counts are unchanged from November 9)
+- Still unrecovered: 287 WLN1 and 3 WVC
+- None of this is compared against the excluded originals
+
+### Lessons
+
+A solver that "finds nothing" after a large budget is not the same as a
+solver that has proved there is nothing. The planted window was there the
+whole time. Completeness (try every distinct remaining-window state) mattered
+more here than a faster incomplete search. And the rule stands: if the
+practice test does not recover a planted file, the solver does not touch the
+real ones.

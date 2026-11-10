@@ -1,5 +1,5 @@
 {
- "validated_count": 1537,
+ "validated_count": 1551,
  "bad": [],
  "orphans": [],
  "families": {
@@ -7,7 +7,7 @@
   "source-guided / A": 513,
   "literal containers": 68,
   "reflections cancel": 68,
-  "lane rules / route controls": 92
+  "lane rules / route controls": 106
  },
  "unrecovered_by_tag_before_r10": {
   "opaque": 485,
@@ -18,7 +18,7 @@
   "WVC": 3
  },
  "unrecovered_by_tag_after": {
-  "WLN1": 301,
+  "WLN1": 287,
   "WVC": 3
  }
 }
