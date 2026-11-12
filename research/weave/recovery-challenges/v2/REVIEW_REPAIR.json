@@ -1,0 +1,206 @@
+{
+  "schema": "weave.recovery-review-repair/v1",
+  "reviewed_head": "bd54c789cf5df1910dbb57a22cce6c7754b47e54",
+  "base_commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+  "doctrine": {
+    "repository": "The-Interdependency/skill-lib",
+    "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
+    "skills": [
+      "the-interdependency",
+      "repo-audit-repair",
+      "msdmd",
+      "ratios",
+      "skill-usage"
+    ],
+    "boundary": "Operational repair guidance only; no source pin, algorithm or authority change."
+  },
+  "implementation_sha256": {
+    ".github/workflows/weave.yml": "be621388823bb6a395829a4976ef8b9d61484dad5863ad313a1a5932b7703725",
+    "research/weave/recovery-challenges/v2/build.py": "541d1abbe967f4a017cab0aac86acafa72c673f14b2b56f242a109771af1444c",
+    "research/weave/recovery-challenges/v2/release.py": "f79668b95e0d0f10c082a2afdabdcede9b7661948636f0beb214514b709d621f",
+    "research/weave/recovery-challenges/v2/test_harness.py": "6b2e804127e1c8efab3adbbb60dfbb45456ae1175dd17ec110b9c78e524bdeb7",
+    "research/weave/recovery-challenges/v2/test_regressions.py": "e1cb8cdbcc65c789785d6bdc02e80d4ffe82d0a94016dec751c95cab492cf366"
+  },
+  "pre_repair_reproduction": {
+    "focused_tests": 4,
+    "failing_subcases": 25,
+    "errors": 0,
+    "expected_failure": true
+  },
+  "integrity_regressions": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "weave_suite": {
+    "status": "PASSED",
+    "tests": 176,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "source_unchanged": true,
+    "source_sha256": "80b87ced37aab8d30b8e3e71ce4f9cec3d0195cfddc31e4d3bd0219dc467d382"
+  },
+  "harness": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "harness_passed": true,
+    "full_weave_coverage": "INCOMPLETE",
+    "seconds": 2.16,
+    "observations": {
+      "typed_order_refusals": 602,
+      "corpus_boundary": "Official wrong/missing corpus refusal; corpus-free extraction from normalized frame still succeeds.",
+      "sequence_discovery": "Independent partition restoration and native A composition witnessed.",
+      "disclosures": {
+        "case_level_text_checks": 12887,
+        "materialized_family_level_exports": 28,
+        "standalone_last_level_receivers": 4
+      },
+      "unmet_full_weave": {
+        "whole_message_private_gonol": "No arbitrary-message/private-gonol forward/inverse law.",
+        "private_gonol_binding": "stages/bind.py supplies a declaration, no operator.",
+        "asymmetric_key_relation": "stages/key.py requires a caller-supplied law; none exists.",
+        "cryptographic_thread_dependency": "Occurrence lanes exist; complementary secret reconstruction does not.",
+        "native_corpus_key_binding": "Normalization validates corpus/padding; private reconstruction binding is absent.",
+        "authentication": "stages/auth.py declares Q10 but provides no authenticator.",
+        "replay_state": "No stateful replay rejection mechanism is implemented."
+      },
+      "twin_ray": "Different messages have identical public faces; full private records contain message-bearing fields. No recoverable public-face challenge claimed.",
+      "native_circles": {
+        "whole_origin_circle": true,
+        "occurrence_circles": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "equivalent_schedules_witnessed": [
+        "BB=identity",
+        "RR=identity",
+        "BR=RB",
+        "BBB=B",
+        "RRR=R"
+      ],
+      "prime_components": "Exact base-2/base-10 spans, prime-index recursion, recipe numeral and section routes witnessed.",
+      "public_boundary": "All 1841 exact wire outputs plus only generic README and ciphertext checksums; no extra answer artifacts."
+    }
+  },
+  "full_weave_gate_exit": 2,
+  "orphan_replay": {
+    "planned": 1841,
+    "verified": 1841,
+    "failures": [],
+    "seconds": 296.492,
+    "workers": 4,
+    "ciphertexts_byte_identical": 1841,
+    "ciphertext_inodes_unchanged": 1841,
+    "ciphertext_mtimes_unchanged": 1841,
+    "frozen_private_plan_unchanged": true,
+    "receipts_missing_before": 1841,
+    "fresh_receipts_verified_after": 1841,
+    "repeated_generation_preserved_report": true
+  },
+  "frozen_archive_sha256": "8c1d7a9ad6347ec2e00a098f19c20ed8f5a1f55315a030e47f31742ffb8ea7b1",
+  "prediction_commitment_sha256": "242cdf7745fb4cb5d83de0fe404c3f5297a1aa72bcd7c251a97bc8f382f5f4cd",
+  "preserved": [
+    "All 1841 IDs and ciphertext bytes",
+    "All frozen messages and parameters",
+    "All seven cumulative disclosure levels",
+    "All 61 source-locked original files",
+    "matrix.py, operations.py and transport_cases.py",
+    "Original CHECKS.json, COVERAGE.json and RESULTS.json",
+    "Entire v1 subtree"
+  ],
+  "gates": {
+    "stack_consistency": "PASS: 7 repositories, 41 research participant identities",
+    "portfolio_validation_and_ancestry": "PASS with full Git history",
+    "municipal_handoff_integrity": "PASS",
+    "ratios": {
+      "files": 7,
+      "verified_fields": 42,
+      "drift": 0,
+      "misplaced": 0,
+      "gaps": 0
+    }
+  },
+  "hosted_jobs": [
+    {
+      "run_id": 41001095046,
+      "job_id": 123885412475,
+      "url": "https://api.github.com/repos/The-Interdependency/stack/check-runs/123885412475/annotations",
+      "annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/The-Interdependency/stack/blob/bd54c789cf5df1910dbb57a22cce6c7754b47e54/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because your account is locked due to a billing issue.",
+          "raw_details": ""
+        },
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/The-Interdependency/stack/blob/bd54c789cf5df1910dbb57a22cce6c7754b47e54/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "notice",
+          "title": "",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+          "raw_details": ""
+        }
+      ]
+    },
+    {
+      "run_id": 41001095045,
+      "job_id": 123885412696,
+      "url": "https://api.github.com/repos/The-Interdependency/stack/check-runs/123885412696/annotations",
+      "annotations": [
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/The-Interdependency/stack/blob/bd54c789cf5df1910dbb57a22cce6c7754b47e54/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "failure",
+          "title": "",
+          "message": "The job was not started because your account is locked due to a billing issue.",
+          "raw_details": ""
+        },
+        {
+          "path": ".github",
+          "blob_href": "https://github.com/The-Interdependency/stack/blob/bd54c789cf5df1910dbb57a22cce6c7754b47e54/.github",
+          "start_line": 1,
+          "start_column": null,
+          "end_line": 1,
+          "end_column": null,
+          "annotation_level": "notice",
+          "title": "",
+          "message": "\"The ubuntu-latest label will migrate to Ubuntu 26 beginning October 19, 2026. For more information, see https://github.com/actions/runner-images/issues/14748\"",
+          "raw_details": ""
+        }
+      ]
+    }
+  ],
+  "hosted_classification": "EXTERNAL: account billing lock prevented both reviewed-head jobs from starting. Empty steps; logs unavailable. Local validation is separate.",
+  "attacker_trials_run": 0,
+  "receiver_checks_are_attacks": false,
+  "hmmm": [
+    "Hosted execution requires account billing lock resolution.",
+    "Current-head review and merge admission remain separate gates.",
+    "Asymmetric key generation, authentication, replay resistance and private-state binding remain incomplete.",
+    "Path containment assumes operator-owned directories without concurrent hostile ancestor replacement."
+  ],
+  "usage": "See REVIEW_REPAIR.md for exact commands and same-frozen-corpus replay without resampling."
+}
