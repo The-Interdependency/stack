@@ -61,6 +61,12 @@ class RuntimeConfig:
     entitlements: tuple[str, ...] = ("basic",)
     deadline_ms: int = 5000
     injection_handling: str = "enforce-refusal"
+    uchc_database: str | None = None
+    uchc_structural_field: str | None = None
+    uchc_structural_lock: str | None = None
+    uchc_lock: str | None = None
+    uchc_require_complete: bool = False
+    uchc_max_text_bytes: int | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -70,6 +76,18 @@ class RuntimeConfig:
             "entitlements": list(self.entitlements),
             "deadline_ms": self.deadline_ms,
             "injection_handling": self.injection_handling,
+            **({"uchc": {"profile": "english.input/1",
+                          "database": self.uchc_database,
+                          "lock": self.uchc_lock,
+                          "require_complete": self.uchc_require_complete,
+                          "max_text_bytes": self.uchc_max_text_bytes}}
+               if self.uchc_database is not None else
+               {"uchc": {"profile": "english.structural/1",
+                         "field_dir": self.uchc_structural_field,
+                         "lock": self.uchc_structural_lock,
+                         "require_complete": self.uchc_require_complete,
+                         "max_text_bytes": self.uchc_max_text_bytes}}
+               if self.uchc_structural_field is not None else {}),
             "turn_messages": {
                 str(turn): [dict(message) for message in messages]
                 for turn, messages in self.turn_messages.items()
@@ -174,6 +192,7 @@ def _observation(
     turn_messages: Sequence[Mapping[str, Any]],
     capabilities: Sequence[str],
     ledger: ConstructionLedger,
+    language_evidence: Sequence[Mapping[str, Any]] = (),
 ) -> Observation:
     legal = list(build_legal_actions(opened))
     if "construct" in capabilities:
@@ -197,6 +216,7 @@ def _observation(
         inbox=tuple(dict(item) for item in turn_messages),
         entitlements=config.entitlements,
         deadline_ms=config.deadline_ms,
+        language_evidence=tuple(language_evidence),
     )
 
 
@@ -206,12 +226,48 @@ def run_plane(
     config: RuntimeConfig | None = None,
     out_dir: Path | str | None = None,
 ) -> RunResult:
-    """Run the production minimum loop through one conforming agent harness.
+    """Run AHBG with optional, fully verified native UCHC language evidence."""
+    cfg = config or RuntimeConfig()
+    if cfg.uchc_database is not None and cfg.uchc_structural_field is not None:
+        raise ProtocolError("UCHC candidate versions are mutually exclusive in one Python process")
+    if cfg.uchc_structural_field is not None:
+        if cfg.uchc_lock is not None:
+            raise ProtocolError("input lock cannot be applied to the structural profile")
+        from ahbg.integration.uchc_structural import (
+            UchcStructuralSession, UchcStructuralSettings, DEFAULT_STRUCTURAL_LOCK
+        )
+        with UchcStructuralSession(UchcStructuralSettings(
+            field_dir=Path(cfg.uchc_structural_field),
+            lock=Path(cfg.uchc_structural_lock) if cfg.uchc_structural_lock else DEFAULT_STRUCTURAL_LOCK,
+            require_complete=cfg.uchc_require_complete,
+            max_text_bytes=cfg.uchc_max_text_bytes,
+        )) as uchc:
+            return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=uchc)
+    if cfg.uchc_database is None:
+        if (cfg.uchc_lock is not None or cfg.uchc_structural_lock is not None
+                or cfg.uchc_require_complete or cfg.uchc_max_text_bytes is not None):
+            raise ProtocolError("UCHC settings require uchc_database or uchc_structural_field")
+        return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=None)
+    if cfg.uchc_structural_lock is not None:
+        raise ProtocolError("structural lock cannot be applied to input profile")
+    from ahbg.integration.uchc import UchcSession, UchcSettings, DEFAULT_LOCK
+    with UchcSession(UchcSettings(
+        database=Path(cfg.uchc_database),
+        lock=Path(cfg.uchc_lock) if cfg.uchc_lock else DEFAULT_LOCK,
+        require_complete=cfg.uchc_require_complete,
+        max_text_bytes=cfg.uchc_max_text_bytes,
+    )) as uchc:
+        return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=uchc)
 
-    ``agent`` must expose ``manifest()`` and ``plan(observation)`` as defined
-    by ``AgentHarness`` in ``ahbg.runtime.harness``. A0 uses exactly this path.
-    """
 
+def _run_plane_core(
+    *,
+    agent: Any,
+    config: RuntimeConfig,
+    out_dir: Path | str | None,
+    uchc: Any | None,
+) -> RunResult:
+    """Execute the unchanged UCNS game loop; UCHC annotates input only."""
     cfg = config or RuntimeConfig()
     if cfg.turns < 0:
         raise ProtocolError("turns must be non-negative")
@@ -262,6 +318,10 @@ def run_plane(
         cycle.open_turn()
         turn = opened.turn
         messages = list(cfg.turn_messages.get(turn, ()))
+        language_evidence = (
+            uchc.annotate_messages(messages, source_prefix=f"ahbg:{session_id}:turn:{turn}")
+            if uchc is not None else ()
+        )
         injected = _injection_texts(messages)
         observation = _observation(
             session_id=session_id,
@@ -271,6 +331,7 @@ def run_plane(
             turn_messages=messages,
             capabilities=capabilities,
             ledger=ledger,
+            language_evidence=language_evidence,
         )
 
         forced = cfg.forced_plans.get(turn)
@@ -348,6 +409,7 @@ def run_plane(
                 "injected_refused": injection_refused,
                 "agent_provenance": agent_provenance,
                 "state_digest": digest,
+                **({"uchc_evidence": list(language_evidence)} if uchc is not None else {}),
             }
         )
 
@@ -368,7 +430,8 @@ def run_plane(
         turn_records=tuple(turn_records),
         effects=tuple(effects),
         construction=dict(ledger.as_dict()),
-        provenance=integration_provenance(manifest),
+        provenance={**integration_provenance(manifest),
+                    **({"uchc": uchc.provenance} if uchc is not None else {})},
         out_dir=output_root,
     )
     (output_root / "result.json").write_text(

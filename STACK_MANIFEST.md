@@ -17,8 +17,9 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `dc2cac5ac1d609f7f72434514ec95a55e8020b0b9326c17883b1ef25e86baaa3`
+  `38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
+- Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -44,7 +45,7 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
@@ -66,6 +67,9 @@ release identity.
 | `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | Stack-owned native binary sequence-cycle candidate; private/public derivation unresolved; no URPCS inheritance or security standing | no |
 | `research/weave/` | `The-Interdependency/ucns` | `905e66964a495d7596a577bb64e4158db9465864` | native exact axis-circle and Mobius geometry; source-verified unchanged mathematical producer for native_binary.py | no |
 | `research/weave/` | `The-Interdependency/uchc` | `4ad94e92be10d2c4c875a848addfda46f3c7cfdb` | origin/axis architecture and domain migration boundary; architectural reference only; speculative binary implementation remains in Stack until graduation gates complete | no |
+| `research/pi-radix/` | `The-Interdependency/stack` | `ccf707f933a9611d7b7fe13a0417378d8b453a14` | stack-local exact radix expansion, prime-block and angular-coordinate experiment; no base-independent law or general prime authority | no |
+| `research/pi-radix/` | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | domain-restraint consultation for representation versus invariant; root impact none and no status transfer | no |
+| `research/pi-radix/` | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | pinned build, evidence and structural-update doctrine; no authority transfer | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
 | `research/english-gonol/` | `The-Interdependency/edcm` | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | exact repaired EDCM semantic metric-origin producer; preserves canonical O/L identities and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
@@ -233,6 +237,10 @@ construction.
 Weave is a new stack-local research component. It is not yet an
 independent repository, release, or security-reviewed cryptosystem.
 
+Pi radix is stack-local research. Its finite computations establish the recorded
+radix streams and prime-block observations only; representation recurrence does not
+establish a base-independent generating law.
+
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
@@ -240,6 +248,7 @@ independent repository, release, or security-reviewed cryptosystem.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
+- Pi radix has no established base-independent segmentation law; fixed-symbol and common-information profiles remain bounded computations.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
 ## UCHC input candidate
@@ -271,3 +280,28 @@ sequences, retains native whole/occurrence-circle relations, uses scoped numeral
 references and prime-route bit partitions, and reverses the completed rounds.
 See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
 and all-cost accounting. This is construction/recovery, not established encryption.
+
+## English ordinal candidate
+
+The candidate remains in `research/english-gonol/`; UCHC verifies an exact extraction.
+See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.md).
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `ed0b0760f05cd975a7a811f8abeb70a11d09f00b` | Public Gonol and ordinal geometry; exact native producer |
+| `The-Interdependency/uchc` | `c514e1a2a3f3da5ffae9ebf76d67a1d348845842` | unmerged ordinal proposal; not English implementation authority; source provenance preserved before rehoming and review repairs |
+| `The-Interdependency/skill-lib` | `e46accffcb67a10630516d486c89e67f6ad19c7a` | build, extraction and review discipline; governing source; no geometry authority |
+
+No authority, semantic standing or graduation status transfers.
+
+## English recursive attachment integration
+
+See [recursive-stack.md](research/english-gonol/docs/recursive-stack.md).
+The global libraries and historical ordinal source remain unchanged.
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `9cc00771e54336d58ee377faeec87a3a33dbd4bf` | native recursive planar attachment and exact expression geometry; exact producer; historical ordinal modules unchanged |
+| `The-Interdependency/stack` | `f19389bd7b15e6540f812ec47d67274e429daec5` | English construction forge pending domain graduation; input baseline; output extraction must pin the resulting forge commit |
+| `The-Interdependency/uchc` | `f2528c7f4cc182912df11b92fa355b16231b1fb5` | verified extraction consumer baseline; input baseline; candidate output identity is separate |
+| `The-Interdependency/skill-lib` | `d71a3a938cb6d646ffc0b59186452117e4a37d13` | build and verification discipline; resolved governing skills; no geometry authority |

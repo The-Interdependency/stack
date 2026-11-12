@@ -1,19 +1,9 @@
 ---
 name: the-interdependency
-description: Protocol and workflow for all tasks involving The Interdependency organization, its repositories, The Interdependent Way projects, EDCMBONE transcript analysis, code building, research, GitHub maintenance and updates. Load this whenever the task or context touches The-Interdependency assets, or on phrases like "assemble edcmbone transcripts for analysis", "write code that...", or any GitHub/research/build work on org projects.
+description: Protocol and workflow for all tasks involving The Interdependency organization, its repositories, The Interdependent Way projects, EDCMBONE transcript analysis, code building, research, GitHub maintenance and updates. Load this whenever the task or context touches The-Interdependency assets, interdependentway.org, Harrison Hovel, or on phrases like "assemble edcmbone transcripts for analysis", "write code that...", or any GitHub/research/build work on org projects.
 ---
 
-# the-interdependency — Workflow Protocol for The Interdependency Projects
 
-`the-interdependency` is a procedural skill that enforces consistent, high-fidelity, structure-preserving practices when working inside The Interdependency ecosystem (org repos, The Interdependent Way artifacts, skill-lib, edcmbone, ucns, pcea, a0, aimmh, etc.). It ensures EDCMBONE analysis follows framework conventions, code and docs always carry usage guidance, GitHub ops respect org standards, and neurodivergence-compatible structure is preserved.
-
-## Load this when
-
-- Any task, research, code, or context mentions The-Interdependency, The Interdependent Way, interdependentway.org, Harrison Hovel, or any repository under the The-Interdependency GitHub organization.
-- User requests include: "assemble edcmbone transcripts for analysis", "write code that..." (or similar), GitHub maintenance, updates, pushes, repo hygiene, or cross-project work.
-- Building, editing, reviewing, or shipping code, specs, documentation, or analysis artifacts destined for or affecting The-Interdependency projects.
-- Performing GitHub operations on org repositories (commits, branches, PRs, issues, propagation, drift checks).
-- Working with skill-lib itself, canon, msdmd blocks, or propagating skills to target repos.
 
 ## Core Doctrine
 
@@ -24,7 +14,6 @@ description: Protocol and workflow for all tasks involving The Interdependency o
 - **EDCMBONE transcript assembly & analysis**: When the task involves assembling or analyzing transcripts (e.g. for EDCMBONE / Energy Dissonance Circuit Model Bound Operator Numerical Evaluation), apply the established EDCMBONE lens: map energy flows and dissonance circuits, compute/report F-loss metrics (fidelity, deletion, inversion, collapse detection), tag F1–F6 failure modes, segment for cognitive accessibility (especially neurodivergent readers), and preserve transcript topology. Do not improvise assembly; extend or adhere to patterns from the edcmbone repository.
 - **Code writing standards**: When writing or modifying code that touches The-Interdependency:
   - Use msdmd self-declaration blocks (`# === BLOCK_NAME ===` ... `# === END BLOCK_NAME ===`) wherever the module fits an existing or new metadata skill.
-  - **Always include prominent usage guidance**: runnable examples, invocation patterns, integration notes, edge cases, limitations, and how the code participates in larger workflows (e.g. a0p/AIMMH orchestration, EDCMBONE analysis pipelines).
   - Respect ratios, test contracts, dependency declarations, ownership, and risk boundaries per the relevant skills.
   - For new modules, begin with `meta-module-build` patterns.
 - **GitHub maintenance & updates**: 
@@ -32,8 +21,46 @@ description: Protocol and workflow for all tasks involving The Interdependency o
   - Before/after changes, run available drift checkers and update machine-readable indexes (`skills.json`, README tables, AGENTS.md pointers).
   - Use clear commit messages that reference affected skills or the change class.
   - When propagating skill-lib changes, prefer the canonical `tools/propagate_skills.py` (or equivalent) with `--apply` only after dry-run validation.
-- **Usage guidance requirement**: Every code file, SKILL.md update, README change, research summary, or artifact produced under this skill **must contain clear, actionable usage guidance**. This is non-negotiable for accessibility, onboarding, and reducing signal loss.
+- **Usage guidance requirement**: Every code file, SKILL.md update, README change, research summary, or artifact produced under this skill **must contain clear, actionable usage guidance**: runnable examples, invocation patterns, integration notes, edge cases, limitations, and participation in larger workflows. This is non-negotiable for accessibility, onboarding, and reducing signal loss.
 - **Research & canon alignment**: Ground all claims in source-backed canon (cross-load `canon` skill). Use `char-compress` for context handoff. Leave genuine uncertainty as `hmmm`.
+
+## Operator workflow contract
+
+These constraints govern how work is selected and executed; they do not override repository-local authority about what a project means.
+
+- **Audit before assent**: Test a proposal against current code, canon, evidence, constraints, and failure modes before agreeing with it. Agreement is a conclusion, not a conversational default.
+- **Preserve concepts; reject bad placement**: When a proposal is useful but architecturally misplaced, preserve the concept and move or re-scope it to the owning layer rather than either accepting the wrong placement or discarding the idea.
+- **Useful, good, true**: Do not generate work merely to create activity. Prefer artifacts and actions that are useful to the stated goal, operationally sound, and truthfully supported by evidence or explicit status.
+- **KISS under reality contact**: Prefer the smallest skilled design that survives actual execution. A clever mechanism that is fragile, opaque, untestable, or needlessly expensive is not simpler than a slightly longer mechanism that works.
+- **Prior planning before execution**: Resolve authority, placement, dependency order, resource needs, validation, rollback, and terminal condition before expensive or destructive work begins. Planning exists to prevent avoidable failure, not to create an approval ceremony.
+- **Complete within granted scope**: When the request, authority, and safety boundary already permit the next action, continue through the coherent workflow instead of repeatedly asking the operator to approve each obvious intermediate step. Ask only when a real unresolved decision cannot be recovered from authoritative sources or safely isolated as `hmmm`.
+- **Usage-limit aware orchestration**: Treat model-plan limits, API quotas, tool-call limits, rate limits, context budgets, and session durability as real resources during preflight. Stage or redistribute work before launch so a workflow does not predictably die midway from exhaustion. Do not silently downgrade evidence quality merely to fit a limit.
+- **Purposeful functions**: Every function, script, workflow step, and abstraction must have a defensible purpose, coherent inputs/outputs, failure behavior, and a reason to exist at that layer. Remove dead indirection and mechanisms whose only justification is that they already exist.
+- **Deprecation is removal plus replacement when capability remains required**: Once a mechanism is declared deprecated, stop routing new work through it and provide or identify its supported replacement when the retired capability remains required. If the capability is intentionally retired as unnecessary, complete removal is the replacement outcome. Do not preserve deprecated behavior by default out of inertia.
+- **`hmmm` is mandatory honest incompletion**: `hmmm` is the boundary object for unresolved constraints, missing authority, incomplete evidence, or a living continuation. Never erase an unresolved merely to make an artifact look finished. Where the boundary would otherwise be empty, leave a brief apropos, cogent, or humorous nonsequitur rather than silently dropping it.
+
+## Operational authority topology
+
+This section records durable ownership boundaries, not a frozen inventory of the operator's current machines, clients, logins, quotas, or provider sessions.
+
+- **GitHub repository boundary**: GitHub is the canonical remote source, review, and merge surface for repositories under `The-Interdependency`. GitHub Actions is validation evidence only where a repository's current workflows actually execute the claimed gates; inspect those jobs rather than inferring health from a green badge.
+- **VM control-plane authority**: `skill-lib/vm-mcp` owns reusable VM MCP implementation and doctrine. Its authority profiles are deployment choices: bounded defaults remain appropriate for shared or first-contact environments, while the explicit `personal-console` profile is available for a deliberately configured single-owner private VM. The personal-console profile entered canonical skill-lib in merged #81 at `222ba4d4348022d81950c3fad054bae7e528b6a0`. Repository tests do not prove that any particular VM currently satisfies that profile.
+- **Stack deployment authority**: `The-Interdependency/stack` owns stack-specific deployment and operational-use guidance. Stack's consumption of the canonical `vm-mcp` personal console entered stack in merged #12 at `22b74340d0c603883193a4ecf53e2ef3f9c3e780`. When stack deployment consumes `vm-mcp`, resolve that exact pinned skill-lib identity and the current `stack/backend/deploy` instructions before acting. No implementation or doctrine authority transfers from skill-lib into stack merely because stack consumes it.
+- **Concrete host/client facts are runtime evidence**: A hostname or alias such as `a0`, a client such as Termux, Git transport/authentication method, tunnel state, installed CLI, provider login, exact version, quota, and API availability must be discovered from the current deployment/operator environment before use. This skill must not elevate those transient facts into unconditional organization-wide routing doctrine.
+- **Provider execution capacity is not source authority**: OpenAI/Codex, xAI/Grok, DeepSeek/DeepCode, or another provider may be usable execution capacity when currently authenticated and within quota. Their availability must be checked at runtime, and choosing an executor does not transfer repository, semantic, mathematical, measurement, or publication authority.
+- **Deprecated/stale routes do not revive themselves**: Historical services, hosts, clients, authentication paths, or provider assumptions are not automatic fallbacks. If a route is deprecated, migrate to its supported replacement and remove obsolete routing when compatibility permits; otherwise preserve the unresolved deployment boundary as `hmmm`.
+
+### Operational usage guidance
+
+Before routing work to a machine or provider:
+
+1. resolve the repository and exact commit that owns the work;
+2. read the current deployment instructions owned by the consuming repository;
+3. verify the actual host/client/authentication/tunnel/provider state;
+4. choose only the authority profile and executor justified by that evidence; and
+5. keep human recovery access independent where the deployment contract requires it.
+
+A statement like "use `a0`" is therefore a runtime/operator decision backed by current deployment evidence, not standing organization canon in this skill.
 
 ## METAPAT consultation test
 
@@ -67,14 +94,13 @@ When consultation triggers, inspect the current METAPAT repository state before 
 
 ## Workflow
 
-1. **Agent/work context gate**: On agent birth, resolve skill-lib plus governing repository instructions before org work begins. On every work start, reevaluate skill triggers and load applicable contracts before reasoning or acting. Inherit resolved authority into child/sub-agents; do not make the user restate stable repository knowledge. Missing required authority is `hmmm` and blocks that boundary.
-2. **Trigger detection**: Activate on any The-Interdependency context or the example trigger phrases listed in the description.
-3. **Resource preflight**: Before starting any compute run, decide whether the available resources can sustain it to its natural terminal condition. If not, do not launch it. Do not substitute an arbitrary timeout for preflight judgment.
-4. **METAPAT gate**: Before conceptual or architectural commitment, run the consultation test above. If triggered, inspect current METAPAT before selecting the relation, boundary, transformation, or cross-domain mapping.
-5. **Context assembly**: For transcript work, explicitly structure output using EDCMBONE energy-dissonance mapping, F-metrics, failure-mode tags, and accessibility annotations. Preserve full original relations.
-6. **Artifact production**: Write code/docs with msdmd blocks (if applicable) + dedicated "Usage Guidance" section or equivalent. Include examples that can be copy-pasted.
-7. **GitHub hygiene**: Check drift, update indexes, propagate only after validation. Reference this skill in commit messages where relevant.
-8. **Output packaging**: Structure responses with:
+1. **Context gate**: Apply the agent/work context gate in Core Doctrine.
+2. **Resource preflight**: Apply the resource-run rule in Core Doctrine before compute.
+3. **METAPAT gate**: Before conceptual or architectural commitment, run the consultation test above. If triggered, inspect current METAPAT before selecting the relation, boundary, transformation, or cross-domain mapping.
+4. **Context assembly**: For transcript work, explicitly structure output using EDCMBONE energy-dissonance mapping, F-metrics, failure-mode tags, and accessibility annotations. Preserve full original relations.
+5. **Artifact production**: Write code/docs with msdmd blocks (if applicable) + dedicated "Usage Guidance" section or equivalent. Include examples that can be copy-pasted.
+6. **GitHub hygiene**: Check drift, update indexes, propagate only after validation. Reference this skill in commit messages where relevant.
+7. **Output packaging**: Structure responses with:
    - Preserved structure / epistemic layers first.
    - EDCMBONE-mapped analysis where transcripts are involved.
    - Usage guidance and examples.
@@ -97,6 +123,7 @@ When consultation triggers, inspect the current METAPAT repository state before 
 - Using METAPAT to decorate a routine implementation decision.
 - Making a conceptual architecture choice that crosses the METAPAT gate without consulting current METAPAT.
 - Copying METAPAT doctrine into skill-lib and allowing the copy to become a competing authority.
+- Treating a concrete host, client, provider login, or quota as standing organization authority without current deployment evidence.
 
 ## Output Rubric (active whenever this skill is loaded)
 
@@ -112,3 +139,4 @@ hmmm
 - Whether the historical `meta` skill should remain as a compatibility router or be removed after all consumers propagate this gate.
 - Whether a companion metadata-block skill (e.g. `# === TIW_WORKFLOW ===` or `# === INTERDEPENDENCY ===`) should be added for self-declaring modules inside The-Interdependency repos.
 - Exact canonical reference for the full EDCMBONE transcript assembly protocol — should the detailed steps live in this skill or be expanded inside the edcmbone repo's own skill definitions?
+- Actual VM state, current client/private-tunnel state, provider sessions, and quotas remain runtime evidence outside this skill.

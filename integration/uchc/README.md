@@ -12,6 +12,13 @@ The source commit and physical wheel/database hashes are pinned in
 historical research records. Root work-graph projections include the new
 candidate separately, preserving the old experiments and authority boundaries.
 
+This consumer remains pinned to the historical `0.1.0a1` input candidate.
+The separate current `0.1.0a2` structural candidate and its source/wheel replay
+are recorded in `research/english-gonol/MIGRATION.json`. Their equivalence
+does not migrate this consumer or establish its `0.1.0a2` gate 8. Keep the
+existing lock and its historical receipts unchanged until a separately verified
+consumer migration.
+
 ## Usage guidance
 
 Verify the wheel SHA-256 against the lock before installing into a clean venv:
@@ -62,3 +69,18 @@ The source-owned UCNS neural-audit prerequisite, PTCNA propagation/learning and
 readout construction, held-out useful inference, stable UCHC publication,
 public-artifact reconsumption and domain-authority transition remain separate
 uncompleted gates. This input contract does not silently close any of them.
+
+## 0.1.0 graduation candidate
+
+`candidate-0.1.0.json` names the complete extracted package and its exact wheel.
+Use `UCHC_INPUT_LOCK` to select it for pre-publication integration. The active
+ZFAE lock remains historical until the verified candidate is publicly released
+and reconsumed from its immutable artifact URL. The candidate uses the same
+physical v2 corpus identity and logical receipt; build that corpus with the
+Python 3.12.14 / SQLite 3.45.1 runtime recorded in UCHC's provenance.
+
+UCNS #242 and Stack #93 are merged. UCHC owns no additional implementation
+authority yet. After release, verify the downloaded artifact digest, rerun this
+integration, retire the ordinary English/Python forge import paths, and write
+the separate before/after authority-transition receipt. Preserve all existing
+work-graph non-transfer fields.

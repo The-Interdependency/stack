@@ -3,10 +3,10 @@
 name: UCHC input integration
 on:
   pull_request:
-    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
+    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'ahbg/integration/**', 'ahbg/runtime/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
   push:
     branches: [main]
-    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
+    paths: ['.github/workflows/uchc-input.yml', 'research/zfae/**', 'integration/uchc/**', 'ahbg/integration/**', 'ahbg/runtime/**', 'stack-manifest.json', 'STACK_MANIFEST.md']
 permissions:
   contents: read
 jobs:
@@ -66,7 +66,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
+          UCHC_CORPUS_REQUIRED=1 UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
             .clean/bin/python -I -m pytest -q stack/integration/uchc/tests/test_input.py --junitxml=evidence/integration.xml
           .clean/bin/python -I producer/tools/verify_inference_corpus.py \
             --database evidence/construct/construct.db \
@@ -76,6 +76,11 @@ jobs:
           .clean/bin/python -I stack/research/zfae/uchc_input.py \
             --database evidence/construct/construct.db --source-id ci:exact-input \
             --text 'alpha letter alpha' > evidence/consumer-frame.json
+          # AHBG consumes this same installed wheel and complete verified
+          # construct, not a mock or a second Stack language implementation.
+          UCHC_INPUT_DATABASE="$PWD/evidence/construct/construct.db" \
+            .clean/bin/python -m unittest discover \
+              -s stack/ahbg/integration/tests -p 'test_uchc_installed.py' -v
           cp stack/research/zfae/UCHC_INPUT.json evidence/
           git -C stack rev-parse HEAD > evidence/STACK_COMMIT
           git -C producer rev-parse HEAD > evidence/UCHC_COMMIT

@@ -51,8 +51,8 @@ class InputArtifactError(ValueError):
     """Installed input implementation does not match the pinned consumer lock."""
 
 
-def verify_install(lock: dict) -> dict:
-    if lock.get('schema') != 'stack.zfae.uchc-input' or lock.get('version') != '1.0.0':
+def verify_install(lock: dict, *, expected_schema: str = 'stack.zfae.uchc-input') -> dict:
+    if lock.get('schema') != expected_schema or lock.get('version') != '1.0.0':
         raise InputArtifactError('unsupported input lock')
     expected = lock.get('wheel_sha256')
     if type(expected) is not str or re.fullmatch(r'[0-9a-f]{64}', expected) is None:
