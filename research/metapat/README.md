@@ -19,6 +19,14 @@ Standing: **research, not canon**. Canonical METAPAT authority remains `The-Inte
 
 The separate Tensored Human scaffold is linked at its immutable source from the candidate note. Newer consultation identities do not rebase this workspace or transfer upstream authority.
 
+## Tensored Human application scaffold
+
+- [Tensored Human scaffold](tensored-human-scaffold.md): Erin's September 18, 2026 declaration of needs, possession, agency, domain nomenclature and recursive social composition.
+
+This author-declared application scaffold is separately scoped from the assistant-proposed composition mathematics, linked at its immutable historical source. No upstream canon, workspace base or research authority changes.
+
 ## hmmm
 
 The first-principle basis, physical admission laws, faithful UCNS composition and universal completeness remain unresolved.
+
+The coefficient spaces, tensor operation, operational definitions and recursive social composition remain unresolved.
