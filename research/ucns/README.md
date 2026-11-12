@@ -15,14 +15,15 @@ Standing: **research, not canon**. Canonical UCNS authority remains `The-Interde
 ## hmmm
 
 - The [Structural Null jurisdiction and unresolved attachment record](docs/pointed-torsor-origin-attachment-canon-amendment-draft-v0.md)
-  separates two decisions. The intrinsic/extrinsic jurisdictional model is
-  `RATIFIED` and is proposed upstream by UCNS commit `fdc0cf9` in
-  [PR #220](https://github.com/The-Interdependency/ucns/pull/220), which is
-  open and unmerged. Existing behavior is `COMPATIBLE_BUT_PARTIAL`. Attachment
+  is a historical draft, not current authority. [UCNS PR #220](https://github.com/The-Interdependency/ucns/pull/220)
+  merged as `f6b5fd0`, but its final canon text keeps Structural Null's
+  intrinsic/extrinsic jurisdiction and carrier attachment candidate-scoped;
+  the draft's `RATIFIED` / `open and unmerged` status is superseded. Attachment
   remains `UNRESOLVED`: `iota` is only a research placeholder, its codomain and
-  target are `hmmm`, and no pointing, residual-symmetry consequence,
-  implementation, or evidence is claimed. The next comparison is restricted
-  to the native visible phase basepoint and its `C2`-invariant two-lift fiber.
+  target are `hmmm`, and no canonical pointing is claimed. The bounded native
+  target comparison has now executed: visible phase and full two-lift fiber
+  collide, a single lift retains reflection, and a directed germ is the
+  smallest locally rigid explicit control.
 - The [origin-attachment basepoint symmetry audit](docs/origin-attachment-basepoint-symmetry-v0.md)
   analyzes the smallest pinned-canon traversable candidate before any canon
   ratification. With frame forgotten, the native exact root loop is the
@@ -57,6 +58,25 @@ Standing: **research, not canon**. Canonical UCNS authority remains `The-Interde
   outgoing dart, and closure are `NOT_EVALUATED_DEPENDENCY_BLOCKED`. The
   constructor certificate and every downstream output remain null, and PCEA
   handoff is prohibited. [Frozen receipt](receipts/based-traversal-constructor-contract-v0.json).
+- The [rooted rotation/closure audit](docs/rooted-rotation-closure-audit-v0.md)
+  rechecks that stop against current sources and completes all five fields only
+  under named candidate assumptions. Its rooted oriented ribbon maps replay,
+  preserve `R=(C_k(t), relations, provenance)`, and expose two coherent
+  rotations that disagree at rank two: paired germs give three faces, genus
+  zero, and cellular order one; sign blocks give one face, genus one, and no
+  finite cellular order. Both frozen successor candidates map the one-role
+  state to order one rather than `2881`, so both are `FALSIFIED` and the second
+  recursive gate is not executed. Canonical attachment/selection and the
+  successor selector remain `UNRESOLVED`; PCEA security remains separately
+  `FALSIFIED`. [Deterministic receipt](receipts/rooted-rotation-successor-gate-v0.json).
+- The [native attachment target stabilizer audit](docs/native-attachment-target-stabilizer-v0.md)
+  executes the next comparison on the exact complete-state carrier `Q/2Z`. A
+  visible phase and its unordered two-lift fiber are the same subset with the
+  same order-four signed-turn-isometry stabilizer. One framed lift removes deck swap but
+  retains exact reflection. A directed local germ is the smallest tested
+  refinement with trivial signed-turn-isometry stabilizer and `SURVIVED_LOCALLY` as an explicit
+  constructor; intrinsic selection remains `UNRESOLVED`. No successor gate is
+  opened. [Deterministic receipts](receipts/native-attachment-target-stabilizer-v0.json).
 - The [based-traversal provenance history audit](docs/based-traversal-provenance-history-audit-v0.md)
   searched all local refs in UCNS and the exact A0 source-provenance repository,
   binding 3160 unique reachable commits, the exact ref sets, broad semantic
