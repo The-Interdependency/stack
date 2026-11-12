@@ -1,0 +1,51 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "b548be6927b0994d84ecf84b78531626509372c41d14ef5f1517331dfec951d7",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "authority": "Root semantic and domain-restraint doctrine; no cryptographic authority transfers",
+      "relation": "semantic boundary source"
+    },
+    {
+      "repository": "The-Interdependency/pcea",
+      "commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+      "authority": "Stable PCEA runtime behavior and interface contract",
+      "relation": "implementation baseline"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
+      "authority": "Reusable build, source, and evidence discipline",
+      "relation": "governing workflow source"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "57e3f047c092a6df5435ed4f502347664513a0ff",
+      "authority": "Stack-local PCEA and UCNS candidate research; no upstream canon authority",
+      "relation": "research evidence source and edit owner"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+      "authority": "Geometry implementation and its explicitly scoped research; no automatic cryptographic authority",
+      "relation": "geometry and prime-arity evidence source"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "external-provenance",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Stack's historical experiment pins are retained; this record does not refresh libs/ or BASE.json.",
+      "No completed recursive successor, canon-selected traversal certificate, or UCNS-derived encryption construction is selected by this update.",
+      "Local Stack crypto-audit commit 0b49672862a30cec0a0ee24e39a34241c9626f27 and the unpublished trapdoor-lift files were independently replayed and are bound separately by content digest in the follow-on receipt.",
+      "The rooted ribbon constructor closes only under explicit assumptions; current UCNS still does not select the origin attachment, rotation, marked dart, torsion presentation, or prime successor.",
+      "Post-quantum security, authentication, replay protection, forward secrecy, and compromise recovery require construction-specific evidence; current PCEA fails the tested security-equivalence gate."
+    ]
+  }
+}
