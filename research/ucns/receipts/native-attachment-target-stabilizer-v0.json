@@ -1,0 +1,374 @@
+{
+  "candidate_evaluations": [
+    {
+      "intrinsic_selection": "UNRESOLVED",
+      "local_rooting_sufficiency": "insufficient to select direction/chirality",
+      "retains_deck_swap": true,
+      "retains_direction_reversal": true,
+      "stabilizer": [
+        {
+          "id": "rho_0",
+          "law": "x -> -1*x + 0 (mod 2)",
+          "orientation_preserving": false,
+          "signed_displacement_action": "d -> -1*d"
+        },
+        {
+          "id": "rho_1",
+          "law": "x -> -1*x + 1 (mod 2)",
+          "orientation_preserving": false,
+          "signed_displacement_action": "d -> -1*d"
+        },
+        {
+          "id": "tau_0",
+          "law": "x -> 1*x + 0 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        },
+        {
+          "id": "tau_1",
+          "law": "x -> 1*x + 1 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        }
+      ],
+      "stabilizer_order": 4,
+      "target": {
+        "assumption_id": "attachment.visible-zero-control.v0",
+        "complete_state_subset": [
+          {
+            "complete_coordinate_mod_two": "0",
+            "frame": "positive-local-frame",
+            "visible_phase_mod_one": "0"
+          },
+          {
+            "complete_coordinate_mod_two": "1",
+            "frame": "reversed-local-frame",
+            "visible_phase_mod_one": "0"
+          }
+        ],
+        "directed_germ": null,
+        "kind": "visible-phase-basepoint",
+        "selection_basis": "explicit coordinate-zero control; not intrinsic UCNS geometry",
+        "visible_phase": "0"
+      },
+      "target_orbit": "one transitive homogeneous orbit of targets of this kind",
+      "verdict": "FALSIFIED"
+    },
+    {
+      "intrinsic_selection": "UNRESOLVED",
+      "local_rooting_sufficiency": "insufficient to select direction/chirality",
+      "retains_deck_swap": true,
+      "retains_direction_reversal": true,
+      "stabilizer": [
+        {
+          "id": "rho_0",
+          "law": "x -> -1*x + 0 (mod 2)",
+          "orientation_preserving": false,
+          "signed_displacement_action": "d -> -1*d"
+        },
+        {
+          "id": "rho_1",
+          "law": "x -> -1*x + 1 (mod 2)",
+          "orientation_preserving": false,
+          "signed_displacement_action": "d -> -1*d"
+        },
+        {
+          "id": "tau_0",
+          "law": "x -> 1*x + 0 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        },
+        {
+          "id": "tau_1",
+          "law": "x -> 1*x + 1 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        }
+      ],
+      "stabilizer_order": 4,
+      "target": {
+        "assumption_id": "attachment.two-lift-zero-fiber-control.v0",
+        "complete_state_subset": [
+          {
+            "complete_coordinate_mod_two": "0",
+            "frame": "positive-local-frame",
+            "visible_phase_mod_one": "0"
+          },
+          {
+            "complete_coordinate_mod_two": "1",
+            "frame": "reversed-local-frame",
+            "visible_phase_mod_one": "0"
+          }
+        ],
+        "directed_germ": null,
+        "kind": "c2-invariant-two-lift-fiber",
+        "selection_basis": "explicit coordinate-zero control; not intrinsic UCNS geometry",
+        "visible_phase": "0"
+      },
+      "target_orbit": "one transitive homogeneous orbit of targets of this kind",
+      "verdict": "FALSIFIED"
+    },
+    {
+      "intrinsic_selection": "UNRESOLVED",
+      "local_rooting_sufficiency": "insufficient to select direction/chirality",
+      "retains_deck_swap": false,
+      "retains_direction_reversal": true,
+      "stabilizer": [
+        {
+          "id": "rho_0",
+          "law": "x -> -1*x + 0 (mod 2)",
+          "orientation_preserving": false,
+          "signed_displacement_action": "d -> -1*d"
+        },
+        {
+          "id": "tau_0",
+          "law": "x -> 1*x + 0 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        }
+      ],
+      "stabilizer_order": 2,
+      "target": {
+        "assumption_id": "attachment.positive-zero-lift-control.v0",
+        "complete_state_subset": [
+          {
+            "complete_coordinate_mod_two": "0",
+            "frame": "positive-local-frame",
+            "visible_phase_mod_one": "0"
+          }
+        ],
+        "directed_germ": null,
+        "kind": "single-complete-framed-lift",
+        "selection_basis": "explicit coordinate-zero control; not intrinsic UCNS geometry",
+        "visible_phase": null
+      },
+      "target_orbit": "one transitive homogeneous orbit of targets of this kind",
+      "verdict": "FALSIFIED"
+    },
+    {
+      "intrinsic_selection": "UNRESOLVED",
+      "local_rooting_sufficiency": "explicit assumption constructs a locally rigid carrier target in Isom_turn(X)",
+      "retains_deck_swap": false,
+      "retains_direction_reversal": false,
+      "stabilizer": [
+        {
+          "id": "tau_0",
+          "law": "x -> 1*x + 0 (mod 2)",
+          "orientation_preserving": true,
+          "signed_displacement_action": "d -> 1*d"
+        }
+      ],
+      "stabilizer_order": 1,
+      "target": {
+        "assumption_id": "attachment.positive-zero-directed-germ-control.v0",
+        "complete_state_subset": [
+          {
+            "complete_coordinate_mod_two": "0",
+            "frame": "positive-local-frame",
+            "visible_phase_mod_one": "0"
+          }
+        ],
+        "directed_germ": {
+          "direction": 1,
+          "state": {
+            "complete_coordinate_mod_two": "0",
+            "frame": "positive-local-frame",
+            "visible_phase_mod_one": "0"
+          }
+        },
+        "kind": "single-lift-with-directed-local-germ",
+        "selection_basis": "explicit coordinate-zero control; not intrinsic UCNS geometry",
+        "visible_phase": null
+      },
+      "target_orbit": "one transitive homogeneous orbit of targets of this kind",
+      "verdict": "SURVIVED_LOCALLY"
+    }
+  ],
+  "carrier_model": {
+    "complete_states": "X = Q/2Z",
+    "deck_involution": "delta([x]_2) = [x+1]_2",
+    "native_transition_law": "(t,epsilon)~(t+n,(-1)^n epsilon)",
+    "path_parameter": "exact geometric turn displacement d in Q",
+    "projection": "pi([x]_2) = [x]_1",
+    "tested_unoriented_isometry_group": "Isom_turn(X) = (Q/2Z) semidirect C2; x -> s*x+c, preserving d up to one global sign",
+    "time_interpretation": null,
+    "visible_states": "V = Q/Z"
+  },
+  "dependency_audit": [
+    {
+      "classification": "UNRESOLVED",
+      "field": "origin_attachment",
+      "implementation": "IMPLEMENTED_FOR_EXPLICIT_TARGET_ASSUMPTIONS",
+      "obstruction": "no equivariant target selector exists on any homogeneous candidate orbit without additional incidence",
+      "selection": "MISSING_GEOMETRY_OWNED_INCIDENCE",
+      "why_necessary": "a singular source must be incident to one traversable carrier target before local data can be transported"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "field": "directed_tangent_or_chirality",
+      "implementation": "IMPLEMENTED_BY_DIRECTED_GERM_CONTROL",
+      "obstruction": "visible, fiber, and single-lift targets have a nontrivial reversing stabilizer",
+      "selection": "MISSING",
+      "why_necessary": "reflection fixes a chosen complete lift while reversing every signed displacement germ"
+    },
+    {
+      "classification": "FALSIFIED",
+      "field": "rotation_system",
+      "implementation": "TWO_COHERENT_STACK_CANDIDATES_EXIST",
+      "obstruction": "paired-germs and sign-blocks preserve earlier fields but yield different faces and genus",
+      "selection": "MISSING",
+      "why_necessary": "face permutation requires a cyclic successor sigma on all incident darts"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "field": "marked_outgoing_dart",
+      "implementation": "EXPLICIT_FIRST_ROLE_CONTROL_EXISTS",
+      "obstruction": "relation/source order is provenance rather than geometry",
+      "selection": "MISSING",
+      "why_necessary": "a cyclic rotation determines a boundary word only up to cyclic conjugacy and component choice"
+    },
+    {
+      "classification": "UNRESOLVED",
+      "field": "closure_rule",
+      "implementation": "RIBBON_FACE_ORBITS_IMPLEMENTED_AS_PHI_EQUALS_SIGMA_AFTER_ALPHA",
+      "obstruction": "ordinary face closure gives only trivial or non-finite cellular order in the frozen candidates",
+      "selection": "GLOBAL_ATTACHING_OR_TORSION_LAW_MISSING",
+      "why_necessary": "alpha and sigma do not authorize a filled face, relator, torsion, or arithmetic readout until a closure operation is declared"
+    }
+  ],
+  "exact_collision": {
+    "deprecated_representation": "treating a visible basepoint and its full inverse-image fiber as distinct primitive information",
+    "deprecated_status": "DEPRECATED",
+    "left": "attachment.visible-zero-control.v0",
+    "right": "attachment.two-lift-zero-fiber-control.v0",
+    "same_complete_state_subset": true,
+    "same_stabilizer": true,
+    "smallest_counterexample": {
+      "shared_stabilizer": [
+        "rho_0",
+        "rho_1",
+        "tau_0",
+        "tau_1"
+      ],
+      "two_lifts": [
+        "0",
+        "1"
+      ],
+      "visible_phase": "0"
+    },
+    "verdict": "FALSIFIED"
+  },
+  "first_remaining_irreducible_assumption": {
+    "name": "geometry-owned oriented incidence",
+    "statement": "one intrinsic UCNS relation must attach Structural Null or Public Gonol origin to a complete native Mobius state and distinguish one local displacement germ",
+    "why_irreducible": "a visible point and its two-lift fiber collide; a chosen lift still has an exact reversing stabilizer; provenance and coordinate defaults cannot remove it"
+  },
+  "minimal_refinements": [
+    {
+      "additional_observable": "one complete-state lift (frame choice)",
+      "does_not_remove": "reflection fixing the chosen complete state",
+      "from": "visible-phase-basepoint",
+      "removes": "deck swap",
+      "stabilizer_order_after": 2,
+      "stabilizer_order_before": 4,
+      "to": "single-complete-framed-lift",
+      "verdict": "SURVIVED"
+    },
+    {
+      "additional_observable": "one directed local germ at the chosen complete state",
+      "from": "single-complete-framed-lift",
+      "removes": "the final sign-reversing reflection",
+      "stabilizer_order_after": 1,
+      "stabilizer_order_before": 2,
+      "to": "single-lift-with-directed-local-germ",
+      "verdict": "SURVIVED_LOCALLY"
+    }
+  ],
+  "next_experiment": {
+    "competing_candidates": [
+      "Public Gonol index r maps only to visible boundary phase r/157",
+      "the inverse-image two-lift fiber is retained as an unordered target",
+      "one complete lift plus directed germ is supplied only as the stronger control"
+    ],
+    "falsifier": "every candidate either lacks an authority-declared Public-Gonol bridge or retains a nontrivial target stabilizer",
+    "freeze_inputs": [
+      "current 157-position Public Gonol arrangement",
+      "current exact gonal boundary samples r/157",
+      "native Q/2Z complete-state projection",
+      "all candidate lift and local-germ choices before comparator access"
+    ],
+    "name": "public-origin to native-germ incidence sieve",
+    "survival_gate": "an exact carrier-owned incidence must select one directed germ with trivial signed-turn-isometry stabilizer and replay independently of source order, frame defaults, covering-degree choice, hashes, or PCEA expectations"
+  },
+  "nonclaims": [
+    "not UCNS canon or a selected Public-Gonol-to-native-carrier incidence",
+    "not a claim that local turn displacement is physical or METAPAT time",
+    "not a selected rotation system, marked dart, attaching word, torsion presentation, or successor",
+    "not PCEA runtime or cryptographic security evidence",
+    "not permission to use coordinate zero, positive frame, source order, or observed cardinalities as intrinsic geometry"
+  ],
+  "observed_successor_gate": {
+    "constructor_frozen": true,
+    "observed_successor_values_evaluated": false,
+    "observed_values_present_in_constructor": false,
+    "reason": "target selection and rotation remain unresolved; an attachment stabilizer is not a successor law",
+    "successor_selector_derived": false
+  },
+  "producer_code_reference": "sha256:b8063d6cc6eaab7a2810b592153dcbf00f9cb7a6a289ade860a405ddc0b7d0e7",
+  "result_classifications": {
+    "canonical_successor_evaluation": "BLOCKED",
+    "directed_germ_explicit_constructor": "SURVIVED_LOCALLY",
+    "general_ucns_trapdoor_lift": "UNRESOLVED",
+    "intrinsic_directed_germ_selection": "UNRESOLVED",
+    "minimal_fourth_power_trapdoor": "FALSIFIED",
+    "pcea_cryptographic_security": "FALSIFIED",
+    "rotation_selected_by_earlier_fields": "FALSIFIED",
+    "single_framed_lift_suffices_for_direction": "FALSIFIED",
+    "two_lift_fiber_adds_information_over_visible_phase": "FALSIFIED",
+    "visible_and_full_fiber_as_distinct_primitives": "DEPRECATED",
+    "visible_phase_suffices_for_direction": "FALSIFIED"
+  },
+  "schema_id": "the-interdependency.stack-research.ucns.native-attachment-target-stabilizer",
+  "schema_version": "0.1.0",
+  "security_separation": {
+    "geometric_result": "local target refinement SURVIVED_LOCALLY under explicit assumptions; intrinsic selection UNRESOLVED",
+    "pcea_security": "FALSIFIED at crypto-audit commit 0b49672",
+    "security_promotion": null,
+    "trapdoor_lift": "general claim UNRESOLVED; smallest fourth-power candidate FALSIFIED"
+  },
+  "source_identities": {
+    "basepoint_symmetry_receipt_sha256": "5b38d70047ec62ba4c269b13f0f41f3e0c5f661d9f9b317bf8cf8c2b61cda197",
+    "crypto_audit_commit": "0b49672862a30cec0a0ee24e39a34241c9626f27",
+    "current_pcea_authority_commit": "1595842abd1a5b443c6a601a2afe935b60c4adf7",
+    "current_stack_main": "bcaba85900716e5209150a504660fa2ca5158299",
+    "current_ucns_authority_commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+    "current_ucns_source_sha256": {
+      "CANON.md": "24977f0dfa7af56d59705cb131c6506c2b551832358bee57b592266be7599f33",
+      "src/ucns/carrier.py": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+      "src/ucns/direct_mobius.py": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+      "src/ucns/gonal_boundary_trace.py": "332358a21d5d9edac5b0b61806d4785f0c3caecf6704abb842e173c2939c35d0",
+      "src/ucns/modular_orbit.py": "7bfab10697b93ff87ea53f49f540896840f8c3fc789a2ef7f901c2cf5836f282"
+    },
+    "metapat_authority_commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+    "metapat_vm_working_head": "e3111d9bf34eae17255af96d2e4f6c072ef16dc4",
+    "rooted_rotation_receipt_sha256": "d8ce28b8e183123f0c5ecc2cd04a5783fb6c476524b6491665bba85c3d67de89",
+    "skill_lib_authority_commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
+    "skill_lib_vm_working_head": "22c2c5702d14fb4b0faeb717777ecab2665770a1",
+    "stack_pr42_head": "57e3f047c092a6df5435ed4f502347664513a0ff",
+    "stack_predecessor_commit": "7419712f5bfa0813b9d2e8f28743aa44dad6f30c",
+    "stack_predecessor_files": {
+      "research/ucns/origin_attachment_basepoint_symmetry.py": "6728b2cac11caa5c5ca26efb40a1bf01f6856be08a38796c952648c38397d214",
+      "research/ucns/rooted_rotation_closure_constructor.py": "42a2062469f96f048bcf3bdf3a8d3fe2afb1666ff710c66c55569826b3c9b6af",
+      "research/ucns/rooted_rotation_successor_gate.py": "f764190338d58815157a94f3ea9184458869c709cad666d90f8fb8684879de85"
+    },
+    "stack_rooted_constructor_commit": "ef9dfee02f67231e08d49cc44159bfee501aef28",
+    "trapdoor_unpublished_base_commit": "82dc5e39f1e0c3f162138c2e7b642814df14dd98",
+    "trapdoor_unpublished_sha256": {
+      "research/ucns/receipts/trapdoor-lift-falsification-v0.json": "991a48b0df0bd6ded5d8cae9c6d507eb7b0642b3a58ae302b3beee389411690c",
+      "research/ucns/receipts/trapdoor-lift-falsification-v0.md": "8412bdd507b4efe35a06df5a1c178ec3f3f6167e17897eb25603ecf34d76fc8d",
+      "research/ucns/tests/test_trapdoor_lift_falsification.py": "d129cc090b06893f412bc05e31320838578a4b9d9f22d073a027b64d054f12f8",
+      "research/ucns/trapdoor_lift_falsification.py": "9039d55c3d6230327338fd6c1d004a351ed5f9084f22ac546d675151ecfd8903"
+    }
+  },
+  "standing": "stack-local-explicit-assumption-stabilizer-audit"
+}
