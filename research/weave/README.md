@@ -8,6 +8,26 @@ multi-arity bit interleaving, and an eventual asymmetric public/private relation
 The interleave is one operation, not the project identity. URPCS remains retired;
 its substituted codec, implementation and security findings are not inherited.
 
+## Research abstract
+
+Description dated 2026-10-14; published 2026-10-18. This is a research description, not a new verification, release, or promotion of claim status.
+
+### Weave: A Reversible Gonol Construction for Cryptographic Research
+
+**Weave** investigates whether cryptographic recovery can depend on private structural relations among nested geometric representations, multiple reconstruction-dependent streams, and user-selected corpus material. Its intended architecture combines a message-origin construction with private-gonol participation, ordered multi-arity bit interleaving, and an asymmetric public/private recovery relation. The interleave is one operation within this architecture, not the cryptosystem itself; the intended asymmetry must arise from the construction rather than a substituted conventional cipher.
+
+The implemented cycle normalizes message length using actual corpus bits, identifies repeated multi-byte sequences, attaches those sequences to an eighth whole/origin circle, and records their ordered occurrences across seven companion-circle streams. Exact length-bearing numeral references preserve reconstructable values, while executed prime routes determine bit partitions. Sequence construction and first/last interleaving repeat across successive rounds. Recovery reverses the resulting record using the declared corpus, profile, and source dependencies, without requiring the original plaintext or an undisclosed encoder trace.
+
+The merged cycle’s published validation reports **176 passing tests** and exact reconstruction. Its recorded demonstration expands 784 input bytes to 6,735 encoded bytes; compact references therefore do not establish net compression or a fixed expansion ratio. A separate public/private polynomial candidate supports public-only encoding and private inversion, but its published coefficients also permit an equivalent public inverse. This result falsifies that candidate’s requirement for private state, not the broader intended architecture.
+
+Weave’s present contribution is an executable reversible construction and a falsification program that distinguishes reconstruction correctness from confidentiality. The central research question is whether the combined private-gonol, stream, and corpus relations impose an independently necessary recovery constraint that remains unavailable from public information.
+
+**hmmm:** Native asymmetry, cryptographic stream/corpus dependence, authentication, and replay resistance remain unresolved. The current implementation supports construction experiments, not confidential storage.
+
+**Usage guidance:** Read this abstract for the research question and intended contribution. Use the scope, evidence, commands, and limitations in the rest of this README before relying on the work; retain the unresolved conditions above when quoting the description.
+
+Public repository context: [Preserved specification](https://github.com/The-Interdependency/stack/blob/3d74cf118e14cc3839d7426d90ca9791567a7005/research/weave/SPECIFICATION.md) · [Executable cycle and limits](https://github.com/The-Interdependency/stack/blob/3d74cf118e14cc3839d7426d90ca9791567a7005/research/weave/CYCLE.md).
+
 ## Current executable cycle
 
 Normalize once with actual corpus bits. Discover repeated multi-byte sequences,
