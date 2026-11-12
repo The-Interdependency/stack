@@ -4,6 +4,10 @@ This repository is `The-Interdependency/stack`, the organization's composition f
 canonical projects are pinned here, stack-local research can combine them, and emergent
 projects may later graduate into their own repositories.
 
+These root instructions apply recursively to every file and workspace in Stack.
+More-specific `AGENTS.md` files may add constraints for their subtree, but they
+must not weaken the authority, provenance, preservation, or evidence rules below.
+
 ## Authority and topology
 
 - `libs/<repo>/` is the manifest-pinned canonical repository view. Treat it as read-only
@@ -166,3 +170,54 @@ coherence; it does not replace workspace behavioral tests.
 URPCS provenance boundary: the immutable public intended-design transcript identity
 and detailed design attribution remain unresolved; see
 [`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+## Universal evidence and implementation rules
+
+- Inspect the owning source, applicable `AGENTS.md` files, and exact participant
+  identities before changing behavior. Moving code, passing a local test, or a
+  successful workflow does not transfer authority, proof status, or security status.
+- Preserve unrelated user changes. Keep experiments in their owning research
+  workspace, and route completed behavior to the owning canonical repository with
+  explicit review and release evidence.
+- Preserve identity, order, multiplicity, relations, recoverable constituents,
+  and provenance whenever a structure is transformed. Do not replace a retained
+  object with a scalar summary merely because the scalar is convenient.
+- Freeze source bytes, inputs, algorithms, parameter ranges, work limits, and
+  readout rules before comparing known targets. Emit deterministic receipts with
+  exact commands and hashes; incomplete external computation is `UNRESOLVED`,
+  not a negative control.
+- Separate missing implementation, missing selection, mathematical obstruction,
+  and missing evidence. A failed candidate falsifies that candidate, not every
+  possible construction; a local survival remains bounded by its assumptions.
+- Preserve historical receipts and negative results. If source identity changes,
+  create a new receipt instead of rewriting the old result.
+- Treat arithmetic patterns, primes, geometry, round-trip correctness, carrier
+  size, and representation fidelity as non-cryptographic evidence unless a
+  construction-specific security property is demonstrated against a stated threat
+  model. Assess confidentiality, integrity, replay, rollback, forward secrecy,
+  and compromise recovery separately from functional correctness.
+- Do not fit observed sequences or promote supplied parameters into discovered
+  selectors. Any claimed successor must expose a deterministic selector from the
+  retained state, or return an explicit candidate set or unresolved result.
+- Record the first remaining irreducible assumption and the smallest next
+  experiment that could resolve it in the handoff and receipt.
+
+For the detailed UCNS/PCEA constructor, arity, successor, and cryptographic
+requirements, read [`research/AGENTS.md`](research/AGENTS.md) when working in
+those workspaces.
+
+## Research PR scope and priority
+
+Erin's 2026-11-12 work order puts Stack first and sets the research priority:
+**UCNS → UCHC → EDCM → Weave**.
+
+- Give each research PR one research area and one independently reviewable outcome.
+  Split mixed changes before repair or merge; a shared dependency does not transfer
+  research ownership or justify including a second area's implementation.
+- Keep producer and consumer changes in their owning areas. Link separately scoped
+  dependency PRs and bind exact source identities when their evidence is coupled.
+- Keep general Stack governance and infrastructure in a separate maintenance PR.
+- Preserve work outside the four named priorities in its own research area. Its
+  position after this sequence does not authorize discarding it or folding it into UCNS.
+- For each PR, state its area, priority position, dependencies, verification and
+  remaining `hmmm`. Recheck its actual changed files against that declared scope.
