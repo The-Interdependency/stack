@@ -6,6 +6,20 @@ Immediate target: one functional persistent plane in which A0 can perceive, plan
 
 Do not block this target on multiplayer, federation, blockchain, ascension, monetization, or other deferred architecture.
 
+## Research abstract
+
+Description dated 2026-10-16; published 2026-10-18. This is a research description, not a new verification, release, or promotion of claim status.
+
+### AHBG: A Game-Based Experimental Framework for Embodied Agent Evaluation
+
+We propose the Agent Harness Benchmark Game (AHBG), a controlled, persistent environment for investigating how an artificial agent’s embodiment and execution harness affect its behavior. AHBG treats the underlying model, the instantiated agent, and the environment as distinct experimental objects. Its central method varies embodiment conditions while holding the model and task fixed, allowing differences in performance to be examined in relation to memory, available actions, regulatory constraints, role, and interaction history. A shared observation–action interface is intended to connect compatible agents and boards while preserving each board’s mechanics. Geometric constructions are supplied by UCNS, with AHBG responsible for gameplay, experimental conditions, and event recording. Persistent state, explicit instance lineage, and deterministic replay of recorded transitions support inspection of how actions produce consequences across successive turns. The evaluation protocol combines telemetry, held-out controls, and falsification tests, preserving distinctions between unknown and neutral conditions, prohibited and costly actions, task value and regulatory cost, and copying and forking an agent. A complementary collectible-card layer is intended to connect repeated play with learning real-world concepts. The research objective is to determine which harness and embodiment conditions support reproducible differences in adaptive behavior, continuity, and effective agency. Successful experiments would establish operational effects within specified conditions; interpreting those effects as evidence of consciousness requires a separate account and independent validation.
+
+**hmmm:** Regulatory calibration and the criteria connecting observable behavior to agency remain experimental obligations.
+
+**Usage guidance:** Read this abstract for the research question and intended contribution. Use the scope, evidence, commands, and limitations in the rest of this README before relying on the work; retain the unresolved conditions above when quoting the description.
+
+Public repository context: [Calibration protocol](https://github.com/The-Interdependency/stack/blob/3d74cf118e14cc3839d7426d90ca9791567a7005/ahbg/CALIBRATION.md).
+
 ## UCNS board authority
 
 The AHBG board is a **game projection of UCNS geometry**, not an independently invented grid.
