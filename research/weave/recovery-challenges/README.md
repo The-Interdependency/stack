@@ -128,4 +128,3 @@ this challenge directory; it changes no cipher source or authority.
 hmmm: the reported v1 recovery has not been independently replayed here. Exact authorized round trips establish
 that these files have recoverable answers; they do not establish secrecy,
 asymmetry, authentication or cryptographic strength.
-

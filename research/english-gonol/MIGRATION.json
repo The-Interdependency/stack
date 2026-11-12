@@ -116,5 +116,34 @@
       "downstream_reconsumption": "hmmm: candidate wheel consumption exists, released-artifact reconsumption does not"
     },
     "scope": "Historical 0.1.0a1 input consumer; not evidence for structural 0.1.0a2 integration"
+  },
+  "ordinal_extension": {
+    "state": "stabilizing",
+    "source_path": "research/english-gonol/english_gonol/ordinal_construction.py",
+    "proposal_provenance": "docs/ordinal-source.json",
+    "work_graph": "docs/ordinal-work-graph.json",
+    "extraction_target": "The-Interdependency/uchc PR #10; exact source/test and behavior equivalence required",
+    "authority_transfer": false,
+    "hmmm": [
+      "a3 clean-wheel/forge equivalence is a separate candidate gate; existing a1/a2 receipts do not verify it",
+      "stable publication, released-artifact reconsumption and graduation remain incomplete"
+    ]
+  },
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
+  },
+  "package_candidate": {
+    "repository": "The-Interdependency/uchc",
+    "source_commit": "b1d2c62fd55d2898bb37cba9ebec862c9a8d5980",
+    "version": "0.1.0",
+    "wheel_sha256": "856d7bf01d9c55266ce3d50a20fcc7dd1e4efc729fad85120ccbf387b3454415",
+    "lock": "integration/uchc/candidate-0.1.0.json",
+    "extraction_source_commit": "ca69c60032a079585ccb89d5cc7aba67f637df55",
+    "standing": "exact package candidate; publication and authority transition pending",
+    "authority_transfer": false
   }
 }
