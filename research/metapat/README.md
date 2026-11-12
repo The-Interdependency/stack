@@ -12,6 +12,12 @@ Standing: **research, not canon**. Canonical METAPAT authority remains `The-Inte
 4. If work changes METAPAT itself, route the accepted change upstream; after merge, refresh `libs/metapat/` and this workspace's base commit.
 5. If work becomes a distinct composed project, keep its authority separate rather than silently promoting this workspace.
 
+## Tensored Human application scaffold
+
+- [Tensored Human scaffold](tensored-human-scaffold.md): Erin's declared needs, possession, agency, domain nomenclature and recursive social composition.
+
+This author-declared application scaffold is separately scoped from the assistant-proposed composition mathematics, linked at its immutable historical source. No upstream canon, workspace base or research authority changes.
+
 ## hmmm
 
-No active METAPAT-specific stack research has been materialized here yet.
+The coefficient spaces, tensor operation, operational definitions and recursive social composition remain unresolved.
