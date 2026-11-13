@@ -1,0 +1,47 @@
+name: uchc-unicode-bit-radius
+
+on:
+  pull_request:
+    paths:
+      - research/english-gonol/english_gonol/unicode_construction.py
+      - research/english-gonol/unicode_tests/**
+      - research/english-gonol/docs/unicode-bit-radius*
+      - research/english-gonol/BASE.json
+      - .github/workflows/uchc-unicode-bit-radius.yml
+  push:
+    paths:
+      - research/english-gonol/english_gonol/unicode_construction.py
+      - research/english-gonol/unicode_tests/**
+      - research/english-gonol/docs/unicode-bit-radius*
+      - research/english-gonol/BASE.json
+      - .github/workflows/uchc-unicode-bit-radius.yml
+
+permissions:
+  contents: read
+
+jobs:
+  unicode-gonols:
+    runs-on: ubuntu-latest
+    env:
+      UCHC_UNICODE_UCNS_ROOT: ${{ github.workspace }}/_deps/ucns-unicode
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Check out exact native Unicode producer
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 0600a23e27af83d06157ee6ca66644dbff613d2a
+          path: _deps/ucns-unicode
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest==9.1.1
+      - name: Verify pinned producer and big-endian transport
+        working-directory: research/english-gonol
+        run: |
+          test "$(git -C "$UCHC_UNICODE_UCNS_ROOT" rev-parse HEAD)" = "0600a23e27af83d06157ee6ca66644dbff613d2a"
+          python -m pytest -q unicode_tests

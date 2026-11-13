@@ -1,0 +1,42 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "authority": "extracted language-hyperspace candidates pending graduation",
+      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "authority": "construction, domain-claim and cross-repository evidence discipline",
+      "relation": "governing source for this scoped representation change"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "operator-declared UCHC encoding-width policy consumed through UCNS; no semantic mapping inferred from bits",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Closed-word bearings and higher-scale affixiation remain unresolved.",
+      "Corpus replacement and extraction into the UCHC distribution remain separate from primitive width and transport."
+    ]
+  },
+  "work_graph_sha256": "3e64593d2c548a8bc0a4cb027f4d4af4d71be37a4f9592fc22672cea7ce253dc"
+}
