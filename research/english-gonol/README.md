@@ -1,16 +1,26 @@
 # English Gonol Construction
 
-## Ordinal candidate
+## Unicode gonols — 16 b rad, big-endian
 
-The active [recursive attachment profile](docs/recursive-stack.md) consumes
+New primitive text construction uses
+[`english_gonol.unicode_construction`](docs/unicode-bit-radius.md). Every Unicode
+glyph has **16-bit radius and 32-bit diameter**, represented by four big-endian
+bytes. ASCII has three leading zero bytes. UCNS owns the native representation;
+exact scalar identity, UTF-8 anatomy, order and multiplicity remain recoverable.
+This width is independent of geometric placement radius. Corpus migration and
+closed-word bearings retain their explicit boundaries in the linked contract.
+
+## Historical ordinal and recursive candidates
+
+The historical [recursive attachment profile](docs/recursive-stack.md) consumes
 native UCNS stacks, closed compound joins and reversible origin views.
 Sentences stack closed words through the same operation that stacks glyphs.
 The [ordinal v1 profile](docs/ordinal-geometry.md) remains historical replay.
 
-## Structural profile v1 — new construction entrypoint
+## Historical structural profile v1
 
-The operator-ratified [structural profile](docs/structural-profile-v1.md) replaces
-non-whitespace runs for new structural work. It builds the complete pinned
+The operator-ratified [structural profile](docs/structural-profile-v1.md) replaced
+non-whitespace runs in that corpus candidate. It builds the complete pinned
 corpus, keeps punctuation outside word identity, preserves ordered shared
 participations, and exposes read-only query/replay through
 `english_gonol.structural_query.StructuralField`. Start with the commands in

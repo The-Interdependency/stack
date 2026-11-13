@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213",
+  "work_graph_sha256": "09804ee8eedd9885c2540a022ae4f50bc8c3500b64e32fb1b70a51a9883614ba",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -540,6 +540,46 @@
       "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
       "authority": "build and verification discipline",
       "relation": "resolved governing skills; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "authority": "extracted language-hyperspace candidates pending graduation",
+      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "authority": "construction, domain-claim and cross-repository evidence discipline",
+      "relation": "governing source for this scoped representation change",
       "canonical_release": false,
       "authority_transfer": false
     }
