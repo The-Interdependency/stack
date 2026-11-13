@@ -1,0 +1,50 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "42bcc4c2b1b4e13aa42d71d2760e47762b65fe0c9f92fdd1fcd9808ba3bdb546",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
+      "authority": "origin/axis architecture and migration boundary",
+      "relation": "architectural reference only; no ungraduated binary runtime or public package"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "905e66964a495d7596a577bb64e4158db9465864",
+      "authority": "native exact geometry",
+      "relation": "unchanged mathematical producer consumed by the new domain"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "8c737f1e129b90004e986fc74940990c507762f0",
+      "authority": "Weave binary-origin candidate, sequence selection and round composition",
+      "relation": "exact repair starting point; reviewed local native_binary.py is source-locked in CYCLE_NATIVE.json"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "9867ab33877f2b1f50f8a501cf379aa99360bd52",
+      "authority": "build and evidence discipline",
+      "relation": "governing workflow source"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "86415a5368c1a1417c2b6731f19967a6b1fce6bb",
+      "authority": "domain restraint and affixiation semantics",
+      "relation": "semantic consultation only; no security or geometry transfer"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "declared binary-domain candidate; no language or cryptographic equivalence",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Named normalization, selection, attachment and split profiles are executable candidates, not universal rules.",
+      "Public/private cryptographic lifting, authentication and full-cipher security remain unimplemented.",
+      "This graph changes no English/Python graduation or UCNS geometry authority.",
+      "Binary closure remains in the Stack forge; UCHC proposal #7 is provenance, not graduation or a runtime input."
+    ]
+  }
+}

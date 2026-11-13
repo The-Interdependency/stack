@@ -76,6 +76,49 @@ class WorkerUnitTests(unittest.TestCase):
             ledger, "job_test", worker_id="test", executor="local", lease_seconds=120,
         )
 
+    def test_unexpected_job_error_is_recorded_and_loop_survives(self):
+        job = Job(
+            id="job_boom", dedupe_key="a"*64, kind="fresh.make", target="msdmd:ucns",
+            freshness_key="b"*64, preferred_executor="local", state="running", attempts=1,
+            payload={"target":"msdmd:ucns"}, created_at="2026-08-30T00:00:00+00:00",
+            updated_at="2026-08-30T00:00:00+00:00", lease_owner="test",
+            lease_until="2099-01-01T00:00:00+00:00", active_attempt_id="attempt_boom",
+            receipt_id=None, error=None, hmmm=None,
+        )
+        ledger = WorkerLedger(job)
+        failures = []
+        ledger.get = lambda job_id: job
+        ledger.fail = lambda job_id, *, error, hmmm=None: failures.append((job_id, error, hmmm))
+        with patch.dict(os.environ, {"STACK_COMMAND_TIMEOUT_SECONDS":"30"}, clear=False), \
+             patch("backend.worker.run_job", side_effect=OSError(12, "Cannot allocate memory")), \
+             patch("sys.stderr"):
+            did_work = run_once(ledger, worker_id="test", lease_seconds=120)
+        self.assertTrue(did_work)
+        self.assertEqual(1, len(failures))
+        self.assertEqual("job_boom", failures[0][0])
+        self.assertIn("worker caught OSError", failures[0][1])
+
+    def test_unreachable_ledger_still_crashes_for_systemd_restart(self):
+        job = Job(
+            id="job_db", dedupe_key="a"*64, kind="fresh.make", target="msdmd:ucns",
+            freshness_key="b"*64, preferred_executor="local", state="running", attempts=1,
+            payload={}, created_at="2026-08-30T00:00:00+00:00",
+            updated_at="2026-08-30T00:00:00+00:00", lease_owner="test",
+            lease_until="2099-01-01T00:00:00+00:00", active_attempt_id="attempt_db",
+            receipt_id=None, error=None, hmmm=None,
+        )
+        ledger = WorkerLedger(job)
+
+        def unreachable(job_id):
+            raise ConnectionError("postgres unavailable")
+
+        ledger.get = unreachable
+        with patch.dict(os.environ, {"STACK_COMMAND_TIMEOUT_SECONDS":"30"}, clear=False), \
+             patch("backend.worker.run_job", side_effect=RuntimeError("accept failed")), \
+             patch("sys.stderr"):
+            with self.assertRaises(RuntimeError):
+                run_once(ledger, worker_id="test", lease_seconds=120)
+
 
 @unittest.skipUnless(os.environ.get("STACK_TEST_DATABASE_URL"), "set STACK_TEST_DATABASE_URL to a disposable PostgreSQL database")
 class PostgresStaleLeaseTests(unittest.TestCase):

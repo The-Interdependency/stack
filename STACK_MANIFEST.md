@@ -13,10 +13,13 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - Python Gonol construction baseline UTC: `2026-09-12` at `0e8384bbb60e4c2189016a212bdd0030d04aed7d`
 - EPAC-derived carrier workspace separation UTC: `2026-09-18` at `545e135e2efbbcf29f033ab5530ac4876a68b718`
 - URPCS v1 workspace integration UTC: `2026-09-20` from Stack baseline `a428a41a38a8b30bacb7025a4d54070b228a8089`
+- URPCS retirement UTC: `2026-09-28`; reported specification divergence; exact intended-design transcript identity unresolved; retained implementation is historical evidence only
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d`
+  `38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213`
+- Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
+- Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
 
 ## Directory contract
@@ -42,7 +45,7 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
@@ -60,8 +63,15 @@ release identity.
 |---|---|---|---|---|
 | `research/epac/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | historical forge evidence; active implementation consumed from the independent EPAC release | no |
 | `research/epac-derived-carrier/` | `The-Interdependency/stack` | `545e135e2efbbcf29f033ab5530ac4876a68b718` | active stack-local carrier audit consuming exact EPAC source; no EPAC implementation/public-contract or scientific standing transfer | no |
-| `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | stack-local authenticated recursive pairing codec research with byte-exact reference vectors; no confidentiality, PCEA compatibility, or UCNS-gonol identity transfer | no |
+| `research/urpcs/` | `The-Interdependency/stack` | `a428a41a38a8b30bacb7025a4d54070b228a8089` | retired substituted-codec historical evidence only; no active URPCS authority or evidence transfer | no |
+| `research/weave/` | `The-Interdependency/stack` | `1ba201449731337dc20c564788f4303c8910bfdd` | Stack-owned native binary sequence-cycle candidate; private/public derivation unresolved; no URPCS inheritance or security standing | no |
+| `research/weave/` | `The-Interdependency/ucns` | `905e66964a495d7596a577bb64e4158db9465864` | native exact axis-circle and Mobius geometry; source-verified unchanged mathematical producer for native_binary.py | no |
+| `research/weave/` | `The-Interdependency/uchc` | `4ad94e92be10d2c4c875a848addfda46f3c7cfdb` | origin/axis architecture and domain migration boundary; architectural reference only; speculative binary implementation remains in Stack until graduation gates complete | no |
+| `research/pi-radix/` | `The-Interdependency/stack` | `ccf707f933a9611d7b7fe13a0417378d8b453a14` | stack-local exact radix expansion, prime-block and angular-coordinate experiment; no base-independent law or general prime authority | no |
+| `research/pi-radix/` | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | domain-restraint consultation for representation versus invariant; root impact none and no status transfer | no |
+| `research/pi-radix/` | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | pinned build, evidence and structural-update doctrine; no authority transfer | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `99b3598b02a6e683b3c84184d8ea443b12fc0e1a` | stack-local English lexical/gonol construction separated from EDCM; full pinned-corpus v2 build/replay survived; consumes UCNS geometry; EDCM may evaluate outputs but does not define construction | no |
+| `research/english-gonol/` | `The-Interdependency/edcm` | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | exact repaired EDCM semantic metric-origin producer; preserves canonical O/L identities and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `0e8384bbb60e4c2189016a212bdd0030d04aed7d` | stack-local bottom-up Python 3.12 source gonol construction; applies METAPAT affixiation semantics, consumes optional UCNS geometry, and transfers no language authority to UCNS or EDCM | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
@@ -83,6 +93,14 @@ release identity.
 | `research/zfae/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | current domain-restraint consultation; root impact none | no |
 | `research/zfae/` | `The-Interdependency/skill-lib` | `abd259b4722901317e4388d774a20d6819d959c2` | current research, source, structural-update and metadata rules; no snapshot refresh | no |
 | `research/zfae/` | `The-Interdependency/ucns` | `4086ab82399c4d142b0eacfbc09e0a69ed151aa5` | exact Public Gonol carrier consumed by the Stack glyph producer for the finite parser profile; no function semantics inferred | no |
+| `research/a0-municipality/` | `The-Interdependency/stack` | `6504ed963d93836f66fc88e354fe52809a1a3b7a` | starting forge baseline containing the merged English Hilbert candidate, PSFR boundaries and orchestration contracts; placement adds no runtime or canon | no |
+| `research/a0-municipality/` | `The-Interdependency/a0` | `ad958a4e5f4cdb17ba815539d2e6a545034db161` | intended municipal phone, permissions, finance and persistence implementation owner; inspected source, not a deployment claim | no |
+| `research/a0-municipality/` | `The-Interdependency/ucns` | `380ce7b7ec6b8b45ffa53ea4210070f0b3129747` | source-qualified relational geometry producer; no municipal semantics or operational authority transfer | no |
+| `research/a0-municipality/` | `The-Interdependency/uchc` | `0b3ada9ef2f8e32bba10daf104fc0d38730c3a77` | native glyph, word and definition origin reference; current English/Hilbert authority remains Stack-owned pending graduation | no |
+| `research/a0-municipality/` | `The-Interdependency/metapat` | `1cdfb09dd00a451cee30eec2e78624df8c682662` | source-qualified semantic distinctions; structural resemblance transfers no authority or status | no |
+| `research/a0-municipality/` | `The-Interdependency/skill-lib` | `3024df2b91a2cf7f103dc60640081ec03505335a` | separately pinned current placement doctrine; does not refresh the root operational snapshot | no |
+| `research/a0-municipality/` | `The-Interdependency/uchc` | `0401191adcfd490bc98856d3f4f8e9f3c1ae189c` | unmerged PR #3 documentation reference; no duplicate Hilbert implementation or completed graduation | no |
+| `research/a0-municipality/` | `The-Interdependency/stack` | `1df56909816362695b3519838dd7da38226ec565` | unmerged draft PR #66 protocol reference only; no implemented recovery, theorem or minimum-complexity claim | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -121,11 +139,13 @@ Active post-graduation carrier research lives separately at
 bytes for audit purposes; it neither changes the accepted immutable release nor
 returns EPAC implementation authority to Stack.
 
-URPCS v1 lives separately at `research/urpcs/` as an authenticated recursive
-pairing codec experiment. Its accepted Laws 1–13, reference implementation, and
-byte-exact vectors establish bounded deterministic codec behavior only. The
-workspace owns no PCEA compatibility or UCNS-gonol identity, and placement in
-Stack supplies no confidentiality or production-security standing.
+URPCS at `research/urpcs/` is retired historical evidence. The retirement account reports that the GPT-assisted implementation substituted a recursive
+pairing/authenticated codec for Erin Spencer's intended multi-arity interleaving
+construction. The reason for that substitution remains unresolved. All retained
+vectors, decoder evidence, and measurements describe only the substituted codec;
+they do not validate or falsify the intended URPCS design.
+
+The intended construction now has a separate research owner at `research/weave/`. Weave preserves the full system rather than naming only the interleave layer: hyperspace/gonol plaintext construction, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity bit interleaving, and the intended asymmetric public/private relation. The workspace starts with no implementation inheritance from URPCS and no confidentiality or production-security claim.
 
 ZFAE construction research lives at `research/zfae/`. Its exact research-only
 inputs are recorded above. The parser consumes the existing English GlyphGonol
@@ -137,6 +157,21 @@ a separate comparison source. Current PTCNA retains its UCNS neural-audit gate;
 UCHC extraction has not completed release/reconsumption. No `libs/` pin or
 upstream authority changes. Usage: read `research/zfae/README.md` and replay its
 source-bound input and gonol-parser probes.
+
+## a0 Municipality placement
+
+`research/a0-municipality/` preserves the complete 2 October 2026 handoff v1.1
+and registers its current application-composition placement on 4 October 2026.
+The eight research-only identities above bind the starting Stack baseline,
+a0, UCNS, UCHC, METAPAT, current external skill-lib doctrine and the unmerged
+UCHC migration/holography references. They do not change canonical `libs/` pins.
+
+Stack owns this specification and integration research; a0 owns runtime
+implementation. Native construction remains with the declared geometry/language
+producers. Read the workspace README for the merged Stack Hilbert status and
+incomplete UCHC graduation, then HANDOFF.md for all four workflows, the reserved
+fifth, UCNS/UCHC origin requirements and T01–T38. No app, funds, partner authority
+or six-month proof is established by this registration.
 
 ## License status at pinned commits
 
@@ -194,15 +229,79 @@ Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
 transfers no semantic, geometric, measurement, or language-canon status.
 
-URPCS is likewise stack-local and ungraduated. The reference implementation and
-fixtures are executable evidence for one bounded profile, and an independently
-structured decoder reproduced its committed outputs. A confidentiality model,
-durable host state, and production-security review remain open.
+URPCS is retired, not a graduation candidate. The reference implementation and
+fixtures remain executable historical evidence for the substituted profile only.
+No result from that profile may be promoted to a claim about the intended URPCS
+construction.
+
+Weave is a new stack-local research component. It is not yet an
+independent repository, release, or security-reviewed cryptosystem.
+
+Pi radix is stack-local research. Its finite computations establish the recorded
+radix streams and prime-block observations only; representation recurrence does not
+establish a base-independent generating law.
 
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
 - English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
-- URPCS remains stack-local research; bounded independent decoding survived, while confidentiality, durable rollback resistance, and release authority remain unresolved.
+- URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
+- Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
+- Pi radix has no established base-independent segmentation law; fixed-symbol and common-information profiles remain bounded computations.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
+
+## UCHC input candidate
+
+`research/zfae/` now consumes `The-Interdependency/uchc@3d82007b88f74ded88ca913d6e85bcd6f6ff024d` through the immutable wheel lock `research/zfae/UCHC_INPUT.json`.
+The prior `118b488` extraction remains the source identity of the earlier research.
+This additional candidate supplies full-corpus native language input; it does not
+choose PTCNA dimensions, propagate neural state or transfer domain authority.
+See `integration/uchc/README.md` for isolated installation, complete-corpus
+verification and rollback. Stable released-artifact consumption remains `hmmm`.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.
+
+## Weave native sequence-cycle candidate
+
+`research/weave/native_binary.py` is the Stack-owned binary-origin and sequence
+closure implementation. It consumes the exact UCNS sources above and follows the
+UCHC origin/axis architecture, without shipping an ungraduated UCHC domain. The
+misplaced UCHC #7 proposal is retained only as source provenance in
+`research/weave/NATIVE_BINARY_PROVENANCE.json`. No geometry authority transfers.
+
+The cycle normalizes once with corpus bytes, discovers repeated multi-byte
+sequences, retains native whole/occurrence-circle relations, uses scoped numeral
+references and prime-route bit partitions, and reverses the completed rounds.
+See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
+and all-cost accounting. This is construction/recovery, not established encryption.
+
+## English ordinal candidate
+
+The candidate remains in `research/english-gonol/`; UCHC verifies an exact extraction.
+See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.md).
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `ed0b0760f05cd975a7a811f8abeb70a11d09f00b` | Public Gonol and ordinal geometry; exact native producer |
+| `The-Interdependency/uchc` | `c514e1a2a3f3da5ffae9ebf76d67a1d348845842` | unmerged ordinal proposal; not English implementation authority; source provenance preserved before rehoming and review repairs |
+| `The-Interdependency/skill-lib` | `e46accffcb67a10630516d486c89e67f6ad19c7a` | build, extraction and review discipline; governing source; no geometry authority |
+
+No authority, semantic standing or graduation status transfers.
+
+## English recursive attachment integration
+
+See [recursive-stack.md](research/english-gonol/docs/recursive-stack.md).
+The global libraries and historical ordinal source remain unchanged.
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `9cc00771e54336d58ee377faeec87a3a33dbd4bf` | native recursive planar attachment and exact expression geometry; exact producer; historical ordinal modules unchanged |
+| `The-Interdependency/stack` | `f19389bd7b15e6540f812ec47d67274e429daec5` | English construction forge pending domain graduation; input baseline; output extraction must pin the resulting forge commit |
+| `The-Interdependency/uchc` | `f2528c7f4cc182912df11b92fa355b16231b1fb5` | verified extraction consumer baseline; input baseline; candidate output identity is separate |
+| `The-Interdependency/skill-lib` | `d71a3a938cb6d646ffc0b59186452117e4a37d13` | build and verification discipline; resolved governing skills; no geometry authority |

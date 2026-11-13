@@ -1,13 +1,13 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "808d98a91d8dac553da17ec0bb2fb71b208318c609014faad818efc750dc4e78",
+  "work_graph_sha256": "51137d7fc62f2914ea0574f53e4707343d513427ada1c5a26430a5450319d7c1",
   "repositories": [
     {
       "repository": "The-Interdependency/stack",
       "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089",
-      "authority": "stack-local URPCS workspace and reference implementation",
-      "relation": "implementation owner and integration target"
+      "authority": "retired historical evidence for the substituted codec only",
+      "relation": "historical custodian; no active URPCS implementation authority"
     },
     {
       "repository": "The-Interdependency/skill-lib",
@@ -23,10 +23,8 @@
     "semantic_mapping": "external-provenance",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "independent decoder interoperability survived for the committed bounded profile",
-      "confidentiality and production security are unclaimed",
-      "the full accepted Laws 1-13 are public and the frozen clean-room decoder replay passed",
-      "URPCS codec-local Gonol records are not UCNS gonols"
+      "Retained replay results concern only the substituted historical codec; no result transfers to the intended URPCS design.",
+      "Immutable public intended-design transcript identity and cause of substitution remain unresolved."
     ]
   }
 }

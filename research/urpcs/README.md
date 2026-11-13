@@ -1,11 +1,22 @@
-# URPCS v1 recursive pairing codec research
+# URPCS — retired substituted implementation
 
-URPCS is a **stack-local authenticated codec experiment**. Laws 1–13 define a
+> [!WARNING]
+> **RETIRED — SPECIFICATION DIVERGENCE**
+>
+> This workspace does **not** implement Erin Spencer's intended URPCS construction and must not be used as evidence about that construction.
+>
+> The retirement records a reported specification divergence during GPT-assisted implementation. The reported intended design includes successive arity partitioning (for example fifths, sevenths, then thirds), partition-local last-bit/first-bit interleaving and whole-stream interleaving. **These details remain UNRESOLVED as source-backed attribution:** no immutable public intended-design transcript has been verified. They are preserved as an account, not a recovered or ratified specification. See [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json).
+>
+> The exact comparison, cause of substitution and reported elapsed time remain `hmmm`. Retirement withdraws this implementation as evidence for the intended design; it does not manufacture the missing specification.
+>
+> **Standing:** historical evidence of the substituted implementation only. Passing vectors, decoder agreement, relational audits, and Möbius measurements below remain valid only for that substituted codec. They neither validate nor falsify the intended URPCS design. Do not extend, integrate, publish, or cite this workspace as URPCS except when documenting this failure.
+
+The retired substituted implementation was an authenticated codec experiment. Its historical Laws 1–13 define a
 recursive pairing/witness format, deterministic framing, integrity verification,
 and linear state advance. The committed reference implementation and vectors
 exercise that bounded construction.
 
-Standing: **COMPUTATION; research, not canon**.
+Standing: **RETIRED; historical computation for the substituted profile only**.
 
 The evidence supports deterministic round-trip behavior for the frozen harness.
 It does not establish confidentiality, production suitability, PCEA compatibility,
@@ -13,7 +24,7 @@ UCNS geometry, or UCNS-gonol identity.
 
 ## Placement and authority
 
-- `The-Interdependency/stack` owns this research workspace and its reference code.
+- `The-Interdependency/stack` preserves this historical workspace and reference code; it owns no active URPCS construction here.
 - `The-Interdependency/skill-lib` supplies build, evidence, domain-claim, and
   stack-update discipline; it supplies no codec or security result.
 - KMAC256 follows [NIST SP 800-185](https://csrc.nist.gov/pubs/sp/800/185/final)
@@ -51,6 +62,13 @@ UCNS geometry, or UCNS-gonol identity.
   — canonical deterministic 514-case measurement receipt.
 - [`docs/URPCS-mobius-projection-v0.md`](docs/URPCS-mobius-projection-v0.md)
   — generated human-readable summary of that canonical JSON.
+- [`urpcs_relational_analyzer.py`](urpcs_relational_analyzer.py) — read-only
+  graph, ablation, and capacity audit of native authenticated relations across
+  origins, recursion, serialization, and state transitions.
+- [`receipts/urpcs-relational-carrier-v0.json`](receipts/urpcs-relational-carrier-v0.json)
+  — canonical relational graph and deterministic measurement evidence.
+- [`docs/URPCS-relational-carrier-v0.md`](docs/URPCS-relational-carrier-v0.md)
+  — generated human-readable projection of the relational receipt.
 - [`SOURCE_RECEIPT.json`](SOURCE_RECEIPT.json) — imported-artifact identities.
 
 The measurement receipt lives in the new `receipts/` evidence directory while
@@ -59,7 +77,7 @@ its Markdown projection remains with the existing human-readable reports in
 
 ## Usage guidance
 
-Run the reference checks:
+For historical reproduction only, run the reference checks. These commands do not reopen research or validate the intended design:
 
 ```bash
 python3 research/urpcs/urpcs_v1_reference.py --self-test
@@ -110,6 +128,19 @@ python3 research/urpcs/urpcs_mobius_projection.py \
   --write-report research/urpcs/docs/URPCS-mobius-projection-v0.md
 ```
 
+Run the relational audit against the exact pinned authorities:
+
+```bash
+python3 research/urpcs/urpcs_relational_analyzer.py \
+  --stack-root . \
+  --ucns-root /path/to/ucns-at-4086ab8 \
+  --skill-lib-root /path/to/skill-lib-at-22c2c57 \
+  --metapat-root /path/to/metapat-containing-e4165b0 \
+  --kmac-backend pycryptodome \
+  --write-receipt research/urpcs/receipts/urpcs-relational-carrier-v0.json \
+  --write-report research/urpcs/docs/URPCS-relational-carrier-v0.md
+```
+
 ## Verified reference result
 
 - 8/8 named fixtures pass.
@@ -142,25 +173,55 @@ and greater depths require a separately justified permitted-domain cap.
   quotients were zero.
 - No phase bucket contained both local frames. The result is
   `DISTINCTION_ABSENT_IN_BOUNDED_DOMAIN`.
-- This zero result ends integration for the bounded profile. No traversal path,
-  frame field, protocol profile, or inactive semantic stub was added.
+- This zero result is retained only as a narrow fixed-harness baseline. It does
+  not resolve the contribution of multi-origin identity, provenance, shape, or
+  recursive serialization. No traversal path, frame field, protocol profile,
+  or inactive semantic stub was added.
 
-## Next gates
+## Verified relational audit
+
+- Overall classification:
+  `RELATION_PRESENT_SHEET_RELATION_NOT_INVARIANT`. Equal native motion preserves
+  relative visible phase but can change the naive endpoint sheet product, so
+  the proposed complete relative-state tuple fails the requested common-action
+  invariance without a new covariant comparison law.
+- The source-backed multi-origin relation is whole-layer serialization:
+  canonical `LayerWire(G^r)` bytes become the exact input to layer `r+1`, then
+  partition into successor origins and occurrence spans.
+- Pairing and attachment remain scoped to one origin. URPCS v1 supplies no
+  direct peer-origin phase transport or synchronization relation.
+- The declared corpus binds all eight committed vector rows and every tracked
+  `research/urpcs` artifact at the governing head. The canonical graph is
+  instantiated from the three positive committed traces plus deterministic
+  probes only for unrepresented recursive and state-transition relations; the
+  five negative/host rows supply boundary and capacity evidence.
+- Phase, sheet, origin, gonol identity, arity/shape, provenance, and full
+  transformation history are measured separately. The receipt retains exact
+  identifiers and minimal witnesses.
+- Exact byte provenance is recoverable from a complete authenticated trace.
+  Typed transformation-event promotion, stream interlacing, contextual
+  authorization, and independent-origin synchronization remain blocked on
+  explicit missing laws.
+
+## Historical next gates — superseded by retirement
 
 1. A threat model and leakage model must precede any confidentiality claim.
 2. Host-side durable compare-and-swap, crash recovery, rollback resistance, and
    fork policy require implementation and adversarial testing.
 3. Any future relation to PCEA or UCNS requires a separate authority-bearing law;
    repository proximity supplies none.
-4. A Möbius-frame-sensitive traversal experiment is not authorized by the
-   completed bounded measurement because no opposite-frame phase split occurred.
+4. No traversal experiment is authorized by either measurement. A separately
+   versioned profile would need a native source-backed transport law, intended
+   measurable behavior, exact invertibility, and independent agreement.
 
 ## hmmm
 
-The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
+Retirement supersedes further development of this workspace. The frozen audit remains `BLOCKED_NOT_INDEPENDENTLY_SPECIFIED` for its old input.
 After the public contract repair, the clean-room replay is
 `SURVIVED_INDEPENDENTLY` for the committed bounded profile. Confidentiality,
 durable host state, production security, and release authority remain open.
-The complete Möbius scan found no opposite-frame phase split in this fixed
-harness; whether one occurs outside the bounded domain remains unresolved and
-does not authorize integration.
+The complete Möbius scan found no opposite-frame phase split in its fixed
+harness. The relational audit establishes exact recursive byte provenance but
+finds no typed origin transport, synchronization, authorization, stream, or
+event-promotion law. Whether any such separately specified relation would have
+operational value remains unresolved and does not authorize integration.

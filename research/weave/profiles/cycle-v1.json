@@ -1,0 +1,40 @@
+{
+  "schema": "weave.sequence-cycle-profile/v1",
+  "selection": "maximal-lcp-longest-first-v1",
+  "split": "prime-route-compositions-v1",
+  "scope": "weave-cycle-demo",
+  "bucket_bytes": 256,
+  "corpus_bit_offset": 5,
+  "rounds": [
+    {
+      "prime_path": {
+        "seed": 5381,
+        "steps": [["span", 10, 0, 2], ["next"], ["next"]]
+      },
+      "arities": [3, 5, 7],
+      "circle_order": [3, 1, 7, 2, 6, 4, 5],
+      "spaces": [[0, 1], [1, 9], [2, 9], [1, 3], [4, 9], [5, 9], [2, 3], [7, 9]],
+      "end_order": "first-last"
+    },
+    {
+      "prime_path": {
+        "seed": 2,
+        "steps": [["next"], ["next"], ["next"], ["next"], ["next"], ["next"], ["next"]]
+      },
+      "arities": [3, 5, 7],
+      "circle_order": [3, 1, 7, 2, 6, 4, 5],
+      "spaces": [[2, 9], [1, 3], [4, 9], [5, 9], [2, 3], [7, 9], [8, 9], [1, 1]],
+      "end_order": "first-last"
+    },
+    {
+      "prime_path": {
+        "seed": 313,
+        "steps": [["span", 10, 2, 1], ["next"], ["next"]]
+      },
+      "arities": [3, 5, 7],
+      "circle_order": [3, 1, 7, 2, 6, 4, 5],
+      "spaces": [[4, 9], [5, 9], [2, 3], [7, 9], [8, 9], [1, 1], [10, 9], [11, 9]],
+      "end_order": "first-last"
+    }
+  ]
+}

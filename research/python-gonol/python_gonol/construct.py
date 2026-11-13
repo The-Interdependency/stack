@@ -402,7 +402,7 @@ def _build_control_rows(
                 newline_rows.append(("CR", json.dumps([occurrence["id"]], separators=(",", ":"))))
                 index += 1
         else:
-            expanded_column = 0
+            expanded_column = expanded_column + 1 if kind == "FF" else 0
             control_rows.append(
                 (
                     occurrence["id"],

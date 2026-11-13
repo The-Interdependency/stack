@@ -1,0 +1,23 @@
+{
+  "schema": "stack.pi-radix-experiment",
+  "version": "1.0.0",
+  "constant": "pi",
+  "fractional_symbol_count": 500,
+  "matched_information_horizon_bits": 2400,
+  "bases": [30, 60, 359, 360, 361, 720, 2880],
+  "prime_block_lengths": [1, 2, 3, 4],
+  "canonical_block_rule": "the first symbol is nonzero",
+  "angular_symbol_rule": "digit d in base b maps to exp(2*pi*i*d/b); exact turn d/b, degrees 360*d/b, pi-radian coefficient 2*d/b",
+  "precision_verification": "generate independently at required decimal precision plus 80 and plus 180 guard digits; all requested symbols must agree",
+  "questions": [
+    "How does base factorization change the exact terminal-gcd eligibility sieve for prime blocks?",
+    "Which decoded prime integer values recur in distinct radix representations?",
+    "Which aligned symbol positions occupy exactly the same reduced unit-circle phase in distinct bases?"
+  ],
+  "nonclaims": [
+    "pi is normal in any base",
+    "a finite deviation establishes digit bias",
+    "a recurring prime block is a base-independent digit law",
+    "the unit-circle encoding supplies cryptographic entropy or UCNS identity"
+  ]
+}

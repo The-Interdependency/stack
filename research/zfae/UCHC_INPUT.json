@@ -1,0 +1,20 @@
+{
+  "schema": "stack.zfae.uchc-input",
+  "version": "1.0.0",
+  "package": "uchc",
+  "package_version": "0.1.0a1",
+  "source_repository": "The-Interdependency/uchc",
+  "source_commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+  "wheel": "uchc-0.1.0a1-py3-none-any.whl",
+  "wheel_sha256": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
+  "source_date_epoch": 1790308800,
+  "database_sha256": "af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b",
+  "logical_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
+  "status": "candidate; not a stable release or completed domain graduation",
+  "authority_transfer": false,
+  "neural_readiness": "not established",
+  "hmmm": [
+    "PTCNA remains subject to its UCNS neural-audit gate; no propagation, learning or readout inferred",
+    "Stable release, released-artifact reconsumption and domain-authority transition require separate evidence"
+  ]
+}

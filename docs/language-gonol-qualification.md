@@ -4,6 +4,12 @@ Status: the recorded 2026-09-19 qualification applies to its frozen implementati
 The 2026-09-23 repair additionally binds SQLite schema objects, declared JUnit
 aggregates, exact qualification provenance and counts, and distinct artifact paths.
 Its complete Python-corpus requalification is pending; local adversarial gates pass.
+The 2026-11-13 review repair preserves form-feed width in both the constructor
+and independent tab witness. Comparison now binds the frozen 1,052-file,
+20,732,440-byte inventory and validates every constructed manifest's schema,
+producer, source identity, counts and canonical receipt. All 80 current Python
+construction and qualification tests pass with no skips. Historical records
+used as negative-control fixtures do not constitute a new full-corpus execution.
 Artifact agreement alone does not authenticate two independent executions.
 Geometry, language understanding, runtime equivalence, and canon promotion remain hmmm.
 

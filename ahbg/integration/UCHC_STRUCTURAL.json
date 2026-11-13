@@ -1,0 +1,22 @@
+{
+  "schema": "interdependency.ahbg.uchc-structural-lock/1",
+  "version": "1.0.0",
+  "source_repository": "The-Interdependency/uchc",
+  "source_commit": "c18d984438bc30764edb05fd5ccc05691958a24e",
+  "package": "uchc",
+  "package_version": "0.1.0a2",
+  "wheel": "uchc-0.1.0a2-py3-none-any.whl",
+  "wheel_sha256": "7f05fbbbdd40eb8f7d3575450a3a54153c155c46e512a96f245ac5bdfffa76e8",
+  "database_sha256": "13ba24116f0ff02cfdfeb4a6b060f2672fa409b46a3b7cf26e4421c65321b063",
+  "logical_receipt": "26ab095f73306ff4fbd9f67d1c282c1df79f926bb75cc081c879db8a6989b58a",
+  "implementation_sha256": "771eb34cb98aeda541c8e9a63ba191c65baf623d1f8549bc7df3cc4891dfc504",
+  "profile": "english.structural/1",
+  "complete_corpus": true,
+  "authority_transfer": false,
+  "standing": "extracted structural candidate, not stable release or neural inference",
+  "hmmm": [
+    "57,155 compound/punctuated lexical definition-origin attachments remain unresolved",
+    "Unimplemented UCNS geometric displacements and semantic inference must refuse",
+    "Stable release, consumer artifact reconsumption and domain graduation remain incomplete"
+  ]
+}

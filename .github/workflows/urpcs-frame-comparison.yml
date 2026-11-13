@@ -1,0 +1,77 @@
+name: urpcs-frame-comparison
+
+on:
+  pull_request:
+    paths:
+      - 'research/urpcs/**'
+      - '.github/workflows/urpcs-frame-comparison.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/urpcs/**'
+      - '.github/workflows/urpcs-frame-comparison.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          path: stack
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: ee3df862112811711b43afed4174592a241c373d
+          path: ucns-comparison
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+      - name: Verify consumer contracts and all sealed observations
+        working-directory: stack
+        env:
+          UCNS_COMPARISON_ROOT: ${{ github.workspace }}/ucns-comparison
+          PYTHONDONTWRITEBYTECODE: '1'
+        run: |
+          python research/urpcs/frame_comparison_tests.py
+          python research/urpcs/urpcs_frame_comparison.py --ucns-root "$UCNS_COMPARISON_ROOT" --out /tmp/urpcs-frame-comparison-v1.json
+          python research/urpcs/urpcs_frame_comparison.py --ucns-root "$UCNS_COMPARISON_ROOT" --out /tmp/urpcs-frame-comparison-replay.json --check /tmp/urpcs-frame-comparison-v1.json
+          if test -f research/urpcs/receipts/urpcs-frame-comparison-v1.json; then
+            cmp /tmp/urpcs-frame-comparison-v1.json research/urpcs/receipts/urpcs-frame-comparison-v1.json
+          fi
+          python tools/check_stack_consistency.py
+      - name: Retain exact source and replay evidence
+        working-directory: stack
+        env:
+          SOURCE_COMMIT: ${{ github.event.pull_request.head.sha || github.sha }}
+          UCNS_COMPARISON_ROOT: ${{ github.workspace }}/ucns-comparison
+        run: |
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          test -z "$(git status --porcelain --untracked-files=all)"
+          mkdir -p /tmp/frame-comparison-evidence
+          cp /tmp/urpcs-frame-comparison-v1.json /tmp/frame-comparison-evidence/receipt.json
+          git archive HEAD research/urpcs .github/workflows/urpcs-frame-comparison.yml | gzip -n > /tmp/frame-comparison-evidence/consumer-source.tar.gz
+          python - <<'PY'
+          import hashlib, json, os, pathlib, subprocess, sys
+          root = pathlib.Path('/tmp/frame-comparison-evidence')
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          record = {
+              'consumer_commit': git('rev-parse', 'HEAD'),
+              'consumer_tree': git('rev-parse', 'HEAD^{tree}'),
+              'producer_commit': git('-C', os.environ['UCNS_COMPARISON_ROOT'], 'rev-parse', 'HEAD'),
+              'python': sys.version,
+              'artifacts': {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(root.iterdir())},
+              'standing': 'execution evidence; verify exact sources and receipt independently',
+          }
+          (root/'source.json').write_text(json.dumps(record, sort_keys=True, indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: urpcs-frame-comparison-evidence
+          path: /tmp/frame-comparison-evidence/
+          if-no-files-found: error

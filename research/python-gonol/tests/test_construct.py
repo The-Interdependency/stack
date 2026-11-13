@@ -1,4 +1,4 @@
-# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=200:74 imports_exports=10:10 calls_definitions=87:13
 # === CHECKS ===
 # id: check_python_complete_constitutive_replay
 #   proves: python_construct_replay_fails_closed_on_tamper
@@ -236,7 +236,9 @@ def test_off_carrier_unicode_is_hmmm_not_invented(tmp_path: Path) -> None:
     assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
 
 
-@pytest.mark.parametrize("prefix", [" " * n for n in range(16)] + ["\t", " \t", "\t "])
+@pytest.mark.parametrize("prefix", [" " * n for n in range(16)] + [
+    "\t", " \t", "\t ", "\f", "abc\f", "\t\f", "abc\f\f", "abc\r", "abc\r\n",
+])
 def test_tabs_match_python_expansion(tmp_path: Path, prefix: str) -> None:
     source = prefix + "\tx\n"
     state_dir, result = _build(tmp_path, source)
@@ -309,4 +311,4 @@ def test_replay_rejects_legacy_version(tmp_path: Path) -> None:
     path.write_text(json.dumps(data))
     with pytest.raises(PythonGonolConstructionError, match="version"):
         verify_construct(state_dir, UCNS_SOURCE_ROOT)
-# ratios: loc_comments=198:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=200:74 imports_exports=10:10 calls_definitions=87:13

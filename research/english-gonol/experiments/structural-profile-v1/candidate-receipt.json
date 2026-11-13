@@ -1,0 +1,12 @@
+{
+  "schema": "english.structural-candidate-receipt",
+  "version": "1.0.0",
+  "work_graph_sha256": "26058ad29d2b27a304917a7e9915b9b7b728ffe7d45e2b8d47db93af54412c75",
+  "candidate": {
+    "repository": "The-Interdependency/uchc",
+    "commit": "c18d984438bc30764edb05fd5ccc05691958a24e",
+    "wheel": "uchc-0.1.0a2-py3-none-any.whl",
+    "wheel_sha256": "7f05fbbbdd40eb8f7d3575450a3a54153c155c46e512a96f245ac5bdfffa76e8"
+  },
+  "receipt_sha256": "27bfa31d5187e6f4168db81cd24d6ec83369346757ce7ad098d3d93e876cebf6"
+}

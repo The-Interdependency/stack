@@ -1,0 +1,70 @@
+{
+  "baseline_stack_commit": "4a03f68c1ea841da5767813c6a65c41620f561f6",
+  "classification": "NATIVE_COMPARISON_INVARIANT_PROTOCOL_TRANSPORT_UNDEFINED",
+  "consumer_source_sha256": {
+    ".github/workflows/urpcs-frame-comparison.yml": "f6cec3c34c490a92315618220528fa2c2a3beb06579879a56d6e4fa01bb53223",
+    "research/urpcs/frame_comparison_tests.py": "c8a54859d1fd7438c39a26bbb816db1bb1efa4dd61283c86dd03541cc549e96a",
+    "research/urpcs/urpcs_frame_comparison.py": "bbbf11c8c7a36968235ca86c9819173b3e9ef5dc21de574d08d71d243a3e2318"
+  },
+  "existing_attachment_probe": {
+    "checks": 2952,
+    "corrected_changes": 0,
+    "edges": 369,
+    "native_delta_reconstruction_failures": 0
+  },
+  "hmmm": [
+    "A future protocol must separately specify origin alignment and transport; this replay neither supplies nor requires them."
+  ],
+  "input_graph_sha256": "bd1059322ef8223d2a6531f84591e76970db67aa3982f1cbfd174d5039b5ecd5",
+  "nonclaims": [
+    "new wire/spec/state behavior",
+    "independent-origin alignment",
+    "new peer-origin edges",
+    "synchronization",
+    "path winding beyond modulo two",
+    "path holonomy",
+    "typed event promotion",
+    "security",
+    "compression",
+    "inference or traversal utility",
+    "full UCNS selection"
+  ],
+  "original_geometry_probe": {
+    "checks": 120,
+    "complete_states": 6,
+    "corrected_changes": 0,
+    "naive_product_changes": 44,
+    "scope": "all distinct recorded state values; not cross-origin authorization"
+  },
+  "payload_sha256": "88813a160543b95f5c3c910bc40725eadd75d1df1d058c4fa303d8227a07c6c7",
+  "population": {
+    "kinds": {
+      "gonol-state": 948,
+      "member-state": 1789
+    },
+    "observations": 2737,
+    "shared_gonol_anchors": 948,
+    "traces": 7
+  },
+  "schema": "the-interdependency.stack.urpcs-frame-comparison.v1",
+  "sealed_receipt": {
+    "classification_preserved": "RELATION_PRESENT_SHEET_RELATION_NOT_INVARIANT",
+    "path": "research/urpcs/receipts/urpcs-relational-carrier-v0.json",
+    "sha256": "f415c486df88cd3d0f8c6ad861d375e01553eba58f3f5a2807e1e23b097b419b"
+  },
+  "shared_anchor_probe": {
+    "checks": 21040,
+    "corrected_changes": 0,
+    "naive_product_changes": 6728,
+    "pairs": 2630
+  },
+  "standing": "complete sealed-population replay; not a protocol profile or selected UCNS carrier",
+  "ucns": {
+    "commit": "ee3df862112811711b43afed4174592a241c373d",
+    "comparison_law": "ucns.native-mobius-comparison@1.0.0",
+    "consumed_source_sha256": {
+      "src/ucns/direct_mobius.py": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+      "src/ucns/mobius_comparison.py": "37b08603277e904fc9d2e78a12eaa8ac7e326a92ecb8952b38125d406dc8c861"
+    }
+  }
+}

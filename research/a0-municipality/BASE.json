@@ -1,0 +1,25 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "a0-municipality",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "6504ed963d93836f66fc88e354fe52809a1a3b7a",
+  "source_path": ".",
+  "canon_path": null,
+  "authority": "Stack-local municipal application specification, composition planning and future integration research; runtime implementation remains a0-owned",
+  "standing": "stack-local-research",
+  "lifecycle": "incubating",
+  "authority_transfer": false,
+  "source_role": "starting forge baseline; the imported handoff has its own byte identity in SOURCE_RECEIPT.json",
+  "work_graph": "../../stack-manifest.json#research_participants[workspace=research/a0-municipality/]",
+  "specification": "HANDOFF.md",
+  "source_receipt": "SOURCE_RECEIPT.json",
+  "runtime_owner": "The-Interdependency/a0",
+  "usage": "Read README.md for current placement, then the complete HANDOFF.md. Run the root consistency checker, portfolio validation, and HANDOFF.sha256 integrity check.",
+  "hmmm": [
+    "No municipality runtime or live pilot is established by placement.",
+    "Native semantic-origin closure, affixiation, cross-origin operations and holographic recovery require producer-owned work.",
+    "UCHC stable release/reconsumption/authority transition remains incomplete.",
+    "Actual municipal, union and payer authority and the fifth workflow remain unresolved."
+  ]
+}

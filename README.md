@@ -35,12 +35,14 @@ stack/
 │   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
-│   ├── urpcs/               # authenticated recursive pairing codec research + exact vectors
+│   ├── urpcs/               # RETIRED: substituted GPT-produced codec; historical evidence only
+│   ├── weave/               # full gonol/private-key/thread/corpus/interleave research
 │   ├── ptcna/               # current PTCNA research + BASE.json
 │   ├── zfae/                # inference construction research and gonol input parser
+│   ├── a0-municipality/     # municipal application handoff and composition research
 │   ├── epac/                # historical forge evidence; active implementation is independent
 │   ├── epac-derived-carrier/ # active Stack audit consuming exact EPAC source
-│   ├── psychsocio-metafauna/ # proposed pattern-lineage, coalescence, accountability research
+│   ├── psfr/                 # Psychosocial Fauna Research: lineages, agency displacement, coalescence
 │   └── from-photons-to-macroverse/ # audited consciousness-first candidate research
 ├── integration/epac/        # immutable EPAC release lock and consumer verification
 ├── ahbg/                    # emerging composed benchmark/game workspace
@@ -95,16 +97,28 @@ restoring implementation code to the sealed historical `research/epac/` path.
 EPAC retains implementation and public-contract authority; Stack owns only the
 local carrier audit and its bounded receipts.
 
-URPCS v1 is a separate stack-local codec experiment at `research/urpcs/`. It
-carries accepted Laws 1–13, an authenticated reference encoder/decoder, an
-independently structured decoder, and byte-exact vectors. Its codec-local `Gonol`
-row is not a UCNS gonol; the workspace imports no PCEA construction and claims no
-confidentiality or production fitness.
+URPCS at `research/urpcs/` is **retired historical evidence**. The implemented
+recursive-pairing/authenticated-codec profile diverged from Erin Spencer's intended
+multi-arity interleaving construction during GPT-assisted implementation. The reason
+for the substitution is unresolved. Its tests and receipts apply only to that
+substituted codec and must not be used to validate or falsify the intended URPCS design.
+
+The replacement research path is `research/weave/`. It owns the full intended encryption construction: hyperspace/gonol plaintext representation, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity bit interleaving, and the eventual asymmetric public/private relation. The interleave is one layer, not the project identity. The workspace deliberately contains no URPCS implementation dependency and makes no security claim.
 
 ```bash
-python3 research/urpcs/urpcs_v1_reference.py --self-test
-python3 -m unittest discover -s research/urpcs/tests -p 'test*.py'
-node research/urpcs/tests/test_independent_decoder.js
+cat research/weave/SPECIFICATION.md
+cat research/weave/BASE.json
+```
+
+Pi radix research lives at `research/pi-radix/`. It computes exact bounded radix
+expansions of pi, maps each symbol to its derived unit-circle coordinate, and measures
+prime-valued symbols and blocks across fixed-symbol and common-information profiles.
+The workspace owns its executable experiment and receipts only. It makes no normality,
+randomness, cryptographic-entropy, UCNS-identity, or base-independent-law claim.
+
+```bash
+python research/pi-radix/pi_radix.py scan
+python -m unittest discover -s research/pi-radix/tests -v
 ```
 
 ### Change stack structure
@@ -135,10 +149,13 @@ English Gonol Construction is currently a distinct stack-local research componen
 separated from EDCM but not independently graduated.
 Python Gonol Construction is likewise stack-local and ungraduated; its Python 3.12
 constructor is an implemented candidate, not stack or language canon.
-URPCS is stack-local and ungraduated; its verified reference vectors and
-independent replay establish bounded deterministic codec behavior, not
-encryption security.
-Psychsocio metafauna and From Photons to the Macroverse remain stack-local
+URPCS is retired; its retained vectors and replay evidence establish behavior only
+of the substituted historical codec. No URPCS claim may be inferred from them.
+Weave is new stack-local research and remains specification-first; no
+confidentiality or production-security standing is implied by its placement.
+Pi radix is stack-local computational research; decoded prime recurrences remain
+finite evidence and do not establish a base-independent digit law.
+PSFR and From Photons to the Macroverse remain stack-local
 pre-graduation research. EPAC has an independently published MPL-2.0 `v0.1.0`
 release and has passed public Stack reconsumption. Its Python forge copy is retired;
 `research/epac/` preserves historical evidence. EPAC is graduated: implementation and public-contract authority belong to the
@@ -166,6 +183,17 @@ Read [research/zfae/README.md](research/zfae/README.md) for the gonol input pars
 the construction sequence, the first executable input-distinction experiment,
 and the remaining UCNS/PTCNA and UCHC prerequisites. This is Stack research;
 conceptual, producer and runtime authority remain with their owners.
+
+### a0 Municipality composition research
+
+[research/a0-municipality/](research/a0-municipality/README.md) holds the complete
+v1.1 municipal application handoff, its source receipt and exact research inputs.
+It preserves the four workflows, the Oakland/Berkeley homeless union stewardship
+model, tax-funded remuneration and UCNS/UCHC native construction requirements.
+Stack owns composition research; a0 owns runtime implementation. This is
+specification-first work, with the fifth workflow reserved and operational proof
+still outstanding. Read the workspace README for current producer standing, then
+HANDOFF.md for the full build and acceptance contract.
 
 ### Make derived artifacts fresh without depending on hosted CI
 
@@ -210,6 +238,39 @@ Then update `STACK_MANIFEST.md`, `stack-manifest.json`, and the matching
 source commit in the message. Run `python tools/check_stack_consistency.py` before
 merge.
 
+## Licensing
+
+Stack's own original code is licensed under the Mozilla Public License 2.0
+(SPDX: `MPL-2.0`). The full text is in [`LICENSE`](LICENSE). At present that covers
+`backend/`, `frontend/`, `integration/`, `tools/` and the root-level stack files.
+Pinned and vendored components keep their own licenses:
+
+| Path | License | Notes |
+|---|---|---|
+| `libs/edcm/` | MPL-2.0 | `libs/edcm/LICENSE`, pinned from The-Interdependency/edcm |
+| `libs/metapat/` | MPL-2.0 | `libs/metapat/LICENSE`, pinned from The-Interdependency/metapat |
+| `libs/pcea/` | MIT | `libs/pcea/LICENSE` (Copyright (c) 2026 Erin Patrick Spencer) |
+| `libs/ptcna/` | MPL-2.0 | `libs/ptcna/LICENSE`, pinned from The-Interdependency/ptcna |
+| `libs/ucns/` | `hmmm`: no `LICENSE` at pinned commit `828c0b8` | Upstream ucns carries MPL-2.0 again from 2026-09-11; a refresh of this pin would bring it in |
+| `skill-lib/` | MPL-2.0, plus Apache-2.0 imports | `skill-lib/LICENSE` (MPL-2.0). The Apache-2.0 skills imported from anthropics/knowledge-work-plugins (`sql-queries/`, `statistical-analysis/`, `explore-data/`, `validate-data/`, and `data-visualization/SKILL.md` only) are listed in `skill-lib/ATTRIBUTION.md`. The other files in `skill-lib/data-visualization/` are original to skill-lib under MPL-2.0. The Apache-2.0 text is in [`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) |
+
+The whole `skill-lib/` snapshot, including
+[`skill-lib/LICENSES/Apache-2.0.txt`](skill-lib/LICENSES/Apache-2.0.txt) and
+`skill-lib/ATTRIBUTION.md`, is an exact copy of The-Interdependency/skill-lib
+`e74ce1e`. The doctrine and MSDMD generator pin is that same commit (see
+`stack-manifest.json` and `backend/fresh-making-provenance.json`). The root
+[`LICENSES/Apache-2.0.txt`](LICENSES/Apache-2.0.txt) is the same text.
+
+`hmmm` (not yet decided): the license status of `ahbg/`, `research/`, `media/` and
+`docs/`. Files there that are modified copies of an MPL-2.0 or MIT component stay
+under that component's license. Nothing else in these paths is licensed yet.
+
+Usage: when you copy code out of stack, take the license of the path it came from
+in the table above. For MPL-2.0 files, keep the license notice and publish your
+modifications to those files under MPL-2.0. For the Apache-2.0 skills, keep
+`skill-lib/ATTRIBUTION.md` and include `skill-lib/LICENSES/Apache-2.0.txt`. This section is
+a licensing map, not legal advice.
+
 ## Boundaries
 
 - `libs/` is a pinned view, not a transfer of authority.
@@ -237,14 +298,30 @@ merge.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; UCNS affixiation geometry remains unresolved.
-- URPCS has a deterministic authenticated-codec reference profile and bounded
-  independent decoder evidence, but no confidentiality model, production state
-  store, or release authority.
+- URPCS is retired because the implemented GPT-produced codec diverged from the
+  intended specification. Cause of the substitution remains `hmmm`; retained evidence
+  applies only to the substituted implementation.
 - Actual VM PostgreSQL/service-account/storage state and the independent backup device
   remain deployment observations until inspected on the VM.
 - A GitHub-hosted executor remains optional and unimplemented; VM-local execution is the
   resilience baseline.
 - Organization aggregate and website-projection derivation specs are not yet registered.
-- The root `skill-lib/` snapshot predates the merged `fresh-making` skill; the runtime
-  pins that doctrine separately in `backend/fresh-making-provenance.json` because a full
-  snapshot refresh would also import unrelated doctrine changes.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+Weave native public/private key derivation and source of asymmetry remain
+unresolved. Provenance metadata is not an implementation of that missing law.
+
+### Executable Weave sequence cycle
+
+`research/weave/CYCLE.md` documents the current corpus-normalization → repeated
+sequence affixiation → prime-derived bit-interleave profile and exact inverse.
+The binary origin/sequence candidate remains Stack-owned in
+`research/weave/native_binary.py` and consumes unchanged native UCNS geometry.
+UCHC supplies the origin/axis architecture reference; no new binary package has
+graduated there. Private/public key derivation and security remain separate work.
+
+Run `WEAVE_SOURCES=/checkouts python research/weave/cycle.py demo` with the exact
+UCNS source named in `research/weave/CYCLE_NATIVE.json`.

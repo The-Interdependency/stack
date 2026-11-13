@@ -2,8 +2,8 @@
   "schema": "the-interdependency.urpcs-source-receipt",
   "version": "1.0.0",
   "imported_at": "2026-09-20",
-  "source_kind": "operator-ratified working artifacts",
-  "source_standing": "Laws 1-13 accepted; bounded reference computation verified; confidentiality unclaimed",
+  "source_kind": "historical working artifacts of the substituted codec",
+  "source_standing": "RETIRED: implementation-local historical evidence; no operator ratification of the intended URPCS construction established",
   "stack_base": {
     "repository": "The-Interdependency/stack",
     "commit": "a428a41a38a8b30bacb7025a4d54070b228a8089"
@@ -65,7 +65,13 @@
     }
   ],
   "hmmm": [
-    "The full accepted-law conversation does not yet have an immutable public transcript identity.",
+    "The intended-design conversation has no verified immutable public transcript identity; detailed design attribution and exact divergence comparison remain unresolved.",
     "NIST announced revisions of SP 800-185 and FIPS 202 in 2025; URPCS v1 remains pinned to the listed final publications until an explicit new wire version changes that dependency."
-  ]
+  ],
+  "intended_design_provenance": {
+    "standing": "UNRESOLVED",
+    "immutable_public_transcript_identity": null,
+    "reported_details": "Successive fifths/sevenths/thirds, partition-local last/first bit interleaving and whole-stream interleaving are an unverified conversation account, not a source-pinned specification.",
+    "use": "Preserve the report as unresolved; do not implement or claim fidelity from these details. Retirement prevents evidence transfer regardless of missing transcript identity."
+  }
 }

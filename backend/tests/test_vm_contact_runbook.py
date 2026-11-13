@@ -1,0 +1,145 @@
+"""Lints the bash blocks in backend/deploy/VM_CONTACT.md.
+
+Usage: python -m unittest backend.tests.test_vm_contact_runbook
+The runbook is pasted block by block into an interactive SSH shell, so a block
+must parse, and must not leave `set -e`, an EXIT trap or a umask behind in that
+shell: they would end the session at the next expected-nonzero command.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+import os
+import re
+import subprocess
+import tempfile
+import unittest
+
+RUNBOOK = Path(__file__).resolve().parents[1] / "deploy" / "VM_CONTACT.md"
+# Shell state that must never persist in the operator's interactive shell.
+PERSISTENT = re.compile(r"^\s*(set\s+-[A-Za-z]*e|set\s+-o\s+errexit|trap\s.*\bEXIT\b|umask\s)")
+
+
+def bash_blocks(text: str) -> list[tuple[int, str]]:
+    blocks, current, start = [], None, 0
+    for number, line in enumerate(text.splitlines(), 1):
+        if current is None and line.strip() == "```bash":
+            current, start = [], number + 1
+        elif current is not None and line.strip() == "```":
+            blocks.append((start, "\n".join(current) + "\n"))
+            current = None
+        elif current is not None:
+            current.append(line)
+    return blocks
+
+
+def _wrapped(block: str) -> bool:
+    lines = [line for line in block.splitlines() if line.strip()]
+    return bool(lines) and lines[0].strip() == "(" and lines[-1].strip() == ")"
+
+
+def _parses(script: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["bash", "-n"], input=script, text=True, capture_output=True, check=False)
+
+
+class VmContactRunbookTests(unittest.TestCase):
+    def setUp(self):
+        self.blocks = bash_blocks(RUNBOOK.read_text(encoding="utf-8"))
+
+    def test_runbook_has_bash_blocks(self):
+        self.assertGreaterEqual(len(self.blocks), 8)
+
+    def test_every_bash_block_parses(self):
+        for line, block in self.blocks:
+            with self.subTest(line=line):
+                result = _parses(block)
+                self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_no_block_sets_shell_state_at_top_level(self):
+        for line, block in self.blocks:
+            with self.subTest(line=line):
+                if not any(PERSISTENT.match(text) for text in block.splitlines()):
+                    continue
+                # Such a block must be one ( ... ) subshell, and the subshell
+                # must not close early: the inner text must parse on its own.
+                self.assertTrue(_wrapped(block), f"block at line {line} sets -e/trap/umask outside a subshell")
+                lines = block.splitlines()
+                first = next(i for i, text in enumerate(lines) if text.strip())
+                last = max(i for i, text in enumerate(lines) if text.strip())
+                inner = "\n".join(lines[first + 1:last]) + "\n"
+                self.assertEqual(0, _parses(inner).returncode, f"block at line {line} closes its subshell early")
+                self.assertEqual(0, _parses("f() {\n" + inner + "}\n").returncode)
+
+    def test_blocks_define_the_http_variables_they_use(self):
+        for line, block in self.blocks:
+            uses = {name for name in ("H", "U", "LIST", "INIT") if re.search(r"\$\{?%s(\b|\[)" % name, block)}
+            for name in uses:
+                with self.subTest(line=line, name=name):
+                    self.assertRegex(block, r"(?m)^\s*%s=" % name, f"block at line {line} uses ${name} without defining it")
+
+    def test_expected_empty_checks_cannot_fail_the_block(self):
+        # A bare `grep -c` (exit 1 on zero matches) must be guarded by `|| true`
+        # inside the same command substitution, so the count is still printed.
+        for line, block in self.blocks:
+            for text in block.splitlines():
+                if "grep -c" in text:
+                    with self.subTest(line=line, text=text):
+                        self.assertRegex(text, r"\$\(grep -c[^()]*\|\| true\)")
+
+    def test_install_blocks_report_where_set_e_stopped_them(self):
+        # A block that stops under set -e and cleans up with an EXIT trap must
+        # also say so: an ERR trap that prints FAIL.
+        for line, block in self.blocks:
+            if re.search(r"(?m)^\s*trap\s.*\bEXIT\b", block):
+                with self.subTest(line=line):
+                    self.assertRegex(block, r"(?m)^\s*trap\s+'echo \"FAIL [^']*\$LINENO[^']*'\s+ERR\b")
+
+    def test_broker_receipt_check_only_counts_this_run(self):
+        blocks = [block for _, block in self.blocks if "broker receipt" in block]
+        self.assertEqual(len(blocks), 1)
+        block = blocks[0]
+        self.assertIn("START = str(time.time())", block)
+        self.assertIn('"--since", "@" + START', block)
+        self.assertIn('receipt.get("request_id") == result["request_id"]', block)
+        self.assertIn('receipt.get("mode") == "admin"', block)
+        self.assertIn('receipt.get("run_as") == "root"', block)
+        self.assertIn("CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE, CHECK_ROOT = load_target()", block)
+
+
+    def _check_d_writable(self):
+        lines = [text for _, block in self.blocks for text in block.splitlines()
+                 if text.startswith("w=$(sudo -n -u vmmcp find /opt/vm-mcp")]
+        self.assertEqual(len(lines), 1)
+        return lines[0]
+
+    def test_check_d_prunes_unsearchable_dirs_and_keeps_read_failures(self):
+        line = self._check_d_writable()
+        self.assertTrue(line.endswith("|| w=READ-FAILED"))
+        self.assertIn("-type d ! -executable -prune -o -writable -print", line)
+
+    @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
+    def test_check_d_find_behaviour(self):
+        line = self._check_d_writable().replace("sudo -n -u vmmcp ", "")
+        script = line.replace("/opt/vm-mcp", '"$1"') + '\nprintf "%s" "$w"\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp, "opt")
+            (root / "__pycache__").mkdir(parents=True)
+            (root / "server.py").write_text("x")
+            (root / "server.py").chmod(0o444)
+            (root / "__pycache__").chmod(0o000)
+            run = lambda: subprocess.run(["bash", "-c", script, "_", str(root)],
+                                         text=True, capture_output=True, check=False).stdout
+            try:
+                root.chmod(0o555)
+                self.assertEqual("", run(), "an unsearchable dir must not read as a failure")
+                (root / "server.py").chmod(0o644)
+                self.assertEqual(str(root / "server.py"), run().strip())
+                (root / "server.py").chmod(0o444)
+                (root / "__pycache__").chmod(0o100)  # enterable but not listable
+                self.assertEqual("READ-FAILED", run())
+            finally:
+                root.chmod(0o755)
+                (root / "__pycache__").chmod(0o755)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -4,6 +4,10 @@ This repository is `The-Interdependency/stack`, the organization's composition f
 canonical projects are pinned here, stack-local research can combine them, and emergent
 projects may later graduate into their own repositories.
 
+These root instructions apply recursively to every file and workspace in Stack.
+More-specific `AGENTS.md` files may add constraints for their subtree, but they
+must not weaken the authority, provenance, preservation, or evidence rules below.
+
 ## Authority and topology
 
 - `libs/<repo>/` is the manifest-pinned canonical repository view. Treat it as read-only
@@ -19,9 +23,21 @@ projects may later graduate into their own repositories.
   component. It owns Python source admission and bottom-up affixiation only; METAPAT owns
   affixiation semantics, UCNS owns consumed geometry, and parser objects are witnesses
   rather than gonol identities.
-- `research/urpcs/` is a distinct stack-local authenticated recursive pairing codec
-  experiment. Its codec-local `Gonol` row is not a UCNS gonol; it imports no PCEA
-  construction and has no confidentiality, production-security, or release standing.
+- `research/urpcs/` is retired historical evidence. GPT-assisted implementation
+  substituted a recursive pairing/authenticated codec for Erin Spencer's intended
+  multi-arity interleaving construction. Do not extend it or treat any passing test,
+  vector, decoder audit, or measurement as evidence for the intended URPCS design.
+- `research/weave/` owns new Stack-local research into the full intended encryption system. Preserve all declared layers: hyperspace/gonol plaintext construction, private-gonol recovery, multiple reconstruction-dependent threads, thread-associated corpus/material, multi-arity last/first interleaving, and the intended asymmetric public/private relation. Read `SPECIFICATION.md` before implementation. Unresolved mechanics must fail closed as `hmmm`; do not reduce the project to its interleave layer or substitute a familiar cipher, codec, permutation generator, or URPCS mechanism.
+- `research/pi-radix/` owns bounded Stack-local computations over radix
+  representations of pi. It may report exact digit streams, decoded prime blocks,
+  terminal-gcd sieves and derived unit-circle coordinates. It does not own general
+  prime-number canon, transfer METAPAT or UCNS authority, establish pi normality,
+  or promote cross-base recurrence into a base-independent law.
+- `research/psfr/` is Psychosocial Fauna Research (PSFR), a stack-local pre-graduation
+  research area. It preserves two non-collapsed tracks: host-transcendent pattern-lineage
+  ecology and agency-displacement phenomenology. Preserve first-person/witness event
+  distinctions before causal compression; do not infer external-agent ontology from
+  automatic action, lost time, or a physiological correlate alone.
 - `research/zfae/` owns Stack-local inference-construction experiments. ZFAE
   retains conceptual authority, PTCNA owns neural construction, and a0 owns
   runtime integration. Keep a0-betatest comparisons separately attributed.
@@ -30,6 +46,13 @@ projects may later graduate into their own repositories.
   Its input parser consumes the exact English GlyphGonol producer and UCNS
   carrier declared in GONOL_PARSER.json. Preserve occurrences and missing
   admission; parser completion is not neural or higher-gonol completion.
+- `research/a0-municipality/` owns the municipal application specification and
+  cross-project integration research. Read its README for current placement,
+  then preserve the complete v1.1 HANDOFF.md and its source receipt. a0 owns
+  runtime implementation; UCNS and current Stack/UCHC owners retain construction
+  authority. Keep all four workflows, the reserved fifth, homeless-union
+  stewardship, tax-funded remuneration and native origin requirements. Placement
+  is not a working app, partner authorization or operational proof.
 - `integration/epac/` consumes the hash-pinned public EPAC release.
   `research/epac/` retains historical evidence only; route implementation changes to
   `The-Interdependency/epac`. Do not restore the retired forge import path.
@@ -134,8 +157,67 @@ coherence; it does not replace workspace behavioral tests.
   independent repository/release authority boundary.
 - Python Gonol Construction has distinct stack-local authority but has not yet gained an
   independent repository/release authority boundary; exact UCNS affixiation geometry is unresolved.
-- URPCS has bounded reference and independent-decoder evidence but lacks a
-  confidentiality model, durable host-state proof, and independent release authority.
-- The complete root `skill-lib/` snapshot refresh remains separate because the current
-  provenance-bound fresh-making doctrine is newer than the local generator snapshot.
+- URPCS is retired for specification divergence. Why GPT substituted the different
+  architecture remains `hmmm`; its retained evidence is historical and implementation-local.
+- Weave remains research. Its explicit native binary sequence-cycle candidate
+  lives in `research/weave/native_binary.py`; UCNS geometry is consumed, not
+  redefined. UCHC binary graduation has not occurred. Private/public lifting,
+  authentication/state and full-cipher security remain `hmmm`.
+- Pi radix research has measured finite cross-base recurrences; the segmentation
+  law, if any, that would make a result base-independent remains `hmmm`.
 - Project graduation automation remains unimplemented.
+
+URPCS provenance boundary: the immutable public intended-design transcript identity
+and detailed design attribution remain unresolved; see
+[`SOURCE_RECEIPT.json`](research/urpcs/SOURCE_RECEIPT.json).
+
+## Universal evidence and implementation rules
+
+- Inspect the owning source, applicable `AGENTS.md` files, and exact participant
+  identities before changing behavior. Moving code, passing a local test, or a
+  successful workflow does not transfer authority, proof status, or security status.
+- Preserve unrelated user changes. Keep experiments in their owning research
+  workspace, and route completed behavior to the owning canonical repository with
+  explicit review and release evidence.
+- Preserve identity, order, multiplicity, relations, recoverable constituents,
+  and provenance whenever a structure is transformed. Do not replace a retained
+  object with a scalar summary merely because the scalar is convenient.
+- Freeze source bytes, inputs, algorithms, parameter ranges, work limits, and
+  readout rules before comparing known targets. Emit deterministic receipts with
+  exact commands and hashes; incomplete external computation is `UNRESOLVED`,
+  not a negative control.
+- Separate missing implementation, missing selection, mathematical obstruction,
+  and missing evidence. A failed candidate falsifies that candidate, not every
+  possible construction; a local survival remains bounded by its assumptions.
+- Preserve historical receipts and negative results. If source identity changes,
+  create a new receipt instead of rewriting the old result.
+- Treat arithmetic patterns, primes, geometry, round-trip correctness, carrier
+  size, and representation fidelity as non-cryptographic evidence unless a
+  construction-specific security property is demonstrated against a stated threat
+  model. Assess confidentiality, integrity, replay, rollback, forward secrecy,
+  and compromise recovery separately from functional correctness.
+- Do not fit observed sequences or promote supplied parameters into discovered
+  selectors. Any claimed successor must expose a deterministic selector from the
+  retained state, or return an explicit candidate set or unresolved result.
+- Record the first remaining irreducible assumption and the smallest next
+  experiment that could resolve it in the handoff and receipt.
+
+For the detailed UCNS/PCEA constructor, arity, successor, and cryptographic
+requirements, read [`research/AGENTS.md`](research/AGENTS.md) when working in
+those workspaces.
+
+## Research PR scope and priority
+
+Erin's 2026-11-12 work order puts Stack first and sets the research priority:
+**UCNS → UCHC → EDCM → Weave**.
+
+- Give each research PR one research area and one independently reviewable outcome.
+  Split mixed changes before repair or merge; a shared dependency does not transfer
+  research ownership or justify including a second area's implementation.
+- Keep producer and consumer changes in their owning areas. Link separately scoped
+  dependency PRs and bind exact source identities when their evidence is coupled.
+- Keep general Stack governance and infrastructure in a separate maintenance PR.
+- Preserve work outside the four named priorities in its own research area. Its
+  position after this sequence does not authorize discarding it or folding it into UCNS.
+- For each PR, state its area, priority position, dependencies, verification and
+  remaining `hmmm`. Recheck its actual changed files against that declared scope.

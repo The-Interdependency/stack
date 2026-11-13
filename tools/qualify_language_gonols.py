@@ -1,4 +1,4 @@
-# ratios: loc_comments=215:23 imports_exports=19:12 calls_definitions=129:12
+# ratios: loc_comments=248:40 imports_exports=20:13 calls_definitions=148:13
 """Replay the declared language construction profiles without executing corpus code.
 
 Usage: python tools/qualify_language_gonols.py --help
@@ -23,6 +23,20 @@ after each file. Receipts retain every admission outcome and unresolved scalar.
 #   rollout: explicit qualification command; check-tests also runs in language CI
 #   rollback: remove qualification calls and preserve existing evidence history
 # === END MODULE_BUILD ===
+# === CONTRACTS ===
+# id: language_qualification_complete_inventory
+#   given: two supplied CPython qualification receipts
+#   when: compare evaluates their source coverage
+#   then: both match the frozen complete pinned Lib/test inventory
+# id: language_qualification_manifest_integrity
+#   given: a CONSTRUCTED outcome
+#   when: compare evaluates the embedded manifest
+#   then: schema, provenance, source identity, counts and canonical receipt agree
+# id: language_qualification_tab_witness
+#   given: source containing form-feed and tab characters
+#   when: independent source rows are checked
+#   then: widths agree with Python expandtabs on the physical line
+# === END CONTRACTS ===
 
 from __future__ import annotations
 
@@ -46,6 +60,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CPYTHON = "2abcf904b8dac8c999d2b3aac76681abb333798a"
 UCNS_PYTHON = "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c"
 OEWN = "dc343f2683279ecbb13fab4e2fd778d7b162d287"
+# Independently frozen from CPython's complete pinned Lib/test tree; the caller
+# cannot redefine "complete" by supplying a smaller self-consistent inventory.
+CPYTHON_INVENTORY = (1052, 20732440, "1dd99a2c8e27e10c669dfd46a29b2e0107da15279f18aac94eb5453052bb41e1")
 
 
 def canonical(value):
@@ -99,7 +116,7 @@ def check_source_rows(db, raw, encoding):
     controls = db.execute("SELECT o.ordinal, c.spaces_to_next_stop FROM controls c JOIN occurrences o ON o.id=c.occurrence_id WHERE o.scalar=char(9)").fetchall()
     require(len(controls) == source.count("\t"), "tab coverage mismatch")
     for ordinal, width in controls:
-        prefix = source[offsets[ordinal][2]:ordinal].rsplit("\f", 1)[-1]
+        prefix = source[offsets[ordinal][2]:ordinal]
         expected = len((prefix + "\t").expandtabs(8)) - len(prefix.expandtabs(8))
         require(width == expected, "tab expansion mismatch")
 
@@ -179,6 +196,40 @@ def implementation_hashes():
     return {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest() for p in sorted(paths)}
 
 
+def check_manifest(row):
+    """Validate retained metadata; full database replay belongs to python-pass."""
+    sys.path.insert(0, str(ROOT / "research/python-gonol"))
+    from python_gonol import construct as producer
+    manifest = row.get("manifest")
+    fields = {"schema", "version", "source_id", "encoding", "source_bytes_sha256",
+              "decoded_source_sha256", "ucns", "counts", "not_on_pinned_carrier",
+              "verification", "preflight_storage_bytes", "hmmm", "construct_sha256",
+              "receipt_sha256"}
+    require(isinstance(manifest, dict) and set(manifest) == fields, "manifest fields mismatch")
+    require((manifest["schema"], manifest["version"]) == (producer.SCHEMA, producer.VERSION), "manifest schema mismatch")
+    require(manifest["ucns"] == {"commit": producer.UCNS_PUBLIC_GONOL_COMMIT,
+            "public_gonol_module_sha256": producer.UCNS_PUBLIC_GONOL_MODULE_SHA256,
+            "public_gonol_sha256": producer.PUBLIC_GONOL_SHA256}, "manifest UCNS mismatch")
+    require(manifest["source_id"] == row["path"] and manifest["source_bytes_sha256"] == row["sha256"], "manifest source identity mismatch")
+    for field in ("source_bytes_sha256", "decoded_source_sha256", "construct_sha256", "receipt_sha256"):
+        require(isinstance(manifest[field], str) and re.fullmatch(r"[0-9a-f]{64}", manifest[field]), "manifest digest mismatch")
+    require(isinstance(manifest["encoding"], str) and bool(manifest["encoding"]), "manifest encoding missing")
+    counts = manifest["counts"]
+    require(isinstance(counts, dict) and set(counts) == {"characters", "occurrences", "controls", "newlines"}, "manifest counts missing")
+    require(all(type(n) is int and n >= 0 for n in counts.values()), "manifest counts invalid")
+    require(counts["newlines"] <= counts["controls"] <= counts["occurrences"] and counts["characters"] == 157, "manifest counts inconsistent")
+    require(type(manifest["preflight_storage_bytes"]) is int and manifest["preflight_storage_bytes"] == 65536 + counts["occurrences"] * 256, "manifest preflight mismatch")
+    flags = manifest["verification"]
+    require(isinstance(flags, dict) and set(flags) == {"tokenize_ok", "ast_ok"} and all(type(flag) is bool for flag in flags.values()), "manifest verification invalid")
+    scalars = manifest["not_on_pinned_carrier"]
+    require(isinstance(scalars, list) and all(isinstance(c, str) and len(c) == 1 and not 0xD800 <= ord(c) <= 0xDFFF for c in scalars), "manifest off-carrier scalars invalid")
+    require(scalars == sorted(set(scalars)), "manifest off-carrier scalars not canonical")
+    require(isinstance(manifest["hmmm"], str) and bool(manifest["hmmm"]), "manifest unresolved constraints missing")
+    payload = {key: value for key, value in manifest.items() if key != "receipt_sha256"}
+    require(sha256(canonical(payload)).hexdigest() == manifest["receipt_sha256"], "manifest receipt mismatch")
+    return manifest
+
+
 def compare(a, b):
     distinct_outputs(a, b, ("receipt.json", "inventory.json", "outcomes.jsonl"))
     for filename in ("receipt.json", "inventory.json", "outcomes.jsonl"):
@@ -188,6 +239,7 @@ def compare(a, b):
     require((receipt.get("cpython"), receipt.get("ucns"), receipt.get("python")) == (CPYTHON, UCNS_PYTHON, "3.12.14"), "qualification provenance mismatch")
     require(receipt.get("sqlite_runtime") == sqlite3.sqlite_version, "qualification SQLite runtime mismatch")
     require(receipt.get("implementation_sha256") == implementation_hashes(), "qualification implementation mismatch")
+    require(tuple(receipt.get(key) for key in ("input_files", "input_bytes", "inventory_sha256")) == CPYTHON_INVENTORY, "pinned CPython inventory mismatch")
     for root in (a, b):
         require(sha256((root / "outcomes.jsonl").read_bytes()).hexdigest() == receipt["outcomes_sha256"], "outcome digest mismatch")
         outcomes = [json.loads(line) for line in (root / "outcomes.jsonl").read_text().splitlines()]
@@ -201,7 +253,7 @@ def compare(a, b):
             else:
                 require(row["outcome"] == "CONSTRUCTED", "unknown admission outcome")
                 counts["constructed"] += 1
-                manifest = row["manifest"]
+                manifest = check_manifest(row)
                 counts["off_carrier_files"] += bool(manifest["not_on_pinned_carrier"])
                 counts["tokenize_false"] += not manifest["verification"]["tokenize_ok"]
                 counts["ast_false"] += not manifest["verification"]["ast_ok"]
@@ -267,4 +319,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=215:23 imports_exports=19:12 calls_definitions=129:12
+# ratios: loc_comments=248:40 imports_exports=20:13 calls_definitions=148:13

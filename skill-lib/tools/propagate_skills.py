@@ -1,4 +1,4 @@
-# ratios: loc_comments=162:12 imports_exports=9:10 calls_definitions=80:10
+# ratios: loc_comments=226:15 imports_exports=9:12 calls_definitions=111:13
 """Synchronize canonical skill-lib skills into a target repo working tree.
 
 This script is intentionally local-file based. It does not push, commit, open
@@ -26,6 +26,7 @@ DEFAULT_INSTALL_ROOT = Path(".agents/skills")
 # those must be carried alongside the skills or the vendored links go dead.
 DOCTRINE_REF_RE = re.compile(r"(?:\.\./)?doctrine/([A-Za-z0-9][\w./-]*\.md)")
 SOURCE_SHA_RE = re.compile(r"Source commit:[^\n]*`([0-9a-f]{7,40})`")
+SKILL_SOURCE_RE = re.compile(r"^- `([^`/]+)/`[^\n]*\[not refreshed; prior source: `([0-9a-f]{7,40}|hmmm)`\]$", re.MULTILINE)
 _TEXT_SUFFIXES = {".md", ".py", ".ts", ".txt"}
 
 
@@ -63,6 +64,18 @@ def previous_source_sha(target_install_root: Path) -> str | None:
         return None
     match = SOURCE_SHA_RE.search(readme.read_text(encoding="utf-8"))
     return match.group(1) if match else None
+
+
+def previous_skill_source_sha(target_install_root: Path, skill_name: str) -> str | None:
+    """Return a skill-local prior source recorded by an earlier partial refresh."""
+    readme = target_install_root / "README.md"
+    if not readme.is_file():
+        return None
+    text = readme.read_text(encoding="utf-8")
+    for name, sha in SKILL_SOURCE_RE.findall(text):
+        if name == skill_name:
+            return sha
+    return None
 
 
 def previous_canonical_blob(sha: str, skill_name: str, relative_path: Path) -> bytes | None:
@@ -111,7 +124,49 @@ def referenced_doctrine(skill_srcs: Iterable[Path]) -> List[str]:
     return sorted(ref for ref in refs if (ROOT / "doctrine" / ref).is_file())
 
 
+def expand_skill_dependencies(requested: Sequence[str], index: Mapping[str, object]) -> List[str]:
+    """Include all declared prerequisites before their consumers, without duplicates."""
+    skills = {entry["name"]: entry for entry in index.get("skills", [])}
+    state: dict[str, int] = {}
+    ordered: List[str] = []
+
+    def visit(name: str) -> None:
+        if name not in skills:
+            raise ValueError(f"missing skill dependency: {name}")
+        if state.get(name) == 1:
+            raise ValueError(f"skill dependency cycle at {name}")
+        if state.get(name) == 2:
+            return
+        state[name] = 1
+        dependencies = skills[name].get("depends_on", [])
+        if not isinstance(dependencies, list):
+            raise ValueError(f"invalid dependencies for {name}")
+        for dependency in dependencies:
+            if not isinstance(dependency, str):
+                raise ValueError(f"invalid dependency in {name}")
+            visit(dependency)
+        state[name] = 2
+        ordered.append(name)
+
+    for name in requested:
+        visit(name)
+    return ordered
+
+
 def write_readme(target_install_root: Path, sha: str, skills: Sequence[str]) -> None:
+    readme = target_install_root / "README.md"
+    old_text = readme.read_text(encoding="utf-8") if readme.is_file() else ""
+    old_entries = dict(re.findall(r"^(- `([^`/]+)/`[^\n]*)$", old_text, re.MULTILINE))
+    # Preserve owner-written descriptions for installed but unrefreshed skills.
+    by_name = {name: line for line, name in old_entries.items()}
+    others = sorted(path.parent.name for path in target_install_root.glob("*/SKILL.md")
+                    if path.parent.name not in skills)
+    prior = previous_source_sha(target_install_root)
+    canonical = set(load_skill_names())
+    for name in others:
+        if name in canonical and "prior source:" not in by_name.get(name, ""):
+            identity = prior if name in by_name and prior else "hmmm"
+            by_name[name] = by_name.get(name, f"- `{name}/`") + f" [not refreshed; prior source: `{identity}`]"
     lines = [
         "# Local agent skills",
         "",
@@ -123,11 +178,19 @@ def write_readme(target_install_root: Path, sha: str, skills: Sequence[str]) -> 
         "Repo-local copies are not the source of truth. Edit `skill-lib` first,",
         "then propagate from the canonical source.",
         "",
-        "Installed skills:",
+        "Skills refreshed from the source commit above:",
         "",
     ]
     lines.extend(f"- `{name}/`" for name in skills)
     lines.append("")
+    if others:
+        lines.extend([
+            "Other installed skills (not refreshed by this propagation):", "",
+            "Their existing files retain their own authority/provenance; the source",
+            "commit above does not assert that these copies were refreshed.", "",
+        ])
+        lines.extend(by_name.get(name, f"- `{name}/`") for name in others)
+        lines.append("")
     target_install_root.mkdir(parents=True, exist_ok=True)
     (target_install_root / "README.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -151,6 +214,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     if unknown:
         print(f"unknown skills: {', '.join(unknown)}", file=sys.stderr)
         return 2
+    try:
+        selected = expand_skill_dependencies(requested, load_index())
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
 
     install_root = target_repo / args.install_root
     sha = current_sha()
@@ -158,7 +226,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     removals = [install_root / name for name in load_superseded_names() if (install_root / name).exists()]
 
     actions = []
-    for name in requested:
+    for name in selected:
         src = ROOT / name
         dst = install_root / name
         if not (src / "SKILL.md").is_file():
@@ -194,11 +262,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         shutil.rmtree(dst)
     removed_files: List[tuple[str, Path]] = []
     for src, dst in actions:
-        removed_files.extend((src.name, path) for path in sync_tree(src, dst, prior_sha))
+        skill_prior_sha = previous_skill_source_sha(install_root, src.name)
+        if skill_prior_sha is None:
+            skill_prior_sha = prior_sha
+        elif skill_prior_sha == "hmmm":
+            skill_prior_sha = None
+        removed_files.extend((src.name, path) for path in sync_tree(src, dst, skill_prior_sha))
     for src, dst in doc_actions:
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
-    write_readme(install_root, sha, requested)
+    write_readme(install_root, sha, selected)
     for skill_name, path in removed_files:
         print(f"Removed obsolete canonical file: {skill_name}/{path}")
     print("Propagation complete.")
@@ -207,4 +280,4 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-# ratios: loc_comments=162:12 imports_exports=9:10 calls_definitions=80:10
+# ratios: loc_comments=226:15 imports_exports=9:12 calls_definitions=111:13

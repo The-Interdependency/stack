@@ -12,7 +12,7 @@
   "authority_transfer": false,
   "stack_baseline": "d713cc5f901d74deb902a191837ef5657dbaba94",
   "work_graph": "../../stack-manifest.json#research_participants[workspace=research/zfae/]",
-  "usage": "Read README.md, INPUT_PROBE.json and GONOL_PARSER.json; retrieve exact external parser/carrier sources, then execute input_probe.py and gonol_probe.py.",
+  "usage": "Read README.md, INPUT_PROBE.json and GONOL_PARSER.json; retrieve exact external parser/carrier sources, then execute input_probe.py and gonol_probe.py. For the complete-corpus input profile, install the exact wheel in UCHC_INPUT.json and run uchc_input.py; see ../../integration/uchc/README.md.",
   "source_files": [
     {
       "repository": "The-Interdependency/zfae",
@@ -110,5 +110,13 @@
     "UCHC extraction has not completed release, Stack reconsumption and authority transition.",
     "The state, propagation, learning and readout laws remain construction work.",
     "The gonol parser has finite declared admission; higher closure and runtime integration remain separate work."
-  ]
+  ],
+  "input_candidate": {
+    "lock": "UCHC_INPUT.json",
+    "source_repository": "The-Interdependency/uchc",
+    "source_commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
+    "wheel_sha256": "10f72f874062c0f90eef35d7efb488f9c5bd17f5052b8ddc64c257e721acb616",
+    "authority_transfer": false,
+    "standing": "candidate input contract; not a neural inference result"
+  }
 }
