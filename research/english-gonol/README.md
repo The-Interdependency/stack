@@ -2,13 +2,16 @@
 
 ## Unicode gonols — 16 b rad, big-endian
 
-New primitive text construction uses
+New primitive and recursive text construction uses
 [`english_gonol.unicode_construction`](docs/unicode-bit-radius.md). Every Unicode
 glyph has **16-bit radius and 32-bit diameter**, represented by four big-endian
 bytes. ASCII has three leading zero bytes. UCNS owns the native representation;
 exact scalar identity, UTF-8 anatomy, order and multiplicity remain recoverable.
-This width is independent of geometric placement radius. Corpus migration and
-closed-word bearings retain their explicit boundaries in the linked contract.
+This width is independent of geometric placement radius. `construct_sequence`
+accepts complete text frames and its own completed objects; `closed_record` and
+`replay_closed` retain the complete graph. Parent bearings are explicit, sibling
+origins share one radius, and child interiors remain intact. Automatic bearing
+selection and corpus migration retain the boundaries in the linked contract.
 
 ## Historical ordinal and recursive candidates
 
