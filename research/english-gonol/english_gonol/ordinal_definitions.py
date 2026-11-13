@@ -1,3 +1,4 @@
+# ratios: loc_comments=193:52 imports_exports=13:6 calls_definitions=70:14
 """Reconstruct inherited character definitions on the selected ordinal base.
 
 The existing character table and final-y implementation remain their owners.
@@ -51,6 +52,9 @@ from .language import character_definitions as inherited
 # id: ordinal_definition_replay
 #   given: serialized character and definition closures on the selected carriers
 #   then: independently replay every placement and interior without invoking affixiate
+# id: ordinal_definition_migration_witness
+#   given: a complete verified source admission and exact Unicode release
+#   then: reconstruct every definition and number-name interior and compare the committed witness exactly
 # === END CONTRACTS ===
 
 SCHEMA = 'english.ordinal-character-definitions/1'
@@ -214,3 +218,66 @@ def verify_definitions(factory, payload):
         raise ValueError('ordinal inherited-definition replay mismatch')
     return VerifiedDefinitions(MappingProxyType(entries), _digest(expected),
                                MappingProxyType(expected['counts']))
+
+
+def migration_witness(factory):
+    """Replay all definitions and number-name interiors, then expose observed facts."""
+    payload = build_definitions(factory)
+    layer = verify_definitions(factory, payload)
+    for name, closed in payload['number_names'].items():
+        if closed['receipt'] != factory.word(factory.word_ids[name]).receipt:
+            raise ValueError('migration number-name interior mismatch')
+    return {
+        'schema': 'english.ordinal-definition-migration-witness/2',
+        'status': 'SURVIVED',
+        'scope': 'Every expanded-carrier character and inherited definition; every number-name interior replayed from the verified source inventory',
+        'public_gonol_size': len(factory.glyph_carrier.identities),
+        'source_words': len(factory.words), 'source_receipt': factory.source_receipt,
+        'public_gonol_sha256': _digest(factory.public),
+        'definition_receipt': layer.receipt, 'counts': dict(layer.counts),
+        'behavior': {
+            'hyphen_roles': list(layer.entries['-'].classes),
+            '3_number_name': layer.entries['3'].number_name,
+            'try_ing': layer.final_y_realization('y', 'r', 'ing', True),
+            'try_ed': layer.final_y_realization('y', 'r', 'ed', True),
+        },
+        'source_table_sha256': payload['source']['sha256'],
+        'source_loader_sha256': payload['source']['loader_sha256'],
+        'implementation_sha256': payload['implementation_sha256'],
+        'hmmm': ['Definitions absent from the inherited source remain unresolved.',
+                 'This witness covers definition migration; global geometric transport remains unresolved.'],
+    }
+
+
+def check_migration_witness(factory, expected):
+    observed = migration_witness(factory)
+    if _canonical(observed) != _canonical(expected):
+        raise ValueError('committed migration witness differs from complete replay')
+    return observed
+
+
+def main():
+    """python -m english_gonol.ordinal_definitions ADMISSION UCD [--expect JSON]."""
+    import argparse
+    from .ordinal_construct import Factory, _inventory, _producer_check, repertoire, _json_read
+    from .structural_construct import _verified_connection
+    parser = argparse.ArgumentParser(description=main.__doc__)
+    parser.add_argument('admission', type=Path)
+    parser.add_argument('ucd', type=Path)
+    parser.add_argument('--expect', type=Path)
+    args = parser.parse_args()
+    _producer_check()
+    with _verified_connection(args.admission) as (source, manifest):
+        if manifest['metadata']['complete_corpus'] is not True:
+            raise ValueError('migration witness requires complete pinned source')
+        chars, words = _inventory(source)
+        public = repertoire(tuple(chars.values()), tuple(manifest['metadata']['producer']['carrier']), args.ucd)
+        factory = Factory(public, words, manifest['receipt_sha256'])
+        observed = (migration_witness(factory) if args.expect is None else
+                    check_migration_witness(factory, _json_read(args.expect)))
+    print(_canonical(observed).decode('utf-8'))
+
+
+if __name__ == '__main__':
+    main()
+# ratios: loc_comments=193:52 imports_exports=13:6 calls_definitions=70:14

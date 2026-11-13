@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "a28ff770ccb5c7cdae017272dd47e3bacb0b7054b07ebe7086fe26d534aaebb6",
+  "work_graph_sha256": "4ebd1b9c80ba7a0547668b1a625dbd7954ae27679452c07a3a5aea84d51ce5fd",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -498,9 +498,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "ordinal-admission",
       "repository": "The-Interdependency/stack",
-      "commit": "e3eb83764355b4b760a79323cda6a6d75c3a501a",
+      "commit": "05d235f17c1e4cd0cce35836ae3561d9bc96bd2f",
       "authority": "English source admission and independent replay",
-      "relation": "unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry",
+      "relation": "bounded thirteen-file source-reader closure; source admission is not the selected completed geometry",
       "canonical_release": false,
       "authority_transfer": false
     },

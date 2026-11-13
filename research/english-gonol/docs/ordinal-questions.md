@@ -63,11 +63,11 @@ Missing, extra, reordered or altered data fail. Existing artifacts must be rebui
 old receipts are not rebranded as evidence for the changed implementation.
 
 The committed `../experiments/ordinal-definitions/migration-witness.json` records
-reconstruction over all 4,698 scalars from the supplied complete field: 4,757
-definition closures and ten number-name interiors matching existing corpus word
-receipts. The inherited source leaves 4,643 scalar definitions explicitly unknown.
-This is full definition-layer coverage, not a new complete-corpus admission replay
-or current-head hosted CI. `../tests/test_ordinal_definitions.py` supplies
+reconstruction over all 4,698 scalars from a fresh complete source admission: 4,757
+definition closures and ten number-name interiors independently matching constructed
+corpus word receipts. The inherited source leaves 4,643 scalar definitions explicitly unknown.
+The source admission was rebuilt and replayed with the bounded reader before
+regenerating this witness. Hosted complete geometry replay remains a separate gate. `../tests/test_ordinal_definitions.py` supplies
 preservation, no-old-constructor, independent-replay and corruption tests.
 
 ### 5. Vocabulary growth: open
@@ -93,3 +93,16 @@ Only question 5 remains a construction choice. The inherited definition migratio
 is executable and locally tested; current-head full-corpus build/replay and review
 must establish their own evidence. SPACE reference choices are settled while their
 global transport witnesses remain outstanding. Native Mobius integration is excluded.
+
+## Review repair, 2026-11-13
+
+The full workflow now watches the committed migration witness and reconstructs it
+from the complete pinned admission and Unicode release before comparing every
+field. Version 2 omits the old local-test-count claim and records only facts that
+the replay computes. The source graph rejects unsupported schemas and transfer
+claims even when a caller recomputes its digest. The selected runtime includes the
+inherited `gonol.py` dependency; nested admission manifests use the same bounded
+reader as the outer artifact.
+
+The ordinal candidate is historical after UCNS #244. Active scalar-geometry
+migration and current-main reconciliation remain required before merging this draft.

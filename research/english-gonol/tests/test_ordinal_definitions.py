@@ -13,6 +13,27 @@ admission. The hosted complete build remains the full-source witness.
 # id: definition_corruption_is_rejected
 #   proves: ordinal_definition_replay
 #   call: self::test_tampering_refuses
+# id: check_test_migration_witness_replays_every_number_name
+#   proves: ordinal_definition_migration_witness
+#   call: self::test_migration_witness_replays_every_number_name
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files or in-memory values
+#   cleanup: pytest fixtures
+# id: check_test_committed_migration_witness_cannot_drift
+#   proves: ordinal_definition_migration_witness
+#   call: self::test_committed_migration_witness_cannot_drift
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files or in-memory values
+#   cleanup: pytest fixtures
+# id: check_test_full_workflow_compares_committed_migration_witness
+#   proves: ordinal_definition_migration_witness
+#   call: self::test_full_workflow_compares_committed_migration_witness
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files or in-memory values
+#   cleanup: pytest fixtures
 # === END CHECKS ===
 from copy import deepcopy
 from dataclasses import asdict
@@ -156,3 +177,36 @@ def test_default_build_and_verifier_consume_definition_component():
     for tree in (producer, checker):
         assert any(isinstance(n, ast.Constant) and n.value == 'character-definitions.json'
                    for n in ast.walk(tree))
+
+
+def test_migration_witness_replays_every_number_name(factory):
+    witness = definitions.migration_witness(factory)
+    assert witness['counts']['characters'] == 158
+    assert witness['counts']['number_names'] == 10
+    assert definitions.check_migration_witness(factory, witness) == witness
+
+
+@pytest.mark.parametrize('change', [
+    lambda p: p.update(source_words=1),
+    lambda p: p.update(definition_receipt='0' * 64),
+    lambda p: p.update(source_receipt='other-source'),
+    lambda p: p['behavior'].update(try_ed='preserve-y'),
+    lambda p: p['counts'].update(number_names=9),
+    lambda p: p.update(status='FALSIFIED'),
+])
+def test_committed_migration_witness_cannot_drift(factory, change):
+    expected = definitions.migration_witness(factory)
+    change(expected)
+    with pytest.raises(ValueError, match='committed migration witness'):
+        definitions.check_migration_witness(factory, expected)
+
+
+def test_full_workflow_compares_committed_migration_witness():
+    from pathlib import Path
+    import yaml
+    root = Path(__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(), Loader=yaml.BaseLoader)
+    build = next(s['run'] for s in workflow['jobs']['full-corpus']['steps']
+                 if s.get('name') == 'Build complete source admission then the replacement geometry')
+    assert '-m english_gonol.ordinal_definitions' in build
+    assert '--expect research/english-gonol/experiments/ordinal-definitions/migration-witness.json' in build

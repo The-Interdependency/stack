@@ -97,6 +97,13 @@
 #   timeout: 60
 #   mutates: temporary fixture files only
 #   cleanup: pytest tmp_path
+# id: check_test_nested_admission_manifest_refuses_before_database
+#   proves: structural_regular_bounded_manifest
+#   call: self::test_nested_admission_manifest_refuses_before_database
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary fixture files or in-memory values
+#   cleanup: pytest fixtures
 # === END CHECKS ===
 
 """Fixture tests are not full Unicode or corpus receipts; hosted build supplies those."""
@@ -463,3 +470,27 @@ def test_json_stream_read_is_capped_if_file_grows(tmp_path, monkeypatch):
     with pytest.raises(ValueError, match='read budget'):
         implementation._json_read(path)
     assert requested == [33]
+
+
+@pytest.mark.parametrize('kind', ['symlink', 'directory', 'fifo', 'oversize'])
+def test_nested_admission_manifest_refuses_before_database(tmp_path, monkeypatch, kind):
+    from english_gonol import structural_construct as admission
+    path = tmp_path / 'admission' / 'manifest.json'
+    path.parent.mkdir()
+    if kind == 'symlink':
+        target = tmp_path / 'target'
+        target.write_bytes(b'{}\n')
+        path.symlink_to(target)
+    elif kind == 'directory':
+        path.mkdir()
+    elif kind == 'fifo':
+        admission.os.mkfifo(path)
+    else:
+        with path.open('wb') as stream:
+            stream.truncate(admission.MANIFEST_MAX_BYTES + 1)
+    def unopened(*args, **kwargs):
+        raise AssertionError('invalid manifest reached database access')
+    monkeypatch.setattr(admission, 'open_readonly', unopened)
+    with pytest.raises(ValueError, match='regular nonsymlink|read budget'):
+        with admission._verified_connection(path.parent):
+            raise AssertionError('invalid manifest admitted')

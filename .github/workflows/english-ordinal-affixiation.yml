@@ -1,3 +1,8 @@
+# === CONTRACTS ===
+# id: english_ordinal_workflow_provenance
+#   given: a supplied source graph and root provenance projection
+#   then: reject unknown schema, version, transfer claims or unmatched participant identities
+# === END CONTRACTS ===
 name: English ordinal affixiation
 on:
   workflow_dispatch:
@@ -13,6 +18,7 @@ on:
       - 'research/english-gonol/tests/test_ordinal_definitions.py'
       - 'research/english-gonol/tests/test_ordinal_source_inputs.py'
       - 'research/english-gonol/docs/ordinal-*'
+      - 'research/english-gonol/experiments/ordinal-definitions/migration-witness.json'
       - '.github/workflows/english-ordinal-affixiation.yml'
 permissions:
   contents: read
@@ -94,12 +100,22 @@ jobs:
         env:
           PYTHONPATH: research/english-gonol
         run: |
-          git fetch --no-tags --depth=1 origin e3eb83764355b4b760a79323cda6a6d75c3a501a
+          git fetch --no-tags --depth=1 origin 05d235f17c1e4cd0cce35836ae3561d9bc96bd2f
           _inputs/ucns/.venv/bin/python - <<'PY'
           import ast,hashlib,json,pathlib,subprocess
           graph=json.loads(pathlib.Path('research/english-gonol/docs/ordinal-work-graph.json').read_text())
-          body={k:graph[k] for k in ('repositories','boundaries')}
-          assert hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':')).encode()).hexdigest()==graph['work_graph_sha256']
+          def validate_graph(graph, manifest):
+              assert (graph.get('schema'),graph.get('version'))==('the-interdependency.stack-manifest','1.0.0'), 'unsupported graph schema/version'
+              assert (manifest.get('schema'),manifest.get('version'))==('the-interdependency.stack-manifest','1.1.0'), 'unsupported root graph schema/version'
+              body={k:graph[k] for k in ('repositories','boundaries')}
+              assert hashlib.sha256(json.dumps(body,sort_keys=True,separators=(',',':')).encode()).hexdigest()==graph['work_graph_sha256'], 'graph digest mismatch'
+              for name in ('authority_transfer','proof_status_transfer','measurement_status_transfer'):
+                  assert graph['boundaries'][name] is False and manifest['boundaries'][name] is False, 'graph may not transfer standing'
+              participants=[r for r in manifest['research_participants'] if r['workspace']=='research/english-gonol/']
+              assert all(r['authority_transfer'] is False for r in participants), 'participant authority transfer'
+              identities={(r['repository'],r.get('commit'),r.get('artifact_sha256')) for r in participants}
+              assert all((r['repository'],r.get('commit'),r.get('artifact_sha256')) in identities for r in graph['repositories']), 'graph participant absent from root projection'
+          validate_graph(graph,json.loads(pathlib.Path('stack-manifest.json').read_text()))
           git_roots={
               ('The-Interdependency/ucns','a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb'):'_inputs/ucns',
               ('The-Interdependency/ucns','4f863ad37096b7baab8f62820ad5cb937b62a3a7'):'_inputs/admission-carrier',
@@ -110,7 +126,7 @@ jobs:
               'unicode.org/Public/18.0.0/ucd/UnicodeData.txt':'_inputs/ucd/UnicodeData.txt',
               'unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt':'_inputs/ucd/DerivedCoreProperties.txt',
           }
-          baseline_key=('The-Interdependency/stack','e3eb83764355b4b760a79323cda6a6d75c3a501a')
+          baseline_key=('The-Interdependency/stack','05d235f17c1e4cd0cce35836ae3561d9bc96bd2f')
           expected=set(git_roots) | {(name,None) for name in artifact_roots} | {baseline_key}
           seen=set()
           for item in graph['repositories']:
@@ -134,6 +150,7 @@ jobs:
           subprocess.run(['git','fetch','--no-tags','--depth=1','origin',selected],check=True)
           for relative in ('english_gonol/ordinal_construct.py','english_gonol/__main__.py',
                            'english_gonol/ordinal_definitions.py',
+                           'english_gonol/gonol.py',
                            'english_gonol/language/character_definitions.py',
                            'english_gonol/language/data/character_definitions_v1.json',
                            'ACTIVE_CONSTRUCTION.json','docs/ordinal-work-graph.json'):
@@ -171,6 +188,10 @@ jobs:
             --source-root _inputs/oewn/src/yaml \
             --ucns-source-root _inputs/admission-carrier \
             --out-dir _admission 2> _evidence/admission-resources.txt
+          _inputs/ucns/.venv/bin/python -m english_gonol.ordinal_definitions \
+            _admission _inputs/ucd \
+            --expect research/english-gonol/experiments/ordinal-definitions/migration-witness.json \
+            > _evidence/definition-migration-replay.json
           /usr/bin/time -v _inputs/ucns/.venv/bin/python -m english_gonol build \
             _admission _inputs/ucd _constructed \
             2> _evidence/geometry-resources.txt | tee _evidence/full-verification.json

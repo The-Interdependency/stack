@@ -14,6 +14,13 @@
 #   timeout: 60
 #   mutates: isolated subprocess only
 #   cleanup: process exit
+# id: ordinal_selected_runtime_import_closure
+#   proves: english_ordinal_workflow_provenance
+#   call: self::test_selected_and_admission_closures_cover_loaded_runtime
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: isolated import process
+#   cleanup: process exit
 # === END CHECKS ===
 import json
 from pathlib import Path
@@ -106,8 +113,8 @@ def test_active_inputs_are_registered_in_root_provenance():
         assert exact_identity(record) in human
         if participant_id.startswith('ordinal-'):
             assert participant_id in human
-    assert keyed['ordinal-unicode-data']['artifact_sha256'] == implementation.UCD_RELEASE_SHA256['UnicodeData.txt']
-    assert keyed['ordinal-unicode-math']['artifact_sha256'] == implementation.UCD_RELEASE_SHA256['DerivedCoreProperties.txt']
+    assert keyed['ordinal-unicode-data']['artifact_sha256'] == ordinal_construct.UCD_RELEASE_SHA256['UnicodeData.txt']
+    assert keyed['ordinal-unicode-math']['artifact_sha256'] == ordinal_construct.UCD_RELEASE_SHA256['DerivedCoreProperties.txt']
 
 
 def test_full_workflow_covers_admission_dependencies():
@@ -154,7 +161,8 @@ def test_provenance_repins_trigger_exact_source_gate():
     filters = workflow['on']['pull_request']['paths']
     for path in ('research/english-gonol/BASE.json', 'stack-manifest.json',
                  'STACK_MANIFEST.md', 'research/english-gonol/ACTIVE_CONSTRUCTION.json',
-                 'research/english-gonol/docs/ordinal-work-graph.json'):
+                 'research/english-gonol/docs/ordinal-work-graph.json',
+                 'research/english-gonol/experiments/ordinal-definitions/migration-witness.json'):
         assert any(fnmatch(path, pattern) for pattern in filters), path
 
 
@@ -173,6 +181,10 @@ def test_selection_and_source_graph_are_exact_pinned_inputs():
                 and isinstance(node.target, ast.Name) and node.target.id == 'relative')
     inputs = ast.literal_eval(loop.iter)
     assert set(inputs) == {'english_gonol/ordinal_construct.py', 'english_gonol/__main__.py',
+                           'english_gonol/ordinal_definitions.py',
+                           'english_gonol/gonol.py',
+                           'english_gonol/language/character_definitions.py',
+                           'english_gonol/language/data/character_definitions_v1.json',
                            'ACTIVE_CONSTRUCTION.json', 'docs/ordinal-work-graph.json'}
     assert any(isinstance(node, ast.Assert) for node in loop.body)
 
@@ -220,3 +232,26 @@ def test_general_workflow_isolates_ordinal_ucns_package():
     assert '--ignore=tests/test_ordinal_construct.py' in historical
     assert '--ignore=tests/test_active_construction.py' in historical
     assert '../../_deps/ordinal-venv/bin/python' in ordinal
+
+
+def test_selected_and_admission_closures_cover_loaded_runtime():
+    import ast
+    import yaml
+    root = Path(entry.__file__).resolve().parents[3]
+    workflow = yaml.load((root / '.github/workflows/english-ordinal-affixiation.yml').read_text(), Loader=yaml.BaseLoader)
+    command = next(s['run'] for s in workflow['jobs']['full-corpus']['steps']
+                   if s.get('name') == 'Verify exact participant graph and unchanged source reader')
+    source = command.split("<<'PY'\n", 1)[1].rsplit('\nPY', 1)[0]
+    loop = next(n for n in ast.walk(ast.parse(source)) if isinstance(n, ast.For)
+                and isinstance(n.target, ast.Name) and n.target.id == 'relative')
+    selected = set(ast.literal_eval(loop.iter))
+    from english_gonol.structural_construct import IMPLEMENTATION_FILES
+    allowed = selected | {'english_gonol/' + name for name in IMPLEMENTATION_FILES}
+    script = """import json,sys
+from pathlib import Path
+from english_gonol import ordinal_construct,ordinal_definitions,__main__
+root=Path(ordinal_construct.__file__).resolve().parents[1]
+print(json.dumps(sorted(str(Path(m.__file__).resolve().relative_to(root)) for name,m in sys.modules.items() if name.startswith('english_gonol.') and getattr(m,'__file__',None))))
+"""
+    loaded = set(json.loads(subprocess.check_output([sys.executable, '-c', script], text=True)))
+    assert loaded <= allowed, sorted(loaded - allowed)

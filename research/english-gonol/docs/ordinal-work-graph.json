@@ -16,9 +16,9 @@
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "e3eb83764355b4b760a79323cda6a6d75c3a501a",
+      "commit": "05d235f17c1e4cd0cce35836ae3561d9bc96bd2f",
       "authority": "English source admission and construction forge",
-      "relation": "unchanged structural-source baseline; candidate source bound by generated implementation digest and observed head"
+      "relation": "bounded structural-source baseline; candidate source bound by generated implementation digest and observed head"
     },
     {
       "repository": "globalwordnet/english-wordnet",
@@ -57,5 +57,5 @@
       "The historical admission carrier is pinned separately in preserved source metadata; its angles are not consumed by the new constructor."
     ]
   },
-  "work_graph_sha256": "5d92bd50ce35e27ea81b815f3b90cead901fcf6eb275c56ec3e451ce7ba3d219"
+  "work_graph_sha256": "9ffabda1a50b7131c5d138eb1920687a7053454ab81cb0095fbadd4bde2627fb"
 }

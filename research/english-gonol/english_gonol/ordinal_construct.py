@@ -1,3 +1,4 @@
+# ratios: loc_comments=49:487 imports_exports=23:11 calls_definitions=271:28
 """Build the replacement English angular/radial construction.
 
 Usage (from research/english-gonol, with UCNS on PYTHONPATH):
@@ -327,33 +328,7 @@ def _json_write(path, value):
     Path(path).write_bytes(canonical(value) + b'\n')
 
 
-def _read_bounded_regular(path: Path, limit: int, label: str) -> bytes:
-    """Snapshot one bounded regular file without following links or blocking on special files."""
-    before = path.lstat()
-    if not stat.S_ISREG(before.st_mode):
-        raise ValueError(f'{label} must be a regular nonsymlink file: {path.name}')
-    if before.st_size > limit:
-        raise ValueError(f'{label} exceeds read budget: {path.name}')
-    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
-    try:
-        fd = os.open(path, flags)
-    except OSError as error:
-        raise ValueError(f'{label} changed or cannot be opened: {path.name}') from error
-    with os.fdopen(fd, 'rb') as stream:
-        opened = os.fstat(stream.fileno())
-        if (not stat.S_ISREG(opened.st_mode)
-                or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino)):
-            raise ValueError(f'{label} changed or is not regular: {path.name}')
-        if opened.st_size > limit:
-            raise ValueError(f'{label} exceeds read budget: {path.name}')
-        raw = stream.read(limit + 1)
-        after = os.fstat(stream.fileno())
-        if len(raw) > limit:
-            raise ValueError(f'{label} exceeds read budget: {path.name}')
-        if (len(raw) != opened.st_size
-                or (after.st_size, after.st_mtime_ns) != (opened.st_size, opened.st_mtime_ns)):
-            raise ValueError(f'{label} changed during bounded read: {path.name}')
-    return raw
+from .structural_construct import _read_bounded_regular
 
 
 def _json_read(path):
@@ -625,3 +600,4 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
+# ratios: loc_comments=49:487 imports_exports=23:11 calls_definitions=271:28

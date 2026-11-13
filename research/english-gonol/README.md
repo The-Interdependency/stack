@@ -1,5 +1,11 @@
 # English Gonol Construction
 
+Review status, 2026-11-13: this draft retains the historical `english.ordinal/1`
+candidate for evidence repair. UCNS #244 supersedes ordinal radius-halving for
+active Unicode text with scalar bearings and equal primitive radii. The commands
+below describe this branch; migration to that geometry remains required before
+this branch can supply an active construction.
+
 ## Active construction: ordinal affixiation
 
 `english.ordinal/1` is the selected replacement for new English construction.
@@ -53,8 +59,9 @@ Construction/recovery does not validate EDCM measurement. See
 The structural-only build is **deprecated as a completed geometric construction**.
 `structural_construct` remains the verified source-admission/replay stage consumed
 by the replacement, not a competing geometry. `StructuralField` inspects that
-source stage only. Its 13-file sealed import closure remains unchanged so existing
-source evidence remains independently replayable.
+source stage only. Its 13-file sealed import closure now bounds manifest reads and
+rejects nonregular files. The new source pin requires rebuilding admission artifacts;
+historical receipts remain replayable with their original implementation.
 
 Full construct v2, orthogonal-axis placement and constituent-overlap views are
 **historical, not supported routes for new construction**. Their old build commands

@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `a28ff770ccb5c7cdae017272dd47e3bacb0b7054b07ebe7086fe26d534aaebb6`
+  `4ebd1b9c80ba7a0547668b1a625dbd7954ae27679452c07a3a5aea84d51ce5fd`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -66,7 +66,7 @@ selection, and see [the supported build](research/english-gonol/README.md).
 |---|---|---|---|
 | `ordinal-source` | `The-Interdependency/stack` | `2ba7131c5931cccbd779ed08b59f8a2a356729d4` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
 | `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
-| `ordinal-admission` | `The-Interdependency/stack` | `e3eb83764355b4b760a79323cda6a6d75c3a501a` | unchanged thirteen-file source-reader closure; source admission is not the selected completed geometry |
+| `ordinal-admission` | `The-Interdependency/stack` | `05d235f17c1e4cd0cce35836ae3561d9bc96bd2f` | bounded thirteen-file source-reader closure; source admission is not the selected completed geometry |
 | `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
 | `ordinal-corpus` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | all exact pinned source records consumed by the ordinal construction |
 | `ordinal-unicode-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | exact immutable Unicode 18.0.0 numeric-category release file consumed by public-gonol admission |
