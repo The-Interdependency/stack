@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "4ebd1b9c80ba7a0547668b1a625dbd7954ae27679452c07a3a5aea84d51ce5fd",
+  "work_graph_sha256": "edf20bb4c4fe88c90a8ea075c74c2588354afd4b2745f8e3855057c33d049036",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -478,7 +478,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "ordinal-source",
       "repository": "The-Interdependency/stack",
-      "commit": "2ba7131c5931cccbd779ed08b59f8a2a356729d4",
+      "commit": "0b48535f315400812a257dbb790c709a5642b90b",
       "authority": "English construction and supported entrypoint",
       "relation": "exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority",
       "canonical_release": false,
