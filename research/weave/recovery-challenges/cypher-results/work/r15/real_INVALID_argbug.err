@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_one.py", line 5, in <module>
+    f, s, n, t, rot, ar = sys.argv[1], sys.argv[2], *map(int, sys.argv[3:7])
+    ^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 6, got 5)

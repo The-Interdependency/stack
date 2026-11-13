@@ -1,0 +1,7 @@
+XCC 7 3 unique True 17.2s
+XCC 5 2 unique True 42.7s
+XCC 3 7 timeout900
+XCCC 3 7 timeout900
+XCCC 5 1 timeout900
+XCCC 7 3 timeout900
+DONE

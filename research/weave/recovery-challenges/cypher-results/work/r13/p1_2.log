@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r13/run_jobs.py", line 9, in <module>
+    st, msg = S.solve(tuple(s), n, t, rot, ar, wl, tlimit=tl)
+              ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/cypher/work/r13/wln_sat.py", line 96, in solve
+    r = go()
+  File "/workspace/cypher/work/r13/wln_sat.py", line 94, in go
+    r = S.solve_limited(expect_interrupt=True); tm.cancel(); S.clear_interrupt()
+                                                             ~~~~~~~~~~~~~~~~~^^
+  File "/home/box/.local/lib/python3.13/site-packages/pysat/solvers.py", line 2480, in clear_interrupt
+    raise NotImplementedError('Limited solve is currently unsupported by CaDiCaL.')
+NotImplementedError: Limited solve is currently unsupported by CaDiCaL.

@@ -129,3 +129,19 @@ v1: 8/8 root-verified. v2: **1550 / 1841** format-valid candidates (up from 608
 on Nov 8); 42 of them additionally pass a header-root digest check of the final
 plaintext and 196 more pass it on an intermediate layer. 291 remain (288
 C-bearing WLN1, 3 WVC). Details in LOG.md Rounds 10–11 and REPRODUCE_v2.md.
+
+## Status update — Nov 12, 2026 (America/Los_Angeles)
+
+v1: 8/8 root-verified. v2: **1552 / 1841** format-valid candidates. The
+newest one (`2f7a28768aab060c`, multi-C WLN1 via a SAT encoding) also passes a
+forward re-encode check against the public transport code. 289 remain (286
+WLN1, 3 WVC). Details in LOG.md Rounds 13 and 15.
+
+## Status update — Nov 13, 2026 (America/Los_Angeles)
+
+No new challenge files (branch head moved, but only a blank line in the
+challenge README changed). v2 stays at **1552 / 1841** format-valid. XCC
+(3-op multi-C) now finishes for 40 of the 41 files it can fit: 1 recovered,
+39 with no XCC preimage (conditional on the SAT encoding being complete), 1
+still running. LOG Round 16 also corrects a Round 15 claim: the "12/12 timeout"
+batch was a crashed run, not real timeouts.

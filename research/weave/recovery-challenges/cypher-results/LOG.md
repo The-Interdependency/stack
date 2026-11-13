@@ -610,3 +610,121 @@ leaks.
   preimage under every matching m≥3 1-C catalog layout.
 - Not proven: match to excluded originals; that remaining WLN1 files are
   secure (most are likely multi-C or other unsolved schedules).
+
+---------------------------------------------------------------------------
+## Round 13 — Nov 11, 2026 daily run (America/Los_Angeles), reconstructed
+
+The Nov 11 run ended before it wrote any log, docs or commit. This entry is
+reconstructed on Nov 12 from the files it left in `work/r13` and `work/r14`;
+nothing in them was edited.
+
+- `work/r13/wln_sat.py`: CNF encoding of multi-C WLN1 transport (public
+  `transport_cases` only). Every C stage reads one shared corpus window;
+  X/J/I/W are pushed through the public forward code as variable labels;
+  each C lane is a deque route with one-hot left-count variables; hex id
+  chars are constrained to 0-9a-f. Uniqueness = re-solve with a blocking
+  clause on the hex bits. Solver: CaDiCaL 1.5.3 via PySAT. Corpus wrap is
+  ignored, which can only add solutions.
+- `work/r13/plan.py` → `jobs.json` (316,930 file/schedule/parameter jobs over
+  the 287 remaining WLN1; 17 MB, regenerable, not published). Only 41 files
+  fit 3–4-op schedules (XCC / XCCC); the other 246 fit only 10- or 15-op
+  catalog schedules.
+- Planted test (`test_synth.py`): only `XCC t=5 seed 1` is recorded:
+  `unique`, byte-equal, 50.7 s. The other planted cases left empty logs.
+- Real run (`p1_args.txt` → `p1_out.jsonl`, 150 s cap): 81 of 82 XCC/XCCC
+  jobs recorded: XCC 28 none, 11 timeout, **1 unique**
+  (`2f7a28768aab060c.bin`, t=7); XCCC 41 timeout. One XCC job
+  (`04be9cd9…`, t=7) is missing from the output.
+- An in-process time limit crashed (`err.log`: CaDiCaL does not support
+  `solve_limited` interrupts); the shell `timeout` wrapper was used instead.
+- `work/r14/one600.sh` (600 s wrapper) exists but produced no output.
+
+---------------------------------------------------------------------------
+## Round 15 — Nov 12, 2026 ~10:25–11:00 AM (America/Los_Angeles), daily check
+
+Challenge branch head unchanged (`0a5320a`, Oct 30 PDT); no new challenge
+files. Shared weekly usage 55.8% at start; session ceiling frozen at ~22
+points (half of remaining) — actual use far below that.
+
+### Forward check of the Round 13 candidate (`work/r15/forward_check.py`)
+Re-solve `2f7a28768aab060c.bin` under XCC (thread_count 7), pull the shared
+corpus window (167 bits) out of the SAT model, then run the **public
+forward** `transport_cases.run` on the candidate message with that window as
+a synthetic corpus. Every output lane bit equals the challenge file
+(`forward_check_2f7a.json`: `lanes_equal: true`), and the stored text is
+byte-identical to the model message. The hex id is unique under XCC t=7.
+Candidate: `Prediction 7a0577073d5e4119c0e2ee22d3c02082: …` (lane-rules
+family). The XCCC job for the same file timed out, so uniqueness across
+*every* schedule is not proven.
+
+`validate.py`: **1552 / 1841**, 0 bad, 0 orphans. Remaining: WLN1 286, WVC 3.
+
+### More planted tests (`work/r15/synth.sh`, 900 s cap)
+- XCC t=7 seed 3: unique, byte-equal, 17 s
+- XCC t=5 seed 2: unique, byte-equal, 43 s
+- XCC t=3 seed 7: timeout
+- XCCC t=3/5/7: all timeout
+
+### Real XCC reruns (`work/r15/run_real.sh`, 900 s cap)
+The 11 Round-13 XCC timeouts plus the missing `04be9cd9…` job: **12/12 timeout**
+(`xcc_out.jsonl`). Nearly all are t=3, matching the planted t=3 timeout.
+
+### Proven vs guessed
+- Proven: one more file has an exact forward-checked preimage under a public
+  catalog schedule (format-valid + reproducible re-encode). Not compared with
+  excluded originals.
+- Conditional: the 28 XCC "none" results mean no XCC preimage exists *if* the
+  CNF is correct. It passes positive planted tests only; no planted negative
+  test was run, so treat them as unconfirmed eliminations.
+- Not attempted: XCCC (planted tests all time out), 10/15-op schedules
+  (~317k jobs), the 3 WVC files.
+
+### Lessons
+A SAT solver turned the t=5/t=7 multi-C cases from "times out" into seconds,
+but t=3 (fewer, longer lanes) is still out of reach at 15 minutes. A forward
+re-encode is a much stronger check than a format match and costs ~15 s.
+
+---------------------------------------------------------------------------
+## Round 16 — Nov 13, 2026 ~10:23–11:00 AM (America/Los_Angeles), daily check
+
+Challenge branch head moved to `f435c65` (Nov 12, 12:12 PM PST), but the
+only change inside `research/weave/recovery-challenges/` is one trailing
+blank line removed from `README.md`. No new or changed challenge files. (Only
+the file list of the diff was used to establish this; no other folders read.)
+Shared weekly usage 60.7% at start; session ceiling frozen at ~19 points
+(half of remaining). Actual use far below that.
+
+### Correction to Round 15 (append-only; Round 15 text left as written)
+Round 15 says the 12 real XCC reruns were "12/12 timeout (`xcc_out.jsonl`)".
+That run was **invalid**: a wrapper bug dropped the file argument, so every
+job crashed and was recorded as a timeout. Its output is kept as
+`work/r15/xcc_out_INVALID_argbug.jsonl` / `real_INVALID_argbug.err`. The
+fixed wrapper reran only 7 of the 12 jobs (`xcc_args2.txt` → `xcc_out2.jsonl`)
+and finished overnight, after the Round 15 log was written:
+6 `none`, 1 recorded `timeout2400` (`187df4d1…`). The `timeout` wrapper sent
+SIGTERM, which did not stop the solver inside Python; some jobs ran ~16 h.
+The planted `XCC t=3 seed 7` long rerun (`synth_t3_long.log`) also timed out
+at 2400 s.
+
+### This round (`work/r16/`)
+- `run_real_kill.sh`: same as `r15/run_real.sh` but `timeout -s KILL`.
+- The 5 XCC jobs never validly run (`args.txt` → `out.jsonl`):
+  `04be9cd9…` (t=7) and 4 t=3 files — **5/5 `none`**, 4–385 s each.
+- `187df4d1…` relaunched with a 20 h kill cap (`out_187d.jsonl`); result
+  pending at the time of writing.
+
+### XCC tally over the 41 files that fit 3–4-op schedules
+1 unique (`2f7a2876…`, forward-checked, Round 15), 39 `none`,
+1 unresolved (`187df4d1…`). `validate.py` count unchanged at **1552 / 1841**.
+
+### Proven vs guessed
+- The 39 `none` results only eliminate XCC (one schedule out of several each
+  file could fit) and only if the CNF encoding is complete. Positive planted
+  tests pass; no independent proof of completeness exists. Treat them as
+  conditional.
+- XCCC and all 10/15-op schedules remain untried on the real files.
+
+### Lessons
+Check that a background batch is actually running the intended jobs before
+writing results down; the Round 15 log recorded a crashed batch as timeouts.
+Use SIGKILL caps for C solvers called from Python.

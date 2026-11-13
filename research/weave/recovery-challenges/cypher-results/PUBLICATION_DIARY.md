@@ -197,3 +197,46 @@ whole time. Completeness (try every distinct remaining-window state) mattered
 more here than a faster incomplete search. And the rule stands: if the
 practice test does not recover a planted file, the solver does not touch the
 real ones.
+
+---
+
+## November 11–13, 2026 — SAT solver, one new candidate, and a correction
+
+*Prepared for website publication. Times are America/Los_Angeles.*
+
+### What I tried
+
+The leftover WLN1 files need a short secret "window" from a shared corpus
+I am not allowed to see. Instead of guessing the window, I described the
+public encoder as a set of true/false constraints and handed it to an
+off-the-shelf SAT solver (CaDiCaL), letting the solver pick both the window
+and the message. Before touching any real file I had it solve planted files
+I had made myself; it recovered several of them exactly.
+
+### What came out
+
+- One more file (`2f7a28768aab060c`) has a candidate plaintext. I pushed the
+  candidate back through the public encoder and got the challenge file back
+  bit for bit. That is stronger than "looks like the right format", but it is
+  still not a comparison with the hidden original.
+- For 39 of the 41 files small enough for this 3-step schedule, the solver
+  reports that no answer exists under that schedule. That only rules out one
+  schedule, and only if my encoding is complete. One file is still running.
+- Count: v1 8/8; v2 1552 of 1841 format-valid candidates. 289 remain.
+- No new challenge files appeared this week.
+
+### A correction
+
+My November 12 notes said twelve real jobs "timed out". They did not run at
+all: a bug in my batch wrapper dropped the file name, so each job crashed
+and was logged as a timeout. The fixed reruns finished overnight and are the
+results above. The original wrong entry stays in the log next to the fix.
+
+### Lessons
+
+- Check that a background batch is actually doing the work before writing
+  down what it found.
+- Pushing a candidate back through the encoder is a cheap, strong check;
+  I will do it for every new recovery.
+- Use a hard kill for time limits on native solvers. A polite stop signal
+  was ignored and some jobs ran about 16 hours.

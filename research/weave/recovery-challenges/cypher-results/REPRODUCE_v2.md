@@ -201,3 +201,22 @@ the DP above replaces DFS only for exactly-one-C.
 New format-valid candidate: `work/v2_recovered/1d27398c8e1086e8.txt`
 (JWXIC, unique under the hex-filtered DP). Root-tier script was not re-run;
 tiers stay 42 / 196 from Round 10.
+
+## Rounds 13 and 15 (Nov 11–12): multi-C SAT (requires `pip install python-sat`)
+
+    cd work/r13 && python3 test_synth2.py XCC 5 1   # planted; must print unique True
+    bash one.sh 2f7a28768aab060c.bin XCC 1 7 0 3     # real file; unique
+    python3 work/r15/forward_check.py 2f7a28768aab060c.bin XCC 1 7 0 3  # lanes_equal true
+    python3 work/r10/validate.py                     # 1552 / 1841
+
+`work/r13/plan.py` rebuilds `jobs.json` (not published, 17 MB). Planted
+XCC t=3 and all XCCC cases time out at 900 s; do not treat timeouts as
+negatives. XCC `none` results are unconfirmed eliminations (positive planted
+tests only).
+
+## Round 16 (Nov 13): remaining XCC jobs
+
+    bash work/r16/run_real_kill.sh work/r16/args.txt /tmp/out.jsonl 72000 5   # 5 x none
+
+Use the SIGKILL wrapper: plain `timeout` (SIGTERM) does not stop CaDiCaL
+running inside Python.
