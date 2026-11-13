@@ -1,18 +1,5 @@
 {
-  "english": {
-    "completed_independent_process_builds": 2,
-    "proof": "english-replay.json",
-    "receipt_sha256": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57"
-  },
   "evidence_files": {
-    "english-replay.json": {
-      "bytes": 1996,
-      "sha256": "66f6a7371ad2c3b8b9ef725f3798b177bd51e29858243a417c6758c9647b4294"
-    },
-    "english-tests.xml": {
-      "bytes": 11372,
-      "sha256": "0e94a985634cfca3eaf55e138466c531db977c70462da533ae86d50510471332"
-    },
     "python-attempt-a.json": {
       "bytes": 1083,
       "sha256": "525cd23c82c03d46b724eeed82b23ea31b8be5a2dca5fa3244cb4c0fa15a4552"
@@ -97,7 +84,7 @@
     "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
     "sqlite": "3.53.1"
   },
-  "schema": "language-gonol.qualification-result",
+  "schema": "python-gonol.historical-qualification-projection",
   "skill_lib_commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
   "stack_consistency": {
     "repositories": 7,
@@ -107,12 +94,6 @@
   "stack_start_commit": "bcaba85900716e5209150a504660fa2ca5158299",
   "status": "SURVIVED_DECLARED_CONSTRUCTION_PROFILES_WITH_RECORDED_ATTEMPT_FAILURE",
   "tests": {
-    "english": {
-      "errors": 0,
-      "failed": 0,
-      "passed": 85,
-      "skipped": 0
-    },
     "python": {
       "errors": 0,
       "failed": 0,
@@ -128,5 +109,7 @@
       "included_in_completed_pass_count": false
     }
   ],
-  "version": 1
+  "version": 1,
+  "source": "The-Interdependency/stack@5a2dbd82059a99e56e9c3231fd10a8e9d09b0337:docs/evidence/language-gonol-20260919/summary.json",
+  "projection_note": "Python records from the historical joint run; historical ratios cover that original run."
 }

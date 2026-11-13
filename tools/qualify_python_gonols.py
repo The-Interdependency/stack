@@ -1,18 +1,18 @@
-# ratios: loc_comments=248:40 imports_exports=20:13 calls_definitions=148:13
-"""Replay the declared language construction profiles without executing corpus code.
+# ratios: loc_comments=238:42 imports_exports=19:12 calls_definitions=139:12
+"""Replay the declared Python construction profile without executing corpus code.
 
-Usage: python tools/qualify_language_gonols.py --help
+Usage: python tools/qualify_python_gonols.py --help
 Run python-pass twice in separate processes, then compare their output JSONL.
 Source and producer checkouts stay read-only; temporary constructs are removed
 after each file. Receipts retain every admission outcome and unresolved scalar.
 """
 # === MODULE_BUILD ===
 # id: language_gonol_qualification
-#   module_name: qualify_language_gonols
+#   module_name: qualify_python_gonols
 #   module_kind: instrument
 #   summary: checks full source coverage, independent replay, exact identities and actual test outcomes
 #   owner: Stack language construction research
-#   public_surface: python-pass, compare, english-compare, check-tests commands
+#   public_surface: python-pass, compare, check-tests commands
 #   internal_surface: source inventory, independent address/tab witnesses, canonical receipts
 #   auth_boundary: read-only source and authority checkouts
 #   storage_boundary: explicit output directory and automatically removed temporary constructs
@@ -59,10 +59,16 @@ import xml.etree.ElementTree as ET
 ROOT = Path(__file__).resolve().parents[1]
 CPYTHON = "2abcf904b8dac8c999d2b3aac76681abb333798a"
 UCNS_PYTHON = "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c"
-OEWN = "dc343f2683279ecbb13fab4e2fd778d7b162d287"
 # Independently frozen from CPython's complete pinned Lib/test tree; the caller
 # cannot redefine "complete" by supplying a smaller self-consistent inventory.
 CPYTHON_INVENTORY = (1052, 20732440, "1dd99a2c8e27e10c669dfd46a29b2e0107da15279f18aac94eb5453052bb41e1")
+# Frozen encoding-admission outcomes for those exact source bytes. All other
+# files in the bound inventory must carry a complete constructed manifest.
+CPYTHON_ENCODING_REJECTIONS = {
+    "Lib/test/tokenizedata/bad_coding.py": "ffd93515dbe0bc61779aafb3cdf11e4c32d229e120139bfc38d3ea54b95a76e3",
+    "Lib/test/tokenizedata/bad_coding2.py": "8cf248d2b943c380e0f50a3b80293de6d739f8a6a7ebfc182d81ee7663e04aa1",
+    "Lib/test/tokenizedata/badsyntax_pep3120.py": "8d39a6286aca58ab1a43ffd9f84e0758243334f579c6a7e3c082cf55a96a9f6d",
+}
 
 
 def canonical(value):
@@ -248,7 +254,10 @@ def compare(a, b):
         require(len(inputs) == receipt["input_files"] and sum(r["bytes"] for r in inputs) == receipt["input_bytes"], "source aggregate mismatch")
         counts = Counter()
         for row in outcomes:
+            rejected_hash = CPYTHON_ENCODING_REJECTIONS.get(row["path"])
+            require((rejected_hash is not None) == (row["outcome"] == "REJECTED_ENCODING"), "encoding admission outcome mismatch")
             if row["outcome"] == "REJECTED_ENCODING":
+                require(row["sha256"] == rejected_hash and row.get("reason") == "SyntaxError", "encoding admission rejection mismatch")
                 counts["rejected_encoding"] += 1
             else:
                 require(row["outcome"] == "CONSTRUCTED", "unknown admission outcome")
@@ -261,22 +270,6 @@ def compare(a, b):
         require(sha256(canonical(inputs)).hexdigest() == receipt["inventory_sha256"], "inventory digest mismatch")
         require([{key: row[key] for key in ("path", "git_blob", "sha256", "bytes")} for row in outcomes] == inputs, "outcome/source inventory mismatch")
     print(json.dumps({"status": "SURVIVED", "receipt": receipt}, indent=2))
-
-
-def english_compare(a, b):
-    distinct_outputs(a, b, ("construct.db", "manifest.json"))
-    sys.path.insert(0, str(ROOT / "research/english-gonol"))
-    from english_gonol.full_construct_run import verify_replay
-    first, second = verify_replay(a), verify_replay(b)
-    require(first == second, "English manifests differ")
-    expected = json.loads((ROOT / "research/english-gonol/experiments/full-construct-v2/manifest.json").read_text())
-    require(first == expected, "English build differs from frozen complete-corpus receipt")
-    for root in (a, b):
-        with sqlite3.connect(f"file:{root / 'construct.db'}?mode=ro", uri=True) as db:
-            require(db.execute("PRAGMA integrity_check").fetchone()[0] == "ok", "SQLite integrity")
-            for table, count in first["counts"].items():
-                require(db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] == count, "count mismatch")
-    print(json.dumps({"status": "SURVIVED", "matching_distinct_artifacts": 2, "independent_execution": "not established by artifact comparison alone", "manifest": first}, indent=2))
 
 
 def check_tests(paths):
@@ -303,8 +296,7 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     p = commands.add_parser("python-pass")
     p.add_argument("corpus", type=Path); p.add_argument("producer", type=Path); p.add_argument("out", type=Path)
-    for name in ("compare", "english-compare"):
-        p = commands.add_parser(name); p.add_argument("a", type=Path); p.add_argument("b", type=Path)
+    p = commands.add_parser("compare"); p.add_argument("a", type=Path); p.add_argument("b", type=Path)
     p = commands.add_parser("check-tests"); p.add_argument("paths", type=Path, nargs="+")
     args = parser.parse_args()
     if args.command == "python-pass":
@@ -313,10 +305,8 @@ def main():
         check_tests(args.paths)
     elif args.command == "compare":
         compare(args.a, args.b)
-    else:
-        english_compare(args.a, args.b)
 
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=248:40 imports_exports=20:13 calls_definitions=148:13
+# ratios: loc_comments=238:42 imports_exports=19:12 calls_definitions=139:12

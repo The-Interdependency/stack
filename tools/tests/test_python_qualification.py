@@ -1,4 +1,4 @@
-# ratios: loc_comments=117:46 imports_exports=7:10 calls_definitions=59:14
+# ratios: loc_comments=146:53 imports_exports=7:11 calls_definitions=73:16
 """Negative controls for the qualification gate; run with pytest."""
 # === CHECKS ===
 # id: check_test_compare_rejects_self_consistent_incomplete_inventory
@@ -43,6 +43,13 @@
 #   timeout: 60
 #   mutates: temporary files and SQLite
 #   cleanup: pytest_tmp_path and connection context
+# id: check_python_encoding_admission
+#   proves: language_qualification_complete_inventory
+#   call: self::test_compare_binds_actual_encoding_admission
+#   requires: python3, pytest
+#   timeout: 60
+#   mutates: temporary files
+#   cleanup: pytest_tmp_path
 # === END CHECKS ===
 import importlib.util
 import gzip
@@ -52,7 +59,7 @@ from pathlib import Path
 
 import pytest
 
-spec = importlib.util.spec_from_file_location("language_qualification", Path(__file__).parents[1] / "qualify_language_gonols.py")
+spec = importlib.util.spec_from_file_location("language_qualification", Path(__file__).parents[1] / "qualify_python_gonols.py")
 qualification = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(qualification)
 
@@ -114,7 +121,7 @@ def test_compare_rejects_self_consistent_incomplete_inventory(tmp_path):
 
 def _complete_pair(tmp_path, change=lambda rows: None):
     """Historical records are schema fixtures, never a new execution receipt."""
-    evidence = qualification.ROOT / 'docs/evidence/language-gonol-20260919'
+    evidence = qualification.ROOT / 'docs/evidence/python-gonol-20260919'
     inputs = json.loads(gzip.decompress((evidence / 'python-inventory.json.gz').read_bytes()))
     rows = [json.loads(line) for line in gzip.decompress(
         (evidence / 'python-outcomes.jsonl.gz').read_bytes()).splitlines()]
@@ -185,4 +192,35 @@ def test_tab_oracle_counts_formfeed_as_one_column():
         with pytest.raises(ValueError, match='tab expansion'):
             qualification.check_source_rows(db, raw, 'utf-8')
 
-# ratios: loc_comments=117:46 imports_exports=7:10 calls_definitions=59:14
+
+
+@pytest.mark.parametrize('attack', ['all_rejected', 'valid_rejected', 'wrong_reason'])
+def test_compare_binds_actual_encoding_admission(tmp_path, attack):
+    def change(rows):
+        if attack == 'all_rejected':
+            selected = rows
+        elif attack == 'valid_rejected':
+            selected = [next(r for r in rows if r['outcome'] == 'CONSTRUCTED')]
+        else:
+            selected = [next(r for r in rows if r['outcome'] == 'REJECTED_ENCODING')]
+        for row in selected:
+            row.pop('manifest', None)
+            row.update(outcome='REJECTED_ENCODING', reason='UnicodeDecodeError' if attack == 'wrong_reason' else 'SyntaxError')
+    roots = _complete_pair(tmp_path, change)
+    for root in roots:
+        receipt = json.loads((root / 'receipt.json').read_text())
+        rows = [json.loads(line) for line in (root / 'outcomes.jsonl').read_text().splitlines()]
+        counts = qualification.Counter()
+        for row in rows:
+            if row['outcome'] == 'REJECTED_ENCODING':
+                counts['rejected_encoding'] += 1
+            else:
+                counts['constructed'] += 1
+                counts['off_carrier_files'] += bool(row['manifest']['not_on_pinned_carrier'])
+                counts['tokenize_false'] += not row['manifest']['verification']['tokenize_ok']
+                counts['ast_false'] += not row['manifest']['verification']['ast_ok']
+        receipt['counts'] = dict(counts)
+        (root / 'receipt.json').write_bytes(qualification.canonical(receipt))
+    with pytest.raises(ValueError, match='encoding admission'):
+        qualification.compare(*roots)
+# ratios: loc_comments=146:53 imports_exports=7:11 calls_definitions=73:16

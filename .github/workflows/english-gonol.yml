@@ -6,16 +6,16 @@ on:
       - "research/english-gonol/**"
       - "libs/ucns/**"
       - ".github/workflows/english-gonol.yml"
-      - "tools/qualify_language_gonols.py"
-      - "tools/tests/test_language_qualification.py"
+      - "tools/qualify_english_gonols.py"
+      - "tools/tests/test_english_qualification.py"
       - "requirements-language-tests.txt"
   pull_request:
     paths:
       - "research/english-gonol/**"
       - "libs/ucns/**"
       - ".github/workflows/english-gonol.yml"
-      - "tools/qualify_language_gonols.py"
-      - "tools/tests/test_language_qualification.py"
+      - "tools/qualify_english_gonols.py"
+      - "tools/tests/test_english_qualification.py"
       - "requirements-language-tests.txt"
 
 permissions:
@@ -113,10 +113,10 @@ jobs:
 
       - name: English Gonol construction tests
         working-directory: research/english-gonol
-        run: python -m pytest -q tests --junitxml="$RUNNER_TEMP/english-gonol.xml"
+        run: python -m pytest -q tests ../../tools/tests/test_english_qualification.py --junitxml="$RUNNER_TEMP/english-gonol.xml"
 
       - name: Require every test to pass
-        run: python tools/qualify_language_gonols.py check-tests "$RUNNER_TEMP/english-gonol.xml"
+        run: python tools/qualify_english_gonols.py check-tests "$RUNNER_TEMP/english-gonol.xml"
 
       - name: Retain full-corpus metric-origin evidence
         uses: actions/upload-artifact@v7.0.1

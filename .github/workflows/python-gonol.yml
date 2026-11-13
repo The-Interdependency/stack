@@ -10,11 +10,11 @@ on:
       - "STACK_MANIFEST.md"
       - "stack-manifest.json"
       - ".github/workflows/python-gonol.yml"
-      - "tools/qualify_language_gonols.py"
-      - "tools/tests/test_language_qualification.py"
+      - "tools/qualify_python_gonols.py"
+      - "tools/tests/test_python_qualification.py"
       - "requirements-language-tests.txt"
-      - "docs/language-gonol-qualification.md"
-      - "docs/evidence/language-gonol-*/**"
+      - "docs/python-gonol-qualification.md"
+      - "docs/evidence/python-gonol-*/**"
   push:
     branches: [main]
     paths:
@@ -25,11 +25,11 @@ on:
       - "STACK_MANIFEST.md"
       - "stack-manifest.json"
       - ".github/workflows/python-gonol.yml"
-      - "tools/qualify_language_gonols.py"
-      - "tools/tests/test_language_qualification.py"
+      - "tools/qualify_python_gonols.py"
+      - "tools/tests/test_python_qualification.py"
       - "requirements-language-tests.txt"
-      - "docs/language-gonol-qualification.md"
-      - "docs/evidence/language-gonol-*/**"
+      - "docs/python-gonol-qualification.md"
+      - "docs/evidence/python-gonol-*/**"
 
 permissions:
   contents: read
@@ -60,6 +60,6 @@ jobs:
         working-directory: research/python-gonol
         env:
           UCNS_SOURCE_ROOT: ${{ github.workspace }}/.ci/ucns
-        run: python -m pytest -q tests ../../tools/tests/test_language_qualification.py --junitxml="$RUNNER_TEMP/python-gonol.xml"
+        run: python -m pytest -q tests ../../tools/tests/test_python_qualification.py --junitxml="$RUNNER_TEMP/python-gonol.xml"
       - name: Require every test to pass
-        run: python tools/qualify_language_gonols.py check-tests "$RUNNER_TEMP/python-gonol.xml"
+        run: python tools/qualify_python_gonols.py check-tests "$RUNNER_TEMP/python-gonol.xml"
