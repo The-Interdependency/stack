@@ -39,8 +39,8 @@ python -m english_gonol.unicode_construction 'Aë𐍈' --ucns-source-root /path/
 UCHC_UNICODE_UCNS_ROOT=/path/to/ucns python -m pytest -q unicode_tests
 ```
 
-The runtime verifies the native module's SHA-256 before executing those same
-bytes. It imports no ambient UCNS package and contains no replacement geometry.
+The runtime verifies all four native dependency files before executing any of
+those same bytes. It imports no ambient UCNS package and contains no replacement geometry.
 The CLI emits the exact producer identity and native frame receipt.
 
 The four scoped source identities also appear in the root `stack-manifest.json`
@@ -66,9 +66,46 @@ proof, certification or measurement standing transfers between repositories.
 
 ## hmmm
 
-This completes primitive scalar width and transport. The ongoing corpus
-replacement in Stack #88, higher-scale affixiation/bearing, and extraction of
-this entrypoint into the UCHC distribution remain separate work. Historical
+This completes scalar width/transport and recursive declared-frame completion.
+Automatic closed-object bearing selection, affixiation beyond declared rigid
+placement, the ongoing corpus replacement in Stack #88, and domain graduation
+remain separate work. Historical
 corpus, ordinal and attachment receipts keep their pinned producers and cannot
 be relabeled as this Unicode representation. Roll back the entrypoint and its
 source pin together; no stored historical receipt is rewritten.
+
+## Completed objects are participants
+
+`construct_sequence` accepts native glyphs, complete text frames, and its own
+completed results. It retains the actual objects and every occurrence. Complete
+frames require explicit exact parent bearings; the same operation works at each
+declared scale, including direct placement without an intermediate word stage.
+All sibling origins use one parent radius; each child's local radius stays intact.
+
+```python
+from fractions import Fraction
+from english_gonol.unicode_construction import (
+    construct_text, construct_sequence, closed_record, replay_closed,
+)
+
+word = construct_text("Aë e\u0308!\n", ucns_source_root=root)
+pair = construct_sequence((word, word), bearings=(0, Fraction(1, 2)),
+                          ucns_source_root=root, source="example:pair")
+parent = construct_sequence((pair, pair), bearings=(0, Fraction(1, 2)),
+                            ucns_source_root=root, source="example:parent")
+record = closed_record(parent, ucns_source_root=root)
+copy = replay_closed(record, ucns_source_root=root)
+assert copy.recover() == word.text * 4
+assert copy.receipt == parent.receipt
+```
+
+The graph retains relations, provenance, shared interiors and ordered occurrences.
+The native placement supplies an exact rigid map and inverse; no historical
+ordinal-halving or candidate bearing becomes the active Unicode rule. Bit radius
+stays 16, with one complete four-byte diameter per scalar throughout nesting.
+
+The historical `attachment_construction.closed_record` compatibility validator
+also now recognizes completed sequences and validates their native structure.
+It no longer reconstructs `declared-word-sequence` as literal word text. Historical
+glyph/sequence receipts remain unchanged, and malformed sequence labels,
+participants and radii still refuse.

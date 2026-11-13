@@ -36,14 +36,21 @@
     "work_graph": "docs/recursive-work-graph.json",
     "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
     "authority_transfer": false,
-    "standing": "forward native integration; candidate bearing explicit; graduation unchanged"
+    "standing": "historical attachment compatibility; recursive validator repaired; candidate bearing remains explicit; graduation unchanged"
   },
   "unicode_bit_radius": {
     "profile": "uchc.unicode-bit-radius/1",
     "work_graph": "docs/unicode-bit-radius-work-graph.json",
-    "native_commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
     "authority": "Stack UCHC language entrypoint consumes native UCNS Unicode gonols",
     "authority_transfer": false,
-    "standing": "forward primitive scalar representation; 16 b rad; 32-bit big-endian diameter; corpus migration separate"
+    "standing": "forward primitive and recursive Unicode objects; 16 b rad; 32-bit big-endian diameter; corpus migration separate"
+  },
+  "unicode_recursive": {
+    "profile": "uchc.unicode-recursive/1",
+    "work_graph": "docs/unicode-bit-radius-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "authority_transfer": false,
+    "standing": "completed objects reenter with explicit equal-radius parent placement; automatic bearing selection unresolved"
   }
 }

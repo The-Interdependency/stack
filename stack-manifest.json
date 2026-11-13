@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "09804ee8eedd9885c2540a022ae4f50bc8c3500b64e32fb1b70a51a9883614ba",
+  "work_graph_sha256": "c4d65342181baf40fac09479ac2e71700654dd6660aa380ae0d920fcf1a7110a",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -547,8 +547,8 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-ucns",
       "repository": "The-Interdependency/ucns",
-      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
-      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion",
       "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
       "canonical_release": false,
       "authority_transfer": false
@@ -557,7 +557,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-stack",
       "repository": "The-Interdependency/stack",
-      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "commit": "798b0b419e9fea897d3fadd2d4b9cb91db68687e",
       "authority": "active language construction research forge",
       "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
       "canonical_release": false,
@@ -580,6 +580,26 @@
       "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
       "authority": "construction, domain-claim and cross-repository evidence discipline",
       "relation": "governing source for this scoped representation change",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns-historical-0600a23e",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack-historical-f837e71b",
+      "repository": "The-Interdependency/stack",
+      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
       "canonical_release": false,
       "authority_transfer": false
     }

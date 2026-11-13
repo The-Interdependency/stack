@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `09804ee8eedd9885c2540a022ae4f50bc8c3500b64e32fb1b70a51a9883614ba`
+  `c4d65342181baf40fac09479ac2e71700654dd6660aa380ae0d920fcf1a7110a`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -105,6 +105,8 @@ release identity.
 | `research/english-gonol/` | `The-Interdependency/stack` | `f837e71bd6de2dd5c0ab7388d79f276cf658a67c` | active language construction research forge; starting consumer identity; changed entrypoint is identified by its containing PR commit | no |
 | `research/english-gonol/` | `The-Interdependency/uchc` | `7e59f266655b7678b5443c8297c81094b806f36b` | extracted language-hyperspace candidates pending graduation; historical extraction boundary; this forward Unicode entrypoint is not yet extracted | no |
 | `research/english-gonol/` | `The-Interdependency/skill-lib` | `7fdbdc4485431cb7f43a32089d10cf882c07ad0a` | construction, domain-claim and cross-repository evidence discipline; governing source for this scoped representation change | no |
+| `research/english-gonol/` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion; exact native producer consumed by the Stack UCHC Unicode entrypoint | no |
+| `research/english-gonol/` | `The-Interdependency/stack` | `798b0b419e9fea897d3fadd2d4b9cb91db68687e` | active language construction research forge; starting consumer identity; changed entrypoint is identified by its containing PR commit | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
