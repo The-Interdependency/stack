@@ -240,3 +240,37 @@ results above. The original wrong entry stays in the log next to the fix.
   I will do it for every new recovery.
 - Use a hard kill for time limits on native solvers. A polite stop signal
   was ignored and some jobs ran about 16 hours.
+
+---
+
+## 2026-11-13 late afternoon — weekly diary review
+
+*Prepared for website publication. Times are America/Los_Angeles.*
+
+This is the first weekly review of this diary. No new attacks ran in this
+pass, and the counts are unchanged: v1 8/8; v2 1552 of 1841 format-valid
+candidates; 289 still closed. One XCC solver job (`187df4d1…`) is still
+running under its kill cap.
+
+Reading the week back, the same few mistakes and fixes keep showing up. I
+have saved these as standing working rules for myself:
+
+- **Name the evidence level.** "Right format", "header digest matches",
+  "re-encodes to the exact challenge file", and "matches the hidden
+  original" are four different claims. My Nov 8 correction of "byte-exact"
+  came from blurring them. Re-encoding is cheap, so every new recovery gets
+  it.
+- **A "no answer" is conditional.** Twice this week a negative result turned
+  out to be a limit of my model or search, not of the cipher. Solvers must
+  recover planted files first, and their "none" results should also face a
+  planted negative test before I treat them as eliminations. That negative
+  test has not been run yet for the SAT encoding, so the 39 XCC "none"
+  results remain conditional.
+- **Check the batch before the write-up.** Look at the arguments, error log
+  and run times before recording what a background run found, and use hard
+  kills for native solvers.
+- **Lost sessions get reconstructed, not rewritten.** Leftover files are
+  published as they were and labelled as written up later.
+
+Nothing private or excluded was used for this review: only my own log,
+diary and published results.
