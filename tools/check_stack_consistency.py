@@ -1,3 +1,4 @@
+# ratios: loc_comments=415:88 imports_exports=9:15 calls_definitions=227:18
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -11,7 +12,7 @@
 #   network_boundary: none
 #   user_data_boundary: none
 #   admin_only: false
-#   tests: exercised in .github/workflows/stack-consistency.yml and by local invocation
+#   tests: .github/workflows/stack-consistency.yml, research/english-gonol/unicode_tests/test_unicode_provenance.py, local invocation
 #   rollout: required structural drift gate
 #   rollback: revert checker/workflow together only if replaced by an equivalent or stricter gate
 #   requires: Python standard library, Git with full repository history, stack-manifest.json, STACK_MANIFEST.md
@@ -55,6 +56,12 @@
 #   then: both candidate projections retain explicit unassigned inference authority and axis-versus-node boundaries while BASE and the input lock retain current construction standing
 #   class: boundary
 #   since: 2026-10-11
+#
+# id: uchc_unicode_graph_is_projected
+#   given: the UCHC Unicode entrypoint declares its scoped work graph
+#   then: its digest verifies and every exact participant, authority, and relation is projected into both Stack manifests without release or authority transfer
+#   class: boundary
+#   since: 2026-11-13
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -182,6 +189,39 @@ def check_research_participants(
         if commit and commit not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
     return keys, sources
+
+
+def check_unicode_bit_radius_graph(
+    manifest: dict[str, Any], human: str, findings: list[str],
+) -> None:
+    """Keep the forward Unicode producer visible beside historical inputs."""
+    workspace = "research/english-gonol/"
+    try:
+        graph = load_json(ROOT / workspace / "docs/unicode-bit-radius-work-graph.json")
+        payload = {key: graph[key] for key in ("repositories", "boundaries")}
+        digest = hashlib.sha256(json.dumps(
+            payload, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")).hexdigest()
+        if graph.get("work_graph_sha256") != digest:
+            error(findings, "unicode_graph.digest", "scoped work-graph digest does not reproduce")
+        for source in graph["repositories"]:
+            repository = source["repository"]
+            participant_id = "unicode-bit-radius-" + repository.rsplit("/", 1)[-1]
+            matches = [entry for entry in manifest.get("research_participants", [])
+                       if entry.get("workspace") == workspace
+                       and entry.get("participant_id") == participant_id]
+            if len(matches) != 1 or any(
+                matches[0].get(key) != source[key]
+                for key in ("repository", "commit", "authority", "relation")
+            ) or any(matches[0].get(key) is not False
+                     for key in ("canonical_release", "authority_transfer")):
+                error(findings, "unicode_graph.participant", f"missing or divergent scoped participant {participant_id}")
+            values = (workspace, repository, source["commit"], source["authority"], source["relation"])
+            if not any(line.startswith("|") and all(value in line for value in values)
+                       for line in human.splitlines()):
+                error(findings, "unicode_graph.human_drift", f"missing coherent human projection for {participant_id}")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        error(findings, "unicode_graph.inputs", f"invalid or missing Unicode work graph: {exc}")
 
 
 def check_base_records(
@@ -504,6 +544,7 @@ def main() -> int:
     check_digest(manifest, human, findings)
     repositories = check_repository_projection(manifest, human, findings)
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
+    check_unicode_bit_radius_graph(manifest, human, findings)
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)
@@ -522,3 +563,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# ratios: loc_comments=415:88 imports_exports=9:15 calls_definitions=227:18

@@ -8,6 +8,9 @@ on:
       - research/english-gonol/docs/unicode-bit-radius*
       - research/english-gonol/BASE.json
       - .github/workflows/uchc-unicode-bit-radius.yml
+      - stack-manifest.json
+      - STACK_MANIFEST.md
+      - tools/check_stack_consistency.py
   push:
     paths:
       - research/english-gonol/english_gonol/unicode_construction.py
@@ -15,6 +18,9 @@ on:
       - research/english-gonol/docs/unicode-bit-radius*
       - research/english-gonol/BASE.json
       - .github/workflows/uchc-unicode-bit-radius.yml
+      - stack-manifest.json
+      - STACK_MANIFEST.md
+      - tools/check_stack_consistency.py
 
 permissions:
   contents: read

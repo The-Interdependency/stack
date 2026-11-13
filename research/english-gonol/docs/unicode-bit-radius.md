@@ -43,6 +43,12 @@ The runtime verifies the native module's SHA-256 before executing those same
 bytes. It imports no ambient UCNS package and contains no replacement geometry.
 The CLI emits the exact producer identity and native frame receipt.
 
+The four scoped source identities also appear in the root `stack-manifest.json`
+and `STACK_MANIFEST.md`. Run `python tools/check_stack_consistency.py` from the
+repository root to verify their exact identities, authority and relations. This
+gate rejects missing or divergent projections while preserving historical pins;
+the Unicode tests exercise those rejection paths.
+
 ```python
 from english_gonol.unicode_construction import construct_glyph, encode_text, decode_text
 
