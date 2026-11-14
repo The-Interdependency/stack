@@ -1,11 +1,11 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "edf20bb4c4fe88c90a8ea075c74c2588354afd4b2745f8e3855057c33d049036",
+  "work_graph_sha256": "dcd6aa2f76b6391b9a0e303aaf8077036fa21f08f1a762868e380a7a1fd0d868",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
-      "commit": "321e721fb660e0fea5bb8c37d943611963039a57",
+      "commit": "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128",
       "authority": "organization-wide build and evidence doctrine",
       "relation": "full operational snapshot at stack root skill-lib/"
     },
@@ -73,8 +73,7 @@
       "Weave has an explicit Stack-owned native binary sequence-cycle candidate with exact recovery; other profiles, private/public lifting, authentication/state and full-cipher security remain unresolved.",
       "Weave native public/private key derivation and source of asymmetry remain unresolved; source-bound key metadata does not establish a native asymmetric law.",
       "a0 Municipality is specification-first composition research; native semantic-origin/affixiation integration, operational authorities and its fifth workflow remain unresolved; no runtime or six-month proof is established by placement.",
-      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes.",
-      "English ordinal/1 is selected with inherited definitions reconstructed on its expanded base. SPACE attachment references are specified; global transport, vocabulary growth, source-uncovered definitions and downstream migration remain unresolved. Native Mobius integration is not required."
+      "Pi radix research has measured finite cross-base recurrences; a base-independent segmentation or generating law remains unestablished, and no pi normality or cryptographic security follows from the finite prefixes."
     ]
   },
   "research_participants": [
@@ -476,71 +475,21 @@
     },
     {
       "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-source",
-      "repository": "The-Interdependency/stack",
-      "commit": "0b48535f315400812a257dbb790c709a5642b90b",
-      "authority": "English construction and supported entrypoint",
-      "relation": "exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
-      "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-geometry",
+      "participant_id": "ordinal-ucns",
       "repository": "The-Interdependency/ucns",
-      "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
-      "authority": "generic exact ordinal geometry",
-      "relation": "merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority",
+      "commit": "ed0b0760f05cd975a7a811f8abeb70a11d09f00b",
+      "authority": "Public Gonol and ordinal geometry",
+      "relation": "exact native producer",
       "canonical_release": false,
       "authority_transfer": false
     },
     {
       "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-admission",
-      "repository": "The-Interdependency/stack",
-      "commit": "05d235f17c1e4cd0cce35836ae3561d9bc96bd2f",
-      "authority": "English source admission and independent replay",
-      "relation": "bounded thirteen-file source-reader closure; source admission is not the selected completed geometry",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
-      "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-admission-carrier",
-      "repository": "The-Interdependency/ucns",
-      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
-      "authority": "historical carrier provenance",
-      "relation": "inherited scalar identity admission only; these historical angles do not supply the replacement placement",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
-      "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-corpus",
-      "repository": "globalwordnet/english-wordnet",
-      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
-      "authority": "complete English corpus evidence",
-      "relation": "all exact pinned source records consumed by the ordinal construction",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
-      "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-unicode-data",
-      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
-      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
-      "authority": "Unicode 18.0.0 numeric-category source",
-      "relation": "exact immutable release file consumed by expanded public-gonol admission",
-      "canonical_release": false,
-      "authority_transfer": false
-    },
-    {
-      "workspace": "research/english-gonol/",
-      "participant_id": "ordinal-unicode-math",
-      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
-      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
-      "authority": "Unicode 18.0.0 Math-property source",
-      "relation": "exact immutable release file consumed by expanded public-gonol admission",
+      "participant_id": "ordinal-proposal",
+      "repository": "The-Interdependency/uchc",
+      "commit": "c514e1a2a3f3da5ffae9ebf76d67a1d348845842",
+      "authority": "unmerged ordinal proposal; not English implementation authority",
+      "relation": "source provenance preserved before rehoming and review repairs",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -548,9 +497,179 @@
       "workspace": "research/english-gonol/",
       "participant_id": "ordinal-doctrine",
       "repository": "The-Interdependency/skill-lib",
-      "commit": "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128",
-      "authority": "build and evidence discipline",
-      "relation": "separately pinned ordinal work graph doctrine; root operational snapshot remains unchanged",
+      "commit": "e46accffcb67a10630516d486c89e67f6ad19c7a",
+      "authority": "build, extraction and review discipline",
+      "relation": "governing source; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+      "authority": "native recursive planar attachment and exact expression geometry",
+      "relation": "exact producer; historical ordinal modules unchanged",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "f19389bd7b15e6540f812ec47d67274e429daec5",
+      "authority": "English construction forge pending domain graduation",
+      "relation": "input baseline; output extraction must pin the resulting forge commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "f2528c7f4cc182912df11b92fa355b16231b1fb5",
+      "authority": "verified extraction consumer baseline",
+      "relation": "input baseline; candidate output identity is separate",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "recursive-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
+      "authority": "build and verification discipline",
+      "relation": "resolved governing skills; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "798b0b419e9fea897d3fadd2d4b9cb91db68687e",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "authority": "extracted language-hyperspace candidates pending graduation",
+      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "authority": "construction, domain-claim and cross-repository evidence discipline",
+      "relation": "governing source for this scoped representation change",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns-historical-0600a23e",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack-historical-f837e71b",
+      "repository": "The-Interdependency/stack",
+      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-forge",
+      "repository": "The-Interdependency/stack",
+      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "authority": "English construction forge",
+      "relation": "approved integration baseline and sealed structural reader",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "UCNS Unicode geometry",
+      "relation": "native equal-radius scalar and declared-parent construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-admission",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
+      "authority": "historical structural admission carrier",
+      "relation": "reproduce the immutable source admission",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-oewn",
+      "repository": "globalwordnet/english-wordnet",
+      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+      "authority": "OEWN 2025 source",
+      "relation": "lexical entries, definitions, membership, order and provenance",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-replay",
+      "repository": "The-Interdependency/stack",
+      "commit": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
+      "authority": "historical English ordinal experiment",
+      "relation": "preserve original implementation, repairs, corpus witness and operator answers",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucd-data",
+      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate numeric repertoire input",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucd-math",
+      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
+      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate Math repertoire input",
       "canonical_release": false,
       "authority_transfer": false
     }

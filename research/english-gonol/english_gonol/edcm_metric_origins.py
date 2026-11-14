@@ -78,8 +78,12 @@ from .hyperspace_construct import (
 
 SCHEMA = "english-gonol.edcm-metric-origin-set"
 VERSION = "0.2.0"
-FIXTURE = Path(__file__).resolve().parents[1] / "EDCM_METRIC_ORIGINS_SOURCE.json"
-BASE = FIXTURE.parent / "BASE.json"
+DATA = Path(__file__).resolve().parent / "data"
+# The exact semantic fixture and its registration travel with the package.
+# Stack's BASE/manifest projections are checked by the forge tests, not read
+# from a caller's workspace at runtime.
+FIXTURE = DATA / "EDCM_METRIC_ORIGINS_SOURCE.json"
+BASE = DATA / "METRIC_ORIGIN_PROVENANCE.json"
 # Bind the complete source projection, not only a caller-supplied commit label.
 FIXTURE_SHA256 = "4a769f493af21eb54c0f7d95307237a172e3fd17aaf43e62d6602cd80e0dba5c"
 

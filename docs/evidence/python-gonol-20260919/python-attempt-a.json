@@ -1,0 +1,22 @@
+{
+  "attempt": "python-a",
+  "completed_files": 671,
+  "completed_outcomes_equal_prefix_of_full_pass": true,
+  "completed_outcomes_sha256": "f109fffdb03741ab1a1252b5f88db33200366f06de03f0394b6c63b24dfb518f",
+  "diagnostic_rebuilds": {
+    "count": 3,
+    "each_replay_receipt_sha256": "4f43d2e4ceced18bf74182c2309679a46022f64f0ceda0790cb1510439c0cbbd",
+    "each_sqlite_integrity": "ok"
+  },
+  "failed_source": "Lib/test/test_logging.py",
+  "failure": "sqlite3.OperationalError: attempt to write a readonly database",
+  "failure_stage": "verify_construct PRAGMA integrity_check",
+  "log_file": "python-attempt-a.log",
+  "log_sha256": "c13d0c3420eb742d4bff16fa501c7eac740a45e314c7ffcee674187893080126",
+  "process_exit_code": 1,
+  "repeat_policy": "Retain the failed attempt, run the same frozen implementation over the full corpus in a new output directory, and compare complete successful passes.",
+  "root_cause": "hmmm: not established; no verification weakening or code change applied",
+  "schema": "language-gonol.python-attempt-failure",
+  "status": "FAILED",
+  "version": 1
+}

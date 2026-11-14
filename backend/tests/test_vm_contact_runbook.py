@@ -8,8 +8,10 @@ shell: they would end the session at the next expected-nonzero command.
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import re
 import subprocess
+import tempfile
 import unittest
 
 RUNBOOK = Path(__file__).resolve().parents[1] / "deploy" / "VM_CONTACT.md"
@@ -75,12 +77,13 @@ class VmContactRunbookTests(unittest.TestCase):
                     self.assertRegex(block, r"(?m)^\s*%s=" % name, f"block at line {line} uses ${name} without defining it")
 
     def test_expected_empty_checks_cannot_fail_the_block(self):
-        # A bare `grep -c` (exit 1 on zero matches) must be guarded by `|| true`.
+        # A bare `grep -c` (exit 1 on zero matches) must be guarded by `|| true`
+        # inside the same command substitution, so the count is still printed.
         for line, block in self.blocks:
             for text in block.splitlines():
                 if "grep -c" in text:
                     with self.subTest(line=line, text=text):
-                        self.assertIn("|| true", text)
+                        self.assertRegex(text, r"\$\(grep -c[^()]*\|\| true\)")
 
     def test_install_blocks_report_where_set_e_stopped_them(self):
         # A block that stops under set -e and cleans up with an EXIT trap must
@@ -91,13 +94,51 @@ class VmContactRunbookTests(unittest.TestCase):
                     self.assertRegex(block, r"(?m)^\s*trap\s+'echo \"FAIL [^']*\$LINENO[^']*'\s+ERR\b")
 
     def test_broker_receipt_check_only_counts_this_run(self):
-        for line, block in self.blocks:
-            if "broker receipt" in block:
-                with self.subTest(line=line):
-                    self.assertRegex(block, r"(?m)^START=\$\(date ")
-                    self.assertNotRegex(block, r"journalctl -u vm-mcp-admin\.service -n ")
-                    self.assertIn('--since "$START"', block)
-                    self.assertIn("test -s /root/vm-mcp.auth", block)
+        blocks = [block for _, block in self.blocks if "broker receipt" in block]
+        self.assertEqual(len(blocks), 1)
+        block = blocks[0]
+        self.assertIn("START = str(time.time())", block)
+        self.assertIn('"--since", "@" + START', block)
+        self.assertIn('receipt.get("request_id") == result["request_id"]', block)
+        self.assertIn('receipt.get("mode") == "admin"', block)
+        self.assertIn('receipt.get("run_as") == "root"', block)
+        self.assertIn("CHECK_PORT, CHECK_PROFILE, CHECK_SOCKET, TOKEN_FILE, CHECK_ROOT = load_target()", block)
+
+
+    def _check_d_writable(self):
+        lines = [text for _, block in self.blocks for text in block.splitlines()
+                 if text.startswith("w=$(sudo -n -u vmmcp find /opt/vm-mcp")]
+        self.assertEqual(len(lines), 1)
+        return lines[0]
+
+    def test_check_d_prunes_unsearchable_dirs_and_keeps_read_failures(self):
+        line = self._check_d_writable()
+        self.assertTrue(line.endswith("|| w=READ-FAILED"))
+        self.assertIn("-type d ! -executable -prune -o -writable -print", line)
+
+    @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
+    def test_check_d_find_behaviour(self):
+        line = self._check_d_writable().replace("sudo -n -u vmmcp ", "")
+        script = line.replace("/opt/vm-mcp", '"$1"') + '\nprintf "%s" "$w"\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp, "opt")
+            (root / "__pycache__").mkdir(parents=True)
+            (root / "server.py").write_text("x")
+            (root / "server.py").chmod(0o444)
+            (root / "__pycache__").chmod(0o000)
+            run = lambda: subprocess.run(["bash", "-c", script, "_", str(root)],
+                                         text=True, capture_output=True, check=False).stdout
+            try:
+                root.chmod(0o555)
+                self.assertEqual("", run(), "an unsearchable dir must not read as a failure")
+                (root / "server.py").chmod(0o644)
+                self.assertEqual(str(root / "server.py"), run().strip())
+                (root / "server.py").chmod(0o444)
+                (root / "__pycache__").chmod(0o100)  # enterable but not listable
+                self.assertEqual("READ-FAILED", run())
+            finally:
+                root.chmod(0o755)
+                (root / "__pycache__").chmod(0o755)
 
 
 if __name__ == "__main__":

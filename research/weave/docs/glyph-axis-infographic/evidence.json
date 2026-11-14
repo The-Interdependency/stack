@@ -1,0 +1,91 @@
+{
+  "carrier_receipt": "034f4f98f2a5aea9ac1aee8bb25cfcb9af2f304e1dfa56d33a62a0b8eb9976d2",
+  "carrier_scope": "Explicit eight-identity example; not the Public Gonol arrangement",
+  "classification": "ILLUSTRATION_WITH_EXACT_COUNTS_AND_64_OCCURRENCE_CHECK",
+  "dimensions": [
+    {
+      "axes": 2,
+      "lines": 16,
+      "occurrences": 64,
+      "square_slices": 1
+    },
+    {
+      "axes": 3,
+      "lines": 192,
+      "occurrences": 512,
+      "square_slices": 24
+    },
+    {
+      "axes": 4,
+      "lines": 2048,
+      "occurrences": 4096,
+      "square_slices": 384
+    },
+    {
+      "axes": 5,
+      "lines": 20480,
+      "occurrences": 32768,
+      "square_slices": 5120
+    },
+    {
+      "axes": 6,
+      "lines": 196608,
+      "occurrences": 262144,
+      "square_slices": 61440
+    },
+    {
+      "axes": 7,
+      "lines": 1835008,
+      "occurrences": 2097152,
+      "square_slices": 688128
+    },
+    {
+      "axes": 8,
+      "lines": 16777216,
+      "occurrences": 16777216,
+      "square_slices": 7340032
+    }
+  ],
+  "distinction": "Occurrence address rotation is not internal UCNS orientation transport.",
+  "figure_files": {
+    "glyph-axis-infographic.pdf": "5085b60704d23b799bc819493597e3d7044e4ef0b7dce98c36fa559fa0697302",
+    "glyph-axis-infographic.png": "8fb64bb35005895acb29a6c402c1f004f2b9b492e735cdeeb6e262e26881c6ff",
+    "glyph-axis-infographic.svg": "0ee846f09c0892d4894b8ef9101c05ac93f5f6a0db5c5429b58b7c2feece2654"
+  },
+  "four_turn_identity": true,
+  "glyphs": [
+    "A",
+    "é",
+    "Ω",
+    "Ж",
+    "λ",
+    "π",
+    "ß",
+    "→"
+  ],
+  "hmmm": [
+    "Matching/deletion predicates for glyph interiors and whole objects remain distinct.",
+    "Higher-axis native UCNS closure and Unicode-wide frequencies were not tested."
+  ],
+  "matplotlib_version": "3.10.8",
+  "moved_occurrences": 64,
+  "original_native_objects_retained": true,
+  "producer_sha256": "784cf61d185d2a54259c0e013af8c0ea2b6d79fad32beaffda7819f0c0e512ad",
+  "renderer_sha256": "ef94e9fac9bc620c87e29e0785816b27c9eee0cb5eee623d1836f89b3388bdc5",
+  "rotation": "(row,column) -> (column,7-row)",
+  "schema": "weave.glyph-axis-figure-evidence.v1",
+  "stack_base": "37e493d194651ca45c7bc3fbd6327f653df6879e",
+  "text_contrast_ratios": {
+    "ink/pale": 12.106,
+    "ink/paper": 12.856,
+    "ink/white": 14.256,
+    "muted/paper": 5.41,
+    "muted/white": 5.999,
+    "teal/white": 6.411,
+    "violet/lavender": 6.126,
+    "violet/white": 7.342,
+    "white/ink": 14.256
+  },
+  "ucns_blob": "9fa84ef20f19fe0c04df680f49b50ea307e6d624",
+  "ucns_commit": "3f97f5292b0bd2dab911540062ccf79dea2be1bf"
+}

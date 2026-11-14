@@ -58,13 +58,18 @@ for source-built participants.
 One compact SQLite construct plus a small manifest:
 
 ```text
-construct.db   characters, occurrences, control_identities, controls, newlines, meta
+construct.db   characters, occurrences, control_identities, controls, newlines, source_bytes, meta
 manifest.json  schema, source digests, counts, carrier pin, receipt_sha256, hmmm
 ```
 
 No giant JSON receipt.
 
 ## Replay
+
+Version 2 preserves original source bytes, including encoding markers, and
+reconstructs the complete construct in temporary storage during replay. Every
+table and manifest field must agree with that reconstruction. Version 1
+receipts must be rebuilt from original source.
 
 Replay verifies, at minimum:
 

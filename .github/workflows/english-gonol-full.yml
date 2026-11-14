@@ -10,6 +10,7 @@ on:
       - "research/english-gonol/tests/test_full_construct_run.py"
       - "research/english-gonol/tests/test_source_order.py"
       - ".github/workflows/english-gonol-full.yml"
+      - "requirements-language-tests.txt"
 
 permissions:
   contents: read
@@ -43,10 +44,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v7.0.0
         with:
-          python-version: "3.12"
+          python-version: "3.12.14"
 
       - name: Install construction prerequisites
-        run: python -m pip install --disable-pip-version-check pytest PyYAML
+        run: python -m pip install --disable-pip-version-check --require-hashes -r requirements-language-tests.txt
 
       - name: Preflight resources and exact producer identities
         shell: bash

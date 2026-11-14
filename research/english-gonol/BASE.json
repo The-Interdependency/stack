@@ -6,8 +6,8 @@
   "source_commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
   "ucns_prerequisite": {
     "repository": "The-Interdependency/ucns",
-    "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
-    "relation": "selected English ordinal construction consumes exact UCNS geometry; root libs/ucns and the extraction source remain historical pins"
+    "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "relation": "English Gonol Construction consumes UCNS geometry; UCNS owns geometry and representation"
   },
   "canon_path": "../../libs/edcm",
   "authority": "stack-local research component (extracted from The-Interdependency/edcm)",
@@ -25,16 +25,40 @@
     "relation": "exact EDCM semantic metric-origin producer with canonical O/L split; does not refresh the historical extraction source or libs/edcm pin",
     "authority_transfer": false
   },
-  "historical_ucns_prerequisite": {
-    "repository": "The-Interdependency/ucns",
-    "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
-    "relation": "English Gonol Construction consumes UCNS geometry; UCNS owns geometry and representation"
+  "ordinal_candidate": {
+    "work_graph": "docs/ordinal-work-graph.json",
+    "proposal_provenance": "docs/ordinal-source.json",
+    "authority": "Stack English implementation candidate; UCNS owns geometry",
+    "authority_transfer": false
   },
-  "active_construction": {
-    "selection": "ACTIVE_CONSTRUCTION.json",
-    "source_repository": "The-Interdependency/stack",
-    "source_commit": "0b48535f315400812a257dbb790c709a5642b90b",
-    "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "historical attachment compatibility; recursive validator repaired; candidate bearing remains explicit; graduation unchanged"
+  },
+  "unicode_bit_radius": {
+    "profile": "uchc.unicode-bit-radius/1",
+    "work_graph": "docs/unicode-bit-radius-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "authority": "Stack UCHC language entrypoint consumes native UCNS Unicode gonols",
+    "authority_transfer": false,
+    "standing": "forward primitive and recursive Unicode objects; 16 b rad; 32-bit big-endian diameter; English corpus implementation in unicode_corpus"
+  },
+  "unicode_recursive": {
+    "profile": "uchc.unicode-recursive/1",
+    "work_graph": "docs/unicode-bit-radius-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "authority_transfer": false,
+    "standing": "completed objects reenter with explicit equal-radius parent placement; automatic bearing selection unresolved"
+  },
+  "unicode_corpus": {
+    "profile": "uchc.english-unicode-corpus/1",
+    "entrypoint": "python -m english_gonol",
+    "work_graph": "docs/unicode-corpus-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "ordinal_replay": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
     "authority_transfer": false
   }
 }

@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `edf20bb4c4fe88c90a8ea075c74c2588354afd4b2745f8e3855057c33d049036`
+  `dcd6aa2f76b6391b9a0e303aaf8077036fa21f08f1a762868e380a7a1fd0d868`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -45,40 +45,13 @@ meaning used by that repository.
 
 | Repository | Exact source commit | Source branch | Authority | Stack relation |
 |---|---|---|---|---|
-| `The-Interdependency/skill-lib` | `321e721fb660e0fea5bb8c37d943611963039a57` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
+| `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | main | organization-wide build and evidence doctrine | operational snapshot at `skill-lib/` |
 | `The-Interdependency/metapat` | `34d954aa1e2092e615b03a180500f6b6977f501e` | main | semantic authority (Meta Energy Theory) | canon view `libs/metapat/`; research `research/metapat/` |
 | `The-Interdependency/ucns` | `828c0b8bbcfc267efb5701da714191c1f73a81ff` | main | geometry and mathematical representation | canon view `libs/ucns/`; research `research/ucns/` |
 | `The-Interdependency/edcm` | `7951ca32ba0f2494dc68ff9b7f6a80151918a56d` | main | measurement and evaluation of text-domain outputs | canon view `libs/edcm/`; measurement research `research/edcm/`; English Gonol construction is separate at `research/english-gonol/` |
 | `The-Interdependency/pcea` | `91ffa8c7249dfb810ca64a0bbc500481c0bd12a9` | main | prime circle encryption algorithm | canon view `libs/pcea/`; research `research/pcea/` |
 | `The-Interdependency/ptcna` | `97abdd1bbda61a68e0aac8595a32a3cb0ce73487` | main | prime tensor circled neural architecture | canon view `libs/ptcna/`; research `research/ptcna/` |
 | `The-Interdependency/epac` | `949cb1cb304927942966c9fb396caf6227120e7f` | v0.1.0 | independent implementation and public-contract authority for EPAC | immutable release artifact consumer at integration/epac/; historical forge evidence at research/epac/; libs/epac/ remains unpopulated |
-
-## Selected English ordinal construction
-
-`english.ordinal/1` replaces the previous completed-geometry default in
-`research/english-gonol/`. The exact implementation baseline and its inputs are
-research participants; no canonical `libs/` pin is refreshed. The earlier v2
-and four-view records below remain historical evidence, not current geometry.
-Use `PYTHONPATH=research/english-gonol python -m english_gonol profile` to inspect
-selection, and see [the supported build](research/english-gonol/README.md).
-
-| Participant ID | Source | Exact identity | Relation |
-|---|---|---|---|
-| `ordinal-source` | `The-Interdependency/stack` | `0b48535f315400812a257dbb790c709a5642b90b` | exact selected ordinal runtime source and supported entrypoint; no independent UCHC release authority |
-| `ordinal-geometry` | `The-Interdependency/ucns` | `a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb` | merged UCNS #241 producer; exact local radius and carrier angle law, not global transport or semantic authority |
-| `ordinal-admission` | `The-Interdependency/stack` | `05d235f17c1e4cd0cce35836ae3561d9bc96bd2f` | bounded thirteen-file source-reader closure; source admission is not the selected completed geometry |
-| `ordinal-admission-carrier` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | inherited scalar identity admission only; these historical angles do not supply the replacement placement |
-| `ordinal-corpus` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | all exact pinned source records consumed by the ordinal construction |
-| `ordinal-unicode-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | exact immutable Unicode 18.0.0 numeric-category release file consumed by public-gonol admission |
-| `ordinal-unicode-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | exact immutable Unicode 18.0.0 Math-property release file consumed by public-gonol admission |
-| `ordinal-doctrine` | `The-Interdependency/skill-lib` | `e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128` | separately pinned ordinal work graph doctrine; root operational snapshot remains unchanged |
-
-UCNS #241 merged at `6ebbf970ad13a0d2e1c13bd65c496b671e740185`;
-the source consumer remains pinned to the tested producer bytes above. The
-source-admission closure remains support, not an alternate completed geometry.
-[ACTIVE_CONSTRUCTION.json](research/english-gonol/ACTIVE_CONSTRUCTION.json) owns
-default selection and [the question record](research/english-gonol/docs/ordinal-questions.md)
-separates unanswered construction laws from remaining engineering work.
 
 ## Research-Only Composition Participants
 
@@ -128,6 +101,12 @@ release identity.
 | `research/a0-municipality/` | `The-Interdependency/skill-lib` | `3024df2b91a2cf7f103dc60640081ec03505335a` | separately pinned current placement doctrine; does not refresh the root operational snapshot | no |
 | `research/a0-municipality/` | `The-Interdependency/uchc` | `0401191adcfd490bc98856d3f4f8e9f3c1ae189c` | unmerged PR #3 documentation reference; no duplicate Hilbert implementation or completed graduation | no |
 | `research/a0-municipality/` | `The-Interdependency/stack` | `1df56909816362695b3519838dd7da38226ec565` | unmerged draft PR #66 protocol reference only; no implemented recovery, theorem or minimum-complexity claim | no |
+| `research/english-gonol/` | `The-Interdependency/ucns` | `0600a23e27af83d06157ee6ca66644dbff613d2a` | native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation; exact native producer consumed by the Stack UCHC Unicode entrypoint | no |
+| `research/english-gonol/` | `The-Interdependency/stack` | `f837e71bd6de2dd5c0ab7388d79f276cf658a67c` | active language construction research forge; starting consumer identity; changed entrypoint is identified by its containing PR commit | no |
+| `research/english-gonol/` | `The-Interdependency/uchc` | `7e59f266655b7678b5443c8297c81094b806f36b` | extracted language-hyperspace candidates pending graduation; historical extraction boundary; this forward Unicode entrypoint is not yet extracted | no |
+| `research/english-gonol/` | `The-Interdependency/skill-lib` | `7fdbdc4485431cb7f43a32089d10cf882c07ad0a` | construction, domain-claim and cross-repository evidence discipline; governing source for this scoped representation change | no |
+| `research/english-gonol/` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion; exact native producer consumed by the Stack UCHC Unicode entrypoint | no |
+| `research/english-gonol/` | `The-Interdependency/stack` | `798b0b419e9fea897d3fadd2d4b9cb91db68687e` | active language construction research forge; starting consumer identity; changed entrypoint is identified by its containing PR commit | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
@@ -248,10 +227,9 @@ release lock and acceptance evidence. EPAC consumes exact UCNS `6eea1828a34ed8ec
 Stack's direct `libs/ucns/` and separate research UCNS pins remain unchanged.
 
 English Gonol Construction remains stack-local research, not EDCM and not an independent
-canonical release. The selected `english.ordinal/1` local construction is distinct
-from the historical v2 and four-view receipts. Complete source and ordinal replay
-establish construction/recovery, not semantic quality, general geometry canon or
-measurement validity.
+canonical release. Its v2 full pinned-corpus construction/replay survived with compact
+committed evidence; that result establishes the construction/replay only, not semantic
+quality, geometry canon, or measurement validity.
 
 Python Gonol Construction is also stack-local research. Its Python 3.12 source
 constructor has no independent repository/release authority, and its successful replay
@@ -272,7 +250,7 @@ establish a base-independent generating law.
 ## hmmm
 
 - UCNS has no `LICENSE` file at pinned commit `828c0b8`.
-- English Gonol Construction has selected exact ordinal geometry with inherited definitions reconstructed on the expanded base. SPACE references are specified; global transport, vocabulary growth, source-uncovered definitions, downstream migration and independent release still need their own evidence. Native Mobius integration is not required.
+- English Gonol Construction remains stack-local research; independent repository/release authority and the exact UCNS displacement law have not been established.
 - Python Gonol Construction remains stack-local research; independent repository/release authority and exact UCNS affixiation geometry remain unresolved.
 - URPCS is retired for specification divergence; why GPT flattened/substituted the intended construction remains unresolved, and retained evidence is scoped only to the substituted implementation.
 - Weave now runs one explicit native sequence-cycle profile with corpus normalization and prime-derived splits; cryptographic lifting, authentication/state and full-cipher security remain unresolved.
@@ -308,3 +286,42 @@ sequences, retains native whole/occurrence-circle relations, uses scoped numeral
 references and prime-route bit partitions, and reverses the completed rounds.
 See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
 and all-cost accounting. This is construction/recovery, not established encryption.
+
+## English ordinal candidate
+
+The candidate remains in `research/english-gonol/`; UCHC verifies an exact extraction.
+See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.md).
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `ed0b0760f05cd975a7a811f8abeb70a11d09f00b` | Public Gonol and ordinal geometry; exact native producer |
+| `The-Interdependency/uchc` | `c514e1a2a3f3da5ffae9ebf76d67a1d348845842` | unmerged ordinal proposal; not English implementation authority; source provenance preserved before rehoming and review repairs |
+| `The-Interdependency/skill-lib` | `e46accffcb67a10630516d486c89e67f6ad19c7a` | build, extraction and review discipline; governing source; no geometry authority |
+
+No authority, semantic standing or graduation status transfers.
+
+## English recursive attachment integration
+
+See [recursive-stack.md](research/english-gonol/docs/recursive-stack.md).
+The global libraries and historical ordinal source remain unchanged.
+
+| Source | Exact commit | Role |
+| --- | --- | --- |
+| `The-Interdependency/ucns` | `9cc00771e54336d58ee377faeec87a3a33dbd4bf` | native recursive planar attachment and exact expression geometry; exact producer; historical ordinal modules unchanged |
+| `The-Interdependency/stack` | `f19389bd7b15e6540f812ec47d67274e429daec5` | English construction forge pending domain graduation; input baseline; output extraction must pin the resulting forge commit |
+| `The-Interdependency/uchc` | `f2528c7f4cc182912df11b92fa355b16231b1fb5` | verified extraction consumer baseline; input baseline; candidate output identity is separate |
+| `The-Interdependency/skill-lib` | `d71a3a938cb6d646ffc0b59186452117e4a37d13` | build and verification discipline; resolved governing skills; no geometry authority |
+
+## English Unicode corpus
+
+The [source graph](research/english-gonol/docs/unicode-corpus-work-graph.json) binds the complete corpus to the active Unicode producer.
+
+| Participant | Source | Exact identity | Use |
+|---|---|---|---|
+| `unicode-corpus-forge` | `The-Interdependency/stack` | `223f2b2c70ab764826f8d7b99174309e8aaad8b3` | English construction forge. approved integration baseline and sealed structural reader |
+| `unicode-corpus-ucns` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | UCNS Unicode geometry. native equal-radius scalar and declared-parent construction |
+| `unicode-corpus-admission` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | historical structural admission carrier. reproduce the immutable source admission |
+| `unicode-corpus-oewn` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | OEWN 2025 source. lexical entries, definitions, membership, order and provenance |
+| `unicode-corpus-replay` | `The-Interdependency/stack` | `30e081a5f0e624d4be45161d96fcc09c37c9edb6` | historical English ordinal experiment. preserve original implementation, repairs, corpus witness and operator answers |
+| `unicode-corpus-ucd-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | Unicode Character Database. authenticate numeric repertoire input |
+| `unicode-corpus-ucd-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | Unicode Character Database. authenticate Math repertoire input |

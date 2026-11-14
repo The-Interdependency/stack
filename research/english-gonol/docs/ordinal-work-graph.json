@@ -4,58 +4,39 @@
   "repositories": [
     {
       "repository": "The-Interdependency/ucns",
-      "commit": "a7bfa0c96daca1f7445ba57c39fa6d8fd62e51eb",
-      "authority": "generic exact ordinal geometry",
-      "relation": "new producer; no English semantic authority"
-    },
-    {
-      "repository": "The-Interdependency/ucns",
-      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
-      "authority": "historical scalar-admission carrier",
-      "relation": "retained source-admission carrier only; historical angles are not consumed by the replacement constructor"
+      "commit": "ed0b0760f05cd975a7a811f8abeb70a11d09f00b",
+      "authority": "Public Gonol and ordinal geometry",
+      "relation": "exact native producer"
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "05d235f17c1e4cd0cce35836ae3561d9bc96bd2f",
-      "authority": "English source admission and construction forge",
-      "relation": "bounded structural-source baseline; candidate source bound by generated implementation digest and observed head"
+      "commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+      "authority": "English construction forge pending UCHC graduation",
+      "relation": "starting forge baseline; this change adds the ordinal candidate"
     },
     {
-      "repository": "globalwordnet/english-wordnet",
-      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
-      "authority": "complete English corpus evidence",
-      "relation": "all exact pinned source records"
-    },
-    {
-      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
-      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
-      "authority": "Unicode 18.0.0 numeric-category source",
-      "relation": "immutable release file identity consumed by public-gonol admission"
-    },
-    {
-      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
-      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
-      "authority": "Unicode 18.0.0 Math-property source",
-      "relation": "immutable release file identity consumed by public-gonol admission"
+      "repository": "The-Interdependency/uchc",
+      "commit": "c514e1a2a3f3da5ffae9ebf76d67a1d348845842",
+      "authority": "unmerged ordinal proposal; not English implementation authority",
+      "relation": "source provenance preserved before rehoming and review repairs"
     },
     {
       "repository": "The-Interdependency/skill-lib",
-      "commit": "e74ce1ee8a2cea50b0a6acce7697a6d3d9b2e128",
-      "authority": "build discipline",
-      "relation": "current loaded governing contracts"
+      "commit": "e46accffcb67a10630516d486c89e67f6ad19c7a",
+      "authority": "build, extraction and review discipline",
+      "relation": "governing source; no geometry authority"
     }
   ],
   "boundaries": {
     "authority_transfer": false,
     "proof_status_transfer": false,
     "measurement_status_transfer": false,
-    "semantic_mapping": "English supplies exact participants and explicit ordering policy; UCNS supplies geometry only",
-    "agent_scope": "cross-repository-work-graph",
+    "semantic_mapping": "UCNS defines geometry; Stack owns the English candidate; UCHC may verify an extraction.",
+    "agent_scope": "english-ordinal-review-repair",
     "hmmm": [
-      "Native Mobius lift and global frame attachment remain unresolved.",
-      "Balanced scalar insertion and composite angular ordering are declared profile choices.",
-      "The historical admission carrier is pinned separately in preserved source metadata; its angles are not consumed by the new constructor."
+      "Missing Public Gonol bearings and higher word frames remain unresolved.",
+      "Verified extraction is not stable publication, released-artifact reconsumption or domain graduation."
     ]
   },
-  "work_graph_sha256": "9ffabda1a50b7131c5d138eb1920687a7053454ab81cb0095fbadd4bde2627fb"
+  "work_graph_sha256": "7cbf5bbef94a934731a5d5fee73af627f3466388692ec37b246e1ce09c0c9078"
 }

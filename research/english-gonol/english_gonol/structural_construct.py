@@ -1,4 +1,4 @@
-# ratios: loc_comments=567:84 imports_exports=19:6 calls_definitions=351:24
+# ratios: loc_comments=540:80 imports_exports=19:6 calls_definitions=333:23
 """Complete English structural construction and byte-stable replay.
 
 Usage: python -m english_gonol.structural_construct build --source-root PATH
@@ -77,9 +77,6 @@ from english_gonol.structural_rules import (
 # id: structural_regular_database
 #   given: construct.db is a symlink or other nonregular file
 #   then: refuse verification before opening it
-# id: structural_regular_bounded_manifest
-#   given: an admission manifest, including a nested ordinal admission
-#   then: snapshot a bounded regular nonsymlink file and reject growth or replacement
 # === END CONTRACTS ===
 
 SCHEMA = "english-gonol.structural-construct"
@@ -98,7 +95,6 @@ RAW_SOURCE_MAX_FILES = 73
 RAW_SOURCE_MAX_FILE_BYTES = 3333131
 RAW_SOURCE_MAX_TOTAL_BYTES = 46372711
 RAW_SOURCE_MAX_PATH_BYTES = 23
-MANIFEST_MAX_BYTES = 64_000_000
 FIXED_METADATA = {
     "geometry_state": "hmmm", "normalization": "none",
     "definition_topologies": ["constituent-chain", "constituent-direct", "definition-succession"],
@@ -467,41 +463,11 @@ def _schema(db: sqlite3.Connection) -> list:
                       "WHERE name NOT GLOB 'sqlite_*' ORDER BY type,name").fetchall()
 
 
-def _read_bounded_regular(path: Path, limit: int, label: str) -> bytes:
-    """Snapshot one bounded regular file without following links or blocking on special files."""
-    before = path.lstat()
-    if not stat.S_ISREG(before.st_mode):
-        raise ValueError(f'{label} must be a regular nonsymlink file: {path.name}')
-    if before.st_size > limit:
-        raise ValueError(f'{label} exceeds read budget: {path.name}')
-    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
-    try:
-        fd = os.open(path, flags)
-    except OSError as error:
-        raise ValueError(f'{label} changed or cannot be opened: {path.name}') from error
-    with os.fdopen(fd, 'rb') as stream:
-        opened = os.fstat(stream.fileno())
-        if (not stat.S_ISREG(opened.st_mode)
-                or (opened.st_dev, opened.st_ino) != (before.st_dev, before.st_ino)):
-            raise ValueError(f'{label} changed or is not regular: {path.name}')
-        if opened.st_size > limit:
-            raise ValueError(f'{label} exceeds read budget: {path.name}')
-        raw = stream.read(limit + 1)
-        after = os.fstat(stream.fileno())
-        if len(raw) > limit:
-            raise ValueError(f'{label} exceeds read budget: {path.name}')
-        if (len(raw) != opened.st_size
-                or (after.st_size, after.st_mtime_ns) != (opened.st_size, opened.st_mtime_ns)):
-            raise ValueError(f'{label} changed during bounded read: {path.name}')
-    return raw
-
-
-
 @contextmanager
 def _verified_connection(out_dir: str | Path):
     """Keep verification and subsequent reads on one snapshot until closed."""
     root = Path(out_dir)
-    manifest_bytes = _read_bounded_regular(root / "manifest.json", MANIFEST_MAX_BYTES, "admission manifest")
+    manifest_bytes = (root / "manifest.json").read_bytes()
     manifest = json.loads(manifest_bytes)
     if manifest_bytes != canonical(manifest) + b"\n":
         raise StructuralError("noncanonical manifest encoding")
@@ -711,4 +677,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-# ratios: loc_comments=567:84 imports_exports=19:6 calls_definitions=351:24
+# ratios: loc_comments=540:80 imports_exports=19:6 calls_definitions=333:23
