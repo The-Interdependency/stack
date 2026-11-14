@@ -11,7 +11,7 @@ This width is independent of geometric placement radius. `construct_sequence`
 accepts complete text frames and its own completed objects; `closed_record` and
 `replay_closed` retain the complete graph. Parent bearings are explicit, sibling
 origins share one radius, and child interiors remain intact. Automatic bearing
-selection and corpus migration retain the boundaries in the linked contract.
+selection remains unresolved. The [complete English corpus](docs/unicode-corpus.md) uses the same native constructor for its word interiors and explicit parent placements.
 
 ## Historical ordinal and recursive candidates
 

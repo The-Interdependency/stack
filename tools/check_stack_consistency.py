@@ -1,4 +1,4 @@
-# ratios: loc_comments=415:88 imports_exports=9:15 calls_definitions=227:18
+# ratios: loc_comments=449:89 imports_exports=9:16 calls_definitions=247:19
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -133,9 +133,14 @@ def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
         if not HEX40.fullmatch(commit):
             error(findings, "repository.commit", f"{entry.get('repository')}: invalid commit {commit!r}")
     for entry in manifest.get("research_participants", []):
-        commit = entry.get("commit", "")
-        if not HEX40.fullmatch(commit):
+        commit = entry.get("commit")
+        artifact_sha256 = entry.get("artifact_sha256")
+        if (commit is None) == (artifact_sha256 is None):
+            error(findings, "research.identity", f"{entry.get('workspace')}:{entry.get('participant_id')}: exactly one of commit or artifact_sha256 is required")
+        elif commit is not None and not HEX40.fullmatch(str(commit)):
             error(findings, "research.commit", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid commit {commit!r}")
+        elif artifact_sha256 is not None and re.fullmatch(r"[0-9a-f]{64}", str(artifact_sha256)) is None:
+            error(findings, "research.artifact_sha256", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid artifact_sha256 {artifact_sha256!r}")
         if entry.get("authority_transfer") is not False:
             error(findings, "research.authority_transfer", f"{entry.get('workspace')}:{entry.get('participant_id')} must keep authority_transfer=false")
 
@@ -179,15 +184,18 @@ def check_research_participants(
         participant_id = str(entry.get("participant_id", ""))
         repository = str(entry.get("repository", ""))
         commit = str(entry.get("commit", ""))
+        artifact_sha256 = str(entry.get("artifact_sha256", ""))
         key = (workspace, participant_id)
         if key in keys:
             error(findings, "research.duplicate", f"duplicate research participant {key!r}")
         keys.add(key)
-        sources.add((workspace, repository, commit))
+        if commit:
+            sources.add((workspace, repository, commit))
         if workspace and workspace not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention workspace {workspace!r}")
-        if commit and commit not in human:
-            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
+        identity = commit or artifact_sha256
+        if identity and identity not in human:
+            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research identity {identity!r}")
     return keys, sources
 
 
@@ -222,6 +230,34 @@ def check_unicode_bit_radius_graph(
                 error(findings, "unicode_graph.human_drift", f"missing coherent human projection for {participant_id}")
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
         error(findings, "unicode_graph.inputs", f"invalid or missing Unicode work graph: {exc}")
+
+
+def check_unicode_corpus_graph(manifest: dict, human: str, findings: list[str]) -> None:
+    """Resolve the corpus participant set and its hashes against the root projection."""
+    workspace = "research/english-gonol/"
+    try:
+        graph = load_json(ROOT / workspace / "docs/unicode-corpus-work-graph.json")
+        body = {k: graph[k] for k in ("repositories", "boundaries")}
+        declared = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if ((graph["schema"], graph["version"]) != ("the-interdependency.stack-manifest", "1.0.0")
+                or graph["work_graph_sha256"] != declared
+                or any(graph["boundaries"][k] is not False or manifest["boundaries"][k] is not False
+                       for k in ("authority_transfer", "proof_status_transfer", "measurement_status_transfer"))):
+            raise ValueError("invalid schema, digest or nontransfer boundaries")
+        root = [r for r in manifest["research_participants"] if r["workspace"] == workspace
+                and r["participant_id"].startswith("unicode-corpus-")]
+        projected = [{k: v for k, v in r.items() if k not in ("workspace", "canonical_release", "authority_transfer")}
+                     for r in root]
+        if projected != graph["repositories"] or any(
+                r.get("authority_transfer") is not False or r.get("canonical_release") is not False for r in root):
+            raise ValueError("participants differ from the root projection")
+        for r in root:
+            identity = r.get("commit") or r["artifact_sha256"]
+            if not any(all(str(r[k]) in line for k in ("participant_id", "repository", "authority", "relation"))
+                       and identity in line for line in human.splitlines()):
+                raise ValueError("missing human projection: " + r["participant_id"])
+    except (ValueError, KeyError, TypeError, OSError) as exc:
+        error(findings, "unicode_corpus.graph", str(exc))
 
 
 def check_base_records(
@@ -545,6 +581,7 @@ def main() -> int:
     repositories = check_repository_projection(manifest, human, findings)
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
     check_unicode_bit_radius_graph(manifest, human, findings)
+    check_unicode_corpus_graph(manifest, human, findings)
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)
@@ -563,4 +600,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=415:88 imports_exports=9:15 calls_definitions=227:18
+# ratios: loc_comments=449:89 imports_exports=9:16 calls_definitions=247:19

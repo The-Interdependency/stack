@@ -68,7 +68,7 @@ proof, certification or measurement standing transfers between repositories.
 
 This completes scalar width/transport and recursive declared-frame completion.
 Automatic closed-object bearing selection, affixiation beyond declared rigid
-placement, the ongoing corpus replacement in Stack #88, and domain graduation
+placement, and domain graduation
 remain separate work. Historical
 corpus, ordinal and attachment receipts keep their pinned producers and cannot
 be relabeled as this Unicode representation. Roll back the entrypoint and its

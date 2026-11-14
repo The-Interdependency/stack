@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `c4d65342181baf40fac09479ac2e71700654dd6660aa380ae0d920fcf1a7110a`
+  `dcd6aa2f76b6391b9a0e303aaf8077036fa21f08f1a762868e380a7a1fd0d868`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -311,3 +311,17 @@ The global libraries and historical ordinal source remain unchanged.
 | `The-Interdependency/stack` | `f19389bd7b15e6540f812ec47d67274e429daec5` | English construction forge pending domain graduation; input baseline; output extraction must pin the resulting forge commit |
 | `The-Interdependency/uchc` | `f2528c7f4cc182912df11b92fa355b16231b1fb5` | verified extraction consumer baseline; input baseline; candidate output identity is separate |
 | `The-Interdependency/skill-lib` | `d71a3a938cb6d646ffc0b59186452117e4a37d13` | build and verification discipline; resolved governing skills; no geometry authority |
+
+## English Unicode corpus
+
+The [source graph](research/english-gonol/docs/unicode-corpus-work-graph.json) binds the complete corpus to the active Unicode producer.
+
+| Participant | Source | Exact identity | Use |
+|---|---|---|---|
+| `unicode-corpus-forge` | `The-Interdependency/stack` | `223f2b2c70ab764826f8d7b99174309e8aaad8b3` | English construction forge. approved integration baseline and sealed structural reader |
+| `unicode-corpus-ucns` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | UCNS Unicode geometry. native equal-radius scalar and declared-parent construction |
+| `unicode-corpus-admission` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | historical structural admission carrier. reproduce the immutable source admission |
+| `unicode-corpus-oewn` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | OEWN 2025 source. lexical entries, definitions, membership, order and provenance |
+| `unicode-corpus-replay` | `The-Interdependency/stack` | `30e081a5f0e624d4be45161d96fcc09c37c9edb6` | historical English ordinal experiment. preserve original implementation, repairs, corpus witness and operator answers |
+| `unicode-corpus-ucd-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | Unicode Character Database. authenticate numeric repertoire input |
+| `unicode-corpus-ucd-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | Unicode Character Database. authenticate Math repertoire input |
