@@ -1,0 +1,27 @@
+qualified 100/1052
+qualified 200/1052
+qualified 300/1052
+qualified 400/1052
+Lib/test/test_fstring.py:1769: SyntaxWarning: invalid escape sequence '\N'
+Lib/test/test_fstring.py:1769: SyntaxWarning: invalid escape sequence '\N'
+qualified 500/1052
+qualified 600/1052
+Traceback (most recent call last):
+  File "/workspace/scratch/ac319e1cc114/stack-language-qualification/research/python-gonol/python_gonol/construct.py", line 737, in verify_construct
+    if connection.execute("PRAGMA integrity_check").fetchone()[0] != "ok":
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: attempt to write a readonly database
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/ac319e1cc114/stack-language-qualification/tools/qualify_language_gonols.py", line 229, in <module>
+    main()
+  File "/workspace/scratch/ac319e1cc114/stack-language-qualification/tools/qualify_language_gonols.py", line 219, in main
+    python_pass(args.corpus.resolve(), args.producer.resolve(), args.out.resolve())
+  File "/workspace/scratch/ac319e1cc114/stack-language-qualification/tools/qualify_language_gonols.py", line 149, in python_pass
+    require(verify_construct(state, producer) == result.receipt_sha256, "replay mismatch")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/ac319e1cc114/stack-language-qualification/research/python-gonol/python_gonol/construct.py", line 752, in verify_construct
+    raise PythonGonolConstructionError(f"construct database is not readable: {exc}") from exc
+python_gonol.construct.PythonGonolConstructionError: construct database is not readable: attempt to write a readonly database

@@ -45,7 +45,7 @@ position.
 One compact SQLite construct plus a small manifest:
 
 ```text
-construct.db   characters, occurrences, control_identities, controls, newlines, meta
+construct.db   characters, occurrences, control_identities, controls, newlines, source_bytes, meta
 manifest.json  schema, source digests, counts, carrier pin, receipt_sha256, hmmm
 ```
 
@@ -75,6 +75,17 @@ verify_construct(Path("construct"), "/home/wayseer_interdependentway_org/src/ucn
 ```
 
 ## Acceptance gates
+
+Version 2.0.0 corrects tab expansion and CR-only physical addresses. Rebuild
+1.x constructs from their original sources; replay rejects the old version.
+Occurrence columns and `controls.start_column` are one-based source-scalar
+addresses. TAB widths use a separate zero-based expanded column, advancing
+through earlier tabs. LF, CR, and CRLF reset that expanded column; FF resets
+the indentation column. Version 2 also preserves original source bytes in the
+database and binds every row in a logical digest. Replay reconstructs the
+complete database in an isolated temporary directory and compares the entire
+manifest and logical digest. CRLF retains both source scalars on the preceding
+physical line and advances the next scalar to line + 1, column 1.
 
 - `x=1\n` produces no not-on-pinned-carrier.
 - LF replays as exact `U+000A`.
