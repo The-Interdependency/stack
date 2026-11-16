@@ -1,9 +1,14 @@
-# ratios: loc_comments=1861:220 imports_exports=17:5 calls_definitions=669:45
+# ratios: loc_comments=1917:226 imports_exports=17:5 calls_definitions=708:46
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
 
 # === CHECKS ===
+# id: check_digital_metric_unicode_graph_encoding
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_unicode_graph_encoding_agrees_across_all_gates
+#   mutates: temporary graph and manifest fixtures
+#   cleanup: TemporaryDirectory
 # id: check_digital_metric_block_comment_termination
 #   proves: digital_metric_work_graph_matches_stack_manifest
 #   call: self::test_block_comments_do_not_promote_suffix_to_projection
@@ -2109,6 +2114,64 @@ class MetricProtocolTests(unittest.TestCase):
             manifest, '<!-- hidden --!>\n' + human, repositories, findings)
         self.assertTrue(findings, findings)
 
+    def test_unicode_graph_encoding_agrees_across_all_gates(self) -> None:
+        baseline = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
+        manifest = json.loads((WORKSPACE.parents[1] / 'stack-manifest.json').read_text())
+        human = (WORKSPACE.parents[1] / 'STACK_MANIFEST.md').read_text()
+        parser = (WORKSPACE / 'vendor/universal.py').read_bytes()
+        for text in (' Möbius', ' λ e\u0308', ' 😀'):
+            for field in ('relation', 'hmmm'):
+                with self.subTest(text=text, field=field), TemporaryDirectory() as directory:
+                    graph = deepcopy(baseline)
+                    matched = deepcopy(manifest)
+                    display = human
+                    owner = next(r for r in matched['research_participants']
+                                 if r.get('workspace') == 'research/digital-metrics/' and r['participant_id'] == 'digital-metrics')
+                    if field == 'relation':
+                        previous = graph['participants'][0]['relation']
+                        graph['participants'][0]['relation'] += text
+                        owner['relation'] = graph['participants'][0]['relation']
+                        display = display.replace(previous, owner['relation'])
+                    else:
+                        old = canonical_json(graph['boundaries'])
+                        graph['boundaries']['hmmm'][0] += text
+                        owner['boundaries'] = deepcopy(graph['boundaries'])
+                        display = display.replace('`' + old + '`', '`' + canonical_json(graph['boundaries']) + '`')
+                    graph['work_graph_sha256'] = sha256_json({k: graph[k] for k in ('participants', 'boundaries')})
+                    root_payload = {k: matched[k] for k in ('repositories', 'research_participants', 'boundaries')}
+                    matched['work_graph_sha256'] = hashlib.sha256(json.dumps(
+                        root_payload, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()).hexdigest()
+                    self.assertNotEqual(matched['work_graph_sha256'], sha256_json(root_payload))
+                    display = display.replace(baseline['work_graph_sha256'], graph['work_graph_sha256'])
+                    display = display.replace(manifest['work_graph_sha256'], matched['work_graph_sha256'])
+                    root = Path(directory)
+                    workspace = root/'research/digital-metrics'
+                    workspace.mkdir(parents=True)
+                    graph_path = workspace/'WORK_GRAPH.json'
+                    manifest_path = root/'stack-manifest.json'
+                    graph_bytes = (canonical_json(graph) + '\n').encode()
+                    graph_path.write_bytes(graph_bytes)
+                    manifest_path.write_text(canonical_json(matched) + '\n')
+                    self.assertEqual(load_work_graph(graph_path), graph)
+                    findings = []
+                    stack_consistency.check_digital_metrics_projection(
+                        matched, display, {r['repository']: r for r in matched['repositories']}, findings, graph_path)
+                    self.assertEqual(findings, [])
+                    admitted = contract_audit._load_pinned_parser(SKILL_LIB_ROOT,
+                        graph_source=graph_bytes, manifest_source=manifest_path.read_bytes(), parser_source=parser)
+                    self.assertTrue(callable(admitted.parse_text))
+                    # Git identity is exercised separately; vary only serialization here.
+                    with patch.dict(_validate_repository_work_graph_projection.__globals__,
+                                    {'_verify_stack_participant': lambda *_: None}):
+                        _validate_repository_work_graph_projection(graph, workspace)
+                        matched['work_graph_sha256'] = sha256_json(root_payload)
+                        manifest_path.write_text(canonical_json(matched) + '\n')
+                        with self.assertRaisesRegex(ProducerIdentityError, 'Stack manifest digest mismatch'):
+                            _validate_repository_work_graph_projection(graph, workspace)
+                    with self.assertRaisesRegex(contract_audit.AuditIdentityError, 'Stack manifest digest mismatch'):
+                        contract_audit._load_pinned_parser(SKILL_LIB_ROOT,
+                            graph_source=graph_bytes, manifest_source=manifest_path.read_bytes(), parser_source=parser)
+
     def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
         graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
         original = canonical_json(graph)
@@ -2179,4 +2242,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=1861:220 imports_exports=17:5 calls_definitions=669:45
+# ratios: loc_comments=1917:226 imports_exports=17:5 calls_definitions=708:46

@@ -1,4 +1,4 @@
-# ratios: loc_comments=815:94 imports_exports=15:5 calls_definitions=236:31
+# ratios: loc_comments=817:95 imports_exports=15:5 calls_definitions=238:31
 """Generate the frozen METAPAT/UCNS digital-metric vertical-slice receipt.
 
 Usage guidance
@@ -355,7 +355,10 @@ def _validate_repository_work_graph_projection(
         }
     except (KeyError, TypeError) as exc:
         raise ProducerIdentityError(f"invalid Stack manifest projection: {exc}") from exc
-    if manifest.get("work_graph_sha256") != sha256_json(manifest_payload):
+    # The root Stack schema has a separate ASCII-escaped encoding contract.
+    manifest_digest = _sha256_bytes(json.dumps(manifest_payload, sort_keys=True,
+        separators=(",", ":"), ensure_ascii=True).encode("utf-8"))
+    if manifest.get("work_graph_sha256") != manifest_digest:
         raise ProducerIdentityError("Stack manifest digest mismatch")
 
     projected = [
@@ -988,4 +991,4 @@ if __name__ == "__main__":
     raise SystemExit(
         "run generate_receipt_cli.py so generator execution is source-bound"
     )
-# ratios: loc_comments=815:94 imports_exports=15:5 calls_definitions=236:31
+# ratios: loc_comments=817:95 imports_exports=15:5 calls_definitions=238:31

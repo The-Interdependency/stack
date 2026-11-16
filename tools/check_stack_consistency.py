@@ -1,4 +1,4 @@
-# ratios: loc_comments=865:108 imports_exports=9:20 calls_definitions=391:24
+# ratios: loc_comments=866:108 imports_exports=9:20 calls_definitions=391:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -506,6 +506,7 @@ def check_digital_metrics_projection(
             {"participants": graph["participants"], "boundaries": graph["boundaries"]},
             sort_keys=True,
             separators=(",", ":"),
+            ensure_ascii=False,
         ).encode("utf-8")).hexdigest()
     except (KeyError, TypeError) as exc:
         error(findings, "digital_metrics.shape", f"invalid work graph: {exc}")
@@ -639,7 +640,7 @@ def check_digital_metrics_projection(
     owner = projected[0] if projected else {}
     if owner.get("boundaries") != graph.get("boundaries"):
         error(findings, "digital_metrics.boundaries", "manifest boundary projection differs from work graph")
-    boundary_projection = json.dumps(graph.get("boundaries"), sort_keys=True, separators=(",", ":"))
+    boundary_projection = json.dumps(graph.get("boundaries"), sort_keys=True, separators=(",", ":"), ensure_ascii=False)
     boundary_marker = "The exact non-transfer boundary projection, in canonical JSON, is:"
     marker_indices = [
         index for index, line in enumerate(digital_section) if line == boundary_marker
@@ -1058,4 +1059,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=865:108 imports_exports=9:20 calls_definitions=391:24
+# ratios: loc_comments=866:108 imports_exports=9:20 calls_definitions=391:24

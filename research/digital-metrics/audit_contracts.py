@@ -1,4 +1,4 @@
-# ratios: loc_comments=448:51 imports_exports=8:3 calls_definitions=147:12
+# ratios: loc_comments=448:52 imports_exports=8:3 calls_definitions=147:12
 """Audit digital-metrics CONTRACTS/CHECKS without importing inspected modules.
 
 Usage guidance::
@@ -134,8 +134,8 @@ def _unique_json_pairs(pairs):
     return value
 
 
-def _canonical_sha256(value: object) -> str:
-    encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+def _canonical_sha256(value: object, *, ensure_ascii: bool = True) -> str:
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=ensure_ascii).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -166,7 +166,8 @@ def _load_pinned_parser(
         "participants": graph["participants"],
         "boundaries": graph["boundaries"],
     }
-    if graph.get("work_graph_sha256") != _canonical_sha256(payload):
+    # Digital graphs use protocol UTF-8; the root manifest retains ASCII escapes.
+    if graph.get("work_graph_sha256") != _canonical_sha256(payload, ensure_ascii=False):
         raise AuditIdentityError("digital-metrics work-graph digest mismatch")
     graph_skills = [
         item for item in graph["participants"]
@@ -542,4 +543,4 @@ def main(*, skill_lib_root: Path) -> int:
 
 if __name__ == "__main__":
     raise SystemExit("run audit_contracts_cli.py so auditor execution is source-bound")
-# ratios: loc_comments=448:51 imports_exports=8:3 calls_definitions=147:12
+# ratios: loc_comments=448:52 imports_exports=8:3 calls_definitions=147:12
