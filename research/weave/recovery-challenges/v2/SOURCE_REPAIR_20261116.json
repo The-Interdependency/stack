@@ -1,0 +1,502 @@
+{
+  "schema": "weave.challenge-source-repair/v1",
+  "reviewed_head": "f435c65152cc23f65abc5edc403adca3cb191e64",
+  "integrated_main": "3032238fc8549b58721c9baf2753c53844eb8d96",
+  "baseline": {
+    "startup": "ValueError: source identity mismatch: research/weave/README.md"
+  },
+  "source_lock": {
+    "schema": "weave.challenge-sources/v2",
+    "stack_commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+    "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+    "files": [
+      {
+        "path": "AGENTS.md",
+        "git_blob": "6a757df08fb76483dcc8293c5feb6defc1b9616d"
+      },
+      {
+        "path": "research/weave/ASSEMBLY.md",
+        "git_blob": "715c170f63e8a8d0ae667c199270f1bf180b7402"
+      },
+      {
+        "path": "research/weave/BASE.json",
+        "git_blob": "9b0bbf160a16803a79b5fbd8b9fda2357ca9358e"
+      },
+      {
+        "path": "research/weave/CYCLE.md",
+        "git_blob": "e704297d381aad0f9198597446f1748a6b910290"
+      },
+      {
+        "path": "research/weave/CYCLE_NATIVE.json",
+        "git_blob": "0997b017c58c3c689800832a8b67340160f7b5f3"
+      },
+      {
+        "path": "research/weave/CYCLE_WORK_GRAPH.json",
+        "git_blob": "897c118910bb0b4efee30da73c06a1602f8129d6"
+      },
+      {
+        "path": "research/weave/EIGHT_CIRCLE.md",
+        "git_blob": "ca8cdcb90edebb88e20f1458eb94fe3eff357abc"
+      },
+      {
+        "path": "research/weave/IMPLEMENTATION_PLAN.json",
+        "git_blob": "8850400b2540114f7aacfba43020126b286e9a70"
+      },
+      {
+        "path": "research/weave/IMPLEMENTED.md",
+        "git_blob": "b3facf6aea05abcaf4a632b4d3acbd53915680fc"
+      },
+      {
+        "path": "research/weave/NATIVE_BINARY_PROVENANCE.json",
+        "git_blob": "09de2fa7103cf48a5427f4cd15d134baf3ef9a8c"
+      },
+      {
+        "path": "research/weave/NUMERAL_CONSTRUCTION.md",
+        "git_blob": "a99ef97228de17eb7bda605ddd6935763300e3b2"
+      },
+      {
+        "path": "research/weave/PLAN.md",
+        "git_blob": "23840a6d93d358699f2412a4c671195319cbf672"
+      },
+      {
+        "path": "research/weave/QUESTIONS.md",
+        "git_blob": "f076a1e136cf1cdfed36a705a4f35e231f542eb6"
+      },
+      {
+        "path": "research/weave/README.md",
+        "git_blob": "aa5e6eb52739c65f33a0d396fff29548d8ce3cc9"
+      },
+      {
+        "path": "research/weave/REPORT.md",
+        "git_blob": "0cd31df78708608f0bd770dfbf0308d4243cd3b3"
+      },
+      {
+        "path": "research/weave/SPECIFICATION.md",
+        "git_blob": "db347b53c742a2448e3dec109178e55d735dd750"
+      },
+      {
+        "path": "research/weave/affixiation.py",
+        "git_blob": "047ae47a565cb986ff6f8888b19a0d269c13f3f7"
+      },
+      {
+        "path": "research/weave/assembly.py",
+        "git_blob": "bbabc1c6109442a9f24ebd3b6b702053cbef42ad"
+      },
+      {
+        "path": "research/weave/cycle.py",
+        "git_blob": "9730d6058e9e997b6b081c1614019810755b5194"
+      },
+      {
+        "path": "research/weave/cycle_native.py",
+        "git_blob": "8d011a15234f8583fb0968c8fc80c63c308f2054"
+      },
+      {
+        "path": "research/weave/evidence/review-repair-v1.json",
+        "git_blob": "93bcac46901122576b11e20b32c20faaadb79ae0"
+      },
+      {
+        "path": "research/weave/evidence/transport-v1.json",
+        "git_blob": "408faedadec42368a0e2ef4cc2a20ac543319af4"
+      },
+      {
+        "path": "research/weave/lab.py",
+        "git_blob": "88e3d1802e7a48a2e836c2d4519fb3c97ae0449a"
+      },
+      {
+        "path": "research/weave/native_binary.py",
+        "git_blob": "6a6ba9f57b83b62116a57113a5c6358fab7e7831"
+      },
+      {
+        "path": "research/weave/numeral.py",
+        "git_blob": "1e9b7f12b1d7dc20413e737ceb36696d34a59980"
+      },
+      {
+        "path": "research/weave/prime_schedule.py",
+        "git_blob": "667ff6afe7510fa373d164a2fb4992acabd94106"
+      },
+      {
+        "path": "research/weave/probe.py",
+        "git_blob": "ae2eb456a31782f3663b52139b4b39c654f1e28e"
+      },
+      {
+        "path": "research/weave/profiles/cycle-v1.json",
+        "git_blob": "372d1420a9cc59c86d2813af926c75eca315b14d"
+      },
+      {
+        "path": "research/weave/profiles/transport.json",
+        "git_blob": "bf0255cb2da7d536642e057aa5a23fadc78d9b01"
+      },
+      {
+        "path": "research/weave/run.py",
+        "git_blob": "7aabc5278f6ef5613492b595610888d6e89b5589"
+      },
+      {
+        "path": "research/weave/safe_output.py",
+        "git_blob": "2c84a5d46adadb88285ba1e3e8db26417f26f6f2"
+      },
+      {
+        "path": "research/weave/stages/__init__.py",
+        "git_blob": "f64d970f6c9f79b17d56d3f2f3e710b5c4f52569"
+      },
+      {
+        "path": "research/weave/stages/api.py",
+        "git_blob": "15e5973aa8eedd168c25d3aa42aa1b80da36a156"
+      },
+      {
+        "path": "research/weave/stages/auth.py",
+        "git_blob": "dc3cd804143f245893f6e33e860d79827d447644"
+      },
+      {
+        "path": "research/weave/stages/bind.py",
+        "git_blob": "ecc711f0f52305c055ee2afb276866bda9149e80"
+      },
+      {
+        "path": "research/weave/stages/corpus.py",
+        "git_blob": "f9a6ca808614c62ea33e3806266a22a25b469e80"
+      },
+      {
+        "path": "research/weave/stages/gonol.py",
+        "git_blob": "d49b786b7a5d60fa5a7f6b070ec826e327617767"
+      },
+      {
+        "path": "research/weave/stages/inter.py",
+        "git_blob": "e89d9b38adf928e54b51cdf1e7ccc8cce4cca3c2"
+      },
+      {
+        "path": "research/weave/stages/join.py",
+        "git_blob": "4f95f04170f9c1a5392984eef323c7c927df3a17"
+      },
+      {
+        "path": "research/weave/stages/key.py",
+        "git_blob": "353aeb053cf018decebab277c86279c6e20174d7"
+      },
+      {
+        "path": "research/weave/stages/split.py",
+        "git_blob": "f0d67a812274c95d0eed703faa7c84d0dc2ed774"
+      },
+      {
+        "path": "research/weave/stages/whole.py",
+        "git_blob": "30b37381d2d4c0f0acf42ed5227903a8606b6449"
+      },
+      {
+        "path": "research/weave/test.py",
+        "git_blob": "7d2941ab0d97feb6e2c4a589314abb1bdd2e477c"
+      },
+      {
+        "path": "research/weave/tests/test_admission_order.py",
+        "git_blob": "38a25f0416ad1dbe7e9c685c60d0a741c2afbcb1"
+      },
+      {
+        "path": "research/weave/tests/test_assembly.py",
+        "git_blob": "ae1b1106fb7bd546ccaaa8a8a3aceed3589976d0"
+      },
+      {
+        "path": "research/weave/tests/test_binary_origin.py",
+        "git_blob": "e2f704c7b143ce375023795e33bdcb731c25e9d8"
+      },
+      {
+        "path": "research/weave/tests/test_cycle.py",
+        "git_blob": "dbd6901b905527747658f7d9217d2e4cb9ddd905"
+      },
+      {
+        "path": "research/weave/tests/test_cycle_repairs.py",
+        "git_blob": "21cf7d7d1c2e511e34c61dbac76e0da66cd33f0c"
+      },
+      {
+        "path": "research/weave/tests/test_final_findings.py",
+        "git_blob": "c05bbe9364960b278a944c760289d11a7cb4a0e5"
+      },
+      {
+        "path": "research/weave/tests/test_numeral.py",
+        "git_blob": "3f1765f4b1d6d13a8f9eef9b5887ec28791e5539"
+      },
+      {
+        "path": "research/weave/tests/test_numeral_replay.py",
+        "git_blob": "b5eb999de2f8ac86edd9a9e1cbeacd4bcd8b4eb9"
+      },
+      {
+        "path": "research/weave/tests/test_numeral_review.py",
+        "git_blob": "b6dd1bef891885cde5da7b189811ba008f1ce901"
+      },
+      {
+        "path": "research/weave/tests/test_review_closure.py",
+        "git_blob": "8d2be65eaba88eefcdc135a479627e17f4f4f313"
+      },
+      {
+        "path": "research/weave/tests/test_terminal_records.py",
+        "git_blob": "788ace9312b894332d6e47c5f00b28cabec1f678"
+      },
+      {
+        "path": "research/weave/tests/test_transport.py",
+        "git_blob": "93dab34fc2903766d88f4ad70bcb5a6b9bde6801"
+      },
+      {
+        "path": "research/weave/transport.py",
+        "git_blob": "a15ba4e6fa3179ba61604e9142df616077e11b79"
+      },
+      {
+        "path": "research/weave/twin_ray_engine.py",
+        "git_blob": "b1726a91f1677e04029cbf6e6a6998eb6eb6d8a0"
+      },
+      {
+        "path": "sources/ucns/src/ucns/axis_circle.py",
+        "git_blob": "768777c8eca6e65537fdbab2003835d6f4f40569"
+      },
+      {
+        "path": "sources/ucns/src/ucns/direct_mobius.py",
+        "git_blob": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+      },
+      {
+        "path": "stack-manifest.json",
+        "git_blob": "39a0983020e6eb25219ecf11f8c46f11aafb68bf"
+      },
+      {
+        "path": "STACK_MANIFEST.md",
+        "git_blob": "fd878562a15e89d889424548aa98665d8af5a4d5"
+      }
+    ]
+  },
+  "source_bundle": {
+    "schema": "weave.frozen-source-bundle/v1",
+    "source_lock_sha256": "d62d192df22b5d07ce93c64f4ad495f28a1b1ce67f399cca370b6d43f1ae793f",
+    "archive_sha256": "889cfa19a3447c6a826e808b1f0dd8eeb9ea0b4951d62d588f5361fb41369ea4",
+    "licenses": [
+      {
+        "path": "LICENSE",
+        "git_blob": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+      },
+      {
+        "path": "sources/ucns/LICENSE",
+        "git_blob": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+      }
+    ]
+  },
+  "source_rebuild": "BYTE_IDENTICAL_GIT_OBJECT_REPLAY",
+  "snapshot_tests": {
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "original_adapter_vectors": 9,
+    "standalone_level_six_exports": 9
+  },
+  "containment_regressions": {
+    "tests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "current_weave_suite": {
+    "schema": "weave.sequence-cycle-suite/v1",
+    "status": "PASSED",
+    "python": "3.12.14",
+    "tests": 196,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expected_test_methods": 196,
+    "source_unchanged": true,
+    "source_sha256": "935aa08c1efd0581e55431a5038e51502929cde7b7a56ac74e46f43d31e1b24d",
+    "source_files": {
+      "CYCLE_NATIVE.json": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43",
+      "CYCLE_WORK_GRAPH.json": "39b59906ff6972a14d85d53febb0d8873bce73f44252a0ce0bbc7e02cfbc9ee8",
+      "affixiation.py": "15518004e43873515badefd951d6f32a0de79ce8002d3aebd41921bf8d7eb985",
+      "assembly.py": "986591368877369cbf8040e4e5e5e290a1c5f5aca2759de1c82dd6b9f99a18d4",
+      "cycle.py": "25cbe0e5567562c1f2de3de0ca69d4e5a4e57e78a283aa7dcee882b0b16de562",
+      "cycle_native.py": "8a3cf679078b6ffc36a26ab99d0f4cbd593cfa2c404e05fd927d8fae09947219",
+      "docs/glyph-axis-infographic/animate.py": "0c2d5a25f4cdc970f1c429228c28818af84266b00474110fe30749abc93b4495",
+      "docs/glyph-axis-infographic/render.py": "ef94e9fac9bc620c87e29e0785816b27c9eee0cb5eee623d1836f89b3388bdc5",
+      "lab.py": "67e31f637ce27b3146c1eafb02fca58d7facc0b3e44d2672b22b40b8e60131ba",
+      "native_binary.py": "3843b4fb7c735c2d3d45f28a13905397a4dd8ff988fba91b3fe1f92e75103e4d",
+      "numeral.py": "a3c2b67611b095f65ba4b355fac2275735a062fb76ba2170790e64d8b434f9e3",
+      "prime_schedule.py": "c5b59833d236c1f7dfe66102052e1796e8532a25f299820c68e2b417c6678242",
+      "private_public.py": "6619e1982d166748a61cc9448033f96dc0787b8bf32d41f0c37ebe3169ca665b",
+      "probe.py": "9649f8ed463ceaa2ad466d8caa9af235bfe7fc3567fc2c17d94ed83f2853ae63",
+      "profiles/cycle-v1.json": "f4018221aa4707292471411832ea1cc273f7605c874ae1c3c55d676af6f6691b",
+      "profiles/transport.json": "ab297676a7762296db73d991974bbf59c0c03becdba3ed1130e0ecb0db9039b2",
+      "recovery-challenges/v2/build.py": "541d1abbe967f4a017cab0aac86acafa72c673f14b2b56f242a109771af1444c",
+      "recovery-challenges/v2/build_source_bundle.py": "f6ec0a99f886385ca9c62e70fc1ba29a66fc471d95f8b10df8f2ec5660729d68",
+      "recovery-challenges/v2/matrix.py": "fdace0fb6d55f54b9cabc05626acf60a754b2783392ef9065e7b4db5edf80ad1",
+      "recovery-challenges/v2/operations.py": "e708bb753fa582abeda0468a9e00cd05615b20190887fad033bdcfdbfa025db3",
+      "recovery-challenges/v2/release.py": "c1c167ef55259b240c7adcd2d22471d62c13f65163d1aafde6a400d1d1645f57",
+      "recovery-challenges/v2/source_snapshot.py": "4e5cccd04b0dce2e7b4742b4eba2fb0a8a95c8b20dd1488755f9ff1eb20030da",
+      "recovery-challenges/v2/test_harness.py": "6b2e804127e1c8efab3adbbb60dfbb45456ae1175dd17ec110b9c78e524bdeb7",
+      "recovery-challenges/v2/test_regressions.py": "e1cb8cdbcc65c789785d6bdc02e80d4ffe82d0a94016dec751c95cab492cf366",
+      "recovery-challenges/v2/test_source_snapshot.py": "0ddd31719a83cb99a6ebaf90c596c7ca0e8c8e01351a8e301ed71f655df8f9fb",
+      "recovery-challenges/v2/transport_cases.py": "c63402cccac0b97468609ba48e0b9ebb5bd362de55dad7ecea3f9adabc97686b",
+      "run.py": "2a6143054ac2cef6ec41bc075b273a1a93ecb4cd15cb092fa5eb3ecdc66d0d5a",
+      "safe_output.py": "5bdfc6ead9f7eb9341d3de669ece63cdf653e1e8ba7882b334360cbafad8b052",
+      "stages/__init__.py": "f280e5ec37b9e247cf92b7eb1a32035f090bc4d6f1d56031eb7fca69b9aa4ed2",
+      "stages/api.py": "a5cd49d008d9e9277a41954fed23aa6968640c3e9c880c52d47cb5f53932d72b",
+      "stages/auth.py": "cbc0d401b62af4ec7d3543de3e472463b04dd2e4b212d313b3c358f85898de67",
+      "stages/bind.py": "b3ec00d196ef6a50ed59f9625a7fe09e18b36b6a26b3132dde101427f9f364de",
+      "stages/corpus.py": "4098281aace459f5654ff7e05797530b3297c368620a32fd1e81a271513fe311",
+      "stages/gonol.py": "d1e8dd80d361e3af0fa5985a1ab668291fdf88b2d9f2d8292772a54c26b7962f",
+      "stages/inter.py": "15760b57ad3ea79c6ad649a1e87c2f254070ab9b000bde8448c6893bfe05fbbd",
+      "stages/join.py": "4b6d5986f76bc0d33246769b5155de398b116681ad593a2ae6e8ec33b44c85f6",
+      "stages/key.py": "b06c195f0204c619f69e0e65981bb3cacd02b86ce2f8a693c4c206c6225c025e",
+      "stages/split.py": "fe84147ec1adf677b826511c8d2a60986bc7a871b3c9102c4cab0724023df0e8",
+      "stages/whole.py": "fb93035125c1a8ff07a8f57bf233f3b09365e9c587655afa15fb1d5a1bf721b4",
+      "test.py": "0411a9a9421ecaf7212431d5bf79cc982411bd2042da2ef156eba46b52f475dd",
+      "tests/test_admission_order.py": "62358bb4432a7176271b4584699a4f0293adc195086e6f9876eb39297de86abc",
+      "tests/test_assembly.py": "58fc96627e41678191aebf315d1dd894078e22bb3ca7edf9a8e58096942bc9ad",
+      "tests/test_binary_origin.py": "280f20c5a999d82b67b6001bedb6ed8d12e839f7c1b1b30a8aac2c30854e3329",
+      "tests/test_cycle.py": "e97c307a5e75b82b1c150c40ee9ab70f631f5daba366da3a5dd56ba1c6f0131f",
+      "tests/test_cycle_repairs.py": "69fa079d1b080b0c2fb7cffe7ab61effe9d3510df25754f7baefd2b536a3e10f",
+      "tests/test_final_findings.py": "249b53d428b0d3378afdffb66eaf90d88e969d3c65ed416d402749ae8fd73ce5",
+      "tests/test_numeral.py": "8a546c24cc238b45472c99add2ba91adf3b503df903188ec76c6633b49a797f8",
+      "tests/test_numeral_replay.py": "935c30474c51cedbbe97c4c39754646196c2feb72d7f898a638e3811f97fe7a7",
+      "tests/test_numeral_review.py": "b62b38114d08c91814c776ffa895fe2f0508c97e74430775ee1cf37820dba5c5",
+      "tests/test_private_public.py": "52bd70bbd74a7f77fb7c50c40daff6a7b9026f6c5985c42e03ab2335d8deb991",
+      "tests/test_review_closure.py": "566db71ac1bb051277b7648ec5e3d2d2e1fd1378460b1fba88a26add9c0f9853",
+      "tests/test_terminal_records.py": "cf0549bdf2cb6a2a59b93d1180ffce4cbb515bc32d9dbf3d0d104dd16bfc454f",
+      "tests/test_transport.py": "9b45e89f28338fdd3981f9edf7783c48a3039b133800ca889b1b42a929f03da0",
+      "transport.py": "fa8a6cffdb21291416a38bbafc1aa8d69d927b23cbaf8aea2abdb56d7bf1c7ec",
+      "twin_ray_engine.py": "9e10ef25bf5471de672dbba48b33c76f5b3a18e6f4367ece3f1d6b1754bbca2e"
+    },
+    "native_sources": {
+      "schema": "weave.native-inputs/v2",
+      "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+      "ucns_sources": {
+        "src/ucns/axis_circle.py": "768777c8eca6e65537fdbab2003835d6f4f40569",
+        "src/ucns/direct_mobius.py": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+      },
+      "binary_source": {
+        "owner": "The-Interdependency/stack",
+        "path": "native_binary.py",
+        "git_blob": "6a6ba9f57b83b62116a57113a5c6358fab7e7831",
+        "standing": "forge-owned candidate, not graduated"
+      },
+      "uchc_architecture": {
+        "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
+        "relation": "origin/axis architecture and migration boundary; not a binary runtime dependency"
+      }
+    },
+    "work_graph_sha256": "42bcc4c2b1b4e13aa42d71d2760e47762b65fe0c9f92fdd1fcd9808ba3bdb546",
+    "coverage_status": "WITNESSED",
+    "coverage": {
+      "old_transport_binary_messages": 8191,
+      "assembly_switch_masks": 512,
+      "transport_switch_masks": 32,
+      "valid_transport_masks": 28,
+      "incompatible_transport_masks": 4,
+      "old_transport_largest_roundtrip_bytes": 65536,
+      "numeral_short_bitblocks": 8191,
+      "numeral_large_block_bits": 8388608,
+      "numeral_repeated_roundtrip_bytes": 4194304,
+      "numeral_review_regressions": 3,
+      "discovery_binary_alphabet_byte_strings": 8191,
+      "small_compositions": 4083,
+      "cycle_largest_roundtrip_bytes": 65536,
+      "cycle_sample_rounds": 3,
+      "native_occurrence_circles": 7,
+      "prime_jump_trace": [
+        5381,
+        53,
+        241,
+        1523
+      ],
+      "native_origin_methods": 13,
+      "cycle_repair_methods": 12,
+      "review_closure_methods": 18,
+      "final_findings_methods": 9,
+      "terminal_record_methods": 9,
+      "header_admission_methods": 3,
+      "numeral_single_replay_methods": 4,
+      "cheap_admission_methods": 8,
+      "private_public_candidate_methods": 20
+    },
+    "cycle": "EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse",
+    "full_weave": {
+      "status": "BLOCKED",
+      "complete_cipher_implemented": false,
+      "profile": "full proposed scope",
+      "switches": {
+        "key": true,
+        "gonol": true,
+        "bind": true,
+        "split": true,
+        "corpus": true,
+        "inter": true,
+        "join": true,
+        "whole": true,
+        "auth": false
+      },
+      "forward_order": [
+        "gonol",
+        "bind",
+        "split",
+        "corpus",
+        "inter",
+        "join",
+        "whole"
+      ],
+      "inverse_order": [
+        "whole",
+        "join",
+        "inter",
+        "corpus",
+        "split",
+        "bind",
+        "gonol"
+      ],
+      "missing": [
+        "key: source-identified KeyPair public relation required",
+        "gonol: Q1, native operator missing",
+        "bind: Q2/Q7/Q8, native operator missing",
+        "split: Q3, native operator missing",
+        "corpus: Q4/Q7/Q8, native operator missing",
+        "join: Q5/Q8, native operator missing"
+      ],
+      "note": "IMPLEMENTED.md separates executable proposals from missing native laws."
+    },
+    "asymmetric_cipher": "NOT_IMPLEMENTED: cycle/profile recovery is not a public/private trapdoor",
+    "private_public_experiment": "FALSIFIED_CANDIDATE: native-shift polynomial supports public sending and private recovery, but public coefficients reveal an equivalent inverse",
+    "native_language_corpus_replay": "NOT_EXECUTED: binary construction does not use or replace a language corpus",
+    "security_observations": [
+      "The older fixed transport map remains recoverable in its declared attack experiment.",
+      "The cycle is deterministic from the same source, corpus and profile; syntax/digest checks are not authentication."
+    ],
+    "retired_substitutions": {
+      "stack_pr_73": "REMOVED: per-bit public sheet substitution",
+      "stack_pr_74": "REMOVED: bit-axis public feedback",
+      "stack_pr_76": "SUPERSEDED: one-bit-per-circle byte records replaced by native sequence-cycle construction",
+      "evidence_scope": "Rejected encoders do not falsify the corrected sequence construction."
+    },
+    "nonclaim": "No fixed total expansion, universal compression, cryptographic strength, or language-graduation result."
+  },
+  "preserved_sha256": {
+    "research/weave/recovery-challenges/v1/ciphertexts/a01.wvc": "f453cbd17dabfdfc5d76fc87fc297a1db46c7108cd4dae41768dec88cefb6087",
+    "research/weave/recovery-challenges/v1/ciphertexts/a02.wvc": "8eea812ae415b9e2f9c24c7628c7bb1233550a53298e6b362885a2876890bb1d",
+    "research/weave/recovery-challenges/v1/ciphertexts/a03.wvc": "f1a559d08a766f9db1901ca8d757cd127189d0c5752339a1a05170c419de0f33",
+    "research/weave/recovery-challenges/v1/ciphertexts/a04.wvc": "f809380a744889ce6f600a79f2389ed68e78e69a4686d891f673ebb7bf3a4446",
+    "research/weave/recovery-challenges/v1/ciphertexts/b01.wvc": "b64d7ac397f3c8faac0ac2e9d70684cd438e6cf02b9e2ca35ee48bcb93235b8f",
+    "research/weave/recovery-challenges/v1/ciphertexts/b02.wvc": "f47ce870965c299d43b0e83dc2891c0d3273eb8712c45547a944284e9ef14ac0",
+    "research/weave/recovery-challenges/v1/ciphertexts/b03.wvc": "7e3374548cacea50bf7c757b838b454829d192214c152ddba4bebb3d79447523",
+    "research/weave/recovery-challenges/v1/ciphertexts/b04.wvc": "5ab7c2f606123cd72b29f185eeca3796a1836112cce5fb505ba59b7dcd9e7082",
+    "research/weave/recovery-challenges/v1/manifest.json": "5daa03f600bfb8ec77193fa591831c25f891901725aa957dbd88a78639cf3176",
+    "research/weave/recovery-challenges/v2/CHECKS.json": "d2d6ba3886deab341888daf0636c3e1b162e737d386a2aabbe10bd31baec9497",
+    "research/weave/recovery-challenges/v2/COVERAGE.json": "6b5afeef877daba34efb563da927d48d51e6816bf47288e4ee5f6955714dbd2c",
+    "research/weave/recovery-challenges/v2/PLAN.md": "a0eaf974aafff01adc8a573435bd238aa8b6dbe8c5e1486be9e906d45c553370",
+    "research/weave/recovery-challenges/v2/RESULTS.json": "36c84efac48c5ac40415de8194ed07f85eca5f5350490286f08ed2dfd5689f4e",
+    "research/weave/recovery-challenges/v2/REVIEW_REPAIR.json": "ae9e76554aa3060c0db5b246d1dec80de0483e8aac1cc695cefd138699953b8e",
+    "research/weave/recovery-challenges/v2/REVIEW_REPAIR.md": "8556b8586715b89253703e15ac4f384ae63406a3b8e69b511b887f4c94a5494b",
+    "research/weave/recovery-challenges/v2/SOURCE.json": "d62d192df22b5d07ce93c64f4ad495f28a1b1ce67f399cca370b6d43f1ae793f",
+    "research/weave/recovery-challenges/v2/blind-pack.zip": "8c1d7a9ad6347ec2e00a098f19c20ed8f5a1f55315a030e47f31742ffb8ea7b1",
+    "research/weave/recovery-challenges/v2/build.py": "541d1abbe967f4a017cab0aac86acafa72c673f14b2b56f242a109771af1444c",
+    "research/weave/recovery-challenges/v2/matrix.py": "fdace0fb6d55f54b9cabc05626acf60a754b2783392ef9065e7b4db5edf80ad1",
+    "research/weave/recovery-challenges/v2/test_harness.py": "6b2e804127e1c8efab3adbbb60dfbb45456ae1175dd17ec110b9c78e524bdeb7",
+    "research/weave/recovery-challenges/v2/test_regressions.py": "e1cb8cdbcc65c789785d6bdc02e80d4ffe82d0a94016dec751c95cab492cf366",
+    "research/weave/recovery-challenges/v2/transport_cases.py": "c63402cccac0b97468609ba48e0b9ebb5bd362de55dad7ecea3f9adabc97686b"
+  },
+  "public_wire_count": 1841,
+  "sorted_wire_identity_sha256": "d2f8f27895f8af5eaf70f1ec6b2b5eceaa3ad78ed0de4eda5634244cf67fe8c4",
+  "original_operator_archive": "NOT_ACCESSED",
+  "original_full_corpus_harness": "NOT_RERUN",
+  "attacker_trials": "NOT_RUN",
+  "full_weave_coverage": "INCOMPLETE",
+  "hmmm": [
+    "Content identity is not a producer signature or OS sandbox.",
+    "Hosted checks and current-head review remain separate."
+  ]
+}

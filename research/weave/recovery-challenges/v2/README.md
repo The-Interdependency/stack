@@ -128,8 +128,10 @@ encryption wrapper or invented key law is used to turn that gap green. The expli
 ## Reproduce and record results
 
 Python 3.12 and standard library suffice. SOURCE.json pins the original Stack and
-UCNS files individually. The operator archive includes their exact bytes. Sources
-are checked before execution. Fresh receiver processes get ciphertext and selected
+UCNS files individually. The current adapters read their exact bytes from the
+checked-in `frozen-sources.zip`, independently of current checkout documentation
+and manifests. SOURCE_BUNDLE.json binds that bundle to the unchanged source lock.
+All members are checked before extraction or source execution. Fresh receiver processes get ciphertext and selected
 parameters only, with no original bytes, prediction salt or encoder trace. This is
 data-flow separation, not an OS sandbox or independent cryptanalytic implementation.
 
@@ -169,14 +171,32 @@ Run the synthetic integrity regressions without private challenge answers:
 
 ```sh
 python3 research/weave/recovery-challenges/v2/test_regressions.py
+python3 research/weave/recovery-challenges/v2/test_source_snapshot.py
 ```
 
-Run from the repository root after supplying the two exact UCNS files named in
-SOURCE.json under `sources/ucns/src/ucns/`; copy them from the private archive's
-`source/sources/` tree or from UCNS commit `905e66964a495d7596a577bb64e4158db9465864`.
-The source-lock check rejects substitutions. The Weave workflow performs the same
-setup from its pinned UCNS checkout. [REVIEW_REPAIR.md](REVIEW_REPAIR.md) records
-the PR #94 defect reproductions and same-corpus replay, separately from attacks.
+Run these challenge regressions from the repository root; they need no Git or
+separate native checkout. Level-two and later exports carry their frozen source
+bundle and source loader. Level-six exports include the executable receiver and
+selected material. To use these repaired adapters with an existing external
+operator archive, run this checkout's `research/weave/recovery-challenges/v2/`
+commands instead of the historical archive's `source/` commands; retain its private
+archive path. Neither its messages nor its wires need regeneration.
+
+Rebuild the source bundle from local Git objects at the exact original commits:
+
+```sh
+python3 research/weave/recovery-challenges/v2/build_source_bundle.py \
+  --stack-root . --ucns-root /path/to/ucns --check
+```
+
+Use `--out /new/directory` instead of `--check` to produce a reviewable candidate.
+There is no Git/network fallback during challenge execution. The separate current
+Weave suite still uses its declared native checkout. [REVIEW_REPAIR.md](REVIEW_REPAIR.md)
+records the earlier containment repair and original-corpus replay;
+[SOURCE_REPAIR_20261116.md](SOURCE_REPAIR_20261116.md) records this startup repair.
+Historical RESULTS.json, CHECKS.json and REVIEW_REPAIR records retain their original
+scope and bytes. `SHA256SUMS.f435c65` preserves the pre-repair checksum list;
+`SHA256SUMS` covers the current files.
 
 Packaging writes new public
 artifacts exclusively and refuses to overwrite a frozen archive. Use a separate

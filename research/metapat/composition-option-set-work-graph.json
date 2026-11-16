@@ -1,0 +1,45 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "545e135e2efbbcf29f033ab5530ac4876a68b718",
+      "authority": "composition forge and ownership of these stack-local research notes",
+      "relation": "starting repository state; document edit location research/metapat/; no new workspace or lifecycle transition"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "authority": "semantic definitions and domain-restraint doctrine",
+      "relation": "document consultation only; does not rebase research/metapat/BASE.json or refresh libs/metapat/"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "d8f0c505e6f5132e9711de0e7c24e4718e77e51a",
+      "authority": "geometry and standing of its own operations and mathematical claims",
+      "relation": "document consultation of geometric scope and unresolved operations; no implementation imported or algebra redefined"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "dd5027d99516831c0dcb83a176a67140d3819b66",
+      "authority": "organization-wide build and evidence doctrine",
+      "relation": "current documentation, domain-claim, canon, work-graph, and repository-update guidance; no operational snapshot refresh"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "external-provenance",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "This graph binds documentation consultation only; the root stack manifest, workspace BASE.json, imported source views, and implementation dependencies remain unchanged.",
+      "No certification or empirical-validity status transfers; the v1.0.0 schema has no dedicated fields for those obligations.",
+      "The author-declared scaffold and assistant-proposed mathematics have distinct source standing; no immutable external conversation transcript identifier is available.",
+      "First-principle basis, physical admission and dynamics, universal completeness, and faithful UCNS composition remain unresolved.",
+      "At the pinned Stack start, full-history stack consistency fails because forge Python implementation has returned under research/epac/."
+    ]
+  },
+  "work_graph_sha256": "21bbdf2c8c53df4a5b0e2c34d5a204a32a4b333fafa2a05838ed2e94bff328aa"
+}

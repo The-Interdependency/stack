@@ -8,7 +8,7 @@
   },
   "project": "python-gonol",
   "python_language_profile": {
-    "commit": "2d7d957248038635334b62b27f650220213d8e5d",
+    "commit": "2abcf904b8dac8c999d2b3aac76681abb333798a",
     "profile": "Python 3.12 file input",
     "repository": "python/cpython",
     "tag": "v3.12.14"

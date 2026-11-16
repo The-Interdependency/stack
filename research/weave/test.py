@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# ratios: loc_comments=82:7 imports_exports=9:2 calls_definitions=18:2
 """Run the full repository Weave suite and emit a source-bound receipt.
 
 Usage: WEAVE_SOURCES=/checkouts python test.py --receipt /tmp/weave-check.json
@@ -17,7 +18,7 @@ import unittest
 from assembly import Pipeline
 
 ROOT = Path(__file__).resolve().parent
-EXPECTED_TESTS = 176  # 168 existing + 8 cheap-admission/public-helper regressions.
+EXPECTED_TESTS = 196  # 176 merged-cycle regressions + 20 native public/private candidate tests.
 
 
 def snapshot():
@@ -65,11 +66,13 @@ def main():
             'native_origin_methods': 13, 'cycle_repair_methods': 12,
             'review_closure_methods': 18, 'final_findings_methods': 9,
             'terminal_record_methods': 9, 'header_admission_methods': 3,
-            'numeral_single_replay_methods': 4, 'cheap_admission_methods': 8
+            'numeral_single_replay_methods': 4, 'cheap_admission_methods': 8,
+            'private_public_candidate_methods': 20
         },
         'cycle': 'EXPLICIT_CANDIDATE: corpus normalization once; native sequence affixiation and prime-derived bit interleave; exact reverse',
         'full_weave': Pipeline().plan(),
         'asymmetric_cipher': 'NOT_IMPLEMENTED: cycle/profile recovery is not a public/private trapdoor',
+        'private_public_experiment': 'FALSIFIED_CANDIDATE: native-shift polynomial supports public sending and private recovery, but public coefficients reveal an equivalent inverse',
         'native_language_corpus_replay': 'NOT_EXECUTED: binary construction does not use or replace a language corpus',
         'security_observations': [
             'The older fixed transport map remains recoverable in its declared attack experiment.',
@@ -93,3 +96,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
+# ratios: loc_comments=82:7 imports_exports=9:2 calls_definitions=18:2

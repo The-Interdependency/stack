@@ -1,3 +1,4 @@
+# ratios: loc_comments=464:159 imports_exports=9:8 calls_definitions=107:19
 # === MODULE_BUILD ===
 # id: english_gonol_corpus_native_density
 #   module_name: density_run
@@ -20,6 +21,11 @@
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
+# id: density_markdown_displays_measured_values
+#   given: exact scalar, position, count and fraction fields in a density result
+#   then: Markdown rows display the field values while preserving the measured JSON receipt
+#   class: correctness
+#
 # id: density_counts_constructed_occurrence_relations
 #   given: a verified English Gonol v2 construct.db
 #   then: every letter count is taken from the constructed occurrence relations joined to shared character identities, never by retokenizing or normalizing source text
@@ -607,7 +613,10 @@ def _render_markdown(result: DensityResult) -> str:
             ]
         )
         for letter in record["letters"]:
-            scalar, public_position, count, fraction = letter
+            scalar = letter["scalar"]
+            public_position = letter["public_position"]
+            count = letter["count"]
+            fraction = letter["frequency_fraction"]
             display = scalar if scalar != " " else "` `"
             lines.append(f"| {display} | {public_position} | {count} | {fraction} |")
         lines.extend(
@@ -687,3 +696,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+# ratios: loc_comments=464:159 imports_exports=9:8 calls_definitions=107:19

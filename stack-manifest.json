@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "38d0295cf7e7aa4a82aea203c5e8dad91aeb08d897bf3bf623daa3b254326213",
+  "work_graph_sha256": "dcd6aa2f76b6391b9a0e303aaf8077036fa21f08f1a762868e380a7a1fd0d868",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -540,6 +540,136 @@
       "commit": "d71a3a938cb6d646ffc0b59186452117e4a37d13",
       "authority": "build and verification discipline",
       "relation": "resolved governing skills; no geometry authority",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "798b0b419e9fea897d3fadd2d4b9cb91db68687e",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "authority": "extracted language-hyperspace candidates pending graduation",
+      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "authority": "construction, domain-claim and cross-repository evidence discipline",
+      "relation": "governing source for this scoped representation change",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns-historical-0600a23e",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0600a23e27af83d06157ee6ca66644dbff613d2a",
+      "authority": "native Unicode gonol geometry and exact 16-bit-radius, 32-bit big-endian scalar representation",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack-historical-f837e71b",
+      "repository": "The-Interdependency/stack",
+      "commit": "f837e71bd6de2dd5c0ab7388d79f276cf658a67c",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-forge",
+      "repository": "The-Interdependency/stack",
+      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "authority": "English construction forge",
+      "relation": "approved integration baseline and sealed structural reader",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "UCNS Unicode geometry",
+      "relation": "native equal-radius scalar and declared-parent construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-admission",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
+      "authority": "historical structural admission carrier",
+      "relation": "reproduce the immutable source admission",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-oewn",
+      "repository": "globalwordnet/english-wordnet",
+      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+      "authority": "OEWN 2025 source",
+      "relation": "lexical entries, definitions, membership, order and provenance",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-replay",
+      "repository": "The-Interdependency/stack",
+      "commit": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
+      "authority": "historical English ordinal experiment",
+      "relation": "preserve original implementation, repairs, corpus witness and operator answers",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucd-data",
+      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate numeric repertoire input",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-corpus-ucd-math",
+      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
+      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate Math repertoire input",
       "canonical_release": false,
       "authority_transfer": false
     }

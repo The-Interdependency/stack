@@ -2,6 +2,13 @@
 
 "This is how it comes together."
 
+**Delivery focus:** Stack first; UCNS → UCHC → EDCM → Weave. Work one research
+area at a time and keep each research PR within that area. Each active result
+needs a reproducible end-to-end check and an explicit failure condition; blocked
+work retains its resumption condition. See [the agent guide](AGENTS.md#delivery-focus)
+for task selection and prerequisite handling. The project inventory below is a
+map of retained work, not a queue to advance simultaneously.
+
 `The-Interdependency/stack` is the organization's composition forge. Pinned views of
 canonical repositories are brought together here so stack-local research can test
 relations among them and, when warranted, form new projects such as EPAC and AHBG.

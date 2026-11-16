@@ -1,4 +1,4 @@
-# ratios: loc_comments=119:35 imports_exports=13:10 calls_definitions=71:10
+# ratios: loc_comments=131:37 imports_exports=14:10 calls_definitions=75:10
 """Pinned-source byte adapters; CLI receives no plaintext or encoder trace.
 
 Run: python operations.py receive --request request.json --output restored.bin
@@ -31,27 +31,41 @@ literal packet, not a new encryption claim. R is exact three-byte-record reversa
 #   then: preserve actual operations, order, repetition and source identity
 # === END CONTRACTS ===
 from pathlib import Path
-from hashlib import sha1
+from types import ModuleType
 from fractions import Fraction
+import atexit
 import argparse
 import json
 import sys
 
 HERE = Path(__file__).resolve().parent
+if __name__ == '__main__':
+    # Transport imports this adapter by name. Keep one snapshot/class universe
+    # when this same file is entered as an isolated standalone CLI.
+    if 'operations' in sys.modules and sys.modules['operations'] is not sys.modules[__name__]:
+        raise ValueError('conflicting operations module in standalone receiver')
+    sys.modules['operations'] = sys.modules[__name__]
 WEAVE = HERE.parents[1]
 CHECKOUT = WEAVE.parents[1]
-SOURCES = CHECKOUT / 'sources'
+_loader_path = HERE / 'source_snapshot.py'
+_loader = ModuleType('_weave_frozen_source_loader')
+_loader.__file__ = str(_loader_path)
+exec(compile(_loader_path.read_bytes(), str(_loader_path), 'exec', dont_inherit=True), _loader.__dict__)
+SNAPSHOT = _loader.load_snapshot(HERE)
+try:
+    SNAPSHOT.install()
+except BaseException:
+    SNAPSHOT.close()
+    raise
+atexit.register(SNAPSHOT.close)
+FROZEN_ROOT = SNAPSHOT.root
+WEAVE = FROZEN_ROOT / 'research/weave'
+SOURCES = FROZEN_ROOT / 'sources'
 
 
 def verify_sources():
-    """Refuse any byte drift before importing the experimental algorithms."""
-    lock = json.loads((HERE / 'SOURCE.json').read_text())
-    for row in lock['files']:
-        data = (CHECKOUT / row['path']).read_bytes()
-        actual = sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest()
-        if actual != row['git_blob']:
-            raise ValueError('source identity mismatch: ' + row['path'])
-    return len(lock['files'])
+    """Verify historical inputs without treating active checkout drift as corruption."""
+    return SNAPSHOT.verify()
 
 
 verify_sources()
@@ -180,4 +194,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# ratios: loc_comments=119:35 imports_exports=13:10 calls_definitions=71:10
+# ratios: loc_comments=131:37 imports_exports=14:10 calls_definitions=75:10

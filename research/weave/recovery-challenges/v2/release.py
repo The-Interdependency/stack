@@ -1,4 +1,4 @@
-# ratios: loc_comments=18:161 imports_exports=8:7 calls_definitions=52:7
+# ratios: loc_comments=18:162 imports_exports=8:7 calls_definitions=53:7
 """Operator-only staged exports and exact-byte grading.
 
 Run: python release.py release --private /operator --id OPAQUE_ID --level 0 --out /new/attempt
@@ -133,13 +133,14 @@ def clue_text(row, level):
 
 
 def copy_sources(destination):
-    lock = json.loads((o.HERE/'SOURCE.json').read_text())
-    for row in lock['files']:
-        target = destination/row['path']; target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(o.CHECKOUT/row['path'], target)
+    o.verify_sources()
+    for name, data in o.SNAPSHOT.files.items():
+        target = destination/name; target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
     target = destination/'research/weave/recovery-challenges/v2'
     target.mkdir(parents=True, exist_ok=True)
-    for name in ('SOURCE.json', 'operations.py', 'transport_cases.py'):
+    for name in ('SOURCE.json', 'SOURCE_BUNDLE.json', 'frozen-sources.zip',
+                 'source_snapshot.py', 'operations.py', 'transport_cases.py'):
         shutil.copyfile(o.HERE/name, target/name)
 
 
@@ -198,4 +199,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# ratios: loc_comments=18:161 imports_exports=8:7 calls_definitions=52:7
+# ratios: loc_comments=18:162 imports_exports=8:7 calls_definitions=53:7
