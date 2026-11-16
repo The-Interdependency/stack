@@ -1,4 +1,4 @@
-# ratios: loc_comments=84:14 imports_exports=9:2 calls_definitions=42:2
+# ratios: loc_comments=100:14 imports_exports=9:2 calls_definitions=55:2
 """Run an independent full-field check and retain a reproducible Unicode corpus witness."""
 import argparse
 from fractions import Fraction
@@ -52,6 +52,7 @@ def witness(directory, native_root):
             word_count += 1
         definition_count = number_names = unknown = 0
         closure_digest = sha256()
+        addition_digest = sha256()
         for cp, ordinal, entry_json, relation, _, word_id in db.execute('SELECT * FROM definitions ORDER BY cp,ordinal'):
             char = chr(cp)
             bearings = (Fraction(0),) if word_id is None else (Fraction(0), Fraction(1,2))
@@ -67,12 +68,25 @@ def witness(directory, native_root):
                 number_names += 1
             unknown += relation == 'definition:hmmm'
             closure_digest.update(canonical([cp, ordinal, restored.receipt]) + b'\n')
+            added = corpus._definition(source, db, char, ordinal, native, None)
+            complete = native.unicode_recursive.replay_unicode_graph(added['construction'])
+            flat = native.unicode_gonol.build_unicode_scalar_frame(restored.recover())
+            if (complete.recover() != restored.recover() or complete.resultant !=
+                    native.unicode_recursive.unicode_resultant(flat)):
+                raise ValueError('automatic inherited-definition addition differs from its glyph construction')
+            addition_digest.update(canonical([cp, ordinal, complete.receipt]) + b'\n')
             definition_count += 1
         record_id = 150508
         compound = corpus._record(source, db, record_id,native,(0, Fraction(1,4),Fraction(1,2),Fraction(3,4)))
         owner = source.execute('SELECT text FROM records WHERE id=?',(compound['owner_record_id'],)).fetchone()
         if owner != ('a cappella',) or compound['recovered'] != 'sung without instrumental accompaniment':
             raise ValueError('compound ownership or source text drift')
+        automatic = corpus._record(source, db, record_id, native, None)
+        combined = native.unicode_recursive.replay_unicode_graph(automatic['construction'])
+        if (automatic['owner_record_id'] != compound['owner_record_id'] or
+                combined.recover() != compound['recovered'] or combined.resultant !=
+                native.unicode_recursive.unicode_resultant(native.unicode_gonol.build_unicode_scalar_frame(compound['recovered']))):
+            raise ValueError('automatic compound addition or ownership drift')
         entries = load_character_definition_table()
         layer = CharacterDefinitionLayer(entries, {}, (), '')
         return {'profile':corpus.PROFILE, 'admission':manifest['admission'],
@@ -83,6 +97,8 @@ def witness(directory, native_root):
                     "SELECT count(*) FROM records WHERE kind='definition'").fetchone()[0],
                 'verified_inherited_definitions':definition_count, 'explicit_unknown_definitions':unknown,
                 'verified_number_name_interiors':number_names, 'definition_closures_sha256':closure_digest.hexdigest(),
+                'automatic_definition_closures_sha256':addition_digest.hexdigest(),
+                'automatic_compound_root':automatic['construction']['root'],
                 'declared_definition_bearings':{'owner':[0,1],'number_name':[1,2]},
                 'compound_fixture':{'record':record_id,'owner':owner[0],'attachment':compound['attachment_reference'],
                                     'declared_word_turns':[[0,1],[1,4],[1,2],[3,4]],
@@ -105,4 +121,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# ratios: loc_comments=84:14 imports_exports=9:2 calls_definitions=42:2
+# ratios: loc_comments=100:14 imports_exports=9:2 calls_definitions=55:2

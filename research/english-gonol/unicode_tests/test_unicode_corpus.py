@@ -1,4 +1,4 @@
-# ratios: loc_comments=131:10 imports_exports=16:8 calls_definitions=73:8
+# ratios: loc_comments=142:10 imports_exports=16:8 calls_definitions=82:8
 """Exercise corpus migration, intact recursive interiors, source custody and substituted artifacts."""
 from contextlib import closing
 from fractions import Fraction
@@ -80,8 +80,14 @@ def test_bearings_and_source_recovery(prepared):
     assert root.participants[0].receipt != root.participants[2].receipt
     assert all(p.radius == 1 for p in root.placements)
     assert root.participants[0].utf32_be == bytes.fromhex('000000eb')
+    added = corpus.query(out, 'the the', NATIVE)
+    automatic = unicode._native(NATIVE).unicode_recursive.replay_unicode_graph(added['construction'])
+    assert automatic.recover() == 'the the'
+    assert automatic.participants[0] is automatic.participants[2]
+    assert automatic.resultant == unicode._native(NATIVE).unicode_recursive.unicode_resultant(
+        unicode.construct_text('the the', ucns_source_root=NATIVE))
     with pytest.raises(ValueError,match='2 explicit'):
-        corpus.query(out, 'the the', NATIVE)
+        corpus.query(out, 'the the', NATIVE, [])
     with pytest.raises(ValueError,match='outside pinned'):
         corpus.query(out, 'quux', NATIVE, [0])
 
@@ -98,6 +104,11 @@ def test_source_record_and_definitions(prepared):
         ordinal, = db.execute("SELECT ordinal FROM definitions WHERE cp=51 AND relation='digit-number-name'").fetchone()
     named = corpus.definition(out,'3',ordinal,NATIVE,[0,Fraction(1,2)])
     assert named['recovered'] == '3three' and named['entry']['number_name'] == 'three'
+    for added in (corpus.record(out, 2, NATIVE), corpus.definition(out, '3', ordinal, NATIVE)):
+        root = unicode._native(NATIVE).unicode_recursive.replay_unicode_graph(added['construction'])
+        assert root.recover() == added['recovered']
+        assert root.resultant == unicode.resultant(unicode.construct_text(added['recovered'], ucns_source_root=NATIVE),
+                                                    ucns_source_root=NATIVE)
 
 
 @pytest.mark.parametrize('sql', [
@@ -160,4 +171,4 @@ def test_real_entrypoint():
     assert restored.recover()=='Aë'
     assert [item.radius for item in restored.placements] == [1,1]
     assert restored.glyphs[0].utf32_be == bytes.fromhex('00000041')
-# ratios: loc_comments=131:10 imports_exports=16:8 calls_definitions=73:8
+# ratios: loc_comments=142:10 imports_exports=16:8 calls_definitions=82:8
