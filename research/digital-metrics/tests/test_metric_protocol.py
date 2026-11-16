@@ -1,9 +1,14 @@
-# ratios: loc_comments=1832:211 imports_exports=17:5 calls_definitions=655:44
+# ratios: loc_comments=1857:218 imports_exports=17:5 calls_definitions=667:45
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
 
 # === CHECKS ===
+# id: check_digital_metric_block_comment_termination
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_block_comments_do_not_promote_suffix_to_projection
+#   mutates: none
+#   cleanup: none
 # id: check_digital_metric_comment_line_boundaries
 #   proves: digital_metric_work_graph_matches_stack_manifest
 #   call: self::test_multiline_comments_do_not_manufacture_projection
@@ -2063,12 +2068,40 @@ class MetricProtocolTests(unittest.TestCase):
                     self.assertTrue(findings, findings)
             for suffix in ('-->tail', 'tail'):
                 source = 'before<!--' + newline + 'hidden' + newline + suffix
-                expected = ['before', '', 'tail' if suffix.startswith('-->') else '']
+                expected = ['', '', '']
                 self.assertEqual(stack_consistency.rendered_markdown_lines(source + newline), expected)
         inline = human.replace('| Repository | Authority |', '| Repository | Auth<!-- hidden -->ority |', 1)
         findings = []
         stack_consistency.check_digital_metrics_projection(manifest, inline, repositories, findings)
         self.assertEqual(findings, [])
+
+    def test_block_comments_do_not_promote_suffix_to_projection(self) -> None:
+        manifest = json.loads((WORKSPACE.parents[1] / 'stack-manifest.json').read_text())
+        human = (WORKSPACE.parents[1] / 'STACK_MANIFEST.md').read_text()
+        repositories = {entry['repository']: entry for entry in manifest['repositories']}
+        for newline in ('\n', '\r\n', '\r'):
+            for indent in range(4):
+                for hidden in ('hidden', 'hidden' + newline):
+                    for target in ('| Repository | Authority |', '### Digital metrics exact projection'):
+                        with self.subTest(newline=repr(newline), indent=indent, hidden=hidden, target=target):
+                            replacement = ' ' * indent + '<!-- ' + hidden + '-->' + target
+                            broken = human.replace(target, replacement, 1)
+                            findings = []
+                            stack_consistency.check_digital_metrics_projection(
+                                manifest, broken, repositories, findings)
+                            self.assertTrue(findings, findings)
+        # Comments inside a fenced block must not hide its closing fence and
+        # consume a later real projection; comment handling follows block state.
+        fenced = '```html\n<!-- hidden\n```\n' + human
+        findings = []
+        stack_consistency.check_digital_metrics_projection(manifest, fenced, repositories, findings)
+        self.assertEqual(findings, [])
+        for comment in ('<!--> -->', '<!---> -->', '<!-- internal -- dash -->', '<!-- trailing--->'):
+            with self.subTest(malformed=comment):
+                broken = human.replace('| Repository | Authority |', '| Repository | Auth' + comment + 'ority |', 1)
+                findings = []
+                stack_consistency.check_digital_metrics_projection(manifest, broken, repositories, findings)
+                self.assertTrue(findings, findings)
 
     def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
         graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
@@ -2140,4 +2173,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=1832:211 imports_exports=17:5 calls_definitions=655:44
+# ratios: loc_comments=1857:218 imports_exports=17:5 calls_definitions=667:45

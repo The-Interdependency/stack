@@ -20,6 +20,30 @@ neither receipt nor producer pins changed.
 Run the acceptance commands in [the initial repair record](review-repair-20261115.md).
 That record's 34-test result remains historical; this follow-up adds one test.
 
+## Block-comment follow-up
+
+Fresh review of `e8783952cf2bb5afa14a722df1e7b0cfb63e8836` reproduced another
+false admission: `<!-- hidden\n-->| Repository | Authority |` promotes the
+terminating line's suffix into a table header. Both comments 4581963896 and
+4581963901 report that same defect. GFM's
+[HTML-block rules](https://github.github.com/gfm/#html-blocks) include the entire
+terminating line in the block.
+
+Comment handling now follows the existing fence/raw-block state. Block comments
+consume whole lines, including their closing line. Multiline inline comments are
+conservatively excluded through their closing line; only valid single-line inline
+comments can join visible text. Malformed inline HTML cannot manufacture a
+projection. A second regression covers both headings and headers, all three
+newline formats, zero to three spaces, same-line and multiline block comments,
+fenced comment text and malformed inline comments. The valid inline control stays
+admitted. No general Markdown renderer is claimed.
+
+Current result: **36 reviewed tests pass**, zero skips; static linkage has 30
+contracts and 36 checks with zero behavioral verification credit. Consistency,
+portfolio validation, both changed-source ratio gates and whitespace checks pass.
+Receipt replay retains the same payload and bytes. The earlier 34/35-test records
+remain historical observations.
+
 hmmm: current-head hosted checks and review remain separate evidence. No EDCM
 measurement, signature or arbitrary-Python attestation follows from this repair.
 

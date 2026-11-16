@@ -1,4 +1,4 @@
-# ratios: loc_comments=840:102 imports_exports=9:20 calls_definitions=387:24
+# ratios: loc_comments=857:106 imports_exports=9:20 calls_definitions=389:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -335,14 +335,12 @@ def rendered_markdown_lines(source: str) -> list[str]:
     Raw HTML is never authority-table syntax. Preserve excluded line boundaries
     so deleting a block cannot join two otherwise separated table fragments.
     """
-    comment_breaks = lambda match: re.sub(r"[^\r\n]", "", match[0])
-    source = re.sub(r"<!--.*?-->", comment_breaks, source, flags=re.DOTALL)
-    source = re.sub(r"<!--.*\Z", comment_breaks, source, flags=re.DOTALL)
     rendered: list[str] = []
     fence_character: str | None = None
     fence_length = 0
     html_end: str | None = None
     html_blank = False
+    inline_comment = False
     block_tags = (
         'address article aside base basefont blockquote body caption center col '
         'colgroup dd details dialog dir div dl dt fieldset figcaption figure footer '
@@ -352,6 +350,13 @@ def rendered_markdown_lines(source: str) -> list[str]:
     ).split()
     tag_start = re.compile(r'^ {0,3}</?(?:' + '|'.join(block_tags) + r')(?=[\s/>]|$)', re.I)
     for line in source.splitlines():
+        if inline_comment:
+            # A multiline inline comment cannot create a new structural line.
+            # Conservatively exclude its entire terminating line as well.
+            if '-->' in line:
+                inline_comment = False
+            rendered.append('')
+            continue
         if html_end is not None:
             if re.search(html_end, line, re.I):
                 html_end = None
@@ -370,7 +375,9 @@ def rendered_markdown_lines(source: str) -> list[str]:
                 rendered.append('')
                 continue
             special = re.match(r'^ {0,3}<(script|pre|style|textarea)(?=[\s>]|$)', line, re.I)
-            if special:
+            if re.match(r'^ {0,3}<!--', line):
+                html_end = r'-->'
+            elif special:
                 html_end = r'</' + special.group(1) + r'\s*>'
             elif re.match(r'^ {0,3}<\?', line):
                 html_end = r'\?>'
@@ -385,6 +392,20 @@ def rendered_markdown_lines(source: str) -> list[str]:
                     html_end = None
                 rendered.append('')
                 continue
+            # Only genuinely inline, single-line comments can join their
+            # adjacent visible text. Block comments consume whole lines above.
+            while '<!--' in line:
+                start = line.index('<!--')
+                end = line.find('-->', start + 4)
+                if end < 0:
+                    line = ''
+                    inline_comment = True
+                    break
+                text = line[start + 4:end]
+                if text.startswith(('>', '->')) or text.endswith('-') or '--' in text:
+                    line = ''  # Malformed inline HTML cannot manufacture structure.
+                    break
+                line = line[:start] + line[end + 3:]
             rendered.append(line)
             continue
         closing = re.fullmatch(
@@ -1027,4 +1048,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=840:102 imports_exports=9:20 calls_definitions=387:24
+# ratios: loc_comments=857:106 imports_exports=9:20 calls_definitions=389:24
