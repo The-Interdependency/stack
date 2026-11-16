@@ -728,3 +728,65 @@ at 2400 s.
 Check that a background batch is actually running the intended jobs before
 writing results down; the Round 15 log recorded a crashed batch as timeouts.
 Use SIGKILL caps for C solvers called from Python.
+
+---------------------------------------------------------------------------
+## Round 17 — Nov 16, 2026 ~7:34–8:15 AM (America/Los_Angeles), pre-reset window
+
+Shared weekly usage 76.2% at start, reset 9:10 AM PST (1h35m away), so the
+pre-reset allowance applied (98% absolute ceiling). Used ~2–3 points.
+
+### Challenge branch check
+Branch head is now `978951d` (Nov 15, 9:23 PM PST). Inside
+`research/weave/recovery-challenges/` the changes since `f435c65` are
+infrastructure repairs in `v2/`: frozen-source bundle and loader, checkpoint,
+census and release repairs, new SHA256SUMS lists, `SOURCE_REPLAY_VECTORS.json`.
+`blind-pack.zip`, `transport_cases.py` and `matrix.py` hashes are unchanged,
+so no new or changed ciphertexts. (Only that folder's diff was read.)
+
+### 1. Round 16 pending job finished
+`187df4d1…` XCC t=3 → `none` after 27,306 s (`work/r16/out_187d.jsonl`).
+XCC tally over the 41 files that fit 3–4-op schedules: **1 unique
+(`2f7a2876…`), 40 `none`, 0 unresolved.** `validate.py` count unchanged at
+1552 / 1841.
+
+### 2. Independent check of the local forward model
+The new public `SOURCE_REPLAY_VECTORS.json` (copied unchanged to
+`work/r17/SOURCE_REPLAY_VECTORS.978951d.json`) has one transport vector
+(schedule XCIJW, lane_rotation 1), sealed with the original adapters. My
+local `transport_cases` pipeline (with the stubbed `operations` module)
+reproduces its wire **byte for byte** (`replay_transport.py` →
+`replay_transport.out`). This is the first check of my transport model
+against a vector I did not generate.
+
+### 3. Planted tests for the XCC SAT encoding (`work/r17/`)
+`negpos.py` plants XCC wires (n=1, rot=0, arity 3 — same configuration as
+the real runs), `run.sh` runs 20 jobs, 6 at a time, `timeout -s KILL 900`.
+Args, empty `err.log` and run times were checked before this write-up.
+
+- **Truth admitted** (true plaintext bits fixed as unit clauses; solver must
+  find a corpus window): t=3 6/6 SAT (102–380 s), t=5 2/2 (27–38 s),
+  t=7 1/1 (3 s). (A manual t=7 seed 1 run, not in `out.jsonl`, was also SAT.)
+  So the CNF does not exclude the true solution on any planted case,
+  including t=3, where full recovery still times out.
+- **Planted negatives, random wires** (same lane shape, random bits; a
+  preimage is astronomically unlikely, roughly 2^-600 by counting free versus
+  constrained bits): t=3 3/3 `none` (97–478 s), t=7 1/1 `none`.
+- **Planted negatives, near-miss** (1 or 8 wire bits flipped in a planted
+  wire): t=7 2/2 `none` (3 s); t=3 5/5 **killed at 900 s (inconclusive)**.
+
+### Proven vs guessed
+- The 40 XCC `none` results now rest on: positive planted recovery (t=5, t=7),
+  truth admission at t=3/5/7, and planted negatives on random wires. They are
+  still eliminations of **XCC with n=1, rot=0, arity 3 only**, and only within
+  the planted-test coverage (no proof of encoding completeness). The near-miss
+  negatives at t=3 did not finish, so false-negative behaviour close to a
+  real wire is not tested at t=3.
+- 1-bit flips returning `none` at t=7 is expected but not guaranteed (a flip
+  could have a real alternative preimage); none was found.
+- XCCC and 10/15-op schedules remain untried on the real files.
+
+### Lessons
+Fixing the known truth and asking only "is it still satisfiable?" is a cheap
+completeness test that works even where full recovery times out (t=3).
+Near-miss negatives are much harder for the solver than random ones.
+

@@ -1,0 +1,21 @@
+{"mode": "truth", "t": 3, "seed": 1, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 101.9}
+{"mode": "truth", "t": 3, "seed": 3, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 192.9}
+{"mode": "truth", "t": 3, "seed": 2, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 306.3}
+{"mode": "truth", "t": 3, "seed": 5, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 223.4}
+{"mode": "rand", "t": 3, "seed": 1, "status": "none", "rec_eq_planted": null, "secs": 478.3}
+{"mode": "truth", "t": 3, "seed": 4, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 379.9}
+{"mode": "truth", "t": 3, "seed": 6, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 238.1}
+{"mode": "rand", "t": 7, "seed": 1, "status": "none", "rec_eq_planted": null, "secs": 3.4}
+{"mode": "flip8", "t": 7, "seed": 1, "status": "none", "rec_eq_planted": null, "secs": 3.6}
+{"mode": "flip1", "t": 7, "seed": 1, "status": "none", "rec_eq_planted": null, "secs": 2.8}
+{"mode": "truth", "t": 5, "seed": 1, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 37.6}
+{"mode": "truth", "t": 5, "seed": 2, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 27.0}
+{"mode": "truth", "t": 7, "seed": 2, "status": "sat_truth_admitted", "rec_eq_planted": null, "secs": 3.0}
+{"mode": "rand", "t": 3, "seed": 2, "status": "none", "rec_eq_planted": null, "secs": 263.2}
+{"mode": "rand", "t": 3, "seed": 3, "status": "none", "rec_eq_planted": null, "secs": 97.1}
+{"mode":"flip1","t":3,"seed":1,"status":"killed900"}
+{"mode":"flip8","t":3,"seed":1,"status":"killed900"}
+{"mode":"flip8","t":3,"seed":2,"status":"killed900"}
+{"mode":"flip1","t":3,"seed":2,"status":"killed900"}
+{"mode":"flip8","t":3,"seed":3,"status":"killed900"}
+{"DONE":1}
