@@ -1,4 +1,4 @@
-# ratios: loc_comments=18:162 imports_exports=8:7 calls_definitions=53:7
+# ratios: loc_comments=18:164 imports_exports=8:7 calls_definitions=54:7
 """Operator-only staged exports and exact-byte grading.
 
 Run: python release.py release --private /operator --id OPAQUE_ID --level 0 --out /new/attempt
@@ -55,12 +55,17 @@ in the bytes is fair evidence. There is no promise that every file conceals its 
 
 
 def read_case(root, case_id):
+    """Return one frozen row and its verified ciphertext buffer before disclosure."""
     root = build.private_root(root)
-    plan = json.loads((root/'private.json').read_text())
+    plan = build.frozen_plan(root)
     matches = [r for r in plan['cases'] if r['id'] == case_id]
     if len(matches) != 1:
         raise ValueError('unknown or duplicate opaque case ID')
-    return matches[0]
+    row = matches[0]
+    if (root/'ciphertexts'/f'{case_id}.bin').is_symlink():
+        raise ValueError('ciphertext may not be a symlink')
+    _receipt, wire = build.load_verified_case(root, row)
+    return row, wire
 
 
 def structural(p):
@@ -150,13 +155,9 @@ def export(root, case_id, level, out):
     root, out = build.private_root(root), build.outside_checkout(out)
     if out.exists() or out.is_relative_to(root):
         raise ValueError('use a new output directory outside the private archive and checkout')
-    row = read_case(root, case_id)
-    wire_path = root/'ciphertexts'/f'{case_id}.bin'
-    if wire_path.is_symlink():
-        raise ValueError('ciphertext may not be a symlink')
-    wire_path = build.private_path(root, 'ciphertexts', f'{case_id}.bin')
+    row, wire = read_case(root, case_id)
     out.mkdir(mode=0o700, parents=True)
-    shutil.copyfile(wire_path, out/'challenge.bin')
+    (out/'challenge.bin').write_bytes(wire)
     (out/'README.md').write_text(clue_text(row, level))
     if level >= 2:
         copy_sources(out/'source')
@@ -167,13 +168,14 @@ def export(root, case_id, level, out):
         (out/'parameters-without-corpus.json').write_text(json.dumps(p, indent=2)+'\n')
     if level >= 6:
         request = {k: row[k] for k in ('family', 'schedule', 'parameters')}
-        request['wire_hex'] = wire_path.read_bytes().hex()
+        request['wire_hex'] = wire.hex()
         (out/'request.json').write_text(json.dumps(request, indent=2)+'\n')
     return out
 
 
 def grade(root, case_id, candidate):
-    original = bytes.fromhex(read_case(root, case_id)['message_hex'])
+    row, _wire = read_case(root, case_id)
+    original = bytes.fromhex(row['message_hex'])
     data = candidate.read_bytes()
     return {'exact': data == original, 'candidate_sha256': sha256(data).hexdigest()}
 
@@ -199,4 +201,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-# ratios: loc_comments=18:162 imports_exports=8:7 calls_definitions=53:7
+# ratios: loc_comments=18:164 imports_exports=8:7 calls_definitions=54:7

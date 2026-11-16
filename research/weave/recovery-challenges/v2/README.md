@@ -162,7 +162,7 @@ partial checkpoint. Use one generation process per operator archive.
 
 Current receipts use `weave.challenge-checkpoint/v1` and bind SHA-256 of the whole
 frozen case row (sorted compact JSON), including message, family, schedule and
-parameters. Resume and packaging share this validation rule. Changed inputs,
+parameters. Resume, packaging, staged export and grading share this validation rule. Changed inputs,
 unbound historical receipts, empty/duplicate case plans and inconsistent generation
 counts refuse before publication. Digests are content bindings, not signatures.
 
@@ -185,6 +185,8 @@ receiver before creating its new receipt. It leaves the original archive intact.
 Do not add digests to old receipts by hand or treat them as newly verified. The
 synthetic migration is tested; the original 1,841-case operator archive was not
 accessed or migrated in this repair. [Checkpoint repair evidence](CHECKPOINT_REPAIR_20261116.md).
+[Release and grading follow-up](RELEASE_REPAIR_20261116.md) binds every clue level
+and the grader to the verified case and exact checked ciphertext buffer.
 
 Private roots and their artifact paths are resolved before use, including `..`
 and symlinks. Private children must remain within the admitted archive. All staged

@@ -1,4 +1,4 @@
-# ratios: loc_comments=129:38 imports_exports=19:1 calls_definitions=73:7
+# ratios: loc_comments=131:38 imports_exports=19:1 calls_definitions=75:7
 """Frozen-source replay, refusal and standalone-export witnesses.
 
 Usage: python test_source_snapshot.py. No original operator archive is needed.
@@ -93,12 +93,14 @@ class FrozenSources(unittest.TestCase):
             operator = root / 'operator'
             operator.mkdir(mode=0o700)
             (operator / 'ciphertexts').mkdir()
+            (operator / 'receipts').mkdir(mode=0o700)
             rows = [{**row, 'id': f'{index:016x}', 'message_hex': row['input_hex']}
                     for index, row in enumerate(self.vectors)]
             build.save(operator / 'private.json', {'cases': rows})
             for row in rows:
                 with self.subTest(family=row['family'], schedule=row['schedule']):
                     (operator / 'ciphertexts' / (row['id'] + '.bin')).write_bytes(bytes.fromhex(row['wire_hex']))
+                    self.assertEqual(build.one_case(str(operator), row)['status'], 'VERIFIED')
                     out = release.export(operator, row['id'], 6, root / ('attempt-' + row['id']))
                     script = out / 'source/research/weave/recovery-challenges/v2/operations.py'
                     result = subprocess.run([sys.executable, '-I', '-B', str(script), 'receive',
@@ -177,4 +179,4 @@ assert module.__source_sha256__ == o.prime.__source_sha256__
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-# ratios: loc_comments=129:38 imports_exports=19:1 calls_definitions=73:7
+# ratios: loc_comments=131:38 imports_exports=19:1 calls_definitions=75:7

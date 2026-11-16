@@ -1,4 +1,4 @@
-# ratios: loc_comments=232:43 imports_exports=16:14 calls_definitions=130:14
+# ratios: loc_comments=234:44 imports_exports=16:15 calls_definitions=131:15
 """Freeze, generate and verify actual challenges without publishing their answers.
 
 Usage: python build.py freeze --private /absolute/operator
@@ -32,7 +32,7 @@ Private paths resolve outside the checkout; use an operator-owned directory.
 #   given: verified private fixtures
 #   then: publish only ciphertexts, ciphertext digests, opaque IDs and aggregate coverage
 # id: frozen_case_checkpoint_binding
-#   given: a resumed or packaged case with changed inputs or an unbound historical receipt
+#   given: a resumed, packaged, exported or graded case with changed inputs or an unbound historical receipt
 #   then: refuse before accepting verification or publishing, preserving existing evidence
 # === END CONTRACTS ===
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -77,8 +77,8 @@ def frozen_plan(root):
     return plan
 
 
-def checked_checkpoint(root, row):
-    """Resume and publication share one current-input checkpoint admission rule."""
+def load_verified_case(root, row):
+    """Return the receipt and exact ciphertext buffer admitted for this frozen row."""
     digest = case_digest(row)
     receipt = json.loads(private_path(root, 'receipts', row['id']+'.json').read_text())
     if (not isinstance(receipt, dict)
@@ -92,7 +92,12 @@ def checked_checkpoint(root, row):
             or receipt.get('wire_bytes') != len(wire)
             or receipt.get('message_bytes') != len(bytes.fromhex(row['message_hex']))):
         raise ValueError('checkpoint invalid, unbound or mismatched; preserve evidence and reverify separately')
-    return receipt
+    return receipt, wire
+
+
+def checked_checkpoint(root, row):
+    """Resume and publication use the same admission rule as release and grading."""
+    return load_verified_case(root, row)[0]
 
 
 def save(path, value):
@@ -305,4 +310,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=232:43 imports_exports=16:14 calls_definitions=130:14
+# ratios: loc_comments=234:44 imports_exports=16:15 calls_definitions=131:15

@@ -1,4 +1,4 @@
-# ratios: loc_comments=284:27 imports_exports=15:1 calls_definitions=189:23
+# ratios: loc_comments=323:37 imports_exports=15:1 calls_definitions=218:25
 """PR #94 integrity regressions, using synthetic private fixtures only.
 
 Run from any directory: python research/weave/recovery-challenges/v2/test_regressions.py
@@ -22,6 +22,16 @@ import release
 import test_harness as harness
 
 # === CHECKS ===
+# id: checkpoint_release_wire_binding
+#   proves: frozen_case_checkpoint_binding, staged_disclosure, exact_grading
+#   call: self::Integrity.test_release_and_grade_require_current_ciphertext_binding
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
+# id: checkpoint_release_verified_buffer
+#   proves: frozen_case_checkpoint_binding, staged_disclosure
+#   call: self::Integrity.test_release_uses_verified_wire_buffer
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
 # id: checkpoint_frozen_row_binding
 #   proves: frozen_case_checkpoint_binding
 #   call: self::Integrity.test_changed_case_inputs_cannot_reuse_or_publish_checkpoint
@@ -277,6 +287,15 @@ class Integrity(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
                         build.package(self.root)
                     publish.assert_not_called()
+                candidate = self.base/'candidate.bin'
+                candidate.write_bytes(bytes.fromhex(self.row['message_hex']))
+                for level in range(7):
+                    out = self.base/f'rejected-{field}-{level}'
+                    with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                        release.export(self.root, self.row['id'], level, out)
+                    self.assertFalse(out.exists())
+                with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                    release.grade(self.root, self.row['id'], candidate)
                 self.assertEqual((wire.read_bytes(), checkpoint.read_bytes(), wire.stat().st_mtime_ns,
                                   checkpoint.stat().st_mtime_ns), original)
         self.assertEqual(build.one_case(str(self.root), copy.deepcopy(self.row)), receipt)
@@ -298,6 +317,38 @@ class Integrity(unittest.TestCase):
                         build.package(self.root)
                     publish.assert_not_called()
                 self.assertEqual(checkpoint.read_bytes(), data)
+
+    def test_release_and_grade_require_current_ciphertext_binding(self):
+        build.one_case(str(self.root), self.row)
+        wire = self.root/'ciphertexts'/f"{self.row['id']}.bin"
+        original = wire.read_bytes()
+        candidate = self.base/'candidate.bin'
+        candidate.write_bytes(bytes.fromhex(self.row['message_hex']))
+        self.assertTrue(release.grade(self.root, self.row['id'], candidate)['exact'])
+        wire.write_bytes(bytes([original[0] ^ 1]) + original[1:])
+        corrupted = wire.read_bytes()
+        for level in range(7):
+            out = self.base/f'rejected-wire-{level}'
+            with self.subTest(level=level), self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                release.export(self.root, self.row['id'], level, out)
+            self.assertFalse(out.exists())
+        with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+            release.grade(self.root, self.row['id'], candidate)
+        self.assertEqual(wire.read_bytes(), corrupted)
+
+    def test_release_uses_verified_wire_buffer(self):
+        build.one_case(str(self.root), self.row)
+        path = self.root/'ciphertexts'/f"{self.row['id']}.bin"
+        original = path.read_bytes()
+        checked = build.load_verified_case
+        def checked_then_changed(root, row):
+            snapshot = checked(root, row)
+            path.write_bytes(b'changed after the checked buffer was captured')
+            return snapshot
+        with mock.patch.object(build, 'load_verified_case', side_effect=checked_then_changed):
+            out = release.export(self.root, self.row['id'], 6, self.base/'admitted-snapshot')
+        self.assertEqual((out/'challenge.bin').read_bytes(), original)
+        self.assertEqual(json.loads((out/'request.json').read_text())['wire_hex'], original.hex())
 
     def test_duplicate_or_empty_plans_refuse_before_generation_or_publication(self):
         for rows in ([], [self.row, self.row], [{**self.row, 'id': '../escape'}]):
@@ -337,4 +388,4 @@ class Integrity(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-# ratios: loc_comments=284:27 imports_exports=15:1 calls_definitions=189:23
+# ratios: loc_comments=323:37 imports_exports=15:1 calls_definitions=218:25
