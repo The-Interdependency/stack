@@ -1,4 +1,4 @@
-# ratios: loc_comments=817:95 imports_exports=15:5 calls_definitions=238:31
+# ratios: loc_comments=817:100 imports_exports=15:5 calls_definitions=238:31
 """Generate the frozen METAPAT/UCNS digital-metric vertical-slice receipt.
 
 Usage guidance
@@ -42,6 +42,11 @@ from __future__ import annotations
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===
+# id: digital_metric_base_identity_is_unambiguous
+#   given: BASE.json repeats a member, including a matching or conflicting source_commit
+#   then: generation rejects the original ambiguous record before loading any producer
+#   class: provenance
+#
 # id: digital_metric_generator_requires_source_bound_entry
 #   given: the current generator implementation is entered without a source digest binding
 #   then: receipt generation rejects before resolving any producer
@@ -424,7 +429,7 @@ def _verify_stack_base(
     source_path = base_path or workspace / "BASE.json"
     try:
         source = source_path.read_bytes()
-        base = json.loads(source.decode("utf-8"))
+        base = json.loads(source.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ProducerIdentityError(f"invalid digital-metrics BASE.json: {exc}") from exc
     if not isinstance(base, dict):
@@ -991,4 +996,4 @@ if __name__ == "__main__":
     raise SystemExit(
         "run generate_receipt_cli.py so generator execution is source-bound"
     )
-# ratios: loc_comments=817:95 imports_exports=15:5 calls_definitions=238:31
+# ratios: loc_comments=817:100 imports_exports=15:5 calls_definitions=238:31

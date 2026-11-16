@@ -1,9 +1,14 @@
-# ratios: loc_comments=1917:226 imports_exports=17:5 calls_definitions=708:46
+# ratios: loc_comments=1934:231 imports_exports=17:5 calls_definitions=722:47
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
 
 # === CHECKS ===
+# id: check_digital_metric_duplicate_base_members
+#   proves: digital_metric_base_identity_is_unambiguous
+#   call: self::test_base_duplicate_json_members_are_rejected
+#   mutates: temporary BASE fixtures only
+#   cleanup: TemporaryDirectory
 # id: check_digital_metric_unicode_graph_encoding
 #   proves: digital_metric_work_graph_matches_stack_manifest
 #   call: self::test_unicode_graph_encoding_agrees_across_all_gates
@@ -2119,7 +2124,7 @@ class MetricProtocolTests(unittest.TestCase):
         manifest = json.loads((WORKSPACE.parents[1] / 'stack-manifest.json').read_text())
         human = (WORKSPACE.parents[1] / 'STACK_MANIFEST.md').read_text()
         parser = (WORKSPACE / 'vendor/universal.py').read_bytes()
-        for text in (' Möbius', ' λ e\u0308', ' 😀'):
+        for text in (' Möbius', ' λ e\u0308', ' 😀', ' \u2028', ' \u2029', ' \u0085'):
             for field in ('relation', 'hmmm'):
                 with self.subTest(text=text, field=field), TemporaryDirectory() as directory:
                     graph = deepcopy(baseline)
@@ -2171,6 +2176,24 @@ class MetricProtocolTests(unittest.TestCase):
                     with self.assertRaisesRegex(contract_audit.AuditIdentityError, 'Stack manifest digest mismatch'):
                         contract_audit._load_pinned_parser(SKILL_LIB_ROOT,
                             graph_source=graph_bytes, manifest_source=manifest_path.read_bytes(), parser_source=parser)
+
+    def test_base_duplicate_json_members_are_rejected(self) -> None:
+        graph = load_work_graph(WORKSPACE / 'WORK_GRAPH.json')
+        source = (WORKSPACE / 'BASE.json').read_bytes()
+        base = json.loads(source)
+        self.assertEqual(_verify_stack_base(graph, WORKSPACE), hashlib.sha256(source).hexdigest())
+        original = canonical_json(base)
+        key = '"source_commit":"' + base['source_commit'] + '"'
+        for previous in ('0' * 40, base['source_commit']):
+            with self.subTest(previous=previous), TemporaryDirectory() as directory:
+                path = Path(directory) / 'BASE.json'
+                ambiguous = original.replace(key, '"source_commit":"' + previous + '",' + key, 1)
+                self.assertNotEqual(ambiguous, original)
+                path.write_text(ambiguous, encoding='utf-8')
+                with self.assertRaisesRegex(ProducerIdentityError, 'duplicate JSON member: source_commit'):
+                    _verify_stack_base(graph, WORKSPACE, path)
+                with self.assertRaisesRegex(json.JSONDecodeError, 'duplicate JSON member: source_commit'):
+                    stack_consistency.load_json(path)
 
     def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
         graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
@@ -2242,4 +2265,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=1917:226 imports_exports=17:5 calls_definitions=708:46
+# ratios: loc_comments=1934:231 imports_exports=17:5 calls_definitions=722:47

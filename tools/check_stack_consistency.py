@@ -1,4 +1,4 @@
-# ratios: loc_comments=866:108 imports_exports=9:20 calls_definitions=391:24
+# ratios: loc_comments=869:109 imports_exports=9:20 calls_definitions=392:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -350,7 +350,11 @@ def rendered_markdown_lines(source: str) -> list[str]:
         'section summary table tbody td tfoot th thead title tr track ul'
     ).split()
     tag_start = re.compile(r'^ {0,3}</?(?:' + '|'.join(block_tags) + r')(?=[\s/>]|$)', re.I)
-    for line in source.splitlines():
+    # GFM physical lines end at CR/LF; Unicode separators remain source data.
+    lines = re.split(r'\r\n|\r|\n', source)
+    if lines[-1] == '':
+        lines.pop()  # A final line ending terminates its line, not a new one.
+    for line in lines:
         if block_comment:
             if '-->' in line:
                 block_comment = False
@@ -1059,4 +1063,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=866:108 imports_exports=9:20 calls_definitions=391:24
+# ratios: loc_comments=869:109 imports_exports=9:20 calls_definitions=392:24
