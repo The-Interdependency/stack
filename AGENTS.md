@@ -8,6 +8,27 @@ These root instructions apply recursively to every file and workspace in Stack.
 More-specific `AGENTS.md` files may add constraints for their subtree, but they
 must not weaken the authority, provenance, preservation, or evidence rules below.
 
+## Delivery focus
+
+Erin's delivery priority is Stack, in this order: **UCNS → UCHC → EDCM → Weave**.
+Keep one research area active at a time. Before editing, name its current
+end-to-end result, exact source identities, acceptance check and unresolved
+constraint. Close that result with reproducible evidence, or record a concrete
+blocker, before selecting the next area. A blocker is not completion; leave a
+resumption condition and choose the highest-priority unblocked task without
+claiming the missing result or bypassing its dependencies. Cross-area work must
+serve a named prerequisite of the active result, keeping that prerequisite in a
+separate, single-area PR.
+
+Do not reopen an already evidenced result merely to generate activity. Re-run
+checks when sources, findings or the claim change. Research breadth does not
+authorize parallel expansion. Preserve existing evidence and authority boundaries.
+
+Usage: begin a task record with `area / result / source commits / pass condition /
+failure condition / blocker / next action`; finish it with the actual result and
+the replay command. A screenshot, passing metadata gate or repository count does
+not establish a useful construction, valid measurement or secure cipher.
+
 ## Authority and topology
 
 - `libs/<repo>/` is the manifest-pinned canonical repository view. Treat it as read-only
