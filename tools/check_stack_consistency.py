@@ -1,4 +1,4 @@
-# ratios: loc_comments=857:106 imports_exports=9:20 calls_definitions=389:24
+# ratios: loc_comments=865:108 imports_exports=9:20 calls_definitions=391:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -340,6 +340,7 @@ def rendered_markdown_lines(source: str) -> list[str]:
     fence_length = 0
     html_end: str | None = None
     html_blank = False
+    block_comment = False
     inline_comment = False
     block_tags = (
         'address article aside base basefont blockquote body caption center col '
@@ -350,6 +351,11 @@ def rendered_markdown_lines(source: str) -> list[str]:
     ).split()
     tag_start = re.compile(r'^ {0,3}</?(?:' + '|'.join(block_tags) + r')(?=[\s/>]|$)', re.I)
     for line in source.splitlines():
+        if block_comment:
+            if '-->' in line:
+                block_comment = False
+            rendered.append('')
+            continue
         if inline_comment:
             # A multiline inline comment cannot create a new structural line.
             # Conservatively exclude its entire terminating line as well.
@@ -374,10 +380,14 @@ def rendered_markdown_lines(source: str) -> list[str]:
                 fence_length = len(match.group(1))
                 rendered.append('')
                 continue
-            special = re.match(r'^ {0,3}<(script|pre|style|textarea)(?=[\s>]|$)', line, re.I)
             if re.match(r'^ {0,3}<!--', line):
-                html_end = r'-->'
-            elif special:
+                # This is GFM block termination, not browser HTML sanitizing.
+                # Nonstandard browser closers such as --!> remain excluded.
+                block_comment = '-->' not in line
+                rendered.append('')
+                continue
+            special = re.match(r'^ {0,3}<(script|pre|style|textarea)(?=[\s>]|$)', line, re.I)
+            if special:
                 html_end = r'</' + special.group(1) + r'\s*>'
             elif re.match(r'^ {0,3}<\?', line):
                 html_end = r'\?>'
@@ -1048,4 +1058,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=857:106 imports_exports=9:20 calls_definitions=389:24
+# ratios: loc_comments=865:108 imports_exports=9:20 calls_definitions=391:24

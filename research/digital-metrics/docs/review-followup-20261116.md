@@ -44,6 +44,14 @@ portfolio validation, both changed-source ratio gates and whitespace checks pass
 Receipt replay retains the same payload and bytes. The earlier 34/35-test records
 remain historical observations.
 
+CodeQL comment 4581997492 then classified the literal GFM terminator regexp as an
+HTML sanitizer missing a browser's alternate `--!>` closer. This gate reads
+Markdown structure, not browser HTML; accepting that alternate closer would reveal
+content that GFM still treats as a raw block. Block-comment state now uses literal
+GFM termination independently of the generic raw-HTML regex state, and a rejecting
+`--!>` regression confirms that it cannot reveal a hidden authority projection.
+The 36-test suite and all acceptance gates above pass after this change.
+
 hmmm: current-head hosted checks and review remain separate evidence. No EDCM
 measurement, signature or arbitrary-Python attestation follows from this repair.
 

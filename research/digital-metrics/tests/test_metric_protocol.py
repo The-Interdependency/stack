@@ -1,4 +1,4 @@
-# ratios: loc_comments=1857:218 imports_exports=17:5 calls_definitions=667:45
+# ratios: loc_comments=1861:220 imports_exports=17:5 calls_definitions=669:45
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
@@ -2102,6 +2102,12 @@ class MetricProtocolTests(unittest.TestCase):
                 findings = []
                 stack_consistency.check_digital_metrics_projection(manifest, broken, repositories, findings)
                 self.assertTrue(findings, findings)
+        # A browser's alternate comment closer is not GFM block termination;
+        # it must not reveal a hidden projection to this Markdown source gate.
+        findings = []
+        stack_consistency.check_digital_metrics_projection(
+            manifest, '<!-- hidden --!>\n' + human, repositories, findings)
+        self.assertTrue(findings, findings)
 
     def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
         graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
@@ -2173,4 +2179,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=1857:218 imports_exports=17:5 calls_definitions=667:45
+# ratios: loc_comments=1861:220 imports_exports=17:5 calls_definitions=669:45
