@@ -1,9 +1,14 @@
-# ratios: loc_comments=1811:206 imports_exports=17:5 calls_definitions=644:43
+# ratios: loc_comments=1832:211 imports_exports=17:5 calls_definitions=655:44
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
 
 # === CHECKS ===
+# id: check_digital_metric_comment_line_boundaries
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_multiline_comments_do_not_manufacture_projection
+#   mutates: none
+#   cleanup: none
 # id: check_digital_metric_raw_html_and_authority
 #   proves: digital_metric_work_graph_matches_stack_manifest
 #   call: self::test_projection_rejects_raw_html_and_coherent_authority_transfer
@@ -2043,6 +2048,28 @@ class MetricProtocolTests(unittest.TestCase):
             with self.assertRaisesRegex(ProducerIdentityError, 'authority split changed'):
                 load_work_graph(path)
 
+    def test_multiline_comments_do_not_manufacture_projection(self) -> None:
+        manifest = json.loads((WORKSPACE.parents[1] / 'stack-manifest.json').read_text())
+        human = (WORKSPACE.parents[1] / 'STACK_MANIFEST.md').read_text()
+        repositories = {entry['repository']: entry for entry in manifest['repositories']}
+        for newline in ('\n', '\r\n', '\r'):
+            for token in ('| Repository | Auth', '### Digital metrics exact pro'):
+                with self.subTest(newline=repr(newline), token=token):
+                    marker = token + '<!--' + newline + '-->'
+                    broken = human.replace(token, marker, 1)
+                    findings = []
+                    stack_consistency.check_digital_metrics_projection(
+                        manifest, broken, repositories, findings)
+                    self.assertTrue(findings, findings)
+            for suffix in ('-->tail', 'tail'):
+                source = 'before<!--' + newline + 'hidden' + newline + suffix
+                expected = ['before', '', 'tail' if suffix.startswith('-->') else '']
+                self.assertEqual(stack_consistency.rendered_markdown_lines(source + newline), expected)
+        inline = human.replace('| Repository | Authority |', '| Repository | Auth<!-- hidden -->ority |', 1)
+        findings = []
+        stack_consistency.check_digital_metrics_projection(manifest, inline, repositories, findings)
+        self.assertEqual(findings, [])
+
     def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
         graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
         original = canonical_json(graph)
@@ -2113,4 +2140,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-# ratios: loc_comments=1811:206 imports_exports=17:5 calls_definitions=644:43
+# ratios: loc_comments=1832:211 imports_exports=17:5 calls_definitions=655:44

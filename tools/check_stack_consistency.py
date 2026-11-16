@@ -1,4 +1,4 @@
-# ratios: loc_comments=839:102 imports_exports=9:20 calls_definitions=386:24
+# ratios: loc_comments=840:102 imports_exports=9:20 calls_definitions=387:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -335,8 +335,9 @@ def rendered_markdown_lines(source: str) -> list[str]:
     Raw HTML is never authority-table syntax. Preserve excluded line boundaries
     so deleting a block cannot join two otherwise separated table fragments.
     """
-    source = re.sub(r"<!--.*?-->", "", source, flags=re.DOTALL)
-    source = re.sub(r"<!--.*\Z", "", source, flags=re.DOTALL)
+    comment_breaks = lambda match: re.sub(r"[^\r\n]", "", match[0])
+    source = re.sub(r"<!--.*?-->", comment_breaks, source, flags=re.DOTALL)
+    source = re.sub(r"<!--.*\Z", comment_breaks, source, flags=re.DOTALL)
     rendered: list[str] = []
     fence_character: str | None = None
     fence_length = 0
@@ -1026,4 +1027,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=839:102 imports_exports=9:20 calls_definitions=386:24
+# ratios: loc_comments=840:102 imports_exports=9:20 calls_definitions=387:24
