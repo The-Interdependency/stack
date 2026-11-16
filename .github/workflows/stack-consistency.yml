@@ -128,10 +128,10 @@ jobs:
             --edcm-root ../edcm \
             --attest-output /tmp/native-mobius-v0.attested.json
           cmp \
-            research/digital-metrics/receipts/native-mobius-v0-unicode-base-20261116.json \
+            research/digital-metrics/receipts/native-mobius-v0-stack-172bfcc2.json \
             /tmp/native-mobius-v0.attested.json
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
-            research/digital-metrics/receipts/native-mobius-v0-unicode-base-20261116.json \
+            research/digital-metrics/receipts/native-mobius-v0-stack-172bfcc2.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
             --edcm-root ../edcm
