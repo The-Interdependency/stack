@@ -5,16 +5,16 @@
     {
       "participant_id": "unicode-corpus-forge",
       "repository": "The-Interdependency/stack",
-      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
       "authority": "English construction forge",
-      "relation": "approved integration baseline and sealed structural reader"
+      "relation": "exact runtime and test checkpoint for recursive Unicode addition"
     },
     {
       "participant_id": "unicode-corpus-ucns",
       "repository": "The-Interdependency/ucns",
-      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
-      "authority": "UCNS Unicode geometry",
-      "relation": "native equal-radius scalar and declared-parent construction"
+      "commit": "300877066436a03d046b8951772c1e2aed2c5166",
+      "authority": "native Unicode geometry and retained recursive vector addition",
+      "relation": "exact native addition producer consumed by the English constructor"
     },
     {
       "participant_id": "unicode-corpus-admission",
@@ -56,7 +56,10 @@
     "authority_transfer": false,
     "proof_status_transfer": false,
     "measurement_status_transfer": false,
-    "scope": "Pinned English corpus Unicode geometry; higher word bearings are occurrence inputs."
+    "scope": "Pinned English corpus with retained recursive vector addition; exact bearings remain optional declared-placement inputs.",
+    "hmmm": [
+      "Physical sheet lift, the general scale-transition law and independent domain graduation remain separate."
+    ]
   },
-  "work_graph_sha256": "0e694281224586ec7d3d28a6e6b834fc727220fbbea52c10269344633b076ddd"
+  "work_graph_sha256": "4ff3078d8749e0fa6073df09230963c63c429290765e3431a9ee63c4989aae5a"
 }

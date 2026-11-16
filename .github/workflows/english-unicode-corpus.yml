@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/ucns
-          ref: 0bbed0b3ca7ba507101ada6c8019f870499429fe
+          ref: 300877066436a03d046b8951772c1e2aed2c5166
           path: _inputs/unicode
           persist-credentials: false
       - uses: actions/checkout@v7.0.1
@@ -97,7 +97,7 @@ jobs:
           python -m english_gonol.structural_construct build --source-root _inputs/oewn/src/yaml --ucns-source-root _inputs/admission-carrier --out-dir _state/admission > _state/admission-result.json
           python -m english_gonol build _state/admission _inputs/ucd _state/corpus --ucns-source-root "$UCHC_UNICODE_UCNS_ROOT" > _state/build.json
           python research/english-gonol/tools/verify_unicode_corpus.py _state/corpus "$UCHC_UNICODE_UCNS_ROOT" --expect research/english-gonol/experiments/unicode-corpus/replay.json > _state/replay.json
-          python -m english_gonol query _state/corpus 'the geometry' --bearing 0 --bearing 1/2 --ucns-source-root "$UCHC_UNICODE_UCNS_ROOT" > _state/query.json
+          python -m english_gonol query _state/corpus 'the geometry' --ucns-source-root "$UCHC_UNICODE_UCNS_ROOT" > _state/query.json
           python - <<'PY'
           import json
           from pathlib import Path

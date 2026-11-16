@@ -9,9 +9,12 @@ bytes. ASCII has three leading zero bytes. UCNS owns the native representation;
 exact scalar identity, UTF-8 anatomy, order and multiplicity remain recoverable.
 This width is independent of geometric placement radius. `construct_sequence`
 accepts complete text frames and its own completed objects; `closed_record` and
-`replay_closed` retain the complete graph. Parent bearings are explicit, sibling
-origins share one radius, and child interiors remain intact. Automatic bearing
-selection remains unresolved. The [complete English corpus](docs/unicode-corpus.md) uses the same native constructor for its word interiors and explicit parent placements.
+`replay_closed` retain the complete graph. Completed objects add their actual
+geometric results without a new bearing; `resultant` exposes the exact vector.
+Zero sums retain their operands and participate again. The
+[complete English corpus](docs/unicode-corpus.md) uses the same addition for
+queries, source records and inherited definitions. Explicit bearings select
+the historical declared-placement operation.
 
 ## Historical ordinal and recursive candidates
 

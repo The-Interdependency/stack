@@ -83,26 +83,25 @@ declared scale, including direct placement without an intermediate word stage.
 All sibling origins use one parent radius; each child's local radius stays intact.
 
 ```python
-from fractions import Fraction
 from english_gonol.unicode_construction import (
-    construct_text, construct_sequence, closed_record, replay_closed,
+    construct_text, construct_sequence, resultant, closed_record, replay_closed,
 )
 
 word = construct_text("Aë e\u0308!\n", ucns_source_root=root)
-pair = construct_sequence((word, word), bearings=(0, Fraction(1, 2)),
-                          ucns_source_root=root, source="example:pair")
-parent = construct_sequence((pair, pair), bearings=(0, Fraction(1, 2)),
-                            ucns_source_root=root, source="example:parent")
+pair = construct_sequence((word, word), ucns_source_root=root, source="example:pair")
+parent = construct_sequence((pair, pair), ucns_source_root=root, source="example:parent")
 record = closed_record(parent, ucns_source_root=root)
 copy = replay_closed(record, ucns_source_root=root)
 assert copy.recover() == word.text * 4
 assert copy.receipt == parent.receipt
+assert resultant(parent, ucns_source_root=root) == resultant(word, ucns_source_root=root).scaled(4)
 ```
 
 The graph retains relations, provenance, shared interiors and ordered occurrences.
-The native placement supplies an exact rigid map and inverse; no historical
-ordinal-halving or candidate bearing becomes the active Unicode rule. Bit radius
-stays 16, with one complete four-byte diameter per scalar throughout nesting.
+Default closure carries the complete exact vector sum into the next addition.
+It preserves both radius and direction without unit normalization; zero needs no
+invented angle. Explicit bearings retain the declared rigid-map replay API.
+Bit radius stays 16, with one complete four-byte diameter per scalar throughout nesting.
 
 The historical `attachment_construction.closed_record` compatibility validator
 also now recognizes completed sequences and validates their native structure.
