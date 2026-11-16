@@ -1,0 +1,116 @@
+{
+  "schema": "weave.glyph-axis-animation-evidence.v1",
+  "classification": "ANIMATED_ADDRESS_ILLUSTRATION_WITH_EXACT_CHECKS",
+  "stack_base": "dceea8fd9996363e192c255d790f92312773cb1f",
+  "static_fixture": {
+    "schema": "weave.glyph-axis-figure-evidence.v1",
+    "classification": "ILLUSTRATION_WITH_EXACT_COUNTS_AND_64_OCCURRENCE_CHECK",
+    "ucns_commit": "3f97f5292b0bd2dab911540062ccf79dea2be1bf",
+    "ucns_blob": "9fa84ef20f19fe0c04df680f49b50ea307e6d624",
+    "producer_sha256": "784cf61d185d2a54259c0e013af8c0ea2b6d79fad32beaffda7819f0c0e512ad",
+    "stack_base": "37e493d194651ca45c7bc3fbd6327f653df6879e",
+    "glyphs": [
+      "A",
+      "\u00e9",
+      "\u03a9",
+      "\u0416",
+      "\u03bb",
+      "\u03c0",
+      "\u00df",
+      "\u2192"
+    ],
+    "carrier_receipt": "034f4f98f2a5aea9ac1aee8bb25cfcb9af2f304e1dfa56d33a62a0b8eb9976d2",
+    "carrier_scope": "Explicit eight-identity example; not the Public Gonol arrangement",
+    "rotation": "(row,column) -> (column,7-row)",
+    "moved_occurrences": 64,
+    "original_native_objects_retained": true,
+    "four_turn_identity": true,
+    "dimensions": [
+      {
+        "axes": 2,
+        "occurrences": 64,
+        "lines": 16,
+        "square_slices": 1
+      },
+      {
+        "axes": 3,
+        "occurrences": 512,
+        "lines": 192,
+        "square_slices": 24
+      },
+      {
+        "axes": 4,
+        "occurrences": 4096,
+        "lines": 2048,
+        "square_slices": 384
+      },
+      {
+        "axes": 5,
+        "occurrences": 32768,
+        "lines": 20480,
+        "square_slices": 5120
+      },
+      {
+        "axes": 6,
+        "occurrences": 262144,
+        "lines": 196608,
+        "square_slices": 61440
+      },
+      {
+        "axes": 7,
+        "occurrences": 2097152,
+        "lines": 1835008,
+        "square_slices": 688128
+      },
+      {
+        "axes": 8,
+        "occurrences": 16777216,
+        "lines": 16777216,
+        "square_slices": 7340032
+      }
+    ],
+    "distinction": "Occurrence address rotation is not internal UCNS orientation transport.",
+    "hmmm": [
+      "Matching/deletion predicates for glyph interiors and whole objects remain distinct.",
+      "Higher-axis native UCNS closure and Unicode-wide frequencies were not tested."
+    ]
+  },
+  "cube_fixture": {
+    "native_occurrences": 512,
+    "native_object_references_retained": true,
+    "all_three_slice_families_checked": true,
+    "slice_memberships_checked": 1536,
+    "selected_occurrence": 234,
+    "selected_xyz": [
+      2,
+      5,
+      3
+    ],
+    "xz_yz_highlighted_columns_same_physical_line": true
+  },
+  "output": {
+    "file": "glyph-axis-animation.gif",
+    "sha256": "8231f230cffc7c970e18e26922066f11c3753a9370cf63cdf30f995508b9ee3f",
+    "bytes": 4374082,
+    "width": 720,
+    "height": 1040,
+    "decoded_frames": 231,
+    "duration_ms": 41620,
+    "loop": "infinite",
+    "all_frames_decoded": true
+  },
+  "sources": {
+    "renderer_sha256": "0c2d5a25f4cdc970f1c429228c28818af84266b00474110fe30749abc93b4495",
+    "static_renderer_sha256": "ef94e9fac9bc620c87e29e0785816b27c9eee0cb5eee623d1836f89b3388bdc5",
+    "font_sha256": "3fdf69cabf06049ea70a00b5919340e2ce1e6d02b0cc3c4b44fb6801bd1e0d22",
+    "bold_font_sha256": "b184b89e3c1075f22f6b71575b6fc20d4972b3cfd3b23322ca6fd596dcaef167"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "pillow": "13.0.0"
+  },
+  "hmmm": [
+    "4\u20138 axes are grouping schematics, not native higher-axis closure.",
+    "Glyph matching, retained-interior predicates and deletion remain open."
+  ]
+}

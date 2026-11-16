@@ -1,0 +1,412 @@
+{
+  "evidence": {
+    "schema": "english-gonol.full-view-audit",
+    "version": "1.0.0",
+    "standing": "COMPLETE_SCOPE",
+    "sampling": false,
+    "prefix": false,
+    "word_count": 164864,
+    "source_exhausted": true,
+    "protocol_sha256": "de4f123357a340f744d6cf1f8c1067985f22f9379a51214e7a8c7dceafec9c7e",
+    "work_graph_sha256": "49144d08c142dace66e2cdc61110a2cd2e3bf6449c54ea859c5dade610961102",
+    "database_sha256": "350e819d1d6f3312dec9aaada396c351180da0030c4d07d37559d7a2686c353e",
+    "corpus_counts": {
+      "characters": 118,
+      "definition_components": 3535375,
+      "definitions": 185155,
+      "semantic_evidence": 866183,
+      "unresolved_semantic_evidence": 0,
+      "word_characters": 1739949,
+      "words": 164864
+    },
+    "corpus_manifest_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
+    "runner_sha256": {
+      "full_view_audit.py": "dcacdcb2b44df38ecbfe2692845e7f2221085224336831c972ebcc51c0953d3d",
+      "view_replay.py": "ad2f34e694160891e3d9e490f03c48a07548a37642d077969d573af342d30ba5"
+    },
+    "ordered_observation_sha256": "c5856ec7cd49041756e163644f6e10197e715801e7a27814e985f231898833a3",
+    "view1_missing": 139294,
+    "view1_available": 25570,
+    "subsets": {
+      "1": {
+        "word_count": 164864,
+        "distinct_values": 1829,
+        "repeated_records": 163035,
+        "singleton_words": 1235,
+        "ambiguous_words": 163629,
+        "collision_pairs": 9724683619,
+        "largest_bucket": 139294
+      },
+      "2": {
+        "word_count": 164864,
+        "distinct_values": 314,
+        "repeated_records": 164550,
+        "singleton_words": 0,
+        "ambiguous_words": 164864,
+        "collision_pairs": 44524977,
+        "largest_bucket": 697
+      },
+      "3": {
+        "word_count": 164864,
+        "distinct_values": 100778,
+        "repeated_records": 64086,
+        "singleton_words": 57107,
+        "ambiguous_words": 107757,
+        "collision_pairs": 91813,
+        "largest_bucket": 10
+      },
+      "4": {
+        "word_count": 164864,
+        "distinct_values": 157,
+        "repeated_records": 164707,
+        "singleton_words": 0,
+        "ambiguous_words": 164864,
+        "collision_pairs": 89000202,
+        "largest_bucket": 1349
+      },
+      "1+2": {
+        "word_count": 164864,
+        "distinct_values": 11200,
+        "repeated_records": 153664,
+        "singleton_words": 7721,
+        "ambiguous_words": 157143,
+        "collision_pairs": 31612961,
+        "largest_bucket": 577
+      },
+      "1+3": {
+        "word_count": 164864,
+        "distinct_values": 116971,
+        "repeated_records": 47893,
+        "singleton_words": 82130,
+        "ambiguous_words": 82734,
+        "collision_pairs": 64878,
+        "largest_bucket": 10
+      },
+      "1+4": {
+        "word_count": 164864,
+        "distinct_values": 9046,
+        "repeated_records": 155818,
+        "singleton_words": 6230,
+        "ambiguous_words": 158634,
+        "collision_pairs": 63186821,
+        "largest_bucket": 1102
+      },
+      "2+3": {
+        "word_count": 164864,
+        "distinct_values": 126746,
+        "repeated_records": 38118,
+        "singleton_words": 95680,
+        "ambiguous_words": 69184,
+        "collision_pairs": 46649,
+        "largest_bucket": 9
+      },
+      "2+4": {
+        "word_count": 164864,
+        "distinct_values": 314,
+        "repeated_records": 164550,
+        "singleton_words": 0,
+        "ambiguous_words": 164864,
+        "collision_pairs": 44524977,
+        "largest_bucket": 697
+      },
+      "3+4": {
+        "word_count": 164864,
+        "distinct_values": 100778,
+        "repeated_records": 64086,
+        "singleton_words": 57107,
+        "ambiguous_words": 107757,
+        "collision_pairs": 91813,
+        "largest_bucket": 10
+      },
+      "1+2+3": {
+        "word_count": 164864,
+        "distinct_values": 137013,
+        "repeated_records": 27851,
+        "singleton_words": 113554,
+        "ambiguous_words": 51310,
+        "collision_pairs": 33120,
+        "largest_bucket": 9
+      },
+      "1+2+4": {
+        "word_count": 164864,
+        "distinct_values": 11200,
+        "repeated_records": 153664,
+        "singleton_words": 7721,
+        "ambiguous_words": 157143,
+        "collision_pairs": 31612961,
+        "largest_bucket": 577
+      },
+      "1+3+4": {
+        "word_count": 164864,
+        "distinct_values": 116971,
+        "repeated_records": 47893,
+        "singleton_words": 82130,
+        "ambiguous_words": 82734,
+        "collision_pairs": 64878,
+        "largest_bucket": 10
+      },
+      "2+3+4": {
+        "word_count": 164864,
+        "distinct_values": 126746,
+        "repeated_records": 38118,
+        "singleton_words": 95680,
+        "ambiguous_words": 69184,
+        "collision_pairs": 46649,
+        "largest_bucket": 9
+      },
+      "1+2+3+4": {
+        "word_count": 164864,
+        "distinct_values": 137013,
+        "repeated_records": 27851,
+        "singleton_words": 113554,
+        "ambiguous_words": 51310,
+        "collision_pairs": 33120,
+        "largest_bucket": 9
+      }
+    },
+    "renumbering_controls": {
+      "word_id_reverse": {
+        "changed_word_counts_by_view": {
+          "view1_definition_inner_product_density": 0,
+          "view2_word_axis_angle": 0,
+          "view3_provenance_interval_lift": 164848,
+          "view4_canonical_witness_lift": 0
+        },
+        "views": {
+          "view1_definition_inner_product_density": {
+            "word_count": 164864,
+            "distinct_values": 1829,
+            "repeated_records": 163035,
+            "singleton_words": 1235,
+            "ambiguous_words": 163629,
+            "collision_pairs": 9724683619,
+            "largest_bucket": 139294
+          },
+          "view2_word_axis_angle": {
+            "word_count": 164864,
+            "distinct_values": 314,
+            "repeated_records": 164550,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 44524977,
+            "largest_bucket": 697
+          },
+          "view3_provenance_interval_lift": {
+            "word_count": 164864,
+            "distinct_values": 100745,
+            "repeated_records": 64119,
+            "singleton_words": 57067,
+            "ambiguous_words": 107797,
+            "collision_pairs": 91851,
+            "largest_bucket": 9
+          },
+          "view4_canonical_witness_lift": {
+            "word_count": 164864,
+            "distinct_values": 157,
+            "repeated_records": 164707,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 89000202,
+            "largest_bucket": 1349
+          }
+        },
+        "synthesis": {
+          "word_count": 164864,
+          "distinct_values": 137006,
+          "repeated_records": 27858,
+          "singleton_words": 113515,
+          "ambiguous_words": 51349,
+          "collision_pairs": 33076,
+          "largest_bucket": 9
+        },
+        "baseline_collision_pairs_split": 5999,
+        "new_collision_pairs_joined": 5955
+      },
+      "word_id_affine_157": {
+        "changed_word_counts_by_view": {
+          "view1_definition_inner_product_density": 0,
+          "view2_word_axis_angle": 0,
+          "view3_provenance_interval_lift": 164708,
+          "view4_canonical_witness_lift": 0
+        },
+        "views": {
+          "view1_definition_inner_product_density": {
+            "word_count": 164864,
+            "distinct_values": 1829,
+            "repeated_records": 163035,
+            "singleton_words": 1235,
+            "ambiguous_words": 163629,
+            "collision_pairs": 9724683619,
+            "largest_bucket": 139294
+          },
+          "view2_word_axis_angle": {
+            "word_count": 164864,
+            "distinct_values": 314,
+            "repeated_records": 164550,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 44524977,
+            "largest_bucket": 697
+          },
+          "view3_provenance_interval_lift": {
+            "word_count": 164864,
+            "distinct_values": 103706,
+            "repeated_records": 61158,
+            "singleton_words": 60139,
+            "ambiguous_words": 104725,
+            "collision_pairs": 83801,
+            "largest_bucket": 8
+          },
+          "view4_canonical_witness_lift": {
+            "word_count": 164864,
+            "distinct_values": 157,
+            "repeated_records": 164707,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 89000202,
+            "largest_bucket": 1349
+          }
+        },
+        "synthesis": {
+          "word_count": 164864,
+          "distinct_values": 138844,
+          "repeated_records": 26020,
+          "singleton_words": 116322,
+          "ambiguous_words": 48542,
+          "collision_pairs": 29903,
+          "largest_bucket": 5
+        },
+        "baseline_collision_pairs_split": 33120,
+        "new_collision_pairs_joined": 29903
+      },
+      "glyph_id_reverse": {
+        "changed_word_counts_by_view": {
+          "view1_definition_inner_product_density": 0,
+          "view2_word_axis_angle": 164466,
+          "view3_provenance_interval_lift": 163867,
+          "view4_canonical_witness_lift": 163867
+        },
+        "views": {
+          "view1_definition_inner_product_density": {
+            "word_count": 164864,
+            "distinct_values": 1829,
+            "repeated_records": 163035,
+            "singleton_words": 1235,
+            "ambiguous_words": 163629,
+            "collision_pairs": 9724683619,
+            "largest_bucket": 139294
+          },
+          "view2_word_axis_angle": {
+            "word_count": 164864,
+            "distinct_values": 314,
+            "repeated_records": 164550,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 43470743,
+            "largest_bucket": 625
+          },
+          "view3_provenance_interval_lift": {
+            "word_count": 164864,
+            "distinct_values": 103249,
+            "repeated_records": 61615,
+            "singleton_words": 59713,
+            "ambiguous_words": 105151,
+            "collision_pairs": 85490,
+            "largest_bucket": 10
+          },
+          "view4_canonical_witness_lift": {
+            "word_count": 164864,
+            "distinct_values": 157,
+            "repeated_records": 164707,
+            "singleton_words": 0,
+            "ambiguous_words": 164864,
+            "collision_pairs": 86861034,
+            "largest_bucket": 1185
+          }
+        },
+        "synthesis": {
+          "word_count": 164864,
+          "distinct_values": 138068,
+          "repeated_records": 26796,
+          "singleton_words": 115231,
+          "ambiguous_words": 49633,
+          "collision_pairs": 31560,
+          "largest_bucket": 10
+        },
+        "baseline_collision_pairs_split": 24230,
+        "new_collision_pairs_joined": 22670
+      }
+    },
+    "same_glyph_multiset": {
+      "multiword_groups": 4885,
+      "word_count_in_multiword_groups": 10692,
+      "multiword_groups_with_different_view2": 0
+    },
+    "unique_word_address_baseline": {
+      "distinct_values": 164864,
+      "repeated_records": 0
+    },
+    "legacy_report": {
+      "schema": "english-gonol.hyperspace-views",
+      "version": "0.1.0",
+      "word_count": 164864,
+      "distinct_values": {
+        "view1_definition_inner_product_density": 1829,
+        "view2_word_axis_angle": 314,
+        "view3_provenance_interval_lift": 100778,
+        "view4_canonical_witness_lift": 157,
+        "synthesis": 137013
+      },
+      "collisions": {
+        "view1_definition_inner_product_density": 163035,
+        "view2_word_axis_angle": 164550,
+        "view3_provenance_interval_lift": 64086,
+        "view4_canonical_witness_lift": 164707,
+        "synthesis": 27851
+      },
+      "ranking_by_distinctness": [
+        {
+          "view": "synthesis",
+          "distinct": 137013,
+          "collisions": 27851
+        },
+        {
+          "view": "view3_provenance_interval_lift",
+          "distinct": 100778,
+          "collisions": 64086
+        },
+        {
+          "view": "view1_definition_inner_product_density",
+          "distinct": 1829,
+          "collisions": 163035
+        },
+        {
+          "view": "view2_word_axis_angle",
+          "distinct": 314,
+          "collisions": 164550
+        },
+        {
+          "view": "view4_canonical_witness_lift",
+          "distinct": 157,
+          "collisions": 164707
+        }
+      ],
+      "hmmm": "one doctor or four? The corpus adjudicates which views merit retainment or whether the differential synthesis is most useful; this report ranks, it does not select",
+      "receipt_sha256": "d4da3bcc4b8e5fb87c03e82059951a65d46d23e434bb5d5a94f79e5a2357ae0c"
+    },
+    "selected": [],
+    "hmmm": [
+      "Downstream inference usefulness requires an actual task and acceptance criterion.",
+      "Stable addressing requires source-qualified identity and explicit remapping across corpus versions.",
+      "Geometric selection and higher closure retain their owning UCNS/Stack boundaries."
+    ],
+    "receipt_sha256": "61aa21995be2428a351245e1de66c884bff394fa9562e539f0ab3b5aefe78264"
+  },
+  "execution": {
+    "engine": "independent",
+    "python": "3.12.14",
+    "native_records_compared": 0,
+    "elapsed_seconds": 28.411,
+    "peak_rss_kib": 1218672
+  }
+}

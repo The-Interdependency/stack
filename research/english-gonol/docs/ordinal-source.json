@@ -1,0 +1,27 @@
+{
+  "schema": "english.ordinal-proposal-provenance",
+  "version": "1.0.0",
+  "origin_repository": "The-Interdependency/uchc",
+  "origin_commit": "c514e1a2a3f3da5ffae9ebf76d67a1d348845842",
+  "origin_pull_request": 10,
+  "forge_repository": "The-Interdependency/stack",
+  "forge_root": "research/english-gonol",
+  "files": [
+    {
+      "original_path": "human/english/english_gonol/ordinal_construction.py",
+      "forge_path": "english_gonol/ordinal_construction.py",
+      "original_sha256": "78035a5b320153e5f72de5751d9e134cfb8125f3d70919290811e4f37ff579f2"
+    },
+    {
+      "original_path": "tests/test_ordinal_construction.py",
+      "forge_path": "ordinal_tests/test_ordinal_construction.py",
+      "original_sha256": "e6e405164b2f255bc1d3bef9c2c94f793373aff077b43f9fd334777558ff7961"
+    }
+  ],
+  "license": "FSL-1.1-ALv2; original LICENSE and NOTICE copied beside this record",
+  "authority_transfer": false,
+  "standing": "original proposal rehomed in its existing Stack forge, with review repairs; not a claim of historical Stack authorship",
+  "hmmm": [
+    "UCHC extraction must pin the resulting Stack commit and verify repaired source/test bytes; release and graduation remain separate."
+  ]
+}

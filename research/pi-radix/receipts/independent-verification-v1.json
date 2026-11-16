@@ -1,0 +1,2364 @@
+{
+  "classification_disagreements": 0,
+  "control_counts_compared": 796,
+  "distinct_values_factored": 3349428,
+  "hmmm": [
+    "Draw, interval, and shuffle generation reuse production code; classifier and counter are independent.",
+    "Finite-prefix agreement establishes neither pi normality nor base-independent laws nor cryptographic security."
+  ],
+  "observed": {
+    "fixed500": [
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 61
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 71
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 107
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 347
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 373
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 443
+      },
+      {
+        "bases": [
+          30,
+          360
+        ],
+        "prime": 523
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 587
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 701
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 809
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 3529
+      },
+      {
+        "bases": [
+          360,
+          720
+        ],
+        "prime": 118907
+      }
+    ],
+    "matched2400": [
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 61
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 347
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 373
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 443
+      },
+      {
+        "bases": [
+          30,
+          360
+        ],
+        "prime": 523
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 587
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 809
+      },
+      {
+        "bases": [
+          30,
+          60
+        ],
+        "prime": 3529
+      }
+    ]
+  },
+  "oracle": "GNU coreutils factor; complete integer factorization",
+  "recurrence_disagreements": 0,
+  "replicates": [
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 0
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 1
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 2
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 3
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 18,
+        "matched2400": 14
+      },
+      "trial": 4
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 5
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 6
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 7
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "trial": 8
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 19,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 6
+      },
+      "trial": 9
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "trial": 10
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "trial": 11
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 12
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 12
+      },
+      "trial": 13
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 6
+      },
+      "trial": 14
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "trial": 15
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "trial": 16
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 4,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 6
+      },
+      "trial": 17
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 6
+      },
+      "trial": 18
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 6
+      },
+      "trial": 19
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 19,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 12
+      },
+      "trial": 20
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "trial": 21
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "trial": 22
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 5,
+        "matched2400": 3
+      },
+      "trial": 23
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 3
+      },
+      "trial": 24
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 11
+      },
+      "trial": 25
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 18
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 26
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 27
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 28
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 17
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 4
+      },
+      "trial": 29
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 11
+      },
+      "trial": 30
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 31
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "trial": 32
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 11
+      },
+      "trial": 33
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 34
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 15
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 6
+      },
+      "trial": 35
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 4
+      },
+      "trial": 36
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 37
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 5,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 6
+      },
+      "trial": 38
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 39
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 40
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 4
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 4
+      },
+      "trial": 41
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 42
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 6
+      },
+      "trial": 43
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 6,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 44
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 4,
+        "matched2400": 4
+      },
+      "trial": 45
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 46
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 6
+      },
+      "trial": 47
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "trial": 48
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "trial": 49
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 4,
+        "matched2400": 3
+      },
+      "trial": 50
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 18,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 13
+      },
+      "trial": 51
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 6
+      },
+      "trial": 52
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 53
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 6
+      },
+      "trial": 54
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 22,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 3
+      },
+      "trial": 55
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 56
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 57
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 13
+      },
+      "trial": 58
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 59
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 60
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 61
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 62
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 3
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "trial": 63
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 64
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 19,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "trial": 65
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 4
+      },
+      "trial": 66
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 14
+      },
+      "trial": 67
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 6,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 68
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 5,
+        "matched2400": 3
+      },
+      "trial": 69
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 17,
+        "matched2400": 11
+      },
+      "trial": 70
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 4
+      },
+      "trial": 71
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "trial": 72
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "trial": 73
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 10
+      },
+      "trial": 74
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 75
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 76
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 77
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "trial": 78
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 79
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 18,
+        "matched2400": 13
+      },
+      "trial": 80
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 81
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 8
+      },
+      "trial": 82
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 83
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 4
+      },
+      "trial": 84
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "trial": 85
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 1,
+        "matched2400": 1
+      },
+      "trial": 86
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 18,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 87
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 88
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 89
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 6
+      },
+      "trial": 90
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 7
+      },
+      "trial": 91
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 19,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 17,
+        "matched2400": 12
+      },
+      "trial": 92
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 19,
+        "matched2400": 12
+      },
+      "trial": 93
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 9
+      },
+      "trial": 94
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 21,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "trial": 95
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 18,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 96
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 97
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 3
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 98
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "trial": 99
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 10
+      },
+      "trial": 100
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 15
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "trial": 101
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 5
+      },
+      "trial": 102
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 103
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 5,
+        "matched2400": 3
+      },
+      "trial": 104
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 5
+      },
+      "trial": 105
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 5
+      },
+      "trial": 106
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 107
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "trial": 108
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 12
+      },
+      "trial": 109
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 16
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 4
+      },
+      "trial": 110
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 15
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 111
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 112
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "trial": 113
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 114
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 115
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "trial": 116
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 9
+      },
+      "trial": 117
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 13
+      },
+      "trial": 118
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 5
+      },
+      "trial": 119
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "trial": 120
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 5,
+        "matched2400": 3
+      },
+      "trial": 121
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "trial": 122
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 7,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 12
+      },
+      "trial": 123
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 8
+      },
+      "trial": 124
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 10
+      },
+      "trial": 125
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 126
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "trial": 127
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "trial": 128
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 129
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 6
+      },
+      "trial": 130
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "trial": 131
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "trial": 132
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 133
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "trial": 134
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 7
+      },
+      "trial": 135
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 16
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 136
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 9
+      },
+      "trial": 137
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 19,
+        "matched2400": 14
+      },
+      "trial": 138
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 139
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 4
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "trial": 140
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "trial": 141
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 142
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 143
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 8
+      },
+      "trial": 144
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 145
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 8
+      },
+      "trial": 146
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "trial": 147
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 5,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 148
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 5
+      },
+      "trial": 149
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 150
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 19,
+        "matched2400": 13
+      },
+      "trial": 151
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 18,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 152
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "trial": 153
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 5,
+        "matched2400": 3
+      },
+      "trial": 154
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "trial": 155
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 5
+      },
+      "trial": 156
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 12
+      },
+      "trial": 157
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 11
+      },
+      "trial": 158
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 159
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 8
+      },
+      "trial": 160
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 3,
+        "matched2400": 3
+      },
+      "trial": 161
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 17,
+        "matched2400": 12
+      },
+      "trial": 162
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 19,
+        "matched2400": 15
+      },
+      "trial": 163
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 8
+      },
+      "trial": 164
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "trial": 165
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 7,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 11,
+        "matched2400": 7
+      },
+      "trial": 166
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 11
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 167
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 18,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 6
+      },
+      "trial": 168
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 169
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 170
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 7
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "trial": 171
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "trial": 172
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 14
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 10
+      },
+      "trial": 173
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 174
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 17,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "trial": 175
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 6
+      },
+      "trial": 176
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 3
+      },
+      "trial": 177
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 9
+      },
+      "trial": 178
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 12
+      },
+      "trial": 179
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 23,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "trial": 180
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 6
+      },
+      "trial": 181
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 6,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 7
+      },
+      "trial": 182
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 15,
+        "matched2400": 11
+      },
+      "trial": 183
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 7,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 7
+      },
+      "trial": 184
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 10
+      },
+      "trial": 185
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 8,
+        "matched2400": 5
+      },
+      "trial": 186
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 7
+      },
+      "trial": 187
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 7,
+        "matched2400": 5
+      },
+      "trial": 188
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 10,
+        "matched2400": 8
+      },
+      "trial": 189
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 16,
+        "matched2400": 6
+      },
+      "shared_number": {
+        "fixed500": 17,
+        "matched2400": 15
+      },
+      "trial": 190
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 10,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "trial": 191
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 6
+      },
+      "trial": 192
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 9,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 6,
+        "matched2400": 3
+      },
+      "trial": 193
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 11,
+        "matched2400": 8
+      },
+      "shared_number": {
+        "fixed500": 16,
+        "matched2400": 10
+      },
+      "trial": 194
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 13,
+        "matched2400": 5
+      },
+      "shared_number": {
+        "fixed500": 14,
+        "matched2400": 12
+      },
+      "trial": 195
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 8,
+        "matched2400": 13
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 7
+      },
+      "trial": 196
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 15,
+        "matched2400": 9
+      },
+      "shared_number": {
+        "fixed500": 9,
+        "matched2400": 8
+      },
+      "trial": 197
+    },
+    {
+      "histogram_shuffle": {
+        "fixed500": 12,
+        "matched2400": 10
+      },
+      "shared_number": {
+        "fixed500": 13,
+        "matched2400": 6
+      },
+      "trial": 198
+    }
+  ],
+  "schema": "stack.pi-radix-independent-verification",
+  "sources_sha256": {
+    "CONTROL_PLAN.md": "754bc985fd4b6a79a35b0217d7fddfe49cd94cff25467ce988f6bf2a9bb7b6bb",
+    "EXPERIMENT.json": "6e4ea3dd5884468c69ebe7d68a0c794d68bfaa1da838bb563a30be1853fd4d9f",
+    "docs/pi-radix-scan-v1.md": "f3c26cd91fd84e2d6bb5122c13c9dea2953e5656a797dcec0ccd6ea2b20fb30a",
+    "docs/recurrence-controls-v1.md": "d8e2a4463cd2745787a2e44839b972d8cfa88073bfbdeced57dd313d5031b153",
+    "pi_radix.py": "046657039bcef70964f6650a624df7c4a4caffda73861c9e2e38d4b222b84fd3",
+    "receipts/pi-radix-scan-v1.json": "1b3571c16f6db45b50b264771bd8754cd6222293dee4a93844b73c8f7c1bfb56",
+    "receipts/recurrence-controls-v1.json": "a08b9836acbe2bf91ddba1b44f6a63873e352a944abd9a092ed1809ee84d1ba7",
+    "recurrence_controls.py": "8561063bdea563525f914cba9063010d8bfe99ad8836dce3eb9e103e935e9fec",
+    "tests/test_pi_radix.py": "fc5a363499a77ec8af95c8b64e3e66f94bcc866462902c6f1a86f2141f9fdfb3",
+    "tests/test_recurrence_controls.py": "e01e71308fb370f3c91aa44e89eaf049133b2502a6c15981b8384d31523012cf",
+    "verify_evidence.py": "be556cbd58ec6241e766b3f5dd35a500a9c74ad7f98181a0163c53f8d060ad2f"
+  },
+  "standing": "COMPUTATION",
+  "version": "1.0.0"
+}

@@ -1,0 +1,98 @@
+# Usage: test current legacy-parser contracts, then replay their unchanged
+# sealed evidence from its exact historical work graph. A new portfolio
+# participant must not rewrite old receipts or silently change their inputs.
+name: zfae-research
+
+on:
+  pull_request:
+    paths:
+      - 'research/zfae/**'
+      - 'research/english-gonol/english_gonol/hyperspace_construct.py'
+      - 'stack-manifest.json'
+      - '.github/workflows/zfae-research.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/zfae/**'
+      - 'research/english-gonol/english_gonol/hyperspace_construct.py'
+      - 'stack-manifest.json'
+      - '.github/workflows/zfae-research.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  input-distinction:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Resolve current tests and the exact frozen replay snapshot
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          FROZEN="$RUNNER_TEMP/zfae-frozen"
+          printf 'FROZEN=%s\n' "$FROZEN" >> "$GITHUB_ENV"
+          [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+          git init -q .
+          git remote add origin https://github.com/The-Interdependency/stack.git
+          git fetch --quiet origin "$SOURCE_SHA"
+          git checkout -q --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          python3 -c 'import sys; assert sys.version_info[:2] == (3, 12)'
+          git worktree add --detach "$FROZEN" 4a03f68c1ea841da5767813c6a65c41620f561f6
+          # No old harness, profile, producer, or receipt may change unnoticed.
+          # New profiles such as UCHC_INPUT are verified by their own workflow.
+          for path in research/zfae/input_probe.py research/zfae/gonol_probe.py \
+              research/zfae/gonol_parser.py research/zfae/INPUT_PROBE.json \
+              research/zfae/GONOL_PARSER.json \
+              research/zfae/receipts/input-distinction-v0-parser-graph.json \
+              research/zfae/receipts/gonol-parser-v1.json \
+              research/english-gonol/english_gonol/hyperspace_construct.py; do
+            cmp "$path" "$FROZEN/$path"
+          done
+      - name: Retrieve exact comparison source
+        run: |
+          curl --fail --location --retry 2 \
+            https://raw.githubusercontent.com/The-Interdependency/a0-betatest/5d51d70a0ae6044d1386d72bd0cada9d48887f77/backend/interdependent_lib/zfae/_parser.py \
+            --output "$RUNNER_TEMP/zfae-parser.py"
+      - name: Retrieve exact UCNS carrier source
+        run: |
+          curl --fail --location --retry 2 \
+            https://raw.githubusercontent.com/The-Interdependency/ucns/4086ab82399c4d142b0eacfbc09e0a69ed151aa5/src/ucns/public_gonol.py \
+            --output "$RUNNER_TEMP/public_gonol.py"
+      - name: Verify current gonol input contracts and harness controls
+        env:
+          ZFAE_UCNS_SOURCE: ${{ runner.temp }}/public_gonol.py
+        run: python3 -W error::ResourceWarning -m unittest discover -s research/zfae/tests -v
+      - name: Replay every frozen pair with its original graph
+        run: |
+          cd "$FROZEN"
+          python3 research/zfae/input_probe.py \
+            --source-file "$RUNNER_TEMP/zfae-parser.py" \
+            --output "$RUNNER_TEMP/zfae-input-result.json"
+      - name: Compare sealed observations and identities
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          expected = json.loads(Path('research/zfae/receipts/input-distinction-v0-parser-graph.json').read_text())
+          observed = json.loads((Path(os.environ['RUNNER_TEMP']) / 'zfae-input-result.json').read_text())
+          print('Replay Python:', observed['python'], 'recorded Python:', expected['python'])
+          # Runtime patch version is disclosed, not part of semantic replay identity.
+          observed['python'] = expected['python']
+          assert observed == expected, 'Research replay differs; inspect the complete receipt'
+          PY
+      - name: Replay declared gonol admission and source recovery
+        run: |
+          (cd "$FROZEN" && python3 research/zfae/gonol_probe.py \
+            --ucns-source-file "$RUNNER_TEMP/public_gonol.py" \
+            --output "$RUNNER_TEMP/zfae-gonol-result.json")
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          expected = json.loads(Path('research/zfae/receipts/gonol-parser-v1.json').read_text())
+          observed = json.loads((Path(os.environ['RUNNER_TEMP']) / 'zfae-gonol-result.json').read_text())
+          print('Replay Python:', observed['python'], 'recorded Python:', expected['python'])
+          observed['python'] = expected['python']
+          assert observed == expected, 'Gonol parser replay differs; inspect complete evidence'
+          PY

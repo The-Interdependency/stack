@@ -1,0 +1,62 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "participant_id": "unicode-corpus-forge",
+      "repository": "The-Interdependency/stack",
+      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "authority": "English construction forge",
+      "relation": "approved integration baseline and sealed structural reader"
+    },
+    {
+      "participant_id": "unicode-corpus-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "UCNS Unicode geometry",
+      "relation": "native equal-radius scalar and declared-parent construction"
+    },
+    {
+      "participant_id": "unicode-corpus-admission",
+      "repository": "The-Interdependency/ucns",
+      "commit": "4f863ad37096b7baab8f62820ad5cb937b62a3a7",
+      "authority": "historical structural admission carrier",
+      "relation": "reproduce the immutable source admission"
+    },
+    {
+      "participant_id": "unicode-corpus-oewn",
+      "repository": "globalwordnet/english-wordnet",
+      "commit": "dc343f2683279ecbb13fab4e2fd778d7b162d287",
+      "authority": "OEWN 2025 source",
+      "relation": "lexical entries, definitions, membership, order and provenance"
+    },
+    {
+      "participant_id": "unicode-corpus-replay",
+      "repository": "The-Interdependency/stack",
+      "commit": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
+      "authority": "historical English ordinal experiment",
+      "relation": "preserve original implementation, repairs, corpus witness and operator answers"
+    },
+    {
+      "participant_id": "unicode-corpus-ucd-data",
+      "repository": "unicode.org/Public/18.0.0/ucd/UnicodeData.txt",
+      "artifact_sha256": "0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate numeric repertoire input"
+    },
+    {
+      "participant_id": "unicode-corpus-ucd-math",
+      "repository": "unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt",
+      "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
+      "authority": "Unicode Character Database",
+      "relation": "authenticate Math repertoire input"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "scope": "Pinned English corpus Unicode geometry; higher word bearings are occurrence inputs."
+  },
+  "work_graph_sha256": "0e694281224586ec7d3d28a6e6b834fc727220fbbea52c10269344633b076ddd"
+}

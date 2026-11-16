@@ -38,56 +38,80 @@ jobs:
   consistency:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; Node.js 24
         with:
           fetch-depth: 0
       - name: Verify stack authority and provenance projections
         run: python tools/check_stack_consistency.py
       - name: Validate the repository-owned portfolio report
-        run: python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+        run: |
+          python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
+          # Full history above is required: an exact source must remain reachable.
+          source_commit=$(python -c 'import json; print(json.load(open("docs/work-graphs/repository-plan-report.json"))["source"]["commit"])')
+          git merge-base --is-ancestor "$source_commit" HEAD
+      - name: Verify the preserved municipal handoff
+        working-directory: research/a0-municipality
+        run: |
+          # Run from research/a0-municipality for the same local integrity gate.
+          sha256sum -c HANDOFF.sha256
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          handoff = Path("HANDOFF.md").read_bytes()
+          artifact = json.loads(Path("SOURCE_RECEIPT.json").read_text(encoding="utf-8"))["artifact"]
+          if artifact["path"] != "HANDOFF.md":
+              raise SystemExit("Source receipt must identify HANDOFF.md")
+          if artifact["sha256"] != hashlib.sha256(handoff).hexdigest():
+              raise SystemExit("Handoff SHA-256 differs from source receipt")
+          if type(artifact["size_bytes"]) is not int or artifact["size_bytes"] != len(handoff):
+              raise SystemExit("Handoff byte count differs from source receipt")
+          print(f"Source receipt verified: {len(handoff)} bytes")
+          PY
 
   digital-metrics:
     runs-on: ubuntu-latest
     steps:
       - name: Check out Stack
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           path: stack
           fetch-depth: 0
       - name: Check out exact skill-lib doctrine
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: The-Interdependency/skill-lib
           ref: fb3b53a7629f7f03ecf255167d52c13abef1a979
           path: skill-lib
       - name: Check out exact METAPAT producer
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: The-Interdependency/metapat
           ref: e4165b0cac9eca41daef9c2f941881028ca55d48
           path: metapat
       - name: Check out exact UCNS producer
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: The-Interdependency/ucns
           ref: 1cf10c2df2541a332a77f2ed3feda0c6bef4abcc
           path: ucns
       - name: Check out exact EDCM prerequisite
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: The-Interdependency/edcm
           ref: 211ce860446d3576ae2930a101eefdd07d3e3dcc
           path: edcm
       - name: Verify the vendored msdmd parser against the pinned doctrine commit
-        run: cmp stack/skill-lib/msdmd/parsers/universal.py skill-lib/msdmd/parsers/universal.py
-      - name: Audit metric contract witnesses
+        run: cmp stack/research/digital-metrics/vendor/universal.py skill-lib/msdmd/parsers/universal.py
+      - name: Audit metric contract linkage without executing witnesses
         working-directory: stack
         run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/audit_contracts_cli.py --skill-lib-root ../skill-lib
       - name: Run adversarial metric protocol tests
         working-directory: stack
         env:
           STACK_DIGITAL_METRICS_SKILL_LIB_ROOT: ../skill-lib
-        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s research/digital-metrics/tests -p 'test*.py' -v
+        run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/run_tests.py
       - name: Generate pending, attest after replay, and match frozen receipt
         working-directory: stack
         run: |
@@ -104,10 +128,10 @@ jobs:
             --edcm-root ../edcm \
             --attest-output /tmp/native-mobius-v0.attested.json
           cmp \
-            research/digital-metrics/receipts/native-mobius-v0.json \
+            research/digital-metrics/receipts/native-mobius-v0-review-repair-20261115.json \
             /tmp/native-mobius-v0.attested.json
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
-            research/digital-metrics/receipts/native-mobius-v0.json \
+            research/digital-metrics/receipts/native-mobius-v0-review-repair-20261115.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
             --edcm-root ../edcm

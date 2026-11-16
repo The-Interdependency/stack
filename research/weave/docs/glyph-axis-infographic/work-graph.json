@@ -1,0 +1,36 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "3f97f5292b0bd2dab911540062ccf79dea2be1bf",
+      "authority": "Native UCNS object constructors and geometry",
+      "relation": "Source-verified Carrier and Participant producer"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "37e493d194651ca45c7bc3fbd6327f653df6879e",
+      "authority": "Weave research and documentation publication",
+      "relation": "Publication base; executable cipher unchanged"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "6a16302f0b7ad6e2ed5331ee1423fcc0939e1d57",
+      "authority": "Build and evidence discipline",
+      "relation": "Information-design and source-preservation rules"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "declared glyph-cell arrangement; existing native participant identities retained",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "Whole-glyph matching, deletion and higher-axis closure remain unresolved.",
+      "A checked address permutation does not establish Unicode-wide frequencies or cryptographic hardness."
+    ]
+  },
+  "work_graph_sha256": "65eb78bb8943a0b6bb9dc274e6cd5c1226e426735d1b521fd5fb95bc4fee28c8"
+}

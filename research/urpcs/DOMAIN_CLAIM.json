@@ -2,12 +2,12 @@
   "schema": "the-interdependency.domain-claim",
   "version": "0.1.0",
   "term_id": "urpcs.codec",
-  "surface_form": "URPCS",
-  "claiming_domain": "stack-local recursive pairing codec research",
-  "claimed_sense": "The v1 stateful authenticated recursive pairing codec profile defined by accepted Laws 1-13 and bounded by the committed reference harness.",
+  "surface_form": "URPCS (historical substituted codec label)",
+  "claiming_domain": "retired Stack codec evidence",
+  "claimed_sense": "Historical name used for the substituted recursive pairing/authenticated-codec profile; not the intended URPCS construction.",
   "scope": "research/urpcs/ and artifacts that explicitly cite this domain claim",
   "claim_type": "provisional",
-  "claim_status": "stack-local research; not canon; not a confidentiality construction",
+  "claim_status": "superseded; retired historical evidence only",
   "handle": {
     "kind": "acronym",
     "identity_mode": "despecified",
@@ -16,29 +16,28 @@
       {
         "text": "unnamed recursive pairing codec skeleton",
         "scope": "the Laws 1-13 design sequence",
-        "status": "instance-definition",
-        "provenance": "operator-ratified working specification"
+        "status": "superseded",
+        "provenance": "historical working specification; not operator ratification of the intended design"
       }
     ]
   },
   "authority_source": {
-    "kind": "operator-ratified research construction",
-    "author": "Erin Spencer",
-    "date": "2026-09-20",
-    "repository_record": "research/urpcs/",
+    "kind": "historical implementation record; intended-design ratification unverified",
+    "author": "hmmm; do not attribute the substituted construction to Erin Spencer",
+    "repository_record": "research/urpcs/SOURCE_RECEIPT.json",
     "immutable_transcript_identity": "hmmm"
   },
   "included_uses": [
-    "the five-element v1 witness wire and Laws 1-13 framing/state-advance profile",
-    "the bounded reference implementation and deterministic fixtures",
-    "future independent interoperability and leakage tests that cite this exact profile"
+    "Historical reproduction of the retained substituted-codec fixtures; no active implementation or design authority."
   ],
   "excluded_uses": [
     "a claim of confidentiality, IND-CPA, IND-CCA, post-compromise security, or production suitability",
     "PCEA compatibility or PCEA implementation authority",
     "UCNS-gonol identity, UCNS geometry, or UCNS constructor authority",
     "a canonical lexical expansion of the URPCS handle",
-    "a claim that recursive size or combinatorial structure supplies entropy"
+    "a claim that recursive size or combinatorial structure supplies entropy",
+    "Continuation, integration or publication as active URPCS research",
+    "Validation or falsification of the intended URPCS construction"
   ],
   "defined_terms": [
     {
@@ -77,11 +76,8 @@
       "boundary": "UCNS owns its gonol object and geometry. URPCS v1 uses only the domain-qualified urpcs.codec-gonol record."
     }
   ],
-  "effective_version": "v1-research",
+  "effective_version": "v1-retired",
   "hmmm": [
-    "Whether URPCS should ever receive a fixed lexical expansion.",
-    "Whether the codec-local Gonol field should be renamed in a future wire version to remove the namespace collision.",
-    "Whether independent decoding reproduces the accepted reference bytes.",
-    "Whether any future confidentiality construction can retain this recursive representation without unacceptable leakage and expansion."
+    "An immutable public intended-design transcript identity remains unavailable; exact reconstruction and the cause of substitution remain unresolved."
   ]
 }

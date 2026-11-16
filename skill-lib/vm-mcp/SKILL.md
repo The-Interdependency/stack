@@ -5,100 +5,359 @@ description: Private VM control-plane skill for giving an AI/MCP client SSH-like
 
 # vm-mcp — private VM control plane
 
-`vm-mcp` makes a VM reachable to an MCP-capable agent without turning SSH credentials into model context. The runtime lives in this canonical `skill-lib` directory; consuming repositories may vendor the skill, but no application repository owns the control plane.
-
-The core distinction is load-bearing:
+The transport invariant remains:
 
 ```text
 human/bootstrap path: SSH / Google OS Login / IAP
-model path:           MCP -> private tunnel -> loopback vm-mcp service
-credential boundary: SSH keys stay outside the model path
+model path:           MCP -> authenticated private tunnel -> bearer-authenticated loopback vm-mcp
+credential boundary: SSH/cloud credentials stay outside model context
 ```
 
-MCP is not SSH. It provides SSH-like operational contact by executing tools **on the target VM**. SSH remains the bootstrap, rescue, and break-glass path.
+## Profiles
+
+```text
+read-only
+  vm_info + list/read/stat
+
+workspace
+  read-only
+  + write/mkdir/move/remove under VM_MCP_ROOT
+  + shell_exec as confined non-root vmmcp
+
+personal-console
+  workspace
+  + user_exec as any explicit local non-root account
+  + admin_exec as root
+```
+
+`read-only` is the default and remains appropriate for first contact, shared
+systems, or consumers that do not need mutation. `personal-console` is intended
+for a **single-owner private VM** where broad administration is desired and the
+owner prefers capability breadth over a narrow application API.
+
+The personal-console rule is:
+
+> Broad capability is allowed, but privilege transitions must remain obvious.
+
+`user_exec` and `admin_exec` are therefore separate tools. Named convenience
+tools may be added later for ergonomics, but they are not permission cages and
+do not replace the general execution primitives.
 
 ## Trigger / non-trigger
 
-Load this skill when the requested result is one or more of:
+Load this skill when the requested result includes one or more of:
 
-- let an MCP-capable AI inspect or work in a private Linux VM;
-- give ChatGPT/OpenAI a private VM tool surface;
-- expose shell/file operations without exporting SSH keys or cloud credentials;
-- install, update, audit, or troubleshoot `vm-mcp`;
-- add a controlled admin action above the non-root workspace shell.
+- connect ChatGPT/OpenAI or another MCP client to a private Linux/GCE VM;
+- inspect, write, or administer VM files through MCP;
+- use a VM shell without placing an SSH private key in the model path;
+- expose a broad personal VM console to one owner;
+- install, update, audit, or troubleshoot canonical `vm-mcp`;
+- distinguish ordinary non-root work from explicit root administration;
+- replace repeated SSH pastes with persistent, auditable MCP contact.
 
-Do not load it for:
+Do not load it for ordinary human-only SSH setup or a generic application
+deployment where no MCP/agent VM contact is wanted.
 
-- ordinary human SSH key creation, `gcloud compute ssh`, or OS Login with no agent/MCP requirement;
-- a public web API that does not speak MCP;
-- generic application deployment where the agent does not need VM contact;
-- requests to publish an unrestricted root shell to the internet.
+## Source of truth
 
-## Kind and source of truth
+Priority:
 
-This is a **procedural skill with executable helpers**. It defines no new msdmd block type. Its executable modules use existing `MODULE_BUILD`, `CONTRACTS`, and `CHECKS` declarations.
+1. actual target VM facts: OS, accounts, filesystem, services, network and human recovery path;
+2. this canonical `skill-lib/vm-mcp` runtime and tests;
+3. current official MCP SDK/protocol documentation;
+4. current target MCP client's connection, approval, and private-transport documentation;
+5. `hmmm` for unresolved transport/client/host facts.
 
-Source priority:
+Do not copy the control plane into an application repository and let that copy
+become authority. Application repos may document how they consume the service.
 
-1. the actual target VM's operating system, filesystem layout, users, services, and network boundary;
-2. this skill's runtime and tests;
-3. the current stable official MCP SDK and protocol documentation;
-4. the target MCP client's current official connection and permission documentation.
+## Security / authority model
 
-Client and SDK capabilities are time-sensitive. Verify them from official primary sources before deployment rather than relying on this file's historical snapshot.
+The non-root MCP HTTP service retains its original containment:
 
-## Security model
+```text
+vm-mcp.service
+  user: vmmcp
+  bind: 127.0.0.1 only
+  NoNewPrivileges=true
+  ProtectSystem=strict
+  empty Linux capabilities
+  Docker socket inaccessible
+  cloud metadata address denied
+  direct writes confined to VM_MCP_ROOT
+```
 
-The shipped runtime has four deliberate constraints:
+Personal-console root access does **not** weaken that service. It adds a second
+component:
 
-1. **Loopback-only transport.** `server.py` binds Streamable HTTP to `127.0.0.1` at `/mcp`. Do not create a public firewall rule for port `8765`.
-2. **Non-root execution.** The service runs as `vmmcp`, with no sudo or Linux capabilities.
-3. **Host writes are sandboxed.** `ProtectSystem=strict` plus a generated `ReadWritePaths=` override limits writes to `VM_MCP_ROOT`. The Docker socket is explicitly inaccessible because Docker-socket access is effectively host-root authority.
-4. **Cloud credentials stay outside shell context.** `shell_exec` gets a sanitized environment, and the shipped systemd policy denies `169.254.169.254` so Google/AWS-style metadata credentials cannot be fetched through the standard link-local metadata address.
+```text
+vm-mcp.service (vmmcp)
+       |
+       | AF_UNIX /run/vm-mcp/admin.sock
+       v
+vm-mcp-admin.service (root)
+       |
+       +-- user_exec(user, command, cwd)
+       |      drops uid/gid/groups before exec
+       |
+       `-- admin_exec(command, cwd)
+              remains uid 0 explicitly
+```
 
-The exposed tools are:
+The broker:
 
-| Tool | Default | Boundary |
-|---|---|---|
-| `vm_info` | enabled | service identity, root, limits; read-only |
-| `list_directory` | enabled | resolved paths under `VM_MCP_ROOT`; bounded listing |
-| `read_text` | enabled | resolved files under `VM_MCP_ROOT`; bounded bytes |
-| `shell_exec` | **disabled** | arbitrary shell as `vmmcp`; cwd must resolve under `VM_MCP_ROOT`; systemd supplies the real host-write boundary |
+- accepts only Unix-domain connections;
+- verifies the connecting process with `SO_PEERCRED` against the `vmmcp` uid and systemd's current `vm-mcp.service` MainPID; same-UID shell descendants are refused;
+- creates its socket root-owned and group-accessible only to `vmmcp`;
+- requires itself to be uid 0 before executing requests;
+- rejects `root` through `user_exec`; root must use the visibly privileged `admin_exec` surface;
+- runs commands in dedicated process groups with bounded timeout/output and descendant cleanup;
+- sanitizes the command environment rather than inheriting arbitrary service secrets;
+- records request id, mode, run-as user, cwd, command SHA-256, exit status, and timeout in journald;
+- returns the command/output to the MCP caller but does not print arbitrary environment secrets automatically.
 
-`shell_exec` may read whatever the unprivileged Unix service account can legitimately read and may make outbound network requests. Do not put secrets inside `VM_MCP_ROOT` unless agent access to those secrets is intentional.
+Every HTTP request, including direct loopback traffic, must carry the configured
+`Authorization: Bearer` credential. The server refuses startup without a
+32–256 character URL-safe token; operators must supply a random, high-entropy
+token through the installer and the client's secure header configuration. The
+installer writes it to `/etc/credstore/vm-mcp-token` (root, `0600`, new inode on
+every write). systemd opens that file as root and hands it to the service as
+stdin (`StandardInput=file:`); the server reads it once and replaces stdin with
+`/dev/null`. The token is never in the service environment and never in a file
+the `vmmcp` UID can open. (`LoadCredential=` was not used: its copy stays
+readable by the service UID, so by same-UID `shell_exec` children, for the
+whole service lifetime.) Tokens never belong in tool arguments, URLs,
+workspace files, or chat. The installer does not generate or disclose one.
+Provisioning or rotating access is a separate operator-authorized action.
+
+The server disables Linux process dumpability as its first statement, before
+importing `mcp` or `uvicorn`, and again before serving or spawning shell
+commands. Right after that, still before the heavy imports, it exits if
+`TracerPid` in `/proc/self/status` is nonzero, then reads the token from fd 0
+and closes it. In the `workspace` and `personal-console` profiles it also
+refuses a `VM_MCP_AUTH_TOKEN` environment fallback, because Yama does not gate
+`/proc/<pid>/environ` reads.
+
+Shell profiles need Yama `kernel.yama.ptrace_scope` >= 1 for the instant before
+the process is non-dumpable: `pidfd_getfd` needs `PTRACE_MODE_ATTACH`, so with
+scope >= 1 a same-UID `shell_exec` child (never an ancestor of the service)
+cannot copy the token descriptor, even by killing the server to force a
+restart. The unit's `ProcSubset=pid` hides `/proc/sys` from the server, so the
+check is a root pre-start gate, `ExecStartPre=+... yama_gate.py`: the `+` runs
+it as root outside the sandbox, and if it exits nonzero systemd never starts
+`server.py`, so the token fd is never handed over. `StandardInput=` applies to
+every executed process, `ExecStartPre=` included (systemd opens the token file
+again for each one, so the gate cannot consume the server's copy); the gate
+never reads fd 0 and replaces it with `/dev/null` first. All components resolve
+the profile through one helper (`profiles.resolve_profile`). For shell profiles
+the installer writes `kernel.yama.ptrace_scope` (1, or the existing higher
+value) to `/etc/sysctl.d/99-zz-vm-mcp-ptrace.conf`, which sorts last, applies
+it, warns if `systemd-sysctl --cat-config` shows a later override to 0, and
+exits 7 if Yama is unavailable. `read-only` runs no shell children, so the
+installer never raises the scope for it; when a host moves back to `read-only`
+it deletes only its own `99-zz-vm-mcp-ptrace.conf` (a file it did not write is
+kept with a warning), and only after `/etc/vm-mcp.env` is written and the
+service has restarted, so a failed install never leaves the old shell-profile
+config without its boot-time scope. The live value is left alone until the
+next reboot or `sysctl --system`. The override warning also matches sysctl.d globs such as
+`kernel.yama.* = 0`.
+
+`VM_MCP_ROOT` is writable by the service user while root runs code from the
+install root (`/opt/vm-mcp`, including the pre-start gate), so the installer
+rejects a workspace that is `/`, equal to, inside, or a parent of the install
+root, comparing `realpath`-resolved paths. The install root is fixed at
+`/opt/vm-mcp` (both units hardcode it); `VM_MCP_INSTALL_ROOT` is no longer
+read.
+
+The server also checks the token descriptor itself (`fstat` on fd 0): it must
+be a regular file owned by root with no group or other permission bits,
+otherwise the service refuses to start. Same-UID shell children therefore cannot inspect its memory,
+environment or descriptors to steal caller credentials. Children receive only
+the sanitized execution environment. Root remains outside this protection.
+The broker queries systemd for the live main-process identity on every request;
+standalone personal-console launches without the managed service are refused.
+
+Personal-console is intentionally high authority. Anyone able to invoke
+`admin_exec` effectively controls the host. Therefore it is appropriate only
+when that authority matches the owner's intent and the MCP transport/account is
+private and controlled by that owner.
+
+## Tools
+
+| Tool | read-only | workspace | personal-console | Boundary |
+|---|---:|---:|---:|---|
+| `vm_info` | yes | yes | yes | service/profile/limits |
+| `list_directory` | yes | yes | yes | under `VM_MCP_ROOT` |
+| `read_text` | yes | yes | yes | under `VM_MCP_ROOT`, bounded |
+| `stat_path` | yes | yes | yes | under `VM_MCP_ROOT` |
+| `write_text` | no | yes | yes | atomic UTF-8 write under root |
+| `make_directory` | no | yes | yes | under root |
+| `move_path` | no | yes | yes | source/destination under root |
+| `remove_path` | no | yes | yes | under root; root itself refused |
+| `shell_exec` | no | yes | yes | vmmcp + systemd confinement |
+| `user_exec` | no | no | yes | arbitrary explicit non-root local user via broker |
+| `admin_exec` | no | no | yes | root via explicit broker |
+
+Use `shell_exec` for work that should stay inside the MCP workspace. Use
+`user_exec` when repository/application ownership belongs to another local
+service or human account. Use `admin_exec` for host-level operations such as
+systemd, packages, mounts, ownership, PostgreSQL provisioning, or recovery.
+
+## Installer behavior
+
+Provision the bearer token before either installation command below. Give the
+installer exactly one source:
+
+- `VM_MCP_AUTH_TOKEN_FILE=<path>`: a regular file (not a symlink) owned by the
+  installing user (root) with no group or other access (`chmod 0600`); the first
+  line is the token. Preferred.
+- `VM_MCP_AUTH_TOKEN_STDIN=1`: the first line of the installer's stdin (any value
+  other than unset or `1` is rejected).
+- `VM_MCP_AUTH_TOKEN`: the environment; avoid it where it would enter shell history.
+
+The token file is opened once and checked through the open descriptor, so it
+cannot be swapped between the check and the read; a token file with Windows
+CRLF line endings is rejected with a message saying so. Token handling runs
+with xtrace off, so `bash -x install.sh` never prints the token.
+
+Use the same value in the MCP client's secure Authorization-header configuration
+(`Authorization: Bearer <token>`; the scheme is case-insensitive per RFC 9110).
+A tunnel by itself does not authenticate other local processes. Do not place an
+actual credential in a pasted command.
+
+Canonical install:
+
+```bash
+sudo VM_MCP_ROOT=/srv/vm-mcp/workspace \
+  VM_MCP_PROFILE=read-only \
+  VM_MCP_AUTH_TOKEN_FILE=/root/vm-mcp.token \
+  bash vm-mcp/install.sh
+```
+
+Single-owner personal console:
+
+```bash
+sudo VM_MCP_ROOT=/srv/vm-mcp/workspace \
+  VM_MCP_PROFILE=personal-console \
+  VM_MCP_AUTH_TOKEN_FILE=/root/vm-mcp.token \
+  bash vm-mcp/install.sh
+```
+
+### Upgrading an existing install (fails closed until a token exists)
+
+Installs from before caller authentication have no token. After this upgrade:
+
+- the installer exits 3 without changing anything until one token source is given;
+- the new `vm-mcp.service` unit does not start until
+  `/etc/credstore/vm-mcp-token` exists and holds a valid token, so the MCP path
+  stays down rather than open;
+- updated server code under an old unit (no token file configured) falls back
+  to a `VM_MCP_AUTH_TOKEN` in `/etc/vm-mcp.env` and logs a warning; with neither,
+  it refuses to start. Re-running the installer removes the variable from
+  `/etc/vm-mcp.env` and moves the token to the root-only file;
+- clients without the `Authorization` header get `401` on every request.
+- `workspace`/`personal-console` need Yama: the installer sets
+  `kernel.yama.ptrace_scope` >= 1 persistently (exit 7 if Yama is missing), and
+  the root pre-start gate refuses to start the service in those profiles while
+  the scope is 0 or absent. A later sysctl.d file that sets it back to 0 stops
+  the service rather than weakening it. Those profiles also refuse the
+  `VM_MCP_AUTH_TOKEN` environment fallback; re-run the installer.
+
+### Rerunning the installer on a VM that already has vm-mcp
+
+- **Settings carry over.** When `/etc/vm-mcp.env` exists, `VM_MCP_ROOT`,
+  `VM_MCP_PROFILE`, `VM_MCP_PORT` and `VM_MCP_ADMIN_SOCKET` default to its values
+  instead of `/srv/vm-mcp/workspace`, `read-only` and `8765`. The existing profile is
+  resolved with `profiles.py` (the same resolver the service uses), so a legacy
+  env with only `VM_MCP_SHELL_ENABLED=1` stays `workspace` and the new env file
+  records it as `VM_MCP_PROFILE=workspace`.
+- **Changes are explicit.** A different workspace root or profile from the
+  installed one exits 3 unless `VM_MCP_ALLOW_RECONFIGURE=1` is set (any other
+  value is rejected). Restating the same values is fine.
+- **Backup first.** Before anything is overwritten, the installer copies the
+  previous `/opt/vm-mcp` (without `.venv`), both units, the
+  `vm-mcp.service.d` drop-in, `/etc/vm-mcp.env` and the ptrace sysctl.d file into
+  a new root-only (`0700`) directory under `/var/backups/vm-mcp/` and prints its
+  path (also in the final summary). If the backup fails it exits 9 with nothing
+  changed. Old backups are not pruned.
+- **Busy service user.** `usermod` refuses a user with running processes (the
+  exit 8 seen on upgrades). The installer skips `usermod` when the home is
+  unchanged and otherwise stops `vm-mcp.service` and `vm-mcp-admin.service`
+  first; both are restarted at the end.
+- **ptrace sysctl file order.** The Yama availability check still runs before
+  anything changes, but `99-zz-vm-mcp-ptrace.conf` is written only after the
+  user step, and if the install then fails the file is restored to its previous
+  content (or removed if this run created it). The live value is left as is.
+
+#### One-time real-unit check on the VM (after the first install of this version)
+
+Run as root through the human path, in the deployed profile (stack runs
+`personal-console`):
+
+1. `cat /proc/sys/kernel/yama/ptrace_scope` prints 1 or more, and
+   `systemctl is-active vm-mcp.service` prints `active`;
+   `journalctl -u vm-mcp.service -b | grep yama-gate` shows nothing.
+2. The gate does not consume stdin: `systemctl show -p ExecStartPre vm-mcp.service`
+   shows `status=0`, and an authenticated `vm_info` succeeds (the server read the
+   token from its own fd 0).
+3. Refusal: `sysctl -w kernel.yama.ptrace_scope=0; systemctl restart vm-mcp.service`
+   fails, `journalctl -u vm-mcp.service -n 20` shows
+   `vm-mcp-yama-gate: profile personal-console requires kernel.yama.ptrace_scope >= 1`,
+   and no `server.py` process starts (`systemctl show -p MainPID` is 0).
+4. Restore: `sysctl --system` (or `sysctl -w kernel.yama.ptrace_scope=1`), then
+   `systemctl restart vm-mcp.service` and repeat step 1.
+
+Upgrade order: (1) create the root-owned `0600` token file through the human
+SSH/OS Login/IAP path; (2) re-run the installer with `VM_MCP_AUTH_TOKEN_FILE`
+and the same profile and root as before; (3) add the header to the MCP client's
+secure configuration; (4) verify an unauthenticated request returns `401` and an
+authenticated `vm_info` succeeds; (5) delete or keep the token file under the
+operator's own secret handling. Recovery while the MCP path is down uses the same
+human path; never restore an unauthenticated listener to regain access.
+
+Important ownership rule: if `VM_MCP_ROOT` already exists, the installer leaves
+that directory's ownership unchanged. It creates/chowns the root only when the
+path does not yet exist. This prevents an existing application checkout such as
+`/srv/stack` from accidentally being transferred to `vmmcp` merely because it
+was selected as an MCP root.
+
+The install places immutable runtime code under `/opt/vm-mcp` (venv created
+under umask `0022` so `vmmcp` can run it), non-secret configuration in
+`/etc/vm-mcp.env` and the token in `/etc/credstore/vm-mcp-token` (both written
+`0600` to a temp file and renamed into place), and starts `vm-mcp-admin.service` only for
+`personal-console`.
 
 ## Workflow
 
-### 1. Inspect the target before installing
+### 1. Resolve the VM before mutation
 
-Resolve these facts from the VM, not from memory:
+Observe rather than infer:
 
 ```text
-OS/distribution and Python version
+OS/distribution + Python
 systemd availability
-intended writable workspace
-existing application/data directories
-whether Docker/Podman sockets exist
 human SSH/OS Login recovery path
-MCP client and its current write-action support
-private tunnel or authenticated private transport
+MCP private transport
+intended VM_MCP_ROOT
+ownership of application/repository paths
+whether this is truly single-owner
+current client write/destructive-operation support
 ```
 
-Unknowns remain `hmmm`.
+Missing facts remain `hmmm`.
 
-### 2. Pin the canonical skill-lib source
+### 2. Pin canonical skill-lib
 
-Install from an exact reviewed `The-Interdependency/skill-lib` commit or branch. Record the source commit in the VM installation. Do not copy a stale `vm-mcp` implementation out of an application repo.
+Install from an exact reviewed `The-Interdependency/skill-lib` commit. Record the
+commit via `/opt/vm-mcp/SOURCE_COMMIT`.
 
-### 3. Run the tests before host installation
-
-From the `skill-lib` checkout:
+### 3. Run canonical tests before installation
 
 ```bash
 PYTHONPATH=vm-mcp python -m unittest discover -s vm-mcp/tests -p 'test_*.py'
 ```
 
-Also run the repository gates when the full checkout is available:
+When the full repository checkout is available, also run:
 
 ```bash
 python tools/check_skill_compliance.py
@@ -108,140 +367,190 @@ python tools/build_codex_plugin_skills.py --check
 python -m llms.build --root . --out llms.txt --check
 ```
 
-### 4. Install read-only first
+### 4. Choose the profile deliberately
 
-Generic installation:
+Use `read-only` for first contact or shared deployments. Use `workspace` when a
+confined work area and shell are enough. Use `personal-console` when the owner
+explicitly wants a broad personal VM console, including root administration.
 
-```bash
-sudo VM_MCP_ROOT=/srv/vm-mcp/workspace bash vm-mcp/install.sh
-```
+Do not silently upgrade an existing deployment from a lower authority profile.
 
-For the current a0 VM data-disk layout:
-
-```bash
-sudo VM_MCP_ROOT=/srv/a0/workspaces bash vm-mcp/install.sh
-```
-
-The installer keeps immutable runtime code under `/opt/vm-mcp`, writable agent work under the chosen `VM_MCP_ROOT`, and starts `shell_exec` disabled.
-
-### 5. Verify local contact
-
-Check service state and the loopback listener before adding any remote client:
+### 5. Verify local containment
 
 ```bash
 sudo systemctl --no-pager --full status vm-mcp.service
 ss -ltnp | grep ':8765'
 ```
 
-Expected listener address is `127.0.0.1`, not `0.0.0.0` and not the VM's external IP.
+Expected MCP listener: `127.0.0.1:8765`.
 
-### 6. Establish the private MCP transport
-
-For ChatGPT/OpenAI, re-check the current official custom-MCP documentation. As of 2026-08-07, OpenAI's published guidance says private-network/local MCP servers should use **Secure MCP Tunnel** rather than public exposure; full write/modify custom MCP is currently a Business/Enterprise/Edu feature, while Pro custom MCP is read/fetch only. This product boundary does not change the server's host permissions.
-
-For other MCP hosts, use their authenticated private-tunnel/VPN/reverse-proxy mechanism. If the client cannot provide a private authenticated transport, `hmmm` the connection rather than publishing the raw service.
-
-### 7. Exercise read-only tools end-to-end
-
-Call, in order:
-
-```text
-vm_info
-list_directory(path=".")
-read_text(path=<known harmless text file>)
-```
-
-Confirm the reported root and service user before enabling any write tool.
-
-### 8. Enable workspace shell only after the client can govern writes
-
-When the owner explicitly wants model-side command execution and the MCP client supports appropriate write approvals:
+For personal-console also verify:
 
 ```bash
-sudo mkdir -p /etc/systemd/system/vm-mcp.service.d
-printf '[Service]\nEnvironment=VM_MCP_SHELL_ENABLED=1\n' \
-  | sudo tee /etc/systemd/system/vm-mcp.service.d/shell.conf
-sudo systemctl daemon-reload
-sudo systemctl restart vm-mcp.service
+sudo systemctl --no-pager --full status vm-mcp-admin.service
+sudo stat -c '%U %G %a %n' /run/vm-mcp /run/vm-mcp/admin.sock
 ```
 
-Disable it again with:
-
-```bash
-sudo rm -f /etc/systemd/system/vm-mcp.service.d/shell.conf
-sudo systemctl daemon-reload
-sudo systemctl restart vm-mcp.service
-```
-
-### 9. Add administration as named capabilities, not a root shell
-
-If workspace shell is insufficient, do **not** make `vmmcp` passwordless root and do not expose `/run/docker.sock`. Add a root-owned broker for the smallest named operation required, for example:
+Expected broker boundary:
 
 ```text
-restart one named application service
-read one service's journal
-activate one reviewed release
-run one reviewed backup/restore command
+broker process: root
+socket transport: AF_UNIX only
+/run/vm-mcp: root:vmmcp 750
+admin.sock: root:vmmcp 660
 ```
 
-Each new admin operation needs its own arguments, permission boundary, contract, checks, rollback, and client write annotation. An unrestricted `sudo bash -c <model text>` broker is outside this skill's safe default.
+### 6. Establish private MCP transport
 
-## Output shape
+Never publish raw port `8765` to the public internet. Use the current client's
+authenticated private-tunnel/private-network mechanism. Client capabilities are
+time-sensitive; verify current official product documentation at connection
+time rather than treating this skill's historical product snapshot as current.
 
-When this skill is used for a deployment or audit, report:
+### 7. Exercise progressive authority
+
+For a personal console, verify in this order:
 
 ```text
-source: exact skill-lib commit/ref
-vm: observed OS + relevant layout
-workspace: exact VM_MCP_ROOT
-service: installed/running/not installed
-transport: loopback + private tunnel status
-client: observed current MCP read/write capability
-shell_exec: disabled/enabled
-validation: commands actually executed + results
-admin capabilities: none or exact named brokers
-hmmm: unresolved constraints
+unauthenticated HTTP request -> 401
+authenticated vm_info
+read_text / list_directory
+write_text inside disposable VM_MCP_ROOT fixture
+shell_exec("id -u")
+user_exec(<known non-root user>, "id -u")
+admin_exec("id -u")
 ```
 
-Never describe a command as executed when it was only derived for the user to run.
+Expected final result for `admin_exec("id -u")` is `0`. Confirm the corresponding
+journald broker receipt before using root for real administration.
+
+### 8. Prefer ordinary authority when sufficient
+
+Even in personal-console mode, use the least surprising authority that can do
+the job:
+
+```text
+workspace file operation -> file tools
+workspace diagnostic      -> shell_exec
+repo/service-account work  -> user_exec
+host administration        -> admin_exec
+```
+
+This is an observability rule, not a capability prohibition.
+
+### 9. Keep human recovery independent
+
+SSH/OS Login/IAP remains bootstrap, rescue, and break-glass access. Do not remove
+it merely because MCP works.
+
+## Personal-console examples
+
+Repository work as its owning service account:
+
+```text
+user_exec(
+  user="stackorchestrator",
+  cwd="/srv/stack",
+  command="python -m frontend.cli.stackctl fresh status"
+)
+```
+
+Host service inspection:
+
+```text
+admin_exec(
+  cwd="/",
+  command="systemctl --no-pager --full status stack-orchestrator-worker.service"
+)
+```
+
+Package or host maintenance is also possible through `admin_exec`; the tool is
+not artificially limited to a predefined command vocabulary. That breadth is
+the point of the single-owner profile.
 
 ## Validation
 
-The shipped checks cover:
+The shipped suite must cover at least:
 
-- `..` path escape rejection;
-- symlink escape rejection;
-- symlink listings without following target metadata;
-- bounded text and directory output;
-- shell off-by-default;
-- shell cwd confinement;
-- bounded/drained command output;
-- timeout process-group termination;
-- background-descendant cleanup;
-- non-inheritance of unrelated environment secrets;
-- loopback-only server configuration;
-- systemd host-write/capability confinement;
-- cloud metadata-address denial;
-- current stable v2 `MCPServer` surface with removed v1 `FastMCP` excluded.
+- parent/symlink path escape rejection;
+- bounded file/directory/process output;
+- read-only default and backward compatibility for the historical shell flag;
+- workspace write gating and path confinement;
+- shell cwd confinement, timeout, output bound, and environment sanitization;
+- personal-console gate before broker use;
+- root rejection through `user_exec`;
+- root selection through `admin_exec`;
+- broker root-process requirement;
+- `SO_PEERCRED` UID plus current systemd MainPID verification;
+- caller authentication before HTTP request parsing, including loopback callers;
+- same-UID shell denial and non-dumpable service credential isolation;
+- move/remove operate on final symlinks themselves, including broken links;
+- root:vmmcp socket permissions;
+- non-root MCP systemd hardening remaining intact;
+- loopback-only MCP listener and metadata-address denial;
+- installer preserving ownership of an existing `VM_MCP_ROOT`.
 
-The test suite does **not** prove the remote client's tunnel, auth, approval UI, or account plan works. Those require end-to-end contact with the actual client.
+Actual VM acceptance must additionally exercise a real non-root `user_exec`, a
+real root `admin_exec`, journald evidence, service restart, and rollback on the
+target host.
+
+## Rollback
+
+Return to read-only without deleting human recovery access:
+
+```bash
+sudo sed -i 's/^VM_MCP_PROFILE=.*/VM_MCP_PROFILE=read-only/' /etc/vm-mcp.env
+sudo systemctl disable --now vm-mcp-admin.service
+sudo systemctl restart vm-mcp.service
+```
+
+Full stop:
+
+```bash
+sudo systemctl disable --now vm-mcp.service vm-mcp-admin.service
+```
+
+Disconnect the MCP client/tunnel as a separate control-plane action.
 
 ## Anti-patterns
 
-- Putting an SSH private key, Google service-account key, OAuth refresh token, or OS Login credential into an MCP tool argument or prompt.
-- Listening on `0.0.0.0:8765` because the private tunnel is not yet configured.
-- Calling a public reverse proxy "private" without authentication.
-- Running the MCP service as root.
-- Adding `vmmcp` to the Docker group or exposing the Docker socket.
-- Treating `VM_MCP_ROOT` path checks as the only sandbox; systemd is the host-write authority boundary.
-- Enabling `shell_exec` before read-only end-to-end contact works.
-- Claiming ChatGPT write access when the current plan/client only exposes read/fetch.
-- Keeping an SDK line after it is actually deprecated; verify current stable SDK status at deployment/update time and replace deprecated surfaces immediately.
+- Putting SSH private keys, service-account keys, OAuth refresh tokens, or sudo passwords into MCP arguments or prompts.
+- Opening port `8765` publicly because private transport is inconvenient.
+- Running the MCP HTTP service itself as root merely to obtain admin capability.
+- Hiding root execution behind a tool that looks non-privileged.
+- Letting `user_exec(user="root", ...)` become an alias for root; use `admin_exec` visibly.
+- Using an existing application checkout as `VM_MCP_ROOT` and changing its ownership as an installer side effect.
+- Treating a loopback listener, private tunnel, or shared UID alone as caller authentication.
+- Assuming `read-only` is always preferable when the owner intentionally wants a broad personal console.
+- Assuming `personal-console` is appropriate for multi-user/shared systems merely because it is available.
+- Treating named convenience tools as the only permissible operations in a single-owner console.
+- Removing the independent SSH/OS Login recovery route after MCP contact succeeds.
+
+## Output shape
+
+When deploying or auditing, report:
+
+```text
+source: exact skill-lib commit
+vm: observed OS/layout
+profile: read-only | workspace | personal-console
+workspace: exact VM_MCP_ROOT + ownership
+mcp service: user/bind/hardening/status
+root broker: disabled | socket/status/permissions
+private transport: observed status
+shell_exec: enabled/disabled
+user_exec: enabled/disabled
+admin_exec: enabled/disabled
+validation: commands actually executed + outcomes
+human recovery: observed path
+hmmm: unresolved constraints
+```
+
+Never describe a command as executed when it was only derived for another
+environment.
 
 ## hmmm
 
-- Exact Secure MCP Tunnel provisioning commands are client/product infrastructure and must be taken from current official OpenAI documentation or the actual connected product surface; do not invent them.
-- Application-layer OAuth is intentionally not implemented in the loopback runtime because the default architecture assumes a private authenticated tunnel. A public-edge deployment would require a separate reviewed auth layer.
-- Root-level VM maintenance is deliberately not a generic tool. Named administration brokers should be added only when concrete operations are known.
-- The current stable MCP Python SDK observed on 2026-08-07 is v2; v1 is maintenance-only and its `FastMCP` import is removed from the current surface. Re-check the current major before future upgrades.
-- A private control plane is a door; the useful engineering question is not whether it opens, but exactly which room the hinges belong to.
+- Private tunnel provisioning remains client/product infrastructure and must be resolved from the current official client surface at deployment time.
+- The shipped broker intentionally grants broad root administration in `personal-console`; future shared/multi-owner deployments may need a separate policy/profile rather than weakening this profile into ambiguous partial authority.
+- Named convenience tools for git, systemd, PostgreSQL, fresh-making, backups, and logs are useful ergonomics but are not required for capability because `user_exec` and `admin_exec` already expose the underlying operations.

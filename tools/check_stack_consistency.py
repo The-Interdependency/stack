@@ -1,3 +1,4 @@
+# ratios: loc_comments=839:102 imports_exports=9:20 calls_definitions=386:24
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -11,7 +12,7 @@
 #   network_boundary: none
 #   user_data_boundary: none
 #   admin_only: false
-#   tests: exercised in .github/workflows/stack-consistency.yml and by local invocation
+#   tests: .github/workflows/stack-consistency.yml, research/english-gonol/unicode_tests/test_unicode_provenance.py, local invocation
 #   rollout: required structural drift gate
 #   rollback: revert checker/workflow together only if replaced by an equivalent or stricter gate
 #   requires: Python standard library, Git with full repository history, stack-manifest.json, STACK_MANIFEST.md
@@ -50,11 +51,23 @@
 #   class: boundary
 #   since: 2026-09-12
 #
+# id: zfae_candidate_preserves_current_authority
+#   given: this checkout declares the unimplemented neuronal-inference candidate
+#   then: both candidate projections retain explicit unassigned inference authority and axis-versus-node boundaries while BASE and the input lock retain current construction standing
+#   class: boundary
+#   since: 2026-10-11
+#
+# id: uchc_unicode_graph_is_projected
+#   given: the UCHC Unicode entrypoint declares its scoped work graph
+#   then: its digest verifies and every exact participant, authority, and relation is projected into both Stack manifests without release or authority transfer
+#   class: boundary
+#   since: 2026-11-13
 # id: digital_metrics_graph_matches_stack_projection
-#   given: Stack carries a digital-metrics work graph plus machine and human manifest projections
-#   then: exact participants, commits, authority, relations, boundaries, and parser bytes agree across all projections
+#   given: Stack carries a digital-metrics work graph plus machine and human projections
+#   then: exact participants, fixed authority, commits, relations, boundaries and parser bytes agree
 #   class: evidence
 #   since: 2026-09-20
+#
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -91,7 +104,9 @@ SKILLS_README_PATH = ROOT / ".agents" / "skills" / "README.md"
 STACK_UPDATE_SKILL_PATH = ROOT / ".agents" / "skills" / "stack-update" / "SKILL.md"
 STACK_UPDATE_PROVENANCE_PATH = ROOT / ".agents" / "skills" / "stack-update" / "PROVENANCE.json"
 DIGITAL_METRICS_WORKSPACE = "research/digital-metrics/"
+
 DIGITAL_METRICS_WORK_GRAPH_VERSION = "0.1.0"
+
 DIGITAL_METRICS_BOUNDARY_FIELDS = {
     "authority_transfer",
     "proof_status_transfer",
@@ -100,12 +115,14 @@ DIGITAL_METRICS_BOUNDARY_FIELDS = {
     "semantic_mapping",
     "hmmm",
 }
+
 DIGITAL_METRICS_FALSE_TRANSFER_FIELDS = (
     "authority_transfer",
     "proof_status_transfer",
     "measurement_status_transfer",
     "empirical_status_transfer",
 )
+
 DIGITAL_METRICS_PARTICIPANT_REPOSITORIES = (
     "The-Interdependency/stack",
     "The-Interdependency/skill-lib",
@@ -113,8 +130,12 @@ DIGITAL_METRICS_PARTICIPANT_REPOSITORIES = (
     "The-Interdependency/ucns",
     "The-Interdependency/edcm",
 )
+
+DIGITAL_METRICS_AUTHORITIES = {'The-Interdependency/stack': 'composition, strict research protocol, deterministic receipt, and non-transfer boundaries', 'The-Interdependency/skill-lib': 'organization-wide build and evidence doctrine', 'The-Interdependency/metapat': 'semantic definitions, question forms, interpretation constraints, and claim status', 'The-Interdependency/ucns': 'geometry, exact native Mobius transition law, and its own proof status', 'The-Interdependency/edcm': 'measurement projection and result contracts'}
 DIGITAL_METRICS_GRAPH_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "WORK_GRAPH.json"
+
 DIGITAL_METRICS_BASE_PATH = ROOT / DIGITAL_METRICS_WORKSPACE / "BASE.json"
+
 DIGITAL_METRICS_BASE_STATIC = {
     "schema": "the-interdependency.stack-research-base",
     "version": "1.0.0",
@@ -133,6 +154,7 @@ DIGITAL_METRICS_BASE_STATIC = {
         "none of those statuses."
     ),
 }
+
 HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 # Original completed EPAC event. Advancing release pins cannot reselect history.
@@ -140,7 +162,18 @@ EPAC_TRANSITION_COMMIT = "c81d807142d3f0fe3968a6879888afa00352eaff"
 
 
 def load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    text = path.read_text(encoding="utf-8")
+    def unique(pairs):
+        value = {}
+        for key, item in pairs:
+            if key in value:
+                raise ValueError(f"duplicate JSON member: {key}")
+            value[key] = item
+        return value
+    try:
+        return json.loads(text, object_pairs_hook=unique)
+    except ValueError as exc:
+        raise json.JSONDecodeError(str(exc), text, 0) from exc
 
 
 def manifest_digest(manifest: dict[str, Any]) -> str:
@@ -158,71 +191,6 @@ def error(findings: list[str], code: str, message: str) -> None:
     findings.append(f"{code}: {message}")
 
 
-def rendered_markdown_lines(source: str) -> list[str]:
-    """Return Markdown lines outside fenced code blocks."""
-    source = re.sub(r"<!--.*?-->", "", source, flags=re.DOTALL)
-    source = re.sub(r"<!--.*\Z", "", source, flags=re.DOTALL)
-    rendered: list[str] = []
-    fence_character: str | None = None
-    fence_length = 0
-    for line in source.splitlines():
-        if fence_character is None:
-            match = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
-            if match is not None:
-                fence_character = match.group(1)[0]
-                fence_length = len(match.group(1))
-                continue
-            rendered.append(line)
-            continue
-        closing = re.fullmatch(
-            rf" {{0,3}}{re.escape(fence_character)}{{{fence_length},}}[ \t]*",
-            line,
-        )
-        if closing is not None:
-            fence_character = None
-            fence_length = 0
-            continue
-    return rendered
-
-
-def markdown_table_rows(
-    source: str,
-    header: str,
-    separator: str,
-) -> list[str] | None:
-    """Return rows from the unique table with the exact header and separator."""
-    lines = rendered_markdown_lines(source)
-    starts = [
-        index for index, line in enumerate(lines[:-1])
-        if line == header and lines[index + 1] == separator
-    ]
-    if len(starts) != 1:
-        return None
-    rows: list[str] = []
-    for line in lines[starts[0] + 2:]:
-        if not line.startswith("|"):
-            break
-        rows.append(line)
-    return rows
-
-
-def markdown_section(source: str, heading: str) -> list[str] | None:
-    """Return the uniquely headed section through the next peer/parent heading."""
-    lines = rendered_markdown_lines(source)
-    starts = [index for index, line in enumerate(lines) if line == heading]
-    if len(starts) != 1:
-        return None
-    level = len(heading) - len(heading.lstrip("#"))
-    section: list[str] = []
-    for line in lines[starts[0] + 1:]:
-        if line.startswith("#"):
-            next_level = len(line) - len(line.lstrip("#"))
-            if next_level <= level:
-                break
-        section.append(line)
-    return section
-
-
 def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
     if manifest.get("schema") != "the-interdependency.stack-manifest":
         error(findings, "manifest.schema", "unexpected or missing stack-manifest schema")
@@ -234,9 +202,14 @@ def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
         if not HEX40.fullmatch(commit):
             error(findings, "repository.commit", f"{entry.get('repository')}: invalid commit {commit!r}")
     for entry in manifest.get("research_participants", []):
-        commit = entry.get("commit", "")
-        if not HEX40.fullmatch(commit):
+        commit = entry.get("commit")
+        artifact_sha256 = entry.get("artifact_sha256")
+        if (commit is None) == (artifact_sha256 is None):
+            error(findings, "research.identity", f"{entry.get('workspace')}:{entry.get('participant_id')}: exactly one of commit or artifact_sha256 is required")
+        elif commit is not None and not HEX40.fullmatch(str(commit)):
             error(findings, "research.commit", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid commit {commit!r}")
+        elif artifact_sha256 is not None and re.fullmatch(r"[0-9a-f]{64}", str(artifact_sha256)) is None:
+            error(findings, "research.artifact_sha256", f"{entry.get('workspace')}:{entry.get('participant_id')}: invalid artifact_sha256 {artifact_sha256!r}")
         if entry.get("authority_transfer") is not False:
             error(findings, "research.authority_transfer", f"{entry.get('workspace')}:{entry.get('participant_id')} must keep authority_transfer=false")
 
@@ -280,16 +253,186 @@ def check_research_participants(
         participant_id = str(entry.get("participant_id", ""))
         repository = str(entry.get("repository", ""))
         commit = str(entry.get("commit", ""))
+        artifact_sha256 = str(entry.get("artifact_sha256", ""))
         key = (workspace, participant_id)
         if key in keys:
             error(findings, "research.duplicate", f"duplicate research participant {key!r}")
         keys.add(key)
-        sources.add((workspace, repository, commit))
+        if commit:
+            sources.add((workspace, repository, commit))
         if workspace and workspace not in human:
             error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention workspace {workspace!r}")
-        if commit and commit not in human:
-            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research commit {commit!r}")
+        identity = commit or artifact_sha256
+        if identity and identity not in human:
+            error(findings, "research.human_drift", f"STACK_MANIFEST.md does not mention research identity {identity!r}")
     return keys, sources
+
+
+def check_unicode_bit_radius_graph(
+    manifest: dict[str, Any], human: str, findings: list[str],
+) -> None:
+    """Keep the forward Unicode producer visible beside historical inputs."""
+    workspace = "research/english-gonol/"
+    try:
+        graph = load_json(ROOT / workspace / "docs/unicode-bit-radius-work-graph.json")
+        payload = {key: graph[key] for key in ("repositories", "boundaries")}
+        digest = hashlib.sha256(json.dumps(
+            payload, sort_keys=True, separators=(",", ":")
+        ).encode("utf-8")).hexdigest()
+        if graph.get("work_graph_sha256") != digest:
+            error(findings, "unicode_graph.digest", "scoped work-graph digest does not reproduce")
+        for source in graph["repositories"]:
+            repository = source["repository"]
+            participant_id = "unicode-bit-radius-" + repository.rsplit("/", 1)[-1]
+            matches = [entry for entry in manifest.get("research_participants", [])
+                       if entry.get("workspace") == workspace
+                       and entry.get("participant_id") == participant_id]
+            if len(matches) != 1 or any(
+                matches[0].get(key) != source[key]
+                for key in ("repository", "commit", "authority", "relation")
+            ) or any(matches[0].get(key) is not False
+                     for key in ("canonical_release", "authority_transfer")):
+                error(findings, "unicode_graph.participant", f"missing or divergent scoped participant {participant_id}")
+            values = (workspace, repository, source["commit"], source["authority"], source["relation"])
+            if not any(line.startswith("|") and all(value in line for value in values)
+                       for line in human.splitlines()):
+                error(findings, "unicode_graph.human_drift", f"missing coherent human projection for {participant_id}")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as exc:
+        error(findings, "unicode_graph.inputs", f"invalid or missing Unicode work graph: {exc}")
+
+
+def check_unicode_corpus_graph(manifest: dict, human: str, findings: list[str]) -> None:
+    """Resolve the corpus participant set and its hashes against the root projection."""
+    workspace = "research/english-gonol/"
+    try:
+        graph = load_json(ROOT / workspace / "docs/unicode-corpus-work-graph.json")
+        body = {k: graph[k] for k in ("repositories", "boundaries")}
+        declared = hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if ((graph["schema"], graph["version"]) != ("the-interdependency.stack-manifest", "1.0.0")
+                or graph["work_graph_sha256"] != declared
+                or any(graph["boundaries"][k] is not False or manifest["boundaries"][k] is not False
+                       for k in ("authority_transfer", "proof_status_transfer", "measurement_status_transfer"))):
+            raise ValueError("invalid schema, digest or nontransfer boundaries")
+        root = [r for r in manifest["research_participants"] if r["workspace"] == workspace
+                and r["participant_id"].startswith("unicode-corpus-")]
+        projected = [{k: v for k, v in r.items() if k not in ("workspace", "canonical_release", "authority_transfer")}
+                     for r in root]
+        if projected != graph["repositories"] or any(
+                r.get("authority_transfer") is not False or r.get("canonical_release") is not False for r in root):
+            raise ValueError("participants differ from the root projection")
+        for r in root:
+            identity = r.get("commit") or r["artifact_sha256"]
+            if not any(all(str(r[k]) in line for k in ("participant_id", "repository", "authority", "relation"))
+                       and identity in line for line in human.splitlines()):
+                raise ValueError("missing human projection: " + r["participant_id"])
+    except (ValueError, KeyError, TypeError, OSError) as exc:
+        error(findings, "unicode_corpus.graph", str(exc))
+
+
+def rendered_markdown_lines(source: str) -> list[str]:
+    """Keep structural Markdown outside code and raw HTML blocks.
+
+    Raw HTML is never authority-table syntax. Preserve excluded line boundaries
+    so deleting a block cannot join two otherwise separated table fragments.
+    """
+    source = re.sub(r"<!--.*?-->", "", source, flags=re.DOTALL)
+    source = re.sub(r"<!--.*\Z", "", source, flags=re.DOTALL)
+    rendered: list[str] = []
+    fence_character: str | None = None
+    fence_length = 0
+    html_end: str | None = None
+    html_blank = False
+    block_tags = (
+        'address article aside base basefont blockquote body caption center col '
+        'colgroup dd details dialog dir div dl dt fieldset figcaption figure footer '
+        'form frame frameset h1 h2 h3 h4 h5 h6 head header hr html iframe legend li '
+        'link main menu menuitem nav noframes ol optgroup option p param search '
+        'section summary table tbody td tfoot th thead title tr track ul'
+    ).split()
+    tag_start = re.compile(r'^ {0,3}</?(?:' + '|'.join(block_tags) + r')(?=[\s/>]|$)', re.I)
+    for line in source.splitlines():
+        if html_end is not None:
+            if re.search(html_end, line, re.I):
+                html_end = None
+            rendered.append('')
+            continue
+        if html_blank:
+            if not line.strip():
+                html_blank = False
+            rendered.append('')
+            continue
+        if fence_character is None:
+            match = re.match(r"^ {0,3}(`{3,}|~{3,})", line)
+            if match is not None:
+                fence_character = match.group(1)[0]
+                fence_length = len(match.group(1))
+                rendered.append('')
+                continue
+            special = re.match(r'^ {0,3}<(script|pre|style|textarea)(?=[\s>]|$)', line, re.I)
+            if special:
+                html_end = r'</' + special.group(1) + r'\s*>'
+            elif re.match(r'^ {0,3}<\?', line):
+                html_end = r'\?>'
+            elif re.match(r'^ {0,3}<!\[CDATA\[', line):
+                html_end = r'\]\]>'
+            elif re.match(r'^ {0,3}<![A-Z]', line):
+                html_end = r'>'
+            elif tag_start.match(line) or re.fullmatch(r' {0,3}</?[A-Za-z][^>]*>[ \t]*', line):
+                html_blank = True
+            if html_end is not None or html_blank:
+                if html_end is not None and re.search(html_end, line, re.I):
+                    html_end = None
+                rendered.append('')
+                continue
+            rendered.append(line)
+            continue
+        closing = re.fullmatch(
+            rf" {{0,3}}{re.escape(fence_character)}{{{fence_length},}}[ \t]*",
+            line,
+        )
+        if closing is not None:
+            fence_character = None
+            fence_length = 0
+        rendered.append('')
+    return rendered
+
+
+def markdown_table_rows(
+    source: str,
+    header: str,
+    separator: str,
+) -> list[str] | None:
+    """Return rows from the unique table with the exact header and separator."""
+    lines = rendered_markdown_lines(source)
+    starts = [
+        index for index, line in enumerate(lines[:-1])
+        if line == header and lines[index + 1] == separator
+    ]
+    if len(starts) != 1:
+        return None
+    rows: list[str] = []
+    for line in lines[starts[0] + 2:]:
+        if not line.startswith("|"):
+            break
+        rows.append(line)
+    return rows
+
+
+def markdown_section(source: str, heading: str) -> list[str] | None:
+    """Return the uniquely headed section through the next peer/parent heading."""
+    lines = rendered_markdown_lines(source)
+    starts = [index for index, line in enumerate(lines) if line == heading]
+    if len(starts) != 1:
+        return None
+    level = len(heading) - len(heading.lstrip("#"))
+    section: list[str] = []
+    for line in lines[starts[0] + 1:]:
+        if line.startswith("#"):
+            next_level = len(line) - len(line.lstrip("#"))
+            if next_level <= level:
+                break
+        section.append(line)
+    return section
 
 
 def check_digital_metrics_projection(
@@ -432,6 +575,8 @@ def check_digital_metrics_projection(
         return
 
     for graph_entry, manifest_entry in zip(graph_participants, projected):
+        if graph_entry["authority"] != DIGITAL_METRICS_AUTHORITIES[graph_entry["repository"]]:
+            error(findings, "digital_metrics.authority", "v0 participant authority split changed")
         repository = str(graph_entry.get("repository", ""))
         expected_id = "digital-metrics" if repository == "The-Interdependency/stack" else repository.rsplit("/", 1)[-1]
         if manifest_entry.get("participant_id") != expected_id:
@@ -505,7 +650,7 @@ def check_digital_metrics_projection(
                     f"expected {expected!r}, got {base.get(field)!r}",
                 )
 
-    skill = repositories.get("The-Interdependency/skill-lib", {})
+    skill = next((entry for entry in projected if entry["repository"] == "The-Interdependency/skill-lib"), {})
     graph_skill = next(
         (item for item in graph_participants if item.get("repository") == "The-Interdependency/skill-lib"),
         {},
@@ -515,7 +660,7 @@ def check_digital_metrics_projection(
     artifacts = skill.get("operational_artifacts")
     expected_identity = {
         "source_path": "msdmd/parsers/universal.py",
-        "workspace_path": "skill-lib/msdmd/parsers/universal.py",
+        "workspace_path": "research/digital-metrics/vendor/universal.py",
     }
     matches = [
         item for item in artifacts if all(item.get(key) == value for key, value in expected_identity.items())
@@ -816,6 +961,36 @@ def check_epac_graduation(manifest: dict[str, Any], findings: list[str]) -> None
         error(findings, "epac.graduation", f"invalid or missing transition evidence: {exc}")
 
 
+def check_zfae_neuronal_candidate(findings: list[str], root: Path = ROOT) -> None:
+    """Guard explicit candidate disclaimers; this does not validate neural capability.
+
+    Usage: called by the structural gate; tests may supply an isolated root.
+    Adopting a source-owned operator requires revising this boundary with all
+    authority projections, rather than deleting a disclaimer in one document.
+    """
+    workspace = root / "research" / "zfae"
+    candidate = workspace / "UCNS_NEURONAL_INFERENCE.md"
+    # This gate is part of the candidate's declared projection closure. Retiring
+    # the candidate must retire this obligation too; a missing file is drift.
+    try:
+        for path in (candidate, workspace / "README.md"):
+            text = " ".join(path.read_text(encoding="utf-8").split())
+            for boundary in (
+                "Proposed inference authority: **unassigned**.",
+                "Axis construction is not an inference-node witness.",
+            ):
+                if boundary not in text:
+                    error(findings, "zfae.candidate_boundary", f"{path.name} is missing {boundary!r}")
+        base = load_json(workspace / "BASE.json")
+        lock = load_json(workspace / "UCHC_INPUT.json")
+        if base.get("authority_transfer") is not False or "PTCNA owns neural construction" not in base.get("authority", ""):
+            error(findings, "zfae.candidate_authority", "unassigned candidate must retain current PTCNA construction authority")
+        if lock.get("authority_transfer") is not False or lock.get("neural_readiness") != "not established":
+            error(findings, "zfae.candidate_readiness", "axis/input construction must not promote neural readiness")
+    except (OSError, ValueError, TypeError) as exc:
+        error(findings, "zfae.candidate_inputs", f"invalid or missing candidate boundary evidence: {exc}")
+
+
 def main() -> int:
     findings: list[str] = []
     try:
@@ -830,11 +1005,14 @@ def main() -> int:
     check_digest(manifest, human, findings)
     repositories = check_repository_projection(manifest, human, findings)
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
+    check_unicode_bit_radius_graph(manifest, human, findings)
+    check_unicode_corpus_graph(manifest, human, findings)
     check_digital_metrics_projection(manifest, human, repositories, findings)
     check_base_records(repositories, research_participant_keys, research_source_identities, readme, findings)
     check_english_gonol_regression(repositories, research_participant_keys, human, readme, findings)
     check_stack_update_skill_provenance(findings)
     check_epac_graduation(manifest, findings)
+    check_zfae_neuronal_candidate(findings)
 
     if findings:
         for finding in findings:
@@ -848,3 +1026,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# ratios: loc_comments=839:102 imports_exports=9:20 calls_definitions=386:24

@@ -1,0 +1,32 @@
+{
+  "schema": "english-gonol.full-corpus-receipts",
+  "version": "1.0.0",
+  "word_count": 164864,
+  "generated": "2026-09-26",
+  "surfaces": {
+    "describing_graph": {
+      "receipt_sha256": "ab2d2b603bb52253f2a9cea6ec1b416a71a72c8dd63071854171455b0cf9e240",
+      "x_channel_sum": 12858405,
+      "y_channel_sum": 9818443,
+      "z_channel_sum": 185155
+    },
+    "synthesis": {
+      "receipt_sha256": "18aad80cb19402ba39ffb19eb437259f12f2c5cb8a373d40c2970b35c3903e58",
+      "composition": "views one, two, and three together"
+    },
+    "view_adjudication": {
+      "receipt_sha256": "4b7af8a6b6a815eacab7c9750824245a9baada9b5a9d780aaca35cdc544cf76e",
+      "ranking_by_distinctness": [
+        {"view": "synthesis", "distinct": 161637, "collisions": 3227},
+        {"view": "view3_provenance_interval_lift", "distinct": 100778, "collisions": 64086},
+        {"view": "view2_word_axis_angle", "distinct": 85748, "collisions": 79116},
+        {"view": "view1_definition_inner_product_density", "distinct": 1829, "collisions": 163035}
+      ],
+      "view4_canonical_witness_lift": {
+        "derived": true,
+        "distinct": 157
+      }
+    }
+  },
+  "hmmm": "view four reduces to derivation; views one, two, and three together are the thing"
+}

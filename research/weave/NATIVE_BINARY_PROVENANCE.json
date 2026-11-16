@@ -1,0 +1,29 @@
+{
+  "schema": "weave.binary-candidate-provenance/v1",
+  "source_repository": "The-Interdependency/uchc",
+  "source_commit": "65ac43d5d4cf79082c0836f8545adeb0242e88fc",
+  "source_path": "binary/uchc_binary/origin.py",
+  "source_git_blob": "300db7383b403acbff7ce9a94f7536ad047bc78b",
+  "source_proposal": "The-Interdependency/uchc#7",
+  "current_owner": "The-Interdependency/stack",
+  "current_path": "research/weave/native_binary.py",
+  "standing": "incubating",
+  "reason": "Premature UCHC placement is withdrawn; existing migration gates require the candidate to remain in the Stack forge. The native UCNS geometry is unchanged.",
+  "changes": [
+    "Complete closed-table validation",
+    "Fresh verified-buffer module instances, never sys.modules cache reuse",
+    "Explicit source and authority records"
+  ],
+  "authority_transfer": false,
+  "hmmm": [
+    "No domain graduation, public-key secrecy, or authentication is established."
+  ],
+  "license": "FSL-1.1-ALv2",
+  "license_url": "https://github.com/The-Interdependency/uchc/blob/65ac43d5d4cf79082c0836f8545adeb0242e88fc/LICENSE",
+  "copyright": "Copyright 2026 Erin Spencer",
+  "notice_url": "https://github.com/The-Interdependency/uchc/blob/65ac43d5d4cf79082c0836f8545adeb0242e88fc/NOTICE",
+  "license_scope": [
+    "native_binary.py",
+    "tests/test_binary_origin.py"
+  ]
+}

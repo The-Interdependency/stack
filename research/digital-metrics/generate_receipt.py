@@ -1,3 +1,4 @@
+# ratios: loc_comments=815:94 imports_exports=15:5 calls_definitions=236:31
 """Generate the frozen METAPAT/UCNS digital-metric vertical-slice receipt.
 
 Usage guidance
@@ -180,6 +181,9 @@ DIGITAL_METRICS_BASE_STATIC = {
 }
 
 
+EXPECTED_PARTICIPANT_AUTHORITIES = {'The-Interdependency/stack': 'composition, strict research protocol, deterministic receipt, and non-transfer boundaries', 'The-Interdependency/skill-lib': 'organization-wide build and evidence doctrine', 'The-Interdependency/metapat': 'semantic definitions, question forms, interpretation constraints, and claim status', 'The-Interdependency/ucns': 'geometry, exact native Mobius transition law, and its own proof status', 'The-Interdependency/edcm': 'measurement projection and result contracts'}
+
+
 class ProducerIdentityError(ValueError):
     """Raised before producer import when source identity is not exact."""
 
@@ -234,8 +238,17 @@ def _participant(work_graph: Mapping[str, Any], repository: str) -> dict[str, An
     return matches[0]
 
 
+def _unique_json_pairs(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise ProducerIdentityError(f"duplicate JSON member: {key}")
+        value[key] = item
+    return value
+
+
 def load_work_graph(path: Path) -> dict[str, Any]:
-    value = json.loads(path.read_text(encoding="utf-8"))
+    value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_unique_json_pairs)
     expected = {"schema", "version", "participants", "boundaries", "work_graph_sha256"}
     if not isinstance(value, dict) or set(value) != expected:
         raise ProducerIdentityError("WORK_GRAPH.json has missing or unknown fields")
@@ -255,6 +268,9 @@ def load_work_graph(path: Path) -> dict[str, Any]:
         raise ProducerIdentityError(
             "work graph must contain the exact ordered v0 participant set"
         )
+    for item in value["participants"]:
+        if item["authority"] != EXPECTED_PARTICIPANT_AUTHORITIES[item["repository"]]:
+            raise ProducerIdentityError("v0 participant authority split changed")
     boundaries = value["boundaries"]
     if not isinstance(boundaries, dict) or set(boundaries) != {
         "authority_transfer", "proof_status_transfer", "measurement_status_transfer",
@@ -329,7 +345,7 @@ def _validate_repository_work_graph_projection(
     manifest_path = workspace.parents[1] / "stack-manifest.json"
     manifest_source = manifest_path.read_bytes()
     try:
-        manifest = json.loads(manifest_source.decode("utf-8"))
+        manifest = json.loads(manifest_source.decode("utf-8"), object_pairs_hook=_unique_json_pairs)
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ProducerIdentityError(f"invalid Stack manifest: {exc}") from exc
     try:
@@ -382,7 +398,7 @@ def _validate_repository_work_graph_projection(
     graph_skill = _participant(work_graph, "The-Interdependency/skill-lib")
     manifest_skills = [
         item
-        for item in manifest["repositories"]
+        for item in projected
         if item.get("repository") == "The-Interdependency/skill-lib"
     ]
     if (
@@ -972,3 +988,4 @@ if __name__ == "__main__":
     raise SystemExit(
         "run generate_receipt_cli.py so generator execution is source-bound"
     )
+# ratios: loc_comments=815:94 imports_exports=15:5 calls_definitions=236:31

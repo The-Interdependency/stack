@@ -1,3 +1,4 @@
+# ratios: loc_comments=31:31 imports_exports=5:1 calls_definitions=12:2
 """Source-loading CLI launcher for the digital-metric receipt verifier.
 
 This launcher reads ``verify_receipt.py`` exactly once, computes the digest of
@@ -71,3 +72,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+# ratios: loc_comments=31:31 imports_exports=5:1 calls_definitions=12:2

@@ -1,0 +1,53 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "f619f23ecbdcaf851f0dbff7aa99bd25cbcc2f841f6fd4eaf0abc8eb9f69c25a",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "a2399aac10f5df820dea96ca04093b7ac89a4b3a",
+      "authority": "Stack-local English Gonol implementation forge",
+      "relation": "exact forge baseline before the Hilbert-state candidate; candidate remains stack-local"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "380ce7b7ec6b8b45ffa53ea4210070f0b3129747",
+      "authority": "Public Gonol and geometric construction",
+      "relation": "supplies the consumed glyph-axis geometry; no English or Hilbert authority transfer"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "1cdfb09dd00a451cee30eec2e78624df8c682662",
+      "authority": "METAPAT semantic distinctions including its domain-qualified Vector term",
+      "relation": "collision boundary only; mathematical HilbertStateVector is explicitly not METAPAT Vector"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "0b3ada9ef2f8e32bba10daf104fc0d38730c3a77",
+      "authority": "extracted future independent language-hyperspace repository under incomplete graduation",
+      "relation": "migration target only; does not own this new candidate until release/reconsumption/transition gates complete"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "ad895d2f756fc315c0b83856b2042796c3ad781d",
+      "authority": "cross-repository, gonol-build, domain-claim and graduation doctrine",
+      "relation": "governing workflow source; no implementation authority"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "domain-qualified-borrowed-mathematics",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "canonical Hilbert scalar field R or C",
+      "cross-origin inner products and angles",
+      "amplitude and phase assignment",
+      "learned inference operators and sense selection",
+      "sentence-axis and later recursive promotions",
+      "immutable public identity of the operator-ratifying design conversation",
+      "stable UCHC release, released-artifact reconsumption, and scoped authority-transition receipt"
+    ]
+  }
+}

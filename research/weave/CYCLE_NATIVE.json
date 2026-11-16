@@ -1,0 +1,18 @@
+{
+  "schema": "weave.native-inputs/v2",
+  "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+  "ucns_sources": {
+    "src/ucns/axis_circle.py": "768777c8eca6e65537fdbab2003835d6f4f40569",
+    "src/ucns/direct_mobius.py": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d"
+  },
+  "binary_source": {
+    "owner": "The-Interdependency/stack",
+    "path": "native_binary.py",
+    "git_blob": "6a6ba9f57b83b62116a57113a5c6358fab7e7831",
+    "standing": "forge-owned candidate, not graduated"
+  },
+  "uchc_architecture": {
+    "commit": "4ad94e92be10d2c4c875a848addfda46f3c7cfdb",
+    "relation": "origin/axis architecture and migration boundary; not a binary runtime dependency"
+  }
+}

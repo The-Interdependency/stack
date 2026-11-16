@@ -1,3 +1,4 @@
+# ratios: loc_comments=711:73 imports_exports=8:18 calls_definitions=313:34
 """Strict, provenance-bound records for Stack-local digital metric research.
 
 This module defines transport and integrity contracts.  It does not assign
@@ -867,3 +868,4 @@ __all__ = [
     "validate_structure",
     "verify_receipt",
 ]
+# ratios: loc_comments=711:73 imports_exports=8:18 calls_definitions=313:34

@@ -1,0 +1,117 @@
+# Read-only AHBG consumption of the exact extracted UCHC a2 structural field.
+# This job does not publish UCHC, graduate the English domain, or choose senses.
+name: AHBG UCHC structural corpus
+on:
+  pull_request:
+    paths:
+      - "ahbg/integration/uchc_structural.py"
+      - "ahbg/integration/UCHC_STRUCTURAL.json"
+      - "ahbg/integration/tests/test_uchc_structural_installed.py"
+      - "ahbg/runtime/runtime.py"
+      - "ahbg/runtime/protocol.py"
+      - "research/zfae/uchc_input.py"
+      - ".github/workflows/ahbg-uchc-structural.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ahbg/integration/uchc_structural.py"
+      - "ahbg/integration/UCHC_STRUCTURAL.json"
+      - "ahbg/integration/tests/test_uchc_structural_installed.py"
+      - "ahbg/runtime/runtime.py"
+      - "ahbg/runtime/protocol.py"
+      - "research/zfae/uchc_input.py"
+      - ".github/workflows/ahbg-uchc-structural.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  ahbg-structural-consumer:
+    runs-on: ubuntu-24.04
+    env:
+      SOURCE_DATE_EPOCH: '1790308800'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: The-Interdependency/uchc
+          ref: c18d984438bc30764edb05fd5ccc05691958a24e
+          path: _deps/uchc
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: globalwordnet/english-wordnet
+          ref: dc343f2683279ecbb13fab4e2fd778d7b162d287
+          path: _deps/oewn
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: The-Interdependency/ucns
+          ref: 4f863ad37096b7baab8f62820ad5cb937b62a3a7
+          path: _deps/ucns
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12.14'
+      - name: Preflight and build pinned wheel
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os, sqlite3, shutil
+          assert shutil.disk_usage('.').free > 8 * 1024**3, 'insufficient disk'
+          assert os.sysconf('SC_PHYS_PAGES') * os.sysconf('SC_PAGE_SIZE') >= 5 * 1024**3, 'insufficient memory'
+          assert sqlite3.sqlite_version == '3.45.1', 'SQLite writer differs from pinned byte evidence'
+          PY
+          python -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0 PyYAML==6.0.2
+          python -m pip wheel --no-deps --no-build-isolation ./_deps/uchc -w /tmp/ahbg-uchc-a2-dist
+          python - <<'PY'
+          import hashlib, json, pathlib
+          lock = json.loads(pathlib.Path('ahbg/integration/UCHC_STRUCTURAL.json').read_text())
+          artifact = pathlib.Path('/tmp/ahbg-uchc-a2-dist') / lock['wheel']
+          with artifact.open('rb') as f:
+              assert hashlib.file_digest(f, 'sha256').hexdigest() == lock['wheel_sha256']
+          PY
+          python -m venv .uchc-a2
+          .uchc-a2/bin/python -m pip install PyYAML==6.0.2
+          .uchc-a2/bin/python -m pip install --no-index --no-deps /tmp/ahbg-uchc-a2-dist/uchc-0.1.0a2-py3-none-any.whl
+      - name: Build and verify full structural corpus through installed UCHC
+        run: |
+          set -euo pipefail
+          .uchc-a2/bin/python -I -m english_gonol.structural_construct build \
+            --source-root "$PWD/_deps/oewn/src/yaml" \
+            --ucns-source-root "$PWD/_deps/ucns" \
+            --out-dir "$PWD/_state/structural"
+          .uchc-a2/bin/python -I -m english_gonol.structural_construct verify "$PWD/_state/structural"
+          python - <<'PY'
+          import hashlib, json, pathlib
+          lock = json.loads(pathlib.Path('ahbg/integration/UCHC_STRUCTURAL.json').read_text())
+          root = pathlib.Path('_state/structural')
+          manifest = json.loads((root/'manifest.json').read_text())
+          with (root/'construct.db').open('rb') as f:
+              observed = hashlib.file_digest(f, 'sha256').hexdigest()
+          assert observed == lock['database_sha256'], 'physical structural bytes mismatch'
+          assert manifest['receipt_sha256'] == lock['logical_receipt'], 'structural logical receipt mismatch'
+          assert manifest['metadata']['implementation_sha256'] == lock['implementation_sha256']
+          assert manifest['metadata']['complete_corpus'] is True
+          assert manifest['metadata']['profile']['profile'] == lock['profile']
+          PY
+      - name: Consume full native structural field inside AHBG
+        env:
+          UCHC_STRUCTURAL_FIELD: ${{ github.workspace }}/_state/structural
+          UCHC_CORPUS_REQUIRED: '1'
+        run: |
+          set -euo pipefail
+          .uchc-a2/bin/python -m unittest discover -s ahbg/integration/tests \
+            -p 'test_uchc_structural_installed.py' -v
+      - name: Retain identity and test evidence, never republish corpus bytes
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: ahbg-uchc-structural-evidence
+          path: |
+            _state/structural/manifest.json
+            ahbg/integration/UCHC_STRUCTURAL.json
+          retention-days: 14
+          if-no-files-found: warn

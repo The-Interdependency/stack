@@ -1,0 +1,23 @@
+{
+  "schema": "the-interdependency.a0-municipality-source-receipt",
+  "version": "1.0.0",
+  "artifact": {
+    "path": "HANDOFF.md",
+    "original_filename": "a0-municipality-handoff.md",
+    "document_version": "1.1",
+    "document_date": "2026-10-02",
+    "sha256": "211c30c00ef92d45c86e713da633aa3926a41eb18953326fea615bb4a7d882a0",
+    "size_bytes": 77790,
+    "transformation": "byte-for-byte copy"
+  },
+  "origin": "Generated handoff in the user conversation, revised after the user supplied an audit; user subsequently requested placement in Stack.",
+  "placement_date": "2026-10-04",
+  "standing": "specification and proposed acceptance contracts; no application behavior established",
+  "authentication": "Content identity only; not a signature, authenticated transcript or independent evidence of author intent.",
+  "source_status_policy": "HANDOFF.md preserves its dated source observations; README.md supplies current placement observations without rewriting the frozen artifact.",
+  "usage": "Verify HANDOFF.sha256 from this workspace, then read README.md and the complete HANDOFF.md. Amend future requirements with a new document version and source receipt.",
+  "hmmm": [
+    "Immutable independently authenticated conversation transcript identity is unavailable.",
+    "Municipal deployment, partner agreements, live funds, T01-T38 behavior and native construction completeness remain unestablished by this receipt."
+  ]
+}

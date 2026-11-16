@@ -1,0 +1,122 @@
+{
+  "schema": "stack.zfae.gonol-parser-profile",
+  "version": "1.0.0",
+  "standing": "stack-local implemented candidate; finite synthetic admission profile",
+  "unicode_version": "15.0.0",
+  "ucns": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+    "path": "src/ucns/public_gonol.py",
+    "blob_sha": "c1955e46e2dc918fb657cb346e42106d71937e91"
+  },
+  "producer": {
+    "repository": "The-Interdependency/stack",
+    "commit": "d713cc5f901d74deb902a191837ef5657dbaba94",
+    "path": "research/english-gonol/english_gonol/hyperspace_construct.py",
+    "blob_sha": "8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a"
+  },
+  "admitted_carrier": "every position of the exact UCNS Public Gonol",
+  "additional_scalars": [
+    "\u0000",
+    "\t",
+    "\r",
+    "\n",
+    "é",
+    "́",
+    "中",
+    "😀"
+  ],
+  "additional_construction": "consume the existing English GlyphGonol encoded-name or encoded-codepoint construction; Unicode names are constitutive lexical parts, not UCNS function operations",
+  "source_unit": "one Unicode scalar, with zero-based scalar and UTF-8 byte spans",
+  "occurrence_address": "(source_id, ordinal); repeated occurrences reference the same immutable glyph construction",
+  "relation": "ordered occurrence references; no word, prompt, or neural closure is asserted",
+  "unknown_policy": "retain every unsupported scalar in order with gonol=None; require_gonols refuses partial admission",
+  "normalization": "none; no case folding, whitespace mapping, segmentation, deduplication of occurrences, or str coercion",
+  "cases": [
+    {
+      "text": "",
+      "admitted": true
+    },
+    {
+      "text": "a",
+      "admitted": true
+    },
+    {
+      "text": "b",
+      "admitted": true
+    },
+    {
+      "text": "α",
+      "admitted": true
+    },
+    {
+      "text": "β",
+      "admitted": true
+    },
+    {
+      "text": "1",
+      "admitted": true
+    },
+    {
+      "text": "2",
+      "admitted": true
+    },
+    {
+      "text": "Cat.",
+      "admitted": true
+    },
+    {
+      "text": "cat!",
+      "admitted": true
+    },
+    {
+      "text": "cat dog",
+      "admitted": true
+    },
+    {
+      "text": "cat\tdog",
+      "admitted": true
+    },
+    {
+      "text": "AaA ααβ 112!\t\r\n",
+      "admitted": true
+    },
+    {
+      "text": "é",
+      "admitted": true
+    },
+    {
+      "text": "é",
+      "admitted": true
+    },
+    {
+      "text": "中😀\u0000",
+      "admitted": true
+    },
+    {
+      "text": "🧪a🧪",
+      "admitted": false
+    }
+  ],
+  "acceptance": [
+    "all 157 carrier positions retain exact glyph and carrier index",
+    "all declared scalars recover exactly via text, UTF-8, native gonol sequence and JSON replay",
+    "every prior required-distinction pair remains distinct with stable controls",
+    "unsupported glyphs retain evidence and cannot reach a complete-gonol consumer",
+    "foreign or changed gonols, corrupt serialized records and invalid source encoding fail closed"
+  ],
+  "resource_preflight": "165 declared scalars plus finite short fixtures; stdlib, in-memory SQLite; no network, training or GPU in execution",
+  "nonclaims": [
+    "universal Unicode admission",
+    "geometric function operations",
+    "higher-scale gonol closure",
+    "UCHC release consumption",
+    "neural inference or usefulness"
+  ],
+  "hmmm": [
+    "PTCNA UCNS neural audit",
+    "admission profiles beyond this finite scope",
+    "geometric operation of glyph function positions",
+    "higher closure and runtime integration"
+  ]
+}

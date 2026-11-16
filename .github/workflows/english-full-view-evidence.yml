@@ -1,0 +1,34 @@
+name: english-full-view-evidence
+
+on:
+  pull_request:
+    paths:
+      - 'research/english-gonol/**'
+      - '.github/workflows/english-full-view-evidence.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'research/english-gonol/**'
+      - '.github/workflows/english-full-view-evidence.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  sealed-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify complete receipts and audit mechanics
+        working-directory: research/english-gonol
+        run: python -m unittest discover -s tests -p test_full_view_audit.py -v
+      - name: Verify audit source ratio declarations
+        run: |
+          python skill-lib/ratios/ratios_check.py research/english-gonol/english_gonol/full_view_audit.py
+          python skill-lib/ratios/ratios_check.py research/english-gonol/english_gonol/view_replay.py
+          python skill-lib/ratios/ratios_check.py research/english-gonol/tests/test_full_view_audit.py

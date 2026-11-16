@@ -80,7 +80,7 @@ The committed receipt records:
 These are structural observations and transport-integrity readouts. They are not
 EDCM measurements and do not independently prove UCNS mathematics.
 
-Receipt:
+Original receipt (preserved historical result; repaired replay is listed below):
 
 ```text
 receipts/native-mobius-v0.json
@@ -90,9 +90,13 @@ File SHA-256: 3cfec6cc75a91661c113c7633db33c508a7b59d2d8e01f858752424c34272146
 
 ## Usage guidance
 
-Run the contract audit. It source-loads the exact manifest-bound msdmd parser,
-executes every statically admitted witness, and rejects skips, expected
-failures, unexpected successes, test failures, and static/runtime count drift:
+Run the contract linkage audit. It source-loads the exact research-participant
+parser and parses source/test declarations without importing or executing those
+modules. Report version 0.2.0 exposes `linkage_passed`, `witness_execution:
+NOT_RUN`, and `verified_contracts: 0`. A linked test body may still fail, skip or
+be hostile; linkage supplies no behavioral proof credit. The former Python
+witness-attestation implementation is removed; see the
+[review repair](docs/review-repair-20261115.md).
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
@@ -100,13 +104,15 @@ python3 research/digital-metrics/audit_contracts_cli.py \
   --skill-lib-root /path/to/exact/skill-lib
 ```
 
-Then run the adversarial witnesses directly for verbose per-test output:
+Then run the separately reviewed repository test implementation. This gate
+rejects an empty suite, skips, expected failures, unexpected successes and test
+failures. It is ordinary trusted-source testing, with no claim to authenticate
+arbitrary Python supplied as a witness:
 
 ```bash
 STACK_DIGITAL_METRICS_SKILL_LIB_ROOT=/path/to/exact/skill-lib \
 PYTHONDONTWRITEBYTECODE=1 \
-python3 -m unittest discover \
-  -s research/digital-metrics/tests -p 'test*.py' -v
+python3 research/digital-metrics/run_tests.py
 ```
 
 Generate a candidate receipt from clean checkouts at the exact commits in
@@ -135,12 +141,13 @@ python3 research/digital-metrics/verify_receipt_cli.py \
   --attest-output /tmp/native-mobius-v0.attested.json
 ```
 
-Replay an already attested receipt byte-for-byte:
+Replay the repaired implementation's attested receipt byte-for-byte. The original
+`receipts/native-mobius-v0.json` remains byte-identical historical evidence:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/verify_receipt_cli.py \
-  research/digital-metrics/receipts/native-mobius-v0.json \
+  research/digital-metrics/receipts/native-mobius-v0-review-repair-20261115.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
   --edcm-root /path/to/exact/edcm
@@ -191,4 +198,6 @@ executed verifier bytes to the recorded digest.
 - The verifier shares protocol code with the generator; replay is deterministic
   but not yet independent implementation agreement.
 - Git/content identities are not cryptographic producer signatures.
+- Hostile Python execution is unsupported; no witness self-report is accepted
+  as authenticated evidence. The linkage audit and reviewed test gate stay separate.
 - The correct empirical targets and external holdout custody remain unresolved.

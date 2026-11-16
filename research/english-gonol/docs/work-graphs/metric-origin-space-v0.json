@@ -1,0 +1,43 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "work_graph_sha256": "7ff5587bf530a014ae48cee1cc1de659f4f2d4dd0000cb4b17f6dc1b72f3632d",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/edcm",
+      "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
+      "authority": "metric definitions, scalar measurement, and evidence/readout contracts",
+      "relation": "defines source-owned canonical metric identities and binds legacy scalar carriers to explicit canonical Stack origin receipts"
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "d5fbd9457e249f7625dacc33cdb484e53547de7c",
+      "authority": "current English Gonol semantic construction",
+      "relation": "constructs exact EDCM construction terms as verified O_W/O_G metric origin sets"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "1cdfb09dd00a451cee30eec2e78624df8c682662",
+      "authority": "cross-domain semantic constraints",
+      "relation": "constrains semantic transfer; no metric validity transfer"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+      "authority": "gonol geometry consumed by Stack English construction",
+      "relation": "underlying geometry only; no metric semantics or measurement validity"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "declared mapping",
+    "agent_scope": "cross-repository-work-graph",
+    "hmmm": [
+      "lawful observed-construct to metric-origin projection/distance is unresolved",
+      "full-corpus closure requires the generated English construct database",
+      "originating operator decision lacks immutable public provenance; repository adoption is prospective"
+    ]
+  }
+}

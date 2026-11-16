@@ -1,0 +1,2555 @@
+{
+  "schema": "stack.zfae.gonol-parser-result",
+  "version": "1.0.0",
+  "scope": "complete declared finite input profile; source preservation, not neural inference",
+  "python": "3.12.14",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
+  "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+  "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+  "source_sha256": {
+    "gonol_parser.py": "e855fbf41467f23320143892128ea891c4a3a3eeb1b962ffc8dc441ee39aeed1",
+    "gonol_probe.py": "ef4185fdb334b4294c2d755c2f535578b1551ce1295568754ba067b05bc214f3",
+    "input_probe.py": "4f10a4d1cc71ef4499177d868eeadd8fcd72b931b55184a68d4cdfadc4f5f0c6",
+    "INPUT_PROBE.json": "b40cc9ca7d7071ece972423822d76354ef33bce04f6168552c6458b3fcd9208a"
+  },
+  "ucns": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "4086ab82399c4d142b0eacfbc09e0a69ed151aa5",
+    "path": "src/ucns/public_gonol.py",
+    "blob_sha": "c1955e46e2dc918fb657cb346e42106d71937e91"
+  },
+  "producer": {
+    "repository": "The-Interdependency/stack",
+    "commit": "d713cc5f901d74deb902a191837ef5657dbaba94",
+    "path": "research/english-gonol/english_gonol/hyperspace_construct.py",
+    "blob_sha": "8b55823805c87ad8c4cc9d7451dc2eb90bdedd3a"
+  },
+  "carrier_glyph_count": 157,
+  "admitted_scalar_count": 165,
+  "recovery_cases": [
+    {
+      "text": "",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "a",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "b",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "α",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "β",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "1",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "2",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "Cat.",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "cat!",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "cat dog",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "cat\tdog",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "AaA ααβ 112!\t\r\n",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "é",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "é",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "中😀\u0000",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    },
+    {
+      "text": "🧪a🧪",
+      "admitted": false,
+      "admission_expected": false,
+      "missing_offsets": [
+        0,
+        2
+      ],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": null
+    },
+    {
+      "text": " A!\"B#$C%(D&'E1*F+[G,-H./I3{J:;K=?L<@M5\\N^_O‘`P|~Q7…R“—S–·T°«U9±V×÷W√∂X∫∑Y∏∇Z∞≈≠a≤≥b→←c)↑d↓2e↔⊕f]⊗g⊙⊘h∈4i}∉j⊂⊃k⊆>l⊇6m∩∪n∧’o∨¬p∀8q∃”r⊢⊨s∴∵t»0u≡ψvφωwαβxγδyλπzσ\u0000\t\r\né́中😀",
+      "admitted": true,
+      "admission_expected": true,
+      "missing_offsets": [],
+      "source_recovered": true,
+      "utf8_recovered": true,
+      "json_replayed": true,
+      "native_gonols_replayed": true
+    }
+  ],
+  "standing": "SURVIVED",
+  "controls_passed": true,
+  "collision_ids": [],
+  "observations": [
+    {
+      "id": "repeat",
+      "kind": "equal-control",
+      "left": "cats chase dogs",
+      "right": "cats chase dogs",
+      "input_codepoints_equal": true,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "07dccf35d480cb0e01ce22fdcaf1cb103dcea4ec0652baf30197f0a8c099fd39",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": " ",
+            "carrier_position": 0,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              " "
+            ],
+            "axis_index": 0
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "e",
+            "carrier_position": 92,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "e"
+            ],
+            "axis_index": 92
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "h",
+            "carrier_position": 101,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "h"
+            ],
+            "axis_index": 101
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "s",
+            "carrier_position": 134,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "s"
+            ],
+            "axis_index": 134
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "s",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 4,
+            "scalar": " ",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 5,
+            "scalar": "c",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "h",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "h"
+          },
+          {
+            "ordinal": 7,
+            "scalar": "a",
+            "scalar_span": [
+              7,
+              8
+            ],
+            "utf8_span": [
+              7,
+              8
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 8,
+            "scalar": "s",
+            "scalar_span": [
+              8,
+              9
+            ],
+            "utf8_span": [
+              8,
+              9
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 9,
+            "scalar": "e",
+            "scalar_span": [
+              9,
+              10
+            ],
+            "utf8_span": [
+              9,
+              10
+            ],
+            "glyph_identity": "e"
+          },
+          {
+            "ordinal": 10,
+            "scalar": " ",
+            "scalar_span": [
+              10,
+              11
+            ],
+            "utf8_span": [
+              10,
+              11
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 11,
+            "scalar": "d",
+            "scalar_span": [
+              11,
+              12
+            ],
+            "utf8_span": [
+              11,
+              12
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 12,
+            "scalar": "o",
+            "scalar_span": [
+              12,
+              13
+            ],
+            "utf8_span": [
+              12,
+              13
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 13,
+            "scalar": "g",
+            "scalar_span": [
+              13,
+              14
+            ],
+            "utf8_span": [
+              13,
+              14
+            ],
+            "glyph_identity": "g"
+          },
+          {
+            "ordinal": 14,
+            "scalar": "s",
+            "scalar_span": [
+              14,
+              15
+            ],
+            "utf8_span": [
+              14,
+              15
+            ],
+            "glyph_identity": "s"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "07dccf35d480cb0e01ce22fdcaf1cb103dcea4ec0652baf30197f0a8c099fd39",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": " ",
+            "carrier_position": 0,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              " "
+            ],
+            "axis_index": 0
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "e",
+            "carrier_position": 92,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "e"
+            ],
+            "axis_index": 92
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "h",
+            "carrier_position": 101,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "h"
+            ],
+            "axis_index": 101
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "s",
+            "carrier_position": 134,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "s"
+            ],
+            "axis_index": 134
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "s",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 4,
+            "scalar": " ",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 5,
+            "scalar": "c",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "h",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "h"
+          },
+          {
+            "ordinal": 7,
+            "scalar": "a",
+            "scalar_span": [
+              7,
+              8
+            ],
+            "utf8_span": [
+              7,
+              8
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 8,
+            "scalar": "s",
+            "scalar_span": [
+              8,
+              9
+            ],
+            "utf8_span": [
+              8,
+              9
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 9,
+            "scalar": "e",
+            "scalar_span": [
+              9,
+              10
+            ],
+            "utf8_span": [
+              9,
+              10
+            ],
+            "glyph_identity": "e"
+          },
+          {
+            "ordinal": 10,
+            "scalar": " ",
+            "scalar_span": [
+              10,
+              11
+            ],
+            "utf8_span": [
+              10,
+              11
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 11,
+            "scalar": "d",
+            "scalar_span": [
+              11,
+              12
+            ],
+            "utf8_span": [
+              11,
+              12
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 12,
+            "scalar": "o",
+            "scalar_span": [
+              12,
+              13
+            ],
+            "utf8_span": [
+              12,
+              13
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 13,
+            "scalar": "g",
+            "scalar_span": [
+              13,
+              14
+            ],
+            "utf8_span": [
+              13,
+              14
+            ],
+            "glyph_identity": "g"
+          },
+          {
+            "ordinal": 14,
+            "scalar": "s",
+            "scalar_span": [
+              14,
+              15
+            ],
+            "utf8_span": [
+              14,
+              15
+            ],
+            "glyph_identity": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lexical",
+      "kind": "distinct-control",
+      "left": "cat",
+      "right": "dog",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "77af778b51abd4a3c51c5ddd97204a9c3ae614ebccb75a606c3b6865aed6744e",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "cd6357efdd966de8c0cb2f876cc89ec74ce35f0968e11743987084bd42fb8944",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "d",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "o",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "g",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "g"
+          }
+        ]
+      }
+    },
+    {
+      "id": "word-order",
+      "kind": "distinct-control",
+      "left": "cats chase dogs",
+      "right": "dogs chase cats",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "07dccf35d480cb0e01ce22fdcaf1cb103dcea4ec0652baf30197f0a8c099fd39",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": " ",
+            "carrier_position": 0,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              " "
+            ],
+            "axis_index": 0
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "e",
+            "carrier_position": 92,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "e"
+            ],
+            "axis_index": 92
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "h",
+            "carrier_position": 101,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "h"
+            ],
+            "axis_index": 101
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "s",
+            "carrier_position": 134,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "s"
+            ],
+            "axis_index": 134
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "s",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 4,
+            "scalar": " ",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 5,
+            "scalar": "c",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "h",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "h"
+          },
+          {
+            "ordinal": 7,
+            "scalar": "a",
+            "scalar_span": [
+              7,
+              8
+            ],
+            "utf8_span": [
+              7,
+              8
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 8,
+            "scalar": "s",
+            "scalar_span": [
+              8,
+              9
+            ],
+            "utf8_span": [
+              8,
+              9
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 9,
+            "scalar": "e",
+            "scalar_span": [
+              9,
+              10
+            ],
+            "utf8_span": [
+              9,
+              10
+            ],
+            "glyph_identity": "e"
+          },
+          {
+            "ordinal": 10,
+            "scalar": " ",
+            "scalar_span": [
+              10,
+              11
+            ],
+            "utf8_span": [
+              10,
+              11
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 11,
+            "scalar": "d",
+            "scalar_span": [
+              11,
+              12
+            ],
+            "utf8_span": [
+              11,
+              12
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 12,
+            "scalar": "o",
+            "scalar_span": [
+              12,
+              13
+            ],
+            "utf8_span": [
+              12,
+              13
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 13,
+            "scalar": "g",
+            "scalar_span": [
+              13,
+              14
+            ],
+            "utf8_span": [
+              13,
+              14
+            ],
+            "glyph_identity": "g"
+          },
+          {
+            "ordinal": 14,
+            "scalar": "s",
+            "scalar_span": [
+              14,
+              15
+            ],
+            "utf8_span": [
+              14,
+              15
+            ],
+            "glyph_identity": "s"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "67a499ca83d9aeb7895f06be4c34d1c6ac8e9a20641aa491fef368504ab6c56c",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": " ",
+            "carrier_position": 0,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              " "
+            ],
+            "axis_index": 0
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "e",
+            "carrier_position": 92,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "e"
+            ],
+            "axis_index": 92
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "h",
+            "carrier_position": 101,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "h"
+            ],
+            "axis_index": 101
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "s",
+            "carrier_position": 134,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "s"
+            ],
+            "axis_index": 134
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "d",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "o",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "g",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "g"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "s",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 4,
+            "scalar": " ",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 5,
+            "scalar": "c",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "h",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "h"
+          },
+          {
+            "ordinal": 7,
+            "scalar": "a",
+            "scalar_span": [
+              7,
+              8
+            ],
+            "utf8_span": [
+              7,
+              8
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 8,
+            "scalar": "s",
+            "scalar_span": [
+              8,
+              9
+            ],
+            "utf8_span": [
+              8,
+              9
+            ],
+            "glyph_identity": "s"
+          },
+          {
+            "ordinal": 9,
+            "scalar": "e",
+            "scalar_span": [
+              9,
+              10
+            ],
+            "utf8_span": [
+              9,
+              10
+            ],
+            "glyph_identity": "e"
+          },
+          {
+            "ordinal": 10,
+            "scalar": " ",
+            "scalar_span": [
+              10,
+              11
+            ],
+            "utf8_span": [
+              10,
+              11
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 11,
+            "scalar": "c",
+            "scalar_span": [
+              11,
+              12
+            ],
+            "utf8_span": [
+              11,
+              12
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 12,
+            "scalar": "a",
+            "scalar_span": [
+              12,
+              13
+            ],
+            "utf8_span": [
+              12,
+              13
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 13,
+            "scalar": "t",
+            "scalar_span": [
+              13,
+              14
+            ],
+            "utf8_span": [
+              13,
+              14
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 14,
+            "scalar": "s",
+            "scalar_span": [
+              14,
+              15
+            ],
+            "utf8_span": [
+              14,
+              15
+            ],
+            "glyph_identity": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "single-glyph",
+      "kind": "required-distinction",
+      "left": "a",
+      "right": "b",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "a",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "a"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "3e23e8160039594a33894f6564e1b1348bbd7a0088d42c4acb73eeaed59c009d",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "b",
+            "carrier_position": 83,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "b"
+            ],
+            "axis_index": 83
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "b",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "b"
+          }
+        ]
+      }
+    },
+    {
+      "id": "unicode-glyph",
+      "kind": "required-distinction",
+      "left": "α",
+      "right": "β",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "3e32da9648c78feedcc821d56e483c126dcd270e9fe49973c528e3a88912d557",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "α",
+            "carrier_position": 147,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "α"
+            ],
+            "axis_index": 147
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "α",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              2
+            ],
+            "glyph_identity": "α"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "2245c1c8daf7694bc2b2fe9f156c39f4bac6c788dc32e42bccb74554af2b5d86",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "β",
+            "carrier_position": 148,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "β"
+            ],
+            "axis_index": 148
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "β",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              2
+            ],
+            "glyph_identity": "β"
+          }
+        ]
+      }
+    },
+    {
+      "id": "digit-value",
+      "kind": "required-distinction",
+      "left": "1",
+      "right": "2",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "1",
+            "carrier_position": 14,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "1"
+            ],
+            "axis_index": 14
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "1",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "1"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "2",
+            "carrier_position": 91,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "2"
+            ],
+            "axis_index": 91
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "2",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "2"
+          }
+        ]
+      }
+    },
+    {
+      "id": "punctuation",
+      "kind": "required-distinction",
+      "left": "cat.",
+      "right": "cat!",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "248a128397d8e9c551b65a2afbe8e74ba964090b2792e0449e0847999d66c913",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": ".",
+            "carrier_position": 23,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "."
+            ],
+            "axis_index": 23
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": ".",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "."
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "ff311e9315c6684d2b8ac6d6c63530a8cf395e17afc22412bd2e21dca484c773",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "!",
+            "carrier_position": 2,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "!"
+            ],
+            "axis_index": 2
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "!",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "!"
+          }
+        ]
+      }
+    },
+    {
+      "id": "letter-case",
+      "kind": "required-distinction",
+      "left": "Cat",
+      "right": "cat",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "48735c4fae42d1501164976afec76730b9e5fe467f680bdd8daff4bb77674045",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "C",
+            "carrier_position": 7,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "C"
+            ],
+            "axis_index": 7
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "C",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "C"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "77af778b51abd4a3c51c5ddd97204a9c3ae614ebccb75a606c3b6865aed6744e",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          }
+        ]
+      }
+    },
+    {
+      "id": "whitespace",
+      "kind": "required-distinction",
+      "left": "cat dog",
+      "right": "cat\tdog",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "fb6750d6ecc8f62cdb3b922590e60a72070ea1eb5cbb59d388ad12121f1918d9",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": " ",
+            "carrier_position": 0,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              " "
+            ],
+            "axis_index": 0
+          },
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": " ",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": " "
+          },
+          {
+            "ordinal": 4,
+            "scalar": "d",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 5,
+            "scalar": "o",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "g",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "g"
+          }
+        ]
+      },
+      "right_features": {
+        "schema": "stack.zfae.gonol-input",
+        "version": "1.0.0",
+        "source_id": "fixture:pair",
+        "source_sha256": "cac89c20fe048019611d994329eacdf36a241bfe4804f36b197b731192385a63",
+        "profile_sha256": "411ea2a1e92d3edde9e31976cfe998a1d6b20ae7fc667fe5240832458e57acda",
+        "inventory_sha256": "c4dff9f771c23e90b6f830265b2520c52fc78eb22666789a85c35b6434aab8d2",
+        "admitted": true,
+        "gonols": [
+          {
+            "identity": "a",
+            "carrier_position": 80,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "a"
+            ],
+            "axis_index": 80
+          },
+          {
+            "identity": "c",
+            "carrier_position": 86,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "c"
+            ],
+            "axis_index": 86
+          },
+          {
+            "identity": "d",
+            "carrier_position": 89,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "d"
+            ],
+            "axis_index": 89
+          },
+          {
+            "identity": "g",
+            "carrier_position": 98,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "g"
+            ],
+            "axis_index": 98
+          },
+          {
+            "identity": "o",
+            "carrier_position": 122,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "o"
+            ],
+            "axis_index": 122
+          },
+          {
+            "identity": "t",
+            "carrier_position": 137,
+            "construction_kind": "carrier",
+            "construction_parts": [
+              "t"
+            ],
+            "axis_index": 137
+          },
+          {
+            "identity": "\t",
+            "carrier_position": null,
+            "construction_kind": "encoded-codepoint",
+            "construction_parts": [
+              "U",
+              "+",
+              "0",
+              "0",
+              "0",
+              "9"
+            ],
+            "axis_index": 158
+          }
+        ],
+        "occurrences": [
+          {
+            "ordinal": 0,
+            "scalar": "c",
+            "scalar_span": [
+              0,
+              1
+            ],
+            "utf8_span": [
+              0,
+              1
+            ],
+            "glyph_identity": "c"
+          },
+          {
+            "ordinal": 1,
+            "scalar": "a",
+            "scalar_span": [
+              1,
+              2
+            ],
+            "utf8_span": [
+              1,
+              2
+            ],
+            "glyph_identity": "a"
+          },
+          {
+            "ordinal": 2,
+            "scalar": "t",
+            "scalar_span": [
+              2,
+              3
+            ],
+            "utf8_span": [
+              2,
+              3
+            ],
+            "glyph_identity": "t"
+          },
+          {
+            "ordinal": 3,
+            "scalar": "\t",
+            "scalar_span": [
+              3,
+              4
+            ],
+            "utf8_span": [
+              3,
+              4
+            ],
+            "glyph_identity": "\t"
+          },
+          {
+            "ordinal": 4,
+            "scalar": "d",
+            "scalar_span": [
+              4,
+              5
+            ],
+            "utf8_span": [
+              4,
+              5
+            ],
+            "glyph_identity": "d"
+          },
+          {
+            "ordinal": 5,
+            "scalar": "o",
+            "scalar_span": [
+              5,
+              6
+            ],
+            "utf8_span": [
+              5,
+              6
+            ],
+            "glyph_identity": "o"
+          },
+          {
+            "ordinal": 6,
+            "scalar": "g",
+            "scalar_span": [
+              6,
+              7
+            ],
+            "utf8_span": [
+              6,
+              7
+            ],
+            "glyph_identity": "g"
+          }
+        ]
+      }
+    }
+  ],
+  "hmmm": [
+    "PTCNA UCNS neural audit",
+    "admission profiles beyond this finite scope",
+    "geometric operation of glyph function positions",
+    "higher closure and runtime integration"
+  ]
+}

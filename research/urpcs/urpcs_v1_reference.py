@@ -38,7 +38,7 @@ uses a process-local lock; it is not a durable-storage proof.
 #   tests: research/urpcs/tests/test_reference.py
 #   rollout: stack-local research only; no production import or encryption claim
 #   rollback: remove research/urpcs and its stack research-participant projections as one transaction
-#   unresolved: independent decoder interoperability, confidentiality model, production key lifecycle
+#   unresolved: confidentiality model, production key lifecycle, independent release authority
 # === END MODULE_BUILD ===
 
 # === CONTRACTS ===

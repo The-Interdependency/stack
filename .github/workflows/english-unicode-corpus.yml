@@ -1,0 +1,125 @@
+name: English Unicode corpus
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: &inputs
+      - 'research/english-gonol/english_gonol/**'
+      - 'research/english-gonol/unicode_tests/**'
+      - 'research/english-gonol/tools/verify_unicode_corpus.py'
+      - 'research/english-gonol/experiments/unicode-corpus/**'
+      - 'research/english-gonol/docs/unicode-corpus-work-graph.json'
+      - 'research/english-gonol/BASE.json'
+      - 'tools/check_stack_consistency.py'
+      - 'stack-manifest.json'
+      - 'STACK_MANIFEST.md'
+      - '.github/workflows/english-unicode-corpus.yml'
+  push:
+    branches: [main]
+    paths: *inputs
+permissions:
+  contents: read
+jobs:
+  unicode-corpus:
+    runs-on: ubuntu-24.04
+    env:
+      PYTHONPATH: ${{ github.workspace }}/research/english-gonol
+      UCHC_UNICODE_UCNS_ROOT: ${{ github.workspace }}/_inputs/unicode
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 0bbed0b3ca7ba507101ada6c8019f870499429fe
+          path: _inputs/unicode
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 4f863ad37096b7baab8f62820ad5cb937b62a3a7
+          path: _inputs/admission-carrier
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: globalwordnet/english-wordnet
+          ref: dc343f2683279ecbb13fab4e2fd778d7b162d287
+          path: _inputs/oewn
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12.14'
+      - name: Verify resources and acquire exact UCD source
+        run: |
+          python - <<'PY'
+          import os, shutil
+          if shutil.disk_usage('.').free < 6*1024**3 or os.sysconf('SC_PHYS_PAGES')*os.sysconf('SC_PAGE_SIZE') < 5*1024**3:
+              raise SystemExit('insufficient resources for complete corpus replay')
+          PY
+          python -m pip install --require-hashes -r requirements-language-tests.txt
+          mkdir -p _inputs/ucd _state
+          for f in UnicodeData.txt DerivedCoreProperties.txt ReadMe.txt; do
+            curl --fail --location --retry 3 "https://www.unicode.org/Public/18.0.0/ucd/$f" -o "_inputs/ucd/$f"
+          done
+          curl --fail --location --retry 3 https://www.unicode.org/license.txt -o _inputs/ucd/LICENSE-Unicode.txt
+      - name: Bind source graph to checkouts, authenticated UCD bytes and tested source
+        run: |
+          python tools/check_stack_consistency.py
+          python - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          from english_gonol import unicode_construction as u, unicode_corpus_inputs as inputs
+          from english_gonol.structural_construct import IMPLEMENTATION_FILES
+          root = Path('research/english-gonol')
+          graph = json.loads((root/'docs/unicode-corpus-work-graph.json').read_text())
+          rows = {r['participant_id'].removeprefix('unicode-corpus-'): r for r in graph['repositories']}
+          checkout = {'ucns':'_inputs/unicode','admission':'_inputs/admission-carrier','oewn':'_inputs/oewn'}
+          assert set(rows) == {*checkout, 'replay', 'forge','ucd-data','ucd-math'}
+          for name, directory in checkout.items():
+              assert subprocess.check_output(['git','-C',directory,'rev-parse','HEAD'],text=True).strip() == rows[name]['commit']
+          for name in ('forge','replay'):
+              sha = rows[name]['commit']
+              assert subprocess.check_output(['git','rev-parse',sha+'^{commit}'],text=True).strip() == sha
+          assert u.UCNS_COMMIT == rows['ucns']['commit']
+          for name, filename in zip(('ucd-data','ucd-math'), inputs.UCD_FILES, strict=True):
+              assert hashlib.sha256((Path('_inputs/ucd')/filename).read_bytes()).hexdigest() == rows[name]['artifact_sha256'] == inputs.UCD_RELEASE_SHA256[filename]
+          for name in {*IMPLEMENTATION_FILES, 'unicode_construction.py', 'gonol.py', 'language/character_definitions.py', 'language/data/character_definitions_v1.json'}:
+              path = root / 'english_gonol' / name
+              assert path.read_bytes() == subprocess.check_output(['git','show', rows['forge']['commit']+':'+str(path)]), name
+          PY
+      - name: Unicode behavior, exact source and failure cases
+        run: |
+          python -m pytest -q research/english-gonol/unicode_tests --junitxml=_state/tests.xml
+          python tools/qualify_english_gonols.py check-tests _state/tests.xml
+      - name: Build complete pinned corpus and verify all Unicode rows
+        run: |
+          python -m english_gonol.structural_construct build --source-root _inputs/oewn/src/yaml --ucns-source-root _inputs/admission-carrier --out-dir _state/admission > _state/admission-result.json
+          python -m english_gonol build _state/admission _inputs/ucd _state/corpus --ucns-source-root "$UCHC_UNICODE_UCNS_ROOT" > _state/build.json
+          python research/english-gonol/tools/verify_unicode_corpus.py _state/corpus "$UCHC_UNICODE_UCNS_ROOT" --expect research/english-gonol/experiments/unicode-corpus/replay.json > _state/replay.json
+          python -m english_gonol query _state/corpus 'the geometry' --bearing 0 --bearing 1/2 --ucns-source-root "$UCHC_UNICODE_UCNS_ROOT" > _state/query.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('_state/query.json').read_text())['recovered'] == 'the geometry'
+          PY
+          mkdir -p _state/corpus/licenses
+          cp _inputs/ucd/{ReadMe.txt,LICENSE-Unicode.txt} _state/corpus/licenses/
+          cp _inputs/oewn/LICENSE.md _state/corpus/licenses/OEWN-LICENSE.md
+          cp _inputs/oewn/README.md _state/corpus/licenses/OEWN-README.md
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: english-unicode-corpus-evidence
+          path: |
+            _state/tests.xml
+            _state/admission-result.json
+            _state/build.json
+            _state/replay.json
+            _state/query.json
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: english-unicode-corpus
+          path: _state/corpus/
+          if-no-files-found: error
+          retention-days: 7

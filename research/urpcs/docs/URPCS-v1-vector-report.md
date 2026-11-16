@@ -27,9 +27,10 @@ Additional coverage:
 - the Python module compiles without third-party packages.
 
 Post-merge review adds separate regression coverage for witness origin/region
-completeness, pre-authentication `MAX_C0` enforcement, and true process-local
-concurrent single-winner state-slot behavior. These repairs do not change the
-frozen vector bytes; they harden acceptance around those bytes.
+completeness, pre-authentication `MAX_C0` enforcement, true process-local
+concurrent single-winner state-slot behavior, and the independent decoder's
+bounded `R_cap <= 1` profile gate. These repairs do not change the frozen vector
+bytes; they harden acceptance around those bytes.
 
 ## Positive-vector receipts
 
@@ -79,12 +80,15 @@ or newer is required; the implementation uses only the standard library.
 
 - `COMPUTATION`: the listed fixtures and exhaustive one-byte/depth-zero tests
   passed in the reference implementation.
-- `UNRESOLVED`: interoperability with an independent URPCS implementation.
+- `SURVIVED_INDEPENDENTLY`: the separately implemented JavaScript decoder
+  reproduced the three committed positive plaintexts, deterministic receipts,
+  successor states, and authenticated rejection behavior for the bounded
+  profile. See `URPCS-v1-independent-replay.md` for the frozen replay evidence.
 - `UNCLAIMED`: confidentiality, rollback-resistant storage, fork merging,
   post-compromise security, or production suitability.
 
 ## hmmm
 
-One implementation can agree perfectly with itself. The next serious test is
-an independently written decoder consuming these bytes without sharing this
-code's internal representations.
+Independent replay closes decoder interoperability for the committed bounded
+profile. Confidentiality, durable production state, and independent release
+authority remain outside this report.

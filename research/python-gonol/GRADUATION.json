@@ -1,0 +1,23 @@
+{
+  "schema": "the-interdependency.graduation-receipt",
+  "version": "1.0.0",
+  "project": "python-gonol",
+  "forge": "The-Interdependency/stack",
+  "forge_source_commit": "ca190204de25de240662bb438af80c8dc405cea6",
+  "forge_source_path": "research/python-gonol",
+  "uchc_repository": "The-Interdependency/uchc",
+  "uchc_commit": "118b48802b20509afa556cf3ce68cee915628af0",
+  "uchc_domain_path": "programming/python",
+  "artifact": {
+    "construct_file": "programming/python/python_gonol/construct.py",
+    "receipt": "source-receipt; compact SQLite built on demand"
+  },
+  "gates_1_5": "passed",
+  "gates_6_11": "license resolved (FSL-1.1-ALv2); release identity = uchc commit; reconsumption = this receipt",
+  "authority_transition": "implementation and public-contract authority moved to UCHC; Stack remains research forge and consumer",
+  "date": "2026-09-21",
+  "hmmm": [
+    "deeper geometric functions",
+    "arbitrary Unicode admission"
+  ]
+}

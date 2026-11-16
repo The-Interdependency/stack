@@ -1,0 +1,80 @@
+{
+  "schema": "weave.transport-evidence/v1",
+  "status": "PASSED",
+  "python": "3.13.5",
+  "tests": 43,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "source_unchanged": true,
+  "expected_test_methods": 43,
+  "coverage_status": "WITNESSED",
+  "source_sha256": "15ecd585290b2adf6d827d55606fe62189493423ad26b1036ea8f8514a8d534c",
+  "source_files": {
+    "assembly.py": "56df26baf35597c3b09c7e4bbc0407043d81a66785c548185d1f97d5ae3c3b8d",
+    "lab.py": "881d88bfb43235b4b78896b17228a238c18d98420d134b0ad812c6e1aa476b01",
+    "probe.py": "9649f8ed463ceaa2ad466d8caa9af235bfe7fc3567fc2c17d94ed83f2853ae63",
+    "profiles/transport.json": "ab297676a7762296db73d991974bbf59c0c03becdba3ed1130e0ecb0db9039b2",
+    "run.py": "2a6143054ac2cef6ec41bc075b273a1a93ecb4cd15cb092fa5eb3ecdc66d0d5a",
+    "stages/__init__.py": "f280e5ec37b9e247cf92b7eb1a32035f090bc4d6f1d56031eb7fca69b9aa4ed2",
+    "stages/api.py": "a5cd49d008d9e9277a41954fed23aa6968640c3e9c880c52d47cb5f53932d72b",
+    "stages/auth.py": "cbc0d401b62af4ec7d3543de3e472463b04dd2e4b212d313b3c358f85898de67",
+    "stages/bind.py": "b3ec00d196ef6a50ed59f9625a7fe09e18b36b6a26b3132dde101427f9f364de",
+    "stages/corpus.py": "4098281aace459f5654ff7e05797530b3297c368620a32fd1e81a271513fe311",
+    "stages/gonol.py": "d1e8dd80d361e3af0fa5985a1ab668291fdf88b2d9f2d8292772a54c26b7962f",
+    "stages/inter.py": "15760b57ad3ea79c6ad649a1e87c2f254070ab9b000bde8448c6893bfe05fbbd",
+    "stages/join.py": "4b6d5986f76bc0d33246769b5155de398b116681ad593a2ae6e8ec33b44c85f6",
+    "stages/key.py": "1b9e9873d79dbae190d84a614f551098c3233417575ccece687cb0b8ff2320af",
+    "stages/split.py": "fe84147ec1adf677b826511c8d2a60986bc7a871b3c9102c4cab0724023df0e8",
+    "stages/whole.py": "fb93035125c1a8ff07a8f57bf233f3b09365e9c587655afa15fb1d5a1bf721b4",
+    "test.py": "68bacc5770af4f253fb59dc74d6eb4c6b2c2a449f9cae09abcb8fda7372115fe",
+    "tests/test_assembly.py": "618b97372812c0613ff947dd83939dea16f8fdd040258b618a25b8fd8bcfa62f",
+    "tests/test_transport.py": "9b45e89f28338fdd3981f9edf7783c48a3039b133800ca889b1b42a929f03da0",
+    "transport.py": "fa8a6cffdb21291416a38bbafc1aa8d69d927b23cbaf8aea2abdb56d7bf1c7ec",
+    "verify.py": "9fb597982993a373d7abb0be89bb80a4ed74d84e4a8f74db6dadb74f5942985d"
+  },
+  "coverage": {
+    "binary_messages": 8191,
+    "binary_lengths_inclusive": [0, 12],
+    "assembly_switch_masks": 512,
+    "transport_switch_masks": 32,
+    "valid_transport_masks": 28,
+    "incompatible_transport_masks": 4,
+    "largest_roundtrip_bytes": 65536,
+    "separate_process_roundtrip_bytes": 1026
+  },
+  "full_weave": {
+    "status": "BLOCKED",
+    "complete_cipher_implemented": false,
+    "profile": "full proposed scope",
+    "switches": {
+      "key": true,
+      "gonol": true,
+      "bind": true,
+      "split": true,
+      "corpus": true,
+      "inter": true,
+      "join": true,
+      "whole": true,
+      "auth": false
+    },
+    "forward_order": ["gonol", "bind", "split", "corpus", "inter", "join", "whole"],
+    "inverse_order": ["whole", "join", "inter", "corpus", "split", "bind", "gonol"],
+    "missing": [
+      "key: Q2/Q7/Q8, native public/private relation/key input missing",
+      "gonol: Q1, native operator missing",
+      "bind: Q2/Q7/Q8, native operator missing",
+      "split: Q3, native operator missing",
+      "corpus: Q4/Q7/Q8, native operator missing",
+      "join: Q5/Q8, native operator missing"
+    ],
+    "note": "IMPLEMENTED.md separates executable proposals from missing native laws."
+  },
+  "native_corpus_replay": "NOT_EXECUTED: source inspected; no constructed database materialized here",
+  "native_adapter_tests": "missing-input/source-identity refusal only; not successful real-corpus replay",
+  "security_observations": [
+    "fixed-map recovery succeeds against this transport candidate at 137 bits in 8 queries",
+    "wrong material can yield wrong plaintext without an authentication error"
+  ],
+  "nonclaim": "No complete native Weave or asymmetric security result; no independent researcher review."
+}

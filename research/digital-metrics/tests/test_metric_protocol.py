@@ -1,8 +1,24 @@
+# ratios: loc_comments=1811:206 imports_exports=17:5 calls_definitions=644:43
 """Adversarial witnesses for the Stack-local digital metric protocol."""
 
 from __future__ import annotations
 
 # === CHECKS ===
+# id: check_digital_metric_raw_html_and_authority
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_projection_rejects_raw_html_and_coherent_authority_transfer
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+# id: check_digital_metric_duplicate_work_graph_members
+#   proves: digital_metric_work_graph_matches_stack_manifest
+#   call: self::test_work_graph_duplicate_json_members_are_rejected
+#   mutates: temporary directory only
+#   cleanup: automatic temporary-directory cleanup
+# id: check_digital_metric_trusted_test_gate
+#   proves: digital_metric_repository_tests_require_clean_completion
+#   call: self::test_trusted_test_gate_rejects_empty_and_nonpassing_results
+#   mutates: none
+#   cleanup: none
 # id: check_digital_metric_missing_field_rejection
 #   proves: digital_metric_missing_never_becomes_zero
 #   call: self::test_missing_value_field_is_rejected_before_any_default
@@ -1550,607 +1566,32 @@ class MetricProtocolTests(unittest.TestCase):
                         contract_audit, "TEST_FILES", (test_path,)
                     ):
                         report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
-                    self.assertFalse(report["passed"])
+                    self.assertFalse(report["linkage_passed"])
                     self.assertTrue(
                         any("not a discoverable unittest" in item for item in report["findings"])
                     )
 
-            runtime_skip_forms = (
-                (
-                    "import unittest\n"
-                    "class RuntimeSkipped(unittest.TestCase):\n"
-                    "    def test_hidden(self):\n"
-                    "        self.skipTest('runtime unavailable')\n",
-                    "zero skips",
-                ),
-                (
-                    "import unittest\n"
-                    "class SetupSkipped(unittest.TestCase):\n"
-                    "    def setUp(self):\n"
-                    "        raise unittest.SkipTest('runtime unavailable')\n"
-                    "    def test_hidden(self):\n"
-                    "        pass\n",
-                    "zero skips",
-                ),
-                (
-                    "import unittest\n"
-                    "class SetupClassSkipped(unittest.TestCase):\n"
-                    "    @classmethod\n"
-                    "    def setUpClass(cls):\n"
-                    "        raise unittest.SkipTest('runtime unavailable')\n"
-                    "    def test_hidden(self):\n"
-                    "        pass\n",
-                    "not a discoverable unittest",
-                ),
-            )
-            for skipped, expected in runtime_skip_forms:
-                with self.subTest(runtime_skip=skipped.splitlines()[1]):
-                    test_path.write_text(check_header + skipped, encoding="utf-8")
-                    with patch.object(
-                        contract_audit, "SOURCE_FILES", (source_path,)
-                    ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
-                        report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
-                    self.assertFalse(report["passed"])
-                    self.assertTrue(
-                        any(expected in item for item in report["findings"]),
-                        report["findings"],
-                    )
-
+            # Bodies and imports are data to this audit. A linked failing test
+            # must never acquire behavioral proof credit or run as a side effect.
+            marker = root / "must-not-execute"
             test_path.write_text(
-                check_header
-                + "import unittest\n"
-                + "class AsyncRight(unittest.IsolatedAsyncioTestCase):\n"
-                + "    async def test_hidden(self):\n"
-                + "        pass\n",
+                check_header + "import unittest\nfrom pathlib import Path\n"
+                + f"Path({str(marker)!r}).write_text('executed')\n"
+                + "class Declared(unittest.TestCase):\n"
+                + "    def test_hidden(self):\n"
+                + "        self.fail('linkage is not execution')\n",
                 encoding="utf-8",
             )
-            with patch.object(
-                contract_audit, "SOURCE_FILES", (source_path,)
-            ), patch.object(contract_audit, "TEST_FILES", (test_path,)):
+            with patch.object(contract_audit, "SOURCE_FILES", (source_path,)), patch.object(
+                contract_audit, "TEST_FILES", (test_path,)
+            ):
                 report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
-            self.assertTrue(report["passed"], report["findings"])
-
-            dependency_path = root / "metric_protocol.py"
-            verified_dependency = "MARKER = 'source'\n"
-            self._install_timestamp_valid_stale_bytecode(
-                dependency_path,
-                poisoned_source="MARKER = 'poison'\n",
-                verified_source=verified_dependency,
-            )
-            test_path.write_text(
-                "import metric_protocol\n"
-                "import unittest\n"
-                "class SourceBound(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.assertEqual(metric_protocol.MARKER, 'source')\n",
-                encoding="utf-8",
-            )
-            cached_dependency = ModuleType("metric_protocol")
-            cached_dependency.MARKER = "cached"  # type: ignore[attr-defined]
-            with patch.object(
-                contract_audit,
-                "AUDITED_IMPORT_ORDER",
-                (("metric_protocol", dependency_path),),
-            ), patch.dict(
-                sys.modules,
-                {"metric_protocol": cached_dependency},
-                clear=False,
-            ):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "SourceBound"},
-                    test_path.read_bytes(),
-                    {dependency_path: verified_dependency.encode("utf-8")},
-                )
-                self.assertTrue(clean, output)
-                self.assertEqual(tests_run, 1)
-                self.assertIs(sys.modules["metric_protocol"], cached_dependency)
-
-            load_tests_source = (
-                "import unittest\n"
-                "class Declared(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('declared witness executed')\n"
-                "class Replacement(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        pass\n"
-                "def load_tests(loader, tests, pattern):\n"
-                "    return unittest.TestSuite([Replacement('test_hidden')])\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "Declared"},
-                    load_tests_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("declared witness executed", output)
-
-            runtime_override_source = (
-                "import unittest\n"
-                "class DynamicRunner(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-                "def bypass(self, result=None):\n"
-                "    result.startTest(self)\n"
-                "    result.stopTest(self)\n"
-                "    return result\n"
-                "DynamicRunner.run = bypass\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "overrides unittest execution",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "DynamicRunner"},
-                        runtime_override_source,
-                        {},
-                    )
-
-            constructor_class_override_source = (
-                "import unittest\n"
-                "class ConstructorOverride(unittest.TestCase):\n"
-                "    def __init__(self, methodName='runTest'):\n"
-                "        super().__init__(methodName)\n"
-                "        def bypass(self, result=None):\n"
-                "            result.startTest(self)\n"
-                "            result.stopTest(self)\n"
-                "            return result\n"
-                "        type(self).run = bypass\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "after construction",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "ConstructorOverride"},
-                        constructor_class_override_source,
-                        {},
-                    )
-
-            constructor_method_override_source = (
-                "import unittest\n"
-                "class ConstructorMethodOverride(unittest.TestCase):\n"
-                "    def __init__(self, methodName='runTest'):\n"
-                "        super().__init__(methodName)\n"
-                "        type(self).test_hidden = lambda self: None\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "method changed after construction",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "ConstructorMethodOverride"},
-                        constructor_method_override_source,
-                        {},
-                    )
-
-            precapture_method_override_source = (
-                "import unittest\n"
-                "class PreCaptureOverride(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-                "PreCaptureOverride.test_hidden = lambda self: None\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "differs from statically admitted body",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "PreCaptureOverride"},
-                        precapture_method_override_source,
-                        {},
-                    )
-
-            setup_hook_bypass_source = (
-                "import unittest\n"
-                "class SetupHookBypass(unittest.TestCase):\n"
-                "    def setUp(self):\n"
-                "        self._callTestMethod = lambda method: None\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "SetupHookBypass"},
-                    setup_hook_bypass_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("must execute", output)
-
-            manual_precall_source = (
-                "import unittest\n"
-                "class ManualPrecall(unittest.TestCase):\n"
-                "    def setUp(self):\n"
-                "        try:\n"
-                "            self.test_hidden()\n"
-                "        except AssertionError:\n"
-                "            pass\n"
-                "        self._callTestMethod = lambda method: None\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute through unittest')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "ManualPrecall"},
-                    manual_precall_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("must execute through unittest", output)
-
-            teardown_mutation_source = (
-                "import unittest\n"
-                "class TeardownMutation(unittest.TestCase):\n"
-                "    def tearDown(self):\n"
-                "        self._outcome.result.failures.clear()\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must remain failed')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, _output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "TeardownMutation"},
-                    teardown_mutation_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-
-            cleanup_callback_mutation_source = (
-                "import unittest\n"
-                "class CleanupCallbackMutation(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.addCleanup(lambda: self.fail('cleanup must remain failed'))\n"
-                "        self._outcome.result.addError = lambda *args: None\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "CleanupCallbackMutation"},
-                    cleanup_callback_mutation_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("replace result callback addError", output)
-
-            cleanup_class_callback_mutation_source = (
-                "import unittest\n"
-                "class CleanupClassCallbackMutation(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.addCleanup(lambda: self.fail('cleanup must remain failed'))\n"
-                "        type(self._outcome.result).addError = lambda *args: None\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, _output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "CleanupClassCallbackMutation"},
-                    cleanup_class_callback_mutation_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-
-            class_setup_bypass_source = (
-                "import unittest\n"
-                "class ClassSetupBypass(unittest.TestCase):\n"
-                "    @classmethod\n"
-                "    def setUpClass(cls):\n"
-                "        def bypass(self, result=None):\n"
-                "            result.startTest(self)\n"
-                "            try:\n"
-                "                self._callTestMethod(self.test_hidden)\n"
-                "            except AssertionError:\n"
-                "                pass\n"
-                "            result.stopTest(self)\n"
-                "            return result\n"
-                "        cls.run = bypass\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute through trusted runner')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "setUpClass",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "ClassSetupBypass"},
-                        class_setup_bypass_source,
-                        {},
-                    )
-
-            module_setup_source = (
-                "import unittest\n"
-                "def setUpModule():\n"
-                "    pass\n"
-                "class ModuleSetup(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        pass\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "setUpModule",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "ModuleSetup"},
-                        module_setup_source,
-                        {},
-                    )
-
-            system_exit_source = b"raise SystemExit(0)\n"
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "attempted to terminate the audit: SystemExit",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {},
-                        system_exit_source,
-                        {},
-                    )
-
-            hard_exit_source = b"import os\nos._exit(0)\n"
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "no valid report",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {},
-                        hard_exit_source,
-                        {},
-                    )
-
-            forged_completion_source = (
-                "import os\n"
-                "import sys\n"
-                "import unittest\n"
-                "frame = sys._getframe()\n"
-                "while frame is not None and frame.f_code.co_name != '_witness_completion_worker':\n"
-                "    frame = frame.f_back\n"
-                "if frame is not None:\n"
-                "    connection = frame.f_locals['connection']\n"
-                "    request_sha256 = frame.f_locals['request_sha256']\n"
-                "    connection.send({\n"
-                "        'schema': 'the-interdependency.digital-metric-witness-completion',\n"
-                "        'version': '1.0.0',\n"
-                "        'request_sha256': request_sha256,\n"
-                "        'status': 'completed',\n"
-                "        'clean': True,\n"
-                "        'output': '',\n"
-                "        'tests_run': 1,\n"
-                "    })\n"
-                "    os._exit(0)\n"
-                "class ForgedCompletion(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('forged report must not bypass this failure')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "ForgedCompletion"},
-                    forged_completion_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("forged report must not bypass", output)
-
-            forged_execution_source = (
-                "import json\n"
-                "import os\n"
-                "import unittest\n"
-                "os.write(1, json.dumps({\n"
-                "    'schema': 'the-interdependency.digital-metric-witness-execution',\n"
-                "    'version': '1.0.0',\n"
-                "    'status': 'completed',\n"
-                "    'clean': True,\n"
-                "    'output': '',\n"
-                "    'tests_run': 1,\n"
-                "}, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
-                "os._exit(0)\n"
-                "class ForgedExecution(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "exact shutdown marker",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "ForgedExecution"},
-                        forged_execution_source,
-                        {},
-                    )
-
-            forged_stdout_source = (
-                "import json\n"
-                "import os\n"
-                "import sys\n"
-                "import unittest\n"
-                "class ForgedStdout:\n"
-                "    def write(self, value):\n"
-                "        forged = {\n"
-                "            'schema': 'the-interdependency.digital-metric-witness-execution',\n"
-                "            'version': '1.0.0',\n"
-                "            'status': 'completed',\n"
-                "            'clean': True,\n"
-                "            'output': '',\n"
-                "            'tests_run': 1,\n"
-                "        }\n"
-                "        os.write(1, json.dumps(forged, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
-                "        return len(value)\n"
-                "    def flush(self):\n"
-                "        pass\n"
-                "sys.stdout = ForgedStdout()\n"
-                "class StdoutForgery(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('stdout replacement must not forge success')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "StdoutForgery"},
-                    forged_stdout_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("stdout replacement must not forge", output)
-
-            forged_global_writer_source = (
-                "import __main__\n"
-                "import json\n"
-                "import os\n"
-                "import unittest\n"
-                "def forged_writer(fd, value):\n"
-                "    forged = {\n"
-                "        'schema': 'the-interdependency.digital-metric-witness-execution',\n"
-                "        'version': '1.0.0',\n"
-                "        'status': 'completed',\n"
-                "        'clean': True,\n"
-                "        'output': '',\n"
-                "        'tests_run': 1,\n"
-                "    }\n"
-                "    return os.write(fd, json.dumps(forged, sort_keys=True, separators=(',', ':')).encode('utf-8'))\n"
-                "__main__._report_write = forged_writer\n"
-                "class GlobalWriterForgery(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('global writer replacement must not forge success')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "GlobalWriterForgery"},
-                    forged_global_writer_source,
-                    {},
-                )
-            self.assertFalse(clean)
-            self.assertEqual(tests_run, 1)
-            self.assertIn("global writer replacement must not forge", output)
-
-            instance_override_source = (
-                "import unittest\n"
-                "class Sneaky(unittest.TestCase):\n"
-                "    def __init__(self, methodName='runTest'):\n"
-                "        super().__init__(methodName)\n"
-                "        def bypass(result=None):\n"
-                "            result.startTest(self)\n"
-                "            result.stopTest(self)\n"
-                "            return result\n"
-                "        self.run = bypass\n"
-                "    def test_hidden(self):\n"
-                "        self.fail('must execute')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                with self.assertRaisesRegex(
-                    contract_audit.AuditIdentityError,
-                    "instance overrides unittest execution",
-                ):
-                    contract_audit._run_unittest_witnesses(
-                        test_path,
-                        {"test_hidden": "Sneaky"},
-                        instance_override_source,
-                        {},
-                    )
-
-            parent_path = root / "generate_receipt.py"
-            dependency_snapshot = b"MARKER = 'snapshot'\n"
-            parent_snapshot = (
-                "from pathlib import Path\n"
-                "from types import ModuleType\n"
-                "source_path = Path(__file__).with_name('metric_protocol.py')\n"
-                "source = source_path.read_bytes()\n"
-                "loaded = ModuleType('nested_dependency')\n"
-                "exec(compile(source, str(source_path), 'exec'), loaded.__dict__)\n"
-                "MARKER = loaded.MARKER\n"
-            ).encode("utf-8")
-            dependency_path.write_bytes(dependency_snapshot)
-            parent_path.write_bytes(parent_snapshot)
-            nested_test_source = (
-                "import generate_receipt\n"
-                "import unittest\n"
-                "class SnapshotBound(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        self.assertEqual(generate_receipt.MARKER, 'snapshot')\n"
-            ).encode("utf-8")
-            dependency_path.write_text("MARKER = 'mutable'\n", encoding="utf-8")
-            with patch.object(
-                contract_audit,
-                "AUDITED_IMPORT_ORDER",
-                (("generate_receipt", parent_path),),
-            ):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "SnapshotBound"},
-                    nested_test_source,
-                    {
-                        dependency_path: dependency_snapshot,
-                        parent_path: parent_snapshot,
-                    },
-                )
-            self.assertTrue(clean, output)
-            self.assertEqual(tests_run, 1)
-
-            self.assertEqual(
-                set(contract_audit.WITNESS_DATA_FILES),
-                {
-                    contract_audit.WORK_GRAPH_PATH,
-                    contract_audit.STACK_MANIFEST_PATH,
-                    contract_audit.STACK_HUMAN_MANIFEST_PATH,
-                    contract_audit.BASE_PATH,
-                    contract_audit.FROZEN_RECEIPT_PATH,
-                    contract_audit.PARSER_PATH,
-                },
-            )
-            data_path = root / "WORK_GRAPH.json"
-            data_snapshot = b'{"marker":"snapshot"}\n'
-            data_path.write_text('{"marker":"mutable"}\n', encoding="utf-8")
-            data_test_source = (
-                "import json\n"
-                "from pathlib import Path\n"
-                "import unittest\n"
-                "class DataSnapshotBound(unittest.TestCase):\n"
-                "    def test_hidden(self):\n"
-                "        value = json.loads(Path(__file__).with_name('WORK_GRAPH.json').read_text(encoding='utf-8'))\n"
-                "        self.assertEqual(value['marker'], 'snapshot')\n"
-            ).encode("utf-8")
-            with patch.object(contract_audit, "AUDITED_IMPORT_ORDER", ()):
-                clean, output, tests_run = contract_audit._run_unittest_witnesses(
-                    test_path,
-                    {"test_hidden": "DataSnapshotBound"},
-                    data_test_source,
-                    {data_path: data_snapshot},
-                )
-            self.assertTrue(clean, output)
-            self.assertEqual(tests_run, 1)
+            self.assertTrue(report["linkage_passed"], report["findings"])
+            self.assertEqual(report["scope"], "static-linkage-only")
+            self.assertEqual(report["witness_execution"], "NOT_RUN")
+            self.assertEqual(report["verified_contracts"], 0)
+            self.assertNotIn("passed", report)
+            self.assertFalse(marker.exists())
 
     def test_contract_auditor_requires_source_bound_snapshot(self) -> None:
         source_path = WORKSPACE / "audit_contracts.py"
@@ -2161,7 +1602,7 @@ class MetricProtocolTests(unittest.TestCase):
         unbound.__package__ = ""
         exec(compile(source, str(source_path), "exec", dont_inherit=True), unbound.__dict__)
         report = unbound.audit()
-        self.assertFalse(report["passed"])
+        self.assertFalse(report["linkage_passed"])
         self.assertTrue(
             any("auditor API must be source-loaded" in item for item in report["findings"]),
             report["findings"],
@@ -2180,7 +1621,7 @@ class MetricProtocolTests(unittest.TestCase):
                 loaded, "AUDITED_IMPORT_ORDER", ()
             ):
                 changed_report = loaded.audit(skill_lib_root=SKILL_LIB_ROOT)
-            self.assertFalse(changed_report["passed"])
+            self.assertFalse(changed_report["linkage_passed"])
             self.assertTrue(
                 any(
                     "executing auditor digest differs" in item
@@ -2218,7 +1659,7 @@ class MetricProtocolTests(unittest.TestCase):
             changed_parser.write_bytes(contract_audit.PARSER_PATH.read_bytes() + b"\n")
             with patch.object(contract_audit, "PARSER_PATH", changed_parser):
                 report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
-        self.assertFalse(report["passed"])
+        self.assertFalse(report["linkage_passed"])
         self.assertTrue(
             any("vendored msdmd parser differs" in item for item in report["findings"]),
             report["findings"],
@@ -2264,7 +1705,7 @@ class MetricProtocolTests(unittest.TestCase):
                 contract_audit, "STACK_MANIFEST_PATH", manifest_path
             ):
                 report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
-        self.assertFalse(report["passed"])
+        self.assertFalse(report["linkage_passed"])
         self.assertTrue(
             any("not at graph-selected commit" in item for item in report["findings"]),
             report["findings"],
@@ -2566,6 +2007,81 @@ class MetricProtocolTests(unittest.TestCase):
                 findings,
             )
 
+    def test_projection_rejects_raw_html_and_coherent_authority_transfer(self) -> None:
+        manifest = json.loads((WORKSPACE.parents[1] / 'stack-manifest.json').read_text())
+        human = (WORKSPACE.parents[1] / 'STACK_MANIFEST.md').read_text()
+        repositories = {entry['repository']: entry for entry in manifest['repositories']}
+        start = human.index('### Digital metrics exact projection')
+        end = human.index('\n## ', start)
+        for opening, closing in (('<pre>', '</pre>'), ('<script>', '</script>'),
+                                 ('<style>', '</style>'), ('<textarea>', '</textarea>'),
+                                 ('<div>', '</div>'), ('<custom>', '</custom>'),
+                                 ('<?instruction', '?>'), ('<![CDATA[', ']]>'),
+                                 ('<!DOCTYPE', '>')):
+            with self.subTest(html=opening):
+                hidden = human[:start] + opening + '\n' + human[start:end] + '\n' + closing + '\n' + human[end:]
+                findings = []
+                stack_consistency.check_digital_metrics_projection(manifest, hidden, repositories, findings)
+                self.assertTrue(any('exact digital-metrics section' in item for item in findings), findings)
+        graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
+        old_authority = graph['participants'][-1]['authority']
+        graph['participants'][-1]['authority'] = 'semantic definitions, geometry, and proof status'
+        graph['work_graph_sha256'] = sha256_json({k: graph[k] for k in ('participants', 'boundaries')})
+        matched = deepcopy(manifest)
+        for entry in matched['research_participants']:
+            if entry.get('workspace') == 'research/digital-metrics/' and entry['repository'].endswith('/edcm'):
+                entry['authority'] = graph['participants'][-1]['authority']
+        matched['work_graph_sha256'] = sha256_json({k: matched[k] for k in ('repositories', 'research_participants', 'boundaries')})
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / 'WORK_GRAPH.json'
+            path.write_text(canonical_json(graph))
+            findings = []
+            stack_consistency.check_digital_metrics_projection(
+                matched, human.replace(old_authority, graph['participants'][-1]['authority']),
+                repositories, findings, path)
+            self.assertTrue(any('authority split changed' in item for item in findings), findings)
+            with self.assertRaisesRegex(ProducerIdentityError, 'authority split changed'):
+                load_work_graph(path)
+
+    def test_work_graph_duplicate_json_members_are_rejected(self) -> None:
+        graph = json.loads((WORKSPACE / 'WORK_GRAPH.json').read_text())
+        original = canonical_json(graph)
+        key = '"commit":"' + graph['participants'][0]['commit'] + '"'
+        for previous in ('0' * 40, graph['participants'][0]['commit']):
+            with self.subTest(previous=previous), TemporaryDirectory() as directory:
+                path = Path(directory) / 'WORK_GRAPH.json'
+                ambiguous = original.replace(key, '"commit":"' + previous + '",' + key, 1)
+                self.assertNotEqual(ambiguous, original)
+                path.write_text(ambiguous)
+                with self.assertRaisesRegex(ProducerIdentityError, 'duplicate JSON member'):
+                    load_work_graph(path)
+                with self.assertRaisesRegex(json.JSONDecodeError, 'duplicate JSON member'):
+                    stack_consistency.load_json(path)
+                with patch.object(contract_audit, 'WORK_GRAPH_PATH', path):
+                    report = contract_audit.audit(skill_lib_root=SKILL_LIB_ROOT)
+                self.assertFalse(report['linkage_passed'])
+                self.assertTrue(any('duplicate JSON member' in item for item in report['findings']))
+
+    def test_trusted_test_gate_rejects_empty_and_nonpassing_results(self) -> None:
+        path = WORKSPACE / 'run_tests.py'
+        gate = ModuleType('_reviewed_repository_test_gate')
+        gate.__file__ = str(path)
+        exec(compile(path.read_bytes(), str(path), 'exec'), gate.__dict__)
+        self.assertFalse(gate.clean_completion(unittest.TestResult()))
+        for outcome in ('pass', 'failure', 'skip', 'expected_failure', 'unexpected_success'):
+            with self.subTest(outcome=outcome):
+                class Probe(unittest.TestCase):
+                    def runTest(self):
+                        if outcome in ('failure', 'expected_failure'):
+                            self.fail('a declared failure must remain visible')
+                        if outcome == 'skip':
+                            self.skipTest('unavailable')
+                if outcome in ('expected_failure', 'unexpected_success'):
+                    Probe.runTest = unittest.expectedFailure(Probe.runTest)
+                result = unittest.TestResult()
+                Probe().run(result)
+                self.assertEqual(gate.clean_completion(result), outcome == 'pass')
+
     def test_frozen_receipt_preserves_metapat_nontransfer(self) -> None:
         receipt_path = WORKSPACE / "receipts/native-mobius-v0.json"
         receipt = verify_receipt(json.loads(receipt_path.read_text(encoding="utf-8")))
@@ -2597,3 +2113,4 @@ class MetricProtocolTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+# ratios: loc_comments=1811:206 imports_exports=17:5 calls_definitions=644:43

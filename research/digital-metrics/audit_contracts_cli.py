@@ -1,3 +1,4 @@
+# ratios: loc_comments=35:27 imports_exports=6:1 calls_definitions=15:2
 """Read-once launcher for the digital-metrics contract auditor."""
 
 from __future__ import annotations
@@ -70,3 +71,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+# ratios: loc_comments=35:27 imports_exports=6:1 calls_definitions=15:2

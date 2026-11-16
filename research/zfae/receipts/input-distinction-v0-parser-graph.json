@@ -1,0 +1,427 @@
+{
+  "schema": "stack.zfae.input-distinction-result",
+  "version": "1.0.0",
+  "claim": "Can the selected heuristic parser serve alone as a lossless Unicode-character input boundary?",
+  "scope": "A0-betatest parse_semantic only; no claim about the full engine, learned inference, linguistic equivalence, or current a0",
+  "source": {
+    "repository": "The-Interdependency/a0-betatest",
+    "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+    "path": "backend/interdependent_lib/zfae/_parser.py",
+    "blob_sha": "13fa9c529d15e7f420e09520ca8cbf45587ea14a"
+  },
+  "source_sha256": "79999e41c9f9fead6d3dcfe8b283be613af517850772cacfbf5693e8c0803c79",
+  "plan_sha256": "b40cc9ca7d7071ece972423822d76354ef33bce04f6168552c6458b3fcd9208a",
+  "harness_sha256": "4f10a4d1cc71ef4499177d868eeadd8fcd72b931b55184a68d4cdfadc4f5f0c6",
+  "work_graph_sha256": "b66f4ffc11c63c1bf8281bab56b7b819f6ce10fb028bfef29c5dca963e34ce6d",
+  "python": "3.12.14",
+  "standing": "FALSIFIED",
+  "controls_passed": true,
+  "collision_ids": [
+    "single-glyph",
+    "unicode-glyph",
+    "digit-value",
+    "punctuation",
+    "letter-case",
+    "whitespace"
+  ],
+  "observations": [
+    {
+      "id": "repeat",
+      "kind": "equal-control",
+      "left": "cats chase dogs",
+      "right": "cats chase dogs",
+      "input_codepoints_equal": true,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 15,
+        "token_count": 3,
+        "tokens": [
+          "cats",
+          "chase",
+          "dogs"
+        ],
+        "keywords": [
+          "chase"
+        ],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.1375,
+        "first_word": "cats",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 15,
+        "token_count": 3,
+        "tokens": [
+          "cats",
+          "chase",
+          "dogs"
+        ],
+        "keywords": [
+          "chase"
+        ],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.1375,
+        "first_word": "cats",
+        "question_words": []
+      }
+    },
+    {
+      "id": "lexical",
+      "kind": "distinct-control",
+      "left": "cat",
+      "right": "dog",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 3,
+        "token_count": 1,
+        "tokens": [
+          "cat"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "cat",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 3,
+        "token_count": 1,
+        "tokens": [
+          "dog"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "dog",
+        "question_words": []
+      }
+    },
+    {
+      "id": "word-order",
+      "kind": "distinct-control",
+      "left": "cats chase dogs",
+      "right": "dogs chase cats",
+      "input_codepoints_equal": false,
+      "features_equal": false,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 15,
+        "token_count": 3,
+        "tokens": [
+          "cats",
+          "chase",
+          "dogs"
+        ],
+        "keywords": [
+          "chase"
+        ],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.1375,
+        "first_word": "cats",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 15,
+        "token_count": 3,
+        "tokens": [
+          "dogs",
+          "chase",
+          "cats"
+        ],
+        "keywords": [
+          "chase"
+        ],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.1375,
+        "first_word": "dogs",
+        "question_words": []
+      }
+    },
+    {
+      "id": "single-glyph",
+      "kind": "required-distinction",
+      "left": "a",
+      "right": "b",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      }
+    },
+    {
+      "id": "unicode-glyph",
+      "kind": "required-distinction",
+      "left": "α",
+      "right": "β",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      }
+    },
+    {
+      "id": "digit-value",
+      "kind": "required-distinction",
+      "left": "1",
+      "right": "2",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 1,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 1,
+        "token_count": 0,
+        "tokens": [],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 1,
+        "semantic_load": 0.0,
+        "first_word": "",
+        "question_words": []
+      }
+    },
+    {
+      "id": "punctuation",
+      "kind": "required-distinction",
+      "left": "cat.",
+      "right": "cat!",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 4,
+        "token_count": 1,
+        "tokens": [
+          "cat"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "cat",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 4,
+        "token_count": 1,
+        "tokens": [
+          "cat"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "cat",
+        "question_words": []
+      }
+    },
+    {
+      "id": "letter-case",
+      "kind": "required-distinction",
+      "left": "Cat",
+      "right": "cat",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 3,
+        "token_count": 1,
+        "tokens": [
+          "cat"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "cat",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 3,
+        "token_count": 1,
+        "tokens": [
+          "cat"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.025,
+        "first_word": "cat",
+        "question_words": []
+      }
+    },
+    {
+      "id": "whitespace",
+      "kind": "required-distinction",
+      "left": "cat dog",
+      "right": "cat\tdog",
+      "input_codepoints_equal": false,
+      "features_equal": true,
+      "replay_equal": true,
+      "left_features": {
+        "raw_length": 7,
+        "token_count": 2,
+        "tokens": [
+          "cat",
+          "dog"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.05,
+        "first_word": "cat",
+        "question_words": []
+      },
+      "right_features": {
+        "raw_length": 7,
+        "token_count": 2,
+        "tokens": [
+          "cat",
+          "dog"
+        ],
+        "keywords": [],
+        "question": false,
+        "greeting": false,
+        "command": false,
+        "reflection": false,
+        "negation": false,
+        "digit_count": 0,
+        "semantic_load": 0.05,
+        "first_word": "cat",
+        "question_words": []
+      }
+    }
+  ],
+  "next_action": "At least one required distinction collides with valid controls; exclude this parser as the sole character-input representation. Retain it only as an optional derived heuristic view.",
+  "hmmm": [
+    "Passing a finite distinction set cannot establish input sufficiency or neural inference.",
+    "Future UCNS/PTCNA construction and UCHC release/reconsumption remain separate gates."
+  ]
+}

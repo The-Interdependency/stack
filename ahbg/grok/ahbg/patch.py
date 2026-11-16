@@ -1,7 +1,8 @@
 """Grok field: UCNS Seed-of-Life centers as tiles.
 
-Tiles are named by UCNS band slots. Axial (q, r) is a game projection of those
-centers, not a substitute board. Movement adjacency uses that projection.
+Tiles are named by UCNS band slots. Axial (q, r) is retained only as a
+presentation projection of those centers, not as movement authority. Movement
+adjacency is read directly from UCNS structural-vesica relations.
 War collisions resolve deterministically (war_v3): occupied target -> defender
 holds; dual target -> smallest unit_id wins priority. An occupant whose starting
 tile is targeted holds that tile for the turn, so its own outgoing intent is
@@ -50,9 +51,30 @@ def tile_from_ucns() -> list[dict[str, Any]]:
     return tiles
 
 
-def _steps() -> tuple[tuple[int, int], ...]:
-    # Clockwise from +x. Independent of sibling direction lists.
-    return ((1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1), (0, 1))
+def _ucns_structural_neighbors() -> dict[str, tuple[str, ...]]:
+    """Return movement adjacency from the UCNS relation ledger.
+
+    The q/r projection is deliberately excluded from this decision.  If UCNS
+    changes which bands are structurally related, AHBG must consume that
+    relation rather than silently preserving a hand-derived hex rule.
+    """
+
+    seed = build_mobius_seed_of_life()
+    neighbors: dict[str, set[str]] = {
+        band.slot.value: set() for band in seed.bands
+    }
+    for relation in seed.structural_relations:
+        left = relation.left.value
+        right = relation.right.value
+        neighbors[left].add(right)
+        neighbors[right].add(left)
+    return {
+        slot: tuple(sorted(adjacent))
+        for slot, adjacent in neighbors.items()
+    }
+
+
+_UCNS_STRUCTURAL_NEIGHBORS = _ucns_structural_neighbors()
 
 
 @dataclass(frozen=True)
@@ -110,8 +132,22 @@ class Field:
 
     def neighbors(self, tile_id: str) -> list[str]:
         cell = self.cells[tile_id]
-        wanted = {(cell.q + dq, cell.r + dr) for dq, dr in _steps()}
-        found = [other.tile_id for other in self.cells.values() if (other.q, other.r) in wanted]
+        allowed_slots = _UCNS_STRUCTURAL_NEIGHBORS.get(cell.ucns_slot)
+        if allowed_slots is None:
+            raise ValueError(
+                f"tile {tile_id} carries unknown UCNS slot {cell.ucns_slot!r}"
+            )
+        found = [
+            other.tile_id
+            for other in self.cells.values()
+            if other.ucns_slot in allowed_slots
+        ]
+        if len(found) != len(allowed_slots):
+            missing = sorted(set(allowed_slots) - {self.cells[tile].ucns_slot for tile in found})
+            raise ValueError(
+                "field does not realize the complete UCNS structural neighborhood "
+                f"for {cell.ucns_slot}: missing {missing}"
+            )
         return sorted(found)
 
     def snapshot(self) -> dict[str, Any]:

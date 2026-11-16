@@ -11,8 +11,8 @@ capability-bounded ``AgentHarness`` interface. A0 is one conforming harness
 among others and receives no privileged path.
 
 This module intentionally does not decide UCNS geometry: tiles come from
-``tile_from_ucns()`` and the engine's axial projection is a display/movement
-projection of UCNS band centers, never a substitute board.
+``tile_from_ucns()``; axial q/r values are presentation coordinates only,
+while movement and construction authority come from UCNS structural relations.
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ from typing import Any, Mapping, Sequence
 from . import protocol
 from .construction import ConstructionError, ConstructionLedger
 from .engine import load_engine
+from .provenance import integration_provenance
 from .protocol import (
     Effect,
     Intent,
@@ -58,6 +59,14 @@ class RuntimeConfig:
     turn_messages: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     forced_plans: Mapping[int, Sequence[Mapping[str, Any]]] = field(default_factory=dict)
     entitlements: tuple[str, ...] = ("basic",)
+    deadline_ms: int = 5000
+    injection_handling: str = "enforce-refusal"
+    uchc_database: str | None = None
+    uchc_structural_field: str | None = None
+    uchc_structural_lock: str | None = None
+    uchc_lock: str | None = None
+    uchc_require_complete: bool = False
+    uchc_max_text_bytes: int | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -65,6 +74,28 @@ class RuntimeConfig:
             "turns": self.turns,
             "units": [dict(unit) for unit in self.units],
             "entitlements": list(self.entitlements),
+            "deadline_ms": self.deadline_ms,
+            "injection_handling": self.injection_handling,
+            **({"uchc": {"profile": "english.input/1",
+                          "database": self.uchc_database,
+                          "lock": self.uchc_lock,
+                          "require_complete": self.uchc_require_complete,
+                          "max_text_bytes": self.uchc_max_text_bytes}}
+               if self.uchc_database is not None else
+               {"uchc": {"profile": "english.structural/1",
+                         "field_dir": self.uchc_structural_field,
+                         "lock": self.uchc_structural_lock,
+                         "require_complete": self.uchc_require_complete,
+                         "max_text_bytes": self.uchc_max_text_bytes}}
+               if self.uchc_structural_field is not None else {}),
+            "turn_messages": {
+                str(turn): [dict(message) for message in messages]
+                for turn, messages in self.turn_messages.items()
+            },
+            "forced_plans": {
+                str(turn): [dict(plan) for plan in plans]
+                for turn, plans in self.forced_plans.items()
+            },
         }
 
 
@@ -78,6 +109,7 @@ class RunResult:
     turn_records: tuple[Mapping[str, Any], ...]
     effects: tuple[Mapping[str, Any], ...]
     construction: Mapping[str, Any]
+    provenance: Mapping[str, Any]
     out_dir: Path
 
     def as_dict(self) -> dict[str, Any]:
@@ -90,6 +122,7 @@ class RunResult:
             "turn_records": [dict(item) for item in self.turn_records],
             "effects": [dict(item) for item in self.effects],
             "construction": dict(self.construction),
+            "provenance": dict(self.provenance),
         }
 
 
@@ -159,6 +192,7 @@ def _observation(
     turn_messages: Sequence[Mapping[str, Any]],
     capabilities: Sequence[str],
     ledger: ConstructionLedger,
+    language_evidence: Sequence[Mapping[str, Any]] = (),
 ) -> Observation:
     legal = list(build_legal_actions(opened))
     if "construct" in capabilities:
@@ -181,6 +215,8 @@ def _observation(
         feed=tuple(record.payload() for record in chain.records),
         inbox=tuple(dict(item) for item in turn_messages),
         entitlements=config.entitlements,
+        deadline_ms=config.deadline_ms,
+        language_evidence=tuple(language_evidence),
     )
 
 
@@ -190,15 +226,61 @@ def run_plane(
     config: RuntimeConfig | None = None,
     out_dir: Path | str | None = None,
 ) -> RunResult:
-    """Run the production minimum loop through one conforming agent harness.
+    """Run AHBG with optional, fully verified native UCHC language evidence."""
+    cfg = config or RuntimeConfig()
+    if cfg.uchc_database is not None and cfg.uchc_structural_field is not None:
+        raise ProtocolError("UCHC candidate versions are mutually exclusive in one Python process")
+    if cfg.uchc_structural_field is not None:
+        if cfg.uchc_lock is not None:
+            raise ProtocolError("input lock cannot be applied to the structural profile")
+        from ahbg.integration.uchc_structural import (
+            UchcStructuralSession, UchcStructuralSettings, DEFAULT_STRUCTURAL_LOCK
+        )
+        with UchcStructuralSession(UchcStructuralSettings(
+            field_dir=Path(cfg.uchc_structural_field),
+            lock=Path(cfg.uchc_structural_lock) if cfg.uchc_structural_lock else DEFAULT_STRUCTURAL_LOCK,
+            require_complete=cfg.uchc_require_complete,
+            max_text_bytes=cfg.uchc_max_text_bytes,
+        )) as uchc:
+            return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=uchc)
+    if cfg.uchc_database is None:
+        if (cfg.uchc_lock is not None or cfg.uchc_structural_lock is not None
+                or cfg.uchc_require_complete or cfg.uchc_max_text_bytes is not None):
+            raise ProtocolError("UCHC settings require uchc_database or uchc_structural_field")
+        return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=None)
+    if cfg.uchc_structural_lock is not None:
+        raise ProtocolError("structural lock cannot be applied to input profile")
+    from ahbg.integration.uchc import UchcSession, UchcSettings, DEFAULT_LOCK
+    with UchcSession(UchcSettings(
+        database=Path(cfg.uchc_database),
+        lock=Path(cfg.uchc_lock) if cfg.uchc_lock else DEFAULT_LOCK,
+        require_complete=cfg.uchc_require_complete,
+        max_text_bytes=cfg.uchc_max_text_bytes,
+    )) as uchc:
+        return _run_plane_core(agent=agent, config=cfg, out_dir=out_dir, uchc=uchc)
 
-    ``agent`` must expose ``manifest()`` and ``plan(observation)`` as defined
-    by ``AgentHarness`` in ``ahbg.runtime.harness``. A0 uses exactly this path.
-    """
 
+def _run_plane_core(
+    *,
+    agent: Any,
+    config: RuntimeConfig,
+    out_dir: Path | str | None,
+    uchc: Any | None,
+) -> RunResult:
+    """Execute the unchanged UCNS game loop; UCHC annotates input only."""
     cfg = config or RuntimeConfig()
     if cfg.turns < 0:
         raise ProtocolError("turns must be non-negative")
+    if (
+        isinstance(cfg.deadline_ms, bool)
+        or not isinstance(cfg.deadline_ms, int)
+        or cfg.deadline_ms <= 0
+    ):
+        raise ProtocolError("deadline_ms must be a positive integer")
+    if cfg.injection_handling not in {"enforce-refusal", "observe-only"}:
+        raise ProtocolError(
+            "injection_handling must be 'enforce-refusal' or 'observe-only'"
+        )
     output_root = Path(out_dir) if out_dir is not None else Path("ahbg-runtime-out")
 
     manifest = agent.manifest()
@@ -236,6 +318,10 @@ def run_plane(
         cycle.open_turn()
         turn = opened.turn
         messages = list(cfg.turn_messages.get(turn, ()))
+        language_evidence = (
+            uchc.annotate_messages(messages, source_prefix=f"ahbg:{session_id}:turn:{turn}")
+            if uchc is not None else ()
+        )
         injected = _injection_texts(messages)
         observation = _observation(
             session_id=session_id,
@@ -245,6 +331,7 @@ def run_plane(
             turn_messages=messages,
             capabilities=capabilities,
             ledger=ledger,
+            language_evidence=language_evidence,
         )
 
         forced = cfg.forced_plans.get(turn)
@@ -256,10 +343,20 @@ def run_plane(
             plan = parse_plan_payload(raw_plan, observation)
             intents = list(plan.intents)
 
-        if injected:
-            # Injected instructions are refused. The harness observation still
-            # carried them; no injected text may change the executed plan.
-            plan = Plan(session_id=session_id, turn=turn, intents=(), note="refused-injection")
+        submitted_plan = plan
+        injection_refused = bool(
+            injected and cfg.injection_handling == "enforce-refusal"
+        )
+        if injection_refused:
+            # Compatibility/control policy: preserve the historical calibrated
+            # behavior.  Causal benchmark runs may instead use observe-only so
+            # the subject's response is measured rather than overwritten here.
+            plan = Plan(
+                session_id=session_id,
+                turn=turn,
+                intents=(),
+                note="refused-injection",
+            )
             intents = []
 
         # Simultaneous resolution: moves through the war_v3 engine, constructs
@@ -292,14 +389,27 @@ def run_plane(
             ),
         )
         effects.append(effect.as_dict())
+        provenance_fn = getattr(agent, "turn_provenance", None)
+        agent_provenance: dict[str, Any] = {}
+        if callable(provenance_fn):
+            candidate = provenance_fn()
+            if candidate is not None:
+                if not isinstance(candidate, Mapping):
+                    raise ProtocolError("agent turn_provenance() must return an object")
+                agent_provenance = dict(candidate)
+
         turn_records.append(
             {
                 "turn": turn,
+                "submitted_plan": submitted_plan.as_dict(),
                 "plan": plan.as_dict(),
                 "effect": effect.as_dict(),
                 "construction": ledger.as_dict(),
-                "injected_refused": bool(injected),
+                "injection_detected": bool(injected),
+                "injected_refused": injection_refused,
+                "agent_provenance": agent_provenance,
                 "state_digest": digest,
+                **({"uchc_evidence": list(language_evidence)} if uchc is not None else {}),
             }
         )
 
@@ -320,6 +430,8 @@ def run_plane(
         turn_records=tuple(turn_records),
         effects=tuple(effects),
         construction=dict(ledger.as_dict()),
+        provenance={**integration_provenance(manifest),
+                    **({"uchc": uchc.provenance} if uchc is not None else {})},
         out_dir=output_root,
     )
     (output_root / "result.json").write_text(

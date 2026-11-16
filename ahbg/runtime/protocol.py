@@ -105,6 +105,7 @@ class Observation:
     inbox: tuple[Mapping[str, Any], ...] = ()
     entitlements: tuple[str, ...] = ("basic",)
     deadline_ms: int = 5000
+    language_evidence: tuple[Mapping[str, Any], ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -118,6 +119,8 @@ class Observation:
             "inbox": [dict(item) for item in self.inbox],
             "entitlements": list(self.entitlements),
             "deadline_ms": self.deadline_ms,
+            **({"language_evidence": [dict(item) for item in self.language_evidence]}
+               if self.language_evidence else {}),
         }
 
 

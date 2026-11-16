@@ -1,0 +1,96 @@
+{
+  "schema": "stack.zfae.input-distinction-plan",
+  "version": "1.0.0",
+  "question": "Can the selected heuristic parser serve alone as a lossless Unicode-character input boundary?",
+  "scope": "A0-betatest parse_semantic only; no claim about the full engine, learned inference, linguistic equivalence, or current a0",
+  "source": {
+    "repository": "The-Interdependency/a0-betatest",
+    "commit": "5d51d70a0ae6044d1386d72bd0cada9d48887f77",
+    "path": "backend/interdependent_lib/zfae/_parser.py",
+    "blob_sha": "13fa9c529d15e7f420e09520ca8cbf45587ea14a"
+  },
+  "criterion": "Every required-distinction pair must produce different complete SemanticFeatures dictionaries. Identical-repeat and known-distinction controls must behave as specified.",
+  "pairs": [
+    {
+      "id": "repeat",
+      "kind": "equal-control",
+      "left": "cats chase dogs",
+      "right": "cats chase dogs"
+    },
+    {
+      "id": "lexical",
+      "kind": "distinct-control",
+      "left": "cat",
+      "right": "dog"
+    },
+    {
+      "id": "word-order",
+      "kind": "distinct-control",
+      "left": "cats chase dogs",
+      "right": "dogs chase cats"
+    },
+    {
+      "id": "single-glyph",
+      "kind": "required-distinction",
+      "left": "a",
+      "right": "b"
+    },
+    {
+      "id": "unicode-glyph",
+      "kind": "required-distinction",
+      "left": "α",
+      "right": "β"
+    },
+    {
+      "id": "digit-value",
+      "kind": "required-distinction",
+      "left": "1",
+      "right": "2"
+    },
+    {
+      "id": "punctuation",
+      "kind": "required-distinction",
+      "left": "cat.",
+      "right": "cat!"
+    },
+    {
+      "id": "letter-case",
+      "kind": "required-distinction",
+      "left": "Cat",
+      "right": "cat"
+    },
+    {
+      "id": "whitespace",
+      "kind": "required-distinction",
+      "left": "cat dog",
+      "right": "cat\tdog"
+    }
+  ],
+  "outcomes": {
+    "SURVIVED": "All frozen distinctions survive; expand to a source/gonol/occurrence adapter fixture. No universal sufficiency claim.",
+    "FALSIFIED": "At least one required distinction collides with valid controls; exclude this parser as the sole character-input representation. Retain it only as an optional derived heuristic view.",
+    "BLOCKED": "Source identity, plan validity, import, call, serialization, determinism, or control failure; repair the prerequisite before interpretation."
+  },
+  "stop_condition": "Evaluate every frozen pair twice per side, record all observations, then classify once.",
+  "resource_preflight": {
+    "completion_feasible": true,
+    "python": "3.12 standard library",
+    "data": "9 short synthetic pairs; no user records",
+    "compute": "36 parser calls; no training or model API",
+    "memory": "source and small JSON records",
+    "money": "no paid calls",
+    "human_attention": "low",
+    "coordination": "low",
+    "operational_risk": "local source execution after immutable identity check",
+    "network_during_run": "none",
+    "execution_durability": "one foreground process; receipt written only after complete evaluation",
+    "externally_imposed_hard_limits": [],
+    "scientific_resource_stop_rule": "none"
+  },
+  "maximal_program": "Admit lawful character-gonol input; consume the UCNS neural audit; derive PTCNA construction; establish weight/state-sensitive inference and readout; evaluate generalization; integrate the accepted contract in a0.",
+  "hmmm": [
+    "Passing a finite distinction set cannot establish input sufficiency or neural inference.",
+    "Future UCNS/PTCNA construction and UCHC release/reconsumption remain separate gates."
+  ],
+  "design": "Source-informed directed counterexample search frozen before execution; not blinded or a representative benchmark."
+}

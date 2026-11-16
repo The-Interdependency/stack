@@ -1,0 +1,30 @@
+name: psfr
+
+on:
+  pull_request:
+    paths:
+      - "research/psfr/**"
+      - "research/metapat/BASE.json"
+      - "README.md"
+      - ".github/workflows/psfr.yml"
+  push:
+    branches: [main]
+    paths:
+      - "research/psfr/**"
+      - "research/metapat/BASE.json"
+      - "README.md"
+      - ".github/workflows/psfr.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Validate PSFR boundaries
+        run: python -m unittest discover -s research/psfr/tests -q

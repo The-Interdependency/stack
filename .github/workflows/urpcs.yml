@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
   push:
     branches: [main]
     paths:
       - "research/urpcs/**"
+      - "libs/ucns/src/ucns/direct_mobius.py"
       - ".github/workflows/urpcs.yml"
 
 permissions:
@@ -19,10 +21,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Verify sealed pre-retirement source identities.
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Independent decoder replay
+        run: node research/urpcs/tests/test_independent_decoder.js
       - name: Reference codec and committed-vector checks
         run: python -m unittest discover -s research/urpcs/tests -p 'test*.py'
       - name: Python syntax
-        run: python -m py_compile research/urpcs/urpcs_v1_reference.py
+        run: >-
+          python -m py_compile
+          research/urpcs/urpcs_v1_reference.py
+          research/urpcs/urpcs_mobius_projection.py
+          research/urpcs/urpcs_relational_analyzer.py

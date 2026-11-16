@@ -11,5 +11,54 @@
   },
   "canon_path": "../../libs/edcm",
   "authority": "stack-local research component (extracted from The-Interdependency/edcm)",
-  "standing": "stack-local-research"
+  "standing": "stack-local-research",
+  "full_view_audit": {
+    "source_repository": "The-Interdependency/stack",
+    "source_commit": "1f9a35eb355296fc88d09784c7a3e2e95511ca31",
+    "protocol": "FULL_VIEW_AUDIT.json",
+    "work_graph": "../../stack-manifest.json#research_participants[workspace=research/english-gonol/]",
+    "authority_transfer": false
+  },
+  "metric_origin_source": {
+    "repository": "The-Interdependency/edcm",
+    "commit": "0873c105799681ea1f7ccb3e619d1f7aebbd85e0",
+    "relation": "exact EDCM semantic metric-origin producer with canonical O/L split; does not refresh the historical extraction source or libs/edcm pin",
+    "authority_transfer": false
+  },
+  "ordinal_candidate": {
+    "work_graph": "docs/ordinal-work-graph.json",
+    "proposal_provenance": "docs/ordinal-source.json",
+    "authority": "Stack English implementation candidate; UCNS owns geometry",
+    "authority_transfer": false
+  },
+  "recursive_attachment_candidate": {
+    "profile": "english.attachment/1",
+    "work_graph": "docs/recursive-work-graph.json",
+    "native_commit": "9cc00771e54336d58ee377faeec87a3a33dbd4bf",
+    "authority_transfer": false,
+    "standing": "historical attachment compatibility; recursive validator repaired; candidate bearing remains explicit; graduation unchanged"
+  },
+  "unicode_bit_radius": {
+    "profile": "uchc.unicode-bit-radius/1",
+    "work_graph": "docs/unicode-bit-radius-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "authority": "Stack UCHC language entrypoint consumes native UCNS Unicode gonols",
+    "authority_transfer": false,
+    "standing": "forward primitive and recursive Unicode objects; 16 b rad; 32-bit big-endian diameter; English corpus implementation in unicode_corpus"
+  },
+  "unicode_recursive": {
+    "profile": "uchc.unicode-recursive/1",
+    "work_graph": "docs/unicode-bit-radius-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "authority_transfer": false,
+    "standing": "completed objects reenter with explicit equal-radius parent placement; automatic bearing selection unresolved"
+  },
+  "unicode_corpus": {
+    "profile": "uchc.english-unicode-corpus/1",
+    "entrypoint": "python -m english_gonol",
+    "work_graph": "docs/unicode-corpus-work-graph.json",
+    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "ordinal_replay": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
+    "authority_transfer": false
+  }
 }

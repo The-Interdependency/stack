@@ -1,3 +1,4 @@
+# ratios: loc_comments=128:57 imports_exports=8:2 calls_definitions=48:6
 """Verify and deterministically replay a digital-metric vertical-slice receipt.
 
 Usage guidance::
@@ -211,3 +212,4 @@ if __name__ == "__main__":
     raise SystemExit(
         "run verify_receipt_cli.py so verifier execution is source-bound"
     )
+# ratios: loc_comments=128:57 imports_exports=8:2 calls_definitions=48:6
