@@ -41,23 +41,23 @@
   "unicode_bit_radius": {
     "profile": "uchc.unicode-bit-radius/1",
     "work_graph": "docs/unicode-bit-radius-work-graph.json",
-    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "native_commit": "300877066436a03d046b8951772c1e2aed2c5166",
     "authority": "Stack UCHC language entrypoint consumes native UCNS Unicode gonols",
     "authority_transfer": false,
     "standing": "forward primitive and recursive Unicode objects; 16 b rad; 32-bit big-endian diameter; English corpus implementation in unicode_corpus"
   },
   "unicode_recursive": {
-    "profile": "uchc.unicode-recursive/1",
+    "profile": "uchc.unicode-recursive/2",
     "work_graph": "docs/unicode-bit-radius-work-graph.json",
-    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "native_commit": "300877066436a03d046b8951772c1e2aed2c5166",
     "authority_transfer": false,
-    "standing": "completed objects reenter with explicit equal-radius parent placement; automatic bearing selection unresolved"
+    "standing": "complete native vector results participate recursively without new bearings; explicit placement remains replayable"
   },
   "unicode_corpus": {
-    "profile": "uchc.english-unicode-corpus/1",
+    "profile": "uchc.english-unicode-corpus/2",
     "entrypoint": "python -m english_gonol",
     "work_graph": "docs/unicode-corpus-work-graph.json",
-    "native_commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+    "native_commit": "300877066436a03d046b8951772c1e2aed2c5166",
     "ordinal_replay": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
     "authority_transfer": false
   }

@@ -141,13 +141,13 @@ python3 research/digital-metrics/verify_receipt_cli.py \
   --attest-output /tmp/native-mobius-v0.attested.json
 ```
 
-Replay the repaired implementation's attested receipt byte-for-byte. The original
+Replay the repaired implementation's attested receipt byte-for-byte. The [current-main integration record](docs/integration-20261116.md) explains the new manifest-bound receipt; prior receipts remain historical. The original
 `receipts/native-mobius-v0.json` remains byte-identical historical evidence:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/verify_receipt_cli.py \
-  research/digital-metrics/receipts/native-mobius-v0-review-repair-20261115.json \
+  research/digital-metrics/receipts/native-mobius-v0-integration-20261116.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
   --edcm-root /path/to/exact/edcm

@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "8b08914c8bd018e331a62cbf3f57a0a15e54fc0a8d64748a4ddab0e2de98e323",
+  "work_graph_sha256": "7002cd2c17218141958c0450c28b9dd78f490712ca6fc4d9ba0b4656601d4d02",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -547,9 +547,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-ucns",
       "repository": "The-Interdependency/ucns",
-      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
-      "authority": "native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion",
-      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "commit": "300877066436a03d046b8951772c1e2aed2c5166",
+      "authority": "native Unicode geometry and retained recursive vector addition",
+      "relation": "exact native addition producer consumed by the English constructor",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -557,9 +557,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-stack",
       "repository": "The-Interdependency/stack",
-      "commit": "798b0b419e9fea897d3fadd2d4b9cb91db68687e",
+      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
       "authority": "active language construction research forge",
-      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "relation": "exact runtime and test checkpoint for recursive Unicode addition",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -567,9 +567,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-uchc",
       "repository": "The-Interdependency/uchc",
-      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "commit": "b13e0e0614da34e0e47e38d65cfc3de0177514c7",
       "authority": "extracted language-hyperspace candidates pending graduation",
-      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted",
+      "relation": "previous extracted candidate; the addition increment retains its own source receipt",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -577,7 +577,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-skill-lib",
       "repository": "The-Interdependency/skill-lib",
-      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "commit": "9e76d5e509bc2ab2de74addaf9ca78d2a171d71f",
       "authority": "construction, domain-claim and cross-repository evidence discipline",
       "relation": "governing source for this scoped representation change",
       "canonical_release": false,
@@ -607,9 +607,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-corpus-forge",
       "repository": "The-Interdependency/stack",
-      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
       "authority": "English construction forge",
-      "relation": "approved integration baseline and sealed structural reader",
+      "relation": "exact runtime and test checkpoint for recursive Unicode addition",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -617,9 +617,9 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-corpus-ucns",
       "repository": "The-Interdependency/ucns",
-      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
-      "authority": "UCNS Unicode geometry",
-      "relation": "native equal-radius scalar and declared-parent construction",
+      "commit": "300877066436a03d046b8951772c1e2aed2c5166",
+      "authority": "native Unicode geometry and retained recursive vector addition",
+      "relation": "exact native addition producer consumed by the English constructor",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -670,6 +670,66 @@
       "artifact_sha256": "09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9",
       "authority": "Unicode Character Database",
       "relation": "authenticate Math repertoire input",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-ucns-historical-0bbed0b3",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion",
+      "relation": "exact native producer consumed by the Stack UCHC Unicode entrypoint",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-stack-historical-798b0b41",
+      "repository": "The-Interdependency/stack",
+      "commit": "798b0b419e9fea897d3fadd2d4b9cb91db68687e",
+      "authority": "active language construction research forge",
+      "relation": "starting consumer identity; changed entrypoint is identified by its containing PR commit",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-uchc-historical-7e59f266",
+      "repository": "The-Interdependency/uchc",
+      "commit": "7e59f266655b7678b5443c8297c81094b806f36b",
+      "authority": "extracted language-hyperspace candidates pending graduation",
+      "relation": "historical extraction boundary; this forward Unicode entrypoint is not yet extracted",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "unicode-bit-radius-skill-lib-historical-7fdbdc44",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "7fdbdc4485431cb7f43a32089d10cf882c07ad0a",
+      "authority": "construction, domain-claim and cross-repository evidence discipline",
+      "relation": "governing source for this scoped representation change",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "historical-unicode-corpus-forge-historical-223f2b2c",
+      "repository": "The-Interdependency/stack",
+      "commit": "223f2b2c70ab764826f8d7b99174309e8aaad8b3",
+      "authority": "English construction forge",
+      "relation": "approved integration baseline and sealed structural reader",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/english-gonol/",
+      "participant_id": "historical-unicode-corpus-ucns-historical-0bbed0b3",
+      "repository": "The-Interdependency/ucns",
+      "commit": "0bbed0b3ca7ba507101ada6c8019f870499429fe",
+      "authority": "UCNS Unicode geometry",
+      "relation": "native equal-radius scalar and declared-parent construction",
       "canonical_release": false,
       "authority_transfer": false
     },

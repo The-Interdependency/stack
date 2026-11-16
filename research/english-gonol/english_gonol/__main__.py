@@ -41,12 +41,12 @@ def main(argv=None):
             command.add_argument('ordinal', type=int)
         if name in ('query', 'record', 'definition'):
             command.add_argument('--bearing', action='append', type=Fraction,
-                                 help='exact turn for each closed child, in occurrence order')
+                                 help='optional declared placement; omit to add complete objects')
     args = parser.parse_args(argv)
     from . import unicode_construction as unicode
     if args.action == 'profile':
         value = {'active_profile': unicode.PROFILE, 'recursive_profile': unicode.RECURSIVE_PROFILE,
-                 'geometry': unicode.authority(), 'parent_bearings': 'caller-declared'}
+                 'geometry': unicode.authority(), 'closure': 'exact-planar-vector-addition'}
     elif args.action == 'text':
         value = unicode.closed_record(unicode.construct_text(args.text, ucns_source_root=args.ucns_source_root),
                                       ucns_source_root=args.ucns_source_root)

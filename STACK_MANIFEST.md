@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `8b08914c8bd018e331a62cbf3f57a0a15e54fc0a8d64748a4ddab0e2de98e323`
+Work-graph SHA-256: `7002cd2c17218141958c0450c28b9dd78f490712ca6fc4d9ba0b4656601d4d02`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -350,10 +350,28 @@ The [source graph](research/english-gonol/docs/unicode-corpus-work-graph.json) b
 
 | Participant | Source | Exact identity | Use |
 |---|---|---|---|
-| `unicode-corpus-forge` | `The-Interdependency/stack` | `223f2b2c70ab764826f8d7b99174309e8aaad8b3` | English construction forge. approved integration baseline and sealed structural reader |
-| `unicode-corpus-ucns` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | UCNS Unicode geometry. native equal-radius scalar and declared-parent construction |
+| `historical-unicode-corpus-forge-historical-223f2b2c` | `The-Interdependency/stack` | `223f2b2c70ab764826f8d7b99174309e8aaad8b3` | English construction forge. approved integration baseline and sealed structural reader |
+| `historical-unicode-corpus-ucns-historical-0bbed0b3` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | UCNS Unicode geometry. native equal-radius scalar and declared-parent construction |
 | `unicode-corpus-admission` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | historical structural admission carrier. reproduce the immutable source admission |
 | `unicode-corpus-oewn` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | OEWN 2025 source. lexical entries, definitions, membership, order and provenance |
 | `unicode-corpus-replay` | `The-Interdependency/stack` | `30e081a5f0e624d4be45161d96fcc09c37c9edb6` | historical English ordinal experiment. preserve original implementation, repairs, corpus witness and operator answers |
 | `unicode-corpus-ucd-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | Unicode Character Database. authenticate numeric repertoire input |
 | `unicode-corpus-ucd-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | Unicode Character Database. authenticate Math repertoire input |
+
+## Recursive Unicode addition
+
+The following identities govern current recursive addition. Earlier producer entries retain their historical scope. Publication and authority transition remain separate.
+
+| Workspace | Participant | Repository | Identity | Authority and relation |
+|---|---|---|---|---|
+| `research/english-gonol/` | `unicode-bit-radius-ucns` | `The-Interdependency/ucns` | `300877066436a03d046b8951772c1e2aed2c5166` | native Unicode geometry and retained recursive vector addition; exact native addition producer consumed by the English constructor |
+| `research/english-gonol/` | `unicode-bit-radius-stack` | `The-Interdependency/stack` | `a1c063eed2100cb9a4da74ed7ac6cf80c2798573` | active language construction research forge; exact runtime and test checkpoint for recursive Unicode addition |
+| `research/english-gonol/` | `unicode-bit-radius-uchc` | `The-Interdependency/uchc` | `b13e0e0614da34e0e47e38d65cfc3de0177514c7` | extracted language-hyperspace candidates pending graduation; previous extracted candidate; the addition increment retains its own source receipt |
+| `research/english-gonol/` | `unicode-bit-radius-skill-lib` | `The-Interdependency/skill-lib` | `9e76d5e509bc2ab2de74addaf9ca78d2a171d71f` | construction, domain-claim and cross-repository evidence discipline; governing source for this scoped representation change |
+| `research/english-gonol/` | `unicode-corpus-forge` | `The-Interdependency/stack` | `a1c063eed2100cb9a4da74ed7ac6cf80c2798573` | English construction forge; exact runtime and test checkpoint for recursive Unicode addition |
+| `research/english-gonol/` | `unicode-corpus-ucns` | `The-Interdependency/ucns` | `300877066436a03d046b8951772c1e2aed2c5166` | native Unicode geometry and retained recursive vector addition; exact native addition producer consumed by the English constructor |
+| `research/english-gonol/` | `unicode-corpus-admission` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | historical structural admission carrier; reproduce the immutable source admission |
+| `research/english-gonol/` | `unicode-corpus-oewn` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | OEWN 2025 source; lexical entries, definitions, membership, order and provenance |
+| `research/english-gonol/` | `unicode-corpus-replay` | `The-Interdependency/stack` | `30e081a5f0e624d4be45161d96fcc09c37c9edb6` | historical English ordinal experiment; preserve original implementation, repairs, corpus witness and operator answers |
+| `research/english-gonol/` | `unicode-corpus-ucd-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | Unicode Character Database; authenticate numeric repertoire input |
+| `research/english-gonol/` | `unicode-corpus-ucd-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | Unicode Character Database; authenticate Math repertoire input |
