@@ -1,4 +1,4 @@
-# ratios: loc_comments=204:5 imports_exports=14:1 calls_definitions=130:19
+# ratios: loc_comments=284:27 imports_exports=15:1 calls_definitions=189:23
 """PR #94 integrity regressions, using synthetic private fixtures only.
 
 Run from any directory: python research/weave/recovery-challenges/v2/test_regressions.py
@@ -8,6 +8,7 @@ rejected disclosure; receiver subprocesses exercise the actual frozen algorithms
 from pathlib import Path
 from unittest import mock
 import contextlib
+import copy
 import io
 import json
 import shutil
@@ -19,6 +20,29 @@ import matrix
 import operations as o
 import release
 import test_harness as harness
+
+# === CHECKS ===
+# id: checkpoint_frozen_row_binding
+#   proves: frozen_case_checkpoint_binding
+#   call: self::Integrity.test_changed_case_inputs_cannot_reuse_or_publish_checkpoint
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
+# id: checkpoint_legacy_binding_refusal
+#   proves: frozen_case_checkpoint_binding
+#   call: self::Integrity.test_unbound_or_mismatched_receipts_are_preserved_and_refused
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
+# id: checkpoint_plan_census
+#   proves: frozen_case_checkpoint_binding
+#   call: self::Integrity.test_duplicate_or_empty_plans_refuse_before_generation_or_publication
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
+# id: checkpoint_legacy_separate_reverification
+#   proves: frozen_case_checkpoint_binding
+#   call: self::Integrity.test_legacy_evidence_can_be_reverified_in_separate_archive
+#   mutates: temporary operator fixtures
+#   cleanup: TemporaryDirectory
+# === END CHECKS ===
 
 
 class Integrity(unittest.TestCase):
@@ -227,7 +251,90 @@ class Integrity(unittest.TestCase):
                 build.generate(self.root, 1)
             self.assertEqual(path.read_bytes(), before)
 
+    def test_changed_case_inputs_cannot_reuse_or_publish_checkpoint(self):
+        receipt = build.one_case(str(self.root), self.row)
+        self.assertEqual(receipt['case_sha256'], build.case_digest(self.row))
+        wire = self.root/'ciphertexts'/f"{self.row['id']}.bin"
+        checkpoint = self.root/'receipts'/f"{self.row['id']}.json"
+        original = (wire.read_bytes(), checkpoint.read_bytes(), wire.stat().st_mtime_ns,
+                    checkpoint.stat().st_mtime_ns)
+        (self.root/'generation.json').write_text(json.dumps({'planned': 1, 'verified': 1, 'failures': []}))
+        for field in ('message_hex', 'schedule', 'parameters', 'family'):
+            changed = copy.deepcopy(self.row)
+            if field == 'message_hex':
+                changed[field] = b'changed answer with unchanged ciphertext'.hex()
+            elif field == 'schedule':
+                changed[field] = ['W']
+            elif field == 'parameters':
+                changed[field]['corpus_hex'] = '00'
+            else:
+                changed[field] = 'transport'
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                    build.one_case(str(self.root), changed)
+                (self.root/'private.json').write_text(json.dumps({'cases': [changed]}))
+                with mock.patch.object(build.zipfile, 'ZipFile') as publish:
+                    with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                        build.package(self.root)
+                    publish.assert_not_called()
+                self.assertEqual((wire.read_bytes(), checkpoint.read_bytes(), wire.stat().st_mtime_ns,
+                                  checkpoint.stat().st_mtime_ns), original)
+        self.assertEqual(build.one_case(str(self.root), copy.deepcopy(self.row)), receipt)
+
+    def test_unbound_or_mismatched_receipts_are_preserved_and_refused(self):
+        receipt = build.one_case(str(self.root), self.row)
+        checkpoint = self.root/'receipts'/f"{self.row['id']}.json"
+        (self.root/'generation.json').write_text(json.dumps({'planned': 1, 'verified': 1, 'failures': []}))
+        for field in ('schema', 'case_sha256', 'wire_bytes', 'message_bytes', 'fresh_receiver'):
+            changed = dict(receipt)
+            changed.pop(field)
+            data = json.dumps(changed).encode()
+            checkpoint.write_bytes(data)
+            with self.subTest(field=field):
+                with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                    build.one_case(str(self.root), self.row)
+                with mock.patch.object(build.zipfile, 'ZipFile') as publish:
+                    with self.assertRaisesRegex(ValueError, 'checkpoint invalid'):
+                        build.package(self.root)
+                    publish.assert_not_called()
+                self.assertEqual(checkpoint.read_bytes(), data)
+
+    def test_duplicate_or_empty_plans_refuse_before_generation_or_publication(self):
+        for rows in ([], [self.row, self.row], [{**self.row, 'id': '../escape'}]):
+            (self.root/'private.json').write_text(json.dumps({'cases': rows}))
+            with self.subTest(rows=len(rows)), mock.patch.object(build, 'ProcessPoolExecutor') as pool, \
+                    mock.patch.object(build.zipfile, 'ZipFile') as publish:
+                with self.assertRaises(ValueError):
+                    build.generate(self.root, 1)
+                with self.assertRaises(ValueError):
+                    build.package(self.root)
+                pool.assert_not_called()
+                publish.assert_not_called()
+        self.assertEqual(list((self.root/'receipts').iterdir()), [])
+
+    def test_legacy_evidence_can_be_reverified_in_separate_archive(self):
+        receipt = build.one_case(str(self.root), self.row)
+        receipt.pop('schema')
+        receipt.pop('case_sha256')
+        checkpoint = self.root/'receipts'/f"{self.row['id']}.json"
+        checkpoint.write_text(json.dumps(receipt))
+        wire = self.root/'ciphertexts'/f"{self.row['id']}.bin"
+        before = (checkpoint.read_bytes(), wire.read_bytes(), checkpoint.stat().st_mtime_ns,
+                  wire.stat().st_mtime_ns, wire.stat().st_ino)
+        new = self.base/'reverified'
+        new.mkdir(mode=0o700)
+        (new/'receipts').mkdir(mode=0o700)
+        shutil.copyfile(self.root/'private.json', new/'private.json')
+        shutil.copytree(self.root/'ciphertexts', new/'ciphertexts', symlinks=True)
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(build.generate(new, 1), 0)
+        checked = build.checked_checkpoint(new, self.row)
+        self.assertEqual(checked['case_sha256'], build.case_digest(self.row))
+        self.assertEqual((new/'ciphertexts'/wire.name).read_bytes(), wire.read_bytes())
+        self.assertEqual((checkpoint.read_bytes(), wire.read_bytes(), checkpoint.stat().st_mtime_ns,
+                          wire.stat().st_mtime_ns, wire.stat().st_ino), before)
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-# ratios: loc_comments=204:5 imports_exports=14:1 calls_definitions=130:19
+# ratios: loc_comments=284:27 imports_exports=15:1 calls_definitions=189:23

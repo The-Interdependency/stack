@@ -160,6 +160,32 @@ rewriting its original report. Checkpoints publish atomically without replacemen
 an interruption may leave a harmless hidden temporary file, never an accepted
 partial checkpoint. Use one generation process per operator archive.
 
+Current receipts use `weave.challenge-checkpoint/v1` and bind SHA-256 of the whole
+frozen case row (sorted compact JSON), including message, family, schedule and
+parameters. Resume and packaging share this validation rule. Changed inputs,
+unbound historical receipts, empty/duplicate case plans and inconsistent generation
+counts refuse before publication. Digests are content bindings, not signatures.
+
+Preserve an old operator archive. To verify its unchanged plan and ciphertexts
+with current receipts, use a **new** private directory with no copied receipts or
+generation report. For example, from the current repository root:
+
+```sh
+set -eu
+mkdir -m 700 /absolute/new-operator
+mkdir -m 700 /absolute/new-operator/receipts
+cp /absolute/original-operator/private.json /absolute/new-operator/
+cp -a /absolute/original-operator/ciphertexts /absolute/new-operator/
+python3 research/weave/recovery-challenges/v2/build.py generate \
+  --private /absolute/new-operator --workers 4
+```
+
+This recomputes each frozen wire, compares the copied bytes and runs a fresh
+receiver before creating its new receipt. It leaves the original archive intact.
+Do not add digests to old receipts by hand or treat them as newly verified. The
+synthetic migration is tested; the original 1,841-case operator archive was not
+accessed or migrated in this repair. [Checkpoint repair evidence](CHECKPOINT_REPAIR_20261116.md).
+
 Private roots and their artifact paths are resolved before use, including `..`
 and symlinks. Private children must remain within the admitted archive. All staged
 exports and harness receipts must also remain outside the public checkout; exports

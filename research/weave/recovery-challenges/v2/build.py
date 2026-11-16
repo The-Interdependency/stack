@@ -1,4 +1,4 @@
-# ratios: loc_comments=211:38 imports_exports=16:11 calls_definitions=114:11
+# ratios: loc_comments=232:43 imports_exports=16:14 calls_definitions=130:14
 """Freeze, generate and verify actual challenges without publishing their answers.
 
 Usage: python build.py freeze --private /absolute/operator
@@ -31,6 +31,9 @@ Private paths resolve outside the checkout; use an operator-owned directory.
 # id: separated_artifacts
 #   given: verified private fixtures
 #   then: publish only ciphertexts, ciphertext digests, opaque IDs and aggregate coverage
+# id: frozen_case_checkpoint_binding
+#   given: a resumed or packaged case with changed inputs or an unbound historical receipt
+#   then: refuse before accepting verification or publishing, preserving existing evidence
 # === END CONTRACTS ===
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from collections import Counter
@@ -52,6 +55,44 @@ from transport_cases import run as transport
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':')).encode()
+
+
+def case_digest(row):
+    """Bind the complete frozen row, including message and receiver parameters."""
+    case_id = row.get('id') if isinstance(row, dict) else None
+    if not isinstance(case_id, str) or len(case_id) != 16 or any(c not in '0123456789abcdef' for c in case_id):
+        raise ValueError('invalid opaque case ID')
+    return sha256(canonical(row)).hexdigest()
+
+
+def frozen_plan(root):
+    plan = json.loads((root/'private.json').read_text())
+    rows = plan['cases']
+    if not isinstance(rows, list) or not rows:
+        raise ValueError('frozen plan requires a nonempty case list')
+    for row in rows:
+        case_digest(row)
+    if len({row['id'] for row in rows}) != len(rows):
+        raise ValueError('duplicate frozen case ID')
+    return plan
+
+
+def checked_checkpoint(root, row):
+    """Resume and publication share one current-input checkpoint admission rule."""
+    digest = case_digest(row)
+    receipt = json.loads(private_path(root, 'receipts', row['id']+'.json').read_text())
+    if (not isinstance(receipt, dict)
+            or receipt.get('schema') != 'weave.challenge-checkpoint/v1'
+            or receipt.get('case_sha256') != digest
+            or receipt.get('id') != row['id'] or receipt.get('status') != 'VERIFIED'
+            or receipt.get('fresh_receiver') is not True):
+        raise ValueError('checkpoint invalid, unbound or mismatched; preserve evidence and reverify separately')
+    wire = private_path(root, 'ciphertexts', row['id']+'.bin').read_bytes()
+    if (receipt.get('wire_sha256') != sha256(wire).hexdigest()
+            or receipt.get('wire_bytes') != len(wire)
+            or receipt.get('message_bytes') != len(bytes.fromhex(row['message_hex']))):
+        raise ValueError('checkpoint invalid, unbound or mismatched; preserve evidence and reverify separately')
+    return receipt
 
 
 def save(path, value):
@@ -120,17 +161,13 @@ def freeze(root):
 
 def one_case(root_text, row):
     root = private_root(root_text); start = time.monotonic()
+    digest = case_digest(row)
     case_id = row['id']
-    if not isinstance(case_id, str) or len(case_id) != 16 or any(c not in '0123456789abcdef' for c in case_id):
-        raise ValueError('invalid opaque case ID')
+    identity = {'schema': 'weave.challenge-checkpoint/v1', 'id': case_id, 'case_sha256': digest}
     receipt_path = private_path(root, 'receipts', f'{case_id}.json')
     wire_path = private_path(root, 'ciphertexts', f'{case_id}.bin')
     if receipt_path.exists():
-        receipt = json.loads(receipt_path.read_text())
-        if (receipt['id'] == case_id and receipt['status'] == 'VERIFIED'
-                and sha256(wire_path.read_bytes()).hexdigest() == receipt['wire_sha256']):
-            return receipt
-        raise ValueError('checkpoint invalid or failed; inspect without silently regenerating')
+        return checked_checkpoint(root, row)
     try:
         message = bytes.fromhex(row['message_hex']); p = row['parameters']
         if row['family'] == 'cycle':
@@ -140,7 +177,7 @@ def one_case(root_text, row):
         else:
             wire = o.execute(message, row['schedule'], p)
     except Exception as error:
-        receipt = {'id': case_id, 'status': 'FAILED', 'error': str(error),
+        receipt = {**identity, 'status': 'FAILED', 'error': str(error),
                    'seconds': round(time.monotonic()-start, 6)}
         save(receipt_path, receipt)
         return receipt
@@ -162,7 +199,7 @@ def one_case(root_text, row):
             if (folder/'restored.bin').read_bytes() != message:
                 raise AssertionError('fresh receiver did not recover exact bytes')
     except Exception as error:
-        receipt = {'id': case_id, 'status': 'FAILED', 'error': str(error),
+        receipt = {**identity, 'status': 'FAILED', 'error': str(error),
                    'seconds': round(time.monotonic()-start, 6)}
         save(receipt_path, receipt)
         return receipt
@@ -171,7 +208,7 @@ def one_case(root_text, row):
             raise ValueError('ciphertext changed during receiver verification')
     else:
         publish(wire_path, wire)
-    receipt = {'id': case_id, 'status': 'VERIFIED', 'wire_bytes': len(wire),
+    receipt = {**identity, 'status': 'VERIFIED', 'wire_bytes': len(wire),
                'wire_sha256': sha256(wire).hexdigest(), 'message_bytes': len(message),
                'seconds': round(time.monotonic()-start, 6), 'fresh_receiver': True}
     save(receipt_path, receipt)
@@ -182,7 +219,7 @@ def generate(root, workers):
     root = private_root(root)
     if not 1 <= workers <= 4:
         raise ValueError('one through four workers allowed')
-    plan = json.loads((root/'private.json').read_text()); rows = plan['cases']
+    plan = frozen_plan(root); rows = plan['cases']
     started = time.monotonic(); results = []
     with ProcessPoolExecutor(max_workers=workers) as pool:
         futures = [pool.submit(one_case, str(root), row) for row in rows]
@@ -209,18 +246,13 @@ def generate(root, workers):
 
 def package(root):
     root = private_root(root)
-    plan = json.loads((root/'private.json').read_text())
+    plan = frozen_plan(root)
     generation = json.loads((root/'generation.json').read_text())
     rows = plan['cases']; receipts = []
-    if generation['verified'] != len(rows) or generation['failures']:
+    if generation['planned'] != len(rows) or generation['verified'] != len(rows) or generation['failures']:
         raise ValueError('planned failures forbid a misleading complete archive')
     for row in rows:
-        receipt = json.loads(private_path(root, 'receipts', f"{row['id']}.json").read_text())
-        wire = private_path(root, 'ciphertexts', f"{row['id']}.bin").read_bytes()
-        if (receipt['id'] != row['id'] or receipt['status'] != 'VERIFIED'
-                or sha256(wire).hexdigest() != receipt['wire_sha256']):
-            raise ValueError('checkpoint wire drift')
-        receipts.append(receipt)
+        receipts.append(checked_checkpoint(root, row))
     with zipfile.ZipFile(o.HERE/'blind-pack.zip', 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         archive.writestr('README.md', '# Exact-byte recovery challenge\n\nRecover the original bytes of each supplied file. '
             'Record your available inputs, methods, time and result. Submit bytes, not merely plausible prose. '
@@ -273,4 +305,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=211:38 imports_exports=16:11 calls_definitions=114:11
+# ratios: loc_comments=232:43 imports_exports=16:14 calls_definitions=130:14
