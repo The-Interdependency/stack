@@ -165,6 +165,13 @@ frozen case row (sorted compact JSON), including message, family, schedule and
 parameters. Resume, packaging, staged export and grading share this validation rule. Changed inputs,
 unbound historical receipts, empty/duplicate case plans and inconsistent generation
 counts refuse before publication. Digests are content bindings, not signatures.
+Publication additionally requires the complete declared matrix: every exact
+family/schedule/control row and multiplicity must match `matrix.schedules()`.
+Transport lane counts and native-cycle round counts must match their actual
+receiver parameters. The frozen plan's schema, status declaration and 32-byte
+salt encoding must also agree with the publication record. Private generation
+can use small synthetic fixtures; `package` refuses incomplete composition
+coverage. [Census admission evidence](CENSUS_REPAIR_20261116.md).
 
 Preserve an old operator archive. To verify its unchanged plan and ciphertexts
 with current receipts, use a **new** private directory with no copied receipts or

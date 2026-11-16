@@ -1,4 +1,4 @@
-# ratios: loc_comments=323:37 imports_exports=15:1 calls_definitions=218:25
+# ratios: loc_comments=389:54 imports_exports=17:1 calls_definitions=257:28
 """PR #94 integrity regressions, using synthetic private fixtures only.
 
 Run from any directory: python research/weave/recovery-challenges/v2/test_regressions.py
@@ -22,6 +22,21 @@ import release
 import test_harness as harness
 
 # === CHECKS ===
+# id: publication_verified_wire_buffer
+#   proves: complete_publication_census, frozen_case_checkpoint_binding, separated_artifacts
+#   call: self::Integrity.test_package_writes_the_verified_wire_buffer
+#   mutates: temporary operator and publication fixtures
+#   cleanup: TemporaryDirectory
+# id: full_matrix_publication_census
+#   proves: complete_publication_census, declared_census
+#   call: self::Integrity.test_publication_requires_exact_matrix_and_controls
+#   mutates: synthetic in-memory plan only
+#   cleanup: none
+# id: incomplete_publication_refusal
+#   proves: complete_publication_census, separated_artifacts
+#   call: self::Integrity.test_package_refuses_verified_subset_before_publication
+#   mutates: temporary operator fixture
+#   cleanup: TemporaryDirectory
 # id: checkpoint_release_wire_binding
 #   proves: frozen_case_checkpoint_binding, staged_disclosure, exact_grading
 #   call: self::Integrity.test_release_and_grade_require_current_ciphertext_binding
@@ -350,6 +365,77 @@ class Integrity(unittest.TestCase):
         self.assertEqual((out/'challenge.bin').read_bytes(), original)
         self.assertEqual(json.loads((out/'request.json').read_text())['wire_hex'], original.hex())
 
+    def test_publication_requires_exact_matrix_and_controls(self):
+        rows = [{**row, 'id': f'{index:016x}', 'message_hex': '', 'parameters': {
+                    'initial_lanes': row.get('initial_lanes', 1),
+                    'rounds': [{} for _ in range(row.get('round_count', 1))]}}
+                for index, row in enumerate(matrix.schedules())]
+        self.assertEqual(len(rows), 1841)
+        plan = {'schema': 'weave.recovery-private/v2', 'cases': rows,
+                'prediction_status': 'FROZEN_BEFORE_ENCODING_AND_ATTACKS', 'salt': 'ab'*32}
+        build.validate_publication_plan(plan)
+        build.validate_publication_plan({**plan, 'cases': list(reversed(rows))})
+        same_family_substitution = copy.deepcopy(rows)
+        same_family_substitution[1] = {**same_family_substitution[0], 'id': rows[1]['id']}
+        variants = [rows[:-1], [rows[0]], rows + [rows[0]], rows[:-1] + [rows[0]],
+                    same_family_substitution]
+        for changed in variants:
+            with self.subTest(cases=len(changed)), self.assertRaisesRegex(ValueError, 'complete matrix census'):
+                build.validate_publication_plan({**plan, 'cases': changed})
+        for family, control in (('transport', 'initial_lanes'), ('cycle', 'rounds')):
+            changed = copy.deepcopy(plan)
+            row = next(row for row in changed['cases'] if row['family'] == family)
+            row['parameters'][control] = 2 if family == 'transport' else []
+            with self.subTest(family=family), self.assertRaisesRegex(ValueError, 'controls disagree'):
+                build.validate_publication_plan(changed)
+        for field in ('schema', 'prediction_status', 'salt'):
+            changed = {**plan, field: 'invalid'}
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, 'publication metadata'):
+                build.validate_publication_plan(changed)
+
+    def test_package_refuses_verified_subset_before_publication(self):
+        build.one_case(str(self.root), self.row)
+        (self.root/'generation.json').write_text(json.dumps({'planned': 1, 'verified': 1, 'failures': []}))
+        originals = {path: (path.read_bytes(), path.stat().st_mtime_ns)
+                     for path in self.root.rglob('*') if path.is_file()}
+        with mock.patch.object(build.zipfile, 'ZipFile') as publish:
+            with self.assertRaisesRegex(ValueError, 'complete matrix census'):
+                build.package(self.root)
+            publish.assert_not_called()
+        self.assertEqual({path: (path.read_bytes(), path.stat().st_mtime_ns)
+                          for path in self.root.rglob('*') if path.is_file()}, originals)
+
+    def test_package_writes_the_verified_wire_buffer(self):
+        build.one_case(str(self.root), self.row)
+        (self.root/'generation.json').write_text(json.dumps({'planned': 1, 'verified': 1, 'failures': []}))
+        wire_path = self.root/'ciphertexts'/f"{self.row['id']}.bin"
+        original = wire_path.read_bytes()
+        output = self.checkout/'new-publication'
+        output.mkdir()
+        checked = build.load_verified_case
+        calls = 0
+        def checked_then_changed(root, row):
+            nonlocal calls
+            calls += 1
+            admitted = checked(root, row)
+            if calls == 2:
+                wire_path.write_bytes(b'changed after publication buffer validation')
+            return admitted
+        # Census admission is tested independently above; isolate byte emission
+        # here without claiming a new full-corpus recovery from this tiny fixture.
+        with mock.patch.object(build, 'validate_publication_plan'), \
+                mock.patch.object(build, 'load_verified_case', side_effect=checked_then_changed), \
+                mock.patch.object(o, 'HERE', output), contextlib.redirect_stdout(io.StringIO()):
+            build.package(self.root)
+        self.assertEqual(calls, 2)
+        import hashlib
+        import zipfile
+        with zipfile.ZipFile(output/'blind-pack.zip') as archive:
+            name = 'files/'+self.row['id']+'.bin'
+            self.assertEqual(archive.read(name), original)
+            self.assertEqual(archive.read('SHA256SUMS').decode().strip(),
+                             hashlib.sha256(original).hexdigest()+'  '+name)
+
     def test_duplicate_or_empty_plans_refuse_before_generation_or_publication(self):
         for rows in ([], [self.row, self.row], [{**self.row, 'id': '../escape'}]):
             (self.root/'private.json').write_text(json.dumps({'cases': rows}))
@@ -388,4 +474,4 @@ class Integrity(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
-# ratios: loc_comments=323:37 imports_exports=15:1 calls_definitions=218:25
+# ratios: loc_comments=389:54 imports_exports=17:1 calls_definitions=257:28

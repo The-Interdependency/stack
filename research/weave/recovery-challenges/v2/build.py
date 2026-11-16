@@ -1,4 +1,4 @@
-# ratios: loc_comments=234:44 imports_exports=16:15 calls_definitions=131:15
+# ratios: loc_comments=263:48 imports_exports=16:16 calls_definitions=150:16
 """Freeze, generate and verify actual challenges without publishing their answers.
 
 Usage: python build.py freeze --private /absolute/operator
@@ -34,6 +34,9 @@ Private paths resolve outside the checkout; use an operator-owned directory.
 # id: frozen_case_checkpoint_binding
 #   given: a resumed, packaged, exported or graded case with changed inputs or an unbound historical receipt
 #   then: refuse before accepting verification or publishing, preserving existing evidence
+# id: complete_publication_census
+#   given: a verified plan offered as the complete v2 experiment
+#   then: require the exact declared matrix multiplicities and matching structural controls before publication
 # === END CONTRACTS ===
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from collections import Counter
@@ -98,6 +101,34 @@ def load_verified_case(root, row):
 def checked_checkpoint(root, row):
     """Resume and publication use the same admission rule as release and grading."""
     return load_verified_case(root, row)[0]
+
+
+def validate_publication_plan(plan):
+    """Partial fixtures may be generated, but cannot claim the complete matrix."""
+    expected = Counter(canonical(row) for row in matrix.schedules())
+    actual = Counter(canonical({k: v for k, v in row.items()
+                               if k not in ('id', 'parameters', 'message_hex')})
+                     for row in plan['cases'])
+    if actual != expected:
+        raise ValueError('frozen plan does not match complete matrix census: '
+                         f'{sum((expected - actual).values())} missing, '
+                         f'{sum((actual - expected).values())} unexpected')
+    for row in plan['cases']:
+        parameters = row['parameters']
+        if row['family'] == 'transport' and (
+                type(parameters.get('initial_lanes')) is not int
+                or parameters['initial_lanes'] != row['initial_lanes']):
+            raise ValueError('transport controls disagree with declared matrix case')
+        if row['family'] == 'cycle' and (
+                not isinstance(parameters.get('rounds'), list)
+                or len(parameters['rounds']) != row['round_count']):
+            raise ValueError('cycle controls disagree with declared matrix case')
+    salt = plan.get('salt')
+    if (plan.get('schema') != 'weave.recovery-private/v2'
+            or plan.get('prediction_status') != 'FROZEN_BEFORE_ENCODING_AND_ATTACKS'
+            or not isinstance(salt, str) or len(salt) != 64
+            or any(c not in '0123456789abcdef' for c in salt)):
+        raise ValueError('frozen publication metadata is invalid')
 
 
 def save(path, value):
@@ -253,20 +284,24 @@ def package(root):
     root = private_root(root)
     plan = frozen_plan(root)
     generation = json.loads((root/'generation.json').read_text())
-    rows = plan['cases']; receipts = []
+    rows = plan['cases']
     if generation['planned'] != len(rows) or generation['verified'] != len(rows) or generation['failures']:
         raise ValueError('planned failures forbid a misleading complete archive')
     for row in rows:
-        receipts.append(checked_checkpoint(root, row))
+        checked_checkpoint(root, row)
+    validate_publication_plan(plan)
+    receipts = []
     with zipfile.ZipFile(o.HERE/'blind-pack.zip', 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
         archive.writestr('README.md', '# Exact-byte recovery challenge\n\nRecover the original bytes of each supplied file. '
             'Record your available inputs, methods, time and result. Submit bytes, not merely plausible prose. '
             'An evaluator can release additional information after you freeze each attempt.\n'
             '\nFor a genuinely independent first attempt, use a fresh context for each file and receive only that file.\n')
         sums = []
-        for receipt in sorted(receipts, key=lambda r: r['id']):
+        for row in sorted(rows, key=lambda r: r['id']):
+            receipt, wire = load_verified_case(root, row)
+            receipts.append(receipt)
             name = receipt['id']+'.bin'
-            archive.write(private_path(root, 'ciphertexts', name), 'files/'+name)
+            archive.writestr('files/'+name, wire)
             sums.append(receipt['wire_sha256']+'  files/'+name)
         archive.writestr('SHA256SUMS', '\n'.join(sums)+'\n')
     accepted, refused = matrix.transport_schedules()
@@ -310,4 +345,4 @@ def main():
 
 if __name__ == '__main__':
     raise SystemExit(main())
-# ratios: loc_comments=234:44 imports_exports=16:15 calls_definitions=131:15
+# ratios: loc_comments=263:48 imports_exports=16:16 calls_definitions=150:16
