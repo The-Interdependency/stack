@@ -1,0 +1,49 @@
+{
+  "starting_head": "28647b5b29e839626b8cba294b47b0b715c23c24",
+  "integrated_main": "3032238fc8549b58721c9baf2753c53844eb8d96",
+  "baseline_forgeries": {
+    "frame_forgery": [
+      true,
+      "",
+      1
+    ],
+    "transient_callbacks": [
+      true,
+      "----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK",
+      1
+    ]
+  },
+  "baseline_projections": {
+    "control": [],
+    "raw_html": [],
+    "authority_transfer": [],
+    "duplicate_commit": []
+  },
+  "repaired_scope": {
+    "linkage_obligations": 30,
+    "linkage_checks": 34,
+    "verified_contracts": 0,
+    "witness_execution": "NOT_RUN",
+    "reviewed_repository_tests": 34,
+    "test_failures": 0,
+    "test_skips": 0,
+    "stack_repositories": 7,
+    "research_participant_identities": 66
+  },
+  "historical_receipt_sha256": "3cfec6cc75a91661c113c7633db33c508a7b59d2d8e01f858752424c34272146",
+  "active_receipt": "receipts/native-mobius-v0-review-repair-20261115.json",
+  "source_sha256": {
+    "research/digital-metrics/audit_contracts.py": "a5cc048aed1174222ba9cbc82a7d04451335875b19bde34848b086d5994aab35",
+    "research/digital-metrics/audit_contracts_cli.py": "8c5342c5954aade20162cd0b8ffbbb8767e538b87e6337f77ad1f44179a09664",
+    "research/digital-metrics/generate_receipt.py": "08f3550376caac54ad2d85fd7bbf01da8370b31c604288e62d2f0beab8c3a704",
+    "research/digital-metrics/generate_receipt_cli.py": "176c0b1b6a06de2e4f9f99d87031a813fa0759373d47c819a59765d3a50dce5d",
+    "research/digital-metrics/metric_protocol.py": "d860f60a4ce161e0815b85fa1c2551cab6485489ae6397c42282df49c1dbbcee",
+    "research/digital-metrics/run_tests.py": "5f9cab4d99f89f9a932353cc2d5736e2c0620030b8825e3e8d2a25a497101184",
+    "research/digital-metrics/verify_receipt.py": "f67397c913da60df7b3e7636a3235a2d7baa0e99c2f63306c511186e08b106f7",
+    "research/digital-metrics/verify_receipt_cli.py": "983ff8e312f123ada72cbb19436366d1cbe07b3a3b150b25ff0776f02a8c8e5e"
+  },
+  "hmmm": [
+    "Hosted checks and current-head review remain separate.",
+    "No arbitrary Python attestation, EDCM projection, independent verifier or producer signature is established."
+  ]
+}

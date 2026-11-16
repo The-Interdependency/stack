@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-  `3c401794b8af8b6189bfdcaf0ad2b3fcc961778d6995119715f9123b1136332c`
+Work-graph SHA-256: `7002cd2c17218141958c0450c28b9dd78f490712ca6fc4d9ba0b4656601d4d02`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -107,10 +107,42 @@ release identity.
 | `research/english-gonol/` | `The-Interdependency/skill-lib` | `7fdbdc4485431cb7f43a32089d10cf882c07ad0a` | construction, domain-claim and cross-repository evidence discipline; governing source for this scoped representation change | no |
 | `research/english-gonol/` | `The-Interdependency/ucns` | `0bbed0b3ca7ba507101ada6c8019f870499429fe` | native Unicode gonol geometry, 16-bit-radius big-endian scalars and recursive declared-frame completion; exact native producer consumed by the Stack UCHC Unicode entrypoint | no |
 | `research/english-gonol/` | `The-Interdependency/stack` | `798b0b419e9fea897d3fadd2d4b9cb91db68687e` | active language construction research forge; starting consumer identity; changed entrypoint is identified by its containing PR commit | no |
+| `research/digital-metrics/` | `The-Interdependency/stack` | `ca190204de25de240662bb438af80c8dc405cea6` | starting identity and owner of the noncanonical digital-metrics research workspace | no |
+| `research/digital-metrics/` | `The-Interdependency/skill-lib` | `fb3b53a7629f7f03ecf255167d52c13abef1a979` | manifest-pinned Stack operational doctrine; supplies no metric result | no |
+| `research/digital-metrics/` | `The-Interdependency/metapat` | `e4165b0cac9eca41daef9c2f941881028ca55d48` | exact affixiation-harmonics semantic constraint; supplies no calculated metric value | no |
+| `research/digital-metrics/` | `The-Interdependency/ucns` | `1cf10c2df2541a332a77f2ed3feda0c6bef4abcc` | exact geometric producer for one-turn and two-turn structural observations | no |
+| `research/digital-metrics/` | `The-Interdependency/edcm` | `211ce860446d3576ae2930a101eefdd07d3e3dcc` | merged fail-closed missing-metric decoder prerequisite; no EDCM measurement is invoked by the v0 structural receipt | no |
 
 The imported `libs/` trees are the complete tracked working trees of their source
 repositories at the pinned commits, produced from Git trees / `git archive` contents.
 VCS metadata, virtualenvs, caches, and untracked files are excluded.
+
+### Digital metrics exact projection
+
+The `research/digital-metrics/` work graph retains these exact authority fields:
+
+| Repository | Authority |
+|---|---|
+| `The-Interdependency/stack` | composition, strict research protocol, deterministic receipt, and non-transfer boundaries |
+| `The-Interdependency/skill-lib` | organization-wide build and evidence doctrine |
+| `The-Interdependency/metapat` | semantic definitions, question forms, interpretation constraints, and claim status |
+| `The-Interdependency/ucns` | geometry, exact native Mobius transition law, and its own proof status |
+| `The-Interdependency/edcm` | measurement projection and result contracts |
+
+The contract audit source-loads `msdmd/parsers/universal.py` from
+`research/digital-metrics/vendor/universal.py` only when its SHA-256 is
+`15b6d47628083db62428d52a9cecb50831c82a9903a1457c2270bf9878e34c4e` and
+its Git blob SHA-1 is `7bc86bf303083c5c0049393d6ce38a50908c4a00`; the skill-lib
+commit is the exact participant pin above.
+
+The exact non-transfer boundary projection, in canonical JSON, is:
+
+`{"authority_transfer":false,"empirical_status_transfer":false,"hmmm":["EDCM projection selection and empirical calibration are not part of the v0 structural receipt.","Producer identities are content-bound but are not cryptographic producer signatures.","Independent implementation replay remains required before promotion beyond test-backed Stack research."],"measurement_status_transfer":false,"proof_status_transfer":false,"semantic_mapping":"external-provenance"}`
+
+The imported `libs/` trees are the complete tracked working trees of their source
+repositories at the pinned commits, produced from Git trees / `git archive` contents.
+VCS metadata, virtualenvs, caches, and untracked files are excluded.
+
 
 ## Research base records
 

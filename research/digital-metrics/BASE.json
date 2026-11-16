@@ -1,0 +1,12 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "digital-metrics",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "ca190204de25de240662bb438af80c8dc405cea6",
+  "source_path": null,
+  "canon_path": null,
+  "authority": "stack-local strict metric transport, integrity projections, deterministic replay, and cross-repository non-transfer enforcement",
+  "standing": "stack-local-research",
+  "note": "METAPAT retains semantic authority, UCNS retains geometry and proof status, EDCM retains measurement authority, and Stack receipt success transfers none of those statuses."
+}
