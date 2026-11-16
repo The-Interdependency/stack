@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `7002cd2c17218141958c0450c28b9dd78f490712ca6fc4d9ba0b4656601d4d02`
+Work-graph SHA-256: `172bfcc2d8a8f80d2a0e158e83046ded824f1870ada88e9510ba38f73b4409af`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -365,10 +365,10 @@ The following identities govern current recursive addition. Earlier producer ent
 | Workspace | Participant | Repository | Identity | Authority and relation |
 |---|---|---|---|---|
 | `research/english-gonol/` | `unicode-bit-radius-ucns` | `The-Interdependency/ucns` | `300877066436a03d046b8951772c1e2aed2c5166` | native Unicode geometry and retained recursive vector addition; exact native addition producer consumed by the English constructor |
-| `research/english-gonol/` | `unicode-bit-radius-stack` | `The-Interdependency/stack` | `a1c063eed2100cb9a4da74ed7ac6cf80c2798573` | active language construction research forge; exact runtime and test checkpoint for recursive Unicode addition |
+| `research/english-gonol/` | `unicode-bit-radius-stack` | `The-Interdependency/stack` | `87025797abad4eba7bbcf7faf98275dab2ca8351` | active language construction research forge; exact runtime and test checkpoint for recursive Unicode addition |
 | `research/english-gonol/` | `unicode-bit-radius-uchc` | `The-Interdependency/uchc` | `b13e0e0614da34e0e47e38d65cfc3de0177514c7` | extracted language-hyperspace candidates pending graduation; previous extracted candidate; the addition increment retains its own source receipt |
 | `research/english-gonol/` | `unicode-bit-radius-skill-lib` | `The-Interdependency/skill-lib` | `9e76d5e509bc2ab2de74addaf9ca78d2a171d71f` | construction, domain-claim and cross-repository evidence discipline; governing source for this scoped representation change |
-| `research/english-gonol/` | `unicode-corpus-forge` | `The-Interdependency/stack` | `a1c063eed2100cb9a4da74ed7ac6cf80c2798573` | English construction forge; exact runtime and test checkpoint for recursive Unicode addition |
+| `research/english-gonol/` | `unicode-corpus-forge` | `The-Interdependency/stack` | `87025797abad4eba7bbcf7faf98275dab2ca8351` | English construction forge; exact runtime and test checkpoint for recursive Unicode addition |
 | `research/english-gonol/` | `unicode-corpus-ucns` | `The-Interdependency/ucns` | `300877066436a03d046b8951772c1e2aed2c5166` | native Unicode geometry and retained recursive vector addition; exact native addition producer consumed by the English constructor |
 | `research/english-gonol/` | `unicode-corpus-admission` | `The-Interdependency/ucns` | `4f863ad37096b7baab8f62820ad5cb937b62a3a7` | historical structural admission carrier; reproduce the immutable source admission |
 | `research/english-gonol/` | `unicode-corpus-oewn` | `globalwordnet/english-wordnet` | `dc343f2683279ecbb13fab4e2fd778d7b162d287` | OEWN 2025 source; lexical entries, definitions, membership, order and provenance |

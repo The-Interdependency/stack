@@ -5,7 +5,7 @@
     {
       "participant_id": "unicode-corpus-forge",
       "repository": "The-Interdependency/stack",
-      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
+      "commit": "87025797abad4eba7bbcf7faf98275dab2ca8351",
       "authority": "English construction forge",
       "relation": "exact runtime and test checkpoint for recursive Unicode addition"
     },
@@ -61,5 +61,5 @@
       "The general scale-transition law and independent domain graduation remain separate."
     ]
   },
-  "work_graph_sha256": "55f7825b79f62c71a473d213c22bab45224cfd1b83e7c496ba88306c5dfd5ef4"
+  "work_graph_sha256": "09993b47d7c07a5414bba034d6a6afcfa7cd4a81974e9faf52719644c59f36d6"
 }
