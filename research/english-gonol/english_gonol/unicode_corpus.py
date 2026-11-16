@@ -27,7 +27,7 @@ from .structural_rules import canonical, digest, segment
 #   owner: Erin Spencer
 #   tests: unicode_tests/test_unicode_corpus.py and complete corpus workflow
 #   storage_boundary: new self-contained output directory; verified read-only inputs
-#   unresolved: physical sheet lift, general scale-transition law, independent domain release
+#   unresolved: general scale-transition law, independent domain release
 # === END MODULE_BUILD ===
 # === CONTRACTS ===
 # id: unicode_corpus_preserves_ownership

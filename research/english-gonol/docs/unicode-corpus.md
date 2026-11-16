@@ -23,4 +23,4 @@ The [earlier ordinal corpus experiment](https://github.com/The-Interdependency/s
 
 The current profile is `uchc.english-unicode-corpus/2`. The prior replay witness is preserved as `experiments/unicode-corpus/replay-0bbed0b.json`; its counts, primitive geometry rows and declared-placement closure digests remain unchanged. The new witness adds independent complete automatic-definition and compound-ownership checks.
 
-**hmmm**. Physical sheet lift, semantic selection and independent English release remain separate. The complete workflow retains the artifact and verification records.
+**hmmm**. Semantic selection and independent English release remain separate. The complete workflow retains the artifact and verification records.

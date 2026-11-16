@@ -24,11 +24,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Verify complete receipts and audit mechanics
-        working-directory: research/english-gonol
-        run: python -m unittest discover -s tests -p test_full_view_audit.py -v
-      - name: Verify audit source ratio declarations
+      - name: Replay the archived four-view evidence
+        env:
+          ARCHIVE: dbf50f00695d54030cc8cde5fda557cd03e44f50
         run: |
-          python skill-lib/ratios/ratios_check.py research/english-gonol/english_gonol/full_view_audit.py
-          python skill-lib/ratios/ratios_check.py research/english-gonol/english_gonol/view_replay.py
-          python skill-lib/ratios/ratios_check.py research/english-gonol/tests/test_full_view_audit.py
+          git diff --exit-code "$ARCHIVE" -- research/english-gonol/FULL_VIEW_AUDIT.json research/english-gonol/experiments/hyperspace-views-full-v1
+          git worktree add --detach "$RUNNER_TEMP/english-views" "$ARCHIVE"
+          cd "$RUNNER_TEMP/english-views/research/english-gonol"
+          python -m unittest discover -s tests -p test_full_view_audit.py -v

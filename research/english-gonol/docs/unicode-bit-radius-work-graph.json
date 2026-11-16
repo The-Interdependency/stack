@@ -34,8 +34,8 @@
     "semantic_mapping": "operator-declared UCHC encoding-width policy consumed through UCNS; no semantic mapping inferred from bits",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "Physical sheet lift, the general scale-transition law and independent domain graduation remain separate."
+      "The general scale-transition law and independent domain graduation remain separate."
     ]
   },
-  "work_graph_sha256": "8849fe779d2432b6499185bac5954f6847ce5ebf7a342f2d1dda9b469bea712e"
+  "work_graph_sha256": "c54ed9c724e726d5fec7f1598aeb03d23a278d996c302e33470e11ad0b831610"
 }
