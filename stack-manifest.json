@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "7002cd2c17218141958c0450c28b9dd78f490712ca6fc4d9ba0b4656601d4d02",
+  "work_graph_sha256": "172bfcc2d8a8f80d2a0e158e83046ded824f1870ada88e9510ba38f73b4409af",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -557,7 +557,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-bit-radius-stack",
       "repository": "The-Interdependency/stack",
-      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
+      "commit": "87025797abad4eba7bbcf7faf98275dab2ca8351",
       "authority": "active language construction research forge",
       "relation": "exact runtime and test checkpoint for recursive Unicode addition",
       "canonical_release": false,
@@ -607,7 +607,7 @@
       "workspace": "research/english-gonol/",
       "participant_id": "unicode-corpus-forge",
       "repository": "The-Interdependency/stack",
-      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
+      "commit": "87025797abad4eba7bbcf7faf98275dab2ca8351",
       "authority": "English construction forge",
       "relation": "exact runtime and test checkpoint for recursive Unicode addition",
       "canonical_release": false,

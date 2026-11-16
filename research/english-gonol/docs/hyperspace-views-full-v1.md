@@ -14,16 +14,12 @@ specified task and acceptance criterion.
 
 ## Historical scope and current replay gate
 
-These sealed receipts qualify the frozen Stack and runner identities below.
-Current main has since changed the view payload and synthesis representation;
-this report does not qualify that implementation. The receipt gate reads the
-historical Git objects and verifies their recorded digests. It does not rewrite
-old receipts to match new source. The tightened runner additionally binds the
-supplied manifest directly to the protocol's repository, commit, tree digest,
-receipt, and counts; two identically altered manifest copies cannot pass.
-A new current-source qualification requires a new protocol and full native and
-independent corpus runs. The historical runner also requires the exact database
-and historical source checkout; running it on current main fails closed.
+The receipts below belong to the historical experiment. Its runner, independent
+reconstruction and tests can be replayed from Stack commit
+`dbf50f00695d54030cc8cde5fda557cd03e44f50`. The archive check compares the
+sealed evidence with that revision and runs its verification tests there.
+Current English construction measures definition overlap from its stored words.
+
 
 ## Complete-corpus results
 
