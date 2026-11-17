@@ -10,7 +10,7 @@
     },
     {
       "repository": "The-Interdependency/stack",
-      "commit": "a1c063eed2100cb9a4da74ed7ac6cf80c2798573",
+      "commit": "87025797abad4eba7bbcf7faf98275dab2ca8351",
       "authority": "active language construction research forge",
       "relation": "exact runtime and test checkpoint for recursive Unicode addition"
     },
@@ -34,8 +34,8 @@
     "semantic_mapping": "operator-declared UCHC encoding-width policy consumed through UCNS; no semantic mapping inferred from bits",
     "agent_scope": "cross-repository-work-graph",
     "hmmm": [
-      "Physical sheet lift, the general scale-transition law and independent domain graduation remain separate."
+      "The general scale-transition law and independent domain graduation remain separate."
     ]
   },
-  "work_graph_sha256": "8849fe779d2432b6499185bac5954f6847ce5ebf7a342f2d1dda9b469bea712e"
+  "work_graph_sha256": "0d60c207378ce51b0ca5983fbed46c794f5b420ef227773c4303cb66352ff18d"
 }

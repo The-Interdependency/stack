@@ -332,3 +332,7 @@ graduated there. Private/public key derivation and security remain separate work
 
 Run `WEAVE_SOURCES=/checkouts python research/weave/cycle.py demo` with the exact
 UCNS source named in `research/weave/CYCLE_NATIVE.json`.
+
+## Digital metrics research
+
+[Digital metrics](research/digital-metrics/README.md) retains the strict structural observation and receipt slice. Its manifest-bound historical producers remain explicit; current Stack operational doctrine is unchanged. Contract linkage, ordinary repository test execution and receipt replay are distinct gates. No EDCM projection or measurement is invoked.

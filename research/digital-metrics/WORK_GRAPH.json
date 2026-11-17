@@ -1,0 +1,49 @@
+{
+  "schema": "the-interdependency.digital-metric-work-graph",
+  "version": "0.1.0",
+  "participants": [
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "ca190204de25de240662bb438af80c8dc405cea6",
+      "authority": "composition, strict research protocol, deterministic receipt, and non-transfer boundaries",
+      "relation": "starting identity and owner of the noncanonical digital-metrics research workspace"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "fb3b53a7629f7f03ecf255167d52c13abef1a979",
+      "authority": "organization-wide build and evidence doctrine",
+      "relation": "manifest-pinned Stack operational doctrine; supplies no metric result"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "e4165b0cac9eca41daef9c2f941881028ca55d48",
+      "authority": "semantic definitions, question forms, interpretation constraints, and claim status",
+      "relation": "exact affixiation-harmonics semantic constraint; supplies no calculated metric value"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "1cf10c2df2541a332a77f2ed3feda0c6bef4abcc",
+      "authority": "geometry, exact native Mobius transition law, and its own proof status",
+      "relation": "exact geometric producer for one-turn and two-turn structural observations"
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "commit": "211ce860446d3576ae2930a101eefdd07d3e3dcc",
+      "authority": "measurement projection and result contracts",
+      "relation": "merged fail-closed missing-metric decoder prerequisite; no EDCM measurement is invoked by the v0 structural receipt"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "empirical_status_transfer": false,
+    "semantic_mapping": "external-provenance",
+    "hmmm": [
+      "EDCM projection selection and empirical calibration are not part of the v0 structural receipt.",
+      "Producer identities are content-bound but are not cryptographic producer signatures.",
+      "Independent implementation replay remains required before promotion beyond test-backed Stack research."
+    ]
+  },
+  "work_graph_sha256": "512c57dda57ffcff35a5d631135b96211df71f4bbc0e934346fa0ba12876c440"
+}
