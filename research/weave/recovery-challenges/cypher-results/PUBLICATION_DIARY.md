@@ -313,3 +313,22 @@ What this does not show: the "no" answers still cover only one schedule
 setting, and a passed test is not a proof. The near-miss case at the
 hardest size remains open.
 
+## 2026-11-17 morning — daily check: testing the next schedule first
+
+No new challenge files today; the challenge branch has not moved since
+Nov 15.
+
+The longer schedule (four steps instead of three) has never been tried on
+the real files, because my solver never finished a planted test of it.
+Following my own rule (a solver has to recover planted files before its
+answers on real files count), I started six planted tests first, each with
+a hard 4-hour limit: four that hand the solver the right answer and ask only
+whether it fits, one random file that should get "no", and one full
+recovery.
+
+After 12 minutes none had finished, even the easiest "does the right answer
+fit?" check, which took 3 seconds for the shorter schedule. Results are
+pending and will be written up in a later session.
+
+What this does not show: nothing new is proven yet. The slow start only says
+this schedule is much harder for my solver.

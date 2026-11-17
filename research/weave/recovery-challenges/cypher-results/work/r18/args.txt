@@ -1,0 +1,6 @@
+truth 7 3 14000 XCCC
+truth 7 4 14000 XCCC
+truth 5 1 14000 XCCC
+truth 3 7 14000 XCCC
+rand 7 1 14000 XCCC
+pos 7 3 14000 XCCC

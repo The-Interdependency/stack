@@ -790,3 +790,30 @@ Fixing the known truth and asking only "is it still satisfiable?" is a cheap
 completeness test that works even where full recovery times out (t=3).
 Near-miss negatives are much harder for the solver than random ones.
 
+---------------------------------------------------------------------------
+## Round 18 — Nov 17, 2026 ~10:33–11:00 AM (America/Los_Angeles), daily check
+
+Shared weekly usage 27.6% at start (reset Mon Nov 23, 9:10 AM PST); session
+ceiling frozen at ~36 points (half of remaining). Actual use: a few points.
+
+### Challenge branch check
+Branch head still `978951d` (Nov 15, 9:23 PM PST). No new or changed
+challenge files.
+
+### XCCC planted tests launched (`work/r18/`)
+Round 15's XCCC planted recoveries all hit 900 s (and used SIGTERM caps).
+Before any real XCCC run, the encoding needs planted evidence, so this round
+launched six planted XCCC jobs (n=1, rot=0, arity 3; same config as the real
+`r15/xccc_args.txt`) with `timeout -s KILL 14400` (4 h):
+- `negpos4.py` = `r17/negpos.py` with the schedule as a 5th argument
+  (default XCC, so r17 behaviour is unchanged).
+- `args.txt`: truth-admission t=7 seeds 3,4; t=5 seed 1; t=3 seed 7;
+  random-wire negative t=7 seed 1; full planted recovery (`pos`) t=7 seed 3.
+- Checked at ~1.5 min: all six intended jobs running, `err.log` empty.
+- At ~12 min: **none finished**, not even truth admission at t=7 (XCC took
+  3 s there). Results go to `out.jsonl`; pending at the time of writing.
+
+### Proven vs guessed
+Nothing new proven. The 12-min observation only says XCCC is far harder for
+this CNF than XCC; it says nothing about completeness. Real XCCC runs stay
+on hold until the planted jobs report.
