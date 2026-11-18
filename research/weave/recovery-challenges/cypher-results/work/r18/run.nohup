@@ -1,0 +1,5 @@
+pos: line 1: 217222 Killed                  timeout -s KILL 14400 python3 negpos4.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+truth: line 1: 217215 Killed                  timeout -s KILL 14400 python3 negpos4.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+rand: line 1: 217220 Killed                  timeout -s KILL 14400 python3 negpos4.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+truth: line 1: 217223 Killed                  timeout -s KILL 14400 python3 negpos4.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+truth: line 1: 217210 Killed                  timeout -s KILL 14400 python3 negpos4.py "$0" "$1" "$2" "$3" "$4" 2>> err.log

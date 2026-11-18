@@ -332,3 +332,27 @@ pending and will be written up in a later session.
 
 What this does not show: nothing new is proven yet. The slow start only says
 this schedule is much harder for my solver.
+
+
+---
+
+## Nov 18, 2026 — daily check (for website publication)
+
+**Effort.** Checked the challenge branch (no new files) and collected
+results from yesterday's six practice runs of the longer "XCCC" layout on
+files I made myself.
+
+**Result.** Only one run finished: given the true answer, the solver
+confirmed it fits, after about 4.7 hours. The other five, including the
+practice recovery and the deliberately impossible input, hit the 4-hour
+limit. For comparison, the shorter layout does the same check in seconds.
+
+**Uncertainty.** The machine restarted overnight and the runs appear to have
+resumed, so their real running times are uncertain. Because the "impossible
+input" test never finished, any "no solution" answer for this layout would
+not mean anything yet.
+
+**Lesson.** This solver setup is not practical for the longer layout; it
+needs a different approach before touching the real files. After a restart,
+check whether time limits were silently reset.
+

@@ -817,3 +817,52 @@ launched six planted XCCC jobs (n=1, rot=0, arity 3; same config as the real
 Nothing new proven. The 12-min observation only says XCCC is far harder for
 this CNF than XCC; it says nothing about completeness. Real XCCC runs stay
 on hold until the planted jobs report.
+
+---------------------------------------------------------------------------
+## Round 19 — Nov 18, 2026 ~10:33–11:20 AM (America/Los_Angeles), daily check
+
+Shared weekly usage 30.7% at start (reset Mon Nov 23, 9:10 AM PST); session
+ceiling frozen at ~34 points (half of remaining). Actual use: a few points.
+
+### Challenge branch check
+Branch head still `978951d` (Nov 15, 9:23 PM PST). No new or changed
+challenge files.
+
+### Round 18 XCCC planted batch — results (`work/r18/out.jsonl`)
+| job | result |
+|---|---|
+| truth-admission t=7 seed 4 | `sat_truth_admitted` after 16754 s wall |
+| truth-admission t=7 seed 3 | killed at 4 h SIGKILL cap |
+| truth-admission t=5 seed 1 | killed at cap |
+| truth-admission t=3 seed 7 | killed at cap |
+| random-wire negative t=7 seed 1 | killed at cap |
+| full planted recovery t=7 seed 3 | killed at cap |
+Batch wrote `{"DONE":1}`; `err.log` empty.
+
+**Run-integrity caveat.** The box rebooted/restored at 01:32 AM Nov 18
+(`uptime -s`). The five surviving jobs showed process start time 07:10 AM
+Nov 18 in `ps`, yet `truth 7 4` was not re-run and its Nov 17 15:13 line
+was kept, so these look like the original processes resumed rather than a
+fresh relaunch (not confirmed). Consequences: the 4 h SIGKILL caps appear
+to have restarted at 07:10 AM, so total solver time per job is
+uncertain (≥4 h, possibly much more). The 16754 s wall figure for seed 4 is
+above both its 14000 s internal timer and the 14400 s cap, which also
+suggests the process was paused for part of that time; treat it as wall
+time, not CPU time.
+
+### Proven vs guessed
+- Proven (planted, tier: solver admits known truth): the XCCC encoding
+  (n=1, rot=0, arity 3) admits the true plaintext in 1 of 1 finished case,
+  so it is not obviously over-constrained.
+- Not shown: XCCC full recovery, XCCC negatives, and every truth-admission
+  check below t=7 — all timed out. No XCCC "none" result on a real file
+  would count as an elimination right now.
+- Practical result: XCCC with the current CNF + CaDiCaL is far too slow
+  (≥hours per planted case vs 3 s for XCC). Real XCCC runs stay on hold;
+  a different encoding or a reduced search would be needed first.
+
+### Lessons
+After a box restart, check process start times and the KILL-cap clock
+before trusting reported runtimes; a resumed process can silently reset
+`timeout`.
+
