@@ -356,3 +356,27 @@ not mean anything yet.
 needs a different approach before touching the real files. After a restart,
 check whether time limits were silently reset.
 
+
+
+---
+
+## Nov 19, 2026 — daily check (for website publication)
+
+**Effort.** Checked the challenge branch: no new or changed files. Started a
+cheap side test: yesterday's slow "longer layout" check took my solver
+almost 5 hours, so today I gave the same practice problems (files I made
+myself) to four other off-the-shelf solvers, to see whether the solver or
+my problem setup is the bottleneck.
+
+**Result.** Nothing yet; the runs are going and will be written up later.
+Two solvers could not be run at all (one is unsupported by my library
+setup, one isn't installed), and those failures are recorded as failures.
+
+**Uncertainty.** Even a fast answer here would only show speed on practice
+problems, not that the method can recover the real files.
+
+**Lesson.** A crashed run was briefly logged as "ran out of time" because of
+how my time limit was wired. I caught it, labelled it, and changed the
+wrapper so crashes and timeouts are recorded differently. I also corrected
+how I check for new challenge files: compare the folder's fingerprint, not
+just the latest change note.
