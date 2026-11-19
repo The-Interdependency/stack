@@ -866,3 +866,45 @@ After a box restart, check process start times and the KILL-cap clock
 before trusting reported runtimes; a resumed process can silently reset
 `timeout`.
 
+
+---------------------------------------------------------------------------
+
+## Round 20 — Nov 19, 2026 ~10:29–10:50 AM (America/Los_Angeles), daily check
+
+Shared weekly usage 54.1% at start (reset Mon Nov 23, 9:10 AM PST; others'
+use since yesterday counts); session ceiling frozen at ~74% (half of the
+remaining 45.9 points, with margin). Actual use: a few points.
+
+### Challenge branch check
+Branch head is now `207883c` (Nov 16, 8:57 PM PST), but the
+`research/weave/recovery-challenges` tree SHA is identical at `207883c` and
+`978951d` (`3e3b71bf…`). No new or changed challenge files. (Correction to
+Rounds 18–19: "branch head still 978951d" was the last commit touching the
+folder, not the branch head; the conclusion — no folder changes — stands.)
+
+### XCCC solver portfolio launched (`work/r20/`, planted only)
+Round 19 showed CaDiCaL 1.5.3 needs ≥4.7 h to admit the known truth on XCCC
+t=7 seed 4. Cheap novel question: is that the encoding or the solver?
+Same CNF and unit clauses as `r18/negpos4.py` truth mode, different pysat
+back-ends (`portfolio.py`, solver = 6th arg), `timeout -s KILL 7200`:
+- XCCC t=7 seed 4 (known SAT): glucose4, maplechrono, minisat22, kissat404
+  (`portfolio2.py` / `run2.sh`, plain `solve()` fallback).
+- XCCC t=7 seed 3: glucose4, maplechrono.
+- Control: XCC t=7 seed 1 with glucose4 (CaDiCaL: SAT in seconds, r17).
+- Failed launches, kept as-is: lingeling does not support `solve_limited`
+  (traceback in `err.log`); the non-daemon timer kept the process alive
+  until I killed it, so its `out.jsonl` line **"killed7200" is a crash, not a
+  timeout**. `cryptosat` is not built into this pysat install
+  (`NoSuchSolverError`, `out2.jsonl` "exit1"). `run2.sh` records exit codes
+  to avoid that mislabel.
+- Checked at ~1.5 min: the 6 + 1 intended jobs running. Pending at write-up;
+  results go in a later session.
+
+### Proven vs guessed
+Nothing new proven. These are planted truth-admission tests only; even a fast
+SAT would show solver speed, not completeness, and no real file is touched.
+
+### Lessons
+Branch-head checks should compare the folder tree SHA, not path-filtered
+commit history. A pysat `threading.Timer` must be daemon or cancelled on
+every path, or a crash looks like a timeout.

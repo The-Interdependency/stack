@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r20/portfolio2.py", line 15, in <module>
+    sv = Solver(name=sname, bootstrap_with=cl)
+  File "/home/box/.local/lib/python3.13/site-packages/pysat/solvers.py", line 415, in __init__
+    self.new(name, bootstrap_with, use_timer, **kwargs)
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/box/.local/lib/python3.13/site-packages/pysat/solvers.py", line 513, in new
+    raise(NoSuchSolverError(name))
+pysat.solvers.NoSuchSolverError: cryptosat

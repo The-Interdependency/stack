@@ -1,0 +1,7 @@
+truth 7 4 7000 XCCC glucose4
+truth 7 4 7000 XCCC maplechrono
+truth 7 4 7000 XCCC lingeling
+truth 7 4 7000 XCCC minisat22
+truth 7 3 7000 XCCC glucose4
+truth 7 3 7000 XCCC maplechrono
+truth 7 1 7000 XCC glucose4

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/workspace/cypher/work/r20/portfolio.py", line 17, in <module>
+    r = sv.solve_limited(expect_interrupt=True); tm.cancel()
+  File "/home/box/.local/lib/python3.13/site-packages/pysat/solvers.py", line 1165, in solve_limited
+    return self.solver.solve_limited(assumptions, expect_interrupt)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/box/.local/lib/python3.13/site-packages/pysat/solvers.py", line 6620, in solve_limited
+    raise NotImplementedError('Limited solve is currently unsupported by Lingeling.')
+NotImplementedError: Limited solve is currently unsupported by Lingeling.
