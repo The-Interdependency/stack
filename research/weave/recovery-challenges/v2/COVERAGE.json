@@ -1,0 +1,41 @@
+{
+  "schema": "weave.recovery-coverage/v2",
+  "planned_files": 1841,
+  "verified_files": 1841,
+  "families": {
+    "transport": 393,
+    "byte": 1180,
+    "reflection": 265,
+    "cycle": 3
+  },
+  "core_alphabet": [
+    "N",
+    "A",
+    "U",
+    "S",
+    "W",
+    "B"
+  ],
+  "pair_words_per_pair": 62,
+  "core_pairs": 15,
+  "pair_words_covered": 930,
+  "max_instances_per_operation": 3,
+  "higher_order_rule": "PLAN.md; subset forward/reverse and repeat-in-context, not exhaustive all words",
+  "transport_accepted": 393,
+  "transport_typed_refusals": 602,
+  "full_weave_coverage": "INCOMPLETE",
+  "unimplemented_obligations": {
+    "whole_message_private_gonol": "No arbitrary-message/private-gonol forward/inverse law.",
+    "private_gonol_binding": "stages/bind.py supplies a declaration, no operator.",
+    "asymmetric_key_relation": "stages/key.py requires a caller-supplied law; none exists.",
+    "cryptographic_thread_dependency": "Occurrence lanes exist; complementary secret reconstruction does not.",
+    "native_corpus_key_binding": "Normalization validates corpus/padding; private reconstruction binding is absent.",
+    "authentication": "stages/auth.py declares Q10 but provides no authenticator.",
+    "replay_state": "No stateful replay rejection mechanism is implemented."
+  },
+  "attacker_trials_run": 0,
+  "receiver_checks_are_attacks": false,
+  "prediction_commitment_sha256": "242cdf7745fb4cb5d83de0fe404c3f5297a1aa72bcd7c251a97bc8f382f5f4cd",
+  "commitment_method": "SHA256 of canonical private.json including independent 32-byte salt",
+  "private_case_mapping": "operator archive only"
+}

@@ -1,0 +1,216 @@
+{
+  "schema": "weave.recovery-challenge/v1",
+  "created_date": "2026-10-29",
+  "attribution": "GPT generated; context, prompt Erin Spencer",
+  "status": "READY_FOR_INDEPENDENT_RECOVERY_ATTEMPTS",
+  "classification": "ciphertext-only challenge for the implemented native sequence-cycle candidate; no asymmetric key-generation claim",
+  "repository": "The-Interdependency/stack",
+  "source_commit": "9de81c67b271df09c1d9ba5422660c96fe8af7ac",
+  "ucns_commit": "905e66964a495d7596a577bb64e4158db9465864",
+  "source_files": {
+    "research/weave/cycle.py": {
+      "git_blob": "9730d6058e9e997b6b081c1614019810755b5194",
+      "sha256": "25cbe0e5567562c1f2de3de0ca69d4e5a4e57e78a283aa7dcee882b0b16de562"
+    },
+    "research/weave/cycle_native.py": {
+      "git_blob": "8d011a15234f8583fb0968c8fc80c63c308f2054",
+      "sha256": "8a3cf679078b6ffc36a26ab99d0f4cbd593cfa2c404e05fd927d8fae09947219"
+    },
+    "research/weave/affixiation.py": {
+      "git_blob": "047ae47a565cb986ff6f8888b19a0d269c13f3f7",
+      "sha256": "15518004e43873515badefd951d6f32a0de79ce8002d3aebd41921bf8d7eb985"
+    },
+    "research/weave/native_binary.py": {
+      "git_blob": "6a6ba9f57b83b62116a57113a5c6358fab7e7831",
+      "sha256": "3843b4fb7c735c2d3d45f28a13905397a4dd8ff988fba91b3fe1f92e75103e4d"
+    },
+    "research/weave/numeral.py": {
+      "git_blob": "1e9b7f12b1d7dc20413e737ceb36696d34a59980",
+      "sha256": "a3c2b67611b095f65ba4b355fac2275735a062fb76ba2170790e64d8b434f9e3"
+    },
+    "research/weave/prime_schedule.py": {
+      "git_blob": "667ff6afe7510fa373d164a2fb4992acabd94106",
+      "sha256": "c5b59833d236c1f7dfe66102052e1796e8532a25f299820c68e2b417c6678242"
+    },
+    "research/weave/safe_output.py": {
+      "git_blob": "2c84a5d46adadb88285ba1e3e8db26417f26f6f2",
+      "sha256": "5bdfc6ead9f7eb9341d3de669ece63cdf653e1e8ba7882b334360cbafad8b052"
+    },
+    "research/weave/CYCLE_NATIVE.json": {
+      "git_blob": "0997b017c58c3c689800832a8b67340160f7b5f3",
+      "sha256": "cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43"
+    },
+    "research/weave/profiles/cycle-v1.json": {
+      "git_blob": "372d1420a9cc59c86d2813af926c75eca315b14d",
+      "sha256": "f4018221aa4707292471411832ea1cc273f7605c874ae1c3c55d676af6f6691b"
+    }
+  },
+  "work_graph": "research/weave/CYCLE_WORK_GRAPH.json at source_commit",
+  "wire_format": "unmodified raw WVC version 1; all native metadata and any native leakage retained",
+  "algorithm_changes": false,
+  "groups": {
+    "a": {
+      "known_profile": "research/weave/profiles/cycle-v1.json at source_commit",
+      "withheld": [
+        "fresh 4096-byte corpus sampled with secrets.token_bytes"
+      ],
+      "shared_within_group": [
+        "profile",
+        "corpus"
+      ],
+      "encoding": "same native forward operation for every case"
+    },
+    "b": {
+      "profile_basis": "same public cycle-v1.json; only listed fields differ",
+      "withheld": [
+        "fresh 4096-byte corpus sampled with secrets.token_bytes",
+        "corpus_bit_offset sampled uniformly from 0..32767",
+        "independent uniformly shuffled circle_order in each round",
+        "eight independent space-turn fractions per round: numerator uniform 0..131071 over denominator 65536, reduced canonically"
+      ],
+      "public_unchanged_fields": [
+        "schema",
+        "selection",
+        "split",
+        "scope",
+        "bucket_bytes",
+        "round count",
+        "each prime_path",
+        "each arities",
+        "each end_order"
+      ],
+      "shared_within_group": [
+        "profile",
+        "corpus"
+      ],
+      "encoding": "same native forward operation; supported profile values only"
+    }
+  },
+  "messages": {
+    "description": "Fresh synthetic UTF-8 prose, JSON, repeated blocks and binary data; one of each per group; mapping/content/exact original lengths withheld",
+    "independent_between_groups": true,
+    "personal_user_data": false,
+    "public_plaintext_digests": false
+  },
+  "attacker_inputs": [
+    "this public directory",
+    "all public algorithm source and history, including the exact pinned native dependencies",
+    "all ciphertext bytes and metadata already present within them",
+    "publicly stated parameter distributions"
+  ],
+  "not_supplied": [
+    "original plaintext files or their hashes",
+    "actual corpus bytes",
+    "actual withheld profile fields",
+    "commitment salt and evaluator receipt",
+    "encoder intermediate state or receiver reconstruction trace",
+    "victim encryption/decryption oracle"
+  ],
+  "allowed_methods": [
+    "inspect/reimplement/modify all public algorithms",
+    "derive parameters or plaintext from public data",
+    "generate local test data under attacker-selected parameters",
+    "use cross-ciphertext relations within and between groups"
+  ],
+  "forbidden_extra_inputs": [
+    "request or inspect private evaluator bundle, generator filesystem, or original conversation containing private setup",
+    "treat a supplied secret as attacker recovery"
+  ],
+  "evaluation": {
+    "primary": "byte-exact original plaintext for any case",
+    "partial": "submit partial bytes and positions with evidence; exact successes reported separately",
+    "private_confirmation": "owner compares submitted bytes to withheld originals; no live feedback oracle is part of this pack",
+    "private_commitment": {
+      "scheme": "SHA-256(domain || 32-byte secret salt || canonical private receipt)",
+      "domain_utf8": "weave-recovery-answer-commitment/v1\u0000",
+      "digest": "4debfd7317f9b7b1083060866a62e0bca2c9db2c64d15cb8e08a0a267a27dd2a",
+      "salt_reveal": "only after the frozen submission if owner chooses to reveal evaluation evidence"
+    }
+  },
+  "validation": {
+    "source_files_pinned": true,
+    "authorized_roundtrips": 8,
+    "receiver_processes": 8,
+    "ciphertexts_edited_after_generation": false,
+    "attacker_trials_run": 0
+  },
+  "cases": [
+    {
+      "id": "a01",
+      "group": "a",
+      "ciphertext": "ciphertexts/a01.wvc",
+      "ciphertext_bytes": 13161,
+      "ciphertext_sha256": "f453cbd17dabfdfc5d76fc87fc297a1db46c7108cd4dae41768dec88cefb6087",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "a02",
+      "group": "a",
+      "ciphertext": "ciphertexts/a02.wvc",
+      "ciphertext_bytes": 36813,
+      "ciphertext_sha256": "8eea812ae415b9e2f9c24c7628c7bb1233550a53298e6b362885a2876890bb1d",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "a03",
+      "group": "a",
+      "ciphertext": "ciphertexts/a03.wvc",
+      "ciphertext_bytes": 12040,
+      "ciphertext_sha256": "f1a559d08a766f9db1901ca8d757cd127189d0c5752339a1a05170c419de0f33",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "a04",
+      "group": "a",
+      "ciphertext": "ciphertexts/a04.wvc",
+      "ciphertext_bytes": 55387,
+      "ciphertext_sha256": "f809380a744889ce6f600a79f2389ed68e78e69a4686d891f673ebb7bf3a4446",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "b01",
+      "group": "b",
+      "ciphertext": "ciphertexts/b01.wvc",
+      "ciphertext_bytes": 79568,
+      "ciphertext_sha256": "b64d7ac397f3c8faac0ac2e9d70684cd438e6cf02b9e2ca35ee48bcb93235b8f",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "b02",
+      "group": "b",
+      "ciphertext": "ciphertexts/b02.wvc",
+      "ciphertext_bytes": 38538,
+      "ciphertext_sha256": "f47ce870965c299d43b0e83dc2891c0d3273eb8712c45547a944284e9ef14ac0",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "b03",
+      "group": "b",
+      "ciphertext": "ciphertexts/b03.wvc",
+      "ciphertext_bytes": 148887,
+      "ciphertext_sha256": "7e3374548cacea50bf7c757b838b454829d192214c152ddba4bebb3d79447523",
+      "receiver_exact_match": true
+    },
+    {
+      "id": "b04",
+      "group": "b",
+      "ciphertext": "ciphertexts/b04.wvc",
+      "ciphertext_bytes": 81206,
+      "ciphertext_sha256": "5ab7c2f606123cd72b29f185eeca3796a1836112cce5fb505ba59b7dcd9e7082",
+      "receiver_exact_match": true
+    }
+  ],
+  "excluded_attempts": [
+    {
+      "source": "research/weave/twin_ray_engine.py at source_commit",
+      "standing": "NOT_A_RECOVERABLE_PUBLIC_CIPHERTEXT_CHALLENGE",
+      "reason": "public_face returns the same carrier for all messages, while decrypt requires full Record objects with additional message-bearing fields; publishing internal records would change the declared public interface"
+    }
+  ],
+  "hmmm": [
+    "Recovery by another model has not been attempted in this pack",
+    "Actual wire may leak plaintext or private parameters; such a recovery counts if derived from permitted inputs",
+    "Asymmetric public-only sender/private reconstruction, authentication and replay remain outside this implemented challenge",
+    "No result on this candidate transfers to the full intended Weave construction"
+  ]
+}

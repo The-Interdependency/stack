@@ -1,0 +1,732 @@
+{
+  "reference_adapter_commit": "f435c65152cc23f65abc5edc403adca3cb191e64",
+  "scope": "synthetic source-replay fixtures; no original evaluator material",
+  "vectors": [
+    {
+      "family": "byte",
+      "schedule": [
+        "N"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "574e4d01000000000000004840aff2e9d2d8922e47afd4648e6967497158785fbd1da870e7110266bf944880000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b"
+    },
+    {
+      "family": "byte",
+      "schedule": [
+        "A"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "575241316607a0240fc5bcc2b9d63493ce9a90eb51403a4ffd685a09e5700819c413ec06574146014875574e4301406665366634626561333837313362623162613339623835343333353131333532663334323034373532386437386236333863623066303033383464316231383700c0040103ee8080000101c00100000102030405060708090a0b0c0d0e0f101112131415161709ee8080ee8080ee80800300000000000005180d180f08"
+    },
+    {
+      "family": "byte",
+      "schedule": [
+        "U"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "574e43010f736e617073686f742d7265706c617900c0040103ee8080000101c00400000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f101112131415161703ee8080"
+    },
+    {
+      "family": "byte",
+      "schedule": [
+        "S"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "0820202400302a940ac022c402d028d4098021020a173007320026029200960242004602f800fc0328012c039818c848e008e855001508452005285180118841a001a821272117a2"
+    },
+    {
+      "family": "byte",
+      "schedule": [
+        "W"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "a880288188840885a090209180940095aa402a418a440a45a250225182540255a900290189040905a110211181140115a880288188840885a090209180940095aa402a418a440a45"
+    },
+    {
+      "family": "byte",
+      "schedule": [
+        "B"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "008040c020a060e0109050d030b070f0088848c828a868e8008040c020a060e0109050d030b070f0088848c828a868e8008040c020a060e0109050d030b070f0088848c828a868e8"
+    },
+    {
+      "family": "reflection",
+      "schedule": [
+        "R"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "0201000504030807060b0a090e0d0c11100f1413121716150201000504030807060b0a090e0d0c11100f1413121716150201000504030807060b0a090e0d0c11100f141312171615"
+    },
+    {
+      "family": "transport",
+      "schedule": [
+        "X",
+        "C",
+        "I",
+        "J",
+        "W"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "574c4e3100010000024010006098848a040ac900a310c02062819028a121046d0501045200524de9280050654883204d088a013251038429214050610141c1a18820280051d8024454c4a222019511006029"
+    },
+    {
+      "family": "cycle",
+      "schedule": [
+        "N",
+        "A",
+        "S"
+      ],
+      "parameters": {
+        "scope": "snapshot-replay",
+        "bucket_bytes": 96,
+        "corpus_bit_offset": 0,
+        "corpus_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+        "spec": {
+          "prime_path": {
+            "seed": 53,
+            "steps": [
+              [
+                "next"
+              ],
+              [
+                "next"
+              ]
+            ]
+          },
+          "arities": [
+            3,
+            5,
+            7
+          ],
+          "circle_order": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "spaces": [
+            [
+              0,
+              8
+            ],
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              8
+            ],
+            [
+              3,
+              8
+            ],
+            [
+              4,
+              8
+            ],
+            [
+              5,
+              8
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "end_order": "first-last"
+        },
+        "initial_lanes": 1,
+        "thread_count": 3,
+        "lane_rotation": 1,
+        "inter_arity": 3
+      },
+      "input_hex": "000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617000102030405060708090a0b0c0d0e0f1011121314151617",
+      "wire_hex": "57564301cdf11526ca93a8627eea036d7e56ac630d4be04ccb1fe14ba5973966b19d6f43879a94269aff0a6b9987443367ca3e33e2a392e53758ad0e3f3fa5266f9c0b8c37064760729792cab6638d4d1e8aef478b6fc8ad0ab6138f9ecd3cfe4edd0bfa01bc02222b6044bd001501e1ec01421d8b896a0846800501ad902d818d841c90b494349085950585af113e059e040f10b601360487400700ad143c109c010d04a5143401850414140501a50005021c1405b4a704a50205062f6aa510051207481c87afa22d3825048585ad3e05b916339e859eb6af8d07b807c894b88749ad3887392f171c3c0d9faf26a8086a2020d2029b208fd67e60aaea22000802090001040020001197b05410798801200754566a2ae001000105000004014004530059051b013104330039056b01c104c300c9058b01a104a300a905fe03540656025c071e03340636023c022a050aa8a9944080250d2b808ae0a100a030a480a4f4f740a620a6d4f7e0ac00ac74fcc0aca0ae54ff20ae80aef65502042204d654a206020676579303e61846190038220400282822017c2ba3445e20116008802c66"
+    }
+  ]
+}

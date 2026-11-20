@@ -54,6 +54,11 @@ jobs:
             test "$status" -eq 1
           fi
           cat "$RUNNER_TEMP/weave-private-public.json"
+      - name: Verify frozen challenge sources, standalone receivers and containment
+        run: |
+          set -euo pipefail
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/recovery-challenges/v2/test_source_snapshot.py
+          PYTHONDONTWRITEBYTECODE=1 python3 research/weave/recovery-challenges/v2/test_regressions.py
       - name: Package tracked research source and observed evidence
         if: always()
         run: |

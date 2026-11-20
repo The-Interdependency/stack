@@ -1,0 +1,15 @@
+{
+  "schema": "weave.frozen-source-bundle/v1",
+  "source_lock_sha256": "d62d192df22b5d07ce93c64f4ad495f28a1b1ce67f399cca370b6d43f1ae793f",
+  "archive_sha256": "889cfa19a3447c6a826e808b1f0dd8eeb9ea0b4951d62d588f5361fb41369ea4",
+  "licenses": [
+    {
+      "path": "LICENSE",
+      "git_blob": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+    },
+    {
+      "path": "sources/ucns/LICENSE",
+      "git_blob": "d0a1fa1482eea82e19510e7920cbe3a03e41f691"
+    }
+  ]
+}
