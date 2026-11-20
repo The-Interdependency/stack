@@ -1,0 +1,1 @@
+pos: line 1: 37278 Aborted                 timeout -s KILL 3600 python3 kport.py "$0" "$1" "$2" "$3" "$4" 2>> err.log

@@ -1,0 +1,2 @@
+{"mode": "truth", "t": 7, "seed": 1, "sched": "XCC", "solver": "kissat404", "clauses": 1465642, "status": "sat_truth_admitted", "rec_eq_planted": null, "wall": 9.1, "mono": 9.1, "cpu": 9.3}
+rc=0

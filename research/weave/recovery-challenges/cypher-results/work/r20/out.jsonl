@@ -1,1 +1,8 @@
 {"mode":"truth","t":7,"seed":4,"sched":"XCCC","solver":"lingeling","status":"killed7200"}
+{"mode": "truth", "t": 7, "seed": 1, "sched": "XCC", "solver": "glucose4", "vars": 186449, "clauses": 1465642, "status": "sat_truth_admitted", "secs": 16842.8}
+{"mode": "truth", "t": 7, "seed": 4, "sched": "XCCC", "solver": "minisat22", "vars": 279026, "clauses": 2196099, "status": "timeout", "secs": 26608.5}
+{"mode": "truth", "t": 7, "seed": 3, "sched": "XCCC", "solver": "glucose4", "vars": 279026, "clauses": 2196099, "status": "timeout", "secs": 26608.6}
+{"mode": "truth", "t": 7, "seed": 4, "sched": "XCCC", "solver": "maplechrono", "vars": 279026, "clauses": 2196099, "status": "timeout", "secs": 26608.6}
+{"mode": "truth", "t": 7, "seed": 4, "sched": "XCCC", "solver": "glucose4", "vars": 279026, "clauses": 2196099, "status": "timeout", "secs": 26608.8}
+{"mode": "truth", "t": 7, "seed": 3, "sched": "XCCC", "solver": "maplechrono", "vars": 279026, "clauses": 2196099, "status": "timeout", "secs": 26609.1}
+{"DONE":1}

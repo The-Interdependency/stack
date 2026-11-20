@@ -1,0 +1,4 @@
+truth 7 3 XCCC kissat404
+truth 5 1 XCCC kissat404
+rand 7 1 XCCC kissat404
+pos 7 3 XCCC kissat404

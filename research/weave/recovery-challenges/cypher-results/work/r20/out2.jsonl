@@ -1,1 +1,3 @@
 {"mode":"truth","t":7,"seed":4,"sched":"XCCC","solver":"cryptosat","status":"exit1"}
+{"mode": "truth", "t": 7, "seed": 4, "sched": "XCCC", "solver": "kissat404", "vars": 279026, "clauses": 2196099, "status": "sat_truth_admitted", "secs": 207.5}
+{"DONE":1}

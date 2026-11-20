@@ -1,0 +1,2 @@
+{"mode": "truth", "t": 7, "seed": 3, "sched": "XCCC", "solver": "kissat404", "clauses": 2196099, "status": "sat_truth_admitted", "rec_eq_planted": null, "wall": 45.4, "mono": 45.4, "cpu": 45.5}
+{"mode":"pos","t":7,"seed":3,"sched":"XCCC","solver":"kissat404","status":"exit134"}

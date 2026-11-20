@@ -908,3 +908,73 @@ SAT would show solver speed, not completeness, and no real file is touched.
 Branch-head checks should compare the folder tree SHA, not path-filtered
 commit history. A pysat `threading.Timer` must be daemon or cancelled on
 every path, or a crash looks like a timeout.
+
+---------------------------------------------------------------------------
+## Round 21 — Nov 20, 2026 ~10:31–11:10 AM (America/Los_Angeles), daily check
+
+Shared weekly usage 66.9% at start (reset Mon Nov 23, 9:10 AM PST); session
+ceiling frozen at ~82% (half of the remaining 33.1 points), aiming far
+below. 67.3% at mid-session recheck.
+
+### Challenge branch check
+Branch head still `207883c` (Nov 16, 8:57 PM PST), so the challenge folder
+is unchanged. No new or changed challenge files.
+
+### Round 20 portfolio — results (`work/r20/out*.jsonl`)
+Batch wrote `{"DONE":1}` in both files; `err*.log` hold only the two known
+launch failures (lingeling, cryptosat).
+| job (planted truth admission) | result |
+|---|---|
+| XCCC t=7 seed 4, **kissat404** | `sat_truth_admitted`, 207.5 s wall |
+| XCCC t=7 seed 4, glucose4 / maplechrono / minisat22 | `timeout` (7000 s internal timer) |
+| XCCC t=7 seed 3, glucose4 / maplechrono | `timeout` |
+| XCC t=7 seed 1 (control), glucose4 | SAT, 16842.8 s wall (CaDiCaL: seconds) |
+**Timing caveat.** The reported `secs` (~26609 s) exceed the 7200 s SIGKILL
+cap, and all r20 files carry the same Nov 19 ~11:03 PM mtime; the box
+appears to have been paused/restored (it was up only since 09:34 AM today).
+`secs` is wall time from `time.time()`, while the interrupt timer is
+monotonic, so the "timeout" rows most likely mean ~7000 s of solver time,
+not 26609 s. All r20 times are wall-clock and should be read as upper
+bounds on compute. r21 scripts log wall, monotonic and CPU separately.
+
+### Round 21 — kissat follow-up (`work/r21/`, `kport.py`, `kport2.py`)
+Same CNF as r18/r20 (`wln_sat.build`, n=1, rot=0, arity 3), kissat404 via
+pysat, `timeout -s KILL 3600`, exit codes recorded.
+- Control XCC t=7 seed 1 truth: SAT in 9.1 s (`control.jsonl`).
+- XCCC t=7 seed 3 truth: **SAT in 45.4 s CPU** (CaDiCaL ≥4 h, glucose4 /
+  maplechrono ~7000 s without answer).
+- XCCC t=7 seed 3 **full planted recovery** (`pos`): first model = planted
+  message after 108.6 s; uniqueness re-check with a fresh solver → **unique**,
+  1252 s CPU total. This is the first planted XCCC recovery by any of my
+  solvers, at the tier "recovered message equals the planted one and the
+  CNF has no second hex solution".
+- First `pos` launch crashed (exit 134): kissat is non-incremental, so
+  `add_clause` after `solve` aborts. Kept in `out.jsonl`/`err.log`;
+  `kport2.py` rebuilds a fresh solver for the uniqueness step.
+- XCCC t=5 seed 1 truth and XCCC t=7 seed 1 random-wire planted negative:
+  still running at write-up (cap 3600 s); results next session.
+
+### Real XCCC files with kissat (`work/r21/real_k.py`, `run_real.sh`)
+All 41 XCCC parameter rows from `r15/xccc_args.txt` (13 × t=7, 14 × t=5,
+14 × t=3), t=7 first, 3 parallel, nice 10, `timeout -s KILL 1800`. On SAT
+the script forward re-encodes with the public `transport_cases.run` and
+compares every lane (same check as `r15/forward_check.py`), saving
+candidates to `r21/cand/`. Checked at 2 min: the three intended t=7 jobs
+running. At write-up: 3 rows done, all `none_UNCONFIRMED` (05ae019f…,
+04be9cd9…, and 2f7a2876… — the file already uniquely recovered under XCC,
+so a none here is the expected answer). Rest pending (several hours).
+
+### Proven vs guessed
+- Proven (planted): with kissat, the XCCC encoding recovers a planted t=7
+  message uniquely, and admits the truth at t=7 on seeds 3 and 4. The
+  bottleneck in r18–r20 was the solver, not the encoding.
+- Not yet shown: XCCC planted negatives (random and near-miss), and
+  anything at t=3/5. So the real-file `none` rows are **not eliminations**
+  yet; they are labelled `none_UNCONFIRMED` in the data itself.
+- No new real recovery.
+
+### Lessons
+Try a small solver portfolio before redesigning an encoding: one solver
+swap turned "hours, no answer" into ~1–2 minutes. Check incremental
+support per solver before reusing an incremental script.
+

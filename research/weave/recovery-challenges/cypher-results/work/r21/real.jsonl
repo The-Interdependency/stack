@@ -1,0 +1,3 @@
+{"file": "05ae019faa3e99bf.bin", "sched": "XCCC", "n": 1, "t": 7, "rot": 0, "ar": 3, "solver": "kissat404", "mono": 382.6, "status": "none_UNCONFIRMED"}
+{"file": "04be9cd9a7bbecac.bin", "sched": "XCCC", "n": 1, "t": 7, "rot": 0, "ar": 3, "solver": "kissat404", "mono": 420.7, "status": "none_UNCONFIRMED"}
+{"file": "2f7a28768aab060c.bin", "sched": "XCCC", "n": 1, "t": 7, "rot": 0, "ar": 3, "solver": "kissat404", "mono": 49.1, "status": "none_UNCONFIRMED"}
