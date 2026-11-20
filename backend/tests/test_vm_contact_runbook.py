@@ -114,7 +114,39 @@ class VmContactRunbookTests(unittest.TestCase):
     def test_check_d_prunes_unsearchable_dirs_and_keeps_read_failures(self):
         line = self._check_d_writable()
         self.assertTrue(line.endswith("|| w=READ-FAILED"))
-        self.assertIn("-type d ! -executable -prune -o -writable -print", line)
+        self.assertIn("find /opt/vm-mcp -mindepth 1 -type d ! -executable -prune -o -writable -print", line)
+
+    def _check_d_root(self):
+        lines = [text for _, block in self.blocks for text in block.splitlines()
+                 if text.startswith("r=$(sudo -n -u vmmcp sh -c ")]
+        self.assertEqual(len(lines), 1)
+        self.assertTrue(lines[0].endswith("|| r=READ-FAILED"))
+        return lines[0]
+
+    @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
+    def test_check_d_unsearchable_or_writable_root_never_passes(self):
+        root_line = self._check_d_root().replace("sudo -n -u vmmcp ", "").replace("/opt/vm-mcp", '"$1"')
+        find_line = self._check_d_writable().replace("sudo -n -u vmmcp ", "").replace("/opt/vm-mcp", '"$1"')
+        script = root_line + "\n" + find_line + '\nprintf "%s|%s" "$r" "$w"\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp, "opt")
+            root.mkdir()
+            (root / "server.py").write_text("x")
+            (root / "server.py").chmod(0o444)
+            run = lambda: subprocess.run(["bash", "-c", script, "_", str(root)],
+                                         text=True, capture_output=True, check=False).stdout
+            try:
+                for mode, expected in ((0o000, "not-searchable|READ-FAILED"),
+                                       # Listable but unsearchable: find can scan silently,
+                                       # so only the separate root check catches it.
+                                       (0o444, "not-searchable|"),
+                                       (0o755, "writable|"),
+                                       (0o555, "ok|")):
+                    with self.subTest(mode=oct(mode)):
+                        root.chmod(mode)
+                        self.assertEqual(expected, run())
+            finally:
+                root.chmod(0o755)
 
     @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
     def test_check_d_find_behaviour(self):
