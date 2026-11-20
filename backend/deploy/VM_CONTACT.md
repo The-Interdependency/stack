@@ -550,12 +550,12 @@ PY
 #### #127 non-destructive checks on an existing install
 
 `vm-mcp-127-check.sh` lives in skill-lib at `vm-mcp/tools/vm-mcp-127-check.sh`,
-pinned to skill-lib commit `26fe705d6d04758ef0fd2f73ce3e709728a10daa` (git blob
-`c1ecddcdc0ee2a2f88b3e8f6219b308a2152ec5b`, sha256
+pinned to skill-lib commit `fd9685338e55acfb3c38e09ca7b83b1ceb2fe758` (the merge of
+skill-lib #146; git blob `c1ecddcdc0ee2a2f88b3e8f6219b308a2152ec5b`, sha256
 `0b7126d3e5a2b1a222bfe779a2468b6296e11d6b0022016358bbc6125f75f224`). It expects
-vm-mcp at `e74ce1e`. Take it from that commit, not from a working copy:
-`git clone -q https://github.com/The-Interdependency/skill-lib.git sl-127 && git -C sl-127 show 26fe705d6d04758ef0fd2f73ce3e709728a10daa:vm-mcp/tools/vm-mcp-127-check.sh > vm-mcp-127-check.sh`,
-then compare its `sha256sum` with the value above.
+vm-mcp at `e74ce1e`. Take it from that commit, not from a working copy; the chained
+`sha256sum -c` fails if `git show` failed and left an empty file:
+`git clone -q https://github.com/The-Interdependency/skill-lib.git sl-127 && git -C sl-127 show fd9685338e55acfb3c38e09ca7b83b1ceb2fe758:vm-mcp/tools/vm-mcp-127-check.sh > vm-mcp-127-check.sh && echo "0b7126d3e5a2b1a222bfe779a2468b6296e11d6b0022016358bbc6125f75f224  vm-mcp-127-check.sh" | sha256sum -c -`
 `vm-mcp-127-check.sh --skip-install` checks the installed tree without reinstalling,
 but in that mode it has no source checkout, so its fixed-install-root and
 workspace-overlap checks would fail falsely; and `--repo` alone turns `--skip-install`

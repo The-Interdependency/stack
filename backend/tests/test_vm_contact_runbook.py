@@ -116,6 +116,22 @@ class VmContactRunbookTests(unittest.TestCase):
         self.assertTrue(line.endswith("|| w=READ-FAILED"))
         self.assertIn("find /opt/vm-mcp -mindepth 1 -type d ! -executable -prune -o -writable -print", line)
 
+    def test_127_check_script_is_pinned_and_verified_on_the_same_line(self):
+        text = RUNBOOK.read_text(encoding="utf-8")
+        commit = "fd9685338e55acfb3c38e09ca7b83b1ceb2fe758"
+        digest = "0b7126d3e5a2b1a222bfe779a2468b6296e11d6b0022016358bbc6125f75f224"
+        self.assertNotIn("26fe705", text)  # Pre-merge PR head; the pin is skill-lib main's merge.
+        lines = [line for line in text.splitlines() if "vm-mcp/tools/vm-mcp-127-check.sh > " in line]
+        self.assertEqual(len(lines), 1)
+        self.assertIn(f"show {commit}:vm-mcp/tools/vm-mcp-127-check.sh > vm-mcp-127-check.sh && "
+                      f'echo "{digest}  vm-mcp-127-check.sh" | sha256sum -c -', lines[0])
+        with tempfile.TemporaryDirectory() as tmp:  # A failed git show leaves an empty file: must fail.
+            empty = Path(tmp, "vm-mcp-127-check.sh")
+            empty.write_text("")
+            check = subprocess.run(["bash", "-c", f'echo "{digest}  vm-mcp-127-check.sh" | sha256sum -c -'],
+                                   cwd=tmp, capture_output=True, text=True, check=False)
+            self.assertNotEqual(check.returncode, 0)
+
     def _check_d_root(self):
         lines = [text for _, block in self.blocks for text in block.splitlines()
                  if text.startswith("r=$(sudo -n -u vmmcp sh -c ")]
