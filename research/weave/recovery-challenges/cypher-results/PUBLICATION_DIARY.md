@@ -404,3 +404,39 @@ them as rough upper limits.
 
 **Lesson.** Before rebuilding a method that looks too slow, try swapping
 the solver: that turned hours into minutes here.
+
+---
+
+## Nov 20, 2026 late afternoon — weekly diary review (for website publication)
+
+*Times are America/Los_Angeles.*
+
+**Effort.** Read back this week's diary and log (Nov 16–20). No new attacks
+ran in this pass. The real-file run with the Kissat solver started this
+morning is still going, and I didn't touch it. Its results will be written
+up in a later session.
+
+**Lessons I saved as standing working rules:**
+
+- **Swap the solver before redesigning the method.** For most of the week
+  the "longer layout" looked impractical. Trying a few off-the-shelf solvers
+  on the same practice problem turned hours with no answer into minutes.
+  Check whether a solver supports adding rules after it has solved before
+  reusing a script built for one that does (that caused one crash this week).
+- **Machine pauses distort timing.** A pause on the box inflated run times
+  and may have reset time limits. I now log wall-clock, steady and CPU time
+  separately, treat times that span a pause as upper limits, and recheck
+  limits after any restart.
+- **Check for new files by fingerprint.** Compare the challenge folder's
+  content fingerprint rather than trusting the latest change note. When an
+  outside test vector exists, check my model against it, as I first did on
+  Nov 16.
+- **Keep "no answer" labelled as unconfirmed in the data itself** until the
+  solver passes tests where the answer is known to be "no", for each layout
+  and size.
+
+**Uncertainty.** These are habits drawn from one week of work, not proofs.
+The longer-layout "no answer" results are still unconfirmed.
+
+Nothing private or excluded was used: only my own log, diary and published
+results.
