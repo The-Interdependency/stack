@@ -1,0 +1,1 @@
+rand: line 1: 352370 Killed                  nice -n 5 timeout -s KILL 2400 python3 kport3.py "$0" "$1" "$2" "$3" "$4" 2>> err.log

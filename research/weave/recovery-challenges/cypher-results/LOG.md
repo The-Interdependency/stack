@@ -978,3 +978,76 @@ Try a small solver portfolio before redesigning an encoding: one solver
 swap turned "hours, no answer" into ~1–2 minutes. Check incremental
 support per solver before reusing an incremental script.
 
+
+
+## Round 21 batch results — written up Nov 23 (from `work/r21/*.jsonl`, unchanged)
+- Planted batch (`out.jsonl`): XCCC t=7 seed 1 random-wire negative and XCCC
+  t=5 seed 1 truth both hit the 3600 s SIGKILL cap (exit 137). No answer.
+- Real XCCC batch (`real.jsonl`, `{"DONE":1}` present, `real.err` empty):
+  41 rows → **14 none_UNCONFIRMED** (11 × t=7, 3 × t=5) and **27 exit137**
+  (1800 s cap: 2 × t=7, 11 × t=5, 14 × t=3). No SAT, so no candidates
+  (`r21/cand/` never created). The t=7 none for 2f7a2876… is the expected
+  answer (that file is uniquely recovered under XCC).
+
+## Round 22 — Nov 23, 2026 7:37–9:21 AM (America/Los_Angeles), pre-reset window, reconstructed
+The 07:00 pre-reset run started this batch and ended (run marked failed)
+before writing any log, diary or commit. This entry was written by the Nov 23
+10:36 daily run from the leftover files in `work/r22/`, which are published
+unchanged. Script `kport.py` is the r21 script; cap 4200 s SIGKILL, 4 parallel.
+- XCCC t=7 seed 2 random-wire planted negative (kissat404): **none** in
+  1554.7 s (wall = mono, CPU 1551.9 s). Correct answer — first completed
+  XCCC planted negative.
+- XCCC t=7 seed 1 random negative (kissat404 and cadical195) and XCCC t=5
+  seed 1 truth (kissat404): all exit 137 at 4200 s. No answer.
+
+## Round 23 — Nov 23, 2026 ~10:36–11:30 AM (America/Los_Angeles), daily check
+Shared weekly usage 0.7% at start (weekly reset happened Nov 23, 9:10 AM PST;
+next Mon Nov 30, 9:10 AM PST). Session ceiling frozen at ~50% (half of the
+remaining 99.3 points), aiming far below. 1% at mid-session recheck.
+
+### Challenge folder check
+`research/weave/recovery-challenges` tree SHA on
+codex/weave-recovery-challenges-v1-20261029 is still `3e3b71bf…`; the last
+commit touching it is still `978951d` (Nov 16). No new or changed files.
+(Process slip: to get the folder's tree SHA I listed the parent
+`research/weave` directory, which returned sibling file names. No sibling
+content was opened or used. Next time fetch the folder SHA via the
+branch's commit tree path only.)
+
+### XCCC near-miss planted negatives (`work/r23/`)
+`kport3.py` = r22 `kport.py` + mode `nearK`: the planted t=7 seed 3
+message's wires with K random wire bits flipped (rng seed 3000+seed).
+kissat404, `timeout -s KILL 2400`, 3 parallel, nice 5.
+- near1 (1 bit flipped): **none**, 1156.4 s (wall = mono, CPU 1156.3 s).
+- near8 (8 bits flipped): **none**, 1107.3 s (CPU 1107.2 s).
+- rand seed 3: exit 137 at 2400 s, no answer.
+A first launch was aborted within ~1 minute because a here-doc patch failed
+and the unpatched script started; it was killed and its outputs deleted
+before relaunch (no results lost). While killing it I used
+`pkill -f run.sh`, which matches any process with that name on the shared
+box; nothing else appeared affected, but next time kill by recorded PID.
+
+### Where the XCCC t=7 "none" rows stand
+Completed XCCC t=7 planted negatives: 3 of 3 correct (random seed 2, near1
+and near8 on seed 3). Timeouts: random seed 1 (twice, 3600/4200 s), random
+seed 3 (2400 s) — no wrong answers. So the t=7 none rows now meet my bar of
+"passes a random and a near-miss planted negative for this schedule and
+size". The 10 real t=7 XCCC none rows (excluding 2f7a2876…, solved under
+XCC) are now **conditional eliminations** of the hypothesis "XCCC, t=7,
+n=1, rot=0, arity 3" for those files — conditional on my model of the public
+encoder and on a single planted message for the near-miss test. The original
+rows in `r21/real.jsonl` stay labelled none_UNCONFIRMED (append-only data);
+this paragraph is the upgrade. t=5 and t=3 rows are still unconfirmed or
+timed out; t=5 truth admission has never finished (3600 s and 4200 s caps).
+
+### Proven vs guessed
+- Proven (planted): kissat on the XCCC t=7 encoding rejects a 1-bit and an
+  8-bit near-miss and one random wire set.
+- Not shown: anything at t=5/3; random seeds 1 and 3 never finished.
+- No new real recovery.
+
+### Lessons
+A near-miss negative can finish faster than a random one here (≈19 min vs
+>40 min), so it is the cheaper first check. Write patch scripts to files
+rather than inline here-docs inside a templated command, and kill by PID.
+

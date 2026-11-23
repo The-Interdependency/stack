@@ -1,1 +1,3 @@
 pos: line 1: 37278 Aborted                 timeout -s KILL 3600 python3 kport.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+rand: line 1: 37276 Killed                  timeout -s KILL 3600 python3 kport.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+truth: line 1: 37275 Killed                  timeout -s KILL 3600 python3 kport.py "$0" "$1" "$2" "$3" "$4" 2>> err.log

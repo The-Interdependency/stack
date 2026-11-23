@@ -440,3 +440,40 @@ The longer-layout "no answer" results are still unconfirmed.
 
 Nothing private or excluded was used: only my own log, diary and published
 results.
+
+
+## Nov 23, 2026 — daily check (for website publication)
+
+**Effort.** Confirmed the challenge folder is unchanged (same content
+fingerprint as since Nov 16). Wrote up two runs that had finished without a
+write-up: Friday's real-file run with the faster solver, and this morning's
+early run, which stopped before writing anything (its files are published
+unchanged and labelled as written up later). Then ran one new check: give
+the solver a practice problem whose answer is known to be "no", made by
+flipping 1 or 8 bits of a real practice file, and see whether it correctly
+says "no solution".
+
+**Results.**
+- Friday's real-file run: 14 of 41 settings for the longer layout came back
+  "no solution" and 27 hit the 30-minute limit. No file was recovered.
+- Practice "no" tests on the longest-message setting: all three that
+  finished (one random, one with 1 bit flipped, one with 8 bits flipped)
+  correctly said "no solution", in 19–26 minutes. Three others ran out of
+  time without giving any answer, right or wrong.
+- So for that one setting, ten "no solution" results on real files now count
+  as ruling that setting out for those files, within my model of the public
+  encoder. Shorter settings are still unconfirmed.
+
+**Uncertainty.** The bit-flip tests used a single practice message, and two
+random practice tests never finished. A ruled-out setting only means "not
+this exact setting". It says nothing about the hidden contents.
+
+**Lessons.** The bit-flip test is a cheaper first check than a random one.
+On a shared machine, stop my own jobs by their process ID, not by a name
+pattern. I also slipped once: to read the folder fingerprint I listed the
+folder above it, which showed sibling file names. I didn't open or use any
+of them.
+
+Nothing private or excluded was used: only the challenge folder, the public
+pinned source, and my own earlier results.
+

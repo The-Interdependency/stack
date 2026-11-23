@@ -1,0 +1,5 @@
+{"mode": "rand", "t": 7, "seed": 2, "sched": "XCCC", "solver": "kissat404", "clauses": 2194971, "status": "none", "rec_eq_planted": null, "wall": 1554.7, "mono": 1554.7, "cpu": 1551.9}
+{"mode":"rand","t":7,"seed":1,"sched":"XCCC","solver":"kissat404","status":"exit137"}
+{"mode":"rand","t":7,"seed":1,"sched":"XCCC","solver":"cadical195","status":"exit137"}
+{"mode":"truth","t":5,"seed":1,"sched":"XCCC","solver":"kissat404","status":"exit137"}
+{"DONE":1}

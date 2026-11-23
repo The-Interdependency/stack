@@ -1,0 +1,4 @@
+rand 7 1 XCCC kissat404
+rand 7 1 XCCC cadical195
+rand 7 2 XCCC kissat404
+truth 5 1 XCCC kissat404
