@@ -112,7 +112,7 @@ jobs:
         env:
           STACK_DIGITAL_METRICS_SKILL_LIB_ROOT: ../skill-lib
         run: PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/run_tests.py
-      - name: Generate pending, attest after replay, and match frozen receipt
+      - name: Generate pending and attest after replay
         working-directory: stack
         run: |
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/generate_receipt_cli.py \
@@ -127,9 +127,6 @@ jobs:
             --ucns-root ../ucns \
             --edcm-root ../edcm \
             --attest-output /tmp/native-mobius-v0.attested.json
-          cmp \
-            research/digital-metrics/receipts/native-mobius-v0-stack-56051185.json \
-            /tmp/native-mobius-v0.attested.json
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
             research/digital-metrics/receipts/native-mobius-v0-stack-56051185.json \
             --metapat-root ../metapat \

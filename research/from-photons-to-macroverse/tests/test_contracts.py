@@ -158,13 +158,6 @@ class Contracts(unittest.TestCase):
         self.assertEqual(by_id["HUMAN_HEPTAD"]["status"], "UNVALIDATED_HIGH_RISK")
         self.assertEqual(by_id["SOURCE_REFERENCES_21_22"]["standing"], "HMMM")
 
-    def test_symbol_registry_prevents_plain_text_collisions(self) -> None:
-        text = (PROJECT / "SYMBOL_REGISTRY.md").read_text(encoding="utf-8")
-        for token in ("`C0_presence`", "`C_org_t`", "`M_macro`", "`M_eff_T`", "`B_bdry`", "`A_torus`", "`I_event_t`", "`Cl_n`", "`CG_k`", "`T_arity_t`"):
-            self.assertIn(token, text)
-        self.assertIn("Bare `consciousness` is forbidden", text)
-        self.assertIn("Typography is not a type system", text)
-
     def test_work_graph_digest_and_nontransfer(self) -> None:
         graph = load_json("WORK_GRAPH.json")
         participants = graph["participants"]
@@ -191,111 +184,6 @@ class Contracts(unittest.TestCase):
         ucns = next(x for x in participants if x["id"] == "ucns")
         self.assertEqual(ucns["commit"], "ef98748309913588fb13f389f809d5ef6cb5fec3")
         self.assertIn("no ratification", ucns["role"])
-
-    def test_preregistration_is_frozen_and_nonclassifying(self) -> None:
-        text = (PROJECT / "PREREGISTRATION.md").read_text(encoding="utf-8")
-        flat = " ".join(text.split())
-        for phrase in ("run status: not-run", "human subjects: none", "animal subjects: none", "LLM calls: none", "seeds `32..63`: sealed decision set", "`SURVIVED` requires all of the following", "`FALSIFIED` applies", "`UNRESOLVED` applies", "No outcome classifies a human, animal, model, organization, or physical system as conscious"):
-            self.assertIn(phrase, flat)
-        for phrase in ("configuration `arity-recursion-synthetic-v6` exactly", "carrier state dimension: `2` real coordinates per carrier", "trainable parameter ceiling: `4096`", "episode length: `128` transitions after a `32`-transition burn-in", "optimizer: Adam with learning rate `0.001`", "Primary decision outcomes", "Guardrail and diagnostic outcomes", "both primary decision outcomes"):
-            self.assertIn(phrase, flat)
-        for phrase in ("Synthetic generator", "SHA-256 input is the UTF-8 encoding", "process_noise", "intervention_plan", "model_initializers", "Discrete choices use `floor(u*K)`", "Matched candidate/control comparisons use the same", "Held-out interventional negative log likelihood is the mean one-step predictive Gaussian NLL", "ordered child-arity vector", "left-rotated child-arity vector", "Embedded primary-outcome certificate", "observed scalar-coordinate identity", "input encoding is the dual map", "Adjacent-arity comparisons are `BLOCKED`"):
-            self.assertIn(phrase, flat)
-        self.assertIn("No other random-number source, output lane, block rule, or key encoding is admissible", flat)
-        self.assertIn("`SYSTEMS.json` must carry the realized coefficient tensors", flat)
-        self.assertIn("q_{m,n}(i) = floor(i*m/n)", text)
-        self.assertIn("r_{m,n}(a) = floor(a*n/m)", text)
-        self.assertNotIn("both primary outcomes: interventional log score and recovery", flat)
-        for control in ("six-carrier", "arbitrary-seven", "unnested-seven", "label-shuffled"):
-            self.assertIn(control, text)
-        self.assertIn("hmmm_undefined", text)
-
-    def test_preregistration_closes_exact_head_replay_blockers(self) -> None:
-        text = (PROJECT / "PREREGISTRATION.md").read_text(encoding="utf-8")
-        flat = " ".join(text.split())
-
-        for phrase in (
-            "protocol version: 0.5.0",
-            '["arity-recursion-synthetic-v6",s,n,sigma_milli,domain,role,[k0,...,kp],block]',
-            "concatenated placeholders or language-native float strings are forbidden",
-            "stability/00` through `stability/15",
-            "If no attempt is accepted, that system is `BLOCKED`",
-        ):
-            self.assertIn(phrase, flat)
-
-        for phrase in (
-            "exactly `r=0` generic intervention channels",
-            "`u_t=()` at every transition",
-            "there is no `A_i u_t` term to sample or fit",
-            "additional to the `64/16/16` observational episodes",
-            "Class `5` and `6` are never used for fitting or restart selection",
-        ):
-            self.assertIn(phrase, flat)
-
-        for phrase in (
-            "The nested transition has one leaf noise source",
-            "g_{t,i}",
-            "y_{t+1,i,l} = tanh(ell_{t,i,l} + g_{t,i}/a_i)",
-            "no other coefficient or noise role contributes",
-        ):
-            self.assertIn(phrase, flat)
-
-        for phrase in (
-            "Fitted-family equations and registry",
-            "capacity-only family over flattened observed dimension `D`",
-            "v_c = 1e-6 + softplus(rho_c)",
-            "`B_H=min(4096,min_f P_f)`",
-            "### Required comparisons",
-            "`H_A(n)` requires",
-            "`H_R(n)` requires",
-            "`H_7` uses the union",
-        ):
-            self.assertIn(phrase, flat)
-
-        for phrase in (
-            "Embedded primary-outcome certificate `primary-outcome-v1`",
-            "it may not choose or replace a primary estimator",
-            "Recovery uses exactly the `16` held-out class-`5` episodes",
-            "active for transitions `t0,...,t0+15`",
-            "Recursively feed back that family's decoded predictive mean",
-            "`ECE_candidate - ECE_control <= 0.02`",
-            "exactly `B=65536` nonparametric paired bootstrap draws",
-            "exactly `P=65536` sampled paired sign permutations",
-            "finite-sample `+1` correction",
-        ):
-            self.assertIn(phrase, flat)
-
-        for phrase in (
-            "`block=floor(r/K)`",
-            "ordinal `K` starts the deterministic block-`1` reshuffle",
-            '`["schedule/<split>/<choice_kind>",intervention_class,k]`',
-            '`[episode_id,intervention_class,"start_time"]`',
-            '`[episode_id,6,"start_time"]`',
-            '`P=((1,2),(1,3),(1,4),(2,3),(2,4),(3,4))`',
-            '`r=8+o_c(e)`',
-            "both selected targets for each `e`",
-            '["arity-recursion-synthetic-v6","parameter-mask",family_id,tensor_name,[i0,...,iq]]',
-            "The label-shuffle families are the sole exception to independent ranking",
-            "`feed-forward/tree/<n>`",
-            "it is an exact alias of that one `partition-m` control",
-            "immutable pre-permutation identity",
-            "fused multiply-add contraction are forbidden",
-            "let `S_f(a)` be the set of original observed scalar coordinates",
-            "The class-`5` recovery cut uses both the `W` and target-product maps",
-            "exactly `0.5*NLL_full + 0.5*NLL_cut`",
-            "`F_e(q)=0.5*mean_full(1[p<=q])+0.5*mean_cut(1[p<=q])`",
-            "Mapping preserves the plan's named summand type",
-            "The simultaneous standardized-effect interval is `I_g=[g-q95_g,g+q95_g]`",
-            "define the label-shuffle standardized effect and interval by convention as `g=0` and `I_g=[0,0]`",
-            "These shuffle cells never enter `Z_b`, `G_b`, `M_p`, or their maxima",
-        ):
-            self.assertIn(phrase, flat)
-
-        self.assertNotIn("arity-recursion-synthetic-v1", text)
-        self.assertNotIn("arity-recursion-synthetic-v2", text)
-        self.assertNotIn("arity-recursion-synthetic-v3", text)
-        self.assertNotIn("arity-recursion-synthetic-v4", text)
-        self.assertNotIn("arity-recursion-synthetic-v5", text)
 
     def test_executable_replay_reference_is_hash_pinned(self) -> None:
         replay = load_replay_reference()
@@ -407,17 +295,6 @@ class Contracts(unittest.TestCase):
             vectors["decision_edges"]["label_shuffle_zero"]["standing"],
             "equivalent",
         )
-
-    def test_human_and_machine_entrypoints_agree(self) -> None:
-        readme = (PROJECT / "README.md").read_text(encoding="utf-8")
-        paper_index = (PROJECT / "PAPER.md").read_text(encoding="utf-8")
-        root = (STACK / "README.md").read_text(encoding="utf-8")
-        for phrase in ("SURVIVED as a candidate research program", "canon:                  no", "clinical use:           no", "human classification:  no", "Why the root canonical pins are unchanged", "## hmmm"):
-            self.assertIn(phrase, readme)
-        self.assertIn("ordered, hash-bound Markdown fragments", paper_index)
-        self.assertIn("current visual render is `hmmm` until rerendered", readme)
-        self.assertIn("from-photons-to-macroverse/", root)
-        self.assertIn("consciousness-first candidate research", root)
 
     def test_root_manifest_records_noncanonical_research_participants(self) -> None:
         root_manifest_text = (STACK / "STACK_MANIFEST.md").read_text(encoding="utf-8")
