@@ -1,5 +1,5 @@
-# ratios: loc_comments=62:5 imports_exports=9:1 calls_definitions=37:1
-"""Verify the released UCHC wheel and Stack's separate 16 b rad profile.
+# ratios: loc_comments=70:5 imports_exports=9:1 calls_definitions=42:1
+"""Verify UCHC's paired epicycle results and Stack's 16 b rad profile.
 
 Usage: python -I integration/uchc/verify_halving.py WHEEL STACK_UCNS_ROOT
 after installing the wheel and its pinned halving producer in this interpreter.
@@ -46,11 +46,18 @@ def verify(wheel, stack_native):
     if [ray.radius for ray in word.rays] != expected_radii:
         raise ValueError('ORDINAL_HALVING_REQUIRED')
     phrase = h.construct_sequence((word, word), placement_radius=3)
-    copy = h.replay_closed(h.closed_record(phrase))
+    packet = h.closed_record(phrase)
+    copy = h.replay_closed(packet)
     first, second = (p.interior for p in copy.participants)
     if ([r.radius for r in copy.rays] != [Fraction(3, 4), Fraction(3, 2)]
             or first is not second or first.rays != word.rays or ''.join(copy.recover()) != 'bullbull'):
         raise ValueError('RECURSIVE_HALVING_REQUIRED')
+    endpoint = h.resultant(copy)
+    additive = h.additive_resultant(copy)
+    if (additive != h.additive_resultant(word).scaled(6) or endpoint == additive
+            or packet['record_version'] != 2 or packet['vectors'] != {
+                'placement_endpoint': endpoint.record(), 'additive_resultant': additive.record()}):
+        raise ValueError('PAIRED_EPICYCLE_RESULTS_REQUIRED')
     # Exercise the source-owned Stack research adapter alongside the installed package.
     src = workspace / 'research/english-gonol/english_gonol/unicode_construction.py'
     spec = spec_from_file_location('stack_bit_radius', src)
@@ -63,6 +70,7 @@ def verify(wheel, stack_native):
             'source': url, 'glyph_radii': [str(r.radius) for r in word.rays],
             'closed_word_radii': [str(r.radius) for r in copy.rays],
             'word_receipt': word.receipt, 'sentence_receipt': copy.receipt,
+            'epicycle_vectors': packet['vectors'],
             'stack_bit_radius': glyph.bit_radius, 'stack_A_hex': glyph.utf32_be.hex()}
 
 
@@ -72,4 +80,4 @@ if __name__ == '__main__':
     parser.add_argument('stack_native', type=Path)
     args = parser.parse_args()
     print(json.dumps(verify(args.wheel, args.stack_native), sort_keys=True))
-# ratios: loc_comments=62:5 imports_exports=9:1 calls_definitions=37:1
+# ratios: loc_comments=70:5 imports_exports=9:1 calls_definitions=42:1

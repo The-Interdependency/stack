@@ -4,7 +4,8 @@
 
 Use the [released UCHC consumer](../../integration/uchc/README.md#ordinal-radius-halving)
 for ordinal affixiation of glyphs into words and closed words into sentences.
-Its wheel supplies the current disc-stack operation. Stack keeps the separate
+Its wheel supplies the disc-stack operation and full additive resultant on
+each closed epicycle. Stack keeps the
 encoding experiment and its complete corpus replay below.
 
 ## Stack Unicode research — 16 b rad, big-endian

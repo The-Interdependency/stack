@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "bbe62ae7c5b036f2170344fa6df3be8ac41342aa220e37a970b91455a344d582",
+  "work_graph_sha256": "0a97a240d63476917653bb7a5fd81e9f4d1e7d1f61e57101691c7703212bfa35",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -807,9 +807,9 @@
       "workspace": "integration/uchc/",
       "participant_id": "ordinal-halving-language",
       "repository": "The-Interdependency/uchc",
-      "commit": "a173e9d74075977ec4678e91c23b1e351716f98c",
-      "authority": "ordinal disc affixiation in UCHC",
-      "relation": "package source for the scoped halving release",
+      "commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+      "authority": "ordinal disc affixiation and additive epicycle results in UCHC",
+      "relation": "source of the released ordinal and additive epicycle wheel",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -817,9 +817,9 @@
       "workspace": "integration/uchc/",
       "participant_id": "ordinal-halving-geometry",
       "repository": "The-Interdependency/ucns",
-      "commit": "b9685af7f32dcd0f60adff6ae0ed3b25b6fed877",
+      "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
       "authority": "native scalar-bearing and recursive disc-stack geometry",
-      "relation": "exact geometry producer used by the installed halving wheel",
+      "relation": "native geometry producer for paired placement and additive results",
       "canonical_release": false,
       "authority_transfer": false
     },
@@ -827,9 +827,9 @@
       "workspace": "integration/uchc/",
       "participant_id": "ordinal-halving-wheel",
       "repository": "The-Interdependency/uchc",
-      "artifact_sha256": "3c76335ad07cdd2450660fee48ccc486481a3cd97bb0962704a597bcafc5274b",
+      "artifact_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
       "authority": "released UCHC ordinal-halving/1 implementation",
-      "relation": "Stack installs the hash-locked release and verifies its native geometry",
+      "relation": "Stack installs the hash-locked release and replays both epicycle results",
       "canonical_release": true,
       "authority_transfer": false
     }
