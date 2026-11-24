@@ -1,4 +1,4 @@
-# ratios: loc_comments=43:31 imports_exports=5:5 calls_definitions=18:5
+# ratios: loc_comments=44:31 imports_exports=5:5 calls_definitions=19:5
 # === CHECKS ===
 # id: uchc_unicode_projection_check
 #   proves: uchc_unicode_graph_is_projected
@@ -62,8 +62,9 @@ def test_checker_rejects_omitted_participant(source):
     manifest = deepcopy(MANIFEST)
     manifest["research_participants"] = [
         entry for entry in manifest["research_participants"]
-        if not (entry["repository"] == source["repository"]
-                and entry["commit"] == source["commit"])
+        if not (entry["workspace"] == "research/english-gonol/"
+                and entry["repository"] == source["repository"]
+                and entry.get("commit") == source["commit"])
     ]
     assert any(item.startswith("unicode_graph.participant:") for item in findings(manifest))
 
@@ -85,4 +86,4 @@ def test_checker_rejects_divergent_participant(field, value):
 def test_checker_rejects_missing_human_row(source):
     human = "\n".join(line for line in HUMAN.splitlines() if source["commit"] not in line)
     assert any(item.startswith("unicode_graph.human_drift:") for item in findings(human=human))
-# ratios: loc_comments=43:31 imports_exports=5:5 calls_definitions=18:5
+# ratios: loc_comments=44:31 imports_exports=5:5 calls_definitions=19:5
