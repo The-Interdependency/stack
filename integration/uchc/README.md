@@ -96,7 +96,7 @@ ordinal evidence stays at its recorded source revisions.
 
 ```sh
 python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d dist
-python -m pip install --no-deps 'ucns @ git+https://github.com/The-Interdependency/ucns.git@1be5d4608d7525ca006f8998dbf4db5c08fd8c1b' dist/uchc-0.2.0a2-py3-none-any.whl
+python -m pip install --no-deps 'ucns @ git+https://github.com/The-Interdependency/ucns.git@b9685af7f32dcd0f60adff6ae0ed3b25b6fed877' dist/uchc-0.2.0a2-py3-none-any.whl
 python -I integration/uchc/verify_halving.py dist/uchc-0.2.0a2-py3-none-any.whl /path/to/encoding-ucns
 ```
 
