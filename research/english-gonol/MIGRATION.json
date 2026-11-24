@@ -149,11 +149,12 @@
   "scoped_transitions": {
     "ordinal_halving": {
       "profile": "uchc.ordinal-halving/1",
-      "scope": "geometric ordinal affixiation at primitive and closed-participant scales",
+      "scope": "ordinal placement and the full recursive additive vector at glyph and closed-participant scales",
       "implementation_repository": "The-Interdependency/uchc",
       "consumer": "integration/uchc",
       "lock": "integration/uchc/halving-requirements.txt",
       "acceptance": "integration/uchc/verify_halving.py",
+      "release_receipt": "integration/uchc/epicycle-release.json",
       "geometry_repository": "The-Interdependency/ucns",
       "excluded": [
         "16 b rad Stack representation",

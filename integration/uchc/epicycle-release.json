@@ -1,0 +1,46 @@
+{
+  "schema": "the-interdependency.project-graduation-transition",
+  "version": "1.0.0",
+  "candidate": "uchc.ordinal-halving/1",
+  "scope": "Ordinal placement and the full recursive additive resultant of the same closed epicycle.",
+  "before": {
+    "stack_commit": "8ed854544d8f0983d7385adc5ad1cb3f14376145",
+    "work_graph_sha256": "bbe62ae7c5b036f2170344fa6df3be8ac41342aa220e37a970b91455a344d582",
+    "implementation_public_contract_authority": "The-Interdependency/ucns@300877066436a03d046b8951772c1e2aed2c5166 supplies vector addition; The-Interdependency/stack@87025797abad4eba7bbcf7faf98275dab2ca8351 researches native language sums; UCHC supplies the released ordinal disc stack.",
+    "prior_release": "https://github.com/The-Interdependency/uchc/releases/tag/ordinal-halving-v1"
+  },
+  "after": {
+    "work_graph_sha256": "0a97a240d63476917653bb7a5fd81e9f4d1e7d1f61e57101691c7703212bfa35",
+    "implementation_public_contract_authority": "The-Interdependency/uchc@e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+    "geometry": "The-Interdependency/ucns@1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+    "consumer_lock": "integration/uchc/halving-requirements.txt"
+  },
+  "transition": {
+    "implementation_public_contract_authority_transfer": true,
+    "semantic_authority_transfer": false,
+    "theorem_status_transfer": false,
+    "proof_status_transfer": false,
+    "certification_status_transfer": false,
+    "measurement_status_transfer": false,
+    "empirical_status_transfer": false
+  },
+  "authorization": {
+    "authority_transfer": "authorized",
+    "operator": "Erin Spencer",
+    "date": "2026-11-24"
+  },
+  "artifact": {
+    "version": "0.2.0a3",
+    "release_url": "https://github.com/The-Interdependency/uchc/releases/tag/uchc-v0.2.0a3",
+    "immutable_identity": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88"
+  },
+  "evidence": {
+    "hosted_publication": "https://github.com/The-Interdependency/uchc/actions/runs/45460335068",
+    "pre_publication_stack_replay_sha256": "5cc4944e7ccf3828e19476d764b65d6c62835a052360779210820d0a4a238ab2",
+    "published_stack_replay_sha256": "5cc4944e7ccf3828e19476d764b65d6c62835a052360779210820d0a4a238ab2",
+    "replay": "Follow integration/uchc/README.md to install the public wheel and verify ordinal radii, both vector expressions, interior identity, and the Stack 16 b rad fixture."
+  },
+  "hmmm": [
+    "Whole-domain graduation has its own corpus, installed-consumer and authority evidence in research/english-gonol/MIGRATION.json."
+  ]
+}

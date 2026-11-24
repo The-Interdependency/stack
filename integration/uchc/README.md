@@ -88,18 +88,21 @@ work-graph non-transfer fields.
 
 ## Ordinal radius-halving
 
-UCHC supplies the ordinal disc construction. The released wheel is locked by
-URL and SHA-256 in `halving-requirements.txt`. With its pinned UCNS geometry
+UCHC supplies the ordinal disc construction and its full additive resultant.
+The [release receipt](epicycle-release.json) identifies the verified wheel.
+Its URL and SHA-256 are locked in `halving-requirements.txt`. With its pinned UCNS geometry
 installed, run `uchc-halving bull` or `uchc-halving --sequence bull bull`.
 Stack keeps its 16 b rad experiment in `research/english-gonol`; its earlier
 ordinal evidence stays at its recorded source revisions.
 
 ```sh
 python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d dist
-python -m pip install --no-deps 'ucns @ git+https://github.com/The-Interdependency/ucns.git@b9685af7f32dcd0f60adff6ae0ed3b25b6fed877' dist/uchc-0.2.0a2-py3-none-any.whl
-python -I integration/uchc/verify_halving.py dist/uchc-0.2.0a2-py3-none-any.whl /path/to/encoding-ucns
+python -m pip install --no-deps 'ucns @ git+https://github.com/The-Interdependency/ucns.git@1edfa593ae9d8c9ad394b5462638bcc717f99fbd' dist/uchc-0.2.0a3-py3-none-any.whl
+python -I integration/uchc/verify_halving.py dist/uchc-0.2.0a3-py3-none-any.whl /path/to/encoding-ucns
 ```
 
 The encoding checkout is UCNS `300877066436a03d046b8951772c1e2aed2c5166`.
-The verifier checks the installed wheel, recursive geometric halving and the
-independent Stack four-byte ASCII result in the same process.
+The verifier replays a sentence made of two closed words and checks its
+ordinal radii, placed endpoint, and full additive vector. It also verifies
+Stack's four-byte ASCII result. To roll back, restore the
+[0.2.0a2 consumer revision](https://github.com/The-Interdependency/stack/tree/8ed854544d8f0983d7385adc5ad1cb3f14376145/integration/uchc).
