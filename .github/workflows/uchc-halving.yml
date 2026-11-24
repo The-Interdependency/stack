@@ -1,0 +1,39 @@
+name: Consume released UCHC halving
+on:
+  pull_request:
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+  push:
+    branches: [main]
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+permissions:
+  contents: read
+jobs:
+  released-wheel:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: b9685af7f32dcd0f60adff6ae0ed3b25b6fed877
+          path: _deps/halving-native
+          persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 300877066436a03d046b8951772c1e2aed2c5166
+          path: _deps/encoding-native
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12.14'
+      - name: Verify the installed release and both profiles
+        run: |
+          python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d _dist
+          python -m pip install --no-deps ./_deps/halving-native _dist/*.whl
+          python -I integration/uchc/verify_halving.py _dist/*.whl _deps/encoding-native > halving-replay.json
+          cat halving-replay.json
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: released-halving-replay
+          path: halving-replay.json

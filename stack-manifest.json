@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "172bfcc2d8a8f80d2a0e158e83046ded824f1870ada88e9510ba38f73b4409af",
+  "work_graph_sha256": "bbe62ae7c5b036f2170344fa6df3be8ac41342aa220e37a970b91455a344d582",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -802,6 +802,36 @@
       "relation": "merged fail-closed missing-metric decoder prerequisite; no EDCM measurement is invoked by the v0 structural receipt",
       "repository": "The-Interdependency/edcm",
       "workspace": "research/digital-metrics/"
+    },
+    {
+      "workspace": "integration/uchc/",
+      "participant_id": "ordinal-halving-language",
+      "repository": "The-Interdependency/uchc",
+      "commit": "a173e9d74075977ec4678e91c23b1e351716f98c",
+      "authority": "ordinal disc affixiation in UCHC",
+      "relation": "package source for the scoped halving release",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "integration/uchc/",
+      "participant_id": "ordinal-halving-geometry",
+      "repository": "The-Interdependency/ucns",
+      "commit": "b9685af7f32dcd0f60adff6ae0ed3b25b6fed877",
+      "authority": "native scalar-bearing and recursive disc-stack geometry",
+      "relation": "exact geometry producer used by the installed halving wheel",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "integration/uchc/",
+      "participant_id": "ordinal-halving-wheel",
+      "repository": "The-Interdependency/uchc",
+      "artifact_sha256": "3c76335ad07cdd2450660fee48ccc486481a3cd97bb0962704a597bcafc5274b",
+      "authority": "released UCHC ordinal-halving/1 implementation",
+      "relation": "Stack installs the hash-locked release and verifies its native geometry",
+      "canonical_release": true,
+      "authority_transfer": false
     }
   ]
 }

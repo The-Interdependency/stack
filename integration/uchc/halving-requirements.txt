@@ -1,0 +1,1 @@
+uchc @ https://github.com/The-Interdependency/uchc/releases/download/ordinal-halving-v1/uchc-0.2.0a2-py3-none-any.whl --hash=sha256:3c76335ad07cdd2450660fee48ccc486481a3cd97bb0962704a597bcafc5274b

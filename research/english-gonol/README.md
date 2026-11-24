@@ -1,8 +1,15 @@
 # English Gonol Construction
 
-## Unicode gonols — 16 b rad, big-endian
+## Ordinal radius-halving in UCHC
 
-New primitive and recursive text construction uses
+Use the [released UCHC consumer](../../integration/uchc/README.md#ordinal-radius-halving)
+for ordinal affixiation of glyphs into words and closed words into sentences.
+Its wheel supplies the current disc-stack operation. Stack keeps the separate
+encoding experiment and its complete corpus replay below.
+
+## Stack Unicode research — 16 b rad, big-endian
+
+The Stack fixed-width profile uses
 [`english_gonol.unicode_construction`](docs/unicode-bit-radius.md). Every Unicode
 glyph has **16-bit radius and 32-bit diameter**, represented by four big-endian
 bytes. ASCII has three leading zero bytes. UCNS owns the native representation;
