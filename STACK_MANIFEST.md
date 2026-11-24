@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `0a97a240d63476917653bb7a5fd81e9f4d1e7d1f61e57101691c7703212bfa35`
+Work-graph SHA-256: `56051185865eb386f8e14b1a77f53dc2f189ad9ea121cc1b7d18110c9e241b5f`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -289,14 +289,13 @@ establish a base-independent generating law.
 - Pi radix has no established base-independent segmentation law; fixed-symbol and common-information profiles remain bounded computations.
 - `skill-lib/` remains a special operational snapshot at stack root rather than following the ordinary `libs/` + `research/` pair.
 
-## UCHC input candidate
+## UCHC English readers
 
-`research/zfae/` now consumes `The-Interdependency/uchc@3d82007b88f74ded88ca913d6e85bcd6f6ff024d` through the immutable wheel lock `research/zfae/UCHC_INPUT.json`.
-The prior `118b488` extraction remains the source identity of the earlier research.
-This additional candidate supplies full-corpus native language input; it does not
-choose PTCNA dimensions, propagate neural state or transfer domain authority.
-See `integration/uchc/README.md` for isolated installation, complete-corpus
-verification and rollback. Stable released-artifact consumption remains `hmmm`.
+`research/zfae/` and AHBG consume the `0.2.0a3` release from
+`The-Interdependency/uchc@e8f57c7b663142d98c78e0ed201816327a9fa9cf`.
+`research/zfae/UCHC_INPUT.json` and `ahbg/integration/UCHC_STRUCTURAL.json`
+record the wheel and both corpus identities. See the
+[consumer guide](integration/uchc/README.md) for installation, replay and rollback.
 
 URPCS provenance boundary: the immutable public intended-design transcript identity
 and detailed design attribution remain unresolved; see

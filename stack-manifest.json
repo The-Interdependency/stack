@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "0a97a240d63476917653bb7a5fd81e9f4d1e7d1f61e57101691c7703212bfa35",
+  "work_graph_sha256": "56051185865eb386f8e14b1a77f53dc2f189ad9ea121cc1b7d18110c9e241b5f",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -325,12 +325,12 @@
     },
     {
       "workspace": "research/zfae/",
-      "participant_id": "uchc-input-candidate",
+      "participant_id": "uchc-input-release",
       "repository": "The-Interdependency/uchc",
-      "commit": "3d82007b88f74ded88ca913d6e85bcd6f6ff024d",
-      "authority": "extracted language construction and input public contract; domain graduation incomplete",
-      "relation": "exact installed wheel consumer via research/zfae/UCHC_INPUT.json; no fixed-width semantic projection or neural readiness promotion",
-      "canonical_release": false,
+      "commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+      "authority": "published UCHC English corpus readers and their public contracts",
+      "relation": "ZFAE and AHBG read the exact released wheel and verify each complete corpus through its lock",
+      "canonical_release": true,
       "authority_transfer": false
     },
     {

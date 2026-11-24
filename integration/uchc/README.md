@@ -1,31 +1,20 @@
-# UCHC candidate input consumption
+# Released UCHC in Stack
 
 ## What this establishes
 
-The active Stack ZFAE research can consume a clean-installed, immutable UCHC
-wheel and recover complete native language structure. The public package is
-not shadowed by `research/english-gonol/`; no a0p hash-derived vector is used.
-This is candidate compatibility, not stable publication or domain graduation.
-
-The source commit and physical wheel/database hashes are pinned in
-`research/zfae/UCHC_INPUT.json`. The previous UCHC baseline remains part of the
-historical research records. Root work-graph projections include the new
-candidate separately, preserving the old experiments and authority boundaries.
-
-This consumer remains pinned to the historical `0.1.0a1` input candidate.
-The separate current `0.1.0a2` structural candidate and its source/wheel replay
-are recorded in `research/english-gonol/MIGRATION.json`. Their equivalence
-does not migrate this consumer or establish its `0.1.0a2` gate 8. Keep the
-existing lock and its historical receipts unchanged until a separately verified
-consumer migration.
+Stack installs the hash-locked UCHC `0.2.0a3` release for its English input and
+structural readers. The [ZFAE input lock](../../research/zfae/UCHC_INPUT.json)
+and [AHBG structural lock](../../ahbg/integration/UCHC_STRUCTURAL.json) pin
+the same wheel and each corpus's own database and logical receipt.
 
 ## Usage guidance
 
-Verify the wheel SHA-256 against the lock before installing into a clean venv:
+Download the exact wheel into a clean Python 3.12 environment:
 
 ```bash
 python3 -m venv .uchc-env
-.uchc-env/bin/python -m pip install --no-index --no-deps /artifacts/uchc-0.1.0a1-py3-none-any.whl
+.uchc-env/bin/python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d dist
+.uchc-env/bin/python -m pip install --no-index --no-deps dist/uchc-0.2.0a3-py3-none-any.whl
 .uchc-env/bin/python -I research/zfae/uchc_input.py \
   --database /artifacts/construct.db --source-id request:1 \
   --text 'alpha letter alpha'
@@ -43,8 +32,8 @@ selects a sense or manufactures coordinates.
 
 ## Acceptance
 
-The `uchc-input.yml` workflow fetches exact sources, reproduces the locked
-wheel, tests the consumer in an isolated environment, rebuilds the complete
+The `uchc-input.yml` workflow installs the locked release wheel, tests the
+consumer in an isolated environment, rebuilds the complete
 OEWN corpus, and exhausts the reader across all words, definitions, components
 and evidence rows. It also runs Stack's existing consistency gate with full
 Git history; absence of that history is an environment error, never a reason
@@ -61,29 +50,17 @@ UCHC_INPUT_DATABASE=/artifacts/construct.db \
 
 ## Rollback and hmmm
 
-Remove the new consumer/lock and its graph participant together to roll back;
-retain earlier sealed research evidence. Do not relabel the old comparison's
-hashed features as the current native language primitive.
-
-The source-owned UCNS neural-audit prerequisite, PTCNA propagation/learning and
-readout construction, held-out useful inference, stable UCHC publication,
-public-artifact reconsumption and domain-authority transition remain separate
-uncompleted gates. This input contract does not silently close any of them.
+To roll back, restore the preceding input and structural locks and their
+matching workflows and graph projections together. The source-owned UCNS
+neural-audit prerequisite and PTCNA propagation, learning and readout are
+recorded in the ZFAE research workspace.
 
 ## 0.1.0 graduation candidate
 
-`candidate-0.1.0.json` names the complete extracted package and its exact wheel.
-Use `UCHC_INPUT_LOCK` to select it for pre-publication integration. The active
-ZFAE lock remains historical until the verified candidate is publicly released
-and reconsumed from its immutable artifact URL. The candidate uses the same
-physical v2 corpus identity and logical receipt; build that corpus with the
-Python 3.12.14 / SQLite 3.45.1 runtime recorded in UCHC's provenance.
-
-UCNS #242 and Stack #93 are merged. UCHC owns no additional implementation
-authority yet. After release, verify the downloaded artifact digest, rerun this
-integration, retire the ordinary English/Python forge import paths, and write
-the separate before/after authority-transition receipt. Preserve all existing
-work-graph non-transfer fields.
+`candidate-0.1.0.json` records the historical extracted package and its exact
+wheel. Select it with `UCHC_INPUT_LOCK` when replaying that candidate. The
+released consumer reproduces the pinned v2 corpus using Python 3.12.14 and
+SQLite 3.45.1.
 
 
 ## Ordinal radius-halving

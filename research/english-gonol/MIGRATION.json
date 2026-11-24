@@ -162,5 +162,23 @@
         "Python construction"
       ]
     }
+  },
+  "released_english_readers": {
+    "scope": "Installed English input and structural readers",
+    "implementation_repository": "The-Interdependency/uchc",
+    "source_commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+    "release_url": "https://github.com/The-Interdependency/uchc/releases/tag/uchc-v0.2.0a3",
+    "artifact_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
+    "before_work_graph_sha256": "0a97a240d63476917653bb7a5fd81e9f4d1e7d1f61e57101691c7703212bfa35",
+    "after_work_graph_sha256": "56051185865eb386f8e14b1a77f53dc2f189ad9ea121cc1b7d18110c9e241b5f",
+    "acceptance": {
+      "research/zfae/UCHC_INPUT.json": ".github/workflows/uchc-input.yml",
+      "ahbg/integration/UCHC_STRUCTURAL.json": ".github/workflows/ahbg-uchc-structural.yml"
+    },
+    "rollback_source_commit": "06b72ab57437403eb02febe20e56274bf22cc0c9",
+    "authority_transfer": false,
+    "hmmm": [
+      "Whole-domain graduation includes additional source and compatibility work."
+    ]
   }
 }
