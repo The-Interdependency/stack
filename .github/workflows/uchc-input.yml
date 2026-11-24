@@ -42,6 +42,16 @@ jobs:
         run: |
           set -euo pipefail
           (cd stack && python3 tools/check_stack_consistency.py)
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          workspace = Path('stack/research/zfae')
+          projection = json.loads((workspace / 'BASE.json').read_text())['input_release']
+          assert projection['lock'] == 'UCHC_INPUT.json'
+          lock = json.loads((workspace / projection['lock']).read_text())
+          fields = ('source_repository', 'source_commit', 'wheel_sha256', 'authority_transfer')
+          assert all(projection[key] == lock[key] for key in fields), 'ZFAE input release projection drifted'
+          PY
           python3 -c 'import sqlite3; assert sqlite3.sqlite_version == "3.45.1", "pinned corpus SQLite writer differs"'
           python3 -m venv .clean
           .clean/bin/python -m pip install pytest==8.3.5 PyYAML==6.0.2
