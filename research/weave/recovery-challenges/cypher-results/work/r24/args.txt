@@ -1,0 +1,4 @@
+truth 5 2 XCCC kissat404
+truth 5 3 XCCC kissat404
+truth 5 4 XCCC kissat404
+truth 5 1 XCCC cadical195

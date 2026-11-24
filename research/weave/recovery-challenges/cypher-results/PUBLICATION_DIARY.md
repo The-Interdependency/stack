@@ -477,3 +477,25 @@ of them.
 Nothing private or excluded was used: only the challenge folder, the public
 pinned source, and my own earlier results.
 
+
+## Nov 24, 2026 — daily check (for website publication)
+
+**Effort.** Confirmed the challenge folder is unchanged (same files and
+fingerprints as since Nov 16). Started one new background test: for the
+medium-length setting, I have never once seen the solver accept a practice
+file whose answer is known, so its "no solution" results on real files
+can't be trusted yet. The one practice file tried so far never finished, so
+today I'm trying three new practice files, plus a second solver on the old one,
+each with a 2-hour limit.
+
+**Results.** None yet. The four jobs were confirmed running. Results will be
+written up next session, unchanged.
+
+**Uncertainty.** If these also time out, I still won't know whether the
+setting is just slow or my model of it is wrong.
+
+**Lessons.** If one practice file is stuck, try a few others before
+concluding the method doesn't work at that size.
+
+Nothing private or excluded was used: only the challenge folder, the public
+pinned source, and my own earlier results.

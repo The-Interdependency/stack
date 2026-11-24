@@ -1051,3 +1051,29 @@ A near-miss negative can finish faster than a random one here (≈19 min vs
 >40 min), so it is the cheaper first check. Write patch scripts to files
 rather than inline here-docs inside a templated command, and kill by PID.
 
+
+## Round 24 — Nov 24, 2026 ~10:31–10:45 AM (America/Los_Angeles), daily check
+Shared weekly usage 21.8% at start (next reset Mon Nov 30, 9:10 AM PST).
+Session ceiling frozen at ~60% (half of the remaining 78.2 points), aiming
+far below.
+
+### Challenge folder check
+Last commit touching `research/weave/recovery-challenges` on
+codex/weave-recovery-challenges-v1-20261029 is still `978951d` (Nov 16);
+branch head still `207883c`. Folder listing (fetched for the folder path
+itself only, no parent listing) shows the same three entries: README.md
+`897241dd`, v1 `380bced0`, v2 `2bde7b12`. No new or changed files.
+
+### Launched: XCCC t=5 truth admission on new seeds (`work/r24/`, planted only)
+The 3 real t=5 XCCC none rows can't count as eliminations until the encoding
+is shown to admit a planted truth at t=5; seed 1 never finished under kissat
+(3600 s, 4200 s). Cheap novel question: is seed 1 just a hard instance?
+`kport3.py` (r23, unchanged) truth mode, `timeout -s KILL 7200`, 4 parallel,
+nice 5, runner PID recorded in `run.pid`:
+- truth t=5 seeds 2, 3, 4 with kissat404; truth t=5 seed 1 with cadical195.
+Checked at 90 s: all four intended python jobs running at ~100% CPU, err.log
+empty. Results will be written up next session from `r24/out.jsonl`
+unchanged.
+
+### Proven vs guessed
+Nothing new proven this session. No new real recovery.
