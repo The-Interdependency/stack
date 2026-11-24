@@ -114,7 +114,55 @@ class VmContactRunbookTests(unittest.TestCase):
     def test_check_d_prunes_unsearchable_dirs_and_keeps_read_failures(self):
         line = self._check_d_writable()
         self.assertTrue(line.endswith("|| w=READ-FAILED"))
-        self.assertIn("-type d ! -executable -prune -o -writable -print", line)
+        self.assertIn("find /opt/vm-mcp -mindepth 1 -type d ! -executable -prune -o -writable -print", line)
+
+    def test_127_check_script_is_pinned_and_verified_on_the_same_line(self):
+        text = RUNBOOK.read_text(encoding="utf-8")
+        commit = "fd9685338e55acfb3c38e09ca7b83b1ceb2fe758"
+        digest = "0b7126d3e5a2b1a222bfe779a2468b6296e11d6b0022016358bbc6125f75f224"
+        self.assertNotIn("26fe705", text)  # Pre-merge PR head; the pin is skill-lib main's merge.
+        lines = [line for line in text.splitlines() if "vm-mcp/tools/vm-mcp-127-check.sh > " in line]
+        self.assertEqual(len(lines), 1)
+        self.assertIn(f"show {commit}:vm-mcp/tools/vm-mcp-127-check.sh > vm-mcp-127-check.sh && "
+                      f'echo "{digest}  vm-mcp-127-check.sh" | sha256sum -c -', lines[0])
+        with tempfile.TemporaryDirectory() as tmp:  # A failed git show leaves an empty file: must fail.
+            empty = Path(tmp, "vm-mcp-127-check.sh")
+            empty.write_text("")
+            check = subprocess.run(["bash", "-c", f'echo "{digest}  vm-mcp-127-check.sh" | sha256sum -c -'],
+                                   cwd=tmp, capture_output=True, text=True, check=False)
+            self.assertNotEqual(check.returncode, 0)
+
+    def _check_d_root(self):
+        lines = [text for _, block in self.blocks for text in block.splitlines()
+                 if text.startswith("r=$(sudo -n -u vmmcp sh -c ")]
+        self.assertEqual(len(lines), 1)
+        self.assertTrue(lines[0].endswith("|| r=READ-FAILED"))
+        return lines[0]
+
+    @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
+    def test_check_d_unsearchable_or_writable_root_never_passes(self):
+        root_line = self._check_d_root().replace("sudo -n -u vmmcp ", "").replace("/opt/vm-mcp", '"$1"')
+        find_line = self._check_d_writable().replace("sudo -n -u vmmcp ", "").replace("/opt/vm-mcp", '"$1"')
+        script = root_line + "\n" + find_line + '\nprintf "%s|%s" "$r" "$w"\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp, "opt")
+            root.mkdir()
+            (root / "server.py").write_text("x")
+            (root / "server.py").chmod(0o444)
+            run = lambda: subprocess.run(["bash", "-c", script, "_", str(root)],
+                                         text=True, capture_output=True, check=False).stdout
+            try:
+                for mode, expected in ((0o000, "not-searchable|READ-FAILED"),
+                                       # Listable but unsearchable: find can scan silently,
+                                       # so only the separate root check catches it.
+                                       (0o444, "not-searchable|"),
+                                       (0o755, "writable|"),
+                                       (0o555, "ok|")):
+                    with self.subTest(mode=oct(mode)):
+                        root.chmod(mode)
+                        self.assertEqual(expected, run())
+            finally:
+                root.chmod(0o755)
 
     @unittest.skipIf(os.geteuid() == 0, "permission bits do not bind root")
     def test_check_d_find_behaviour(self):
