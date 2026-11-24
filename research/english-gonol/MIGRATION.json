@@ -6,7 +6,7 @@
   "mode": "execution",
   "authorization": {
     "external_mutation": "authorized for the existing UCHC extraction",
-    "authority_transfer": "not-complete; no scoped transition receipt records a completed transition"
+    "authority_transfer": "Whole-domain transition pending. See scoped_transitions for the separately qualified halving component."
   },
   "forge": {
     "repository": "The-Interdependency/stack",
@@ -145,5 +145,21 @@
     "extraction_source_commit": "ca69c60032a079585ccb89d5cc7aba67f637df55",
     "standing": "exact package candidate; publication and authority transition pending",
     "authority_transfer": false
+  },
+  "scoped_transitions": {
+    "ordinal_halving": {
+      "profile": "uchc.ordinal-halving/1",
+      "scope": "geometric ordinal affixiation at primitive and closed-participant scales",
+      "implementation_repository": "The-Interdependency/uchc",
+      "consumer": "integration/uchc",
+      "lock": "integration/uchc/halving-requirements.txt",
+      "acceptance": "integration/uchc/verify_halving.py",
+      "geometry_repository": "The-Interdependency/ucns",
+      "excluded": [
+        "16 b rad Stack representation",
+        "complete English corpus",
+        "Python construction"
+      ]
+    }
   }
 }

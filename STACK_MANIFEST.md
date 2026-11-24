@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `172bfcc2d8a8f80d2a0e158e83046ded824f1870ada88e9510ba38f73b4409af`
+Work-graph SHA-256: `bbe62ae7c5b036f2170344fa6df3be8ac41342aa220e37a970b91455a344d582`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -319,9 +319,10 @@ references and prime-route bit partitions, and reverses the completed rounds.
 See `research/weave/CYCLE.md` for the explicit profile, exact source lock, bounds
 and all-cost accounting. This is construction/recovery, not established encryption.
 
-## English ordinal candidate
+## Historical English ordinal candidate
 
-The candidate remains in `research/english-gonol/`; UCHC verifies an exact extraction.
+The Public Gonol ordinal candidate remains available at its original Stack
+revision. The current Unicode-bearing halving consumer is recorded below.
 See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.md).
 
 | Source | Exact commit | Role |
@@ -331,6 +332,20 @@ See [source provenance and usage](research/english-gonol/docs/ordinal-geometry.m
 | `The-Interdependency/skill-lib` | `e46accffcb67a10630516d486c89e67f6ad19c7a` | build, extraction and review discipline; governing source; no geometry authority |
 
 No authority, semantic standing or graduation status transfers.
+
+## UCHC ordinal-halving release
+
+Stack consumes the UCHC ordinal-halving/1 wheel through `integration/uchc/`.
+The separate 16 b rad research profile and corpus remain in Stack. UCNS supplies
+the scalar bearings and disc geometry. This transition covers ordinal
+affixiation only. Historical corpus and broader language graduation records
+retain their own producer identities.
+
+| Participant | Repository | Exact identity | Relation |
+| --- | --- | --- | --- |
+| `ordinal-halving-language` | `The-Interdependency/uchc` | `a173e9d74075977ec4678e91c23b1e351716f98c` | ordinal disc affixiation in UCHC; package source for the scoped halving release |
+| `ordinal-halving-geometry` | `The-Interdependency/ucns` | `b9685af7f32dcd0f60adff6ae0ed3b25b6fed877` | native scalar-bearing and recursive disc-stack geometry; exact geometry producer used by the installed halving wheel |
+| `ordinal-halving-wheel` | `The-Interdependency/uchc` | `3c76335ad07cdd2450660fee48ccc486481a3cd97bb0962704a597bcafc5274b` | released UCHC ordinal-halving/1 implementation; Stack installs the hash-locked release and verifies its native geometry |
 
 ## English recursive attachment integration
 

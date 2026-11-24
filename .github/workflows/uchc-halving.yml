@@ -1,10 +1,10 @@
 name: Consume released UCHC halving
 on:
   pull_request:
-    paths: ['integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
   push:
     branches: [main]
-    paths: ['integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
 permissions:
   contents: read
 jobs:
@@ -31,7 +31,8 @@ jobs:
         run: |
           python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d _dist
           python -m pip install --no-deps ./_deps/halving-native _dist/*.whl
-          python -I integration/uchc/verify_halving.py _dist/*.whl _deps/encoding-native | tee halving-replay.json
+          python -I integration/uchc/verify_halving.py _dist/*.whl _deps/encoding-native > halving-replay.json
+          cat halving-replay.json
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: released-halving-replay

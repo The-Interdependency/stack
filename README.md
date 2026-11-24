@@ -67,6 +67,12 @@ repository's package-source layout. It does not mean "canonical source" for stac
 
 ## Usage guidance
 
+### Use ordinal radius-halving
+
+Install the [hash-locked UCHC wheel](integration/uchc/README.md#ordinal-radius-halving)
+to build Unicode-bearing disc stacks. Stack owns the separate 16 b rad encoding
+experiment and its corpus in `research/english-gonol/`.
+
 ### Read canon
 
 Start at [`STACK_MANIFEST.md`](STACK_MANIFEST.md), then read the pinned repository in

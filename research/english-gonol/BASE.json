@@ -60,5 +60,17 @@
     "native_commit": "300877066436a03d046b8951772c1e2aed2c5166",
     "ordinal_replay": "30e081a5f0e624d4be45161d96fcc09c37c9edb6",
     "authority_transfer": false
+  },
+  "ordinal_halving_consumer": {
+    "profile": "uchc.ordinal-halving/1",
+    "workspace": "integration/uchc/",
+    "source_repository": "The-Interdependency/uchc",
+    "source_commit": "a173e9d74075977ec4678e91c23b1e351716f98c",
+    "geometry_repository": "The-Interdependency/ucns",
+    "geometry_commit": "b9685af7f32dcd0f60adff6ae0ed3b25b6fed877",
+    "wheel_url": "https://github.com/The-Interdependency/uchc/releases/download/ordinal-halving-v1/uchc-0.2.0a2-py3-none-any.whl",
+    "wheel_sha256": "3c76335ad07cdd2450660fee48ccc486481a3cd97bb0962704a597bcafc5274b",
+    "encoding_research_owner": "The-Interdependency/stack",
+    "transition_scope": "ordinal affixiation only"
   }
 }

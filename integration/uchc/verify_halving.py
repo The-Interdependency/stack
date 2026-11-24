@@ -1,4 +1,4 @@
-# ratios: loc_comments=52:5 imports_exports=9:1 calls_definitions=33:1
+# ratios: loc_comments=62:5 imports_exports=9:1 calls_definitions=37:1
 """Verify the released UCHC wheel and Stack's separate 16 b rad profile.
 
 Usage: python -I integration/uchc/verify_halving.py WHEEL STACK_UCNS_ROOT
@@ -23,6 +23,16 @@ def verify(wheel, stack_native):
     actual = sha256(wheel.read_bytes()).hexdigest()
     if wheel.name != url.rsplit('/', 1)[1] or actual != expected:
         raise ValueError('RELEASE_WHEEL_MISMATCH')
+    base = json.loads((workspace / 'research/english-gonol/BASE.json').read_text())['ordinal_halving_consumer']
+    graph = json.loads((workspace / 'stack-manifest.json').read_text())
+    rows = {r['participant_id']: r for r in graph['research_participants']
+            if r['workspace'] == 'integration/uchc/'}
+    if (base['wheel_url'] != url or base['wheel_sha256'] != actual
+            or rows['ordinal-halving-wheel']['artifact_sha256'] != actual
+            or base['source_commit'] != rows['ordinal-halving-language']['commit']
+            or base['geometry_commit'] != h.authority()['commit']
+            or rows['ordinal-halving-geometry']['commit'] != base['geometry_commit']):
+        raise ValueError('HALVING_WORK_GRAPH_MISMATCH')
     installed = distribution('uchc')
     with ZipFile(wheel) as archive:
         for name in archive.namelist():
@@ -62,4 +72,4 @@ if __name__ == '__main__':
     parser.add_argument('stack_native', type=Path)
     args = parser.parse_args()
     print(json.dumps(verify(args.wheel, args.stack_native), sort_keys=True))
-# ratios: loc_comments=52:5 imports_exports=9:1 calls_definitions=33:1
+# ratios: loc_comments=62:5 imports_exports=9:1 calls_definitions=37:1
