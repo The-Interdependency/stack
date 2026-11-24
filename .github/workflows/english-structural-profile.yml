@@ -110,7 +110,7 @@ jobs:
               assert candidate[field] == verification[receipt], field
           assert migration['distribution']['version'] == candidate['version']
           assert migration['distribution']['candidate_immutable_identity'] == candidate['candidate_immutable_identity']
-          lock = json.loads(pathlib.Path('research/zfae/UCHC_INPUT.json').read_text())
+          lock = json.loads(pathlib.Path('_deps/forge/research/zfae/UCHC_INPUT.json').read_text())
           historical = migration['historical_input_candidate']
           assert historical['source_commit'] == lock['source_commit']
           assert historical['candidate_immutable_identity'] == lock['wheel_sha256']

@@ -1,5 +1,4 @@
-# Usage: validate the exact locked UCHC candidate inside Stack. No release,
-# deployment, authority transition, model call or neural-readiness promotion.
+# Usage: install the locked UCHC release and replay its complete corpus in Stack.
 name: UCHC input integration
 on:
   pull_request:
@@ -12,9 +11,10 @@ permissions:
 jobs:
   installed-candidate:
     runs-on: ubuntu-24.04
-    env:
-      SOURCE_DATE_EPOCH: '1790308800'
     steps:
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12.14'
       - name: Resolve full-history Stack and exact input sources
         shell: bash
         env:
@@ -36,26 +36,19 @@ jobs:
           fetch_source The-Interdependency/uchc producer "$UCHC_SHA"
           fetch_source globalwordnet/english-wordnet oewn dc343f2683279ecbb13fab4e2fd778d7b162d287
           fetch_source The-Interdependency/ucns ucns 4f863ad37096b7baab8f62820ad5cb937b62a3a7
-          python3 -m venv .build
-          .build/bin/python -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0
           mkdir -p evidence
-      - name: Check coherent Stack projections and reproduce the exact wheel
+      - name: Check Stack projections and install the published wheel
         shell: bash
         run: |
           set -euo pipefail
-          (cd stack && ../.build/bin/python tools/check_stack_consistency.py)
-          .build/bin/python -m pip wheel --no-deps --no-build-isolation ./producer -w evidence/dist
-          .build/bin/python - <<'PY'
-          import hashlib, json
-          from pathlib import Path
-          lock = json.loads(Path('stack/research/zfae/UCHC_INPUT.json').read_text())
-          wheel = Path('evidence/dist') / lock['wheel']
-          assert hashlib.sha256(wheel.read_bytes()).hexdigest() == lock['wheel_sha256'], 'candidate bytes differ from the verified lock'
-          PY
+          (cd stack && python3 tools/check_stack_consistency.py)
+          python3 -c 'import sqlite3; assert sqlite3.sqlite_version == "3.45.1", "pinned corpus SQLite writer differs"'
           python3 -m venv .clean
           .clean/bin/python -m pip install pytest==8.3.5 PyYAML==6.0.2
-          .clean/bin/python -m pip install --no-index --no-deps evidence/dist/uchc-0.1.0a1-py3-none-any.whl
-      - name: Build the complete corpus through the installed candidate
+          .clean/bin/python -m pip download --no-deps --require-hashes \
+            -r stack/integration/uchc/halving-requirements.txt -d evidence/dist
+          .clean/bin/python -m pip install --no-index --no-deps evidence/dist/*.whl
+      - name: Build the complete corpus through the installed release
         shell: bash
         run: |
           set -euo pipefail
@@ -87,7 +80,7 @@ jobs:
           # Keep acceptance and the exact wheel; corpus provenance/attribution is
           # retained by the UCHC producer. Do not republish corpus bytes here.
           rm -r evidence/construct
-      - name: Retain consumer evidence and identical candidate bytes
+      - name: Retain consumer evidence and the verified release wheel
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: uchc-stack-integration

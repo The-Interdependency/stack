@@ -2,7 +2,7 @@
 
 ## Done when
 
-AHBG installs the source- and wheel-locked UCHC candidate; independently verifies
+AHBG installs the source- and wheel-locked UCHC release and independently verifies
 its package files and complete-corpus identity; constructs, queries and replays
 native English input; preserves unknowns; exposes the exact evidence to the
 agent observation and persisted turn record; and refuses changed artifacts or
@@ -14,16 +14,15 @@ them or treats structural similarity as a game rule or consciousness proof.
 
 ## Source and installation
 
-The canonical immutable candidate selection already exists at
-`research/zfae/UCHC_INPUT.json`. AHBG intentionally reuses the existing
-`research/zfae/uchc_input.py` verifier. The candidate is UCHC `0.1.0a1`,
-source `3d82007b88f74ded88ca913d6e85bcd6f6ff024d`.
+The release selection is in `research/zfae/UCHC_INPUT.json`. AHBG uses the
+existing `research/zfae/uchc_input.py` verifier with UCHC `0.2.0a3`,
+source `e8f57c7b663142d98c78e0ed201816327a9fa9cf`.
 Wheel SHA-256, logical receipt, and database byte SHA-256 are **read from the
 trusted lock**, never discovered from the supplied database or guessed at run time.
 
 Use `.github/workflows/uchc-input.yml` as the full-corpus reproducibility and
-installed-artifact acceptance path. It fetches exactly pinned sources, builds
-and verifies wheel bytes, constructs the full OEWN corpus, and runs both the
+installed-artifact acceptance path. It downloads and verifies the published
+wheel, constructs the full OEWN corpus, and runs both the
 existing ZFAE consumer and AHBG's real native-language integration tests.
 
 For a local install, first verify the wheel SHA-256 against the lock and
@@ -67,18 +66,18 @@ with UchcSession(UchcSettings(Path("/artifacts/construct.db"))) as uchc:
     print(uchc.capabilities)
 ```
 
-## Structural profile (separate exact wheel)
+## Structural profile
 
-The **newer** UCHC `0.1.0a2` is also independently consumable. Its real
-`StructuralField` performs text construction, admitted word/definition
+The released UCHC wheel provides a `StructuralField` for text construction,
+admitted word/definition
 recovery, exact record replay, and registered ordered-text/sentence composition.
 It preserves both definition constituent topologies and definition succession.
 It never supplies missing UCNS geometric displacement.
 
-The exact candidate identities are in
+The exact release and corpus identities are in
 [`UCHC_STRUCTURAL.json`](UCHC_STRUCTURAL.json): UCHC source
-`c18d984438bc30764edb05fd5ccc05691958a24e`, wheel hash
-`7f05fbbb...`, complete 711,983,104-byte structural database hash
+`e8f57c7b663142d98c78e0ed201816327a9fa9cf`, wheel hash
+`ff5341a8...`, complete 711,983,104-byte structural database hash
 `13ba2411...`, logical receipt `26ab095f...`. The consumer verifies the
 **full** stored identities, not the abbreviated identifiers printed here.
 
@@ -195,15 +194,11 @@ Real input producer acceptance gate:
 `ahbg/integration/tests/test_uchc_installed.py` against the **complete**
 source-pinned corpus. Structural acceptance independently executes
 `.github/workflows/ahbg-uchc-structural.yml` against the distinct complete
-UCHC `0.1.0a2` field. A mocked reader alone is not sufficient evidence.
+structural field from the same release wheel.
 
 ## hmmm
 
-UCHC `0.1.0a2` structural admission now has its own independent AHBG
-consumer and complete-corpus gate. The new ordinal construction, polyglot
-label layer, binary producer and Hilbert frame bridge still have separate
-implementation and/or publication gates. No unfinished machinery may be
-silently substituted for either pinned candidate package. AHBG may adopt
-each only after its source and wheel/producer receipt, native semantics and
-full-corpus or full-domain replay have been verified, with an explicit lock
-migration. Independent UCHC graduation remains incomplete.
+The AHBG observation contract exposes two English readers. Applications of
+ordinal construction and polyglot labels in AHBG require their own consumer
+contracts. Binary construction and the Hilbert frame bridge have separate
+research records.

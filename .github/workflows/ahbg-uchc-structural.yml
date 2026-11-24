@@ -1,5 +1,4 @@
-# Read-only AHBG consumption of the exact extracted UCHC a2 structural field.
-# This job does not publish UCHC, graduate the English domain, or choose senses.
+# Read-only AHBG replay of the full English structural field from released UCHC.
 name: AHBG UCHC structural corpus
 on:
   pull_request:
@@ -10,6 +9,7 @@ on:
       - "ahbg/runtime/runtime.py"
       - "ahbg/runtime/protocol.py"
       - "research/zfae/uchc_input.py"
+      - "integration/uchc/halving-requirements.txt"
       - ".github/workflows/ahbg-uchc-structural.yml"
   push:
     branches: [main]
@@ -20,6 +20,7 @@ on:
       - "ahbg/runtime/runtime.py"
       - "ahbg/runtime/protocol.py"
       - "research/zfae/uchc_input.py"
+      - "integration/uchc/halving-requirements.txt"
       - ".github/workflows/ahbg-uchc-structural.yml"
 
 permissions:
@@ -28,17 +29,9 @@ permissions:
 jobs:
   ahbg-structural-consumer:
     runs-on: ubuntu-24.04
-    env:
-      SOURCE_DATE_EPOCH: '1790308800'
     steps:
       - uses: actions/checkout@v6
         with:
-          persist-credentials: false
-      - uses: actions/checkout@v6
-        with:
-          repository: The-Interdependency/uchc
-          ref: c18d984438bc30764edb05fd5ccc05691958a24e
-          path: _deps/uchc
           persist-credentials: false
       - uses: actions/checkout@v6
         with:
@@ -55,7 +48,7 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12.14'
-      - name: Preflight and build pinned wheel
+      - name: Preflight and install the published wheel
         run: |
           set -euo pipefail
           python - <<'PY'
@@ -64,26 +57,19 @@ jobs:
           assert os.sysconf('SC_PHYS_PAGES') * os.sysconf('SC_PAGE_SIZE') >= 5 * 1024**3, 'insufficient memory'
           assert sqlite3.sqlite_version == '3.45.1', 'SQLite writer differs from pinned byte evidence'
           PY
-          python -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0 PyYAML==6.0.2
-          python -m pip wheel --no-deps --no-build-isolation ./_deps/uchc -w /tmp/ahbg-uchc-a2-dist
-          python - <<'PY'
-          import hashlib, json, pathlib
-          lock = json.loads(pathlib.Path('ahbg/integration/UCHC_STRUCTURAL.json').read_text())
-          artifact = pathlib.Path('/tmp/ahbg-uchc-a2-dist') / lock['wheel']
-          with artifact.open('rb') as f:
-              assert hashlib.file_digest(f, 'sha256').hexdigest() == lock['wheel_sha256']
-          PY
-          python -m venv .uchc-a2
-          .uchc-a2/bin/python -m pip install PyYAML==6.0.2
-          .uchc-a2/bin/python -m pip install --no-index --no-deps /tmp/ahbg-uchc-a2-dist/uchc-0.1.0a2-py3-none-any.whl
+          python -m venv .uchc-structural
+          .uchc-structural/bin/python -m pip install PyYAML==6.0.2
+          .uchc-structural/bin/python -m pip download --no-deps --require-hashes \
+            -r integration/uchc/halving-requirements.txt -d _state/dist
+          .uchc-structural/bin/python -m pip install --no-index --no-deps _state/dist/*.whl
       - name: Build and verify full structural corpus through installed UCHC
         run: |
           set -euo pipefail
-          .uchc-a2/bin/python -I -m english_gonol.structural_construct build \
+          .uchc-structural/bin/python -I -m english_gonol.structural_construct build \
             --source-root "$PWD/_deps/oewn/src/yaml" \
             --ucns-source-root "$PWD/_deps/ucns" \
             --out-dir "$PWD/_state/structural"
-          .uchc-a2/bin/python -I -m english_gonol.structural_construct verify "$PWD/_state/structural"
+          .uchc-structural/bin/python -I -m english_gonol.structural_construct verify "$PWD/_state/structural"
           python - <<'PY'
           import hashlib, json, pathlib
           lock = json.loads(pathlib.Path('ahbg/integration/UCHC_STRUCTURAL.json').read_text())
@@ -103,7 +89,7 @@ jobs:
           UCHC_CORPUS_REQUIRED: '1'
         run: |
           set -euo pipefail
-          .uchc-a2/bin/python -m unittest discover -s ahbg/integration/tests \
+          .uchc-structural/bin/python -m unittest discover -s ahbg/integration/tests \
             -p 'test_uchc_structural_installed.py' -v
       - name: Retain identity and test evidence, never republish corpus bytes
         if: always()

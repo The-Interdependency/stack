@@ -63,7 +63,7 @@ not establish a useful construction, valid measurement or secure cipher.
   retains conceptual authority, PTCNA owns neural construction, and a0 owns
   runtime integration. Keep a0-betatest comparisons separately attributed.
   Read its README and BASE before work; retain the current PTCNA neural-audit
-  prerequisite and the incomplete UCHC release/reconsumption boundary.
+  prerequisite and the exact UCHC release pin in `UCHC_INPUT.json`.
   Its input parser consumes the exact English GlyphGonol producer and UCNS
   carrier declared in GONOL_PARSER.json. Preserve occurrences and missing
   admission; parser completion is not neural or higher-gonol completion.
