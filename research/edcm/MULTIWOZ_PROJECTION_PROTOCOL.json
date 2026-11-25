@@ -1,0 +1,38 @@
+{
+  "schema": "edcm.multiwoz-epicycle-projection/1",
+  "decision": "Do jointly resolved native recursive origin coordinates preserve the maintained metric readouts across the admitted full dialogue corpus, and does the P coordinate or its movement discriminate source-native booking outcomes before the response?",
+  "standing": "Stack candidate research",
+  "source": {
+    "id": "multiwoz-2.1",
+    "doi": "10.17863/CAM.41572",
+    "archive_sha256": "d377a176f5ec82dc9f6a97e4653d4eddc6cad917704c1aaaa5a8ee3e79f63a8e",
+    "admission": "edcm/corpora/data/multiwoz_2_1_admission.json",
+    "dialogues": 10438,
+    "turns": 143048,
+    "complete_rounds": 71524,
+    "partitions": {"development": 8438, "validation": 1000, "test": 1000},
+    "license": "CC-BY-4.0",
+    "attribution": "University of Cambridge MultiWOZ 2.1 authors; source archive and dialogue-act annotations"
+  },
+  "producer": {
+    "stack": "d8e147230a7063da56b776e9deb73de29bd50a2e",
+    "edcm": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+    "uchc": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+    "ucns": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+    "skill_lib": "c778d5c2c9bd2370a4e0e2a0120508377f5ad3eb"
+  },
+  "grain": "Every source dialogue, every complete consecutive user/system round and its full prefix; also every unambiguous annotated booking event's exact prefix ending just before the labelled system response. No sampling, deduplication, truncation, normalization of geometry source, or leakage of response text.",
+  "source_adapter": "Use admitted even-user/odd-system inference; add USER: and SYSTEM: envelopes; preserve exact raw turn text and literal LF separators in the native graph. For the independent maintained EDCM parser only, replace embedded CR/LF with SPACE as in the existing booking holdout. Retain exact source identity and account for the presentation transform.",
+  "coordinate_rule": "Use the prior epicycle protocol's recursive addressed fields. Form matrix B with the eleven origin vectors as unit-norm columns over their union support, retaining both closed vectors and rays. For each observed field x, solve c = pinv(B, rcond=1e-10) x restricted to origin support with explicit zero-extension. Unmatched observed coordinates are orthogonal to that span. Record origin rank, condition number, coefficients, and fraction of full recursive squared norm represented in the span. Use the same fixed origin matrix for all dialogues and partitions. Compare current round, full prefix, and change from the previous full prefix; initial empty history uses the zero coordinate vector as a declared difference reference, not a constructed gonol.",
+  "numeric_acceleration": "Construct and replay released UCHC native graphs. Cache the evaluation of exact native Point expressions and child endpoint units; construct the exact endpoint by one native Point sum over native rays. This changes execution cost, not the geometric profile. Require equivalence to native endpoint records and native display in preflight/tests. Full-field squared norm includes every native local additive/placed vector and exact squared local ray radius, once per occurrence. Refuse unresolved numeric display instead of inventing a value.",
+  "comparison": "Report descriptive per-axis Pearson and Spearman correlation with independent maintained readouts for every partition and every view, together with support counts and origin-span energy fraction. Zero-variance statistics are null. No regression of source labels or proxies into the origin coordinates.",
+  "booking_outcome": {
+    "selection": "Reuse the already frozen source-native Booking-Book/Booking-NoBook turn mapping, ambiguous exclusion, and partitions; before-response text only.",
+    "event_inventory": {"development": {"positive": 4164, "negative": 1050, "ambiguous": 19}, "validation": {"positive": 543, "negative": 113, "ambiguous": 0}, "test": {"positive": 530, "negative": 131, "ambiguous": 0}},
+    "scores": ["maintained_P", "geometric_P", "geometric_delta_P", "context_length_control"],
+    "calibration": "Fit each score's existing two-parameter EDCM Platt calibration on development only; select one threshold on validation by the existing balanced-accuracy objective and ties; evaluate on test once after both freeze. Retain all four results, including failed candidates, without optimizing geometry on labels.",
+    "decision": "Report sensitivity, specificity, balanced accuracy and dialogue-cluster bootstrap uncertainty, Brier score and ECE. A chance-spanning interval does not establish discrimination. Improvement over length control and maintained P is descriptive unless separately replicated."
+  },
+  "completion": "Verify full archive and all logical members, exact source order and identities, all dialogue/turn/round/partition counts, native final graph replay, every measured prefix source recovery, and every event count. Checkpoint numeric rows and graph/source digests per dialogue; never commit raw corpus text, individual dialogue raw records, or per-event data. Aggregate receipt only. A failed prerequisite produces incomplete evidence, not a negative metric result.",
+  "hmmm": ["The recursive local-frame alignment remains a testable candidate comparison convention, not canon.", "Maintained proxy agreement does not validate EDCM's intended metric semantics.", "The public test split was used in earlier EDCM work; it is fixed, not an independently hidden replication. Booking annotations test task outcomes, not universal dialogue success."]
+}

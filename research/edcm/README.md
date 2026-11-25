@@ -59,8 +59,44 @@ python -m research.edcm.epicycle_projection \
 
 Python consumers can call `observe_rounds(raw_rounds)` to receive the same bound native graphs, field records, all eleven origin comparisons, independent baseline vectors, and receipt digest. The CI workflow generates and replays a current complete receipt. To replay the committed historical receipt, decompress it with `gzip -dc`, then use `--verify` with its recorded source and numeric runtime; binary64 comparisons do not promise byte identity across different numeric runtimes.
 
+
+## MultiWOZ 2.1 full-corpus projection
+
+The [frozen corpus protocol](MULTIWOZ_PROJECTION_PROTOCOL.json) exercises the same native recursive origin directions jointly, rather than treating overlapping axes as independent proximity scores. It consumes the previously [admitted Cambridge archive](https://www.repository.cam.ac.uk/items/74e8d468-9442-424a-bb3b-1bb88dcb8673/full) (DOI `10.17863/CAM.41572`, CC BY 4.0). The [aggregate receipt](evidence/multiwoz-epicycle-projection-v1.json) binds exact Stack, EDCM, UCHC and UCNS sources, the admitted archive, the coordinate rule and a chain of all dialogue results. Raw corpus text and per-dialogue checkpoints remain outside Git.
+
+### Corpus result
+
+All 10,438 dialogue graphs replayed; all 143,048 source turns (including 1,607 containing CR/LF) and 71,524 complete rounds reconciled. Every round and full-prefix state has all eleven joint coefficients and the independent maintained readout. Every unambiguous pre-response booking event was measured: 5,214 development, 656 validation and 661 test; the 19 ambiguous development annotations remain counted exclusions.
+
+The fixed, eleven-column recursive origin matrix has numerical rank 11 but condition number **25,414**. The median test-prefix field energy projected onto the origin span is 85.2%. Yet the median absolute per-axis Spearman association with the maintained test readouts is only 0.084 (round-only 0.038; prefix differences 0.071). Test-prefix associations include E +0.452, F −0.363, P +0.247 and L +0.229. The test partition barely exercises several maintained readouts: C is nonzero in 1/7,372 rounds, I in 6, κ in 17, O in 40, and R in 52. This corpus cannot by itself settle all eleven intended measurement semantics.
+
+### External outcome comparison
+
+Each score uses only the exact preceding turns; the labelled system response is withheld. Calibration uses development, threshold selection uses validation, and test evaluation follows both freezes. The maintained progress point estimate exactly reproduces the previous EDCM booking test; no score improves on it here.
+
+| Fixed score | Test balanced accuracy | 95% dialogue-cluster interval |
+|---|---:|---:|
+| Maintained P | 52.1% | 46.6–57.5% |
+| Joint geometric P | 48.9% | 45.1–52.7% |
+| Joint geometric ΔP | 48.8% | 47.5–50.2% |
+| Context length control | 48.4% | 45.4–51.6% |
+
+**Disposition:** native full-corpus construction and replay SURVIVED. The proposed geometric progress scores do not establish above-chance discrimination; the point estimates are below chance. The high origin condition number and weak correspondence with the maintained measurements identify a poorly separated candidate coordinate system, not a failure of native source construction. This experiment does not establish a causal explanation for the weak discrimination.
+
+### Replay
+
+Use the released-producer environment above. Obtain the exact source archive using EDCM's existing admission record. The runner independently verifies archive bytes, every logical member, the partition inventory and all source-native outcome counts before execution.
+
+```sh
+export OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1
+python -m pytest -q research/edcm/tests
+python -m research.edcm.multiwoz_projection   --archive /path/to/MULTIWOZ2.1.zip   --checkpoint /tmp/multiwoz-epicycle-checkpoint.jsonl   --output /tmp/multiwoz-epicycle-report.json --workers 8
+```
+
+Use the same command and source-bound checkpoint to resume. The native numerical evaluator caches exact Point evaluation and child endpoint units; focused tests compare it to the released native display, including exact endpoint records, full recursive norms, Unicode and future-response exclusion. The local resource preflight estimated 0.113 s/dialogue on one worker, and eight workers completed the corpus in approximately five minutes. All 21 focused and inherited tests passed. A separate full source-to-checkpoint reconciliation confirmed every dialogue, turn, round and eligible event; re-aggregating the verified checkpoint produced a byte-identical report (without repeating the native execution). The aggregate receipt SHA-256 is `7e896f6062eabc08d8cc5c68e46caf7e25042dddf987e201da6ab67dc41197e0`.
+
 ## hmmm
 
-The next decision is lawful metric-specific comparison, not whether more dimensions exist. Freeze a role- and window-aware observation/frame convention, then test a declared metric-specific comparison on new contrasts that separate order, context, formatting and paraphrase. Use independent holdout dialogue and assess the existing proxy semantics separately before proposing a calibrated EDCM measurement adapter. The current complete graphs and failed comparison receipts provide the controls for that decision. Authority, measurement validity, and proof standing remain separate.
+The next measurement question is how to compare role-aligned and window-local structures against a particular metric origin, rather than simply resolve eleven nearly collinear directions over entire histories. Freeze that relation and its falsifier using development evidence, then test it on separately admitted source-native labels. EDCM's existing corpus queue after MultiWOZ lists Molweni, PRISM, ICSI, AMI, WildChat-1M, and LMSYS-Chat-1M; these each still require admission and adapters. Prioritize adequate representation of contradiction, refusal, integration and scope before claiming broader metric validity. Do not tune the MultiWOZ test partition or transfer its task-success labels to other semantics.
 
 GPT generated from context and prompt by Erin Spencer.
