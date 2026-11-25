@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `56051185865eb386f8e14b1a77f53dc2f189ad9ea121cc1b7d18110c9e241b5f`
+Work-graph SHA-256: `91e47343d59ed8c9938b25658dfd72af33f416939696a886098729c160cd8338`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -392,3 +392,21 @@ The following identities govern current recursive addition. Earlier producer ent
 | `research/english-gonol/` | `unicode-corpus-replay` | `The-Interdependency/stack` | `30e081a5f0e624d4be45161d96fcc09c37c9edb6` | historical English ordinal experiment; preserve original implementation, repairs, corpus witness and operator answers |
 | `research/english-gonol/` | `unicode-corpus-ucd-data` | `unicode.org/Public/18.0.0/ucd/UnicodeData.txt` | `0736451de439ae7baf1425136617da495e09ee5afbe6e394374db7009ea08950` | Unicode Character Database; authenticate numeric repertoire input |
 | `research/english-gonol/` | `unicode-corpus-ucd-math` | `unicode.org/Public/18.0.0/ucd/DerivedCoreProperties.txt` | `09c928886a178fcafd93c29e4bd59073a058e5a100b716d425cb563ab50f68c9` | Unicode Character Database; authenticate Math repertoire input |
+
+## EDCM epicycle projection research
+
+The Stack experiment in `research/edcm/` consumes the exact released UCHC
+construction, UCNS geometry, and the maintained EDCM metric definitions.
+The [protocol](research/edcm/EPICYCLE_PROTOCOL.json) and
+[work graph](research/edcm/EPICYCLE_WORK_GRAPH.json) bind its candidate measurements.
+Experiment work-graph SHA-256: `ac4adab9c75b01a0a1a70bd0ea5c64841ff99b65c9fb83980755c0e4b50ef7dd`.
+
+| Participant | Repository | Exact identity | Role |
+| --- | --- | --- | --- |
+| `epicycle-stack` | `The-Interdependency/stack` | `fd9e43eb9a7f8d3492b98de1f9bcf3af6e06a5c6` | starting forge identity |
+| `epicycle-edcm` | `The-Interdependency/edcm` | `acadaae913846613c9bbb9ef82d5ce6cf57214b3` | metric-origin terms, independent raw transcript readout, and measurement contracts |
+| `epicycle-uchc` | `The-Interdependency/uchc` | `e8f57c7b663142d98c78e0ed201816327a9fa9cf` | exact source of the released two-vector epicycle implementation |
+| `epicycle-ucns` | `The-Interdependency/ucns` | `1edfa593ae9d8c9ad394b5462638bcc717f99fbd` | exact graph replay, local rays, vector expressions and numeric display |
+| `epicycle-metapat` | `The-Interdependency/metapat` | `a283a4289c469e8252641aba439fd49d77e671e9` | recursive simplex participation and measurement distinction |
+| `epicycle-skill-lib` | `The-Interdependency/skill-lib` | `c778d5c2c9bd2370a4e0e2a0120508377f5ad3eb` | maximal coherent action and cross-source evidence discipline |
+| `epicycle-uchc-wheel` | `The-Interdependency/uchc` | `ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88` | verified release bytes |

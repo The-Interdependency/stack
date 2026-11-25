@@ -1,0 +1,2065 @@
+{
+  "contrasts": [
+    {
+      "formatting_control": null,
+      "id": "refusal-order",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 33.99999934658062,
+            "projection": 33.99999934658062,
+            "right_norm": 33.99999934658062,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999952950512,
+            "distance": 4.850231333126788e-05,
+            "exact_equal": false,
+            "left_norm": 0.49999999999999994,
+            "projection": 0.49999999764752556,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999989828,
+            "distance": 4.850231333126788e-05,
+            "exact_equal": false,
+            "left_norm": 34.00367561848987,
+            "projection": 34.00367561845528,
+            "right_norm": 34.00367561848987,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9962112541948128,
+            "distance": 4.306608501807222,
+            "exact_equal": false,
+            "left_norm": 49.47350292946526,
+            "projection": 49.28606040277334,
+            "right_norm": 49.473502932239974,
+            "support": {
+              "left_only": 3,
+              "right_only": 3,
+              "shared": 81
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 33.99999934658062,
+            "projection": 33.99999934658062,
+            "right_norm": 33.99999934658062,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999952950511,
+            "distance": 9.70017229610234e-05,
+            "exact_equal": false,
+            "left_norm": 0.9999689963245555,
+            "projection": 0.9999689916197526,
+            "right_norm": 0.9999691336034884,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999959338,
+            "distance": 9.70017229610234e-05,
+            "exact_equal": false,
+            "left_norm": 34.0147011387884,
+            "projection": 34.014701138650096,
+            "right_norm": 34.01470114282415,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9928175659428651,
+            "distance": 4.306608501260975,
+            "exact_equal": false,
+            "left_norm": 35.932263170364386,
+            "projection": 35.67418205961963,
+            "right_norm": 35.93226317418476,
+            "support": {
+              "left_only": 3,
+              "right_only": 3,
+              "shared": 78
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "E": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              }
+            }
+          },
+          "left": 0.6,
+          "right": 0.0
+        },
+        "R": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              }
+            }
+          },
+          "left": 1.0,
+          "right": 0.0
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "contradiction-order",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 47.99999919573502,
+            "projection": 47.999999195735015,
+            "right_norm": 47.99999919573502,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999995603697,
+            "distance": 1.4826165518211292e-05,
+            "exact_equal": false,
+            "left_norm": 0.5,
+            "projection": 0.49999999978018483,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999999521,
+            "distance": 1.4826165518211292e-05,
+            "exact_equal": false,
+            "left_norm": 48.00260329180661,
+            "projection": 48.00260329180432,
+            "right_norm": 48.00260329180661,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9997938182595787,
+            "distance": 1.419727170806648,
+            "exact_equal": false,
+            "left_norm": 69.91410388205308,
+            "projection": 69.89968887043467,
+            "right_norm": 69.9141038829291,
+            "support": {
+              "left_only": 1,
+              "right_only": 1,
+              "shared": 103
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 47.99999919573502,
+            "projection": 47.999999195735015,
+            "right_norm": 47.99999919573502,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999995603697,
+            "distance": 2.9652143067971153e-05,
+            "exact_equal": false,
+            "left_norm": 0.9999914971868217,
+            "projection": 0.999991496747195,
+            "right_norm": 0.9999915584330049,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999998093,
+            "distance": 2.9652143067971153e-05,
+            "exact_equal": false,
+            "left_norm": 48.010414555437954,
+            "projection": 48.0104145554288,
+            "right_norm": 48.01041455671363,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9996099014353604,
+            "distance": 1.4197271706518186,
+            "exact_equal": false,
+            "left_norm": 50.827964732418195,
+            "projection": 50.80813681633253,
+            "right_norm": 50.827964733623155,
+            "support": {
+              "left_only": 1,
+              "right_only": 1,
+              "shared": 100
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "C": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              }
+            }
+          },
+          "left": 1.0,
+          "right": 0.0
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "scope-order",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 1.0000000000000002,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 29.999999445352618,
+            "projection": 29.99999944535262,
+            "right_norm": 29.999999445352618,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999999985686,
+            "distance": 8.460490097634224e-07,
+            "exact_equal": false,
+            "left_norm": 0.49999999999999994,
+            "projection": 0.49999999999928424,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999999996,
+            "distance": 8.460490097634224e-07,
+            "exact_equal": false,
+            "left_norm": 30.004165822784632,
+            "projection": 30.00416582278462,
+            "right_norm": 30.004165822784632,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9999999999997435,
+            "distance": 3.1327731809233736e-05,
+            "exact_equal": false,
+            "left_norm": 43.732077942704535,
+            "projection": 43.732077942693316,
+            "right_norm": 43.732077942927276,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 74
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 1.0000000000000002,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 29.999999445352618,
+            "projection": 29.99999944535262,
+            "right_norm": 29.999999445352618,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999999985685,
+            "distance": 1.6918939526012758e-06,
+            "exact_equal": false,
+            "left_norm": 0.9998775033372399,
+            "projection": 0.9998775033358085,
+            "right_norm": 0.9998775066312654,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999999983,
+            "distance": 1.6918939526012758e-06,
+            "exact_equal": false,
+            "left_norm": 30.016657404561844,
+            "projection": 30.016657404561798,
+            "right_norm": 30.01665740467157,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9999999999995158,
+            "distance": 3.13048747395263e-05,
+            "exact_equal": false,
+            "left_norm": 31.811863737694264,
+            "projection": 31.81186373767886,
+            "right_norm": 31.81186373800047,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 71
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "O": {
+          "actual": "less",
+          "baseline": "SURVIVED",
+          "expected": "less",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "UNRESOLVED",
+                  "distance": "UNRESOLVED",
+                  "projection": "UNRESOLVED"
+                }
+              }
+            }
+          },
+          "left": -1.0,
+          "right": 0.0
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "integration-order",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 41.99999930813792,
+            "projection": 41.99999930813792,
+            "right_norm": 41.99999930813792,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999988585084395,
+            "distance": 0.000755477187143881,
+            "exact_equal": false,
+            "left_norm": 0.5,
+            "projection": 0.49999942925421975,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999998382468,
+            "distance": 0.000755477187143881,
+            "exact_equal": false,
+            "left_norm": 42.00297539322168,
+            "projection": 42.002975386427565,
+            "right_norm": 42.00297539322168,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9739089606062435,
+            "distance": 14.14305664447948,
+            "exact_equal": false,
+            "left_norm": 61.98945801585951,
+            "projection": 60.372088624770115,
+            "right_norm": 61.82887655238424,
+            "support": {
+              "left_only": 10,
+              "right_only": 10,
+              "shared": 76
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 41.99999930813792,
+            "projection": 41.99999930813792,
+            "right_norm": 41.99999930813792,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999988585084395,
+            "distance": 0.0015107661827852875,
+            "exact_equal": false,
+            "left_norm": 0.9998735074072335,
+            "projection": 0.9998723660600631,
+            "right_norm": 0.9998755543074751,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999993534234,
+            "distance": 0.0015107661827852875,
+            "exact_equal": false,
+            "left_norm": 42.01189937284913,
+            "projection": 42.011899345685215,
+            "right_norm": 42.011899421564934,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9516546767741566,
+            "distance": 14.143056604124286,
+            "exact_equal": false,
+            "left_norm": 45.58720174803914,
+            "projection": 43.383273744568456,
+            "right_norm": 45.36860185024863,
+            "support": {
+              "left_only": 10,
+              "right_only": 10,
+              "shared": 73
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "I": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 1.0,
+          "right": 0.0
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "noise-multiplicity",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 19.99999964713086,
+            "projection": 19.99999964713086,
+            "right_norm": 19.99999964713086,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.999999999998642,
+            "distance": 8.240563519843827e-07,
+            "exact_equal": false,
+            "left_norm": 0.5,
+            "projection": 0.499999999999321,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999999993,
+            "distance": 8.240563519843827e-07,
+            "exact_equal": false,
+            "left_norm": 20.006248670983634,
+            "projection": 20.00624867098362,
+            "right_norm": 20.006248670983634,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9999999999999949,
+            "distance": 3.0329973291854625e-06,
+            "exact_equal": false,
+            "left_norm": 29.71305939774168,
+            "projection": 29.713059397741528,
+            "right_norm": 29.713059397742697,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 52
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 19.99999964713086,
+            "projection": 19.99999964713086,
+            "right_norm": 19.99999964713086,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.999999999998642,
+            "distance": 1.6448934272749118e-06,
+            "exact_equal": false,
+            "left_norm": 0.9980466744107654,
+            "projection": 0.99804667440941,
+            "right_norm": 0.9980466741282716,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999999999966,
+            "distance": 1.6448934272749118e-06,
+            "exact_equal": false,
+            "left_norm": 20.024886592676047,
+            "projection": 20.024886592675976,
+            "right_norm": 20.024886592661968,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9999999999999919,
+            "distance": 2.8001669693706716e-06,
+            "exact_equal": false,
+            "left_norm": 21.96283025678819,
+            "projection": 21.962830256788013,
+            "right_norm": 21.962830256789562,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 49
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "N": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 0.5791228762045055,
+          "right": 0.4431228762045055
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "same-round-different-history",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.9999999999999766,
+            "distance": 4.000000042130338,
+            "exact_equal": false,
+            "left_norm": 60.99999899573085,
+            "projection": 60.99999899572943,
+            "right_norm": 56.99999895362073,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999996424994483,
+            "distance": 0.0007398769406136522,
+            "exact_equal": false,
+            "left_norm": 0.8749961376662013,
+            "projection": 0.8749958248545994,
+            "right_norm": 0.8749961376662013,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999994935123515,
+            "distance": 4.000000110557573,
+            "exact_equal": false,
+            "left_norm": 61.006274232410675,
+            "projection": 61.006243333486296,
+            "right_norm": 57.006714507623535,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9987731171798917,
+            "distance": 6.165721084142708,
+            "exact_equal": false,
+            "left_norm": 76.11170521453984,
+            "projection": 76.01832507100298,
+            "right_norm": 71.13875619423638,
+            "support": {
+              "left_only": 4,
+              "right_only": 0,
+              "shared": 134
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 1.0000000000000002,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 29.999999537811163,
+            "projection": 29.999999537811167,
+            "right_norm": 29.999999537811163,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 0.9995108418341052,
+            "projection": 0.9995108418341052,
+            "right_norm": 0.9995108418341052,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 30.01664528543478,
+            "projection": 30.01664528543478,
+            "right_norm": 30.01664528543478,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 32.16673786650519,
+            "projection": 32.16673786650518,
+            "right_norm": 32.16673786650519,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 65
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "D": {
+          "actual": "less",
+          "baseline": "SURVIVED",
+          "expected": "less",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 2.220446049250313e-16,
+          "right": 0.5000000000000001
+        },
+        "F": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 0.45,
+          "right": 0.18333333333333335
+        },
+        "L": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 0.5833333333333333,
+          "right": 0.25
+        },
+        "P": {
+          "actual": "less",
+          "baseline": "SURVIVED",
+          "expected": "less",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "SURVIVED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 0.0,
+          "right": 0.39999999999999997
+        }
+      }
+    },
+    {
+      "formatting_control": null,
+      "id": "stored-tension-history",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.9999999997162494,
+            "distance": 64.99999884110011,
+            "exact_equal": false,
+            "left_norm": 127.9999975470617,
+            "projection": 127.99999751074162,
+            "right_norm": 62.99999874116412,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.999822703116548,
+            "distance": 0.016476712093154704,
+            "exact_equal": false,
+            "left_norm": 0.8749938579232743,
+            "projection": 0.8748387242392249,
+            "right_norm": 0.8749938579232741,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999751168214259,
+            "distance": 65.0000009294235,
+            "exact_equal": false,
+            "left_norm": 128.0029881928512,
+            "projection": 127.999803071638,
+            "right_norm": 63.006074751868844,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9436095875589103,
+            "distance": 93.34337621913568,
+            "exact_equal": false,
+            "left_norm": 163.76349845398502,
+            "projection": 154.52880723336904,
+            "right_norm": 78.5442382534342,
+            "support": {
+              "left_only": 145,
+              "right_only": 2,
+              "shared": 150
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 0.9999999999999999,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 33.99999934658062,
+            "projection": 33.99999934658062,
+            "right_norm": 33.99999934658062,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999999999998,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 0.9999689963245555,
+            "projection": 0.9999689963245554,
+            "right_norm": 0.9999689963245555,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 34.0147011387884,
+            "projection": 34.01470113878841,
+            "right_norm": 34.0147011387884,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 1.0,
+            "distance": 0.0,
+            "exact_equal": true,
+            "left_norm": 35.932263170364386,
+            "projection": 35.932263170364386,
+            "right_norm": 35.932263170364386,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 81
+            }
+          }
+        }
+      },
+      "witnesses": {
+        "kappa": {
+          "actual": "greater",
+          "baseline": "SURVIVED",
+          "expected": "greater",
+          "grains": {
+            "prefix": {
+              "additive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "SURVIVED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "ordinal": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              },
+              "recursive": {
+                "distinction": "SURVIVED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "SURVIVED"
+                }
+              }
+            },
+            "round": {
+              "additive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "ordinal": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "paired": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              },
+              "recursive": {
+                "distinction": "FALSIFIED",
+                "monotonic": {
+                  "cosine": "FALSIFIED",
+                  "distance": "FALSIFIED",
+                  "projection": "FALSIFIED"
+                }
+              }
+            }
+          },
+          "left": 0.5876342505722115,
+          "right": 0.20423469634014174
+        }
+      }
+    },
+    {
+      "formatting_control": {
+        "baseline": "SURVIVED",
+        "source_differs": true,
+        "unchanged_axes": [
+          "C",
+          "R",
+          "F",
+          "E",
+          "D",
+          "N",
+          "I",
+          "O",
+          "L",
+          "P",
+          "kappa"
+        ]
+      },
+      "id": "formatting-control",
+      "pair": {
+        "prefix": {
+          "additive": {
+            "cosine": 0.999999999929925,
+            "distance": 0.9999999999999947,
+            "exact_equal": false,
+            "left_norm": 33.99999934658062,
+            "projection": 33.99999934419808,
+            "right_norm": 34.99999926319139,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.9999999360845941,
+            "distance": 0.00017876717533796087,
+            "exact_equal": false,
+            "left_norm": 0.49999999999999994,
+            "projection": 0.499999968042297,
+            "right_norm": 0.5,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999999116830087,
+            "distance": 1.000000015978846,
+            "exact_equal": false,
+            "left_norm": 34.00367561848987,
+            "projection": 34.00367261538755,
+            "right_norm": 35.003570509640845,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.9711799240302054,
+            "distance": 12.12350100181099,
+            "exact_equal": false,
+            "left_norm": 49.47350292946526,
+            "projection": 48.04767281654622,
+            "right_norm": 50.86381335192046,
+            "support": {
+              "left_only": 19,
+              "right_only": 23,
+              "shared": 65
+            }
+          }
+        },
+        "round": {
+          "additive": {
+            "cosine": 0.999999999929925,
+            "distance": 0.9999999999999947,
+            "exact_equal": false,
+            "left_norm": 33.99999934658062,
+            "projection": 33.99999934419808,
+            "right_norm": 34.99999926319139,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "ordinal": {
+            "cosine": 0.999999936084594,
+            "distance": 0.00035785917412395183,
+            "exact_equal": false,
+            "left_norm": 0.9999689963245555,
+            "projection": 0.9999689324111312,
+            "right_norm": 0.9999844342498441,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 1
+            }
+          },
+          "paired": {
+            "cosine": 0.9999996477785535,
+            "distance": 1.000000064031587,
+            "exact_equal": false,
+            "left_norm": 34.0147011387884,
+            "projection": 34.01468915808117,
+            "right_norm": 35.01428161896428,
+            "support": {
+              "left_only": 0,
+              "right_only": 0,
+              "shared": 2
+            }
+          },
+          "recursive": {
+            "cosine": 0.945304581739136,
+            "distance": 12.08218839767849,
+            "exact_equal": false,
+            "left_norm": 35.932263170364386,
+            "projection": 33.96693300720187,
+            "right_norm": 36.90023794334672,
+            "support": {
+              "left_only": 19,
+              "right_only": 23,
+              "shared": 62
+            }
+          }
+        }
+      },
+      "witnesses": {}
+    }
+  ],
+  "controls": {
+    "cancellation": {
+      "exact_additive_zero": true,
+      "nonzero_placement": true,
+      "undefined_origin_direction": true
+    },
+    "refusals": {
+      "metric_order": "SURVIVED",
+      "tampered_vector": "SURVIVED",
+      "wrong_source": "SURVIVED",
+      "wrong_terms": "SURVIVED"
+    },
+    "reversals_distinguished": {
+      "additive": 0,
+      "ordinal": 11,
+      "paired": 11,
+      "recursive": 11
+    },
+    "reversals_exact_additive_equal": 11,
+    "scale": {
+      "additive_scales_exactly": true,
+      "placement_scales_exactly": true
+    }
+  },
+  "coverage": {
+    "C": "SURVIVED",
+    "D": "SURVIVED",
+    "E": "SURVIVED",
+    "F": "SURVIVED",
+    "I": "SURVIVED",
+    "L": "SURVIVED",
+    "N": "SURVIVED",
+    "O": "SURVIVED",
+    "P": "SURVIVED",
+    "R": "SURVIVED",
+    "kappa": "SURVIVED"
+  },
+  "hmmm": [
+    "Lawful semantic distance, direction for signed axes, metric calibration, and empirical measurement validity require further evidence.",
+    "The recursive address alignment is a candidate comparison convention. Cross-scale semantic correspondence and frame transport are unresolved.",
+    "The previously observed refusal-order contrast is a retrospective control; none of these fixtures constitutes an independent empirical holdout."
+  ],
+  "identity": {
+    "instrument_sha256": "0435305b99b44eba2d37d5eaf24dfa4b67f5bea3b47276992af2523958121458",
+    "numeric_runtime": {
+      "machine": "x86_64",
+      "numpy": "2.2.6",
+      "platform": "Linux",
+      "python": "3.12.14"
+    },
+    "producers": {
+      "edcm": {
+        "commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+        "verified_record_entries": 76,
+        "version": "0.2.0"
+      },
+      "uchc": {
+        "commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+        "verified_record_entries": 60,
+        "version": "0.2.0a3",
+        "wheel_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88"
+      },
+      "ucns": {
+        "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+        "verified_record_entries": 64,
+        "version": "0.0.0.dev0"
+      }
+    },
+    "protocol_sha256": "642d361fd4ce977a18ba661cf69870e41dc550b29decae1d77d61f578e161b7c",
+    "work_graph_sha256": "ac4adab9c75b01a0a1a70bd0ea5c64841ff99b65c9fb83980755c0e4b50ef7dd"
+  },
+  "origin_analysis": {
+    "additive": {
+      "dimensions": 2,
+      "nonorthogonal_pairs": 55,
+      "nonzero_origins": 11,
+      "orthogonality": "FALSIFIED",
+      "pair_count": 55,
+      "rank": 2
+    },
+    "ordinal": {
+      "dimensions": 2,
+      "nonorthogonal_pairs": 55,
+      "nonzero_origins": 11,
+      "orthogonality": "FALSIFIED",
+      "pair_count": 55,
+      "rank": 2
+    },
+    "paired": {
+      "dimensions": 4,
+      "nonorthogonal_pairs": 55,
+      "nonzero_origins": 11,
+      "orthogonality": "FALSIFIED",
+      "pair_count": 55,
+      "rank": 4
+    },
+    "recursive": {
+      "dimensions": 118,
+      "nonorthogonal_pairs": 55,
+      "nonzero_origins": 11,
+      "orthogonality": "FALSIFIED",
+      "pair_count": 55,
+      "rank": 11
+    }
+  },
+  "outcomes": {
+    "prefix": {
+      "additive": {
+        "cosine": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 8,
+          "SURVIVED": 2,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "FALSIFIED": 6,
+          "SURVIVED": 5
+        },
+        "projection": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        }
+      },
+      "ordinal": {
+        "cosine": {
+          "FALSIFIED": 8,
+          "SURVIVED": 2,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 8,
+          "SURVIVED": 2,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "SURVIVED": 11
+        },
+        "projection": {
+          "FALSIFIED": 8,
+          "SURVIVED": 2,
+          "UNRESOLVED": 1
+        }
+      },
+      "paired": {
+        "cosine": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "SURVIVED": 11
+        },
+        "projection": {
+          "FALSIFIED": 6,
+          "SURVIVED": 4,
+          "UNRESOLVED": 1
+        }
+      },
+      "recursive": {
+        "cosine": {
+          "FALSIFIED": 5,
+          "SURVIVED": 5,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 5,
+          "SURVIVED": 5,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "SURVIVED": 11
+        },
+        "projection": {
+          "FALSIFIED": 4,
+          "SURVIVED": 6,
+          "UNRESOLVED": 1
+        }
+      }
+    },
+    "round": {
+      "additive": {
+        "cosine": {
+          "FALSIFIED": 10,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 10,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "FALSIFIED": 11
+        },
+        "projection": {
+          "FALSIFIED": 10,
+          "UNRESOLVED": 1
+        }
+      },
+      "ordinal": {
+        "cosine": {
+          "FALSIFIED": 9,
+          "SURVIVED": 1,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 9,
+          "SURVIVED": 1,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "FALSIFIED": 5,
+          "SURVIVED": 6
+        },
+        "projection": {
+          "FALSIFIED": 10,
+          "UNRESOLVED": 1
+        }
+      },
+      "paired": {
+        "cosine": {
+          "FALSIFIED": 9,
+          "UNRESOLVED": 2
+        },
+        "distance": {
+          "FALSIFIED": 9,
+          "SURVIVED": 1,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "FALSIFIED": 5,
+          "SURVIVED": 6
+        },
+        "projection": {
+          "FALSIFIED": 10,
+          "UNRESOLVED": 1
+        }
+      },
+      "recursive": {
+        "cosine": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        },
+        "distance": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        },
+        "distinction": {
+          "FALSIFIED": 5,
+          "SURVIVED": 6
+        },
+        "projection": {
+          "FALSIFIED": 7,
+          "SURVIVED": 3,
+          "UNRESOLVED": 1
+        }
+      }
+    }
+  },
+  "receipt_sha256": "7777f5f30bff69778053dccffddd27ae3b6a45def57f2f929c7b8bb6a7e5602d",
+  "schema": "edcm.epicycle-projection-summary/1"
+}

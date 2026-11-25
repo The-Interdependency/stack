@@ -1,0 +1,40 @@
+name: EDCM epicycle projection
+on:
+  pull_request:
+    paths: ['research/edcm/**', 'stack-manifest.json', 'integration/uchc/halving-requirements.txt', '.github/workflows/edcm-epicycle-projection.yml']
+  push:
+    branches: [main]
+    paths: ['research/edcm/**', 'stack-manifest.json', 'integration/uchc/halving-requirements.txt', '.github/workflows/edcm-epicycle-projection.yml']
+permissions:
+  contents: read
+jobs:
+  projection-replay:
+    runs-on: ubuntu-24.04
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12.14'
+      - name: Install exact public producers
+        run: |
+          python -m pip download --require-hashes --no-deps -r integration/uchc/halving-requirements.txt -d "$RUNNER_TEMP/edcm-wheel"
+          python -m pip install --no-deps -r research/edcm/requirements.txt "$RUNNER_TEMP"/edcm-wheel/*.whl
+          python -m pip install pytest==8.3.5
+          python -m pip check
+      - name: Test metric origins, native records and counterexamples
+        run: python -m pytest -q research/edcm/tests
+      - name: Generate and independently replay the complete receipt
+        run: |
+          python -m research.edcm.epicycle_projection --output "$RUNNER_TEMP/epicycle-receipt.json" --summary "$RUNNER_TEMP/epicycle-summary.json"
+          python -m research.edcm.epicycle_projection --verify "$RUNNER_TEMP/epicycle-receipt.json"
+      - uses: actions/upload-artifact@v7.0.1
+        with:
+          name: edcm-epicycle-evidence
+          path: |
+            ${{ runner.temp }}/epicycle-receipt.json
+            ${{ runner.temp }}/epicycle-summary.json
