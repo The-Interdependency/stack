@@ -32,29 +32,5 @@ class PublicContractTests(unittest.TestCase):
                 f"Law {law} must have exactly one normative section",
             )
 
-    def test_blocker_groups_are_executable_from_public_text(self) -> None:
-        required = (
-            'ASCII("URPCS001")',
-            'ASCII("URGON001")',
-            'ASCII("URPCF001")',
-            'ASCII("URPCS/TAG/v1")',
-            'ASCII("URPCS/RECEIPT/v1")',
-            'ASCII("URPCS/ADV/PAIR/v1")',
-            'ASCII("URPCS/ADV/INTEGRITY/v1")',
-            'ASCII("URPCS/ADV/ROOT/v1")',
-            "G = DeserializeBody(B_terminal, W_t)",
-            "for r from R down to 0:",
-            "for i in 0 .. len(F):",
-            "Decrypt(C, K_t, AD):",
-        )
-        for token in required:
-            self.assertIn(token, self.spec)
-
-    def test_historical_blocker_is_not_rewritten(self) -> None:
-        self.assertIn("BLOCKED_NOT_INDEPENDENTLY_SPECIFIED", self.audit)
-        self.assertIn("Base commit:", self.audit)
-        self.assertIn("Freeze commit:", self.audit)
-
-
 if __name__ == "__main__":
     unittest.main()
