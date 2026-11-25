@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "56051185865eb386f8e14b1a77f53dc2f189ad9ea121cc1b7d18110c9e241b5f",
+  "work_graph_sha256": "91e47343d59ed8c9938b25658dfd72af33f416939696a886098729c160cd8338",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -830,6 +830,76 @@
       "artifact_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
       "authority": "released UCHC ordinal-halving/1 implementation",
       "relation": "Stack installs the hash-locked release and replays both epicycle results",
+      "canonical_release": true,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-stack",
+      "repository": "The-Interdependency/stack",
+      "commit": "fd9e43eb9a7f8d3492b98de1f9bcf3af6e06a5c6",
+      "authority": "Stack measurement research and experimental evidence",
+      "relation": "starting forge identity",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-edcm",
+      "repository": "The-Interdependency/edcm",
+      "commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "authority": "EDCM metric semantics and maintained readout implementations",
+      "relation": "metric-origin terms, independent raw transcript readout, and measurement contracts",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-uchc",
+      "repository": "The-Interdependency/uchc",
+      "commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+      "authority": "UCHC recursive language construction and release contracts",
+      "relation": "exact source of the released two-vector epicycle implementation",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-ucns",
+      "repository": "The-Interdependency/ucns",
+      "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+      "authority": "native UCNS scalar-bearing disc-stack geometry",
+      "relation": "exact graph replay, local rays, vector expressions and numeric display",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-metapat",
+      "repository": "The-Interdependency/metapat",
+      "commit": "a283a4289c469e8252641aba439fd49d77e671e9",
+      "authority": "METAPAT semantic domain restraint",
+      "relation": "recursive simplex participation and measurement distinction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-skill-lib",
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "c778d5c2c9bd2370a4e0e2a0120508377f5ad3eb",
+      "authority": "organization research and verification doctrine",
+      "relation": "maximal coherent action and cross-source evidence discipline",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/edcm/",
+      "participant_id": "epicycle-uchc-wheel",
+      "repository": "The-Interdependency/uchc",
+      "artifact_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
+      "authority": "released UCHC native epicycle construction",
+      "relation": "hash-locked wheel used to construct and replay every origin and observation",
       "canonical_release": true,
       "authority_transfer": false
     }

@@ -128,7 +128,7 @@ jobs:
             --edcm-root ../edcm \
             --attest-output /tmp/native-mobius-v0.attested.json
           PYTHONDONTWRITEBYTECODE=1 python3 research/digital-metrics/verify_receipt_cli.py \
-            research/digital-metrics/receipts/native-mobius-v0-stack-56051185.json \
+            research/digital-metrics/receipts/native-mobius-v0-stack-91e47343.json \
             --metapat-root ../metapat \
             --ucns-root ../ucns \
             --edcm-root ../edcm

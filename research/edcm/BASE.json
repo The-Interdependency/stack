@@ -6,5 +6,18 @@
   "source_commit": "7951ca32ba0f2494dc68ff9b7f6a80151918a56d",
   "canon_path": "../../libs/edcm",
   "authority": "The-Interdependency/edcm",
-  "standing": "stack-local-research"
+  "standing": "stack-local-research",
+  "epicycle_projection": {
+    "standing": "stack-local measurement research",
+    "protocol": "EPICYCLE_PROTOCOL.json",
+    "work_graph": "EPICYCLE_WORK_GRAPH.json",
+    "work_graph_sha256": "ac4adab9c75b01a0a1a70bd0ea5c64841ff99b65c9fb83980755c0e4b50ef7dd",
+    "edcm_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+    "uchc_source_commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+    "ucns_commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+    "uchc_release_url": "https://github.com/The-Interdependency/uchc/releases/download/uchc-v0.2.0a3/uchc-0.2.0a3-py3-none-any.whl",
+    "uchc_wheel_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
+    "uchc_version": "0.2.0a3",
+    "authority_transfer": false
+  }
 }

@@ -1,0 +1,54 @@
+{
+  "schema": "the-interdependency.stack-manifest",
+  "version": "1.0.0",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "fd9e43eb9a7f8d3492b98de1f9bcf3af6e06a5c6",
+      "authority": "Stack measurement research and experimental evidence",
+      "relation": "starting forge identity"
+    },
+    {
+      "repository": "The-Interdependency/edcm",
+      "commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "authority": "EDCM metric semantics and maintained readout implementations",
+      "relation": "metric-origin terms, independent raw transcript readout, and measurement contracts"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "e8f57c7b663142d98c78e0ed201816327a9fa9cf",
+      "authority": "UCHC recursive language construction and release contracts",
+      "relation": "exact source of the released two-vector epicycle implementation"
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+      "authority": "native UCNS scalar-bearing disc-stack geometry",
+      "relation": "exact graph replay, local rays, vector expressions and numeric display"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "a283a4289c469e8252641aba439fd49d77e671e9",
+      "authority": "METAPAT semantic domain restraint",
+      "relation": "recursive simplex participation and measurement distinction"
+    },
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "c778d5c2c9bd2370a4e0e2a0120508377f5ad3eb",
+      "authority": "organization research and verification doctrine",
+      "relation": "maximal coherent action and cross-source evidence discipline"
+    }
+  ],
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "semantic_mapping": "EDCM metric-origin construction terms are consumed by UCHC; candidate geometric measurements and independent maintained readouts are separately recorded.",
+    "agent_scope": "Stack EDCM epicycle projection experiment",
+    "hmmm": [
+      "Lawful semantic projection and empirical measurement calibration remain to be established.",
+      "Numeric local-frame alignment has candidate standing."
+    ]
+  },
+  "work_graph_sha256": "ac4adab9c75b01a0a1a70bd0ea5c64841ff99b65c9fb83980755c0e4b50ef7dd"
+}

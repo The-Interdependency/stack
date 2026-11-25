@@ -1,0 +1,103 @@
+{
+  "schema": "edcm.epicycle-projection-protocol/1",
+  "decision": "Determine which native geometric views preserve distinctions required by the maintained EDCM readouts and whether metric-origin geometry supports orthogonal axes.",
+  "standing": "candidate research",
+  "origin_profile": "ordered EDCM construction terms, each closed by UCHC at unit radius, then closed as one sequence at unit radius",
+  "observation_profile": "exact raw round text, partitioned into maximal whitespace and non-whitespace runs; each run participates as one closed UCHC object; closed rounds and literal LF separators participate at the next scale",
+  "views": [
+    "additive",
+    "ordinal",
+    "paired",
+    "recursive"
+  ],
+  "recursive_alignment": "Each occurrence is addressed by its parent-local ordinal depth, counted from the most recent child. Retain each local ray and both results of every closed node. Compare equal addresses and roles in their own local SPACE frames.",
+  "comparison": {
+    "distance": "Euclidean norm of differences in the union of addressed planar vector coordinates",
+    "projection": "dot product with the unit vector of the origin field",
+    "cosine": "dot product of unit fields",
+    "absence": "Union-space zero extension is an explicit comparison operation. Record unmatched coordinate supports separately; retain presence of exact zero vectors.",
+    "numeric": "UCNS native display of exact Point expressions, binary64. Preserve original records and unrounded values. Undefined direction is typed null.",
+    "rank_relative_tolerance": 1e-10,
+    "comparison_tolerance": 1e-12,
+    "monotonic_hypothesis": "For unsigned legacy readouts, larger proxy could correspond to smaller origin distance, larger signed projection, or larger cosine. Test each separately at round and prefix grain; signed O direction is unresolved."
+  },
+  "fixtures": [
+    {
+      "id": "refusal-order",
+      "left": ["A: You must finish.\nB: i will not."],
+      "right": ["A: You must finish.\nB: will i not."],
+      "changed": {"R": "greater", "E": "greater"},
+      "same_multiset": true
+    },
+    {
+      "id": "contradiction-order",
+      "left": ["A: State the instruction.\nB: but you said leave."],
+      "right": ["A: State the instruction.\nB: you said but leave."],
+      "changed": {"C": "greater"},
+      "same_multiset": true
+    },
+    {
+      "id": "scope-order",
+      "left": ["A: Keep the scope.\nB: not now."],
+      "right": ["A: Keep the scope.\nB: now not."],
+      "changed": {"O": "less"},
+      "same_multiset": true
+    },
+    {
+      "id": "integration-order",
+      "left": ["A: State the result.\nB: you misunderstood."],
+      "right": ["A: State the result.\nB: misunderstood you."],
+      "changed": {"I": "greater"},
+      "same_multiset": true
+    },
+    {
+      "id": "noise-multiplicity",
+      "left": ["A: Repeat.\nB: no no."],
+      "right": ["A: Repeat.\nB: on no."],
+      "changed": {"N": "greater"},
+      "same_multiset": true
+    },
+    {
+      "id": "same-round-different-history",
+      "left": ["A: alpha beta.\nB: gamma delta.", "A: alpha beta.\nB: gamma delta."],
+      "right": ["A: one two.\nB: three four.", "A: alpha beta.\nB: gamma delta."],
+      "changed": {"F": "greater", "D": "less", "L": "greater", "P": "less"},
+      "same_final_round": true
+    },
+    {
+      "id": "stored-tension-history",
+      "left": ["A: You must finish.\nB: i will not. i will not. but you said leave. you misunderstood. no way.", "A: You must finish.\nB: i will not."],
+      "right": ["A: You must finish.\nB: okay.", "A: You must finish.\nB: i will not."],
+      "changed": {"kappa": "greater"},
+      "same_final_round": true
+    },
+    {
+      "id": "formatting-control",
+      "left": ["A: You must finish.\nB: i will not."],
+      "right": ["A: You must finish.\nB: i will not.\n"],
+      "changed": {},
+      "all_equal": true
+    }
+  ],
+  "controls": [
+    "All eleven origin self-comparisons and all distinct origin pairs",
+    "Reverse each origin term sequence at the same frame, preserving every scalar occurrence",
+    "Repeat an origin at frame radius two, retaining native scale",
+    "Exact additive cancellation with a nonzero placed endpoint; undefined unit direction remains typed absence",
+    "Reject malformed vectors, source mismatches, reordered metric carriers and wrong term identities"
+  ],
+  "acceptance": [
+    "Native closure and replay preserve exact records, source bytes, multiplicity, order, and both vectors.",
+    "Each maintained readout is exercised by a predeclared contrast; a failed baseline witness is recorded as BLOCKED.",
+    "Exact equal field with a changed readout falsifies that field as a sufficient deterministic input at the tested grain.",
+    "A distinct numeric projection survives only the stated contrast; binary64 ambiguity remains UNRESOLVED.",
+    "A planar view with more nonzero axes than dimensions cannot be mutually orthogonal. Record numeric rank and off-diagonal cosines for all views.",
+    "Each of the three monotonic proximity hypotheses is tested separately. Select no calibration from these controls.",
+    "The complete frozen experiment and its exact producer identities replay deterministically."
+  ],
+  "hmmm": [
+    "Lawful semantic distance, direction for signed axes, metric calibration, and empirical measurement validity require further evidence.",
+    "The recursive address alignment is a candidate comparison convention. Cross-scale semantic correspondence and frame transport are unresolved.",
+    "The previously observed refusal-order contrast is a retrospective control; none of these fixtures constitutes an independent empirical holdout."
+  ]
+}
