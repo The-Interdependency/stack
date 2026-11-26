@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `91e47343d59ed8c9938b25658dfd72af33f416939696a886098729c160cd8338`
+Work-graph SHA-256: `969575ef380123921bebc9fac93c5fa2b4b5bd403db889db9a9343c022c1d952`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -348,6 +348,11 @@ the source and public wheel to matching Stack replay results.
 | `ordinal-halving-language` | `The-Interdependency/uchc` | `e8f57c7b663142d98c78e0ed201816327a9fa9cf` | UCHC package source for ordinal affixiation and paired epicycle results |
 | `ordinal-halving-geometry` | `The-Interdependency/ucns` | `1edfa593ae9d8c9ad394b5462638bcc717f99fbd` | native scalar-bearing geometry and recursive vector addition at the installed producer pin |
 | `ordinal-halving-wheel` | `The-Interdependency/uchc` | `ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88` | released UCHC ordinal-halving/1 implementation; Stack installs the hash-locked release and replays both epicycle results |
+| `skill-resolver-catalog` | `The-Interdependency/skill-lib` | `0375a146a05cd61bb924290c5427752a2c0ded67` | skill definitions and declared loading relations; catalog source for the UCHC resolver and typed-graph control |
+
+The [skill resolver pilot](integration/uchc/skill_resolver/README.md) uses this
+scoped catalog alongside the ordinal-halving release. The AHBG host selects
+which skills and runner declarations it can disclose.
 
 ## English recursive attachment integration
 

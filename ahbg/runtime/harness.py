@@ -178,4 +178,6 @@ class SubprocessHarness:
             if self._process.stdin:
                 self._process.stdin.close()
             self._process.wait(timeout=5)
+            if self._process.stdout:
+                self._process.stdout.close()
             self._process = None

@@ -1,0 +1,12 @@
+{
+  "catalog": {
+    "repo": "The-Interdependency/skill-lib",
+    "commit": "0375a146a05cd61bb924290c5427752a2c0ded67",
+    "index_sha256": "574da2d8a1fb49a9641102662e332965d4b3fce45a4d6ff531eb59f7b72033ac"
+  },
+  "uchc": {
+    "version": "0.2.0a3",
+    "halving_module_sha256": "5a94aeed84bb67189a89a8ee12bff97f5e64dbbf4c8f5c89e5125c587b0c5961",
+    "ucns_commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd"
+  }
+}

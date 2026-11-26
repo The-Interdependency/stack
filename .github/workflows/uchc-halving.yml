@@ -1,10 +1,10 @@
 name: Consume released UCHC halving
 on:
   pull_request:
-    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
   push:
     branches: [main]
-    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
 permissions:
   contents: read
 jobs:
@@ -33,7 +33,34 @@ jobs:
           python -m pip install --no-deps ./_deps/halving-native _dist/*.whl
           python -I integration/uchc/verify_halving.py _dist/*.whl _deps/encoding-native > halving-replay.json
           cat halving-replay.json
+      - name: Read catalog commit from the pilot lock
+        id: catalog
+        run: |
+          python - <<'PYCODE' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+          print("commit=" + json.loads(Path("integration/uchc/skill_resolver/source.json").read_text())["catalog"]["commit"])
+          PYCODE
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/skill-lib
+          ref: ${{ steps.catalog.outputs.commit }}
+          path: _deps/skill-catalog
+          persist-credentials: false
+      - name: Compare UCHC and graph skill resolution and AHBG disclosure
+        env:
+          PYTHONPATH: .:libs/ucns/src
+          UCHC_HALVING_UCNS_ROOT: ${{ github.workspace }}/_deps/halving-native
+          AHBG_SKILL_UCNS_SOURCE: ${{ github.workspace }}/_deps/halving-native
+          AHBG_SKILL_CATALOG: ${{ github.workspace }}/_deps/skill-catalog
+        run: |
+          python -m unittest discover -s integration/uchc/skill_resolver -p 'test_*.py'
+          python -m unittest discover -s ahbg/integration/tests -p '*skill*.py'
+          python -m integration.uchc.skill_resolver.acceptance "$AHBG_SKILL_CATALOG" "$UCHC_HALVING_UCNS_ROOT" > skill-resolution.json
+          cmp integration/uchc/skill_resolver/comparison.json skill-resolution.json
       - uses: actions/upload-artifact@v7.0.1
         with:
           name: released-halving-replay
-          path: halving-replay.json
+          path: |
+            halving-replay.json
+            skill-resolution.json
