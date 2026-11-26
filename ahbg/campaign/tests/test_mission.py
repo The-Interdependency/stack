@@ -88,5 +88,13 @@ class MissionTests(unittest.TestCase):
         self.assertEqual(lab.record(parent["id"])["position"], "RING_1")
         self.assertEqual(changed["position"], "RING_5")
         self.assertEqual(
+            changed["fork"],
+            {
+                "parent_id": parent["id"],
+                "parent_digest": parent["state_digest"],
+                "variable": "order",
+            },
+        )
+        self.assertEqual(
             free.save(Case())["state_digest"], lab.save(Case())["state_digest"]
         )

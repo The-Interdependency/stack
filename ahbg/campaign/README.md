@@ -45,13 +45,13 @@ The scripted Builder reached all four expected exits. Adding the competing move 
 | SmolLM2 135M | 0 | 1066 | 1548 | 0.86 | 1145 |
 | Granite 4.0 350M | 0 | 1786 | 2042 | 0.55 | 2394 |
 
-On the occupied-center turn SmolLM2 returned a quoted A for both orders. Granite returned the word builder for both. Both are invalid under the frozen exact-label parser. A separate supervised table trained on 16 engine demonstrations and matched the teacher on 16/16 decisions across four held-out fixture families. It has explicit order and center-state features and a fixed vocabulary. Language generalization, mobile-device latency and population performance remain unmeasured. The fixture commander supplies fixed orders. Current-A0 commander inference, autonomous fauna inference and true spawning require further integration.
+On the occupied-center turn SmolLM2 returned a quoted A for both orders. Granite returned the word builder for both. Both are invalid under the frozen exact-label parser. A separate supervised table trained on 16 engine demonstrations and matched the teacher on 16/16 decisions across four held-out fixture families. It has explicit order and center-state features and a fixed vocabulary. Language generalization, mobile-device latency and population performance remain unmeasured. The fixture commander supplies fixed orders. The separate constrained-menu A0 trial below uses fresh model decisions for the commander, rival and Builder. Runtime spawning remains open.
 
 Use `--controller smol` or `--controller granite` before `serve` to play through the cached local model. Saved decision replay works without loading weights. Fresh model forks require the original controller. The VM trial rejects a model-scoring process that can open an IPv4 or IPv6 socket.
 
 ## Source and reader evidence
 
-The owner inventory on 2026-11-26 contained 37 repositories. The [register](evidence/coverage.tsv) assigns ten runtime, nine content, eight release, three recovery and seven historical obligations. Four rows have executable evidence in this slice. The remaining 33 have proposed consumers and first-failure tests. Five repositories are archived and two more carry owner retirement notices. Weave and PSFR belong to Stack and add no repositories to the denominator. Weave still needs a profile that restores a replay through its corpus/thread cycle. PSFR still needs a synthetic copying, isolation and repair trial that distinguishes ancestry from repetition.
+The owner inventory on 2026-11-26 contained 37 repositories. The [register](evidence/coverage.tsv) assigns ten runtime, nine content, eight release, three recovery and seven historical obligations. Five rows have executable evidence in this slice. The remaining 32 have proposed consumers and first-failure tests. Five repositories are archived and two more carry owner retirement notices. Weave and PSFR belong to Stack and add no repositories to the denominator. Weave still needs a profile that restores a replay through its corpus/thread cycle. PSFR still needs a synthetic copying, isolation and repair trial that distinguishes ancestry from repetition.
 
 Removing UCNS’s seed module in an isolated copy stopped the mission before its first legal menu. Restoring the bytes reproduced the original board digest, as did adding an unread file. Of nine imported UCNS modules, six match the claimed upstream revision, one differs and two are absent there. Five of the twenty EDCM measurement and canon files differ between Stack’s vendored copy and the measured upstream. The inspector consumes the verified upstream measurement package. [Geometry control](evidence/geometry-control.json) · [Source comparisons](evidence/source-comparison.json)
 
@@ -71,9 +71,23 @@ python -m ahbg.campaign.inspector /path/to/exact/edcm/source /tmp/metric-contras
 
 | Obligation | Current boundary and condition to resume |
 |---|---|
-| A0 commander, autonomous fauna and multiplayer | The gameplay UI and offline trials host the Builder locally. The rival is a precommitted fixture. The deployed A0 checkout exposes authenticated `/api/conversations` and `/api/ahbg/sessions`; the reviewed Stack adapter targets `/api/v1/conversations`. Qualify an authenticated, VM-local A0 integration and demonstrate two isolated owner/participant views. |
+| A0 commander, autonomous fauna and multiplayer | The A0 dispatcher trial runs all three participants with separate views and resident weights. The basic mission deliberately fixes the rival’s move for the comparison. The deployed A0 checkout exposes authenticated `/api/conversations` and `/api/ahbg/sessions`; the reviewed Stack adapter targets `/api/v1/conversations`. Qualify an authenticated, VM-local A0 integration and demonstrate two isolated owner/participant views. |
 | AP, construction, spawn, Warrior, loyalty, absence and capture-six | This mission exposes one move and the existing simultaneous resolver. Owner-specified AP accounting, spawn triggers and lineage, capture-six adjudication, absence timing and loyalty transitions need executable owner rules and campaign cases. Seeded occupants supply no spawning evidence. |
 | Skill card | TIWCG supplies a politics rules implementation and its plan describes extraction of the common kernel. The territory adapter, action timing, affordability and idempotent tile/debit commit still need a shared contract. |
 | Structural corpus | Supply a field matching database SHA-256 `13ba24116f0ff02cfdfeb4a6b060f2672fa409b46a3b7cf26e4421c65321b063` and the structural lock, or run its pinned build. That workflow requires more than 8 GiB available; the VM had 4.3 GiB available after the model installation. |
-| Evaluation | Live commander exchanges, population saturation, end-to-end turn latency quantiles, copy/fork memory semantics, genuine handset install/reconnect, and full dependency removal/restoration remain unmeasured. |
+| Evaluation | Authenticated website sessions, population saturation, copy/fork memory semantics, genuine handset install/reconnect, and full dependency removal/restoration remain unmeasured. |
 | Distribution | Weights and corpus databases stay on the VM. Stack’s licensing map reserves the decision on original AHBG and media to the owner. Clear the release manifest and rights per shipped component before distributing a commercial build. |
+
+
+## Live A0 participant dispatch
+
+The VM executed `dispatchParticipant` from A0 commit `8df2a2acce916e1e3993089e9cdabd4266768939`. It routed three separate participant snapshots through A0’s compatible-provider adapter to a model resident on the same VM. The A0 slot is named xAI. The model and its weight digest in each receipt identify the actual inference provider. An in-memory A0 test vault supplied an ephemeral loopback credential. No account-backed website login was exercised.
+
+The commander received the Explorer report and issued the occupied-A order to the Builder. With SmolLM2 in all three roles, the rival independently contested A and the Builder chose A. The resolver displaced the Builder. Switching only the Builder to Granite produced HOLD. Switching only the rival to Granite reproduced the original outcome. These trials use highest mean conditional token log probability over the role’s permitted menu. The earlier free-generation results use a separate decoder and scoring rule. [Three dispatch receipts](evidence/a0-dispatch.json)
+
+```sh
+HF_HUB_OFFLINE=1 "$PYTHON" -m ahbg.campaign.dispatch_trial /path/to/a0 smol /tmp/ahbg-a0-original
+HF_HUB_OFFLINE=1 "$PYTHON" -m ahbg.campaign.dispatch_trial /path/to/a0 smol /tmp/ahbg-a0-swap --builder granite
+```
+
+A second offline run measured complete turns after loading weights, from before observation through persistence and the runtime’s replay check. Each row has 16 arms on one fixed mission. SmolLM2 had a median of 1.04 seconds and a nearest-rank p95 of 2.90 seconds. Granite had a median of 1.74 seconds and a p95 of 3.43 seconds. Scripted and random medians were 19 ms and 20 ms. Run `python -m ahbg.campaign.latency CONTROLLER OUTPUT.json` under the same socket restrictions as the scored trials to repeat. [Times and state digests](evidence/turn-latency.json)

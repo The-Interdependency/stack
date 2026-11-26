@@ -213,6 +213,22 @@
       el("controls").hidden = !data.lab;
       if (data.lab) location.hash = data.id;
     }
+    function renderFork(parent, branch) {
+      renderOriginal(parent);
+      location.hash = branch.id;
+      const card = turn(branch, "Forked turn");
+      node(
+        card,
+        "p",
+        branch.choice !== original.choice
+          ? "First decision change: " + original.choice + " → " + branch.choice
+          : branch.outcome !== original.outcome
+            ? "Same choice. The resolver changed the outcome to " +
+              branch.outcome +
+              "."
+            : "Same choice and outcome.",
+      );
+    }
     el("start").onsubmit = (e) => {
       e.preventDefault();
       action(async () =>
@@ -231,22 +247,7 @@
           id: original.id,
           variable: el("variable").value,
         });
-        renderOriginal(original);
-        const card = turn(branch, "Forked turn");
-        node(
-          card,
-          "p",
-          branch.choice !== original.choice
-            ? "First decision change: " +
-                original.choice +
-                " → " +
-                branch.choice
-            : branch.outcome !== original.outcome
-              ? "Same choice. The resolver changed the outcome to " +
-                branch.outcome +
-                "."
-              : "Same choice and outcome.",
-        );
+        renderFork(original, branch);
       });
     };
     el("replay").onclick = () =>
@@ -294,12 +295,17 @@
             });
         });
       }
-      if (info.lab && location.hash)
-        renderOriginal(
-          await request(
-            "/replay/" + encodeURIComponent(location.hash.slice(1)),
-          ),
+      if (info.lab && location.hash) {
+        const selected = await request(
+          "/replay/" + encodeURIComponent(location.hash.slice(1)),
         );
+        if (selected.fork)
+          renderFork(
+            await request("/replay/" + selected.fork.parent_id),
+            selected,
+          );
+        else renderOriginal(selected);
+      }
     });
   </script>
 </html>

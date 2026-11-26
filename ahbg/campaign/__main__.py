@@ -59,8 +59,10 @@ class Campaign:
         source = self.path(key)
         result = replay(source)
         doc = json.loads((source / "result.json").read_text())
+        lineage = source / "lineage.json"
         return {
             "id": key,
+            "fork": json.loads(lineage.read_text()) if lineage.is_file() else None,
             "case": asdict(load_case(source)),
             **result,
             "board": doc["final_snapshot"],
@@ -68,11 +70,13 @@ class Campaign:
             "lab": self.gate.has_benchmark_lab(),
         }
 
-    def save(self, case):
+    def save(self, case, *, lineage=None):
         key = str(uuid4())
         with tempfile.TemporaryDirectory(dir=self.directory) as tmp:
             stage = Path(tmp) / "turn"
             play(case, self.controller, stage)
+            if lineage is not None:
+                (stage / "lineage.json").write_text(json.dumps(lineage) + "\n")
             stage.rename(self.directory / key)
         return self.record(key)
 
@@ -86,7 +90,14 @@ class Campaign:
             for field, value in self.controller.identity.items()
         ):
             raise ValueError("reopen with the original controller to fork this turn")
-        return self.save(FORKS[variable](load_case(self.path(key))))
+        return self.save(
+            FORKS[variable](load_case(self.path(key))),
+            lineage={
+                "parent_id": key,
+                "variable": variable,
+                "parent_digest": parent["state_digest"],
+            },
+        )
 
 
 def make_server(campaign, port):
