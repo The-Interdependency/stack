@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  /><title>Two exits · AHBG</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: #f6f4ed;
+      color: #18392f;
+      font: 16px/1.5 system-ui;
+    }
+    main {
+      max-width: 860px;
+      margin: auto;
+      padding: clamp(16px, 4vw, 44px);
+    }
+    h1,
+    h2,
+    h3 {
+      font-family: Georgia, serif;
+      line-height: 1.2;
+    }
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+    h2 {
+      font-size: 1.6rem;
+    }
+    button,
+    select {
+      max-width: 100%;
+      padding: 10px;
+      border: 1px solid #587163;
+      border-radius: 4px;
+      font: inherit;
+    }
+    button {
+      background: #194a38;
+      color: white;
+      cursor: pointer;
+    }
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-weight: 600;
+    }
+    .turn {
+      padding: 18px;
+      background: white;
+      border: 1px solid #b9c8bb;
+      border-radius: 8px;
+      min-width: 0;
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(270px, 100%), 1fr));
+      gap: 12px;
+    }
+    .board {
+      position: relative;
+      height: 190px;
+      margin: 14px 0;
+    }
+    .cell {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      min-width: 64px;
+      font: 13px/1.25 system-ui;
+      border-radius: 6px;
+      background: #eaf0e6;
+      padding: 5px;
+    }
+    .cell strong {
+      display: block;
+    }
+    .cell[data-unit="builder"] {
+      background: #194a38;
+      color: white;
+    }
+    details {
+      margin-top: 12px;
+    }
+    code {
+      overflow-wrap: anywhere;
+    }
+    p {
+      margin: 0.6em 0;
+    }
+    .error {
+      color: #902b20;
+    }
+  </style>
+  <main>
+    <h1>Two exits</h1>
+    <p>
+      Direct the Builder from the east tile. Exit A is northeast, exit B is
+      southeast. A rival can contest A on the same turn.
+    </p>
+    <form id="start">
+      <label for="order">Builder’s order</label
+      ><select id="order"></select>
+      <button>Play turn</button>
+    </form>
+    <p id="error" class="error" role="alert"></p>
+    <div class="columns" id="turns"></div>
+    <form id="controls" hidden>
+      <h2>Change one thing</h2>
+      <label for="variable">Fork this turn</label>
+      <select id="variable">
+        <option value="order">Reverse the order</option>
+        <option value="center">Toggle center occupancy</option>
+        <option value="competing-move">Toggle the rival’s move</option>
+        <option value="menu">Reverse the menu</option>
+        <option value="recipient">Change who receives the order</option>
+        <option value="report">Change scout report delivery</option>
+      </select>
+      <button>Play fork</button>
+      <button type="button" id="replay">Replay original</button>
+    </form>
+  </main>
+  <script>
+    const el = (id) => document.getElementById(id);
+    let original;
+    async function request(path, data) {
+      const res = await fetch(
+        path,
+        data === undefined
+          ? {}
+          : {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            },
+      );
+      const body = await res.json();
+      if (!res.ok) throw Error(body.error);
+      return body;
+    }
+    function node(parent, tag, value) {
+      const e = document.createElement(tag);
+      if (value !== undefined) e.textContent = value;
+      parent.append(e);
+      return e;
+    }
+    function turn(data, title) {
+      const card = node(el("turns"), "article");
+      card.className = "turn";
+      node(card, "h2", title);
+      node(
+        card,
+        "p",
+        "Choice " + (data.choice ?? "invalid") + " · " + data.outcome,
+      );
+      const board = node(card, "div");
+      board.className = "board";
+      board.setAttribute("aria-label", "Resolved board");
+      for (const tile of data.board.tiles) {
+        const cell = node(board, "div");
+        cell.className = "cell";
+        cell.style.left = 50 + 31 * (tile.q + tile.r / 2) + "%";
+        cell.style.top = 50 - 31 * tile.r + "%";
+        const unit = data.board.units.find((u) => u.tile_id === tile.tile_id);
+        cell.dataset.unit = unit?.unit_id || "";
+        node(
+          cell,
+          "strong",
+          { RING_1: "A", RING_5: "B", CENTER: "Center" }[tile.tile_id] ||
+            tile.tile_id,
+        );
+        node(cell, "span", unit?.unit_id || "clear");
+      }
+      node(card, "p", "Builder observed center: " + data.builder_view.center);
+      for (const m of data.builder_view.diary)
+        node(card, "p", m.from + " → Builder: " + m.text);
+      const d = node(card, "details");
+      node(d, "summary", "Resolver events and replay ID");
+      for (const e of data.events)
+        node(
+          d,
+          "p",
+          e.kind + " " + (e.data.resolution || e.data.unit_id || ""),
+        );
+      node(d, "code", data.id);
+      return card;
+    }
+    async function action(fn) {
+      el("error").textContent = "";
+      try {
+        await fn();
+      } catch (e) {
+        el("error").textContent = e.message;
+      }
+    }
+    function renderOriginal(data) {
+      original = data;
+      el("turns").replaceChildren();
+      turn(data, "Original turn");
+      el("controls").hidden = !data.lab;
+      if (data.lab) location.hash = data.id;
+    }
+    el("start").onsubmit = (e) => {
+      e.preventDefault();
+      action(async () =>
+        renderOriginal(
+          await request("/play", {
+            case: "two-exits",
+            order: el("order").value,
+          }),
+        ),
+      );
+    };
+    el("controls").onsubmit = (e) => {
+      e.preventDefault();
+      action(async () => {
+        const branch = await request("/fork", {
+          id: original.id,
+          variable: el("variable").value,
+        });
+        renderOriginal(original);
+        const card = turn(branch, "Forked turn");
+        node(
+          card,
+          "p",
+          branch.choice !== original.choice
+            ? "First decision change: " +
+                original.choice +
+                " → " +
+                branch.choice
+            : branch.outcome !== original.outcome
+              ? "Same choice. The resolver changed the outcome to " +
+                branch.outcome +
+                "."
+              : "Same choice and outcome.",
+        );
+      });
+    };
+    el("replay").onclick = () =>
+      action(async () =>
+        renderOriginal(await request("/replay/" + original.id)),
+      );
+    action(async () => {
+      const info = await request("/api");
+      for (const text of [...info.orders, "Hold"])
+        el("order").add(new Option(text, text));
+      if (info.lab && location.hash)
+        renderOriginal(
+          await request(
+            "/replay/" + encodeURIComponent(location.hash.slice(1)),
+          ),
+        );
+    });
+  </script>
+</html>
