@@ -124,6 +124,13 @@
       <button>Play fork</button>
       <button type="button" id="replay">Replay original</button>
     </form>
+    <details id="inspector" hidden>
+      <summary>Inspect eleven EDCM comparisons</summary>
+      <p id="window-note"></p>
+      <label for="metric">Measurement</label
+      ><select id="metric"></select>
+      <div id="readout"></div>
+    </details>
   </main>
   <script>
     const el = (id) => document.getElementById(id);
@@ -153,6 +160,7 @@
       const card = node(el("turns"), "article");
       card.className = "turn";
       node(card, "h2", title);
+      node(card, "p", "Builder controller: " + data.controller.controller);
       node(
         card,
         "p",
@@ -249,6 +257,43 @@
       const info = await request("/api");
       for (const text of [...info.orders, "Hold"])
         el("order").add(new Option(text, text));
+      if (info.lab) {
+        const inspect = el("inspector");
+        inspect.hidden = false;
+        inspect.addEventListener("toggle", () => {
+          if (inspect.open && !el("metric").options.length)
+            action(async () => {
+              const report = await request("/metrics");
+              el("window-note").textContent = report.window;
+              const menu = el("metric");
+              for (const [key, row] of Object.entries(report.measurements))
+                menu.add(new Option(key + " · " + row.name, key));
+              function measure() {
+                const row = report.measurements[menu.value],
+                  pane = el("readout");
+                pane.replaceChildren();
+                node(pane, "p", row.meaning);
+                for (const [i, arm] of row.arms.entries()) {
+                  node(
+                    pane,
+                    "h3",
+                    ["Control", "Comparison"][i] + " · " + arm.value,
+                  );
+                  const window = node(pane, "p", arm.exact_window);
+                  window.style.whiteSpace = "pre-line";
+                  node(
+                    pane,
+                    "p",
+                    "Board: " + arm.board.outcome + " at " + arm.board.position,
+                  );
+                }
+                node(pane, "p", row.interpretation_limit);
+              }
+              menu.onchange = measure;
+              measure();
+            });
+        });
+      }
       if (info.lab && location.hash)
         renderOriginal(
           await request(

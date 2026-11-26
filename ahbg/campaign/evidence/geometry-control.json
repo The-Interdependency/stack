@@ -1,0 +1,18 @@
+{
+  "normal": {
+    "ok": true,
+    "result": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+  },
+  "removed": {
+    "ok": false,
+    "result": "ModuleNotFoundError: No module named 'ucns.mobius_seed'"
+  },
+  "restored": {
+    "ok": true,
+    "result": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+  },
+  "irrelevant": {
+    "ok": true,
+    "result": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+  }
+}

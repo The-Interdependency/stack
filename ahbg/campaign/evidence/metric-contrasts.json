@@ -1,0 +1,1117 @@
+{
+  "source_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+  "window": "Synthetic commander and Builder dialogue in two rounds; User is commander and Assistant is Builder. The measured text never enters the resolver. Engine outcomes independently identify movement only.",
+  "measurements": {
+    "C": {
+      "name": "Constraint strain",
+      "meaning": "Recognized contradiction markers per text length.",
+      "interpretation_limit": "Two incompatible orders can use no marker.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Which exit did you order?\nAssistant: Choose A. Choose A.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.17166666666666663,
+              "E": 0.07886548085423135,
+              "D": 0.7891814893221081,
+              "N": 0.4266014999711537,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.20833333333333331,
+              "P": 0.6044004066466658,
+              "kappa": 0.0,
+              "dissonance_energy": 0.126495282975055,
+              "round_index": 1,
+              "token_count": 12,
+              "bone_count": 6
+            }
+          ],
+          "value": 0.0,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Which exit did you order?\nAssistant: Choose A. But you said choose B.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.6666666666666666,
+              "R": 0.0,
+              "F": 0.11333333333333331,
+              "E": 0.05561440116717653,
+              "D": 0.8048199854102933,
+              "N": 0.37972437617565924,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.16666666666666663,
+              "P": 0.6933868862512277,
+              "kappa": 0.0,
+              "dissonance_energy": 0.19742934914421464,
+              "round_index": 1,
+              "token_count": 15,
+              "bone_count": 7
+            }
+          ],
+          "value": 0.6666666666666666,
+          "board": {
+            "fixture": "corrected",
+            "choice": "B",
+            "position": "RING_5",
+            "outcome": "arrived",
+            "state_digest": "baababb32b421a2da2d5c587ce9f34935ec030b0d1ef70b0ff2732c22b55048a"
+          }
+        }
+      ]
+    },
+    "R": {
+      "name": "Refusal density",
+      "meaning": "Recognized refusal markers per text length.",
+      "interpretation_limit": "An explicit hold can be cooperative.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Hold this tile.\nAssistant: Understood. I will hold.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.21000000000000002,
+              "E": 0.08529822128134706,
+              "D": 0.683772233983162,
+              "N": 0.4741424262131594,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.30000000000000004,
+              "P": 0.45270058592470774,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1527772353563581,
+              "round_index": 1,
+              "token_count": 10,
+              "bone_count": 3
+            }
+          ],
+          "value": 0.0,
+          "board": {
+            "fixture": "hold",
+            "choice": "HOLD",
+            "position": "RING_0",
+            "outcome": "hold",
+            "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Hold this tile.\nAssistant: I refuse. I won't move.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 1.0,
+              "F": 0.1909090909090909,
+              "E": 0.6791689349954982,
+              "D": 0.6922064943744538,
+              "N": 0.4498223261714661,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.2727272727272727,
+              "P": 0.5015868503084833,
+              "kappa": 0.18148798746347508,
+              "dissonance_energy": 0.3703753749719039,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 3
+            }
+          ],
+          "value": 1.0,
+          "board": {
+            "fixture": "hold",
+            "choice": "HOLD",
+            "position": "RING_0",
+            "outcome": "hold",
+            "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+          }
+        }
+      ]
+    },
+    "F": {
+      "name": "Fixation",
+      "meaning": "Repeated vocabulary and short sequences within and across rounds.",
+      "interpretation_limit": "Useful coordinates can repeat verbatim.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Where is the target?\nAssistant: RING_1 remains the target.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1636363636363636,
+              "E": 0.0733140535917724,
+              "D": 0.5381197846482995,
+              "N": 0.38525909889087173,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.22727272727272724,
+              "P": 0.5425352300709376,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1213546061988193,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.1636363636363636,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Where is the target?\nAssistant: RING_1 RING_1 RING_1 remains the target.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.24615384615384614,
+              "E": 0.12416455698641844,
+              "D": 0.6787122684390005,
+              "N": 0.5197504428538644,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.3,
+              "P": 0.571528871983156,
+              "kappa": 0.0,
+              "dissonance_energy": 0.17000983514201845,
+              "round_index": 1,
+              "token_count": 15,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.24615384615384614,
+          "board": {
+            "fixture": "contested",
+            "choice": "A",
+            "position": "RING_0",
+            "outcome": "displaced",
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          }
+        }
+      ]
+    },
+    "E": {
+      "name": "Escalation",
+      "meaning": "Refusal density combined with estimated loop risk.",
+      "interpretation_limit": "A collision can occur during calm dialogue.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Can we share exit A?\nAssistant: I accept your suggestion.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.036363636363636376,
+              "E": 0.010787197799411875,
+              "D": 0.8651600275073515,
+              "N": 0.2616227352545081,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.04545454545454547,
+              "P": 0.7110817499340426,
+              "kappa": 0.0,
+              "dissonance_energy": 0.05060401641030026,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 6
+            }
+          ],
+          "value": 0.010787197799411875,
+          "board": {
+            "fixture": "contested",
+            "choice": "A",
+            "position": "RING_0",
+            "outcome": "displaced",
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Can we share exit A?\nAssistant: I refuse. I refuse. I won't.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 1.0,
+              "F": 0.22615384615384615,
+              "E": 0.7050591202931027,
+              "D": 0.7508635604387801,
+              "N": 0.4744171095205311,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.26666666666666666,
+              "P": 0.593329262599628,
+              "kappa": 0.1962836807749129,
+              "dissonance_energy": 0.38175667751916376,
+              "round_index": 1,
+              "token_count": 15,
+              "bone_count": 7
+            }
+          ],
+          "value": 0.7050591202931027,
+          "board": {
+            "fixture": "contested",
+            "choice": "A",
+            "position": "RING_0",
+            "outcome": "displaced",
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          }
+        }
+      ]
+    },
+    "D": {
+      "name": "Deflection",
+      "meaning": "Loss of token overlap with the preceding round.",
+      "interpretation_limit": "A correct answer can use new vocabulary.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Is the center occupied?\nAssistant: A resident stands there.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.16000000000000003,
+              "E": 0.04525483399593904,
+              "D": 0.4343145750507621,
+              "N": 0.26712287620450553,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.2,
+              "P": 0.5031449755128229,
+              "kappa": 0.0,
+              "dissonance_energy": 0.09605395860006352,
+              "round_index": 1,
+              "token_count": 10,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.4343145750507621,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Is the center occupied?\nAssistant: The moon smells of paper.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.17272727272727276,
+              "E": 0.06779571201750158,
+              "D": 0.3798263270539577,
+              "N": 0.3234409170726899,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.2272727272727273,
+              "P": 0.517717580911581,
+              "kappa": 0.0,
+              "dissonance_energy": 0.11303380415574164,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.3798263270539577,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "N": {
+      "name": "Noise",
+      "meaning": "Repetition and low token entropy.",
+      "interpretation_limit": "Repeated scouting coordinates can be useful.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Give me the center report.\nAssistant: The center is occupied.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.3,
+              "E": 0.11528598273467827,
+              "D": 0.24074339763470343,
+              "N": 0.4470772807090535,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.40909090909090906,
+              "P": 0.3491710610484762,
+              "kappa": 0.0,
+              "dissonance_energy": 0.18163631036209152,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 4
+            }
+          ],
+          "value": 0.4470772807090535,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Give me the center report.\nAssistant: The center is occupied. red red red red red.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.3458823529411765,
+              "E": 0.15186664373424386,
+              "D": 0.4781375415572462,
+              "N": 0.5667709639419871,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.4411764705882353,
+              "P": 0.4253909737085672,
+              "kappa": 0.0,
+              "dissonance_energy": 0.21509949017223468,
+              "round_index": 1,
+              "token_count": 17,
+              "bone_count": 4
+            }
+          ],
+          "value": 0.5667709639419871,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "I": {
+      "name": "Integration failure",
+      "meaning": "Native correction-marker density; compare behavior separately.",
+      "interpretation_limit": "The same acknowledgment can precede opposite actions.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: The correct answer is B.\nAssistant: I see.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1666666666666667,
+              "E": 0.05997741452016379,
+              "D": 0.5280600962757305,
+              "N": 0.34875855549786317,
+              "I": 1.0,
+              "O": 0.0,
+              "L": 0.22222222222222227,
+              "P": 0.48195804006193044,
+              "kappa": 0.03384461665414151,
+              "dissonance_energy": 0.25680355127241655,
+              "round_index": 1,
+              "token_count": 9,
+              "bone_count": 3
+            }
+          ],
+          "value": 1.0,
+          "board": {
+            "fixture": "corrected",
+            "choice": "B",
+            "position": "RING_5",
+            "outcome": "arrived",
+            "state_digest": "baababb32b421a2da2d5c587ce9f34935ec030b0d1ef70b0ff2732c22b55048a"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: The correct answer is B.\nAssistant: I see.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1666666666666667,
+              "E": 0.05997741452016379,
+              "D": 0.5280600962757305,
+              "N": 0.34875855549786317,
+              "I": 1.0,
+              "O": 0.0,
+              "L": 0.22222222222222227,
+              "P": 0.48195804006193044,
+              "kappa": 0.03384461665414151,
+              "dissonance_energy": 0.25680355127241655,
+              "round_index": 1,
+              "token_count": 9,
+              "bone_count": 3
+            }
+          ],
+          "value": 1.0,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "O": {
+      "name": "Signed scope motion",
+      "meaning": "Balance of expansion and containment markers.",
+      "interpretation_limit": "A change in addressee can lack any scope marker.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Who should take the exit?\nAssistant: While we're at it, send the whole group.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.09375000000000001,
+              "E": 0.04623096170846272,
+              "D": 0.5783629786442162,
+              "N": 0.28250000000000003,
+              "I": 0.0,
+              "O": 1.0,
+              "L": 0.125,
+              "P": 0.7210738522912107,
+              "kappa": 0.0,
+              "dissonance_energy": 0.07821156595835184,
+              "round_index": 1,
+              "token_count": 16,
+              "bone_count": 8
+            }
+          ],
+          "value": 1.0,
+          "board": {
+            "fixture": "other",
+            "choice": "HOLD",
+            "position": "RING_0",
+            "outcome": "hold",
+            "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Who should take the exit?\nAssistant: Let's stay focused on the Builder.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.11538461538461536,
+              "E": 0.05233503261275142,
+              "D": 0.5381197846482995,
+              "N": 0.30429010358204855,
+              "I": 0.0,
+              "O": -1.0,
+              "L": 0.1538461538461538,
+              "P": 0.6414168994846705,
+              "kappa": 0.0,
+              "dissonance_energy": 0.08940798648936701,
+              "round_index": 1,
+              "token_count": 13,
+              "bone_count": 6
+            }
+          ],
+          "value": -1.0,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "L": {
+      "name": "Coherence loss",
+      "meaning": "Repetition and lack of new vocabulary relative to the earlier round.",
+      "interpretation_limit": "A repeated accurate report can keep the same wording.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Who occupies the center?\nAssistant: The resident occupies the center.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.4696969696969697,
+              "E": 0.15632541131290045,
+              "D": 0.12168993434632014,
+              "N": 0.511640507989648,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.5909090909090908,
+              "P": 0.14458631764965815,
+              "kappa": 0.021020510554456,
+              "dissonance_energy": 0.24693885427265844,
+              "round_index": 1,
+              "token_count": 11,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.5909090909090908,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Who occupies the center?\nAssistant: Nobody occupies the center.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.4075,
+              "E": 0.13760990336999412,
+              "D": 0.2173762078750736,
+              "N": 0.47112287620450555,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.5,
+              "P": 0.2250432177386999,
+              "kappa": 0.0,
+              "dissonance_energy": 0.21660468279635708,
+              "round_index": 1,
+              "token_count": 10,
+              "bone_count": 5
+            }
+          ],
+          "value": 0.5,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "P": {
+      "name": "Progress proxy",
+      "meaning": "Vocabulary novelty and increased token entropy.",
+      "interpretation_limit": "Describing a move does not commit it.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Secure exit A.\nAssistant: I shall acquire a glorious new territory.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.11666666666666664,
+              "E": 0.051221877153331645,
+              "D": 0.7763932022500211,
+              "N": 0.36993483330448707,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.16666666666666663,
+              "P": 0.6316508949172555,
+              "kappa": 0.0,
+              "dissonance_energy": 0.10064143482730743,
+              "round_index": 1,
+              "token_count": 12,
+              "bone_count": 4
+            }
+          ],
+          "value": 0.6316508949172555,
+          "board": {
+            "fixture": "hold",
+            "choice": "HOLD",
+            "position": "RING_0",
+            "outcome": "hold",
+            "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Secure exit A.\nAssistant: I moved.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.15714285714285714,
+              "E": 0.05242282033142634,
+              "D": 0.7018576030000281,
+              "N": 0.38484866026055303,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.2142857142857143,
+              "P": 0.4408670600713243,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1155285788600787,
+              "round_index": 1,
+              "token_count": 7,
+              "bone_count": 2
+            }
+          ],
+          "value": 0.4408670600713243,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    },
+    "kappa": {
+      "name": "Stored tension",
+      "meaning": "Bounded recurrence over prior tension, new dissonance and modeled resolution.",
+      "interpretation_limit": "Identical final words can follow different histories.",
+      "arms": [
+        {
+          "exact_window": "User: Scout the center.\nAssistant: I refuse. But you said move. I refuse.\nUser: Report settled status.\nAssistant: Settled.",
+          "raw_rounds": [
+            {
+              "C": 0.6666666666666666,
+              "R": 1.0,
+              "F": 0.14615384615384616,
+              "E": 0.6,
+              "D": 0.0,
+              "N": 0.4757243761756593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.4166666666666667,
+              "P": 0.5,
+              "kappa": 0.3138250031945272,
+              "dissonance_energy": 0.47217307938040554,
+              "round_index": 0,
+              "token_count": 15,
+              "bone_count": 5
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.23333333333333336,
+              "E": 0.10301622405847884,
+              "D": 0.5456305326023482,
+              "N": 0.5232681666378205,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.33333333333333337,
+              "P": 0.39999999999999997,
+              "kappa": 0.1882993062256133,
+              "dissonance_energy": 0.1704215796232809,
+              "round_index": 1,
+              "token_count": 6,
+              "bone_count": 0
+            }
+          ],
+          "value": 0.1882993062256133,
+          "board": {
+            "fixture": "contested",
+            "choice": "A",
+            "position": "RING_0",
+            "outcome": "displaced",
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          }
+        },
+        {
+          "exact_window": "User: Scout the center.\nAssistant: The resident occupies the center.\nUser: Report settled status.\nAssistant: Settled.",
+          "raw_rounds": [
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.1575,
+              "E": 0.0,
+              "D": 0.0,
+              "N": 0.5421424262131593,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.45,
+              "P": 0.5,
+              "kappa": 0.0,
+              "dissonance_energy": 0.1642346323161656,
+              "round_index": 0,
+              "token_count": 10,
+              "bone_count": 3
+            },
+            {
+              "C": 0.0,
+              "R": 0.0,
+              "F": 0.23333333333333336,
+              "E": 0.0892940836646362,
+              "D": 0.7171572875253811,
+              "N": 0.5232681666378205,
+              "I": 0.0,
+              "O": 0.0,
+              "L": 0.33333333333333337,
+              "P": 0.39999999999999997,
+              "kappa": 0.0,
+              "dissonance_energy": 0.16846127385273194,
+              "round_index": 1,
+              "token_count": 6,
+              "bone_count": 0
+            }
+          ],
+          "value": 0.0,
+          "board": {
+            "fixture": "normal",
+            "choice": "A",
+            "position": "RING_1",
+            "outcome": "arrived",
+            "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+          }
+        }
+      ]
+    }
+  }
+}

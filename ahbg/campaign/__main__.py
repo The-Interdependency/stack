@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 
 from ahbg.runtime.entitlements import EntitlementError, EntitlementGate
 
-from .controllers import ORDERS, Scripted
+from .controllers import MODELS, ORDERS, LocalModel, Scripted
 from .mission import Case, play, replay
 
 FORKS = {
@@ -41,10 +41,11 @@ def load_case(directory):
 
 
 class Campaign:
-    def __init__(self, directory, gate):
+    def __init__(self, directory, gate, controller=None):
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
         self.gate = gate
+        self.controller = controller or Scripted()
 
     def path(self, key):
         if not isinstance(key, str) or str(UUID(key)) != key:
@@ -63,6 +64,7 @@ class Campaign:
             "case": asdict(load_case(source)),
             **result,
             "board": doc["final_snapshot"],
+            "controller": doc["provenance"]["agent_manifest"],
             "lab": self.gate.has_benchmark_lab(),
         }
 
@@ -70,7 +72,7 @@ class Campaign:
         key = str(uuid4())
         with tempfile.TemporaryDirectory(dir=self.directory) as tmp:
             stage = Path(tmp) / "turn"
-            play(case, Scripted(), stage)
+            play(case, self.controller, stage)
             stage.rename(self.directory / key)
         return self.record(key)
 
@@ -78,7 +80,12 @@ class Campaign:
         self.gate.require("saved_run_comparison")
         if variable not in FORKS:
             raise ValueError("unknown fork")
-        self.record(key)
+        parent = self.record(key)
+        if any(
+            parent["controller"].get(field) != value
+            for field, value in self.controller.identity.items()
+        ):
+            raise ValueError("reopen with the original controller to fork this turn")
         return self.save(FORKS[variable](load_case(self.path(key))))
 
 
@@ -102,6 +109,15 @@ def make_server(campaign, port):
             elif path == "/api":
                 self.answer(
                     200, {"lab": campaign.gate.has_benchmark_lab(), "orders": ORDERS}
+                )
+            elif path == "/metrics":
+                if not campaign.gate.has_benchmark_lab():
+                    return self.answer(403, {"error": "Benchmark Lab is required"})
+                self.answer(
+                    200,
+                    (
+                        Path(__file__).parent / "evidence/metric-contrasts.json"
+                    ).read_bytes(),
                 )
             elif path.startswith("/replay/"):
                 try:
@@ -156,6 +172,8 @@ def main():
         action="store_true",
         help="use the operator's local benchmark_lab test claim",
     )
+    p.add_argument("--controller", choices=["scripted", *MODELS], default="scripted")
+    p.add_argument("--cache", type=Path, default=Path.home() / ".cache/ahbg-122")
     commands = p.add_subparsers(dest="command")
     serve = commands.add_parser("serve")
     serve.add_argument("--port", type=int, default=8112)
@@ -168,7 +186,12 @@ def main():
     branch.add_argument("variable", choices=FORKS)
     args = p.parse_args()
     gate = EntitlementGate.from_claims(["benchmark_lab"] if args.lab else [])
-    game = Campaign(args.store, gate)
+    controller = (
+        LocalModel(args.controller, args.cache)
+        if args.controller in MODELS and args.command != "replay"
+        else Scripted()
+    )
+    game = Campaign(args.store, gate, controller)
     if args.command in (None, "serve"):
         server = make_server(game, getattr(args, "port", 8112))
         print(f"Open http://127.0.0.1:{server.server_port}/", flush=True)

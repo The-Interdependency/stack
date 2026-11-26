@@ -1,0 +1,100 @@
+{
+  "closed_word_radii": [
+    "3/4",
+    "3/2"
+  ],
+  "epicycle_vectors": {
+    "additive_resultant": [
+      {
+        "coefficient": [
+          6,
+          1
+        ],
+        "direction": {
+          "turn": [
+            33,
+            557056
+          ],
+          "unit_endpoints": []
+        }
+      },
+      {
+        "coefficient": [
+          12,
+          1
+        ],
+        "direction": {
+          "turn": [
+            19,
+            278528
+          ],
+          "unit_endpoints": []
+        }
+      },
+      {
+        "coefficient": [
+          6,
+          1
+        ],
+        "direction": {
+          "turn": [
+            5,
+            65536
+          ],
+          "unit_endpoints": []
+        }
+      }
+    ],
+    "placement_endpoint": [
+      {
+        "coefficient": [
+          3,
+          4
+        ],
+        "direction": {
+          "turn": [
+            0,
+            1
+          ],
+          "unit_endpoints": [
+            [
+              "a7c2c1559e7e2033db5244d736cc66eb14cef0594d58b6200fb7d9ccaa122404",
+              1
+            ]
+          ]
+        }
+      },
+      {
+        "coefficient": [
+          3,
+          2
+        ],
+        "direction": {
+          "turn": [
+            0,
+            1
+          ],
+          "unit_endpoints": [
+            [
+              "a7c2c1559e7e2033db5244d736cc66eb14cef0594d58b6200fb7d9ccaa122404",
+              2
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "glyph_radii": [
+    "1/16",
+    "1/8",
+    "1/4",
+    "1/2"
+  ],
+  "profile": "uchc.ordinal-halving/1",
+  "sentence_receipt": "243287f8c83a248aa7901ac38003514d7a0c6d6bbf7b0dfe1eae0ce12d69dfc1",
+  "stack_A_hex": "00000041",
+  "stack_bit_radius": 16,
+  "version": "0.2.0a3",
+  "wheel_sha256": "ff5341a86fce2bedfcafbee4f74f236c99ed9a17206e3efdf156850d0f2eab88",
+  "word_receipt": "a7c2c1559e7e2033db5244d736cc66eb14cef0594d58b6200fb7d9ccaa122404"
+}
