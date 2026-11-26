@@ -1,3 +1,4 @@
+# ratios: loc_comments=200:21 imports_exports=6:4 calls_definitions=74:17
 """Conforming agent harnesses for the AHBG runtime.
 
 Every agent — including A0 — talks to the runtime through ``AgentHarness``:
@@ -11,8 +12,8 @@ advertised ``legal`` actions to choose; it has no privileged runtime path.
 
 ``SubprocessHarness`` connects an external conforming harness over JSON lines:
 the runtime writes ``{"type": "observe", "observation": {...}}`` and reads one
-``{"type": "plan", "plan": {...}}`` line per turn. That external harness can be
-any language and does not modify AHBG.
+``{"type": "plan", "plan": {...}}`` line per turn. An adapter can advertise
+``skill_context_protocol: 1`` in that outer reply to support retention probes.
 """
 
 from __future__ import annotations
@@ -29,6 +30,18 @@ class AgentHarness(Protocol):
     def manifest(self) -> Mapping[str, Any]: ...
 
     def plan(self, observation: Mapping[str, Any]) -> Mapping[str, Any]: ...
+
+
+class SkillContextMiss(ProtocolError):
+    """The adapter lost the probed context and requests a full view before planning."""
+
+    def __init__(self, message: str, *, sent: bool = True):
+        super().__init__(message)
+        self.sent = sent
+
+
+class _AdapterDisconnected(ProtocolError):
+    """No adapter reply is available on the current subprocess pipes."""
 
 
 class A0Harness:
@@ -136,6 +149,8 @@ class SubprocessHarness:
             if name not in CAPABILITIES:
                 raise ProtocolError(f"unknown capability {name!r}")
         self._process: subprocess.Popen[str] | None = None
+        self._supports_skill_context = False
+        self._pending_probe: dict[str, Any] | None = None
 
     def manifest(self) -> dict[str, Any]:
         return {
@@ -144,7 +159,63 @@ class SubprocessHarness:
             "capabilities": list(self._capabilities),
         }
 
+    def _exchange(self, request: dict[str, Any]) -> Mapping[str, Any]:
+        process = self._process
+        assert process is not None and process.stdin is not None and process.stdout is not None
+        try:
+            process.stdin.write(json.dumps(request, sort_keys=True) + "\n")
+            process.stdin.flush()
+            line = process.stdout.readline()
+        except BrokenPipeError as exc:
+            raise _AdapterDisconnected("harness subprocess closed its input") from exc
+        if not line:
+            raise _AdapterDisconnected("harness subprocess closed stdout before replying")
+        try:
+            message = json.loads(line)
+        except json.JSONDecodeError as exc:
+            raise ProtocolError(f"harness sent malformed JSON: {exc}") from exc
+        if not isinstance(message, Mapping):
+            raise ProtocolError("harness message must be an object")
+        return message
+
+    def retained_skill_context(self, probe: Mapping[str, Any]) -> Mapping[str, Any] | None:
+        """Ask the live adapter which skill material its next model request retains."""
+        self._pending_probe = None
+        if self._process is None:
+            return None
+        if self._process.poll() is not None:
+            self.close()
+            return None
+        if not self._supports_skill_context:
+            return None
+        offered = {key: probe[key] for key in ("session_id", "turn", "view_sha256")}
+        try:
+            message = self._exchange({"type": "skill_context_probe", **offered})
+        except _AdapterDisconnected:
+            # Probing sends no observation and invokes no planning operation.
+            self.close()
+            return None
+        if (message.get("type") != "skill_context_state"
+                or type(message.get("turn")) is not int
+                or any(message.get(key) != value for key, value in offered.items())
+                or type(message.get("full_view")) is not bool
+                or not isinstance(message.get("retained"), list)):
+            return None
+        self._pending_probe = offered
+        return message
+
     def plan(self, observation: Mapping[str, Any]) -> Mapping[str, Any]:
+        pending, self._pending_probe = self._pending_probe, None
+        view = observation.get("skill_library")
+        compact = isinstance(view, Mapping) and view.get("schema") in (
+            "ahbg.skill-view-ref/1", "ahbg.skill-view-delta/1")
+        if compact and (pending is None or self._process is None
+                        or any(observation.get(k) != pending[k] for k in ("session_id", "turn"))
+                        or view.get("view_sha256") != pending["view_sha256"]):
+            raise ProtocolError("compact skill delivery requires a live probe for the same turn and view")
+        if compact and self._process.poll() is not None:
+            self.close()
+            raise SkillContextMiss("adapter exited before its compact observation was sent", sent=False)
         if self._process is None:
             self._process = subprocess.Popen(
                 self._command,
@@ -152,32 +223,31 @@ class SubprocessHarness:
                 stdout=subprocess.PIPE,
                 text=True,
             )
-        assert self._process.stdin is not None and self._process.stdout is not None
-        self._process.stdin.write(
-            json.dumps({"type": "observe", "observation": observation}, sort_keys=True) + "\n"
-        )
-        self._process.stdin.flush()
-        line = self._process.stdout.readline()
-        if not line:
-            raise ProtocolError("harness subprocess closed stdout before planning")
-        try:
-            message = json.loads(line)
-        except json.JSONDecodeError as exc:
-            raise ProtocolError(f"harness sent malformed JSON: {exc}") from exc
-        if not isinstance(message, Mapping):
-            raise ProtocolError("harness message must be an object")
+        message = self._exchange({"type": "observe", "observation": observation})
+        if (compact and message.get("type") == "skill_context_miss"
+                and type(message.get("turn")) is int
+                and all(message.get(key) == value for key, value in pending.items())):
+            raise SkillContextMiss("adapter requested full skill context before planning")
         if message.get("type") != "plan":
             raise ProtocolError(f"expected plan message, got {message.get('type')!r}")
         plan = message.get("plan")
         if not isinstance(plan, Mapping):
             raise ProtocolError("plan message requires a plan object")
+        version = message.get("skill_context_protocol")
+        self._supports_skill_context = type(version) is int and version == 1
         return dict(plan)
 
     def close(self) -> None:
+        self._supports_skill_context = False
+        self._pending_probe = None
         if self._process is not None:
             if self._process.stdin:
-                self._process.stdin.close()
+                try:
+                    self._process.stdin.close()
+                except BrokenPipeError:
+                    pass  # A child that exited between probe and observation closed this end.
             self._process.wait(timeout=5)
             if self._process.stdout:
                 self._process.stdout.close()
             self._process = None
+# ratios: loc_comments=200:21 imports_exports=6:4 calls_definitions=74:17

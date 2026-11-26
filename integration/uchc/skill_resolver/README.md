@@ -28,6 +28,23 @@ python -m ahbg.runtime play --turns 1 --out /tmp/skill-pilot \
 
 Use `--skill-experiment control` and a separate output directory for the graph arm. Omitting activation yields a discovery view. The native turn receipt in `result.json` identifies a packet in `skill-activations/<activation_root>.json`. An independent reader can pass the decoded packet and the expected task roots to `SkillResolver.replay_activation` to verify the decision. The packet stays in the host's output directory. The planner receives the scoped view.
 
+## Reuse skills already in model context
+
+A chat planner using the standard AHBG subprocess path can call `serve_skill_planner(plan_from_messages)` from [the receiver](../../../ahbg/integration/skill_context.py). Supply its existing model callback, which accepts a list of chat messages and returns an AHBG plan mapping. The receiver manages session history and advertises retention support. If the adapter trims its history, pass its final history-selection function as `prepare_history`. The model request must use the selected messages. Adapters with opaque context should keep the ordinary full-view protocol.
+
+The host sends the full disclosure on first use. Before later calls it asks the live adapter which exact revisions remain in the model's current messages. A complete match sends a view reference. A partial match sends current metadata and the missing bodies. The receiver verifies the reconstructed view against its digest, keeps a single copy of each authorized body, and adds the current game observation. A new session starts with a full view. A missing reference detected before planning permits one full retry on that turn. Legacy subprocesses continue receiving full views.
+
+| Six-skill test condition | Host-to-adapter skill field | New skill-content tokens in the model messages |
+|---|---:|---:|
+| First turn | 83,083 bytes | 16,974 |
+| All instructions and their index retained | 115 bytes | 0 |
+| Only the `doc-build` instructions evicted | 10,203 bytes | 1,148 |
+| Context cleared | 83,083 bytes | 16,974 |
+
+The byte counts cover compact JSON for the skill field. The token counts use `o200k_base` on the individual skill-message contents, excluding board state, transport probes and chat framing. The full skill contents remained available in the assembled request on every successful turn. A stateless model API may still charge for prior messages included in each request.
+
+Each turn records the full-view digest and size, the delivered digest and size, and the names of the transmitted and retained bodies. The [installed test](../../../ahbg/integration/tests/test_skill_retention_installed.py) checks recovery after eviction and after context loss between acknowledgment and planning.
+
 ## Reproduce the evidence
 
 ```bash

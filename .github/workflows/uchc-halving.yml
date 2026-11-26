@@ -1,10 +1,10 @@
 name: Consume released UCHC halving
 on:
   pull_request:
-    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/skill_context.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
   push:
     branches: [main]
-    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
+    paths: ['stack-manifest.json', 'research/english-gonol/BASE.json', 'integration/uchc/halving-requirements.txt', 'integration/uchc/verify_halving.py', 'integration/uchc/skill_resolver/**', 'ahbg/integration/skill_harness.py', 'ahbg/integration/skill_context.py', 'ahbg/integration/tests/*skill*.py', 'ahbg/runtime/__main__.py', 'ahbg/runtime/harness.py', '.github/workflows/uchc-halving.yml']
 permissions:
   contents: read
 jobs:
