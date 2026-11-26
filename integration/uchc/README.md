@@ -83,3 +83,10 @@ The verifier replays a sentence made of two closed words and checks its
 ordinal radii, placed endpoint, and full additive vector. It also verifies
 Stack's four-byte ASCII result. To roll back, restore the
 [0.2.0a2 consumer revision](https://github.com/The-Interdependency/stack/tree/8ed854544d8f0983d7385adc5ad1cb3f14376145/integration/uchc).
+
+## Skill-library resolver pilot
+
+The [skill resolver](skill_resolver/README.md) uses the ordinal-halving release
+for skill records and reads dependency and co-load declarations from a pinned
+skill-lib catalog. The pilot guide shows how to compare its UCHC and typed-graph
+views in the AHBG harness. The host retains authority over tool execution.

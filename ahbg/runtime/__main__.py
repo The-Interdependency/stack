@@ -1,3 +1,4 @@
+# ratios: loc_comments=78:16 imports_exports=9:1 calls_definitions=43:3
 """AHBG runtime command line.
 
 Usage guidance
@@ -46,6 +47,13 @@ def _agent_from_args(args: argparse.Namespace):
     raise SystemExit(f"unknown agent {args.agent!r}; use --agent a0 or --agent-subprocess")
 
 
+def _runner(value: str) -> tuple[str, str]:
+    owner, separator, path = value.partition("=")
+    if not (owner and separator and path):
+        raise argparse.ArgumentTypeError("runner must use SKILL=PATH")
+    return owner, path
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Run the canonical AHBG minimum loop")
     parser.add_argument("play", nargs="?", default="play")
@@ -60,10 +68,35 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--uchc-lock", help="trusted immutable UCHC wheel/construct lock")
     parser.add_argument("--uchc-require-complete", action="store_true")
     parser.add_argument("--uchc-max-text-bytes", type=int)
+    skills = parser.add_argument_group("optional session skill view")
+    skills.add_argument("--skill-catalog", type=Path, help="pinned skill-lib checkout")
+    skills.add_argument("--visible-skills", nargs="+", metavar="NAME", help="allowed discovery scope")
+    skills.add_argument("--activate-skills", nargs="+", metavar="NAME", help="requested task roots")
+    skills.add_argument("--disclose-runner", action="append", type=_runner, metavar="SKILL=PATH",
+                        help="include this active skill's declared runner in the structured view")
+    skills.add_argument("--skill-experiment", choices=("uchc", "control"))
+    skills.add_argument("--skill-ucns-source", type=Path, help="pinned UCNS geometry checkout")
     args = parser.parse_args(argv)
+    if args.skill_catalog and not args.visible_skills:
+        parser.error("--skill-catalog requires --visible-skills")
+    if not args.skill_catalog and any((args.visible_skills, args.activate_skills,
+                                       args.disclose_runner, args.skill_experiment, args.skill_ucns_source)):
+        parser.error("skill view options require --skill-catalog")
 
     agent = _agent_from_args(args)
     try:
+        if args.skill_catalog:
+            from ahbg.integration.skill_harness import SkillHarness, build_view
+            from integration.uchc.skill_resolver.runtime import SkillResolver
+
+            experiment = args.skill_experiment or "uchc"
+            resolver = SkillResolver(args.skill_catalog, ucns_source_root=args.skill_ucns_source,
+                                     experiment=experiment)
+            view = build_view(resolver, visible=args.visible_skills,
+                              activate=args.activate_skills or (),
+                              disclosed_runners=args.disclose_runner or ())
+            agent = SkillHarness(agent, view, experiment=experiment,
+                                activation_root=resolver.save_activation(Path(args.out)))
         result = run_plane(
             agent=agent,
             config=RuntimeConfig(seed=args.seed, turns=args.turns,
@@ -85,3 +118,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# ratios: loc_comments=78:16 imports_exports=9:1 calls_definitions=43:3

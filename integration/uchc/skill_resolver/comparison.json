@@ -1,0 +1,127 @@
+{
+  "cases": {
+    "distributed-publication": {
+      "order": [
+        "interdependent-work-graph",
+        "distributed-publication"
+      ],
+      "records": {
+        "control": {
+          "bytes": 2177,
+          "sha256": "5bdf311f1d0fdc3111626d7f14ff0cd8fd8b8220aa397d962c3ac3a0127f2bf0"
+        },
+        "uchc": {
+          "bytes": 95142,
+          "sha256": "a7c5f2317fa34738525fd2cc5ba54ef735733c10d8be401c080c5b0026b42ad2"
+        }
+      },
+      "view_bytes": 33438,
+      "view_sha256": "1574885c8d1bc66c1669779c089323c8d8e2d94f0c331b6b941413177edab64d"
+    },
+    "typed-meta-frontend": {
+      "order": [
+        "msdmd",
+        "doc-build",
+        "meta-module-build",
+        "typed-meta-frontend"
+      ],
+      "records": {
+        "control": {
+          "bytes": 3272,
+          "sha256": "8a754bbcef0945a834eedfab1bdf18daff8ae1533f6cfc03f0bf9ee010a884ca"
+        },
+        "uchc": {
+          "bytes": 136442,
+          "sha256": "a7e7d716d368946b26120aed77033356c1f07788a4b53b7850f9ee068eb4f044"
+        }
+      },
+      "view_bytes": 53011,
+      "view_sha256": "c3724b96bb95c6b8bb05b3c4c4820f14f54742bcac8da10d889d2e60a384ab75"
+    }
+  },
+  "revision_probe": {
+    "append_utf8": "\n<!-- skill-resolver revision probe -->\n",
+    "bundle_ids": {
+      "distributed-publication": {
+        "control": [
+          "cb54d6c2c67357bdc6e7b6efba82bb2a61401cb1c4792f7d4358defb31a48da4",
+          "cb54d6c2c67357bdc6e7b6efba82bb2a61401cb1c4792f7d4358defb31a48da4"
+        ],
+        "uchc": [
+          "e3b13d738834f22981aa4e3d8502fe694af12047ab87eacd12b2cda1b413fd64",
+          "e3b13d738834f22981aa4e3d8502fe694af12047ab87eacd12b2cda1b413fd64"
+        ]
+      },
+      "doc-build": {
+        "control": [
+          "a1055f15409b1258435cb097f3ca8804890084a7730aa73aaa96d4ca7a25831e",
+          "452bec997d9b4481e2108b77b01b2f236815dfd42b0828cecfd4a72a0f3c8a0f"
+        ],
+        "uchc": [
+          "4211e1fe0129c6f997f0b40e546d9aaae10e0fc3ccfaf05a5fdce1c9e4b884fe",
+          "d7b69c98122e1df5d400e888d59f8f556604f9ec0ea7a4374abd4cb2ca0b2dc2"
+        ]
+      },
+      "typed-meta-frontend": {
+        "control": [
+          "b513e66941e26b949610c8659655615f92b750de2d90888c25fce234f58ea33d",
+          "190515091bf141dac80b3d6172358e440fbc67b124a2aea5fd28b8c6faf23cd9"
+        ],
+        "uchc": [
+          "e77597cc6456d350596e7f65ea24b837566c489f649e075d03324aced20e0027",
+          "53017706da3491b04b5c4147e6140fac37b6e475d97df30f382f1ebbdb59da7a"
+        ]
+      }
+    },
+    "definition_ids_after": {
+      "control": "830648cf49e4bfa86c7daaa2174ca1a3d27f08f17e1c5d6b4e17af219c47b233",
+      "uchc": "5899ba807c9d5c7a50f8c373506309765c594fd47519a7692ad20a091c4abf57"
+    },
+    "definition_ids_before": {
+      "control": "2e7d7de078d59949309d6585fd47dadcf9dc9db73ba6766d0458ab9a911c003a",
+      "uchc": "c782cf836e20969ed52b0e8379480ba8d6a5fa9161fb0b49bd8b06e9dd80a605"
+    },
+    "invalidated_per_arm": {
+      "control": {
+        "activation_bundles": 2,
+        "definitions": 1,
+        "roots": [
+          "doc-build",
+          "typed-meta-frontend"
+        ]
+      },
+      "uchc": {
+        "activation_bundles": 2,
+        "definitions": 1,
+        "roots": [
+          "doc-build",
+          "typed-meta-frontend"
+        ]
+      }
+    },
+    "original_body_sha256": "1ceabb4df58716a5c630bd119f6fb54294e5e290bf548ab4ef6b6a44eaa6326f",
+    "reused_definitions_per_arm": 5,
+    "scope": "Counterfactual body-only revision at fixed source lock; affected bundles verified by full replay.",
+    "skill": "msdmd",
+    "source": {
+      "commit": "0375a146a05cd61bb924290c5427752a2c0ded67",
+      "index_sha256": "574da2d8a1fb49a9641102662e332965d4b3fce45a4d6ff531eb59f7b72033ac",
+      "repo": "The-Interdependency/skill-lib"
+    },
+    "synthetic_activations_rejected_by_pinned_source": [
+      "doc-build",
+      "typed-meta-frontend"
+    ],
+    "synthetic_body_sha256": "b3fc1a0b2cba27ed2b3def1249eb26a32a8c99dba9f5723ac0ac13557ec42647",
+    "unchanged_roots": [
+      "distributed-publication"
+    ],
+    "unique_definitions_in_scope": 6,
+    "verified_roots_per_arm": 3
+  },
+  "source": {
+    "commit": "0375a146a05cd61bb924290c5427752a2c0ded67",
+    "index_sha256": "574da2d8a1fb49a9641102662e332965d4b3fce45a4d6ff531eb59f7b72033ac",
+    "repo": "The-Interdependency/skill-lib"
+  }
+}
