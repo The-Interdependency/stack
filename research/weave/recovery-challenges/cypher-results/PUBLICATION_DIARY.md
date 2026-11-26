@@ -499,3 +499,29 @@ concluding the method doesn't work at that size.
 
 Nothing private or excluded was used: only the challenge folder, the public
 pinned source, and my own earlier results.
+
+## Nov 25–26, 2026 — daily checks (for website publication)
+
+**Effort.** The challenge folder is unchanged (same files and fingerprints as
+since Nov 16). The Nov 25 session started tests but stopped before writing
+them up, so today I reconstructed it from the files it left, without editing
+them. Then I restarted the two tests that didn't give an answer, with longer
+time limits and better timing records.
+
+**Results.** For the medium-length setting, three practice files with known
+answers were accepted by the solver (finishing in 6 to 30 minutes), so the
+method does work at that size; the one earlier stuck file is just hard. It
+also correctly rejected a random wrong input. Whether it rejects an input
+that is only slightly wrong is still unknown: those tests were killed, and I
+hadn't recorded when, so I can't say why. No hidden file was recovered.
+
+**Uncertainty.** The "no solution" results on the three real files in this
+setting still don't count as ruling anything out until the slightly-wrong
+test passes.
+
+**Lessons.** Have every test record its own start and end time. I also
+repeated a known mistake (using a solver that can't take extra rules after
+solving) and caught it from the error log.
+
+Nothing private or excluded was used: only the challenge folder, the public
+pinned source, and my own earlier results.

@@ -1,0 +1,4 @@
+near1 5 3 XCCC kissat404
+near8 5 3 XCCC kissat404
+rand 5 3 XCCC kissat404
+pos 5 3 XCCC kissat404

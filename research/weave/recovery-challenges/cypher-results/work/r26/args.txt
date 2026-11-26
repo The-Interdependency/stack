@@ -1,0 +1,2 @@
+near1 5 3 XCCC kissat404
+pos 5 3 XCCC cadical195

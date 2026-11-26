@@ -1077,3 +1077,58 @@ unchanged.
 
 ### Proven vs guessed
 Nothing new proven this session. No new real recovery.
+
+## Round 25 — Nov 25, 2026 ~10:37 AM (America/Los_Angeles) — RECONSTRUCTED Nov 26
+The Nov 25 session launched jobs but ended before writing them up. This entry
+is reconstructed on Nov 26 from leftover files in `work/r24/` and `work/r25/`,
+which are published unedited. (File mtimes there read Nov 25 ~18:14 because the
+box was restored/restarted; `started.txt` keeps the real launch times.)
+
+### Round 24 results (from `r24/out.jsonl`, unchanged)
+- XCCC t=5 truth admission, kissat404: seed 3 SAT/admitted in 349 s CPU,
+  seed 2 in 1245 s, seed 4 in 1790 s.
+- Seed 1 with cadical195: no row and no DONE line, so the runner died
+  without recording an outcome (cause not recorded; box restart likely).
+- So the t=5 encoding **does** admit a planted truth (3 of 3 recorded seeds);
+  seed 1 is apparently just a hard instance under both solvers.
+
+### Round 25 jobs (`r25/run.sh`, seed 3, t=5, kissat404, SIGKILL cap 7200 s)
+- rand (random-wire negative): **none** in 84 s CPU — passes.
+- near1, near8 (near-miss negatives): exit 137 (SIGKILL). No timestamps were
+  recorded, so I can't tell if the 7200 s cap or something else (memory,
+  restart) killed them. **Unresolved.**
+- pos (full planted recovery + uniqueness): exit 134, kissat's known abort on
+  add_clause after solve (repeat of a recorded lesson; my slip).
+- `run2.sh` pos rerun with cadical195: no row, no DONE line — died unrecorded.
+
+### Status of the 3 real t=5 XCCC none rows
+Still none_UNCONFIRMED. Truth admission (now shown) and a random negative
+(now shown, one seed) are met; near-miss negative is not.
+
+## Round 26 — Nov 26, 2026 ~10:30 AM (America/Los_Angeles), daily check
+Shared weekly usage 96.4% at start (reset Mon Nov 30, 9:10 AM PST). Session
+ceiling frozen at ~1.8 points (half of remaining 3.6), aiming well below:
+reconstruction, one cheap background launch, publish.
+
+### Challenge folder check
+Last commit touching the folder still `978951d` (Nov 16); branch head still
+`207883c`; folder listing unchanged: README.md `897241dd`, v1 `380bced0`,
+v2 `2bde7b12`. No new or changed files.
+
+### Launched (`work/r26/`, planted only)
+Retry of the two unresolved r25 jobs, 2 parallel, nice 5, SIGKILL cap 14400 s,
+now with per-job start/end epoch stamps (`stamps.jsonl`) so a kill can be
+attributed: near1 seed 3 (kissat404) and pos seed 3 (cadical195, which
+supports incremental clauses). Checked at ~40 s: both python jobs at ~100% CPU,
+RSS 0.8 / 1.3 GB, err.log empty. Write-up next session from `r26/out.jsonl`.
+
+### Proven vs guessed
+- Proven (planted): XCCC t=5 encoding admits planted truth (seeds 2, 3, 4);
+  rejects one random wire set (seed 3).
+- Not shown: near-miss rejection at t=5; planted recovery+uniqueness at t=5.
+- No new real recovery.
+
+### Lessons
+Record per-job start/end stamps in the wrapper itself; an exit 137 without a
+time can't be told apart from an outside kill. Re-check the kissat
+incremental lesson before choosing a solver for a pos job.

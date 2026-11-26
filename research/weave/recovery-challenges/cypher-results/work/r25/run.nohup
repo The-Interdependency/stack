@@ -1,0 +1,3 @@
+pos: line 1: 226438 Aborted                 nice -n 5 timeout -s KILL 7200 python3 kport3.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+near8: line 1: 226436 Killed                  nice -n 5 timeout -s KILL 7200 python3 kport3.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
+near1: line 1: 226434 Killed                  nice -n 5 timeout -s KILL 7200 python3 kport3.py "$0" "$1" "$2" "$3" "$4" 2>> err.log
