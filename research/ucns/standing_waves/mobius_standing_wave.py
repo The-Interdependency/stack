@@ -1,3 +1,4 @@
+# ratios: loc_comments=290:70 imports_exports=6:9 calls_definitions=64:34
 # === MODULE_BUILD ===
 # id: ucns_mobius_standing_wave_root_loop
 #   module_name: mobius_standing_wave
@@ -13,7 +14,7 @@
 #   admin_only: false
 #   tests: tests/test_mobius_standing_wave.py
 #   rollout: geometry-only candidate; no PCEA promotion and no spectral/zeta claim
-#   rollback: remove module, facade exports, tests, and README note
+#   rollback: revert the Stack-local candidate, its tests, and its research notes
 #   requires: ucns_native_mobius_geometry
 #   since: 2026-09-06
 #   unresolved: higher-dimensional UCNS domain, physical boundary beyond quotient seam, PCEA boundary-capacity channel map
@@ -76,7 +77,7 @@ from fractions import Fraction
 from math import cos, isfinite, pi, sin
 from typing import Iterable, Literal
 
-from .direct_mobius import NATIVE_MOBIUS_LAW_ID, NATIVE_MOBIUS_LAW_VERSION
+from ucns.direct_mobius import NATIVE_MOBIUS_LAW_ID, NATIVE_MOBIUS_LAW_VERSION
 
 MOBIUS_STANDING_WAVE_SCHEMA_ID = "ucns.mobius-standing-wave-root-loop"
 MOBIUS_STANDING_WAVE_SCHEMA_VERSION = "0.1.0"
@@ -426,3 +427,4 @@ __all__ = [
     "evaluate_capacity_channel_induction",
     "run_all",
 ]
+# ratios: loc_comments=290:70 imports_exports=6:9 calls_definitions=64:34

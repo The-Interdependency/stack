@@ -1,0 +1,133 @@
+{
+  "schema": "the-interdependency.stack.ucns-standing-wave-source-provenance/1",
+  "upstream": {
+    "repository": "The-Interdependency/ucns",
+    "commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+    "package": "src/ucns",
+    "package_git_tree": "1e3f4fb89c6b277aa1d9d5ebf29d2c546f47490d"
+  },
+  "stack_history": {
+    "repository": "The-Interdependency/stack",
+    "pre_overlay_commit": "030022948fb7c749961ae65743a4448c4bb6cbbe",
+    "overlay_commit": "e3d05e5e4ee4a548e5f22ea43735fe38b4669be4",
+    "origin": "Pre-sync working tree, as recorded by the introducing commit. Earlier authorship is unresolved."
+  },
+  "audit": {
+    "stack_commit": "311e921553a571c0a82fea1315b66d21d9d7c79a",
+    "path": "ahbg/campaign/evidence/source-comparison.json",
+    "git_blob": "35af68b25688fd6fd13a1aab038b90cbfa5bf23e",
+    "sha256": "830e71742445480a3abda4501d45060a29d2704634d9fc514de12e0386054728"
+  },
+  "historical_imports": [
+    {
+      "module": "ucns",
+      "path": "libs/ucns/src/ucns/__init__.py",
+      "sha256": "6c32e39340751a7388cb82a9fb1dbee95ab35dcec72859198212207130e2b659",
+      "git_blob": "a9855f65701c339a4d9543cd1e8f202dc9ec607b",
+      "origin": "stack_modified_facade"
+    },
+    {
+      "module": "ucns.carrier",
+      "path": "libs/ucns/src/ucns/carrier.py",
+      "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+      "git_blob": "7f39c03a6794bddffe5b1be808e2117dc48fb26f",
+      "origin": "upstream"
+    },
+    {
+      "module": "ucns.direct_mobius",
+      "path": "libs/ucns/src/ucns/direct_mobius.py",
+      "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+      "git_blob": "14a4cee36b5bbfa72cf3c03703c427abdac7f33d",
+      "origin": "upstream"
+    },
+    {
+      "module": "ucns.mobius_band_standing_wave",
+      "path": "libs/ucns/src/ucns/mobius_band_standing_wave.py",
+      "sha256": "e72c6052e78357ccfce01a80f82bf072677caee09aff0f02558c01a9b4b26013",
+      "git_blob": "40c645d2006d452f5829ada2f405f8b3a068a20e",
+      "origin": "stack_candidate",
+      "research_path": "research/ucns/standing_waves/mobius_band_standing_wave.py"
+    },
+    {
+      "module": "ucns.mobius_seed",
+      "path": "libs/ucns/src/ucns/mobius_seed.py",
+      "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770",
+      "git_blob": "e33010ec916c89ccc41284bf14e7b41fc387110b",
+      "origin": "upstream"
+    },
+    {
+      "module": "ucns.mobius_seed_construction",
+      "path": "libs/ucns/src/ucns/mobius_seed_construction.py",
+      "sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36",
+      "git_blob": "193fb7a27d9a827a7eeec0ae4a2e79aae7f5285d",
+      "origin": "upstream"
+    },
+    {
+      "module": "ucns.mobius_standing_wave",
+      "path": "libs/ucns/src/ucns/mobius_standing_wave.py",
+      "sha256": "f0be18db09d612e7f34d94e00bad58247f9646095ee60aaafdd69fdf5faa0322",
+      "git_blob": "4ceb05ec129b016a5450a4713b32f2f11584540c",
+      "origin": "stack_candidate",
+      "research_path": "research/ucns/standing_waves/mobius_standing_wave.py"
+    },
+    {
+      "module": "ucns.mobius_vesica",
+      "path": "libs/ucns/src/ucns/mobius_vesica.py",
+      "sha256": "ac05d4043e60f272cee365852f068521c1e96f4b716cab67eb449483ed9c827d",
+      "git_blob": "ee1834abd88da9737b7dfa67011101dead9d9783",
+      "origin": "upstream"
+    },
+    {
+      "module": "ucns.public_gonol",
+      "path": "libs/ucns/src/ucns/public_gonol.py",
+      "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
+      "git_blob": "c1955e46e2dc918fb657cb346e42106d71937e91",
+      "origin": "upstream"
+    }
+  ],
+  "corrected_imports": [
+    {
+      "module": "ucns",
+      "upstream_path": "src/ucns/__init__.py",
+      "sha256": "1cb5dc7bc4d0988eab8f4227a8f6f6996d3ec64ab09d78ce8c704f1001379a80"
+    },
+    {
+      "module": "ucns.carrier",
+      "upstream_path": "src/ucns/carrier.py",
+      "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+    },
+    {
+      "module": "ucns.direct_mobius",
+      "upstream_path": "src/ucns/direct_mobius.py",
+      "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+    },
+    {
+      "module": "ucns.mobius_seed",
+      "upstream_path": "src/ucns/mobius_seed.py",
+      "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+    },
+    {
+      "module": "ucns.mobius_seed_construction",
+      "upstream_path": "src/ucns/mobius_seed_construction.py",
+      "sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36"
+    },
+    {
+      "module": "ucns.mobius_vesica",
+      "upstream_path": "src/ucns/mobius_vesica.py",
+      "sha256": "ac05d4043e60f272cee365852f068521c1e96f4b716cab67eb449483ed9c827d"
+    },
+    {
+      "module": "ucns.public_gonol",
+      "upstream_path": "src/ucns/public_gonol.py",
+      "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+    }
+  ],
+  "replay": {
+    "campaign_commit": "311e921553a571c0a82fea1315b66d21d9d7c79a",
+    "fixture": "ahbg/campaign/evidence/contested-turn",
+    "contested_state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd",
+    "control": "ahbg/campaign/evidence/geometry-control.json",
+    "normal_restored_irrelevant_state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce",
+    "removed_seed": "ucns.mobius_seed"
+  }
+}

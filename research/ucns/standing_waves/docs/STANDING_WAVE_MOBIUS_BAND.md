@@ -18,7 +18,7 @@ Claimed sense: finite value samples, with optional normal derivative slots, on
 the single continuous physical boundary induced by a scalar coordinate-domain
 standing-wave operator on the canonical Mobius band.
 
-Scope: `src/ucns/mobius_band_standing_wave.py` and tests that consume that
+Scope: [mobius_band_standing_wave.py](../mobius_band_standing_wave.py) and tests that consume that
 exact coordinate-domain band model.
 
 Excluded uses: embedded Laplace-Beltrami theorem, physical field theory,

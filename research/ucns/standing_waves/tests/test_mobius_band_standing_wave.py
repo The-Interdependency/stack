@@ -1,3 +1,4 @@
+# ratios: loc_comments=91:41 imports_exports=3:5 calls_definitions=29:5
 # === CHECKS ===
 # id: check_mobius_band_standing_wave_declares_operator_domain_bc_trace
 #   proves: mobius_band_standing_wave_declares_operator_domain_bc_trace
@@ -44,7 +45,7 @@ from fractions import Fraction
 
 import pytest
 
-from ucns.mobius_band_standing_wave import (
+from research.ucns.standing_waves.mobius_band_standing_wave import (
     BOUNDARY_CONDITIONS,
     MOBIUS_QUOTIENT,
     PHYSICAL_BOUNDARY,
@@ -151,3 +152,4 @@ def test_invalid_band_requests_are_rejected() -> None:
         MobiusBandBasisFunction(1, "cos", 0, "even_neumann")
     with pytest.raises(MobiusBandStandingWaveError):
         evaluate_band_capacity_channel_induction(0)
+# ratios: loc_comments=91:41 imports_exports=3:5 calls_definitions=29:5

@@ -6,6 +6,10 @@ Standing: **research, not canon**. Canonical UCNS authority remains `The-Interde
 
 ## Usage guidance
 
+The [standing-wave candidates](standing_waves/README.md) have separate root-loop
+and band models. Their source receipt records how both entered the November 26
+AHBG import trace and how to replay that turn against the pinned UCNS package.
+
 1. Read `BASE.json` before beginning work.
 2. Treat `../../libs/ucns/` as read-only imported canon.
 3. Put experiments, candidate changes, measurements, and notes here rather than editing `libs/`.
