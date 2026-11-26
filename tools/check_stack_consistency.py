@@ -1,4 +1,4 @@
-# ratios: loc_comments=869:109 imports_exports=9:20 calls_definitions=392:24
+# ratios: loc_comments=912:117 imports_exports=11:21 calls_definitions=415:25
 # === MODULE_BUILD ===
 # id: stack_consistency_checker
 #   module_name: check_stack_consistency
@@ -68,6 +68,11 @@
 #   class: evidence
 #   since: 2026-09-20
 #
+# id: ucns_package_matches_pinned_source
+#   given: the Stack manifest selects a UCNS producer commit
+#   then: the vendored Python package paths, Git modes and file bytes match its qualified source tree
+#   class: evidence
+#   since: 2026-11-26
 # === END CONTRACTS ===
 
 """Verify stack authority/provenance projections agree.
@@ -90,7 +95,9 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import os
 import re
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -159,6 +166,9 @@ HASHED_FIELDS = ("repositories", "research_participants", "boundaries")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 # Original completed EPAC event. Advancing release pins cannot reselect history.
 EPAC_TRANSITION_COMMIT = "c81d807142d3f0fe3968a6879888afa00352eaff"
+# Refresh these together from the producer with git rev-parse <commit>:src/ucns.
+UCNS_SOURCE_COMMIT = "828c0b8bbcfc267efb5701da714191c1f73a81ff"
+UCNS_PACKAGE_TREE = "1e3f4fb89c6b277aa1d9d5ebf29d2c546f47490d"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -189,6 +199,48 @@ def git_blob_sha(data: bytes) -> str:
 
 def error(findings: list[str], code: str, message: str) -> None:
     findings.append(f"{code}: {message}")
+
+
+def check_ucns_package(repositories: dict[str, dict[str, Any]], findings: list[str]) -> None:
+    """Compare live package files to the producer tree, including untracked source."""
+    package = ROOT / "libs/ucns/src/ucns"
+    if repositories.get("The-Interdependency/ucns", {}).get("commit") != UCNS_SOURCE_COMMIT:
+        error(findings, "ucns.source", "qualify the package tree for the manifest's UCNS commit")
+        return
+    if not package.is_dir() or package.resolve() != package:
+        error(findings, "ucns.source", "missing or redirected libs/ucns/src/ucns")
+        return
+    try:
+        git = ["git", "-C", str(package)]
+        records = subprocess.check_output(git + ["ls-tree", "--full-tree", "-rz", UCNS_PACKAGE_TREE])
+        expected = {}
+        for record in records.split(b"\0")[:-1]:
+            metadata, name = record.split(b"\t", 1)
+            mode, _, blob = metadata.decode("ascii").split()
+            expected[os.fsdecode(name)] = (mode, blob)
+        # Git includes tracked caches. Only untracked interpreter bytecode is incidental.
+        listed = subprocess.check_output(git + [
+            "ls-files", "-z", "--cached", "--others", "--exclude=**/__pycache__/*.pyc", "--", ".",
+        ])
+        for name in sorted(set(os.fsdecode(listed).split("\0")) - {""}):
+            path = package / name
+            try:
+                mode = path.lstat().st_mode
+            except FileNotFoundError:
+                continue
+            reference = expected.pop(name, None)
+            if reference is None:
+                error(findings, "ucns.source", f"unexpected package entry {name}")
+            elif stat.S_ISREG(mode) and path.parent.resolve() == path.parent:
+                actual = ("100755" if mode & stat.S_IXUSR else "100644", git_blob_sha(path.read_bytes()))
+                if actual != reference:
+                    error(findings, "ucns.source", f"mode or bytes differ for {name}")
+            else:
+                error(findings, "ucns.source", f"expected a regular package source at {name}")
+        for name in sorted(expected):
+            error(findings, "ucns.source", f"missing package entry {name}")
+    except (OSError, subprocess.CalledProcessError) as exc:
+        error(findings, "ucns.source", f"cannot verify the pinned UCNS package: {exc}")
 
 
 def check_manifest_shape(manifest: dict[str, Any], findings: list[str]) -> None:
@@ -1041,6 +1093,7 @@ def main() -> int:
     check_manifest_shape(manifest, findings)
     check_digest(manifest, human, findings)
     repositories = check_repository_projection(manifest, human, findings)
+    check_ucns_package(repositories, findings)
     research_participant_keys, research_source_identities = check_research_participants(manifest, human, findings)
     check_unicode_bit_radius_graph(manifest, human, findings)
     check_unicode_corpus_graph(manifest, human, findings)
@@ -1063,4 +1116,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-# ratios: loc_comments=869:109 imports_exports=9:20 calls_definitions=392:24
+# ratios: loc_comments=912:117 imports_exports=11:21 calls_definitions=415:25

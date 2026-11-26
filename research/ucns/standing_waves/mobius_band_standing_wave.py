@@ -1,3 +1,4 @@
+# ratios: loc_comments=568:73 imports_exports=6:10 calls_definitions=126:49
 # === MODULE_BUILD ===
 # id: ucns_mobius_band_standing_wave
 #   module_name: mobius_band_standing_wave
@@ -13,7 +14,7 @@
 #   admin_only: false
 #   tests: tests/test_mobius_band_standing_wave.py
 #   rollout: geometry-only candidate; no PCEA promotion, no embedded Laplace-Beltrami claim, and no spectral/zeta claim
-#   rollback: remove module, facade exports, tests, README note, and standing-wave band document
+#   rollback: revert the Stack-local candidate, its tests, and its research notes
 #   requires: ucns_mobius_vesica_exact_embedding, ucns_mobius_standing_wave_root_loop
 #   since: 2026-09-06
 #   unresolved: embedded Laplace-Beltrami operator, exact continuum trace capacity theorem, PCEA boundary-channel encoding map
@@ -78,7 +79,7 @@ from fractions import Fraction
 from math import cos, isfinite, pi, sin
 from typing import Iterable, Literal
 
-from .mobius_vesica import MobiusVesicaParameters
+from ucns.mobius_vesica import MobiusVesicaParameters
 
 MOBIUS_BAND_STANDING_WAVE_SCHEMA_ID = "ucns.mobius-band-standing-wave"
 MOBIUS_BAND_STANDING_WAVE_SCHEMA_VERSION = "0.1.0"
@@ -724,3 +725,4 @@ __all__ = [
     "evaluate_band_capacity_channel_induction",
     "run_all_mobius_band",
 ]
+# ratios: loc_comments=568:73 imports_exports=6:10 calls_definitions=126:49

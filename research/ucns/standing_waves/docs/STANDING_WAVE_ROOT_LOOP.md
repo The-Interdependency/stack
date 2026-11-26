@@ -15,7 +15,7 @@ Claiming domain: UCNS geometry.
 Claimed sense: endpoint value/derivative trace induced by the scalar
 second-order standing-wave operator on the native two-turn Mobius root loop.
 
-Scope: `src/ucns/mobius_standing_wave.py` and tests that consume that exact
+Scope: [mobius_standing_wave.py](../mobius_standing_wave.py) and tests that consume that exact
 root-loop model.
 
 Excluded uses: physical field theory, spectral/zeta theorem, PCEA runtime
@@ -85,7 +85,7 @@ independent coupling channels.
 No channels are assigned by fiat. Discrete FFT/epicycle tooling is not used as a
 PDE derivation.
 
-The next larger construction is `src/ucns/mobius_band_standing_wave.py`, which
+The next larger construction is [mobius_band_standing_wave.py](../mobius_band_standing_wave.py), which
 adds the canonical Mobius band coordinate domain and its continuous physical
 boundary. That construction does not retroactively change this root-loop
 falsifier.

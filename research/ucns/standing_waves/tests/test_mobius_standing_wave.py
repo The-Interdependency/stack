@@ -1,3 +1,4 @@
+# ratios: loc_comments=71:41 imports_exports=3:5 calls_definitions=35:5
 # === CHECKS ===
 # id: check_mobius_standing_wave_declares_operator_domain_bc_trace
 #   proves: mobius_standing_wave_declares_operator_domain_bc_trace
@@ -44,7 +45,7 @@ from fractions import Fraction
 
 import pytest
 
-from ucns.mobius_standing_wave import (
+from research.ucns.standing_waves.mobius_standing_wave import (
     DOMAIN,
     MOBIUS_STANDING_WAVE_SCHEMA_ID,
     STATUS_FALSIFIED,
@@ -129,3 +130,4 @@ def test_invalid_standing_wave_requests_raise() -> None:
         StandingWaveBasisFunction(1, "constant")
     with pytest.raises(MobiusStandingWaveError):
         evaluate_capacity_channel_induction(0)
+# ratios: loc_comments=71:41 imports_exports=3:5 calls_definitions=35:5

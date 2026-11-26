@@ -11,6 +11,7 @@ on:
       - 'libs/**'
       - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
+      - 'requirements-language-tests.txt'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
       - '.agents/skills/stack-update/**'
@@ -26,6 +27,7 @@ on:
       - 'libs/**'
       - 'skill-lib/**'
       - 'tools/check_stack_consistency.py'
+      - 'requirements-language-tests.txt'
       - 'integration/epac/**'
       - 'docs/work-graphs/repository-plan-report.json'
       - '.agents/skills/stack-update/**'
@@ -43,6 +45,15 @@ jobs:
           fetch-depth: 0
       - name: Verify stack authority and provenance projections
         run: python tools/check_stack_consistency.py
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.12.14'
+      - name: Replay UCNS package provenance and standing-wave fixtures
+        env:
+          PYTHONPATH: libs/ucns/src
+        run: |
+          python -m pip install --require-hashes -r requirements-language-tests.txt
+          python -m pytest -q research/ucns/standing_waves/tests libs/ucns/tests/test_geometry_public_surface.py
       - name: Validate the repository-owned portfolio report
         run: |
           python skill-lib/interdependent-work-graph/portfolio_plan.py docs/work-graphs/repository-plan-report.json --output /tmp/stack-portfolio-validation.json
