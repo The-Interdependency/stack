@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/ucns
@@ -24,29 +26,24 @@ jobs:
           ref: 300877066436a03d046b8951772c1e2aed2c5166
           path: _deps/encoding-native
           persist-credentials: false
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/skill-lib
+          # skill-lib #156 merged this exact commit. Stack receipts bind its identity.
+          ref: 0375a146a05cd61bb924290c5427752a2c0ded67
+          path: _deps/skill-catalog
+          persist-credentials: false
       - uses: actions/setup-python@v7.0.0
         with:
           python-version: '3.12.14'
+      - name: Verify the checked-out skill catalog against the pilot lock
+        run: python -I integration/uchc/skill_resolver/catalog.py _deps/skill-catalog
       - name: Verify paired epicycle results and Stack scalar encoding
         run: |
           python -m pip download --no-deps --require-hashes -r integration/uchc/halving-requirements.txt -d _dist
           python -m pip install --no-deps ./_deps/halving-native _dist/*.whl
           python -I integration/uchc/verify_halving.py _dist/*.whl _deps/encoding-native > halving-replay.json
           cat halving-replay.json
-      - name: Read catalog commit from the pilot lock
-        id: catalog
-        run: |
-          python - <<'PYCODE' >> "$GITHUB_OUTPUT"
-          import json
-          from pathlib import Path
-          print("commit=" + json.loads(Path("integration/uchc/skill_resolver/source.json").read_text())["catalog"]["commit"])
-          PYCODE
-      - uses: actions/checkout@v7.0.1
-        with:
-          repository: The-Interdependency/skill-lib
-          ref: ${{ steps.catalog.outputs.commit }}
-          path: _deps/skill-catalog
-          persist-credentials: false
       - name: Compare UCHC and graph skill resolution and AHBG disclosure
         env:
           PYTHONPATH: .:libs/ucns/src

@@ -1,4 +1,4 @@
-# ratios: loc_comments=107:1 imports_exports=7:3 calls_definitions=73:7
+# ratios: loc_comments=134:1 imports_exports=7:3 calls_definitions=85:9
 """Exercise the catalog against real Git objects in an isolated skill-lib fixture."""
 import hashlib
 import json
@@ -7,7 +7,7 @@ import subprocess
 import tempfile
 import unittest
 
-from integration.uchc.skill_resolver.catalog import CatalogError, load_catalog, resolve
+from integration.uchc.skill_resolver.catalog import CatalogError, load_catalog, resolve, verify_checkout
 
 
 def row(name, **extra):
@@ -31,6 +31,35 @@ def fixture_source(root, rows, *, retired=(), raw_index=None):
 
 
 class CatalogTests(unittest.TestCase):
+    def test_checkout_requires_the_locked_commit_even_for_an_identical_tree(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            commit = fixture_source(root, [row("a")])
+            lock = {"repo": "The-Interdependency/skill-lib", "commit": commit,
+                    "index_sha256": hashlib.sha256((root / "skills.json").read_bytes()).hexdigest()}
+            verify_checkout(root, lock)
+            subprocess.run(["git", "-C", root, "-c", "user.name=test", "-c",
+                            "user.email=test@example.invalid", "-c", "commit.gpgsign=false",
+                            "commit", "--allow-empty", "-qm", "same catalog bytes"], check=True)
+            with self.assertRaisesRegex(CatalogError, "HEAD differs"):
+                verify_checkout(root, lock)
+
+    def test_checkout_rejects_symbolic_refs_and_lock_drift(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            commit = fixture_source(root, [row("a")])
+            lock = {"repo": "The-Interdependency/skill-lib", "commit": commit,
+                    "index_sha256": hashlib.sha256((root / "skills.json").read_bytes()).hexdigest()}
+            for field, value, error in [
+                ("commit", "HEAD", "HEAD differs"),
+                ("commit", commit[:12], "HEAD differs"),
+                ("commit", "0" * 40, "HEAD differs"),
+                ("repo", "other/skill-lib", "repository or index differs"),
+                ("index_sha256", "0" * 64, "repository or index differs"),
+            ]:
+                with self.subTest(field=field, value=value), self.assertRaisesRegex(CatalogError, error):
+                    verify_checkout(root, {**lock, field: value})
+
     def test_shared_reasons_and_directed_co_load(self):
         rows = [row("msdmd", runner="msdmd/collect.py", status="runnable"),
                 row("cap-build", depends_on=["msdmd"]), row("deps-build", depends_on=["msdmd"]),
@@ -117,4 +146,4 @@ class CatalogTests(unittest.TestCase):
                 load_catalog(root, source_commit=sha)
             with self.assertRaisesRegex(CatalogError, "exact"):
                 load_catalog(root, source_commit="HEAD")
-# ratios: loc_comments=107:1 imports_exports=7:3 calls_definitions=73:7
+# ratios: loc_comments=134:1 imports_exports=7:3 calls_definitions=85:9

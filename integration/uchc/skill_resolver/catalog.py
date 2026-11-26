@@ -1,7 +1,8 @@
-# ratios: loc_comments=194:5 imports_exports=9:4 calls_definitions=98:14
+# ratios: loc_comments=209:6 imports_exports=10:5 calls_definitions=109:15
 """Read the pinned skill-lib catalog and resolve its directed skill relations."""
 from __future__ import annotations
 
+import argparse
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from copy import deepcopy
@@ -181,6 +182,17 @@ def load_catalog(root: Path, *, source_commit: str) -> Catalog:
     return catalog
 
 
+def verify_checkout(root: Path, expected: dict) -> None:
+    """Check the independently selected Git HEAD and catalog bytes against the lock."""
+    head = subprocess.check_output(
+        ["git", "-C", root, "rev-parse", "--verify", "HEAD^{commit}"], text=True
+    ).strip()
+    if head != expected.get("commit"):
+        raise CatalogError("checked-out skill-lib HEAD differs from the pilot lock")
+    if load_catalog(root, source_commit=head).source != expected:
+        raise CatalogError("checked-out catalog repository or index differs from the pilot lock")
+
+
 def resolve(catalog: Catalog, roots: Iterable[str], *, get_record: Callable[[str], dict] | None = None) -> dict:
     """Return a deterministic plan, including every direct reason each skill is present."""
     if isinstance(roots, (str, bytes)):
@@ -224,4 +236,12 @@ def resolve(catalog: Catalog, roots: Iterable[str], *, get_record: Callable[[str
     return {"roots": roots, "order": order, "reasons": {
         name: sorted(reasons[name], key=lambda reason: (reason["source"], reason["kind"]))
         for name in order}}
-# ratios: loc_comments=194:5 imports_exports=9:4 calls_definitions=98:14
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=verify_checkout.__doc__)
+    parser.add_argument("checkout", type=Path, help="path to the skill-lib checkout")
+    args = parser.parse_args()
+    lock = json.loads(Path(__file__).with_name("source.json").read_bytes())
+    verify_checkout(args.checkout, lock["catalog"])
+# ratios: loc_comments=209:6 imports_exports=10:5 calls_definitions=109:15
