@@ -34,7 +34,15 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_6
+          ram-size: 3072M
+          cores: 2
           disable-animations: true
           script: |
             adb install /tmp/ahbg-alpha.apk
             python3 ahbg/android/smoke_phone.py
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-visible-screen
+          path: /tmp/ahbg-android-screen.png
+          if-no-files-found: ignore

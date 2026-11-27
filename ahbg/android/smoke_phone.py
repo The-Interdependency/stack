@@ -1,5 +1,6 @@
 """Install verification runs against the signed alpha on an Android device or emulator."""
 import re
+from pathlib import Path
 import subprocess
 import time
 import xml.etree.ElementTree as ET
@@ -28,6 +29,13 @@ def target(text, *, tap=False, scroll=False, timeout=100):
             time.sleep(1)
             continue
         last = [n.get("text") or n.get("content-desc", "") for n in nodes]
+        if any("Launcher isn" in label for label in last):
+            dialog = next((n for n in nodes if n.get("text") == "Close app"), None)
+            if dialog is not None:
+                x1,y1,x2,y2=map(int,re.findall(r"-?\d+",dialog.get("bounds","")))
+                adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
+                adb("shell","am","start","-n",ACTIVITY)
+                continue
         for node, name in zip(nodes, last):
             if name != text:
                 continue
@@ -47,10 +55,15 @@ def target(text, *, tap=False, scroll=False, timeout=100):
             adb("shell", "input", "swipe", str(width//2), str(bottom), str(width//2), str(top), "400")
         attempt += 1
         time.sleep(1)
+    Path("/tmp/ahbg-android-screen.png").write_bytes(subprocess.check_output(["adb","exec-out","screencap","-p"]))
+    print(adb("shell","dumpsys","activity","activities").split("topResumedActivity")[-1][:350],flush=True)
+    print(adb("logcat","-d","-s","chromium:E","AndroidRuntime:E")[-2300:],flush=True)
     raise RuntimeError(f"Android did not expose {text!r}; last visible labels: {[s for s in last if s][:45]}")
 
 
-adb("shell", "am", "start", "-n", ACTIVITY)
+adb("shell", "input", "keyevent", "KEYCODE_WAKEUP")
+adb("shell", "wm", "dismiss-keyguard")
+adb("shell", "am", "start", "-W", "-n", ACTIVITY)
 target("Start a plane", tap=True)
 target("Move to Ring 5", tap=True, scroll=True)
 target("Explorer", tap=True, scroll=True)
