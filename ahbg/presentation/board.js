@@ -245,7 +245,7 @@ function render(snapshot) {
 
   function paintSelection() {
     svg.querySelectorAll(".tile-point").forEach((node) => {
-      node.setAttribute("class", node.dataset.tile === selected ? "tile-point selected" : "tile-point");
+      node.classList.toggle("selected", node.dataset.tile === selected);
     });
     for (const [tileId, node] of hitByTile.entries()) node.setAttribute("aria-pressed", tileId === selected ? "true" : "false");
     if (selectionRing) {
