@@ -16,6 +16,7 @@ from .store import Rejected, Store
 ASSETS = Path(__file__).resolve().parents[1] / "presentation"
 FILES = {"": ("play.html", "text/html"), "board.html": ("play.html", "text/html"),
          "credits.html": ("credits.html", "text/html"),
+         "research.html": ("research.html", "text/html"), "research.js": ("research.js", "text/javascript"),
          "play.css": ("play.css", "text/css"), "play.js": ("play.js", "text/javascript"),
          "board.css": ("board.css", "text/css"), "board.js": ("board.js", "text/javascript"),
          "sample_snapshot.json": ("sample_snapshot.json", "application/json")}
@@ -38,6 +39,8 @@ def application(database, site):
                 ("Content-Type", mime + "; charset=utf-8"), ("Content-Length", str(len(raw)))])
             return [raw]
         try:
+            if method == "GET" and route in ("research.json", "contested.json"):
+                return send(200, (Path(__file__).parent / "evidence" / route).read_bytes())
             if method == "GET" and route in FILES:
                 name, mime = FILES[route]
                 return send(200, (ASSETS / name).read_bytes(), mime)

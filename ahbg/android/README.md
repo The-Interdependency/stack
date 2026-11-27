@@ -7,7 +7,7 @@ geometry authority.
 ## Architecture
 
 ```text
-Android app (WebView + JS bridge + JSON transport)
+Android app (same-origin WebView + JSON transport)
         │  observe/plan/act JSON over HTTP
         ▼
 ahbg.runtime.server  (ahbg/runtime/server.py)
@@ -17,8 +17,8 @@ canonical runtime (ahbg/runtime + frozen Grok engine + UCNS geometry)
 ```
 
 - `MainActivity` hosts the canonical presentation board (`ahbg/presentation`)
-  in a WebView and exposes `window.ahbg` to the board.
-- `HarnessClient` transports JSON to the runtime bridge; it owns no game state.
+  in a WebView. Secure cookies bind the device profile to its private seats. Connectivity recovery reopens the same server journal.
+- The phone board uses same-origin fetch for authenticated play. The separate operator bridge remains loopback only.
 - `Entitlements.kt` wraps one RevenueCat entitlement, `benchmark_lab`.
 - Bundled board assets are a pinned copy of `ahbg/presentation` (see
   `sync_presentation.sh` and `PRESENTATION.sha256`).
@@ -31,13 +31,13 @@ gradle assembleDebug -PruntimeUrl=http://10.0.2.2:8765
 
 # Google Play release artifact: signed Android App Bundle (AAB)
 gradle bundleRelease \
-  -PruntimeUrl=https://ahbg.interdependentway.org \
+  -PruntimeUrl=https://ahbg.35.212.252.101.sslip.io \
   -PrevenueCatApiKey=<goog_public_sdk_key> \
   -PahbgStoreFile=/secure/ahbg-release.jks -PahbgStorePassword=... \
   -PahbgKeyAlias=... -PahbgKeyPassword=...
 ```
 
-- `runtimeUrl` defaults to `https://ahbg.interdependentway.org` for release
+- `runtimeUrl` defaults to `https://ahbg.35.212.252.101.sslip.io` for release
   builds; debug may point at a local emulator host. Cleartext is allowed only
   for `10.0.2.2`/`localhost` in debug via `network_security_config.xml`.
 - `revenueCatApiKey` is the Google Play app's RevenueCat **public SDK key**

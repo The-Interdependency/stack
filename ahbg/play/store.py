@@ -7,7 +7,6 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from ahbg.runtime.protocol import ProtocolError
 from .game import Plane, TURN_LIMIT, canonical, fingerprint
 from .models import Council
 
@@ -127,6 +126,7 @@ class Store:
                                  (key, turn, seat)).fetchone()
             return {"observation": p.observe(seat), "seat": seat, "mode": room["mode"],
                     "turn_limit": TURN_LIMIT, "done": turn >= TURN_LIMIT, "committed": bool(waiting),
+                    "own_commit": json.loads(waiting["plan"]) if waiting else None,
                     "waiting_join": room["mode"] == "duel" and not room["indigo"],
                     "history": [events[seat] for events in p.history]}
 

@@ -11,13 +11,13 @@ android {
         applicationId = if (project.hasProperty("phoneAlpha")) "org.interdependency.ahbg.alpha" else "org.interdependency.ahbg"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "0.4.0"
+        versionCode = 5
+        versionName = "0.4.1"
         // Production runtime endpoint. Release builds must use HTTPS; debug
         // builds may point at a local emulator host through
         // -PruntimeUrl=http://10.0.2.2:8765. The mobile layer never embeds
         // the engine itself.
-        val runtimeUrl = (project.findProperty("runtimeUrl") as String?) ?: "https://ahbg.interdependentway.org"
+        val runtimeUrl = (project.findProperty("runtimeUrl") as String?) ?: "https://ahbg.35.212.252.101.sslip.io"
         buildConfigField("String", "RUNTIME_URL", "\"$runtimeUrl\"")
         // RevenueCat public API key. Provisioned at build time; never committed.
         val revenueCatKey = (project.findProperty("revenueCatApiKey") as String?) ?: "REVENUECAT_KEY_NOT_PROVISIONED"

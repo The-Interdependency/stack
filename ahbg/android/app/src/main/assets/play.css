@@ -3,3 +3,5 @@
 @media(max-width:740px){main{padding-top:12px}.layout,#lobby{grid-template-columns:1fr;gap:12px}#lobby{margin:12px 0}.hero{padding:20px 4px}.map-card,.planner{padding:14px}.heading{margin:12px 0}.heading h1{font-size:32px}svg{height:275px}.extras section{min-width:100%}}
 
 footer{margin-top:26px}a{color:var(--lime)}
+
+#metrics details,main>section:not(#lobby):not(#game){padding:16px 0;border-bottom:1px solid var(--line)}pre{white-space:pre-wrap;overflow-wrap:anywhere}#options{display:flex;gap:8px;flex-wrap:wrap}details summary{cursor:pointer}

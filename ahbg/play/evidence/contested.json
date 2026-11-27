@@ -1,0 +1,118 @@
+{
+  "room": "contested",
+  "seed": 510924009,
+  "turns": [
+    {
+      "plans": {
+        "amber": {
+          "intents": [
+            {
+              "action": "relocate",
+              "from_tile_id": "RING_0",
+              "to_tile_id": "CENTER",
+              "unit_id": "builder"
+            }
+          ],
+          "messages": {
+            "builder": "Private scout report."
+          },
+          "session_id": "contested",
+          "turn": 0
+        },
+        "indigo": {
+          "intents": [
+            {
+              "action": "relocate",
+              "from_tile_id": "RING_3",
+              "to_tile_id": "CENTER",
+              "unit_id": "rival"
+            }
+          ],
+          "messages": {},
+          "session_id": "contested",
+          "turn": 0
+        },
+        "wild": {
+          "intents": [
+            {
+              "action": "relocate",
+              "from_tile_id": "RING_4",
+              "to_tile_id": "RING_5",
+              "unit_id": "fauna"
+            }
+          ],
+          "messages": {},
+          "session_id": "contested",
+          "turn": 0
+        }
+      },
+      "outcome": {
+        "digest": "df04000f44e9bd687ad80079dce4c6e4673534d1d65ec77f6c5fea95664b81b3",
+        "events": [
+          {
+            "from_tile_id": "RING_0",
+            "kind": "move",
+            "to_tile_id": "CENTER",
+            "unit_id": "builder"
+          },
+          {
+            "from_tile_id": "RING_4",
+            "kind": "move",
+            "to_tile_id": "RING_5",
+            "unit_id": "fauna"
+          },
+          {
+            "from_tile_id": "RING_3",
+            "kind": "war",
+            "resolution": "priority_loser",
+            "to_tile_id": "CENTER",
+            "unit_id": "rival",
+            "winner_unit_id": "builder"
+          }
+        ]
+      }
+    },
+    {
+      "plans": {
+        "amber": {
+          "intents": [
+            {
+              "action": "construct",
+              "from_tile_id": "CENTER",
+              "to_tile_id": "RING_0",
+              "unit_id": "builder"
+            }
+          ],
+          "messages": {},
+          "session_id": "contested",
+          "turn": 1
+        },
+        "indigo": {
+          "intents": [],
+          "messages": {},
+          "session_id": "contested",
+          "turn": 1
+        },
+        "wild": {
+          "intents": [],
+          "messages": {},
+          "session_id": "contested",
+          "turn": 1
+        }
+      },
+      "outcome": {
+        "digest": "6ba9b98c0fb0cb6ca6ab09d6aa95d31ee6ce080a166c3244f6da05d2e42d3364",
+        "events": [
+          {
+            "built_count": 2,
+            "from_tile_id": "CENTER",
+            "kind": "construct",
+            "to_tile_id": "RING_0",
+            "ucns_slot": "RING_0",
+            "unit_id": "builder"
+          }
+        ]
+      }
+    }
+  ]
+}

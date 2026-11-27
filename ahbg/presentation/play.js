@@ -46,6 +46,10 @@ async function openPlane(id) {
     if (!state.observation.owned.includes(unit)) unit=state.observation.owned[0];
     camera=null;
   }
+  if (state.own_commit) {
+    orders=Object.fromEntries(state.own_commit.intents.map(a=>[a.unit_id,a]));
+    messages=state.own_commit.messages||{};
+  }
   draw();
 }
 function draw() {
@@ -59,12 +63,13 @@ function draw() {
   if (!camera) camera=[...base];
   setCamera();
   svg.querySelectorAll(".unit").forEach((n,i)=>n.classList.toggle("mine",o.owned.includes(p.units[i].id)));
+  svg.querySelectorAll(".unit-label").forEach((n,i)=>{ n.textContent=nameOf(p.units[i].id)[0]; });
   svg.querySelectorAll(".tile-point").forEach(n=>{
     n.classList.toggle("built",o.built.includes(n.dataset.tile));
     n.classList.toggle("fog",!o.visible.includes(n.dataset.tile));
   });
   byId("heading").textContent="Turn "+Math.min(o.turn+1,state.turn_limit)+" / "+state.turn_limit;
-  byId("opponent").textContent=names[state.mode]+" · "+state.seat+" seat";
+  byId("opponent").textContent=names[state.mode]+" · "+state.seat+" seat · "+room.slice(-6);
   byId("phase").textContent=state.done?"Complete":state.committed?"Orders committed":"Planning";
   byId("share").hidden=!state.waiting_join || state.seat!=="amber";
   byId("fork-panel").hidden=state.mode==="duel";
@@ -162,7 +167,10 @@ map.addEventListener("pointermove",e=>{
   }
 });
 for(const name of ["pointerup","pointercancel","pointerleave"])map.addEventListener(name,e=>{pointers.delete(e.pointerId);span=0;});
-window.addEventListener("online",()=>{if(room && !busy)run(()=>openPlane(room));});
+window.addEventListener("online",()=>{if(!busy)run(async()=>{
+  await api("identity",{}); const saved=room||localStorage.getItem("ahbg/current");
+  if(saved)await openPlane(saved);else await listPlanes();
+});});
 setInterval(()=>{if(!document.hidden&&state?.committed&&!busy)run(()=>openPlane(room));},4000);
 run(async()=>{
   await api("identity",{}); const last=localStorage.getItem("ahbg/current");

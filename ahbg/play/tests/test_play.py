@@ -35,6 +35,8 @@ class PlayTest(unittest.TestCase):
                 "messages": {"builder": "ë"*256}}
         self.store.commit("first", room, plan)
         self.assertTrue(self.store.state("first", room)["committed"])
+        self.assertEqual(self.store.state("first", room)["own_commit"], plan)
+        self.assertIsNone(self.store.state("second", room)["own_commit"])
         self.assertNotIn("ë", canonical(self.store.state("second", room)))
         self.store.commit("second", room, {"session_id":room, "turn":0, "intents":[move(b,"rival")]})
         self.store.commit("first", room, plan)
