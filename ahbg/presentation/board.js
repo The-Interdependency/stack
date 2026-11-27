@@ -245,7 +245,7 @@ function render(snapshot) {
 
   function paintSelection() {
     svg.querySelectorAll(".tile-point").forEach((node) => {
-      node.setAttribute("class", node.dataset.tile === selected ? "tile-point selected" : "tile-point");
+      node.classList.toggle("selected", node.dataset.tile === selected);
     });
     for (const [tileId, node] of hitByTile.entries()) node.setAttribute("aria-pressed", tileId === selected ? "true" : "false");
     if (selectionRing) {
@@ -297,7 +297,11 @@ function render(snapshot) {
     hit.setAttribute("role", "button");
     hit.setAttribute("aria-label", `Inspect tile ${tile.label || tile.id}`);
     hit.setAttribute("aria-pressed", tile.id === selected ? "true" : "false");
-    const selectTile = () => { selected = tile.id; paintSelection(); };
+    const selectTile = () => {
+      selected = tile.id;
+      paintSelection();
+      svg.dispatchEvent(new CustomEvent("tile-selected", {detail: tile.id}));
+    };
     hit.addEventListener("click", selectTile);
     hit.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectTile(); }
@@ -347,7 +351,7 @@ async function boot() {
   render(validateSnapshot(snapshot));
 }
 
-boot();
+if (!document.body.hasAttribute("data-live")) boot();
 
 function submissionPath() {
   const onboarding = document.getElementById("onboarding");
@@ -388,6 +392,23 @@ function submissionPath() {
     }).then((response) => response.json());
   }
 
+  function offerOrders() {
+    const target = document.getElementById("legacy-orders");
+    target.replaceChildren();
+    const legal = lastObservation?.legal || [];
+    for (const unit of new Set(legal.map(item => item.unit_id))) {
+      const label = document.createElement("label");
+      label.textContent = unit;
+      const select = document.createElement("select");
+      select.add(new Option("Hold", ""));
+      legal.forEach((action, index) => {
+        if (action.unit_id === unit) select.add(new Option(action.action + " " + action.to_tile_id, index));
+      });
+      label.append(select);
+      target.append(label);
+    }
+  }
+
   function renderPresentation(snapshot) {
     render(validateSnapshot(snapshot));
   }
@@ -406,6 +427,7 @@ function submissionPath() {
       .then((payload) => {
         sessionId = payload.session_id;
         lastObservation = payload.observation;
+        offerOrders();
         note(`plane started · session ${sessionId} · turn ${lastObservation.turn}`);
         return bridgeRequest("state", `/session/${sessionId}/state`, { sessionId });
       })
@@ -420,8 +442,8 @@ function submissionPath() {
     if (!sessionId || !lastObservation) { note("start a plane first"); return; }
     playTurn.disabled = true;
     const legal = lastObservation.legal || [];
-    const first = legal[0] || null;
-    const intents = first ? [{ unit_id: first.unit_id, action: first.action, from_tile_id: first.from_tile_id, to_tile_id: first.to_tile_id }] : [];
+    const intents = [...document.querySelectorAll("#legacy-orders select")]
+      .filter(select => select.value !== "").map(select => legal[Number(select.value)]);
     const plan = {
       schema: "interdependency.ahbg.harness.plan/1",
       session_id: sessionId,
@@ -432,6 +454,7 @@ function submissionPath() {
     bridgeRequest("plan", `/session/${sessionId}/plan`, { plan })
       .then((payload) => {
         lastObservation = payload.observation;
+        offerOrders();
         const consequence = (payload.effect && payload.effect.events) || [];
         note(`turn resolved · ${consequence.length} effect event(s) · done: ${payload.done}`);
         if (!payload.done) {

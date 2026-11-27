@@ -12,11 +12,11 @@ SRC="$ROOT/ahbg/presentation"
 DST="$ROOT/ahbg/android/app/src/main/assets"
 mkdir -p "$DST"
 
-cp "$SRC/board.html" "$SRC/board.js" "$SRC/board.css" "$SRC/sample_snapshot.json" "$DST/"
+cp "$SRC/board.html" "$SRC/board.js" "$SRC/board.css" "$SRC/sample_snapshot.json" "$SRC/play.html" "$SRC/play.css" "$SRC/play.js" "$SRC/credits.html" "$SRC/research.html" "$SRC/research.js" "$DST/"
 
 (
   cd "$DST"
-  sha256sum board.html board.js board.css sample_snapshot.json > PRESENTATION.sha256
+  sha256sum board.html board.js board.css sample_snapshot.json play.html play.css play.js credits.html research.html research.js > PRESENTATION.sha256
 )
 
 echo "synced presentation assets to $DST"

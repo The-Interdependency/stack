@@ -2,89 +2,101 @@ package org.interdependency.ahbg
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.Uri
 import android.os.Bundle
-import android.webkit.JavascriptInterface
+import android.webkit.CookieManager
+import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Toast
 
-/**
- * Thinnest Android-first shell around the canonical AHBG runtime.
- *
- * This activity hosts the canonical presentation board in a WebView and
- * exposes one small JS bridge (`window.ahbg`) that forwards observe/plan/act
- * calls to the runtime HTTP bridge. The mobile layer presents and controls
- * AHBG; it is not a second game engine and never reimplements UCNS geometry.
- */
+/** Same-origin phone client. The server owns player identity, orders and the turn journal. */
 class MainActivity : Activity() {
+    private lateinit var board: WebView
+    private lateinit var recovery: LinearLayout
+    private lateinit var network: ConnectivityManager
+    private var offline = false
+    private val connectivity = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            runOnUiThread { if (offline && !isDestroyed) reloadBoard() }
+        }
+    }
 
-    private lateinit var webView: WebView
-    private lateinit var harnessClient: HarnessClient
-    private lateinit var premiumStore: PremiumStore
+    private fun reloadBoard() {
+        offline = false
+        recovery.visibility = View.GONE
+        board.visibility = View.VISIBLE
+        board.loadUrl("${BuildConfig.RUNTIME_URL.trimEnd('/')}/board.html")
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        harnessClient = HarnessClient(BuildConfig.RUNTIME_URL)
-        premiumStore = PremiumStore.create(this, BuildConfig.REVENUECAT_API_KEY)
-
-        webView = WebView(this).apply {
+        val origin = Uri.parse(BuildConfig.RUNTIME_URL)
+        require(origin.scheme == "https" || BuildConfig.DEBUG && origin.host in setOf("10.0.2.2", "localhost"))
+        val premium = lazy { PremiumStore.create(this, BuildConfig.REVENUECAT_API_KEY) }
+        recovery = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(TextView(context).apply { text = "Connection interrupted. Your plane is saved on the VM." })
+            addView(Button(context).apply { text = "Reconnect"; setOnClickListener { reloadBoard() } })
+            visibility = View.GONE
+        }
+        board = WebView(this).apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
-            webViewClient = WebViewClient()
-            addJavascriptInterface(Bridge(), "ahbg")
-            loadUrl("${BuildConfig.RUNTIME_URL}/board.html")
-        }
-        setContentView(webView)
-    }
-
-    private fun toast(message: String) {
-        runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
-    }
-
-    inner class Bridge {
-        @JavascriptInterface
-        fun startSession(seed: Int, turns: Int, callbackId: String) {
-            Thread {
-                val body = "{\"seed\":$seed,\"turns\":$turns}"
-                val result = harnessClient.post("/session", body)
-                runOnUiThread { webView.evaluateJavascript("window.ahbgCallback('$callbackId', ${json(result)});", null) }
-            }.start()
-        }
-
-        @JavascriptInterface
-        fun submitPlan(planJson: String, callbackId: String) {
-            Thread {
-                val sessionId = extractSessionId(planJson)
-                val result = if (sessionId == null) {
-                    "{\"error\":\"plan json must carry session_id\"}"
-                } else {
-                    harnessClient.post("/session/$sessionId/plan", "{\"plan\":$planJson}")
+            settings.allowFileAccess = false
+            settings.allowContentAccess = false
+            settings.mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
+            CookieManager.getInstance().setAcceptThirdPartyCookies(this, false)
+            webViewClient = object : WebViewClient() {
+                override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
+                    if (request.isForMainFrame) {
+                        offline = true
+                        view.visibility = View.GONE
+                        recovery.visibility = View.VISIBLE
+                    }
                 }
-                runOnUiThread { webView.evaluateJavascript("window.ahbgCallback('$callbackId', ${json(result)});", null) }
-            }.start()
+
+                override fun onPageFinished(view: WebView, url: String) {
+                    val page = Uri.parse(url)
+                    if (page.scheme != origin.scheme || page.authority != origin.authority) return
+                    // The legacy board reads this entitlement. No web content can call native methods.
+                    view.evaluateJavascript("Boolean(document.getElementById('premium-status'))") { present ->
+                        if (present == "true" && !isDestroyed) {
+                            val label = if (premium.value.isBenchmarkLabUnlocked()) "unlocked" else "locked (basic play free)"
+                            view.evaluateJavascript("document.getElementById('premium-status')?.replaceChildren('Benchmark Lab: $label')", null)
+                        }
+                    }
+                }
+
+                override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean =
+                    request.url.scheme != origin.scheme || request.url.host != origin.host || request.url.port != origin.port
+            }
         }
+        setContentView(LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            addView(recovery)
+            addView(board, LinearLayout.LayoutParams(-1, -1))
+        })
+        network = getSystemService(ConnectivityManager::class.java)
+        network.registerDefaultNetworkCallback(connectivity)
+        reloadBoard()
+    }
 
-        @JavascriptInterface
-        fun getState(sessionId: String, callbackId: String) {
-            Thread {
-                val result = harnessClient.get("/session/$sessionId/state")
-                runOnUiThread { webView.evaluateJavascript("window.ahbgCallback('$callbackId', ${json(result)});", null) }
-            }.start()
-        }
-
-        @JavascriptInterface
-        fun isBenchmarkLabUnlocked(): Boolean = premiumStore.isBenchmarkLabUnlocked()
-
-        private fun extractSessionId(planJson: String): String? {
-            return Regex("\"session_id\"\\s*:\\s*\"([^\"]+)\"").find(planJson)?.groupValues?.get(1)
-        }
-
-        private fun json(value: String): String = org.json.JSONObject.quote(value)
+    override fun onPause() {
+        CookieManager.getInstance().flush()
+        super.onPause()
     }
 
     override fun onDestroy() {
-        webView.destroy()
+        network.unregisterNetworkCallback(connectivity)
+        board.destroy()
         super.onDestroy()
     }
 }

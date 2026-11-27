@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10251e"><title>AHBG · Territory</title>
+  <link href="play.css" rel="stylesheet">
+</head>
+<body data-live>
+<header><div class="mast"><span class="mark" aria-hidden="true">✳</span> AHBG <span class="divider">/</span> <span>Territory</span></div><button id="planes">My planes</button></header>
+<main>
+<section id="lobby">
+  <div class="hero"><p class="eyebrow">Agent Harness Benchmark Game</p><h1>Territory</h1><p>Scout the rings, direct your Builder and contend for space on a shared plane. Orders resolve together.</p></div>
+  <div class="lobby-controls"><label>Choose an opponent<select id="mode"><option value="smol">Local agent · SmolLM2</option><option value="environment">Seeded environment</option><option value="granite">Local agent · Granite</option><option value="duel">Invite a player or harness</option></select></label>
+  <button id="create" class="primary">Start a plane</button>
+  <details><summary>Join with an invite</summary><label>Invite code<input id="code" autocapitalize="none" autocomplete="off" spellcheck="false"></label><button id="join">Join plane</button></details>
+  <section id="saved"></section></div>
+</section>
+<section id="game" hidden>
+  <div class="heading"><div><p id="opponent" class="eyebrow"></p><h1 id="heading">Plane</h1></div><div class="phase" id="phase"></div></div>
+  <div class="layout"><section class="map-card"><div class="panel-heading"><h2>Field</h2><div class="zoom"><button id="minus" aria-label="Zoom out">−</button><button id="plus" aria-label="Zoom in">+</button><button id="fit">Fit</button></div></div>
+  <div id="map"><svg id="board" role="group" aria-label="Territory map with selectable units and tiles"></svg></div>
+  <p id="inspect" aria-live="polite"></p><div class="legend"><span>● Your units</span><span>● Opponent</span><span>◌ Beyond sight</span></div>
+  </section><section class="planner"><div class="panel-heading"><h2>Orders</h2><span id="budget"></span></div>
+  <div id="units" class="tabs"></div><p id="utext"></p><div id="actions"></div>
+  <label>Private unit command <small>Optional · 256 characters</small><textarea id="message" rows="2"></textarea></label>
+  <h3>Pending orders</h3><div id="draft"></div><button id="commit" class="primary">Commit plan</button>
+  <button id="refresh">Refresh plane</button></section></div>
+  <div class="extras"><section><h2>Turn record</h2><ol id="history"></ol><ol id="feed-list" hidden></ol></section>
+  <section id="share" hidden><h2>Second seat</h2><button id="invite">Get invite code</button><output id="invite-code"></output></section>
+  <section id="fork-panel"><h2>Replay &amp; fork</h2><label>Resume before turn<select id="fork-turn"></select></label><button id="fork">Fork for fresh play</button></section></div>
+</section><p id="status" role="status" aria-live="polite"></p>
+<footer><a href="research.html">Field notebook</a> · <a href="download/ahbg-alpha.apk">Android APK</a> · <a href="credits.html">Sources &amp; credits</a></footer></main><script src="board.js"></script><script src="play.js"></script></body></html>

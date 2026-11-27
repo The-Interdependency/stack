@@ -425,7 +425,7 @@ def field_to_presentation(field: Any, *, plane_id: str = "plane-0") -> dict[str,
         "turn": field.turn,
         "geometry_source": {
             "repository": "The-Interdependency/ucns",
-            "commit": "1975fe70cf4e0826a8020c2da3047569e277af64",
+            "commit": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
             "module": "src/ucns/mobius_seed.py",
             "schema_id": "ucns.mobius-seed-of-life",
             "schema_version": "0.1.0",

@@ -1,0 +1,296 @@
+{
+  "touch_play": {
+    "first": "Move to Center",
+    "chosen": "Move to Ring 5",
+    "draft": "Builder \u00b7 Move to Ring 5\nCancel\n\nExplorer \u00b7 Move to Center\nCancel",
+    "firstTurn": "Turn 1 \u00b7 Builder moved to Ring 5 / Explorer moved to Center",
+    "history": "Turn 2 \u00b7 No visible changes\nTurn 1 \u00b7 Builder moved to Ring 5 / Explorer moved to Center",
+    "closedAndReopened": true,
+    "errors": []
+  },
+  "https_restart": {
+    "turn": 2,
+    "history": [
+      [
+        {
+          "kind": "move",
+          "unit_id": "builder",
+          "from_tile_id": "RING_0",
+          "to_tile_id": "CENTER"
+        }
+      ],
+      [
+        {
+          "kind": "construct",
+          "unit_id": "builder",
+          "from_tile_id": "CENTER",
+          "to_tile_id": "RING_0",
+          "ucns_slot": "RING_0",
+          "built_count": 2
+        }
+      ]
+    ],
+    "built": [
+      "CENTER",
+      "RING_0"
+    ],
+    "cross_seat_read": 404,
+    "illegal_plan": 400,
+    "turn_retries": 1,
+    "pid_before": "631081",
+    "pid_after": "632177",
+    "identical_private_state_sha256": "d6cdfe7ed158996a08514d38cdbc349e98798858812b957a4891fc81ea27bf1a"
+  },
+  "ucns_sources": {
+    "pin": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+    "files": [
+      {
+        "file": "libs/ucns/src/ucns/__init__.py",
+        "consumed_sha256": "1cb5dc7bc4d0988eab8f4227a8f6f6996d3ec64ab09d78ce8c704f1001379a80",
+        "upstream_sha256": "1cb5dc7bc4d0988eab8f4227a8f6f6996d3ec64ab09d78ce8c704f1001379a80",
+        "match": true
+      },
+      {
+        "file": "libs/ucns/src/ucns/mobius_seed.py",
+        "consumed_sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770",
+        "upstream_sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770",
+        "match": true
+      },
+      {
+        "file": "libs/ucns/src/ucns/mobius_seed_construction.py",
+        "consumed_sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36",
+        "upstream_sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36",
+        "match": true
+      },
+      {
+        "file": "libs/ucns/src/ucns/direct_mobius.py",
+        "consumed_sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+        "upstream_sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+        "match": true
+      },
+      {
+        "file": "libs/ucns/src/ucns/carrier.py",
+        "consumed_sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+        "upstream_sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+        "match": true
+      }
+    ]
+  },
+  "measured_role_receipts": [
+    {
+      "mode": "smol",
+      "turns": [
+        {
+          "seconds": 31.958,
+          "service_rss_kib": 891596
+        },
+        {
+          "seconds": 5.838,
+          "service_rss_kib": 939728
+        }
+      ],
+      "audited_decisions": [
+        {
+          "indigo": [
+            {
+              "choice": "A",
+              "controller": "smol",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 11498.02,
+              "individual": "rival",
+              "quantization": "none",
+              "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+              "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            }
+          ],
+          "wild": [
+            {
+              "choice": "A",
+              "controller": "smol",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 3625.02,
+              "individual": "fauna",
+              "quantization": "none",
+              "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+              "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            }
+          ]
+        },
+        {
+          "indigo": [
+            {
+              "choice": "A",
+              "controller": "smol",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 3974.95,
+              "individual": "rival",
+              "quantization": "none",
+              "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+              "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            }
+          ],
+          "wild": [
+            {
+              "choice": "A",
+              "controller": "smol",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 1268.55,
+              "individual": "fauna",
+              "quantization": "none",
+              "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+              "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "granite",
+      "turns": [
+        {
+          "seconds": 21.199,
+          "service_rss_kib": 2256732
+        },
+        {
+          "seconds": 13.819,
+          "service_rss_kib": 2254888
+        }
+      ],
+      "audited_decisions": [
+        {
+          "indigo": [
+            {
+              "choice": "B",
+              "controller": "granite",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 8492.66,
+              "individual": "rival",
+              "quantization": "none",
+              "repo": "ibm-granite/granite-4.0-350m",
+              "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc"
+            }
+          ],
+          "wild": [
+            {
+              "choice": "A",
+              "controller": "granite",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 2994.11,
+              "individual": "fauna",
+              "quantization": "none",
+              "repo": "ibm-granite/granite-4.0-350m",
+              "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc"
+            }
+          ]
+        },
+        {
+          "indigo": [
+            {
+              "choice": "I",
+              "controller": "granite",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 10410.43,
+              "individual": "rival",
+              "quantization": "none",
+              "repo": "ibm-granite/granite-4.0-350m",
+              "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc"
+            }
+          ],
+          "wild": [
+            {
+              "choice": "A",
+              "controller": "granite",
+              "device": "cpu",
+              "dtype": "float32",
+              "elapsed_ms": 2816.1,
+              "individual": "fauna",
+              "quantization": "none",
+              "repo": "ibm-granite/granite-4.0-350m",
+              "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+              "torch": "2.9.1+cpu",
+              "transformers": "4.57.3",
+              "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "environment",
+      "turns": [
+        {
+          "seconds": 0.343,
+          "service_rss_kib": 2254968
+        },
+        {
+          "seconds": 0.598,
+          "service_rss_kib": 2254968
+        }
+      ],
+      "audited_decisions": [
+        {
+          "indigo": [
+            {
+              "controller": "seeded legal",
+              "individual": "rival"
+            }
+          ],
+          "wild": [
+            {
+              "controller": "seeded legal",
+              "individual": "fauna"
+            }
+          ]
+        },
+        {
+          "indigo": [
+            {
+              "controller": "seeded legal",
+              "individual": "rival"
+            }
+          ],
+          "wild": [
+            {
+              "controller": "seeded legal",
+              "individual": "fauna"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notebook_check": {
+    "epac": "two named-seat constructions recovered; substituted seating rejected",
+    "edcm_metrics": 11,
+    "weave": "Weave recovered 2849 bytes. Replaying the restored plans reproduced 2 turns and built CENTER, RING_0.",
+    "error": []
+  }
+}

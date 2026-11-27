@@ -26,6 +26,8 @@ jobs:
           distribution: temurin
           java-version: "17"
       - uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-36 build-tools;35.0.0"
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.11.1"
@@ -39,4 +41,4 @@ jobs:
         working-directory: ahbg/android
         run: |
           ./sync_presentation.sh
-          git diff --exit-code -- app/src/main/assets/board.html app/src/main/assets/board.js app/src/main/assets/board.css app/src/main/assets/sample_snapshot.json app/src/main/assets/PRESENTATION.sha256
+          git diff --exit-code -- app/src/main/assets
