@@ -8,11 +8,11 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "org.interdependency.ahbg"
+        applicationId = if (project.hasProperty("phoneAlpha")) "org.interdependency.ahbg.alpha" else "org.interdependency.ahbg"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
         // Production runtime endpoint. Release builds must use HTTPS; debug
         // builds may point at a local emulator host through
         // -PruntimeUrl=http://10.0.2.2:8765. The mobile layer never embeds

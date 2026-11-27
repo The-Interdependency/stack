@@ -1,0 +1,17 @@
+ahbg.35.212.252.101.sslip.io {
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000"
+    handle /download/ahbg-alpha.apk {
+        root * /var/www/ahbg-phone
+        header Content-Type application/vnd.android.package-archive
+        file_server
+    }
+    handle {
+        request_body {
+            max_size 8KB
+        }
+        reverse_proxy 127.0.0.1:8116 {
+            header_up X-Real-IP {remote_host}
+        }
+    }
+}
