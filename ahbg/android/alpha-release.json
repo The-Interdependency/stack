@@ -1,9 +1,9 @@
 {
   "application_id": "org.interdependency.ahbg.alpha",
-  "version": "0.4.0",
-  "source": "0005e2319f4928fce25f154006e9957af730cb4b",
+  "version": "0.4.1",
+  "source": "dea3f278d947acda388e4c8086aa949f178402d2",
   "url": "https://ahbg.35.212.252.101.sslip.io/download/ahbg-alpha.apk",
-  "sha256": "1cdec736bf60443d3268531dc2cb9a251038a54d8d3f28c650f8b18cb6c6af2d",
-  "size_bytes": 4486846,
+  "sha256": "d2aff4702c5bb7541dedf0c8df22b3eccea222a51ed620bb06d35c7068f231e1",
+  "size_bytes": 4495168,
   "certificate_sha256": "4ad852567374618ce4893c0999ffd9b8fd9aaadc78be7326e64ec688a47e36cd"
 }

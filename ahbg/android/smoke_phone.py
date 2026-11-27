@@ -36,6 +36,12 @@ def target(text, *, tap=False, scroll=False, timeout=100):
                 adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
                 adb("shell","am","start","-n",ACTIVITY)
                 continue
+        if text.startswith("Turn ") and "Reconnect" in last:
+            retry = next(n for n in nodes if n.get("text") == "Reconnect")
+            x1,y1,x2,y2=map(int,re.findall(r"-?\d+",retry.get("bounds","")))
+            adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
+            time.sleep(2)
+            continue
         for node, name in zip(nodes, last):
             if name != text:
                 continue
@@ -70,8 +76,24 @@ target("Explorer", tap=True, scroll=True)
 target("Move to Center", tap=True, scroll=True)
 target("Commit plan", tap=True, scroll=True)
 target("Turn 2 / 16", scroll=True, timeout=150)
+def visible_plane():
+    tree = screen()
+    labels = " ".join(n.get("text", "") + " " + n.get("content-desc", "") for n in tree.iter("node"))
+    found = re.search(r"amber seat\s*·\s*([0-9a-f]{6})", labels, re.IGNORECASE)
+    if not found:
+        raise RuntimeError("Android must show the private plane identifier")
+    return found[1].lower()
+
+
+plane_id = visible_plane()
 adb("shell", "am", "force-stop", PACKAGE)
-adb("shell", "am", "start", "-n", ACTIVITY)
-target("Turn 2 / 16", scroll=True)
+adb("shell", "cmd", "connectivity", "airplane-mode", "enable")
+try:
+    adb("shell", "am", "start", "-W", "-n", ACTIVITY)
+    target("Reconnect")
+finally:
+    adb("shell", "cmd", "connectivity", "airplane-mode", "disable")
+target("Turn 2 / 16", scroll=True, timeout=150)
+assert visible_plane() == plane_id
 target("Commit plan", scroll=True)
-print("Release APK recovered the plane after application process termination.", flush=True)
+print("Release APK recovered the identical plane after process termination and a network interruption.", flush=True)
