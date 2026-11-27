@@ -17,6 +17,13 @@ class PlayTest(unittest.TestCase):
     def start(self, mode):
         return self.store.create("first", "local", mode, "a-unique-request")
 
+    def test_live_geometry_identifies_stack_pin(self):
+        root = Path(__file__).resolve().parents[3]
+        manifest = json.loads((root / "stack-manifest.json").read_text())
+        geometry = Plane("test", 1).observe("amber")["presentation"]["geometry_source"]
+        pin = next(r["commit"] for r in manifest["repositories"] if r["repository"] == geometry["repository"])
+        self.assertEqual(geometry["commit"], pin)
+
     def test_seats_contention_replay_and_private_commit(self):
         created = self.start("duel")
         room = created["room"]
