@@ -36,14 +36,14 @@ def target(text, *, tap=False, scroll=False, timeout=100):
                 adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
                 adb("shell","am","start","-n",ACTIVITY)
                 continue
-        if text.startswith("Turn ") and "Reconnect" in last:
-            retry = next(n for n in nodes if n.get("text") == "Reconnect")
+        if text.startswith("Turn ") and "reconnect" in [label.casefold() for label in last]:
+            retry = next(n for n in nodes if n.get("text", "").casefold() == "reconnect")
             x1,y1,x2,y2=map(int,re.findall(r"-?\d+",retry.get("bounds","")))
             adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
             time.sleep(2)
             continue
         for node, name in zip(nodes, last):
-            if name != text:
+            if name.casefold() != text.casefold():
                 continue
             x1, y1, x2, y2 = map(int, re.findall(r"-?\d+", node.get("bounds", "")))
             if x2 <= x1 or y2 <= y1:
