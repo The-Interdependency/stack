@@ -76,6 +76,9 @@ def application(database, site):
                                               fauna_mode=data.get("fauna_mode")))
             if route == "api/join" and method == "POST":
                 return send(200, store.join(actor, data.get("invite")))
+            observation = re.fullmatch(r"api/rooms/([0-9a-f]{24})/observe/([a-z]+)", route)
+            if observation and method == "GET":
+                return send(200, store.observe_unit(actor, *observation.groups()))
             match = re.fullmatch(r"api/rooms/([0-9a-f]{24})/(state|plan|fork|invite)", route)
             if match:
                 key, action = match.groups()

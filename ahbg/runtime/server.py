@@ -404,7 +404,10 @@ def field_to_presentation(field: Any, *, plane_id: str = "plane-0") -> dict[str,
     centers = {band.slot.value: band.center.to_float() for band in seed.bands}
     tiles = []
     for tile in field.snapshot()["tiles"]:
-        x, y = centers.get(tile["ucns_slot"], (0.0, 0.0))
+        slot = tile["ucns_slot"]
+        if slot not in centers:
+            raise ValueError(f"no UCNS display position for slot {slot}")
+        x, y = centers[slot]
         tiles.append(
             {
                 "id": tile["tile_id"],

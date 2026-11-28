@@ -8,7 +8,7 @@ from contextlib import contextmanager
 from pathlib import Path
 
 from ahbg.campaign.controllers import MODELS
-from .game import Plane, TURN_LIMIT, canonical, fingerprint
+from .game import Plane, SEATS, TURN_LIMIT, canonical, fingerprint
 from .models import Council
 
 
@@ -125,8 +125,9 @@ class Store:
     def restore(db, room):
         plane = Plane(room["id"], room["seed"])
         for row in db.execute("SELECT * FROM turns WHERE room=? ORDER BY turn", (room["id"],)):
-            replayed = plane.resolve(json.loads(row["plans"]))
-            if replayed != json.loads(row["result"]):
+            expected = json.loads(row["result"])
+            replayed = plane.resolve(json.loads(row["plans"]), receipt_version=expected.get("version", 1))
+            if replayed != expected:
                 raise RuntimeError("recorded turn failed deterministic replay")
         return plane
 
@@ -135,6 +136,14 @@ class Store:
             return [dict(row) for row in db.execute(
                 "SELECT id, mode FROM rooms WHERE amber=? OR indigo=? ORDER BY created DESC, rowid DESC",
                 (actor, actor))]
+
+    def observe_unit(self, actor, key, unit):
+        with self.connection() as db:
+            db.execute("BEGIN")
+            room, seat = self.authorize(db, actor, key)
+            if unit not in {row[0] for row in SEATS[seat]}:
+                raise Rejected(404, "unit unavailable")
+            return self.restore(db, room).observe(seat, unit)
 
     def state(self, actor, key):
         with self.connection() as db:

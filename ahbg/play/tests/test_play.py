@@ -1,10 +1,12 @@
 import json
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from ahbg.play.game import Plane, canonical
 from ahbg.play.store import Rejected, Store
 from ahbg.runtime.protocol import ProtocolError
+from ahbg.runtime.server import field_to_presentation
 
 
 class PlayTest(unittest.TestCase):
@@ -38,6 +40,66 @@ class PlayTest(unittest.TestCase):
         geometry = Plane("test", 1).observe("amber")["presentation"]["geometry_source"]
         pin = next(r["commit"] for r in manifest["repositories"] if r["repository"] == geometry["repository"])
         self.assertEqual(geometry["commit"], pin)
+
+    def test_scout_returns_and_only_the_builder_receives_the_sighting(self):
+        plane = Plane("scout", 126)
+        def resolve(*, move=None, report=None):
+            plans = {seat: {"session_id": "scout", "turn": plane.field.turn, "intents": []}
+                     for seat in ("amber", "indigo", "wild")}
+            if move:
+                plans["amber"]["intents"] = [next(i for i in plane.observe("amber", "explorer")["legal"]
+                                                   if i["to_tile_id"] == move)]
+            if report:
+                plans["amber"]["report_tile"] = report
+            plane.resolve(plans)
+
+        initial = plane.observe("amber", "explorer")
+        self.assertIn("RING_3", [t["tile_id"] for t in initial["field"]["tiles"]])
+        self.assertNotIn("RING_3", initial["scouting"]["explorer"]["discovered"])
+        self.assertNotIn("rival", [u["unit_id"] for u in initial["field"]["units"]])
+        self.assertNotIn("PETAL_0", [t["tile_id"] for t in initial["field"]["tiles"]])
+        for target in ("RING_3", "PETAL_0"):
+            with self.assertRaises(ProtocolError):
+                resolve(report=target)
+            plan = {"session_id": "scout", "turn": 0, "intents": [
+                dict(initial["legal"][0], to_tile_id=target)]}
+            with self.assertRaises(ProtocolError):
+                plane.validate("amber", plan)
+        with self.assertRaises(ProtocolError):
+            plane.validate("indigo", {"session_id": "scout", "turn": 0, "intents": [],
+                                       "report_tile": "CENTER"})
+        ledger = plane.ledger.as_dict()
+        resolve(move="RING_2")
+        self.assertFalse(plane.observe("amber", "builder")["inbox"])
+        resolve(move="RING_1", report="RING_3")
+        scout = plane.observe("amber", "explorer")["scouting"]["explorer"]
+        self.assertIn("RING_3", scout["discovered"])
+        self.assertNotIn("RING_3", scout["visible"])
+        builder = plane.observe("amber", "builder")
+        self.assertNotIn("RING_3", builder["scouting"]["builder"]["discovered"])
+        report, = builder["inbox"]
+        self.assertEqual((report["from"], report["turn"], report["tile"], report["occupant"], report["built"]),
+                         ("explorer", 1, "RING_3", "rival", False))
+        self.assertFalse(plane.observe("indigo")["inbox"])
+        self.assertEqual(plane.ledger.as_dict(), ledger)
+        self.assertEqual(plane.field.occupants["builder"].tile_id, "RING_0")
+
+    def test_unknown_position_cannot_render_on_top_of_center(self):
+        plane = Plane("scout", 126)
+        cell = plane.field.cells["RING_1"]
+        plane.field.cells["RING_1"] = replace(cell, ucns_slot="no-source-position")
+        with self.assertRaisesRegex(ValueError, "no UCNS display position"):
+            field_to_presentation(plane.field)
+
+    def test_turn_receipt_detects_changed_discovery_without_a_board_change(self):
+        plane, changed = Plane("memory", 126), Plane("memory", 126)
+        changed.discovered["builder"].add("RING_3")
+        hold = {seat: {"session_id": "memory", "turn": 0, "intents": []}
+                for seat in ("amber", "indigo", "wild")}
+        original, different = plane.resolve(hold), changed.resolve(hold)
+        self.assertEqual(original["events"], different["events"])
+        self.assertEqual(plane.field.snapshot(), changed.field.snapshot())
+        self.assertNotEqual(original["digest"], different["digest"])
 
     def test_seats_contention_replay_and_private_commit(self):
         created = self.start("duel")
