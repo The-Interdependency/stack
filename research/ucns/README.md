@@ -16,6 +16,34 @@ AHBG import trace and how to replay that turn against the pinned UCNS package.
 4. If work changes UCNS itself, route the accepted change upstream; after merge, refresh `libs/ucns/` and this workspace's base commit.
 5. If work becomes a distinct composed project, keep its authority separate rather than silently promoting this workspace.
 
+## Base-27 midpoint projection (finite research receipt)
+
+The [base-27 midpoint experiment](base27_midpoint/README.md) preserves the
+2026-11-28 mathematical research receipt. A generic 19,683-position residue
+circle has 243 eligible midpoint spokes and 81 projected spokes. The two
+prime census windows cover all three input families at each output spoke.
+Explicit radial labels and additional public observations refine finite
+classes; fixed radius, fixed coordinate permutation and repeated loss do not
+establish an independent private recovery relation. This is ordinary integer
+arithmetic, not the native Public Gonol, a Möbius metric, or a security claim.
+
+The directory is a byte-preserved standalone research artifact from the
+original local run; its original delivery status is historical. Repository
+placement does not alter its source pins or promote it to canon. The owning
+Weave workspace retains authority over cryptographic interpretation; no
+cipher or challenge files are changed by this placement.
+
+Replay from this workspace:
+
+```sh
+cd base27_midpoint
+sha256sum -c SHA256SUMS
+python -m unittest -v
+python verify_evidence.py
+python experiment.py --output /tmp/base27-midpoint-review.json
+cmp /tmp/base27-midpoint-review.json evidence.json
+```
+
 ## hmmm
 
 - The [Structural Null jurisdiction and unresolved attachment record](docs/pointed-torsor-origin-attachment-canon-amendment-draft-v0.md)

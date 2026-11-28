@@ -1,0 +1,2772 @@
+{
+  "addendum_sha256": "07722204ed051ebbbe4572b65509a8e2675d21330378a99a93b612d61b4a0f03",
+  "cryptographic_security": "NOT_TESTED",
+  "geometry": {
+    "cube_mismatch_count": 0,
+    "eligible_residues": 243,
+    "eligible_step": 81,
+    "exhaustive_direct_cube_checks": 19683,
+    "first_cube_mismatch": null,
+    "interlacing_control": {
+      "first_81_eligible_residues_forward_labels": [
+        0,
+        243,
+        486,
+        729,
+        972,
+        1215,
+        1458,
+        1701,
+        1944,
+        2187,
+        2430,
+        2673,
+        2916,
+        3159,
+        3402,
+        3645,
+        3888,
+        4131,
+        4374,
+        4617,
+        4860,
+        5103,
+        5346,
+        5589,
+        5832,
+        6075,
+        6318,
+        6561,
+        6804,
+        7047,
+        7290,
+        7533,
+        7776,
+        8019,
+        8262,
+        8505,
+        8748,
+        8991,
+        9234,
+        9477,
+        9720,
+        9963,
+        10206,
+        10449,
+        10692,
+        10935,
+        11178,
+        11421,
+        11664,
+        11907,
+        12150,
+        12393,
+        12636,
+        12879,
+        13122,
+        13365,
+        13608,
+        13851,
+        14094,
+        14337,
+        14580,
+        14823,
+        15066,
+        15309,
+        15552,
+        15795,
+        16038,
+        16281,
+        16524,
+        16767,
+        17010,
+        17253,
+        17496,
+        17739,
+        17982,
+        18225,
+        18468,
+        18711,
+        18954,
+        19197,
+        19440
+      ],
+      "fixed_swap": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "independent_product": {
+        "fixed_swap": {
+          "classes": 6561,
+          "colliding_classes": 6561,
+          "max_size": 9,
+          "objects": 59049,
+          "size_histogram": {
+            "9": 6561
+          }
+        },
+        "omission_only_coarsens": true,
+        "omit_first_coordinate": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 729,
+          "objects": 59049,
+          "size_histogram": {
+            "729": 81
+          }
+        },
+        "swap_preserves_partition": true,
+        "two_coordinate_vector": {
+          "classes": 6561,
+          "colliding_classes": 6561,
+          "max_size": 9,
+          "objects": 59049,
+          "size_histogram": {
+            "9": 6561
+          }
+        }
+      },
+      "omission_only_coarsens": true,
+      "omit_first_coordinate": {
+        "classes": 1,
+        "colliding_classes": 1,
+        "max_size": 243,
+        "objects": 243,
+        "size_histogram": {
+          "243": 1
+        }
+      },
+      "swap_preserves_partition": true,
+      "two_coordinate_vector": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      }
+    },
+    "moduli": {
+      "157": {
+        "canonical_midpoint_observation": {
+          "classes": 243,
+          "colliding_classes": 0,
+          "max_size": 1,
+          "objects": 243,
+          "size_histogram": {
+            "1": 243
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 243,
+          "colliding_classes": 0,
+          "max_size": 1,
+          "objects": 243,
+          "size_histogram": {
+            "1": 243
+          }
+        }
+      },
+      "19683": {
+        "canonical_midpoint_observation": {
+          "classes": 243,
+          "colliding_classes": 0,
+          "max_size": 1,
+          "objects": 243,
+          "size_histogram": {
+            "1": 243
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        }
+      },
+      "19685": {
+        "canonical_midpoint_observation": {
+          "classes": 243,
+          "colliding_classes": 0,
+          "max_size": 1,
+          "objects": 243,
+          "size_histogram": {
+            "1": 243
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 243,
+          "colliding_classes": 0,
+          "max_size": 1,
+          "objects": 243,
+          "size_histogram": {
+            "1": 243
+          }
+        }
+      },
+      "2": {
+        "canonical_midpoint_observation": {
+          "classes": 162,
+          "colliding_classes": 81,
+          "max_size": 2,
+          "objects": 243,
+          "size_histogram": {
+            "1": 81,
+            "2": 81
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 162,
+          "colliding_classes": 81,
+          "max_size": 2,
+          "objects": 243,
+          "size_histogram": {
+            "1": 81,
+            "2": 81
+          }
+        }
+      },
+      "243": {
+        "canonical_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        }
+      },
+      "3": {
+        "canonical_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        }
+      },
+      "6561": {
+        "canonical_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        }
+      },
+      "81": {
+        "canonical_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        },
+        "transformed_midpoint_observation": {
+          "classes": 81,
+          "colliding_classes": 81,
+          "max_size": 3,
+          "objects": 243,
+          "size_histogram": {
+            "3": 81
+          }
+        }
+      }
+    },
+    "modulus": 19683,
+    "radius_and_controls": {
+      "bearing_dependent_radius": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "bearing_only": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "bearing_repeated": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "constant_control": {
+        "classes": 1,
+        "colliding_classes": 1,
+        "max_size": 243,
+        "objects": 243,
+        "size_histogram": {
+          "243": 1
+        }
+      },
+      "constant_radius": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "identity_control": {
+        "classes": 243,
+        "colliding_classes": 0,
+        "max_size": 1,
+        "objects": 243,
+        "size_histogram": {
+          "1": 243
+        }
+      },
+      "three_explicit_radial_layers": {
+        "classes": 243,
+        "colliding_classes": 0,
+        "max_size": 1,
+        "objects": 243,
+        "size_histogram": {
+          "1": 243
+        }
+      },
+      "two_explicit_radial_layers": {
+        "classes": 162,
+        "colliding_classes": 81,
+        "max_size": 2,
+        "objects": 243,
+        "size_histogram": {
+          "1": 81,
+          "2": 81
+        }
+      }
+    },
+    "recursion": {
+      "0": {
+        "classes": 243,
+        "colliding_classes": 0,
+        "max_size": 1,
+        "objects": 243,
+        "size_histogram": {
+          "1": 243
+        }
+      },
+      "1": {
+        "classes": 81,
+        "colliding_classes": 81,
+        "max_size": 3,
+        "objects": 243,
+        "size_histogram": {
+          "3": 81
+        }
+      },
+      "2": {
+        "classes": 27,
+        "colliding_classes": 27,
+        "max_size": 9,
+        "objects": 243,
+        "size_histogram": {
+          "9": 27
+        }
+      },
+      "3": {
+        "classes": 9,
+        "colliding_classes": 9,
+        "max_size": 27,
+        "objects": 243,
+        "size_histogram": {
+          "27": 9
+        }
+      },
+      "4": {
+        "classes": 3,
+        "colliding_classes": 3,
+        "max_size": 81,
+        "objects": 243,
+        "size_histogram": {
+          "81": 3
+        }
+      },
+      "5": {
+        "classes": 1,
+        "colliding_classes": 1,
+        "max_size": 243,
+        "objects": 243,
+        "size_histogram": {
+          "243": 1
+        }
+      },
+      "6": {
+        "classes": 1,
+        "colliding_classes": 1,
+        "max_size": 243,
+        "objects": 243,
+        "size_histogram": {
+          "243": 1
+        }
+      },
+      "7": {
+        "classes": 1,
+        "colliding_classes": 1,
+        "max_size": 243,
+        "objects": 243,
+        "size_histogram": {
+          "243": 1
+        }
+      }
+    },
+    "retained_label": {
+      "correct": 243,
+      "total": 243,
+      "wrong_labels": 486,
+      "wrong_labels_equal_original": 0
+    },
+    "worked_examples": [
+      {
+        "cubes": [
+          2672,
+          2674
+        ],
+        "input_spoke": 7452,
+        "midpoint": 46818,
+        "output_spoke": 2673
+      },
+      {
+        "cubes": [
+          2672,
+          2674
+        ],
+        "input_spoke": 14013,
+        "midpoint": 73062,
+        "output_spoke": 2673
+      },
+      {
+        "cubes": [
+          2672,
+          2674
+        ],
+        "input_spoke": 891,
+        "midpoint": 178038,
+        "output_spoke": 2673
+      }
+    ]
+  },
+  "implementation_sha256": "ba28de327d0b7da315b6b7ecbc46d1a64c057a42faf9c69334c1172ff768d59b",
+  "prime_census": {
+    "crossing_witnesses": [
+      {
+        "cubes": [
+          15398,
+          6949
+        ],
+        "formula_agrees": true,
+        "forward_gap": 11234,
+        "lower_ordinal": 1857859,
+        "primes": [
+          29999999,
+          30000001
+        ]
+      }
+    ],
+    "excluded_crossing_pairs": 1,
+    "first_interval": {
+      "all_output_families": [
+        {
+          "family_counts": [
+            16,
+            24,
+            22
+          ],
+          "output_spoke": 0,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            23,
+            15,
+            22
+          ],
+          "output_spoke": 243,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            23,
+            20,
+            23
+          ],
+          "output_spoke": 486,
+          "total": 66
+        },
+        {
+          "family_counts": [
+            30,
+            21,
+            19
+          ],
+          "output_spoke": 729,
+          "total": 70
+        },
+        {
+          "family_counts": [
+            25,
+            26,
+            26
+          ],
+          "output_spoke": 972,
+          "total": 77
+        },
+        {
+          "family_counts": [
+            17,
+            16,
+            30
+          ],
+          "output_spoke": 1215,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            20,
+            20,
+            29
+          ],
+          "output_spoke": 1458,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            26,
+            24,
+            16
+          ],
+          "output_spoke": 1701,
+          "total": 66
+        },
+        {
+          "family_counts": [
+            27,
+            23,
+            24
+          ],
+          "output_spoke": 1944,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            29,
+            25,
+            25
+          ],
+          "output_spoke": 2187,
+          "total": 79
+        },
+        {
+          "family_counts": [
+            20,
+            26,
+            26
+          ],
+          "output_spoke": 2430,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            22,
+            20,
+            23
+          ],
+          "output_spoke": 2673,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            22,
+            29,
+            26
+          ],
+          "output_spoke": 2916,
+          "total": 77
+        },
+        {
+          "family_counts": [
+            19,
+            29,
+            20
+          ],
+          "output_spoke": 3159,
+          "total": 68
+        },
+        {
+          "family_counts": [
+            26,
+            22,
+            28
+          ],
+          "output_spoke": 3402,
+          "total": 76
+        },
+        {
+          "family_counts": [
+            18,
+            19,
+            18
+          ],
+          "output_spoke": 3645,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            26,
+            23,
+            25
+          ],
+          "output_spoke": 3888,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            25,
+            16,
+            26
+          ],
+          "output_spoke": 4131,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            25,
+            22,
+            25
+          ],
+          "output_spoke": 4374,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            23,
+            26,
+            18
+          ],
+          "output_spoke": 4617,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            26,
+            32,
+            24
+          ],
+          "output_spoke": 4860,
+          "total": 82
+        },
+        {
+          "family_counts": [
+            21,
+            18,
+            24
+          ],
+          "output_spoke": 5103,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            25,
+            26,
+            22
+          ],
+          "output_spoke": 5346,
+          "total": 73
+        },
+        {
+          "family_counts": [
+            32,
+            20,
+            19
+          ],
+          "output_spoke": 5589,
+          "total": 71
+        },
+        {
+          "family_counts": [
+            23,
+            23,
+            26
+          ],
+          "output_spoke": 5832,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            26,
+            27,
+            25
+          ],
+          "output_spoke": 6075,
+          "total": 78
+        },
+        {
+          "family_counts": [
+            18,
+            30,
+            19
+          ],
+          "output_spoke": 6318,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            22,
+            23,
+            19
+          ],
+          "output_spoke": 6561,
+          "total": 64
+        },
+        {
+          "family_counts": [
+            20,
+            27,
+            19
+          ],
+          "output_spoke": 6804,
+          "total": 66
+        },
+        {
+          "family_counts": [
+            27,
+            20,
+            25
+          ],
+          "output_spoke": 7047,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            21,
+            25,
+            23
+          ],
+          "output_spoke": 7290,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            23,
+            28,
+            18
+          ],
+          "output_spoke": 7533,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            24,
+            27,
+            27
+          ],
+          "output_spoke": 7776,
+          "total": 78
+        },
+        {
+          "family_counts": [
+            24,
+            25,
+            16
+          ],
+          "output_spoke": 8019,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            14,
+            24,
+            16
+          ],
+          "output_spoke": 8262,
+          "total": 54
+        },
+        {
+          "family_counts": [
+            20,
+            21,
+            28
+          ],
+          "output_spoke": 8505,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            20,
+            23,
+            23
+          ],
+          "output_spoke": 8748,
+          "total": 66
+        },
+        {
+          "family_counts": [
+            26,
+            20,
+            28
+          ],
+          "output_spoke": 8991,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            21,
+            24,
+            23
+          ],
+          "output_spoke": 9234,
+          "total": 68
+        },
+        {
+          "family_counts": [
+            23,
+            26,
+            23
+          ],
+          "output_spoke": 9477,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            30,
+            24,
+            21
+          ],
+          "output_spoke": 9720,
+          "total": 75
+        },
+        {
+          "family_counts": [
+            15,
+            18,
+            32
+          ],
+          "output_spoke": 9963,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            19,
+            29,
+            17
+          ],
+          "output_spoke": 10206,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            25,
+            23,
+            20
+          ],
+          "output_spoke": 10449,
+          "total": 68
+        },
+        {
+          "family_counts": [
+            26,
+            31,
+            23
+          ],
+          "output_spoke": 10692,
+          "total": 80
+        },
+        {
+          "family_counts": [
+            25,
+            18,
+            27
+          ],
+          "output_spoke": 10935,
+          "total": 70
+        },
+        {
+          "family_counts": [
+            27,
+            21,
+            35
+          ],
+          "output_spoke": 11178,
+          "total": 83
+        },
+        {
+          "family_counts": [
+            22,
+            29,
+            23
+          ],
+          "output_spoke": 11421,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            23,
+            14,
+            28
+          ],
+          "output_spoke": 11664,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            28,
+            24,
+            22
+          ],
+          "output_spoke": 11907,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            18,
+            25,
+            17
+          ],
+          "output_spoke": 12150,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            30,
+            23,
+            15
+          ],
+          "output_spoke": 12393,
+          "total": 68
+        },
+        {
+          "family_counts": [
+            20,
+            17,
+            25
+          ],
+          "output_spoke": 12636,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            25,
+            23,
+            24
+          ],
+          "output_spoke": 12879,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            26,
+            16,
+            25
+          ],
+          "output_spoke": 13122,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            18,
+            24,
+            25
+          ],
+          "output_spoke": 13365,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            25,
+            27,
+            31
+          ],
+          "output_spoke": 13608,
+          "total": 83
+        },
+        {
+          "family_counts": [
+            23,
+            26,
+            25
+          ],
+          "output_spoke": 13851,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            11,
+            20,
+            19
+          ],
+          "output_spoke": 14094,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            26,
+            24,
+            26
+          ],
+          "output_spoke": 14337,
+          "total": 76
+        },
+        {
+          "family_counts": [
+            31,
+            28,
+            22
+          ],
+          "output_spoke": 14580,
+          "total": 81
+        },
+        {
+          "family_counts": [
+            25,
+            27,
+            29
+          ],
+          "output_spoke": 14823,
+          "total": 81
+        },
+        {
+          "family_counts": [
+            25,
+            32,
+            21
+          ],
+          "output_spoke": 15066,
+          "total": 78
+        },
+        {
+          "family_counts": [
+            15,
+            25,
+            20
+          ],
+          "output_spoke": 15309,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            24,
+            30,
+            23
+          ],
+          "output_spoke": 15552,
+          "total": 77
+        },
+        {
+          "family_counts": [
+            22,
+            24,
+            22
+          ],
+          "output_spoke": 15795,
+          "total": 68
+        },
+        {
+          "family_counts": [
+            25,
+            25,
+            22
+          ],
+          "output_spoke": 16038,
+          "total": 72
+        },
+        {
+          "family_counts": [
+            24,
+            20,
+            21
+          ],
+          "output_spoke": 16281,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            18,
+            21,
+            23
+          ],
+          "output_spoke": 16524,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            27,
+            34,
+            26
+          ],
+          "output_spoke": 16767,
+          "total": 87
+        },
+        {
+          "family_counts": [
+            26,
+            17,
+            21
+          ],
+          "output_spoke": 17010,
+          "total": 64
+        },
+        {
+          "family_counts": [
+            20,
+            26,
+            21
+          ],
+          "output_spoke": 17253,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            23,
+            28,
+            29
+          ],
+          "output_spoke": 17496,
+          "total": 80
+        },
+        {
+          "family_counts": [
+            17,
+            22,
+            20
+          ],
+          "output_spoke": 17739,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            26,
+            28,
+            23
+          ],
+          "output_spoke": 17982,
+          "total": 77
+        },
+        {
+          "family_counts": [
+            21,
+            19,
+            23
+          ],
+          "output_spoke": 18225,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            27,
+            19,
+            20
+          ],
+          "output_spoke": 18468,
+          "total": 66
+        },
+        {
+          "family_counts": [
+            21,
+            26,
+            12
+          ],
+          "output_spoke": 18711,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            21,
+            19,
+            18
+          ],
+          "output_spoke": 18954,
+          "total": 58
+        },
+        {
+          "family_counts": [
+            25,
+            25,
+            24
+          ],
+          "output_spoke": 19197,
+          "total": 74
+        },
+        {
+          "family_counts": [
+            29,
+            29,
+            21
+          ],
+          "output_spoke": 19440,
+          "total": 79
+        }
+      ],
+      "direct_cube_mismatches": 0,
+      "eligible_pairs": 5646,
+      "family_count_range": [
+        11,
+        35
+      ],
+      "first_direct_mismatch": null,
+      "fixed_public_label_vector_control": {
+        "coordinate_swap_roundtrip": true,
+        "first_pairs": [
+          [
+            810,
+            2430
+          ],
+          [
+            1620,
+            4860
+          ],
+          [
+            2268,
+            6804
+          ],
+          [
+            2592,
+            7776
+          ],
+          [
+            4050,
+            12150
+          ],
+          [
+            5022,
+            15066
+          ],
+          [
+            7128,
+            1701
+          ],
+          [
+            9720,
+            9477
+          ],
+          [
+            10530,
+            11907
+          ],
+          [
+            13932,
+            2430
+          ],
+          [
+            16362,
+            9720
+          ],
+          [
+            17658,
+            13608
+          ],
+          [
+            1215,
+            3645
+          ],
+          [
+            1377,
+            4131
+          ],
+          [
+            7047,
+            1458
+          ],
+          [
+            7209,
+            1944
+          ],
+          [
+            7857,
+            3888
+          ],
+          [
+            8667,
+            6318
+          ],
+          [
+            12879,
+            18954
+          ],
+          [
+            16119,
+            8991
+          ],
+          [
+            19359,
+            18711
+          ],
+          [
+            2592,
+            7776
+          ],
+          [
+            2916,
+            8748
+          ],
+          [
+            4212,
+            12636
+          ],
+          [
+            7452,
+            2673
+          ],
+          [
+            10044,
+            10449
+          ],
+          [
+            15552,
+            7290
+          ],
+          [
+            17982,
+            14580
+          ],
+          [
+            1053,
+            3159
+          ],
+          [
+            2511,
+            7533
+          ],
+          [
+            5103,
+            15309
+          ],
+          [
+            6399,
+            19197
+          ],
+          [
+            10449,
+            11664
+          ],
+          [
+            13041,
+            19440
+          ],
+          [
+            13203,
+            243
+          ],
+          [
+            14013,
+            2673
+          ],
+          [
+            16119,
+            8991
+          ],
+          [
+            19521,
+            19197
+          ],
+          [
+            2916,
+            8748
+          ],
+          [
+            3240,
+            9720
+          ],
+          [
+            4536,
+            13608
+          ],
+          [
+            8910,
+            7047
+          ],
+          [
+            11340,
+            14337
+          ],
+          [
+            12636,
+            18225
+          ],
+          [
+            13446,
+            972
+          ],
+          [
+            19116,
+            17982
+          ],
+          [
+            19278,
+            18468
+          ],
+          [
+            3645,
+            10935
+          ],
+          [
+            5427,
+            16281
+          ],
+          [
+            9963,
+            10206
+          ],
+          [
+            11907,
+            16038
+          ],
+          [
+            13365,
+            729
+          ],
+          [
+            16605,
+            10449
+          ],
+          [
+            2592,
+            7776
+          ],
+          [
+            4050,
+            12150
+          ],
+          [
+            9720,
+            9477
+          ],
+          [
+            12312,
+            17253
+          ],
+          [
+            15714,
+            7776
+          ],
+          [
+            17334,
+            12636
+          ],
+          [
+            2187,
+            6561
+          ],
+          [
+            14661,
+            4617
+          ],
+          [
+            17091,
+            11907
+          ],
+          [
+            18711,
+            16767
+          ],
+          [
+            1296,
+            3888
+          ],
+          [
+            2106,
+            6318
+          ],
+          [
+            5508,
+            16524
+          ],
+          [
+            6966,
+            1215
+          ],
+          [
+            9558,
+            8991
+          ],
+          [
+            12636,
+            18225
+          ],
+          [
+            18954,
+            17496
+          ],
+          [
+            891,
+            2673
+          ],
+          [
+            2511,
+            7533
+          ],
+          [
+            2673,
+            8019
+          ],
+          [
+            6561,
+            0
+          ],
+          [
+            9153,
+            7776
+          ],
+          [
+            17901,
+            14337
+          ],
+          [
+            162,
+            486
+          ],
+          [
+            6480,
+            19440
+          ],
+          [
+            10368,
+            11421
+          ],
+          [
+            10692,
+            12393
+          ],
+          [
+            13770,
+            1944
+          ]
+        ]
+      },
+      "ordinal_difference_counts": {
+        "1": 5646
+      },
+      "ordinal_label_count_unit": "distinct (output spoke, lower ordinal residue, input midpoint residue) incidences",
+      "ordinal_labels": {
+        "27": {
+          "classes": 2019,
+          "colliding_classes": 1339,
+          "max_size": 3,
+          "objects": 3767,
+          "size_histogram": {
+            "1": 680,
+            "2": 930,
+            "3": 409
+          }
+        },
+        "3": {
+          "classes": 243,
+          "colliding_classes": 243,
+          "max_size": 3,
+          "objects": 729,
+          "size_histogram": {
+            "3": 243
+          }
+        },
+        "9": {
+          "classes": 729,
+          "colliding_classes": 719,
+          "max_size": 3,
+          "objects": 2015,
+          "size_histogram": {
+            "1": 10,
+            "2": 152,
+            "3": 567
+          }
+        }
+      },
+      "output_count_range": [
+        50,
+        87
+      ],
+      "spokes": {
+        "eligible_input": 243,
+        "original": 6561,
+        "output": 81
+      },
+      "twin_pairs": 152890,
+      "upper_prime_last_new_spoke": {
+        "eligible_input": 5797009,
+        "original": 9239941,
+        "output": 1355131
+      }
+    },
+    "limit_inclusive": 60000000,
+    "next_interval": {
+      "all_output_families": [
+        {
+          "family_counts": [
+            20,
+            16,
+            27
+          ],
+          "output_spoke": 0,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            15,
+            20,
+            21
+          ],
+          "output_spoke": 243,
+          "total": 56
+        },
+        {
+          "family_counts": [
+            23,
+            21,
+            18
+          ],
+          "output_spoke": 486,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            14,
+            18,
+            13
+          ],
+          "output_spoke": 729,
+          "total": 45
+        },
+        {
+          "family_counts": [
+            28,
+            19,
+            22
+          ],
+          "output_spoke": 972,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            21,
+            18,
+            22
+          ],
+          "output_spoke": 1215,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            15,
+            16,
+            24
+          ],
+          "output_spoke": 1458,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            20,
+            17,
+            18
+          ],
+          "output_spoke": 1701,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            16,
+            19,
+            14
+          ],
+          "output_spoke": 1944,
+          "total": 49
+        },
+        {
+          "family_counts": [
+            21,
+            18,
+            22
+          ],
+          "output_spoke": 2187,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            26,
+            14,
+            13
+          ],
+          "output_spoke": 2430,
+          "total": 53
+        },
+        {
+          "family_counts": [
+            15,
+            23,
+            18
+          ],
+          "output_spoke": 2673,
+          "total": 56
+        },
+        {
+          "family_counts": [
+            20,
+            18,
+            19
+          ],
+          "output_spoke": 2916,
+          "total": 57
+        },
+        {
+          "family_counts": [
+            30,
+            15,
+            24
+          ],
+          "output_spoke": 3159,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            24,
+            17,
+            21
+          ],
+          "output_spoke": 3402,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            25,
+            20,
+            18
+          ],
+          "output_spoke": 3645,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            12,
+            13,
+            17
+          ],
+          "output_spoke": 3888,
+          "total": 42
+        },
+        {
+          "family_counts": [
+            18,
+            17,
+            20
+          ],
+          "output_spoke": 4131,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            22,
+            11,
+            17
+          ],
+          "output_spoke": 4374,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            17,
+            21,
+            20
+          ],
+          "output_spoke": 4617,
+          "total": 58
+        },
+        {
+          "family_counts": [
+            20,
+            12,
+            25
+          ],
+          "output_spoke": 4860,
+          "total": 57
+        },
+        {
+          "family_counts": [
+            21,
+            21,
+            20
+          ],
+          "output_spoke": 5103,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            18,
+            23,
+            20
+          ],
+          "output_spoke": 5346,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            10,
+            30,
+            23
+          ],
+          "output_spoke": 5589,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            18,
+            11,
+            20
+          ],
+          "output_spoke": 5832,
+          "total": 49
+        },
+        {
+          "family_counts": [
+            18,
+            20,
+            24
+          ],
+          "output_spoke": 6075,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            21,
+            22,
+            8
+          ],
+          "output_spoke": 6318,
+          "total": 51
+        },
+        {
+          "family_counts": [
+            17,
+            19,
+            14
+          ],
+          "output_spoke": 6561,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            17,
+            22,
+            24
+          ],
+          "output_spoke": 6804,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            18,
+            15,
+            26
+          ],
+          "output_spoke": 7047,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            13,
+            20,
+            14
+          ],
+          "output_spoke": 7290,
+          "total": 47
+        },
+        {
+          "family_counts": [
+            8,
+            18,
+            18
+          ],
+          "output_spoke": 7533,
+          "total": 44
+        },
+        {
+          "family_counts": [
+            16,
+            21,
+            13
+          ],
+          "output_spoke": 7776,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            19,
+            17,
+            23
+          ],
+          "output_spoke": 8019,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            23,
+            22,
+            16
+          ],
+          "output_spoke": 8262,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            15,
+            22,
+            26
+          ],
+          "output_spoke": 8505,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            24,
+            21,
+            15
+          ],
+          "output_spoke": 8748,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            15,
+            23,
+            25
+          ],
+          "output_spoke": 8991,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            22,
+            24,
+            17
+          ],
+          "output_spoke": 9234,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            17,
+            20,
+            24
+          ],
+          "output_spoke": 9477,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            18,
+            15,
+            24
+          ],
+          "output_spoke": 9720,
+          "total": 57
+        },
+        {
+          "family_counts": [
+            16,
+            21,
+            23
+          ],
+          "output_spoke": 9963,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            22,
+            21,
+            17
+          ],
+          "output_spoke": 10206,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            25,
+            20,
+            18
+          ],
+          "output_spoke": 10449,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            19,
+            19,
+            16
+          ],
+          "output_spoke": 10692,
+          "total": 54
+        },
+        {
+          "family_counts": [
+            13,
+            21,
+            16
+          ],
+          "output_spoke": 10935,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            25,
+            26,
+            19
+          ],
+          "output_spoke": 11178,
+          "total": 70
+        },
+        {
+          "family_counts": [
+            18,
+            23,
+            24
+          ],
+          "output_spoke": 11421,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            19,
+            16,
+            15
+          ],
+          "output_spoke": 11664,
+          "total": 50
+        },
+        {
+          "family_counts": [
+            25,
+            22,
+            23
+          ],
+          "output_spoke": 11907,
+          "total": 70
+        },
+        {
+          "family_counts": [
+            20,
+            17,
+            22
+          ],
+          "output_spoke": 12150,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            22,
+            19,
+            24
+          ],
+          "output_spoke": 12393,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            20,
+            19,
+            23
+          ],
+          "output_spoke": 12636,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            16,
+            22,
+            20
+          ],
+          "output_spoke": 12879,
+          "total": 58
+        },
+        {
+          "family_counts": [
+            24,
+            23,
+            17
+          ],
+          "output_spoke": 13122,
+          "total": 64
+        },
+        {
+          "family_counts": [
+            16,
+            27,
+            15
+          ],
+          "output_spoke": 13365,
+          "total": 58
+        },
+        {
+          "family_counts": [
+            13,
+            19,
+            19
+          ],
+          "output_spoke": 13608,
+          "total": 51
+        },
+        {
+          "family_counts": [
+            21,
+            19,
+            19
+          ],
+          "output_spoke": 13851,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            15,
+            18,
+            29
+          ],
+          "output_spoke": 14094,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            21,
+            18,
+            17
+          ],
+          "output_spoke": 14337,
+          "total": 56
+        },
+        {
+          "family_counts": [
+            23,
+            21,
+            18
+          ],
+          "output_spoke": 14580,
+          "total": 62
+        },
+        {
+          "family_counts": [
+            17,
+            21,
+            25
+          ],
+          "output_spoke": 14823,
+          "total": 63
+        },
+        {
+          "family_counts": [
+            18,
+            19,
+            23
+          ],
+          "output_spoke": 15066,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            23,
+            19,
+            18
+          ],
+          "output_spoke": 15309,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            25,
+            14,
+            16
+          ],
+          "output_spoke": 15552,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            15,
+            18,
+            15
+          ],
+          "output_spoke": 15795,
+          "total": 48
+        },
+        {
+          "family_counts": [
+            14,
+            19,
+            26
+          ],
+          "output_spoke": 16038,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            22,
+            22,
+            23
+          ],
+          "output_spoke": 16281,
+          "total": 67
+        },
+        {
+          "family_counts": [
+            17,
+            25,
+            19
+          ],
+          "output_spoke": 16524,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            19,
+            16,
+            24
+          ],
+          "output_spoke": 16767,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            15,
+            23,
+            21
+          ],
+          "output_spoke": 17010,
+          "total": 59
+        },
+        {
+          "family_counts": [
+            25,
+            22,
+            11
+          ],
+          "output_spoke": 17253,
+          "total": 58
+        },
+        {
+          "family_counts": [
+            20,
+            17,
+            24
+          ],
+          "output_spoke": 17496,
+          "total": 61
+        },
+        {
+          "family_counts": [
+            20,
+            15,
+            20
+          ],
+          "output_spoke": 17739,
+          "total": 55
+        },
+        {
+          "family_counts": [
+            16,
+            28,
+            21
+          ],
+          "output_spoke": 17982,
+          "total": 65
+        },
+        {
+          "family_counts": [
+            18,
+            18,
+            16
+          ],
+          "output_spoke": 18225,
+          "total": 52
+        },
+        {
+          "family_counts": [
+            20,
+            18,
+            19
+          ],
+          "output_spoke": 18468,
+          "total": 57
+        },
+        {
+          "family_counts": [
+            19,
+            15,
+            20
+          ],
+          "output_spoke": 18711,
+          "total": 54
+        },
+        {
+          "family_counts": [
+            26,
+            21,
+            22
+          ],
+          "output_spoke": 18954,
+          "total": 69
+        },
+        {
+          "family_counts": [
+            18,
+            23,
+            19
+          ],
+          "output_spoke": 19197,
+          "total": 60
+        },
+        {
+          "family_counts": [
+            16,
+            14,
+            25
+          ],
+          "output_spoke": 19440,
+          "total": 55
+        }
+      ],
+      "direct_cube_mismatches": 0,
+      "eligible_pairs": 4721,
+      "family_count_range": [
+        8,
+        30
+      ],
+      "first_direct_mismatch": null,
+      "fixed_public_label_vector_control": {
+        "coordinate_swap_roundtrip": true,
+        "first_pairs": [
+          [
+            7938,
+            4131
+          ],
+          [
+            12960,
+            19197
+          ],
+          [
+            1053,
+            3159
+          ],
+          [
+            1215,
+            3645
+          ],
+          [
+            3807,
+            11421
+          ],
+          [
+            5265,
+            15795
+          ],
+          [
+            6723,
+            486
+          ],
+          [
+            10935,
+            13122
+          ],
+          [
+            19035,
+            17739
+          ],
+          [
+            4212,
+            12636
+          ],
+          [
+            7290,
+            2187
+          ],
+          [
+            1377,
+            4131
+          ],
+          [
+            4941,
+            14823
+          ],
+          [
+            19197,
+            18225
+          ],
+          [
+            7776,
+            3645
+          ],
+          [
+            15066,
+            5832
+          ],
+          [
+            16848,
+            11178
+          ],
+          [
+            405,
+            1215
+          ],
+          [
+            4455,
+            13365
+          ],
+          [
+            14175,
+            3159
+          ],
+          [
+            14985,
+            5589
+          ],
+          [
+            15471,
+            7047
+          ],
+          [
+            972,
+            2916
+          ],
+          [
+            11988,
+            16281
+          ],
+          [
+            14580,
+            4374
+          ],
+          [
+            15390,
+            6804
+          ],
+          [
+            2187,
+            6561
+          ],
+          [
+            6237,
+            18711
+          ],
+          [
+            6399,
+            19197
+          ],
+          [
+            2106,
+            6318
+          ],
+          [
+            5832,
+            17496
+          ],
+          [
+            14094,
+            2916
+          ],
+          [
+            18306,
+            15552
+          ],
+          [
+            5103,
+            15309
+          ],
+          [
+            11178,
+            13851
+          ],
+          [
+            12636,
+            18225
+          ],
+          [
+            14256,
+            3402
+          ],
+          [
+            16686,
+            10692
+          ],
+          [
+            2025,
+            6075
+          ],
+          [
+            7695,
+            3402
+          ],
+          [
+            8505,
+            5832
+          ],
+          [
+            10287,
+            11178
+          ],
+          [
+            13365,
+            729
+          ],
+          [
+            15147,
+            6075
+          ],
+          [
+            6480,
+            19440
+          ],
+          [
+            14904,
+            5346
+          ],
+          [
+            19440,
+            18954
+          ],
+          [
+            1539,
+            4617
+          ],
+          [
+            6399,
+            19197
+          ],
+          [
+            8829,
+            6804
+          ],
+          [
+            15471,
+            7047
+          ],
+          [
+            9558,
+            8991
+          ],
+          [
+            10368,
+            11421
+          ],
+          [
+            11016,
+            13365
+          ],
+          [
+            14418,
+            3888
+          ],
+          [
+            15876,
+            8262
+          ],
+          [
+            1053,
+            3159
+          ],
+          [
+            10611,
+            12150
+          ],
+          [
+            10935,
+            13122
+          ],
+          [
+            14661,
+            4617
+          ],
+          [
+            15795,
+            8019
+          ],
+          [
+            16281,
+            9477
+          ],
+          [
+            17901,
+            14337
+          ],
+          [
+            9720,
+            9477
+          ],
+          [
+            11988,
+            16281
+          ],
+          [
+            19278,
+            18468
+          ],
+          [
+            16119,
+            8991
+          ],
+          [
+            10854,
+            12879
+          ],
+          [
+            11259,
+            14094
+          ],
+          [
+            16119,
+            8991
+          ],
+          [
+            4698,
+            14094
+          ],
+          [
+            15876,
+            8262
+          ],
+          [
+            5103,
+            15309
+          ],
+          [
+            5913,
+            17739
+          ],
+          [
+            11907,
+            16038
+          ],
+          [
+            1620,
+            4860
+          ],
+          [
+            9234,
+            8019
+          ],
+          [
+            11502,
+            14823
+          ],
+          [
+            19440,
+            18954
+          ],
+          [
+            5751,
+            17253
+          ],
+          [
+            8019,
+            4374
+          ]
+        ]
+      },
+      "ordinal_difference_counts": {
+        "1": 4721
+      },
+      "ordinal_label_count_unit": "distinct (output spoke, lower ordinal residue, input midpoint residue) incidences",
+      "ordinal_labels": {
+        "27": {
+          "classes": 1964,
+          "colliding_classes": 1110,
+          "max_size": 3,
+          "objects": 3365,
+          "size_histogram": {
+            "1": 854,
+            "2": 819,
+            "3": 291
+          }
+        },
+        "3": {
+          "classes": 243,
+          "colliding_classes": 243,
+          "max_size": 3,
+          "objects": 728,
+          "size_histogram": {
+            "2": 1,
+            "3": 242
+          }
+        },
+        "9": {
+          "classes": 728,
+          "colliding_classes": 702,
+          "max_size": 3,
+          "objects": 1933,
+          "size_histogram": {
+            "1": 26,
+            "2": 199,
+            "3": 503
+          }
+        }
+      },
+      "output_count_range": [
+        42,
+        70
+      ],
+      "spokes": {
+        "eligible_input": 243,
+        "original": 6561,
+        "output": 81
+      },
+      "twin_pairs": 127666,
+      "upper_prime_last_new_spoke": {
+        "eligible_input": 37818091,
+        "original": 43736521,
+        "output": 32349619
+      }
+    },
+    "split": 30000000
+  },
+  "protocol_sha256": "316d9aaea0392bc0ab4e8d01e650dcbb06e2719b0a193977e9e023b0d0f45206",
+  "schema": "base27-mathematical-replay/1",
+  "standing": "local mathematical evidence only"
+}

@@ -1,0 +1,146 @@
+{
+  "method": "elapsed wall-clock forward bearing + partition summary (not inversion)",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "processor": "",
+  "python": "3.12.14",
+  "rows": [
+    {
+      "classes": 9,
+      "colliding_classes": 9,
+      "exponent": 5,
+      "max_size": 3,
+      "median_ns": 8578,
+      "modulus": 243,
+      "nine_runs_ns": [
+        55060,
+        74482,
+        12434,
+        8520,
+        8749,
+        8578,
+        7925,
+        7835,
+        7847
+      ],
+      "objects": 27,
+      "size_histogram": {
+        "3": 9
+      }
+    },
+    {
+      "classes": 27,
+      "colliding_classes": 27,
+      "exponent": 7,
+      "max_size": 3,
+      "median_ns": 17067,
+      "modulus": 2187,
+      "nine_runs_ns": [
+        52708,
+        19961,
+        34665,
+        49649,
+        17067,
+        16593,
+        16707,
+        16375,
+        16188
+      ],
+      "objects": 81,
+      "size_histogram": {
+        "3": 27
+      }
+    },
+    {
+      "classes": 81,
+      "colliding_classes": 81,
+      "exponent": 9,
+      "max_size": 3,
+      "median_ns": 42927,
+      "modulus": 19683,
+      "nine_runs_ns": [
+        59516,
+        94152,
+        42927,
+        43059,
+        42373,
+        41579,
+        41413,
+        41398,
+        57230
+      ],
+      "objects": 243,
+      "size_histogram": {
+        "3": 81
+      }
+    },
+    {
+      "classes": 243,
+      "colliding_classes": 243,
+      "exponent": 11,
+      "max_size": 3,
+      "median_ns": 173285,
+      "modulus": 177147,
+      "nine_runs_ns": [
+        179051,
+        266627,
+        148271,
+        185615,
+        119175,
+        116340,
+        124575,
+        173285,
+        204207
+      ],
+      "objects": 729,
+      "size_histogram": {
+        "3": 243
+      }
+    },
+    {
+      "classes": 729,
+      "colliding_classes": 729,
+      "exponent": 13,
+      "max_size": 3,
+      "median_ns": 489474,
+      "modulus": 1594323,
+      "nine_runs_ns": [
+        1176308,
+        778391,
+        410537,
+        409035,
+        489474,
+        1137189,
+        1013684,
+        436413,
+        442811
+      ],
+      "objects": 2187,
+      "size_histogram": {
+        "3": 729
+      }
+    },
+    {
+      "classes": 2187,
+      "colliding_classes": 2187,
+      "exponent": 15,
+      "max_size": 3,
+      "median_ns": 1902557,
+      "modulus": 14348907,
+      "nine_runs_ns": [
+        2928155,
+        2324061,
+        1681167,
+        1314887,
+        1902557,
+        1180217,
+        2543478,
+        3809850,
+        1270334
+      ],
+      "objects": 6561,
+      "size_histogram": {
+        "3": 2187
+      }
+    }
+  ]
+}
