@@ -72,7 +72,8 @@ def application(database, site):
             if route == "api/rooms":
                 if method == "GET":
                     return send(200, {"rooms": store.rooms(actor)})
-                return send(201, store.create(actor, origin, data.get("mode"), data.get("request_id")))
+                return send(201, store.create(actor, origin, data.get("mode"), data.get("request_id"),
+                                              fauna_mode=data.get("fauna_mode")))
             if route == "api/join" and method == "POST":
                 return send(200, store.join(actor, data.get("invite")))
             match = re.fullmatch(r"api/rooms/([0-9a-f]{24})/(state|plan|fork|invite)", route)
@@ -93,7 +94,7 @@ def application(database, site):
                     return send(200, {"invite": invite})
                 if action == "fork" and method == "POST":
                     return send(201, store.create(actor, origin, "environment", data.get("request_id"),
-                                                  key, data.get("turn")))
+                                                  key, data.get("turn"), fauna_mode=data.get("fauna_mode")))
             raise Rejected(404, "route unavailable")
         except Rejected as exc:
             return send(exc.status, {"error": str(exc)})

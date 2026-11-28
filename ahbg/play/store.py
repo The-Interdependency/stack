@@ -7,6 +7,7 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
+from ahbg.campaign.controllers import MODELS
 from .game import Plane, TURN_LIMIT, canonical, fingerprint
 from .models import Council
 
@@ -27,6 +28,9 @@ class Store:
                     id TEXT PRIMARY KEY, seed INTEGER NOT NULL, mode TEXT NOT NULL,
                     amber TEXT NOT NULL, indigo TEXT, invite TEXT UNIQUE, origin TEXT NOT NULL,
                     created INTEGER NOT NULL, request TEXT NOT NULL, UNIQUE(amber, request)
+                );
+                CREATE TABLE IF NOT EXISTS fauna_controllers (
+                    room TEXT PRIMARY KEY REFERENCES rooms(id), controller TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS commits (
                     room TEXT NOT NULL, turn INTEGER NOT NULL, seat TEXT NOT NULL, plan TEXT NOT NULL,
@@ -50,9 +54,21 @@ class Store:
         finally:
             db.close()
 
-    def create(self, actor, ip, mode, request, parent=None, fork_turn=0):
-        if mode not in ("environment", "smol", "granite", "duel"):
+    @staticmethod
+    def fauna_mode(db, room):
+        override = db.execute("SELECT controller FROM fauna_controllers WHERE room=?",
+                              (room["id"],)).fetchone()
+        if override:
+            return override["controller"]
+        # Planes created before separate fauna selection used the opponent's
+        # checkpoint, or the seeded controller when both seats were human.
+        return room["mode"] if room["mode"] in MODELS else "environment"
+
+    def create(self, actor, ip, mode, request, parent=None, fork_turn=0, *, fauna_mode=None):
+        if mode not in ("environment", "duel", *MODELS):
             raise Rejected(400, "unknown opponent")
+        if fauna_mode is not None and fauna_mode not in ("environment", *MODELS):
+            raise Rejected(400, "unknown fauna controller")
         if not isinstance(request, str) or not 12 <= len(request) <= 64:
             raise Rejected(400, "creation needs a request ID")
         with self.connection(True) as db:
@@ -71,9 +87,13 @@ class Store:
                 if source["mode"] == "duel" or type(fork_turn) is not int or not 0 <= fork_turn <= len(rows):
                     raise Rejected(400, "choose a completed position from a solo plane")
                 mode, seed, invite = source["mode"], source["seed"], None
+                if fauna_mode is None:
+                    fauna_mode = self.fauna_mode(db, source)
             db.execute("INSERT INTO rooms VALUES (?,?,?,?,?,?,?,?,?)",
                        (room, seed, mode, actor, None, fingerprint(invite) if invite else None,
                         ip, int(time.time()), request))
+            if fauna_mode is not None:
+                db.execute("INSERT INTO fauna_controllers VALUES (?,?)", (room, fauna_mode))
             if parent:
                 for row in rows[:fork_turn]:
                     plans = json.loads(row["plans"])
@@ -125,6 +145,7 @@ class Store:
             waiting = db.execute("SELECT plan FROM commits WHERE room=? AND turn=? AND seat=?",
                                  (key, turn, seat)).fetchone()
             return {"observation": p.observe(seat), "seat": seat, "mode": room["mode"],
+                    "fauna_mode": self.fauna_mode(db, room),
                     "turn_limit": TURN_LIMIT, "done": turn >= TURN_LIMIT, "committed": bool(waiting),
                     "own_commit": json.loads(waiting["plan"]) if waiting else None,
                     "waiting_join": room["mode"] == "duel" and not room["indigo"],
@@ -158,7 +179,8 @@ class Store:
                         return
                     plans[player] = plane.validate(player, json.loads(row["plan"]))
                 else:
-                    controller = Council(room["mode"]) if room["mode"] in ("smol", "granite") else None
+                    mode = self.fauna_mode(db, room) if player == "wild" else room["mode"]
+                    controller = Council(mode) if mode in MODELS else None
                     plans[player], traces[player] = plane.bot(player, controller, room["seed"])
             turn = plane.field.turn
             result = plane.resolve(plans)

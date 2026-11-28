@@ -13,7 +13,7 @@ _load_lock = Lock()
 
 
 def weights(name):
-    # Commits are serialized in SQLite. Release the previous species' weights
+    # Commits are serialized in SQLite. Release the previous checkpoint
     # before allocating a different checkpoint on the small VM.
     with _load_lock:
         if name not in _loaded:

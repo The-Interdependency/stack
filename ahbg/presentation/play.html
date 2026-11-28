@@ -11,6 +11,7 @@
 <section id="lobby">
   <div class="hero"><p class="eyebrow">Agent Harness Benchmark Game</p><h1>Territory</h1><p>Scout the rings, direct your Builder and contend for space on a shared plane. Orders resolve together.</p></div>
   <div class="lobby-controls"><label>Choose an opponent<select id="mode"><option value="smol">Local agent · SmolLM2</option><option value="environment">Seeded environment</option><option value="granite">Local agent · Granite</option><option value="duel">Invite a player or harness</option></select></label>
+  <label>Fauna controller<select id="fauna"><option value="">Use plane default</option></select></label>
   <button id="create" class="primary">Start a plane</button>
   <details><summary>Join with an invite</summary><label>Invite code<input id="code" autocapitalize="none" autocomplete="off" spellcheck="false"></label><button id="join">Join plane</button></details>
   <section id="saved"></section></div>
@@ -27,6 +28,8 @@
   <button id="refresh">Refresh plane</button></section></div>
   <div class="extras"><section><h2>Turn record</h2><ol id="history"></ol><ol id="feed-list" hidden></ol></section>
   <section id="share" hidden><h2>Second seat</h2><button id="invite">Get invite code</button><output id="invite-code"></output></section>
-  <section id="fork-panel"><h2>Replay &amp; fork</h2><label>Resume before turn<select id="fork-turn"></select></label><button id="fork">Fork for fresh play</button></section></div>
+  <section id="fork-panel"><h2>Replay &amp; fork</h2><label>Resume before turn<select id="fork-turn"></select></label>
+    <label>Fauna on this fork<select id="fork-fauna"><option value="">Keep current controller</option></select></label>
+    <button id="fork">Fork for fresh play</button></section></div>
 </section><p id="status" role="status" aria-live="polite"></p>
 <footer><a href="research.html">Field notebook</a> · <a href="download/ahbg-alpha.apk">Android APK</a> · <a href="credits.html">Sources &amp; credits</a></footer></main><script src="board.js"></script><script src="play.js"></script></body></html>

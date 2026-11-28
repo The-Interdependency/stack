@@ -17,6 +17,21 @@ class PlayTest(unittest.TestCase):
     def start(self, mode):
         return self.store.create("first", "local", mode, "a-unique-request")
 
+    def test_existing_planes_retain_their_original_fauna_controller(self):
+        rooms = {mode: self.store.create("first", "local", mode, "existing-room-" + mode)["room"]
+                 for mode in ("environment", "duel", "smol", "granite")}
+        # Reopen the prior release's schema, with one completed turn to replay.
+        room = rooms["environment"]
+        self.store.commit("first", room, {"session_id": room, "turn": 0, "intents": []})
+        before = self.store.state("first", room)
+        with self.store.connection(True) as db:
+            db.execute("DROP TABLE fauna_controllers")
+        restored = Store(self.path)
+        self.assertEqual(restored.state("first", room), before)
+        for mode, key in rooms.items():
+            expected = "environment" if mode == "duel" else mode
+            self.assertEqual(restored.state("first", key)["fauna_mode"], expected)
+
     def test_live_geometry_identifies_stack_pin(self):
         root = Path(__file__).resolve().parents[3]
         manifest = json.loads((root / "stack-manifest.json").read_text())
