@@ -1,0 +1,20 @@
+test_census_accounting (test_experiment.CensusTests.test_census_accounting) ... ok
+test_mutant_cube_census_detected (test_experiment.CensusTests.test_mutant_cube_census_detected) ... ok
+test_odd_sieve_against_trial_division (test_experiment.CensusTests.test_odd_sieve_against_trial_division) ... ok
+test_twin_ordinals_independent_small_reference (test_experiment.CensusTests.test_twin_ordinals_independent_small_reference) ... ok
+test_explicit_retained_label (test_experiment.Geometry.test_explicit_retained_label) ... ok
+test_fibers (test_experiment.Geometry.test_fibers) ... ok
+test_full_circle_cubes (test_experiment.Geometry.test_full_circle_cubes) ... ok
+test_interlacing_is_not_new_information (test_experiment.Geometry.test_interlacing_is_not_new_information) ... ok
+test_invalid_input_rejected (test_experiment.Geometry.test_invalid_input_rejected) ... ok
+test_moduli (test_experiment.Geometry.test_moduli) ... ok
+test_mutant_cube_formula_detected (test_experiment.Geometry.test_mutant_cube_formula_detected) ... ok
+test_radius_controls (test_experiment.Geometry.test_radius_controls) ... ok
+test_recursion_saturation (test_experiment.Geometry.test_recursion_saturation) ... ok
+test_scale_counts (test_experiment.Geometry.test_scale_counts) ... ok
+test_worked_examples (test_experiment.Geometry.test_worked_examples) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 0.505s
+
+OK

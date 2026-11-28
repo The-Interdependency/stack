@@ -1,0 +1,139 @@
+{
+  "schema": "base27-research-sources/1",
+  "retrieval_date": "2026-11-28",
+  "repositories": [
+    {
+      "repository": "The-Interdependency/skill-lib",
+      "commit": "b3bcb5f51c19dd9f5e61a38a4d7cb72af178c9cc",
+      "authority": "build/evidence doctrine",
+      "relation": "source instructions",
+      "files": [
+        {
+          "path": "README.md",
+          "blob_sha": "ffbccec8fc13da7e3e2ffecbc8b16d74f670b534",
+          "url": "https://github.com/The-Interdependency/skill-lib/blob/b3bcb5f51c19dd9f5e61a38a4d7cb72af178c9cc/README.md"
+        },
+        {
+          "path": "AGENTS.md",
+          "blob_sha": "798def7e981fa942b08f22f9e780d0f9ebbb0364",
+          "url": "https://github.com/The-Interdependency/skill-lib/blob/b3bcb5f51c19dd9f5e61a38a4d7cb72af178c9cc/AGENTS.md"
+        },
+        {
+          "path": "the-interdependency/SKILL.md",
+          "blob_sha": "fc1872094bb1b61c2eb756374b27b09fe33cc319",
+          "url": "https://github.com/The-Interdependency/skill-lib/blob/b3bcb5f51c19dd9f5e61a38a4d7cb72af178c9cc/the-interdependency/SKILL.md"
+        },
+        {
+          "path": "interdependent-work-graph/SKILL.md",
+          "blob_sha": "f6007442bc32cbd7e84fbadbb419ccaf3118d330",
+          "url": "https://github.com/The-Interdependency/skill-lib/blob/b3bcb5f51c19dd9f5e61a38a4d7cb72af178c9cc/interdependent-work-graph/SKILL.md"
+        }
+      ]
+    },
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "ee8addc0af36f02b64b42cb355734cb72a126ea5",
+      "authority": "geometric authority",
+      "relation": "canonical reference only",
+      "files": [
+        {
+          "path": "CANON.md",
+          "blob_sha": "4956896f2ebb18aa5b3659293dd6b264552f919b",
+          "url": "https://github.com/The-Interdependency/ucns/blob/ee8addc0af36f02b64b42cb355734cb72a126ea5/CANON.md"
+        },
+        {
+          "path": "docs/modular-orbit-wave-trace.md",
+          "blob_sha": "f6d708bbbc106f78b25e6a30cc99b4296321a89a",
+          "url": "https://github.com/The-Interdependency/ucns/blob/ee8addc0af36f02b64b42cb355734cb72a126ea5/docs/modular-orbit-wave-trace.md"
+        }
+      ]
+    },
+    {
+      "repository": "The-Interdependency/stack",
+      "commit": "3d0297430956f6fae22b3330063a42db27ddbfe6",
+      "authority": "composition forge and Stack-local research, including Weave cryptographic authority",
+      "relation": "research boundary and comparison; no code imported",
+      "files": [
+        {
+          "path": "AGENTS.md",
+          "blob_sha": "fd4714ba4e13ed68dc24523aa78bebeca575c1ed",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/AGENTS.md"
+        },
+        {
+          "path": "research/AGENTS.md",
+          "blob_sha": "8a655fecaf9df6da46522c09f44b4129db0c57f8",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/AGENTS.md"
+        },
+        {
+          "path": "research/ucns/BASE.json",
+          "blob_sha": "39044d43f6a980aca5bdff272987f21eac1986c0",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/ucns/BASE.json"
+        },
+        {
+          "path": "research/ucns/standing_waves/docs/STANDING_WAVE_MOBIUS_BAND.md",
+          "blob_sha": "e2f6675a8c16df830f59e23dab1f434115cbbd31",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/ucns/standing_waves/docs/STANDING_WAVE_MOBIUS_BAND.md"
+        },
+        {
+          "path": "research/pi-radix/README.md",
+          "blob_sha": "b7d87f03215d5bf5aba596fecfa2d4eb7938c4da",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/pi-radix/README.md"
+        },
+        {
+          "path": "research/weave/BASE.json",
+          "blob_sha": "9b0bbf160a16803a79b5fbd8b9fda2357ca9358e",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/BASE.json"
+        },
+        {
+          "path": "research/weave/README.md",
+          "blob_sha": "4b874d924f925a77e3b23019891ee52ff55ff9a2",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/README.md"
+        },
+        {
+          "path": "research/weave/SPECIFICATION.md",
+          "blob_sha": "db347b53c742a2448e3dec109178e55d735dd750",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/SPECIFICATION.md"
+        },
+        {
+          "path": "research/weave/QUESTIONS.md",
+          "blob_sha": "bd338a6668b212527cdd81794dc2c1cc8c3273fb",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/QUESTIONS.md"
+        },
+        {
+          "path": "research/weave/PRIVATE_PUBLIC.md",
+          "blob_sha": "554bff613063ff527e1076df97ba642f220c76aa",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/PRIVATE_PUBLIC.md"
+        },
+        {
+          "path": "research/weave/recovery-challenges/README.md",
+          "blob_sha": "897241dd73049ed497716acea42969ac9cae3e3c",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/recovery-challenges/README.md"
+        },
+        {
+          "path": "research/weave/recovery-challenges/v2/README.md",
+          "blob_sha": "578cec417e12dd3832898380f8370dfbd40fe98a",
+          "url": "https://github.com/The-Interdependency/stack/blob/3d0297430956f6fae22b3330063a42db27ddbfe6/research/weave/recovery-challenges/v2/README.md"
+        }
+      ]
+    }
+  ],
+  "source_base_pins": {
+    "stack_ucns": "1975fe70cf4e0826a8020c2da3047569e277af64",
+    "stack_weave": "1ba201449731337dc20c564788f4303c8910bfdd",
+    "weave_cycle_ucns": "905e66964a495d7596a577bb64e4158db9465864"
+  },
+  "boundaries": {
+    "authority_transfer": false,
+    "proof_status_transfer": false,
+    "measurement_status_transfer": false,
+    "security_status_transfer": false,
+    "semantic_mapping": "none; ordinary integer-residue mathematics; no native UCNS constructor invoked",
+    "hmmm": [
+      "Complete native Möbius lift and embedded metric remain unresolved.",
+      "No base-27 cubing implementation found in inspected current UCNS/Stack source searches; supplied theorem is experiment input, not repo canon.",
+      "No repository checkout/full repository tests or changes; this is independently executed local research evidence.",
+      "Weave is Stack-local, not a separately accessible repository."
+    ]
+  },
+  "usage": "Review exact source URLs at their declared commits. The manifest is provenance, not claimed integration or authentication."
+}

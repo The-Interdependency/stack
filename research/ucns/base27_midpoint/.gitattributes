@@ -1,0 +1,4 @@
+# This directory contains a sealed, byte-hashed research receipt.
+* -text
+# Python's CSV writer emits CRLF records; preserve them in the frozen evidence.
+brightness.csv whitespace=cr-at-eol
