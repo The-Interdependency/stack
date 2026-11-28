@@ -1,4 +1,4 @@
-# ratios: loc_comments=15:145 imports_exports=3:2 calls_definitions=71:12
+# ratios: loc_comments=16:150 imports_exports=4:2 calls_definitions=75:14
 # === CONTRACTS ===
 # id: cpp23_local_binding_relation
 #   given: an admitted int-main program with lexical scopes and ordered native token frames
@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import re
+
+from uchc_halving import closed_record, construct_sequence, construct_text
 
 # Phases 1 and 2 have already run. The only tokens admitted by this grammar are
 # ASCII names, unsuffixed decimal numbers, and the punctuation below.
@@ -34,15 +36,14 @@ class Binding:
 
 
 class _Program:
-    def __init__(self, text, origins, source_id, native, recursive):
+    def __init__(self, text, origins, source_id):
         self.frames = []
         self.spellings = []
         self.origins = []
         self.source_id = source_id
-        self.recursive = recursive
         self.cursor = 0
         self.scopes = []
-        self.parts = []
+        self.parts = [[]]
         self.events = []
         cache = {}
         pos = 0
@@ -55,10 +56,10 @@ class _Program:
             if spelling[0] in " \t\v\f\n" or spelling.startswith(("//", "/*")):
                 continue
             if spelling not in cache:
-                cache[spelling] = native.build_unicode_scalar_frame(spelling)
+                cache[spelling] = construct_text(spelling, source="cpp23:token:" + spelling)
             frame = cache[spelling]
             self.frames.append(frame)
-            self.spellings.append(frame.recover())
+            self.spellings.append("".join(frame.recover()))
             self.origins.append(origins[start:pos])
 
     def peek(self):
@@ -132,47 +133,55 @@ class _Program:
             self.take("=")
         value, reads = self.expression()
         self.take(";")
-        frame = self.recursive.close_unicode(
-            tuple(self.frames[start:self.cursor]), relation="cpp23." + kind,
-            source=f"{self.source_id}#tokens[{start},{self.cursor})")
+        frame = construct_sequence(tuple(self.frames[start:self.cursor]),
+                                   source=f"{self.source_id}#{kind}[{start},{self.cursor})")
         event = {"kind": kind, "scope": scope_id, "tokens": [start, self.cursor],
                  "frame": frame.receipt, "reads": reads, "value": value}
         if target is not None:
             binding.write, binding.value = target, value
             event.update(target=target, declaration=binding.declaration)
-        self.parts.append(frame)
+        self.parts[-1].append(frame)
         self.events.append(event)
         return kind
 
     def delimiter(self, token):
         ordinal = self.take(token)
-        self.parts.append(self.frames[ordinal])
+        self.parts[-1].append(self.frames[ordinal])
         return ordinal
+
+    def open_block(self):
+        self.parts.append([])
+        self.scopes.append((self.delimiter("{"), {}))
+
+    def close_block(self):
+        end = self.delimiter("}") + 1
+        start, _ = self.scopes.pop()
+        operands = tuple(self.parts.pop())
+        block = construct_sequence(operands, source=f"{self.source_id}#block[{start},{end})")
+        self.parts[-1].append(block)
 
     def run(self):
         for token in ("int", "main", "(", ")"):
             self.delimiter(token)
-        self.scopes.append((self.delimiter("{"), {}))
+        self.open_block()
         while self.scopes:
             token = self.peek()
             if token == "{":
-                self.scopes.append((self.delimiter("{"), {}))
+                self.open_block()
             elif token == "}":
-                self.delimiter("}")
-                self.scopes.pop()
+                self.close_block()
             elif self.statement() == "return":
-                self.delimiter("}")
-                self.scopes.pop()
+                self.close_block()
                 if self.peek() is not None:
                     raise ValueError("expected the end of the int-main program")
         if self.peek() is not None or not self.events or self.events[-1]["kind"] != "return":
             raise ValueError("the profile requires exactly one terminal return")
-        root = self.recursive.close_unicode(tuple(self.parts), relation="cpp23.int-main", source=self.source_id)
+        root = construct_sequence(tuple(self.parts[0]), source=self.source_id)
         return {"profile": "cpp23.int-main/1", "token_occurrences": self.origins, "events": self.events,
-                "graph": self.recursive.export_unicode_graph(root), "return_value": self.events[-1]["value"]}
+                "closed": closed_record(root), "return_value": self.events[-1]["value"]}
 
 
-def int_main(text, origins, source_id, native, recursive):
+def int_main(text, origins, source_id):
     """Construct ordered native frames, lexical scopes, reaching writes and a return value."""
-    return _Program(text, origins, source_id, native, recursive).run()
-# ratios: loc_comments=15:145 imports_exports=3:2 calls_definitions=71:12
+    return _Program(text, origins, source_id).run()
+# ratios: loc_comments=16:150 imports_exports=4:2 calls_definitions=75:14

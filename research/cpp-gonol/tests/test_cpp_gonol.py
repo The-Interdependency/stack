@@ -1,4 +1,4 @@
-# ratios: loc_comments=145:11 imports_exports=10:3 calls_definitions=81:12
+# ratios: loc_comments=149:11 imports_exports=11:3 calls_definitions=84:12
 # === CHECKS ===
 # id: cpp23_physical_roundtrip_check
 #   proves: cpp23_physical_unicode_replay
@@ -20,7 +20,8 @@ import unittest
 
 from cpp_gonol import construct, phase2_text, replay
 from cpp_gonol.__main__ import main
-from ucns.unicode_recursive import replay_unicode_graph
+from fractions import Fraction
+from uchc_halving import replay_closed
 
 
 def build(data, *, bindings=False):
@@ -109,8 +110,11 @@ class BindingTests(unittest.TestCase):
             origin, = semantics["token_occurrences"][link["token"]]
             self.assertEqual(source[origin:origin + 1], b"x")
         self.assertNotEqual(inner["scope"], decl["scope"])
-        root = replay_unicode_graph(semantics["graph"])
-        self.assertEqual(root.recover(), source.decode().replace(" ", ""))
+        root = replay_closed(semantics["closed"])
+        self.assertEqual([ray.radius for ray in root.rays], [Fraction(1, 2**i) for i in (5, 4, 3, 2, 1)])
+        self.assertEqual(root.participants[-1].interior.participants[2].interior.source, "example.cpp#block[10,23)")
+        self.assertEqual(root.additive_resultant.record(), semantics["closed"]["vectors"]["additive_resultant"])
+        self.assertEqual("".join(root.recover()), source.decode().replace(" ", ""))
         self.assertEqual(semantics["return_value"], 2)
         self.assertEqual(replay(rec), source)
         for key in ("declaration", "write", "token"):
@@ -169,4 +173,4 @@ class BindingTests(unittest.TestCase):
                     status = subprocess.run([str(program)], check=False).returncode
                     self.assertEqual(status, expected)
                     self.assertEqual(record["int_main"]["return_value"], status)
-# ratios: loc_comments=145:11 imports_exports=10:3 calls_definitions=81:12
+# ratios: loc_comments=149:11 imports_exports=11:3 calls_definitions=84:12

@@ -1,4 +1,4 @@
-# ratios: loc_comments=116:11 imports_exports=9:3 calls_definitions=49:7
+# ratios: loc_comments=113:11 imports_exports=9:3 calls_definitions=49:7
 # === CONTRACTS ===
 # id: cpp23_physical_unicode_replay
 #   given: one UTF-8 C++ source file and its ordered native UCNS glyph occurrences
@@ -15,14 +15,11 @@ from pathlib import Path
 import re
 
 PROFILE = "cpp-gonol.cpp23-utf8/1"
-UCNS_COMMIT = "ee8addc0af36f02b64b42cb355734cb72a126ea5"
+UCNS_COMMIT = "1edfa593ae9d8c9ad394b5462638bcc717f99fbd"
 NATIVE_MODULES = {
-    "attachment_stack": "eed769f1f21c9a2ff469146f494fd76edabc29ea75f389b95a492b738505698a",
-    "ordinal_affixiation": "35604a2d2226f97ff865ba26e03a0fe99b5062ba7e6e8645051cfcc096a0558d",
     "public_gonol": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
     "scalar_bearing": "7d7ff1e1ddbd4997cdbee4f5f17a7c6fa4b8f3d55e288c97f700f610f32be7ac",
     "unicode_gonol": "5360325a51418835f6a4a3c037253ed79b35b2820073cf080ccda9d52cff0c5c",
-    "unicode_recursive": "be72aacb91362e297394918804318a9cfafe8509c66aa0c3e8396a152c375098",
 }
 _PHASE_EDGES = re.compile(r"\\[ \t\v\f]*(?:\r\n|[\r\n])|\r\n|[\r\n]")
 
@@ -34,8 +31,8 @@ def _geometry():
         module = import_module("ucns." + name)
         if sha256(Path(module.__file__).read_bytes()).hexdigest() != digest:
             raise ValueError(f"UCNS module differs from {UCNS_COMMIT}: {name}")
-    from ucns import public_gonol, unicode_gonol, unicode_recursive
-    return public_gonol, unicode_gonol, unicode_recursive
+    from ucns import public_gonol, unicode_gonol
+    return public_gonol, unicode_gonol
 
 
 def _wire(value):
@@ -87,7 +84,7 @@ def construct(data: bytes, *, source_id: str, bindings: bool = False) -> dict:
         raise ValueError("bindings must be a boolean")
     source_id.encode("utf-8")
     text = data.decode("utf-8", errors="strict")
-    public, native, recursive = _geometry()
+    public, native = _geometry()
     glyphs = {}
     for char in sorted(set(text)):
         glyph = native.unicode_glyph_gonol(char)
@@ -113,7 +110,7 @@ def construct(data: bytes, *, source_id: str, bindings: bool = False) -> dict:
     }
     if bindings:
         from .bindings import int_main
-        record["int_main"] = int_main(translated, origins, source_id, native, recursive)
+        record["int_main"] = int_main(translated, origins, source_id)
     record["receipt"] = sha256(_wire(record)).hexdigest()
     return record
 
@@ -142,4 +139,4 @@ def phase2_text(record: dict) -> str:
     """Read the verified C++23 intermediate spelling before preprocessing-token recognition."""
     text = replay(record).decode("utf-8")
     return _project(text, record["phase2"]["segments"])[0]
-# ratios: loc_comments=116:11 imports_exports=9:3 calls_definitions=49:7
+# ratios: loc_comments=113:11 imports_exports=9:3 calls_definitions=49:7
