@@ -1,10 +1,10 @@
-# ratios: loc_comments=238:42 imports_exports=19:12 calls_definitions=139:12
+# ratios: loc_comments=251:42 imports_exports=21:12 calls_definitions=146:12
 """Replay the declared Python construction profile without executing corpus code.
 
 Usage: python tools/qualify_python_gonols.py --help
 Run python-pass twice in separate processes, then compare their output JSONL.
 Source and producer checkouts stay read-only; temporary constructs are removed
-after each file. Receipts retain every admission outcome and unresolved scalar.
+after each file. Receipts retain every source admission outcome and the count of verified scalar occurrences.
 """
 # === MODULE_BUILD ===
 # id: language_gonol_qualification
@@ -58,7 +58,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 CPYTHON = "2abcf904b8dac8c999d2b3aac76681abb333798a"
-UCNS_PYTHON = "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c"
+UCNS_PYTHON = "ee8addc0af36f02b64b42cb355734cb72a126ea5"
 # Independently frozen from CPython's complete pinned Lib/test tree; the caller
 # cannot redefine "complete" by supplying a smaller self-consistent inventory.
 CPYTHON_INVENTORY = (1052, 20732440, "1dd99a2c8e27e10c669dfd46a29b2e0107da15279f18aac94eb5453052bb41e1")
@@ -110,14 +110,20 @@ def inventory(root, prefix):
 def check_source_rows(db, raw, encoding):
     source = raw.decode(encoding)
     require(db.execute("SELECT data FROM source_bytes").fetchall() == [(raw,)], "raw source mismatch")
-    rows = db.execute("SELECT ordinal, scalar, line, column FROM occurrences ORDER BY ordinal").fetchall()
+    characters = {}
+    for identity, scalar, utf32_be, utf8 in db.execute("SELECT id, scalar, utf32_be, utf8 FROM characters"):
+        require(identity == ord(scalar) and utf32_be == scalar.encode("utf-32-be")
+                and utf8 == scalar.encode("utf-8"), "Unicode glyph identity mismatch")
+        characters[identity] = scalar
+    rows = db.execute("SELECT ordinal, scalar, line, column, character_id FROM occurrences ORDER BY ordinal").fetchall()
     require("".join(row[1] for row in rows) == source, "decoded source mismatch")
     offsets = {}
     for line, match in enumerate(re.finditer(r"[^\r\n]*(?:\r\n|\r|\n|$)", source), 1):
         for column, offset in enumerate(range(match.start(), match.end()), 1):
             offsets[offset] = (line, column, match.start())
     require(len(rows) == len(source) == len(offsets), "source coverage mismatch")
-    for ordinal, scalar, line, column in rows:
+    for ordinal, scalar, line, column, identity in rows:
+        require(characters.get(identity) == scalar, "source occurrence has no matching Unicode glyph")
         require(offsets[ordinal][:2] == (line, column), "physical source address mismatch")
     controls = db.execute("SELECT o.ordinal, c.spaces_to_next_stop FROM controls c JOIN occurrences o ON o.id=c.occurrence_id WHERE o.scalar=char(9)").fetchall()
     require(len(controls) == source.count("\t"), "tab coverage mismatch")
@@ -127,7 +133,7 @@ def check_source_rows(db, raw, encoding):
         require(width == expected, "tab expansion mismatch")
 
 
-def python_pass(corpus, producer, out):
+def python_pass(corpus, producer, out, *, installed=False):
     require(sys.version_info[:3] == (3, 12, 14), "qualification requires Python 3.12.14")
     require(git(corpus, "rev-parse", "HEAD").decode().strip() == CPYTHON, "CPython pin mismatch")
     require(git(producer, "rev-parse", "HEAD").decode().strip() == UCNS_PYTHON, "UCNS pin mismatch")
@@ -135,12 +141,23 @@ def python_pass(corpus, producer, out):
     require(not out.exists(), "qualification output must be new")
     out.mkdir(parents=True)
     require(shutil.disk_usage(out).free > 4 * (65536 + max(r["bytes"] for r in before) * 256), "insufficient scratch storage")
-    sys.path.insert(0, str(ROOT / "research/python-gonol"))
+    if not installed:
+        sys.path.insert(0, str(ROOT / "research/python-gonol"))
+    import python_gonol
     from python_gonol import affixiate_python_bytes, verify_construct, PythonGonolConstructionError
-    implementation = {str(p.relative_to(ROOT)): sha256(p.read_bytes()).hexdigest()
-                      for p in sorted((ROOT / "research/python-gonol/python_gonol").glob("*.py"))}
-    implementation[str(Path(__file__).relative_to(ROOT))] = sha256(Path(__file__).read_bytes()).hexdigest()
-    header = {"schema": "language-gonol.python-qualification", "version": 1,
+    runtime = Path(python_gonol.__file__).resolve().parent
+    if installed:
+        from importlib.metadata import distribution
+        dist = distribution("uchc")
+        require(runtime == Path(dist.locate_file("python_gonol")).resolve()
+                and runtime != (ROOT / "research/python-gonol/python_gonol").resolve(),
+                "installed UCHC runtime required")
+    implementation = implementation_hashes()
+    wheel_sources = {p.name: sha256(p.read_bytes()).hexdigest() for p in runtime.glob("*.py")}
+    forge_sources = {Path(path).name: digest for path, digest in implementation.items()
+                     if path.startswith("research/python-gonol/python_gonol/")}
+    require(wheel_sources == forge_sources, "Python runtime differs from the qualified forge sources")
+    header = {"schema": "language-gonol.python-qualification", "version": 2,
               "cpython": CPYTHON, "ucns": UCNS_PYTHON, "python": "3.12.14", "sqlite_runtime": sqlite3.sqlite_version,
               "inventory_sha256": sha256(canonical(before)).hexdigest(), "input_files": len(before),
               "input_bytes": sum(r["bytes"] for r in before), "implementation_sha256": implementation}
@@ -175,7 +192,7 @@ def python_pass(corpus, producer, out):
                     manifest = json.loads((state / "manifest.json").read_text())
                     record.update(outcome="CONSTRUCTED", manifest=manifest)
                     counts["constructed"] += 1
-                    counts["off_carrier_files"] += bool(result.not_on_pinned_carrier)
+                    counts["scalar_occurrences"] += result.occurrence_count
                     counts["tokenize_false"] += not result.tokenize_ok
                     counts["ast_false"] += not result.ast_ok
             stream.write(canonical(record) + b"\n"); stream.flush()
@@ -185,7 +202,7 @@ def python_pass(corpus, producer, out):
     for path, digest in implementation.items():
         require(sha256((ROOT / path).read_bytes()).hexdigest() == digest, "implementation changed during run")
     header.update(counts=dict(counts), outcomes_sha256=sha256((out / "outcomes.jsonl").read_bytes()).hexdigest(),
-                  hmmm=["off-carrier glyph admission", "deeper geometry", "grammar/runtime equivalence is outside source-floor qualification"])
+                  hmmm=["Python grammar relations", "grammar/runtime equivalence is outside source-floor qualification"])
     require(counts["constructed"] + counts["rejected_encoding"] == len(before), "unaccounted source")
     (out / "receipt.json").write_bytes(canonical(header) + b"\n")
     print(json.dumps(header, indent=2))
@@ -208,14 +225,12 @@ def check_manifest(row):
     from python_gonol import construct as producer
     manifest = row.get("manifest")
     fields = {"schema", "version", "source_id", "encoding", "source_bytes_sha256",
-              "decoded_source_sha256", "ucns", "counts", "not_on_pinned_carrier",
+              "decoded_source_sha256", "ucns", "counts",
               "verification", "preflight_storage_bytes", "hmmm", "construct_sha256",
               "receipt_sha256"}
     require(isinstance(manifest, dict) and set(manifest) == fields, "manifest fields mismatch")
     require((manifest["schema"], manifest["version"]) == (producer.SCHEMA, producer.VERSION), "manifest schema mismatch")
-    require(manifest["ucns"] == {"commit": producer.UCNS_PUBLIC_GONOL_COMMIT,
-            "public_gonol_module_sha256": producer.UCNS_PUBLIC_GONOL_MODULE_SHA256,
-            "public_gonol_sha256": producer.PUBLIC_GONOL_SHA256}, "manifest UCNS mismatch")
+    require(manifest["ucns"] == producer.producer_identity(), "manifest UCNS mismatch")
     require(manifest["source_id"] == row["path"] and manifest["source_bytes_sha256"] == row["sha256"], "manifest source identity mismatch")
     for field in ("source_bytes_sha256", "decoded_source_sha256", "construct_sha256", "receipt_sha256"):
         require(isinstance(manifest[field], str) and re.fullmatch(r"[0-9a-f]{64}", manifest[field]), "manifest digest mismatch")
@@ -223,13 +238,10 @@ def check_manifest(row):
     counts = manifest["counts"]
     require(isinstance(counts, dict) and set(counts) == {"characters", "occurrences", "controls", "newlines"}, "manifest counts missing")
     require(all(type(n) is int and n >= 0 for n in counts.values()), "manifest counts invalid")
-    require(counts["newlines"] <= counts["controls"] <= counts["occurrences"] and counts["characters"] == 157, "manifest counts inconsistent")
+    require(counts["newlines"] <= counts["controls"] <= counts["occurrences"] and 157 <= counts["characters"] <= min(1112064, 157 + counts["occurrences"]), "manifest counts inconsistent")
     require(type(manifest["preflight_storage_bytes"]) is int and manifest["preflight_storage_bytes"] == 65536 + counts["occurrences"] * 256, "manifest preflight mismatch")
     flags = manifest["verification"]
     require(isinstance(flags, dict) and set(flags) == {"tokenize_ok", "ast_ok"} and all(type(flag) is bool for flag in flags.values()), "manifest verification invalid")
-    scalars = manifest["not_on_pinned_carrier"]
-    require(isinstance(scalars, list) and all(isinstance(c, str) and len(c) == 1 and not 0xD800 <= ord(c) <= 0xDFFF for c in scalars), "manifest off-carrier scalars invalid")
-    require(scalars == sorted(set(scalars)), "manifest off-carrier scalars not canonical")
     require(isinstance(manifest["hmmm"], str) and bool(manifest["hmmm"]), "manifest unresolved constraints missing")
     payload = {key: value for key, value in manifest.items() if key != "receipt_sha256"}
     require(sha256(canonical(payload)).hexdigest() == manifest["receipt_sha256"], "manifest receipt mismatch")
@@ -241,7 +253,7 @@ def compare(a, b):
     for filename in ("receipt.json", "inventory.json", "outcomes.jsonl"):
         require((a / filename).read_bytes() == (b / filename).read_bytes(), "independent pass mismatch: " + filename)
     receipt = json.loads((a / "receipt.json").read_text())
-    require(receipt.get("schema") == "language-gonol.python-qualification" and receipt.get("version") == 1, "qualification schema mismatch")
+    require(receipt.get("schema") == "language-gonol.python-qualification" and receipt.get("version") == 2, "qualification schema mismatch")
     require((receipt.get("cpython"), receipt.get("ucns"), receipt.get("python")) == (CPYTHON, UCNS_PYTHON, "3.12.14"), "qualification provenance mismatch")
     require(receipt.get("sqlite_runtime") == sqlite3.sqlite_version, "qualification SQLite runtime mismatch")
     require(receipt.get("implementation_sha256") == implementation_hashes(), "qualification implementation mismatch")
@@ -263,7 +275,7 @@ def compare(a, b):
                 require(row["outcome"] == "CONSTRUCTED", "unknown admission outcome")
                 counts["constructed"] += 1
                 manifest = check_manifest(row)
-                counts["off_carrier_files"] += bool(manifest["not_on_pinned_carrier"])
+                counts["scalar_occurrences"] += manifest["counts"]["occurrences"]
                 counts["tokenize_false"] += not manifest["verification"]["tokenize_ok"]
                 counts["ast_false"] += not manifest["verification"]["ast_ok"]
         require(dict(counts) == receipt["counts"], "admission aggregate mismatch")
@@ -296,11 +308,12 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     p = commands.add_parser("python-pass")
     p.add_argument("corpus", type=Path); p.add_argument("producer", type=Path); p.add_argument("out", type=Path)
+    p.add_argument("--installed", action="store_true", help="exercise the exact installed UCHC Python runtime")
     p = commands.add_parser("compare"); p.add_argument("a", type=Path); p.add_argument("b", type=Path)
     p = commands.add_parser("check-tests"); p.add_argument("paths", type=Path, nargs="+")
     args = parser.parse_args()
     if args.command == "python-pass":
-        python_pass(args.corpus.resolve(), args.producer.resolve(), args.out.resolve())
+        python_pass(args.corpus.resolve(), args.producer.resolve(), args.out.resolve(), installed=args.installed)
     elif args.command == "check-tests":
         check_tests(args.paths)
     elif args.command == "compare":
@@ -309,4 +322,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-# ratios: loc_comments=238:42 imports_exports=19:12 calls_definitions=139:12
+# ratios: loc_comments=251:42 imports_exports=21:12 calls_definitions=146:12
