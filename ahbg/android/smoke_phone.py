@@ -2,6 +2,7 @@
 import re
 from pathlib import Path
 import subprocess
+import sys
 import time
 import xml.etree.ElementTree as ET
 
@@ -99,3 +100,13 @@ assert visible_plane() == plane_id
 target("Commit plan", scroll=True)
 target("Builder moved to Ring 5 / Explorer moved to Center", scroll=True, contains=True)
 print("Release APK recovered the identical plane after process termination and a network interruption.", flush=True)
+
+# Deployment acceptance runs after the server publishes the new WebView UI.
+if "--scouting" in sys.argv[1:]:
+    target("Explorer", tap=True, scroll=True)
+    target("No report", tap=True, scroll=True)
+    target("Center", tap=True)
+    target("Commit plan", tap=True, scroll=True)
+    target("Turn 3 / 16", scroll=True, timeout=150)
+    target("Builder", tap=True, scroll=True)
+    target("Turn 2 · Center · Explorer · Constructed", scroll=True, contains=True)

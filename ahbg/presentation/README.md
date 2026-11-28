@@ -88,7 +88,7 @@ occupant count, and renders the selection ring above the unit layer.
 
 ## hmmm
 
-- whether later Flower-of-Life rings belong on this presentation surface;
+- the phone must render discovered exterior geometry under [Stack #126](https://github.com/The-Interdependency/stack/issues/126#issuecomment-7237940705); the first native outward relation and display position are tracked in [UCNS #255](https://github.com/The-Interdependency/ucns/issues/255);
 - the exact live engine-to-observation adapter that attaches UCNS positions is
   owned by the eventual engine integration, not by this graphics package;
 - construction animation remains unavailable until an owning mechanics layer

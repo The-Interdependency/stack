@@ -6,13 +6,13 @@ for (const id of ["fauna", "fork-fauna"]) {
   for (const [value, label] of Object.entries(faunaNames)) byId(id).add(new Option(label, value));
 }
 let room = null, state = null, unit = null, busy = false;
-let orders = {}, messages = {}, camera = null, base = null;
+let orders = {}, messages = {}, reportTile = "", camera = null, base = null;
 const nameOf = id => ({builder:"Builder",explorer:"Explorer",rival:"Rival builder",fauna:"Fauna"})[id] || id;
 const tileName = id => id === "CENTER" ? "Center" : id.replace("RING_", "Ring ");
 const actionName = a => (a.action === "construct" ? "Build " : "Move to ") + tileName(a.to_tile_id);
 const say = text => { byId("status").textContent = text; };
 const draftKey = () => "ahbg/draft/" + room + "/" + state.observation.turn;
-const saveDraft = () => localStorage.setItem(draftKey(), JSON.stringify({orders, messages}));
+const saveDraft = () => localStorage.setItem(draftKey(), JSON.stringify({orders, messages, reportTile}));
 function button(text, click) {
   const b = document.createElement("button");
   b.type = "button"; b.textContent = text; b.addEventListener("click",click); return b;
@@ -46,7 +46,7 @@ async function openPlane(id) {
   byId("lobby").hidden=true; byId("game").hidden=false;
   if (change) {
     const draft=JSON.parse(localStorage.getItem(draftKey()) || "{}");
-    orders=draft.orders||{}; messages=draft.messages||{};
+    orders=draft.orders||{}; messages=draft.messages||{}; reportTile=draft.reportTile||"";
     if (!state.observation.owned.includes(unit)) unit=state.observation.owned[0];
     camera=null;
     byId("fork-fauna").value="";
@@ -54,6 +54,7 @@ async function openPlane(id) {
   if (state.own_commit) {
     orders=Object.fromEntries(state.own_commit.intents.map(a=>[a.unit_id,a]));
     messages=state.own_commit.messages||{};
+    reportTile=state.own_commit.report_tile||"";
   }
   draw();
 }
@@ -106,6 +107,26 @@ function drawOrders() {
     target.append(b);
   }
   byId("message").value=messages[unit]||""; byId("message").disabled=locked;
+  const scouting=o.scouting[unit];
+  const remembered=scouting.discovered.filter(tile=>!scouting.visible.includes(tile));
+  byId("discovery").textContent="In sight · "+scouting.visible.map(tileName).join(", ")+
+    (remembered.length ? ". Previously seen · "+remembered.map(tileName).join(", ") : "");
+  byId("scout-control").hidden=unit!=="explorer";
+  if(unit==="explorer"){
+    const select=byId("report-tile");
+    select.replaceChildren(new Option("No report",""));
+    for(const tile of scouting.visible) select.add(new Option(tileName(tile),tile));
+    select.value=reportTile; select.disabled=locked;
+  }
+  const reports=o.inbox.filter(m=>m.kind==="scout_report" && m.to===unit);
+  byId("scout-inbox").hidden=!reports.length;
+  const list=byId("scout-reports"); list.replaceChildren();
+  for(const r of reports){
+    const row=document.createElement("li");
+    row.textContent="Turn "+(r.turn+1)+" · "+tileName(r.tile)+" · "+
+      (r.occupant?nameOf(r.occupant):"Unoccupied")+" · "+(r.built?"Constructed":"Unconstructed");
+    list.prepend(row);
+  }
   const pending=byId("draft"); pending.replaceChildren();
   for(const id of o.owned) {
     const row=document.createElement("p");
@@ -116,9 +137,14 @@ function drawOrders() {
     }
     pending.append(row);
   }
+  if(reportTile){
+    const row=document.createElement("p");
+    row.textContent="Explorer report · "+tileName(reportTile)+" to Builder"; pending.append(row);
+  }
   const commit=byId("commit"); commit.disabled=locked;
   commit.textContent=state.done?"Campaign complete":state.committed?"Waiting for the other seat":busy?"Resolving…":"Commit plan";
 }
+byId("report-tile").onchange=e=>{reportTile=e.target.value;saveDraft();drawOrders();};
 byId("message").oninput=()=>{
   const text=Array.from(byId("message").value).slice(0,256).join("");
   messages[unit]=text; byId("message").value=text; saveDraft();
@@ -134,6 +160,7 @@ byId("invite").onclick=()=>run(async()=>{const r=await api("rooms/"+room+"/invit
 byId("commit").onclick=()=>run(async()=>{
   const key=draftKey();
   const payload={session_id:room,turn:state.observation.turn,intents:Object.values(orders),messages};
+  if(reportTile) payload.report_tile=reportTile;
   say("Submitting orders…");
   await api("rooms/"+room+"/plan",payload);
   localStorage.removeItem(key); await openPlane(room);

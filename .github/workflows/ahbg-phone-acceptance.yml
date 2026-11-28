@@ -39,7 +39,7 @@ jobs:
           disable-animations: true
           script: |
             adb install /tmp/ahbg-alpha.apk
-            python3 ahbg/android/smoke_phone.py
+            python3 ahbg/android/smoke_phone.py ${{ github.event_name == 'workflow_dispatch' && '--scouting' || '' }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

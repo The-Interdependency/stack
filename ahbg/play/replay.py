@@ -9,7 +9,7 @@ from .game import Plane
 def replay(case):
     plane = Plane(case["room"], case["seed"])
     for row in case["turns"]:
-        outcome = plane.resolve(row["plans"])
+        outcome = plane.resolve(row["plans"], receipt_version=row["outcome"].get("version", 1))
         if outcome != row["outcome"]:
             raise ValueError(f"turn {plane.field.turn} diverged")
     return {"turns": plane.field.turn, "built": plane.ledger.as_dict()["built"],

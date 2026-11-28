@@ -37,6 +37,7 @@ class Plane:
         self.ledger = ConstructionLedger.open(self.field)
         self.history = []
         self.diaries = {unit: [] for unit in self.field.occupants}
+        self.discovered = {unit: self.visible([unit]) for unit in self.field.occupants}
 
     def visible(self, units):
         tiles = set()
@@ -69,7 +70,9 @@ class Plane:
         # The seed and other participants' plans are operator replay material.
         del obs["field"]["seed"]
         obs.update(owned=units, visible=sorted(sight), presentation=board,
-                   built=sorted(set(self.ledger.as_dict()["built"]) & sight))
+                   built=sorted(set(self.ledger.as_dict()["built"]) & sight),
+                   scouting={unit: {"visible": sorted(self.visible([unit])),
+                                    "discovered": sorted(self.discovered[unit])} for unit in units})
         return obs
 
     def validate(self, seat, raw):
@@ -87,10 +90,25 @@ class Plane:
             for u, t in messages.items()
         ):
             raise ProtocolError("orders must address an owned unit and fit 256 Unicode code points")
-        return {"session_id": self.room, "turn": self.field.turn,
-                "intents": [i.as_dict() for i in plan.intents], "messages": messages}
+        accepted = {"session_id": self.room, "turn": self.field.turn,
+                    "intents": [i.as_dict() for i in plan.intents], "messages": messages}
+        if "report_tile" in raw:
+            tile = raw["report_tile"]
+            if "explorer" not in view["owned"] or tile not in view["scouting"]["explorer"]["visible"]:
+                raise ProtocolError("choose a tile in the Explorer's current sight to report")
+            accepted["report_tile"] = tile
+        return accepted
 
-    def resolve(self, plans):
+    def scout_report(self, tile):
+        occupant = self.field.occupant_on(tile)
+        built = tile in self.ledger.as_dict()["built"]
+        return {"kind": "scout_report", "turn": self.field.turn, "from": "explorer", "to": "builder",
+                "tile": tile, "occupant": occupant, "built": built,
+                "text": f"{tile}: {occupant or 'unoccupied'}, {'constructed' if built else 'unconstructed'}."}
+
+    def resolve(self, plans, *, receipt_version=2):
+        if type(receipt_version) is not int or receipt_version not in (1, 2):
+            raise ValueError("unknown turn receipt version")
         if set(plans) != set(SEATS):
             raise ValueError("all seats must commit")
         intents = []
@@ -101,6 +119,8 @@ class Plane:
             views[seat] = set(self.observe(seat)["visible"])
             for unit, text in plan["messages"].items():
                 self.diaries[unit].append({"turn": self.field.turn, "from": seat, "to": unit, "text": text})
+            if "report_tile" in plan:
+                self.diaries["builder"].append(self.scout_report(plan["report_tile"]))
         cycle = Cycle(self.field, self.chain)
         cycle.open_turn()
         start = len(self.chain.records)
@@ -115,14 +135,22 @@ class Plane:
                     event = {"kind": "build_refused", **args}
                 events.append(event)
         cycle.close_turn()
-        receipt = fingerprint([self.field.snapshot(), self.ledger.as_dict(), events, self.diaries])
+        for unit in self.discovered:
+            self.discovered[unit].update(self.visible([unit]))
+        committed = [self.field.snapshot(), self.ledger.as_dict(), events, self.diaries]
+        if receipt_version == 2:
+            committed.append({unit: sorted(tiles) for unit, tiles in self.discovered.items()})
         private = {}
         for seat, sight in views.items():
             units = [row[0] for row in SEATS[seat]]
-            private[seat] = [e for e in events if e["unit_id"] in units or
+            private[seat] = [{k: v for k, v in e.items() if k != "built_count"}
+                             for e in events if e["unit_id"] in units or
                              {e["from_tile_id"], e["to_tile_id"]} <= sight]
         self.history.append(private)
-        return {"events": events, "digest": receipt}
+        result = {"events": events, "digest": fingerprint(committed)}
+        if receipt_version == 2:
+            result["version"] = receipt_version
+        return result
 
     def bot(self, seat, controller, seed):
         view = self.observe(seat)

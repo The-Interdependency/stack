@@ -38,6 +38,13 @@ class HttpBoundaryTests(unittest.TestCase):
         other=self.request("/api/identity",{})[1]["Set-Cookie"].split(";")[0]
         self.assertEqual(self.request(path,cookie=other)[0],404)
         self.assertEqual(self.request(path,cookie=cookie)[2]["seat"],"amber")
+        unit_path = f"/api/rooms/{key}/observe/"
+        unit = self.request(unit_path + "explorer", cookie=cookie)[2]
+        self.assertEqual(unit["owned"], ["explorer"])
+        self.assertEqual(unit["legal"], [a for a in self.request(path, cookie=cookie)[2]["observation"]["legal"]
+                                         if a["unit_id"] == "explorer"])
+        self.assertEqual(self.request(unit_path + "rival", cookie=cookie)[0], 404)
+        self.assertEqual(self.request(unit_path + "builder", cookie=other)[0], 404)
 
     def test_fork_changes_only_fauna_after_replaying_the_saved_turn(self):
         cookie = self.request("/api/identity", {})[1]["Set-Cookie"].split(";")[0]
