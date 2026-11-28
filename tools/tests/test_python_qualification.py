@@ -1,4 +1,4 @@
-# ratios: loc_comments=146:53 imports_exports=7:11 calls_definitions=73:16
+# ratios: loc_comments=170:53 imports_exports=14:12 calls_definitions=83:17
 """Negative controls for the qualification gate; run with pytest."""
 # === CHECKS ===
 # id: check_test_compare_rejects_self_consistent_incomplete_inventory
@@ -64,6 +64,29 @@ qualification = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(qualification)
 
 
+def test_all_preupgrade_projection_misses_have_native_glyphs(tmp_path):
+    import os
+    import sqlite3
+    import sys
+    sys.path.insert(0, str(qualification.ROOT / "research/python-gonol"))
+    from python_gonol import affixiate_python_source, verify_construct
+
+    history = qualification.ROOT / "docs/evidence/python-gonol-20260919/python-outcomes.jsonl.gz"
+    rows = [json.loads(line) for line in gzip.decompress(history.read_bytes()).splitlines()]
+    flags = [row["manifest"]["not_on_pinned_carrier"] for row in rows
+             if row["outcome"] == "CONSTRUCTED" and row["manifest"]["not_on_pinned_carrier"]]
+    scalars = sorted({ch for flag in flags for ch in flag})
+    assert (len(flags), len(scalars)) == (113, 290)
+    native = os.environ["UCNS_SOURCE_ROOT"]
+    text = "".join(scalars)
+    result = affixiate_python_source(text, state_dir=tmp_path, source_id="archived-scalars", ucns_source_root=native)
+    with sqlite3.connect(tmp_path / "construct.db") as db:
+        qualification.check_source_rows(db, text.encode(), "utf-8")
+        assert db.execute("SELECT count(*) FROM occurrences o JOIN characters c ON c.id=o.character_id "
+                          "WHERE c.public_position IS NULL").fetchone() == (len(scalars),)
+    assert verify_construct(tmp_path, native) == result.receipt_sha256
+
+
 @pytest.mark.parametrize("body", ["", "<testcase><skipped/></testcase>", "<testcase><failure/></testcase>", "<testcase><error/></testcase>"])
 def test_test_gate_rejects_incomplete_evidence(tmp_path, body):
     path = tmp_path / "outcome.xml"
@@ -98,7 +121,7 @@ def test_compare_rejects_self_consistent_incomplete_inventory(tmp_path):
     inputs = [{"path": "x.py", "git_blob": "a" * 40, "sha256": "b" * 64, "bytes": 1}]
     outcome = {**inputs[0], "outcome": "REJECTED_ENCODING", "reason": "SyntaxError"}
     data = qualification.canonical(outcome) + b"\n"
-    receipt = {"schema": "language-gonol.python-qualification", "version": 1,
+    receipt = {"schema": "language-gonol.python-qualification", "version": 2,
                "cpython": qualification.CPYTHON, "ucns": qualification.UCNS_PYTHON,
                "python": "3.12.14", "sqlite_runtime": qualification.sqlite3.sqlite_version, "implementation_sha256": qualification.implementation_hashes(),
                "input_files": 1, "input_bytes": 1, "counts": {"rejected_encoding": 1},
@@ -110,7 +133,7 @@ def test_compare_rejects_self_consistent_incomplete_inventory(tmp_path):
         (root / "receipt.json").write_bytes(qualification.canonical(receipt))
     with pytest.raises(ValueError, match="pinned CPython inventory"):
         qualification.compare(a, b)
-    for key, value in (("schema", "wrong"), ("version", 2), ("cpython", "wrong"), ("ucns", "wrong"),
+    for key, value in (("schema", "wrong"), ("version", 1), ("cpython", "wrong"), ("ucns", "wrong"),
                        ("python", "wrong"), ("implementation_sha256", {}), ("input_bytes", 2), ("counts", {})):
         bad = {**receipt, key: value}
         for root in (a, b):
@@ -120,14 +143,15 @@ def test_compare_rejects_self_consistent_incomplete_inventory(tmp_path):
 
 
 def _complete_pair(tmp_path, change=lambda rows: None):
-    """Historical records are schema fixtures, never a new execution receipt."""
+    """Use the independently replayed v3 manifests as comparison fixtures."""
     evidence = qualification.ROOT / 'docs/evidence/python-gonol-20260919'
     inputs = json.loads(gzip.decompress((evidence / 'python-inventory.json.gz').read_bytes()))
+    current = qualification.ROOT / 'docs/evidence/python-gonol-unicode-v3'
     rows = [json.loads(line) for line in gzip.decompress(
-        (evidence / 'python-outcomes.jsonl.gz').read_bytes()).splitlines()]
+        (current / 'outcomes.jsonl.gz').read_bytes()).splitlines()]
     change(rows)
     data = b''.join(qualification.canonical(row) + b'\n' for row in rows)
-    receipt = json.loads((evidence / 'python-replay.json').read_text())['receipt']
+    receipt = json.loads((current / 'receipt.json').read_text())
     receipt.update(sqlite_runtime=qualification.sqlite3.sqlite_version,
                    implementation_sha256=qualification.implementation_hashes(),
                    outcomes_sha256=sha256(data).hexdigest())
@@ -145,7 +169,7 @@ def test_compare_accepts_complete_manifest_fixture(tmp_path):
 
 
 @pytest.mark.parametrize('field,value', [
-    ('schema', 'wrong'), ('version', '1.0.0'), ('ucns', {}),
+    ('schema', 'wrong'), ('version', '1.0.0'), ('version', '2.0.0'), ('ucns', {}),
     ('source_id', 'elsewhere.py'), ('source_bytes_sha256', '0' * 64),
     ('decoded_source_sha256', 'wrong'), ('construct_sha256', 'wrong'),
     ('counts', {}), ('preflight_storage_bytes', 1), ('hmmm', ''),
@@ -163,7 +187,7 @@ def test_compare_rejects_rebound_invalid_manifest(tmp_path, field, value):
 
 def test_compare_rejects_minimal_constructed_manifest(tmp_path):
     def change(rows):
-        rows[0]['manifest'] = {'not_on_pinned_carrier': [],
+        rows[0]['manifest'] = {'counts': {},
                                'verification': {'ast_ok': True, 'tokenize_ok': True}}
     with pytest.raises(ValueError, match='manifest'):
         qualification.compare(*_complete_pair(tmp_path, change))
@@ -176,22 +200,24 @@ def test_compare_checks_each_manifest_receipt(tmp_path):
         qualification.compare(*_complete_pair(tmp_path, change))
 
 
-def test_tab_oracle_counts_formfeed_as_one_column():
+def test_tab_oracle_counts_formfeed_as_one_column(tmp_path):
+    import os
     import sqlite3
+    import sys
+    sys.path.insert(0, str(qualification.ROOT / "research/python-gonol"))
+    from python_gonol import affixiate_python_bytes
     raw = b'abc\f\t'
-    with sqlite3.connect(':memory:') as db:
-        db.executescript('CREATE TABLE source_bytes(data BLOB); '
-                         'CREATE TABLE occurrences(id, ordinal, scalar, line, column); '
-                         'CREATE TABLE controls(occurrence_id, spaces_to_next_stop);')
-        db.execute('INSERT INTO source_bytes VALUES (?)', (raw,))
-        db.executemany('INSERT INTO occurrences VALUES (?,?,?,?,?)',
-                       [(i + 1, i, ch, 1, i + 1) for i, ch in enumerate(raw.decode())])
-        db.execute('INSERT INTO controls VALUES (5,4)')
+    affixiate_python_bytes(raw, source_id="oracle.py", state_dir=tmp_path,
+                           ucns_source_root=os.environ["UCNS_SOURCE_ROOT"])
+    with sqlite3.connect(tmp_path / "construct.db") as db:
         qualification.check_source_rows(db, raw, 'utf-8')
         db.execute('UPDATE controls SET spaces_to_next_stop=8')
         with pytest.raises(ValueError, match='tab expansion'):
             qualification.check_source_rows(db, raw, 'utf-8')
-
+        db.execute('UPDATE controls SET spaces_to_next_stop=4')
+        db.execute("UPDATE occurrences SET character_id=98 WHERE scalar='a'")
+        with pytest.raises(ValueError, match='matching Unicode glyph'):
+            qualification.check_source_rows(db, raw, 'utf-8')
 
 
 @pytest.mark.parametrize('attack', ['all_rejected', 'valid_rejected', 'wrong_reason'])
@@ -216,11 +242,11 @@ def test_compare_binds_actual_encoding_admission(tmp_path, attack):
                 counts['rejected_encoding'] += 1
             else:
                 counts['constructed'] += 1
-                counts['off_carrier_files'] += bool(row['manifest']['not_on_pinned_carrier'])
+                counts['scalar_occurrences'] += row['manifest']['counts']['occurrences']
                 counts['tokenize_false'] += not row['manifest']['verification']['tokenize_ok']
                 counts['ast_false'] += not row['manifest']['verification']['ast_ok']
         receipt['counts'] = dict(counts)
         (root / 'receipt.json').write_bytes(qualification.canonical(receipt))
     with pytest.raises(ValueError, match='encoding admission'):
         qualification.compare(*roots)
-# ratios: loc_comments=146:53 imports_exports=7:11 calls_definitions=73:16
+# ratios: loc_comments=170:53 imports_exports=14:12 calls_definitions=83:17

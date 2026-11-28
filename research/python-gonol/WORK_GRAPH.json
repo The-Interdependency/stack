@@ -3,8 +3,8 @@
     "agent_scope": "cross-repository-work-graph",
     "authority_transfer": false,
     "hmmm": [
-      "exact UCNS Public Gonol function operations remain unresolved",
-      "deeper geometric functions and admission of arbitrary Unicode source characters remain unresolved; preserved without invention"
+      "Python grammar relations and runtime equivalence",
+      "higher-scale geometric functions"
     ],
     "measurement_status_transfer": false,
     "proof_status_transfer": false,
@@ -13,7 +13,7 @@
   "repositories": [
     {
       "authority": "stack-local Python Gonol implementation owner",
-      "commit": "d24b05bfbf6a893f7acf40c571dd9be280d37f2c",
+      "commit": "3dd568e4b40561c11146df789db972a4e789582e",
       "relation": "construction workspace and implementation owner",
       "repository": "The-Interdependency/stack"
     },
@@ -24,9 +24,9 @@
       "repository": "The-Interdependency/metapat"
     },
     {
-      "authority": "geometry and Public Gonol position authority",
-      "commit": "62e08ee1cf3b5d7b6e48c927b1047509e6328b5c",
-      "relation": "geometry and Public Gonol position authority",
+      "authority": "Unicode glyph and Public Gonol geometry authority",
+      "commit": "ee8addc0af36f02b64b42cb355734cb72a126ea5",
+      "relation": "UCNS supplies the native Unicode glyph, SPACE-relative bearing and optional Public Gonol position",
       "repository": "The-Interdependency/ucns"
     },
     {
@@ -44,5 +44,5 @@
   ],
   "schema": "the-interdependency.stack-manifest",
   "version": "1.0.0",
-  "work_graph_sha256": "19b6cd9b731f96f6f8cdb067097ace4640474081a5ef26f5e430f53b21a177da"
+  "work_graph_sha256": "bfe1c7cc036d91d4478f0686b2d8e2bffdf4351dcc8ae4374fe7fa897e816376"
 }

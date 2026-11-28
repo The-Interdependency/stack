@@ -90,3 +90,18 @@ The [skill resolver](skill_resolver/README.md) uses the ordinal-halving release
 for skill records and reads dependency and co-load declarations from a pinned
 skill-lib catalog. The pilot guide shows how to compare its UCHC and typed-graph
 views in the AHBG harness. The host retains authority over tool execution.
+
+## Python source construction
+
+The Python consumer pins the UCHC 0.2.0a4 wheel by SHA-256 in
+`python-requirements.txt`. Download that wheel from the UCHC GitHub release
+into `dist`, then install it in a clean environment:
+
+```sh
+python -m pip install --no-index --no-deps --require-hashes --find-links dist -r integration/uchc/python-requirements.txt
+python -I -m python_gonol example.py --out-dir construct --ucns-source-root /path/to/pinned/ucns
+python -I -m python_gonol --verify construct --ucns-source-root /path/to/pinned/ucns
+```
+
+The [qualification record](../../docs/python-gonol-qualification.md) identifies the
+UCNS producer, the CPython source inventory and the independent source and installed runs.

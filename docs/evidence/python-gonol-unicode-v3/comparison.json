@@ -1,0 +1,43 @@
+{
+  "schema": "python-gonol.unicode-corpus-comparison",
+  "constructor_version": "3.0.0",
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "stack_constructor": "3dd568e4b40561c11146df789db972a4e789582e",
+  "uchc_package_source": "4776e293d88ef3e70c516e6b9d9b18a0874eb1ae",
+  "ucns": "ee8addc0af36f02b64b42cb355734cb72a126ea5",
+  "cpython": "2abcf904b8dac8c999d2b3aac76681abb333798a",
+  "runs": [
+    "Stack source in an isolated interpreter",
+    "Installed UCHC wheel in a clean isolated interpreter"
+  ],
+  "wheel": {
+    "name": "uchc-0.2.0a4-py3-none-any.whl",
+    "sha256": "e1d8945078f64a0e8cf8ad57e99fe732caac9d3cbb83e1396225e9f563698e93",
+    "source_date_epoch": 1790308800
+  },
+  "compared_files": {
+    "inventory.json": "46a0d052fccc33056551160d29c6fbbe9f2e7581cee4141b2753d442a2357bce",
+    "outcomes.jsonl": "57d6adefeeaa4befb9e38550987ce42d8a2c7daaa748aa4911cbb2a087a39b61",
+    "receipt.json": "2297f7c28d49aafa59bf46bab0d26e2e36eaff776e422268b29aed392ebc0672"
+  },
+  "inventory_source": "../python-gonol-20260919/python-inventory.json.gz",
+  "identical_across_runs": true,
+  "input_files": 1052,
+  "input_bytes": 20732440,
+  "counts": {
+    "ast_false": 6,
+    "constructed": 1049,
+    "rejected_encoding": 3,
+    "scalar_occurrences": 20728462,
+    "tokenize_false": 0
+  },
+  "missing_occurrence_identities": 0,
+  "historical_public_projection": {
+    "flagged_files": 113,
+    "distinct_scalars": 290,
+    "supplementary_scalars": 27,
+    "now_verified": 290
+  },
+  "scope": "Original bytes, Unicode occurrence-to-glyph identity, source positions, control constructions, replay and recorded recognition outcomes."
+}

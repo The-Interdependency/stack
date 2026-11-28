@@ -3,7 +3,9 @@
 Scope: Python source construction and replay. The separate English dependency
 PR owns density rendering, English CI and English evidence.
 
-The repaired constructor preserves original source bytes, physical CR/LF/CRLF
+Schema 3 assigns a native UCNS identity to every decoded Unicode scalar.
+It retains the exact UTF-32BE diameter, UTF-8 spelling, SPACE-relative bearing
+and optional Public Gonol position. It preserves original source bytes, physical CR/LF/CRLF
 addresses, and Python tab expansion. Form-feed consumes one expanded column;
 it does not reset the tab stop. Replay binds SQLite schema objects, every
 constitutive row and provenance field, and reconstructs from the retained bytes.
@@ -29,7 +31,7 @@ independent process executions.
 ## Reproduction
 
 Use Python 3.12.14 and `pip install --require-hashes -r requirements-language-tests.txt`.
-Set `UCNS_SOURCE_ROOT` to UCNS `62e08ee1cf3b5d7b6e48c927b1047509e6328b5c`.
+Set `UCNS_SOURCE_ROOT` to UCNS `ee8addc0af36f02b64b42cb355734cb72a126ea5`.
 From `research/python-gonol`:
 
 ```bash
@@ -38,12 +40,13 @@ python ../../tools/qualify_python_gonols.py check-tests /tmp/python-tests.xml
 ```
 
 From Stack's root, run `python-pass` twice in separate processes and new output
-directories, then compare. CPython must be at
+directories, then compare. Install the [hash-locked wheel](../integration/uchc/python-requirements.txt)
+in the second interpreter. CPython must be at
 `2abcf904b8dac8c999d2b3aac76681abb333798a` (the observed v3.12.14 tag target).
 
 ```bash
-python tools/qualify_python_gonols.py python-pass CPYTHON UCNS FIRST
-python tools/qualify_python_gonols.py python-pass CPYTHON UCNS SECOND
+python -I tools/qualify_python_gonols.py python-pass CPYTHON UCNS FIRST
+/path/to/clean-wheel-venv/bin/python -I tools/qualify_python_gonols.py python-pass --installed CPYTHON UCNS SECOND
 python tools/qualify_python_gonols.py compare FIRST SECOND
 ```
 
@@ -53,7 +56,23 @@ sources and implementation after execution. Temporary constructs are removed
 after each file. Corpus code is never executed. Preflight free storage against
 the largest input and allow the declared scope to finish without arbitrary cuts.
 
-## Historical evidence and current boundary
+## Full schema 3 qualification
+
+The [comparison](evidence/python-gonol-unicode-v3/comparison.json) binds the Stack
+constructor, installed UCHC 0.2.0a4 wheel and native UCNS producer. Two independent
+processes produced identical inventories, per-file outcomes and receipts. Each
+constructed 1,049 files and verified all **20,728,462** scalar occurrences against
+their source and glyph identities. The three pinned encoding fixtures were
+rejected before construction. Six files retained a negative AST witness.
+
+The [per-file manifests](evidence/python-gonol-unicode-v3/outcomes.jsonl.gz) and
+[receipt](evidence/python-gonol-unicode-v3/receipt.json) preserve the result. The
+inventory is byte-identical to the archived inventory. The regression test also
+constructs all 290 distinct scalars that the historical Public Gonol lookup
+flagged in 113 files. Each has a native Unicode identity. The former flag
+describes coverage of the optional 157-position projection.
+
+## Earlier evidence
 
 The [Python evidence projection](evidence/python-gonol-20260919/summary.json)
 retains the original 2026-09-19 file bytes and hashes: two complete independent
@@ -67,7 +86,5 @@ The first historical attempt failed after 671 files with SQLite's
 completed passes. Later 2026-09-23 attempts also encountered this error.
 The failed attempts remain evidence and do not count as completed qualification.
 
-All **83 current Python construction and qualification tests pass**, without
-skips. Complete CPython requalification of the repaired implementation remains
-pending. hmmm: the SQLite failure cause, active scalar-geometry migration,
-off-carrier admission, grammar/runtime equivalence and independent release.
+The cause of the earlier SQLite failure remains unresolved. Both schema 3 runs
+completed. Python grammar relations and runtime equivalence need separate evidence.

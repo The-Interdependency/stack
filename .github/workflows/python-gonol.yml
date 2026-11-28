@@ -13,6 +13,7 @@ on:
       - "tools/qualify_python_gonols.py"
       - "tools/tests/test_python_qualification.py"
       - "requirements-language-tests.txt"
+      - "integration/uchc/python-requirements.txt"
       - "docs/python-gonol-qualification.md"
       - "docs/evidence/python-gonol-*/**"
   push:
@@ -28,6 +29,7 @@ on:
       - "tools/qualify_python_gonols.py"
       - "tools/tests/test_python_qualification.py"
       - "requirements-language-tests.txt"
+      - "integration/uchc/python-requirements.txt"
       - "docs/python-gonol-qualification.md"
       - "docs/evidence/python-gonol-*/**"
 
@@ -49,11 +51,11 @@ jobs:
         run: python -m pip install --require-hashes -r requirements-language-tests.txt
       - name: Stack structural consistency
         run: python tools/check_stack_consistency.py
-      - name: Checkout pinned UCNS Public Gonol authority
+      - name: Checkout pinned UCNS Unicode geometry
         uses: actions/checkout@v7.0.1
         with:
           repository: The-Interdependency/ucns
-          ref: 62e08ee1cf3b5d7b6e48c927b1047509e6328b5c
+          ref: ee8addc0af36f02b64b42cb355734cb72a126ea5
           path: .ci/ucns
           persist-credentials: false
       - name: Python Gonol construction tests
@@ -63,3 +65,40 @@ jobs:
         run: python -m pytest -q tests ../../tools/tests/test_python_qualification.py --junitxml="$RUNNER_TEMP/python-gonol.xml"
       - name: Require every test to pass
         run: python tools/qualify_python_gonols.py check-tests "$RUNNER_TEMP/python-gonol.xml"
+
+      - name: Check out exact UCHC candidate for pre-publication verification
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: The-Interdependency/uchc
+          ref: 4776e293d88ef3e70c516e6b9d9b18a0874eb1ae
+          path: .ci/uchc
+          persist-credentials: false
+      - name: Build candidate wheel
+        if: github.event_name == 'pull_request'
+        env:
+          SOURCE_DATE_EPOCH: '1790308800'
+        run: |
+          python -m venv "$RUNNER_TEMP/uchc-build"
+          builder="$RUNNER_TEMP/uchc-build/bin/python"
+          "$builder" -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0
+          "$builder" -m pip wheel --no-deps --no-build-isolation .ci/uchc -w "$RUNNER_TEMP/uchc-dist"
+      - name: Download published wheel
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p "$RUNNER_TEMP/uchc-dist"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/uchc-dist/uchc-0.2.0a4-py3-none-any.whl" \
+            https://github.com/The-Interdependency/uchc/releases/download/uchc-v0.2.0a4/uchc-0.2.0a4-py3-none-any.whl
+      - name: Verify the hash-locked installed Python constructor
+        env:
+          UCNS_SOURCE_ROOT: ${{ github.workspace }}/.ci/ucns
+        run: |
+          python -m venv "$RUNNER_TEMP/uchc-consumer"
+          consumer="$RUNNER_TEMP/uchc-consumer/bin/python"
+          "$consumer" -m pip install --require-hashes -r requirements-language-tests.txt
+          "$consumer" -m pip install --no-index --no-deps --require-hashes \
+            --find-links "$RUNNER_TEMP/uchc-dist" -r integration/uchc/python-requirements.txt
+          cp research/python-gonol/tests/test_construct.py "$RUNNER_TEMP/test_python_construct.py"
+          "$consumer" -I -m pytest -c /dev/null --noconftest -q "$RUNNER_TEMP/test_python_construct.py" \
+            --junitxml="$RUNNER_TEMP/python-installed.xml"
+          python tools/qualify_python_gonols.py check-tests "$RUNNER_TEMP/python-installed.xml"

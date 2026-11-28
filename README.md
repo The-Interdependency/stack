@@ -97,13 +97,11 @@ English Gonol Construction is a separated stack-local component at
 English text-domain construction candidate. EDCM may evaluate those outputs but does
 not define the construction.
 
-Python Gonol Construction is a separate stack-local component at
-`research/python-gonol/`. It admits every exact Python source occurrence as a character
-gonol, closes the occurrence's applicable character-definition gonols, then affixiates
-lexical forms, delimiters, grammar constructions, and the module from already-closed
-participants. METAPAT owns affixiation semantics; UCNS owns optional consumed geometry;
-Python Gonol owns Python source construction. Tokens and AST nodes are recognition
-witnesses, never gonol substitutes.
+Python Gonol Construction in `research/python-gonol/` assigns the native UCNS
+Unicode identity to every decoded Python 3.12 source occurrence. It records the
+optional Public Gonol position, original encoding bytes, source addresses,
+controls and logical newlines. CPython tokenization and parsing supply witnesses.
+Python grammar relations remain open.
 
 EPAC-derived carrier research is a separate stack-local audit at
 `research/epac-derived-carrier/`. It consumes exact EPAC source bytes without

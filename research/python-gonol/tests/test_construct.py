@@ -1,4 +1,4 @@
-# ratios: loc_comments=200:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=230:74 imports_exports=11:12 calls_definitions=104:15
 # === CHECKS ===
 # id: check_python_complete_constitutive_replay
 #   proves: python_construct_replay_fails_closed_on_tamper
@@ -36,7 +36,7 @@
 #   cleanup: pytest_tmp_path
 #
 # id: check_python_construct_acceptance_gates
-#   proves: python_construct_one_shared_identity_per_glyph, python_construct_controls_are_constitutive, python_construct_newlines_remain_source_distinct, python_construct_off_carrier_is_hmmm_not_invented
+#   proves: python_construct_one_shared_identity_per_glyph, python_construct_controls_are_constitutive, python_construct_newlines_remain_source_distinct, python_construct_unicode_identity
 #   call: self::test_acceptance_gates
 #   requires: python3
 #   timeout: 60
@@ -86,9 +86,8 @@ from python_gonol import (
     verify_construct,
 )
 
-UCNS_SOURCE_ROOT = os.environ.get(
-    "UCNS_SOURCE_ROOT",
-    str(Path.home() / "src" / "ucns"),
+UCNS_SOURCE_ROOT = os.environ.get("PYTHON_GONOL_UCNS_ROOT") or os.environ.get(
+    "UCNS_SOURCE_ROOT", str(Path.home() / "src" / "ucns")
 )
 
 
@@ -130,9 +129,8 @@ def _newlines(state_dir: Path) -> list[tuple[str, list[int]]]:
 
 
 def test_acceptance_gates(tmp_path: Path) -> None:
-    # x=1\n produces no not-on-pinned-carrier and verifies.
+    # Every source occurrence, including LF, has a Unicode identity.
     state_dir, result = _build(tmp_path, "x=1\n")
-    assert result.not_on_pinned_carrier == ()
     assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
 
     # LF replays as exact U+000A and is a source-distinct LF newline.
@@ -146,7 +144,8 @@ def test_acceptance_gates(tmp_path: Path) -> None:
         character_count = connection.execute("SELECT COUNT(*) FROM characters").fetchone()[0]
     finally:
         connection.close()
-    assert character_count == 157  # every pinned glyph has one shared identity
+    assert character_count == 158  # the Public Gonol inventory and LF
+    assert scalar_rows == [(ch, ord(ch)) for ch in "x=1\n"]
     # x has one shared character identity.
     x_ids = {character_id for scalar, character_id in scalar_rows if scalar == "x"}
     assert len(x_ids) == 1
@@ -221,19 +220,50 @@ def test_declared_corpus_completes_within_preflight(tmp_path: Path) -> None:
         assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
 
 
-def test_off_carrier_unicode_is_hmmm_not_invented(tmp_path: Path) -> None:
-    state_dir, result = _build(tmp_path, "a\u20acb", source_id="euro.py")
-    assert "\u20ac" in result.not_on_pinned_carrier
-    assert reconstruct_source(state_dir) == "a\u20acb"
-    connection = sqlite3.connect(f"file:{state_dir / 'construct.db'}?mode=ro", uri=True)
-    try:
-        row = connection.execute(
-            "SELECT character_id, control_kind FROM occurrences WHERE ordinal = 1"
-        ).fetchone()
-    finally:
-        connection.close()
-    assert row == (None, None)
-    assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
+def test_full_unicode_identities_are_shared_across_sources(tmp_path: Path) -> None:
+    from fractions import Fraction
+
+    source = "eëe\u0308🐍\0\ufeff\t\f\r\n\U0010ffffë"
+    first, result = _build(tmp_path, source)
+    second, _ = _build(tmp_path, source[::-1], "reversed.py")
+    receipts = []
+    for directory, text in ((first, source), (second, source[::-1])):
+        with sqlite3.connect(directory / "construct.db") as db:
+            rows = db.execute(
+                "SELECT o.ordinal, c.id, c.scalar, c.utf32_be, c.utf8, c.public_position, "
+                "c.turn_numerator, c.turn_denominator, c.glyph_receipt FROM occurrences o "
+                "JOIN characters c ON o.character_id=c.id ORDER BY o.ordinal"
+            ).fetchall()
+        assert len(rows) == len(text)
+        for i, identity, scalar, utf32, utf8, position, n, d, receipt in rows:
+            assert (scalar, identity) == (text[i], ord(text[i]))
+            assert (utf32, utf8) == (scalar.encode("utf-32-be"), scalar.encode("utf-8"))
+            assert Fraction(n, d) == Fraction((identity - 32) % 0x110000, 0x110000)
+            if scalar in "ë🐍\u0308\U0010ffff":
+                assert position is None
+            assert len(receipt) == 64
+        receipts.append({row[2]: (row[1], row[-1]) for row in rows})
+    assert receipts[0] == receipts[1]
+    assert reconstruct_source(first) == source
+    assert verify_construct(first, UCNS_SOURCE_ROOT) == result.receipt_sha256
+
+
+@pytest.mark.parametrize("text", ["\ud800", "ok\udfff"])
+def test_surrogates_rejected_before_publication(tmp_path: Path, text: str) -> None:
+    with pytest.raises(PythonGonolConstructionError, match="surrogate"):
+        _build(tmp_path, text)
+    assert not list(tmp_path.rglob("construct.db"))
+
+
+def test_overwrite_rebuilds_from_original_bytes(tmp_path: Path) -> None:
+    state, old = _build(tmp_path, "x=1\n")
+    raw = b"# coding: latin-1\r\n# \xeb\r\n"
+    new = affixiate_python_bytes(raw, source_id="latin.py", ucns_source_root=UCNS_SOURCE_ROOT,
+                                 state_dir=state, overwrite=True)
+    assert verify_construct(state, UCNS_SOURCE_ROOT) == new.receipt_sha256 != old.receipt_sha256
+    with sqlite3.connect(state / "construct.db") as db:
+        assert db.execute("SELECT data FROM source_bytes").fetchone() == (raw,)
+        assert db.execute("SELECT utf32_be FROM characters WHERE id=235").fetchone() == (b"\0\0\0\xeb",)
 
 
 @pytest.mark.parametrize("prefix", [" " * n for n in range(16)] + [
@@ -269,6 +299,10 @@ def test_physical_source_addresses(tmp_path: Path, source: str, expected: list) 
 @pytest.mark.parametrize("statement", [
     "UPDATE control_identities SET member_ids='[]' WHERE kind='TAB'",
     "UPDATE characters SET public_position=900 WHERE scalar='Z'",
+    "UPDATE characters SET utf32_be=x'00000000' WHERE scalar='x'",
+    "UPDATE characters SET turn_numerator=999 WHERE scalar='x'",
+    "UPDATE characters SET glyph_receipt='wrong' WHERE scalar='x'",
+    "UPDATE occurrences SET character_id=120 WHERE scalar=char(9)",
     "UPDATE occurrences SET control_kind='TAB' WHERE scalar='x'",
     "UPDATE meta SET value='wrong' WHERE key='source_bytes_sha256'",
     "DELETE FROM occurrences",
@@ -304,11 +338,12 @@ def test_replay_preserves_original_bytes(tmp_path: Path, raw: bytes) -> None:
     assert verify_construct(state_dir, UCNS_SOURCE_ROOT) == result.receipt_sha256
 
 
-def test_replay_rejects_legacy_version(tmp_path: Path) -> None:
+@pytest.mark.parametrize("legacy", ["1.0.0", "2.0.0"])
+def test_replay_rejects_legacy_version(tmp_path: Path, legacy: str) -> None:
     state_dir, _ = _build(tmp_path, "x=1\n")
     path = state_dir / "manifest.json"
-    data = json.loads(path.read_text()); data["version"] = "1.0.0"
+    data = json.loads(path.read_text()); data["version"] = legacy
     path.write_text(json.dumps(data))
     with pytest.raises(PythonGonolConstructionError, match="version"):
         verify_construct(state_dir, UCNS_SOURCE_ROOT)
-# ratios: loc_comments=200:74 imports_exports=10:10 calls_definitions=87:13
+# ratios: loc_comments=230:74 imports_exports=11:12 calls_definitions=104:15
