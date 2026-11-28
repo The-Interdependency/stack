@@ -40,6 +40,7 @@ not establish a useful construction, valid measurement or secure cipher.
   the English Gonol construction. Its `FULL_VIEW_AUDIT.json` and
   `docs/hyperspace-views-full-v1.md` bind a complete 164,864-word four-view census;
   address metadata and independent information contribution do not establish inference quality.
+- `research/cpp-gonol/` owns the C++23 source forge and qualification corpus. UCHC supplies ordinal halving and the packaged constructor. UCNS supplies native glyphs and disc geometry. Compile only the fixed independent behavior fixtures in this workflow.
 - `research/python-gonol/` is a distinct stack-local Python source/gonol construction
   component. It owns Python source admission and bottom-up affixiation only; METAPAT owns
   affixiation semantics, UCNS owns consumed geometry, and parser objects are witnesses
