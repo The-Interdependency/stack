@@ -1,0 +1,77 @@
+name: C++23 UCHC construction
+on:
+  pull_request:
+    paths: ['research/cpp-gonol/**', 'integration/uchc/cpp-requirements.txt', '.github/workflows/cpp-gonol.yml']
+  push:
+    branches: [main]
+    paths: ['research/cpp-gonol/**', 'integration/uchc/cpp-requirements.txt', '.github/workflows/cpp-gonol.yml']
+permissions:
+  contents: read
+jobs:
+  cpp-source-and-bindings:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.12.14'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/ucns
+          ref: 1edfa593ae9d8c9ad394b5462638bcc717f99fbd
+          path: _native
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: fmtlib/fmt
+          ref: 40626af88bd7df9a5fb80be7b25ac85b122d6c21
+          path: _corpus
+          persist-credentials: false
+      - if: github.event_name == 'pull_request'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          repository: The-Interdependency/uchc
+          ref: 455c74cfab50f346380a7327feb01fe871b4c346
+          path: _candidate
+          persist-credentials: false
+      - name: Reproduce pre-publication wheel
+        if: github.event_name == 'pull_request'
+        env:
+          SOURCE_DATE_EPOCH: '1790308800'
+        run: |
+          python -m pip install setuptools==82.0.1 wheel==0.46.3 packaging==26.0
+          python -m pip wheel --no-deps --no-build-isolation ./_candidate -w "$RUNNER_TEMP/dist"
+      - name: Download the published wheel
+        if: github.event_name == 'push'
+        run: |
+          mkdir -p "$RUNNER_TEMP/dist"
+          curl -fsSL --retry 3 -o "$RUNNER_TEMP/dist/uchc-0.2.0a5-py3-none-any.whl" \
+            https://github.com/The-Interdependency/uchc/releases/download/uchc-v0.2.0a5/uchc-0.2.0a5-py3-none-any.whl
+      - name: Install checked artifact and pinned native geometry
+        run: |
+          python -m venv "$RUNNER_TEMP/consumer"
+          p="$RUNNER_TEMP/consumer/bin/python"
+          "$p" -m pip install --no-deps ./_native
+          "$p" -m pip install --require-hashes --no-deps --no-index --find-links "$RUNNER_TEMP/dist" -r integration/uchc/cpp-requirements.txt
+      - name: Compare source and installed binding behavior against C++23
+        run: |
+          p="$RUNNER_TEMP/consumer/bin/python"
+          w="$PWD/research/cpp-gonol"
+          PYTHONPATH="$w" "$p" -m unittest discover -s "$w/tests" -v
+          "$p" -I -m unittest discover -s "$w/tests" -v
+      - name: Replay the complete pinned fmt inventory from both surfaces
+        run: |
+          p="$RUNNER_TEMP/consumer/bin/python"
+          w="$PWD/research/cpp-gonol"
+          PYTHONPATH="$w" "$p" "$w/qualify.py" corpus _corpus > "$RUNNER_TEMP/forge.json"
+          "$p" -I "$w/qualify.py" corpus _corpus > "$RUNNER_TEMP/installed.json"
+          cmp "$RUNNER_TEMP/forge.json" "$w/evidence/fmt-11.2.0.json"
+          cmp "$RUNNER_TEMP/installed.json" "$w/evidence/fmt-11.2.0.json"
+      - name: Verify every Unicode scalar through the installed constructor
+        run: |
+          p="$RUNNER_TEMP/consumer/bin/python"
+          w="$PWD/research/cpp-gonol"
+          "$p" -I "$w/qualify.py" unicode > "$RUNNER_TEMP/range.json"
+          cmp "$RUNNER_TEMP/range.json" "$w/evidence/unicode.json"

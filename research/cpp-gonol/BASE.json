@@ -1,0 +1,47 @@
+{
+  "schema": "the-interdependency.stack-research-base",
+  "version": "1.0.0",
+  "project": "cpp-gonol",
+  "source_repository": "The-Interdependency/stack",
+  "source_commit": "7160e8d7cfcb9d237f22427f58121e4772661241",
+  "authority": "Stack C++ source construction research and qualification",
+  "canon_path": null,
+  "standing": "stack-local-research",
+  "inputs": [
+    {
+      "repository": "The-Interdependency/ucns",
+      "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+      "relation": "Native UTF-32BE glyphs, optional Public Gonol positions and ordinal disc geometry"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "4776e293d88ef3e70c516e6b9d9b18a0874eb1ae",
+      "relation": "Existing UCHC ordinal-halving API used by the C++ source forge"
+    },
+    {
+      "repository": "The-Interdependency/uchc",
+      "commit": "455c74cfab50f346380a7327feb01fe871b4c346",
+      "relation": "0.2.0a5 package source for the hash-locked C++ consumer"
+    },
+    {
+      "repository": "The-Interdependency/metapat",
+      "commit": "510e0171f4ecc6d1889e66bb66a8734c49c3b1fa",
+      "relation": "Affixiation semantics consulted without root impact"
+    },
+    {
+      "repository": "cplusplus/draft",
+      "commit": "4e4de1df8ee941255b653b61d0a62050b34cf8c9",
+      "relation": "WG21 N4950 language profile for physical translation and declarations"
+    },
+    {
+      "repository": "fmtlib/fmt",
+      "commit": "40626af88bd7df9a5fb80be7b25ac85b122d6c21",
+      "relation": "fmt 11.2.0 Git corpus for physical source replay"
+    }
+  ],
+  "artifact": {
+    "name": "uchc-0.2.0a5-py3-none-any.whl",
+    "sha256": "ccab34c1983fe82af1015bba356bf43ac9f34ae09df6802b17a76bcd87367d96"
+  },
+  "authority_transfer": false
+}

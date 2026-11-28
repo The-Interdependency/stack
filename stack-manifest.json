@@ -1,7 +1,7 @@
 {
   "schema": "the-interdependency.stack-manifest",
   "version": "1.1.0",
-  "work_graph_sha256": "26e2885a5947fb752aab16398de4a83c86a24077dc159ffc380664c2360f257f",
+  "work_graph_sha256": "bc665a98c81e80743a5e5e7bcf187dfb62fbebfa2b493bdd9f5c08a872db5714",
   "repositories": [
     {
       "repository": "The-Interdependency/skill-lib",
@@ -164,6 +164,69 @@
       "repository": "The-Interdependency/ucns",
       "commit": "ee8addc0af36f02b64b42cb355734cb72a126ea5",
       "relation": "UCNS supplies the native Unicode glyph, SPACE-relative bearing and optional Public Gonol position",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-gonol",
+      "repository": "The-Interdependency/stack",
+      "commit": "7160e8d7cfcb9d237f22427f58121e4772661241",
+      "relation": "C++23 physical source and portable local integer binding construction",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-unicode",
+      "repository": "The-Interdependency/ucns",
+      "commit": "1edfa593ae9d8c9ad394b5462638bcc717f99fbd",
+      "relation": "Native UTF-32BE glyphs, optional Public Gonol positions and ordinal disc geometry",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-uchc-halving",
+      "repository": "The-Interdependency/uchc",
+      "commit": "4776e293d88ef3e70c516e6b9d9b18a0874eb1ae",
+      "relation": "Existing UCHC ordinal-halving API used by the C++ source forge",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-uchc-package",
+      "repository": "The-Interdependency/uchc",
+      "commit": "455c74cfab50f346380a7327feb01fe871b4c346",
+      "relation": "0.2.0a5 package source for the hash-locked C++ consumer",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-affixiation",
+      "repository": "The-Interdependency/metapat",
+      "commit": "510e0171f4ecc6d1889e66bb66a8734c49c3b1fa",
+      "relation": "Affixiation semantics consulted without root impact",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp23-profile",
+      "repository": "cplusplus/draft",
+      "commit": "4e4de1df8ee941255b653b61d0a62050b34cf8c9",
+      "relation": "WG21 N4950 language profile for physical translation and declarations",
+      "canonical_release": false,
+      "authority_transfer": false
+    },
+    {
+      "workspace": "research/cpp-gonol/",
+      "participant_id": "cpp-fmt-corpus",
+      "repository": "fmtlib/fmt",
+      "commit": "40626af88bd7df9a5fb80be7b25ac85b122d6c21",
+      "relation": "fmt 11.2.0 Git corpus for physical source replay",
       "canonical_release": false,
       "authority_transfer": false
     },

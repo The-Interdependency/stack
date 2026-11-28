@@ -147,7 +147,7 @@ Replay the repaired implementation's attested receipt byte-for-byte. The [Unicod
 ```bash
 PYTHONDONTWRITEBYTECODE=1 \
 python3 research/digital-metrics/verify_receipt_cli.py \
-  research/digital-metrics/receipts/native-mobius-v0-stack-26e2885a.json \
+  research/digital-metrics/receipts/native-mobius-v0-stack-bc665a98.json \
   --metapat-root /path/to/exact/metapat \
   --ucns-root /path/to/exact/ucns \
   --edcm-root /path/to/exact/edcm

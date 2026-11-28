@@ -39,6 +39,7 @@ stack/
 │   ├── metapat/             # current METAPAT research + BASE.json
 │   ├── ucns/                # current UCNS research + BASE.json
 │   ├── english-gonol/       # English lexical/gonol construction; distinct from EDCM
+│   ├── cpp-gonol/           # C++23 physical source, ordinal blocks and local integer bindings
 │   ├── python-gonol/        # Python 3.12 source affixiation from characters upward
 │   ├── edcm/                # current EDCM measurement research + BASE.json
 │   ├── pcea/                # current PCEA research + BASE.json
@@ -96,6 +97,8 @@ English Gonol Construction is a separated stack-local component at
 `research/english-gonol/`. UCNS owns its consumed geometry. English Gonol owns the
 English text-domain construction candidate. EDCM may evaluate those outputs but does
 not define the construction.
+
+[C++23 source construction](research/cpp-gonol/README.md) preserves physical UTF-8 files and replays scalar identities against their native UTF-32BE glyphs. Its integer profile records declared names, reaching writes and ordinal token, statement, block and function interiors. Stack verifies the UCHC C++ wheel against its checksum.
 
 Python Gonol Construction in `research/python-gonol/` assigns the native UCNS
 Unicode identity to every decoded Python 3.12 source occurrence. It records the

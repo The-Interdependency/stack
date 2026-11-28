@@ -17,7 +17,7 @@ Provenance and authority-boundary record for `The-Interdependency/stack`.
 - English four-view complete-corpus audit UTC: `2026-09-22`, exact view source `1f9a35eb355296fc88d09784c7a3e2e95511ca31`; all 164,864 words, native and independent agreement.
 - Stack-manifest schema: `the-interdependency.stack-manifest` version `1.1.0`
 - Work-graph digest (SHA-256 over canonical `repositories` + `research_participants` + `boundaries` JSON):
-Work-graph SHA-256: `26e2885a5947fb752aab16398de4a83c86a24077dc159ffc380664c2360f257f`
+Work-graph SHA-256: `bc665a98c81e80743a5e5e7bcf187dfb62fbebfa2b493bdd9f5c08a872db5714`
 - Weave workspace creation UTC: `2026-09-28`; new specification-first research starts from the intended multi-arity interleaving mechanism without URPCS inheritance
 - Pi radix workspace creation UTC: `2026-10-10`; bounded cross-base computation starts from Stack `ccf707f933a9611d7b7fe13a0417378d8b453a14`
 - Machine-readable copy: [`stack-manifest.json`](stack-manifest.json)
@@ -74,6 +74,13 @@ release identity.
 | `research/english-gonol/` | `The-Interdependency/edcm` | `0873c105799681ea1f7ccb3e619d1f7aebbd85e0` | exact repaired EDCM semantic metric-origin producer; preserves canonical O/L identities and proxy-alignment metadata without refreshing `libs/edcm` or transferring measurement authority | no |
 | `research/python-gonol/` | `The-Interdependency/stack` | `3dd568e4b40561c11146df789db972a4e789582e` | Python 3.12 source construction with native Unicode scalar identities and original-byte replay | no |
 | `research/python-gonol/` | `The-Interdependency/ucns` | `ee8addc0af36f02b64b42cb355734cb72a126ea5` | UCNS supplies the native Unicode glyph, SPACE-relative bearing and optional Public Gonol position | no |
+| `research/cpp-gonol/` | `The-Interdependency/stack` | `7160e8d7cfcb9d237f22427f58121e4772661241` | C++23 physical source and portable local integer binding construction | no |
+| `research/cpp-gonol/` | `The-Interdependency/ucns` | `1edfa593ae9d8c9ad394b5462638bcc717f99fbd` | Native UTF-32BE glyphs, optional Public Gonol positions and ordinal disc geometry | no |
+| `research/cpp-gonol/` | `The-Interdependency/uchc` | `4776e293d88ef3e70c516e6b9d9b18a0874eb1ae` | Existing UCHC ordinal-halving API used by the C++ source forge | no |
+| `research/cpp-gonol/` | `The-Interdependency/uchc` | `455c74cfab50f346380a7327feb01fe871b4c346` | 0.2.0a5 package source for the hash-locked C++ consumer | no |
+| `research/cpp-gonol/` | `The-Interdependency/metapat` | `510e0171f4ecc6d1889e66bb66a8734c49c3b1fa` | Affixiation semantics consulted without root impact | no |
+| `research/cpp-gonol/` | `cplusplus/draft` | `4e4de1df8ee941255b653b61d0a62050b34cf8c9` | WG21 N4950 language profile for physical translation and declarations | no |
+| `research/cpp-gonol/` | `fmtlib/fmt` | `40626af88bd7df9a5fb80be7b25ac85b122d6c21` | fmt 11.2.0 Git corpus for physical source replay | no |
 | `research/ucns/` | `The-Interdependency/ucns` | `1975fe70cf4e0826a8020c2da3047569e277af64` | explicit source base for integrated stack-local UCNS research; does not refresh or replace the manifest-pinned `libs/ucns` canonical view | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/stack` | `77ef8c7fb0ff75a524181655ee9f9641372768f7` | target composition forge baseline at audit start | no |
 | `research/from-photons-to-macroverse/` | `The-Interdependency/skill-lib` | `61eb3b14db440e6ee9b7bf8de3b646dbfd00fb32` | audit, domain-claim, work-graph, and hmmm doctrine | no |
