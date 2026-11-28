@@ -19,7 +19,7 @@ def screen():
     return ET.fromstring(adb("shell", "cat", "/sdcard/ahbg-smoke.xml"))
 
 
-def target(text, *, tap=False, scroll=False, timeout=100, contains=False, resource_id=None):
+def target(text, *, tap=False, scroll=False, timeout=100, contains=False):
     until = time.monotonic() + timeout
     attempt = 0
     last = []
@@ -43,16 +43,9 @@ def target(text, *, tap=False, scroll=False, timeout=100, contains=False, resour
             adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
             time.sleep(2)
             continue
-        def by_id(node):
-            return resource_id and node.get("resource-id", "").split("/")[-1] == resource_id
-
-        # WebView exposes the select's HTML id and accessible label. Its
-        # selected option may only appear after opening the native picker.
-        candidates = sorted(nodes, key=lambda node: not by_id(node)) if resource_id else nodes
-        for node in candidates:
-            labels = [node.get("text", "").casefold(), node.get("content-desc", "").casefold()]
-            matches = any(text.casefold() in label for label in labels) if contains else text.casefold() in labels
-            if not (matches or by_id(node)):
+        for node, name in zip(nodes, last):
+            matches = text.casefold() in name.casefold() if contains else name.casefold() == text.casefold()
+            if not matches:
                 continue
             x1, y1, x2, y2 = map(int, re.findall(r"-?\d+", node.get("bounds", "")))
             if x2 <= x1 or y2 <= y1:
@@ -111,7 +104,30 @@ print("Release APK recovered the identical plane after process termination and a
 # Deployment acceptance runs after the server publishes the new WebView UI.
 if "--scouting" in sys.argv[1:]:
     target("Explorer", tap=True, scroll=True)
-    target("Report a sighting to the Builder", tap=True, scroll=True, resource_id="report-tile")
+    target("Report a sighting to the Builder", scroll=True)
+    # Find the Android control under the visible HTML label. Tapping the
+    # label itself only focuses the select on this WebView.
+    nodes = list(screen().iter("node"))
+    label_idx = next(i for i, n in enumerate(nodes) if n.get("text") == "Report a sighting to the Builder")
+    next_idx = next(i for i, n in enumerate(nodes[label_idx+1:], label_idx+1)
+                    if n.get("text", "").startswith("Private unit command"))
+    def bounds(node):
+        return tuple(map(int, re.findall(r"-?\d+", node.get("bounds", ""))))
+
+    widgets = nodes[label_idx+1:next_idx]
+    for n in widgets:
+        print("Report control", n.get("class"), n.get("resource-id"), bounds(n), flush=True)
+    selector = next((n for n in widgets if n.get("class") == "android.widget.Spinner"
+                     or n.get("resource-id", "").split("/")[-1] == "report-tile"), None)
+    if selector is not None:
+        left, top, right, bottom = bounds(selector)
+    else:
+        # Some WebViews expose the select through its enclosing label only.
+        # The touch control occupies the space between these two labels.
+        left, _, right, top = bounds(nodes[label_idx])
+        bottom = bounds(nodes[next_idx])[1]
+    assert right > left and bottom > top, "The visible report selector must have touch bounds"
+    adb("shell", "input", "tap", str((left+right)//2), str((top+bottom)//2))
     target("Center", tap=True)
     target("Explorer report · Center to Builder", scroll=True, contains=True)
     target("Commit plan", tap=True, scroll=True)
