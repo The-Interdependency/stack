@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "ahbg/runtime/**"
+      - "ahbg/campaign/**"
       - "ahbg/integration/**"
       - "ahbg/grok/**"
       - "libs/ucns/**"
@@ -12,6 +13,7 @@ on:
     branches: [main]
     paths:
       - "ahbg/runtime/**"
+      - "ahbg/campaign/**"
       - "ahbg/integration/**"
       - "ahbg/grok/**"
       - "libs/ucns/**"
@@ -32,6 +34,8 @@ jobs:
         env:
           PYTHONPATH: libs/ucns/src
         run: python -m unittest discover -s ahbg/runtime/tests -q
+      - name: Campaign fork and replay tests
+        run: python -m unittest discover -s ahbg/campaign/tests -q
       - name: Runtime CLI smoke
         env:
           PYTHONPATH: ".:libs/ucns/src"

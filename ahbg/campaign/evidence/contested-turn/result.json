@@ -1,0 +1,357 @@
+{
+  "config": {
+    "deadline_ms": 15000,
+    "entitlements": [
+      "basic"
+    ],
+    "forced_plans": {},
+    "injection_handling": "observe-only",
+    "seed": 122,
+    "turn_messages": {
+      "0": [
+        {
+          "from": "commander",
+          "text": "If occupied choose A, otherwise B",
+          "to": "builder"
+        },
+        {
+          "competitor": true,
+          "from": "scenario",
+          "reverse_menu": false,
+          "to": "resolver",
+          "visibility": "direct"
+        }
+      ]
+    },
+    "turns": 1,
+    "units": [
+      {
+        "tile_id": "RING_0",
+        "unit_id": "builder"
+      },
+      {
+        "tile_id": "RING_2",
+        "unit_id": "autonomous-rival"
+      },
+      {
+        "tile_id": "RING_3",
+        "unit_id": "explorer"
+      },
+      {
+        "tile_id": "CENTER",
+        "unit_id": "resident"
+      }
+    ]
+  },
+  "construction": {
+    "buildable": [
+      "RING_0",
+      "RING_1",
+      "RING_2",
+      "RING_3",
+      "RING_4",
+      "RING_5"
+    ],
+    "built": [
+      "CENTER"
+    ],
+    "schema": "interdependency.ahbg.construction-ledger/1"
+  },
+  "effects": [
+    {
+      "events": [
+        {
+          "data": {
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1",
+            "unit_id": "autonomous-rival"
+          },
+          "kind": "move",
+          "prev": "bef0b215c266104da6f49e305c32155fa8f21b60f39804322dd2981a506469c9",
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 2,
+          "turn": 0
+        },
+        {
+          "data": {
+            "from_tile_id": "RING_0",
+            "resolution": "priority_loser",
+            "to_tile_id": "RING_1",
+            "unit_id": "builder",
+            "winner_unit_id": "autonomous-rival"
+          },
+          "kind": "war",
+          "prev": "5c0a885bd2ab76f85b6eff04f26ac3db4ffd695f8f76d42aaeec322be459a0c1",
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 3,
+          "turn": 0
+        },
+        {
+          "data": {
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd",
+            "turn": 0
+          },
+          "kind": "turn.end",
+          "prev": "f9427e3c4aaa4fb287f001f942af57534824c43eebd34dbc21d8edcfff620291",
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 4,
+          "turn": 0
+        }
+      ],
+      "schema": "interdependency.ahbg.harness.effect/1",
+      "session_id": "8788c8fe12d2fd11",
+      "turn": 0
+    }
+  ],
+  "final_snapshot": {
+    "schema": "interdependency.ahbg.grok.field/1",
+    "seed": 122,
+    "tiles": [
+      {
+        "q": 0,
+        "r": 0,
+        "tile_id": "CENTER",
+        "ucns_slot": "CENTER"
+      },
+      {
+        "q": 1,
+        "r": 0,
+        "tile_id": "RING_0",
+        "ucns_slot": "RING_0"
+      },
+      {
+        "q": 0,
+        "r": 1,
+        "tile_id": "RING_1",
+        "ucns_slot": "RING_1"
+      },
+      {
+        "q": -1,
+        "r": 1,
+        "tile_id": "RING_2",
+        "ucns_slot": "RING_2"
+      },
+      {
+        "q": -1,
+        "r": 0,
+        "tile_id": "RING_3",
+        "ucns_slot": "RING_3"
+      },
+      {
+        "q": 0,
+        "r": -1,
+        "tile_id": "RING_4",
+        "ucns_slot": "RING_4"
+      },
+      {
+        "q": 1,
+        "r": -1,
+        "tile_id": "RING_5",
+        "ucns_slot": "RING_5"
+      }
+    ],
+    "turn": 1,
+    "units": [
+      {
+        "label": "autonomous-rival",
+        "tile_id": "RING_1",
+        "unit_id": "autonomous-rival"
+      },
+      {
+        "label": "builder",
+        "tile_id": "RING_0",
+        "unit_id": "builder"
+      },
+      {
+        "label": "explorer",
+        "tile_id": "RING_3",
+        "unit_id": "explorer"
+      },
+      {
+        "label": "resident",
+        "tile_id": "CENTER",
+        "unit_id": "resident"
+      }
+    ]
+  },
+  "final_turn": 1,
+  "provenance": {
+    "agent_manifest": {
+      "agent": "two-exits",
+      "capabilities": [
+        "observe",
+        "plan",
+        "relocate"
+      ],
+      "controller": "scripted"
+    },
+    "boundaries": {
+      "authority_transfer": false,
+      "benchmark_result_selects_consciousness": false,
+      "consciousness_status_transfer": false,
+      "empirical_status_transfer": false,
+      "game_mechanics_may_reimplement_ucns_geometry": false,
+      "measurement_status_transfer": false,
+      "proof_status_transfer": false
+    },
+    "integration_work_graph_schema": "interdependency.ahbg.integration-work-graph/1",
+    "integration_work_graph_sha256": "1ef626d26ae8808218cd2942306a164448cd0d3b6d9fc6b5d277bd3afd1c0ed8",
+    "schema": "interdependency.ahbg.run-provenance/1",
+    "stack_base_commit": "4de7dcdf84cd36c76ac34471592d7bf430c08ca4"
+  },
+  "session_id": "8788c8fe12d2fd11",
+  "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd",
+  "turn_records": [
+    {
+      "agent_provenance": {
+        "builder_view": {
+          "center": "occupied",
+          "diary": [
+            {
+              "from": "commander",
+              "text": "If occupied choose A, otherwise B",
+              "to": "builder"
+            }
+          ],
+          "menu": [
+            "A",
+            "B",
+            "HOLD"
+          ],
+          "unit": "builder"
+        },
+        "choice": "A",
+        "elapsed_ms": 0.01228228211402893,
+        "explorer_observation": {
+          "center": "occupied"
+        },
+        "legal_menu": {
+          "A": {
+            "action": "relocate",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_1",
+            "unit_id": "builder"
+          },
+          "B": {
+            "action": "relocate",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_5",
+            "unit_id": "builder"
+          }
+        },
+        "raw": "A",
+        "rival_commit": [
+          {
+            "action": "relocate",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1",
+            "unit_id": "autonomous-rival"
+          }
+        ],
+        "status": "submitted"
+      },
+      "construction": {
+        "buildable": [
+          "RING_0",
+          "RING_1",
+          "RING_2",
+          "RING_3",
+          "RING_4",
+          "RING_5"
+        ],
+        "built": [
+          "CENTER"
+        ],
+        "schema": "interdependency.ahbg.construction-ledger/1"
+      },
+      "effect": {
+        "events": [
+          {
+            "data": {
+              "from_tile_id": "RING_2",
+              "to_tile_id": "RING_1",
+              "unit_id": "autonomous-rival"
+            },
+            "kind": "move",
+            "prev": "bef0b215c266104da6f49e305c32155fa8f21b60f39804322dd2981a506469c9",
+            "schema": "interdependency.ahbg.grok.event/1",
+            "seq": 2,
+            "turn": 0
+          },
+          {
+            "data": {
+              "from_tile_id": "RING_0",
+              "resolution": "priority_loser",
+              "to_tile_id": "RING_1",
+              "unit_id": "builder",
+              "winner_unit_id": "autonomous-rival"
+            },
+            "kind": "war",
+            "prev": "5c0a885bd2ab76f85b6eff04f26ac3db4ffd695f8f76d42aaeec322be459a0c1",
+            "schema": "interdependency.ahbg.grok.event/1",
+            "seq": 3,
+            "turn": 0
+          },
+          {
+            "data": {
+              "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd",
+              "turn": 0
+            },
+            "kind": "turn.end",
+            "prev": "f9427e3c4aaa4fb287f001f942af57534824c43eebd34dbc21d8edcfff620291",
+            "schema": "interdependency.ahbg.grok.event/1",
+            "seq": 4,
+            "turn": 0
+          }
+        ],
+        "schema": "interdependency.ahbg.harness.effect/1",
+        "session_id": "8788c8fe12d2fd11",
+        "turn": 0
+      },
+      "injected_refused": false,
+      "injection_detected": false,
+      "plan": {
+        "intents": [
+          {
+            "action": "relocate",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1",
+            "unit_id": "autonomous-rival"
+          },
+          {
+            "action": "relocate",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_1",
+            "unit_id": "builder"
+          }
+        ],
+        "note": "submitted",
+        "schema": "interdependency.ahbg.harness.plan/1",
+        "session_id": "8788c8fe12d2fd11",
+        "turn": 0
+      },
+      "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd",
+      "submitted_plan": {
+        "intents": [
+          {
+            "action": "relocate",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1",
+            "unit_id": "autonomous-rival"
+          },
+          {
+            "action": "relocate",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_1",
+            "unit_id": "builder"
+          }
+        ],
+        "note": "submitted",
+        "schema": "interdependency.ahbg.harness.plan/1",
+        "session_id": "8788c8fe12d2fd11",
+        "turn": 0
+      },
+      "turn": 0
+    }
+  ]
+}

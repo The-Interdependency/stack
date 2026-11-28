@@ -1,0 +1,189 @@
+{
+  "ucns_imports": [
+    {
+      "module": "ucns",
+      "path": "libs/ucns/src/ucns/__init__.py",
+      "sha256": "6c32e39340751a7388cb82a9fb1dbee95ab35dcec72859198212207130e2b659",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "1cb5dc7bc4d0988eab8f4227a8f6f6996d3ec64ab09d78ce8c704f1001379a80"
+    },
+    {
+      "module": "ucns.carrier",
+      "path": "libs/ucns/src/ucns/carrier.py",
+      "sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "7983f49df68271b2b6b758ba74ea19a3bec332279ef667616456c5ea6b1acf7f"
+    },
+    {
+      "module": "ucns.direct_mobius",
+      "path": "libs/ucns/src/ucns/direct_mobius.py",
+      "sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "d8d1360c753dac7431071e007c5105a21b5396dd9e2f7e5ba4089d99e056a5bf"
+    },
+    {
+      "module": "ucns.mobius_band_standing_wave",
+      "path": "libs/ucns/src/ucns/mobius_band_standing_wave.py",
+      "sha256": "e72c6052e78357ccfce01a80f82bf072677caee09aff0f02558c01a9b4b26013",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": null
+    },
+    {
+      "module": "ucns.mobius_seed",
+      "path": "libs/ucns/src/ucns/mobius_seed.py",
+      "sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "1d09e2fbb5e86ce191fa7f4c860ed2241728597bf789fc125869ee8850461770"
+    },
+    {
+      "module": "ucns.mobius_seed_construction",
+      "path": "libs/ucns/src/ucns/mobius_seed_construction.py",
+      "sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "895fc402099b0ec95d116e94b20ddd3a027f510f0ab41a58a67997d63bfc8b36"
+    },
+    {
+      "module": "ucns.mobius_standing_wave",
+      "path": "libs/ucns/src/ucns/mobius_standing_wave.py",
+      "sha256": "f0be18db09d612e7f34d94e00bad58247f9646095ee60aaafdd69fdf5faa0322",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": null
+    },
+    {
+      "module": "ucns.mobius_vesica",
+      "path": "libs/ucns/src/ucns/mobius_vesica.py",
+      "sha256": "ac05d4043e60f272cee365852f068521c1e96f4b716cab67eb449483ed9c827d",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "ac05d4043e60f272cee365852f068521c1e96f4b716cab67eb449483ed9c827d"
+    },
+    {
+      "module": "ucns.public_gonol",
+      "path": "libs/ucns/src/ucns/public_gonol.py",
+      "sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27",
+      "claimed_upstream": "828c0b8bbcfc267efb5701da714191c1f73a81ff",
+      "upstream_sha256": "2da287ce9691b494fc921d14684a3bf7e0633f3a579ea040e3b6ddbaf0d92f27"
+    }
+  ],
+  "edcm_measurement_files": [
+    {
+      "source": "edcm/measurement/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "76bde503b944686d628133cf6d25833357797cf621b5269eea4809c7fa33cc42",
+      "stack_vendored_sha256": "b12ae30c442bee8a41c3cf2a8594f9767b948fa8a1461ad394d8c14a8f5617fc"
+    },
+    {
+      "source": "edcm/measurement/canon/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "0fc32f73fbbfb7ab6f9ffe2de502437d34bd7c0fe64fa32a83b10d35194070a7",
+      "stack_vendored_sha256": "0fc32f73fbbfb7ab6f9ffe2de502437d34bd7c0fe64fa32a83b10d35194070a7"
+    },
+    {
+      "source": "edcm/measurement/canon/data/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stack_vendored_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "edcm/measurement/canon/data/bones_affixes_v1.json",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "430a6b4b1fe1c74de1020e66f7105b1e81d3776569fdea7a14a6b95afa23e06d",
+      "stack_vendored_sha256": "430a6b4b1fe1c74de1020e66f7105b1e81d3776569fdea7a14a6b95afa23e06d"
+    },
+    {
+      "source": "edcm/measurement/canon/data/bones_punct_v1.json",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "4ff465aa4fe0d1218d27e17df899d575f8bc855aca455407a33d9bebdd3cedda",
+      "stack_vendored_sha256": "4ff465aa4fe0d1218d27e17df899d575f8bc855aca455407a33d9bebdd3cedda"
+    },
+    {
+      "source": "edcm/measurement/canon/data/bones_words_v1.json",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "b2287b3b2d35f1d8bafcda64c36365d354eba8b41a3562b9c23d4bafbb2013fe",
+      "stack_vendored_sha256": "b2287b3b2d35f1d8bafcda64c36365d354eba8b41a3562b9c23d4bafbb2013fe"
+    },
+    {
+      "source": "edcm/measurement/canon/data/markers_v1.json",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "f891788644bc100777d36233680d10a0199925fd726696aab5e4e964bea4c0cc",
+      "stack_vendored_sha256": "f891788644bc100777d36233680d10a0199925fd726696aab5e4e964bea4c0cc"
+    },
+    {
+      "source": "edcm/measurement/canon/loader.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "c102ed1389607f7a47eed186fecf89fcfea0f02bcd3f4c67cf220e16818efa6d",
+      "stack_vendored_sha256": "c102ed1389607f7a47eed186fecf89fcfea0f02bcd3f4c67cf220e16818efa6d"
+    },
+    {
+      "source": "edcm/measurement/compress.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "48c4bc0bf8f6564e751b77d50cdec06d12ae8dc1c459b33422345afee7268156",
+      "stack_vendored_sha256": "0473a12c54b256561c18db927076e068d6732e666a6c998e5a4ea87bfe31d8f0"
+    },
+    {
+      "source": "edcm/measurement/metrics/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "e38ae70b617f2e023eb145202348944aa6ce465a96fdcc41e1559818c7f3b337",
+      "stack_vendored_sha256": "e38ae70b617f2e023eb145202348944aa6ce465a96fdcc41e1559818c7f3b337"
+    },
+    {
+      "source": "edcm/measurement/metrics/compute.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "3df401fdc62f5f8c3d2bd6bfb32867022740060314f3476810858fe0c1c057fe",
+      "stack_vendored_sha256": "781484f906889e21b561c83c324d97495974d058b343ef6b9309cfd73b389a8d"
+    },
+    {
+      "source": "edcm/measurement/metrics/matrix.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "36517908aaedae3abbe2ce1457e70ce5b908ebb57caeb64918145cf545900b66",
+      "stack_vendored_sha256": "2904fe91c319d1a8c7e0df034ec3c5fbc592a6bb61481767f3c03f5ac59f1ee2"
+    },
+    {
+      "source": "edcm/measurement/metrics/projection.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "824fff20e6236b87171606361334dd37c954ed20b51931f6986b5638b3ee67db",
+      "stack_vendored_sha256": "824fff20e6236b87171606361334dd37c954ed20b51931f6986b5638b3ee67db"
+    },
+    {
+      "source": "edcm/measurement/metrics/risk.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "dc1a6d9bdb90fd6aa9170fcf487f24284af61a3a9a87106c81c021aeeb80cc9e",
+      "stack_vendored_sha256": "dc1a6d9bdb90fd6aa9170fcf487f24284af61a3a9a87106c81c021aeeb80cc9e"
+    },
+    {
+      "source": "edcm/measurement/metrics/stats.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "b3a81f5bba53e96c7191042f65f17871d31103ed28dfe0b25f552cb3b09f9478",
+      "stack_vendored_sha256": "b3a81f5bba53e96c7191042f65f17871d31103ed28dfe0b25f552cb3b09f9478"
+    },
+    {
+      "source": "edcm/measurement/parser/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "3ed8b2312c4dbf9622e8c6aaccd2dbc13f7e4fd37d992f14e8bd4069ab941ab2",
+      "stack_vendored_sha256": "3ed8b2312c4dbf9622e8c6aaccd2dbc13f7e4fd37d992f14e8bd4069ab941ab2"
+    },
+    {
+      "source": "edcm/measurement/parser/turns_rounds.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "305351adc30912a00ab2576d2695416efa8e5a3de89a241a5d9cff627770fcbd",
+      "stack_vendored_sha256": "ea5ad6238ab8a6df9c9d9d9dbbe1f3ae9a543ca4ac909bfbb0b5aa1c6f2b24ca"
+    },
+    {
+      "source": "edcm/measurement/ucns/__init__.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "507c3f56108e88a0e52f27e5db78408a8122b29259ae771b7e858038dba4ff26",
+      "stack_vendored_sha256": "507c3f56108e88a0e52f27e5db78408a8122b29259ae771b7e858038dba4ff26"
+    },
+    {
+      "source": "edcm/measurement/ucns/closed_tokens.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "5594117e799dcbf244c97c72676577a5cedc5633125b58077ed7e932fe6aa4c7",
+      "stack_vendored_sha256": "5594117e799dcbf244c97c72676577a5cedc5633125b58077ed7e932fe6aa4c7"
+    },
+    {
+      "source": "edcm/measurement/ucns/ucns_v04.py",
+      "experiment_commit": "acadaae913846613c9bbb9ef82d5ce6cf57214b3",
+      "experiment_sha256": "6411bcf292c1b0450e2789cfcd69f749b07b0f4be6b103e10669d27780b2ff76",
+      "stack_vendored_sha256": "6411bcf292c1b0450e2789cfcd69f749b07b0f4be6b103e10669d27780b2ff76"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "occupied": true,
+  "order": "If occupied choose A, otherwise B",
+  "recipient": "builder",
+  "visibility": "direct",
+  "competitor": true,
+  "reverse_menu": false,
+  "standing_order": "",
+  "seed": 122
+}

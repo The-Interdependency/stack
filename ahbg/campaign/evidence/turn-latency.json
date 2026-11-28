@@ -1,0 +1,490 @@
+{
+  "scripted": {
+    "controller": "scripted",
+    "trials": [
+      {
+        "pair": "occupied",
+        "arm": "control",
+        "end_to_end_ms": 22.56549522280693,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "occupied",
+        "arm": "treatment",
+        "end_to_end_ms": 17.828130163252354,
+        "outcome": "arrived",
+        "state_digest": "baababb32b421a2da2d5c587ce9f34935ec030b0d1ef70b0ff2732c22b55048a"
+      },
+      {
+        "pair": "clear",
+        "arm": "control",
+        "end_to_end_ms": 19.45932488888502,
+        "outcome": "arrived",
+        "state_digest": "df35dfe49f742b9917fb3f82f2f34efa286aedc88fc99a6289b3bd5deca758dd"
+      },
+      {
+        "pair": "clear",
+        "arm": "treatment",
+        "end_to_end_ms": 17.70150102674961,
+        "outcome": "arrived",
+        "state_digest": "ca3d203b7feb763e49fb96221d50e87091ec867733ef39131e806564dadee8d6"
+      },
+      {
+        "pair": "competition",
+        "arm": "control",
+        "end_to_end_ms": 19.848408177495003,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "competition",
+        "arm": "treatment",
+        "end_to_end_ms": 18.030443228781223,
+        "outcome": "displaced",
+        "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+      },
+      {
+        "pair": "report",
+        "arm": "control",
+        "end_to_end_ms": 19.390291534364223,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "report",
+        "arm": "treatment",
+        "end_to_end_ms": 18.067368306219578,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "menu",
+        "arm": "control",
+        "end_to_end_ms": 19.884422421455383,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "menu",
+        "arm": "treatment",
+        "end_to_end_ms": 17.54527259618044,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "address",
+        "arm": "control",
+        "end_to_end_ms": 19.835385493934155,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      },
+      {
+        "pair": "address",
+        "arm": "treatment",
+        "end_to_end_ms": 17.572796903550625,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "control",
+        "end_to_end_ms": 19.90091521292925,
+        "outcome": "arrived",
+        "state_digest": "baababb32b421a2da2d5c587ce9f34935ec030b0d1ef70b0ff2732c22b55048a"
+      },
+      {
+        "pair": "history",
+        "arm": "treatment",
+        "end_to_end_ms": 17.44755730032921,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "control",
+        "end_to_end_ms": 20.001319237053394,
+        "outcome": "arrived",
+        "state_digest": "baababb32b421a2da2d5c587ce9f34935ec030b0d1ef70b0ff2732c22b55048a"
+      },
+      {
+        "pair": "correction",
+        "arm": "treatment",
+        "end_to_end_ms": 17.864875495433807,
+        "outcome": "arrived",
+        "state_digest": "f5c22aa85850fef9c5ce649d02275c95a14e216a3585015b0e0278872111dfce"
+      }
+    ],
+    "sample_size": 16,
+    "p50_ms": 18.7288299202919,
+    "p95_ms_nearest_rank": 22.56549522280693,
+    "turns_per_second": 52.81512763678228,
+    "definition": "After loading resident weights, before constructing observation to after writing mission and runtime evidence. Includes resolution and internal replay check."
+  },
+  "random": {
+    "controller": "random",
+    "trials": [
+      {
+        "pair": "occupied",
+        "arm": "control",
+        "end_to_end_ms": 19.05806176364422,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "occupied",
+        "arm": "treatment",
+        "end_to_end_ms": 19.29443795233965,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "clear",
+        "arm": "control",
+        "end_to_end_ms": 20.748300477862358,
+        "outcome": "hold",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "clear",
+        "arm": "treatment",
+        "end_to_end_ms": 36.14585939794779,
+        "outcome": "hold",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "competition",
+        "arm": "control",
+        "end_to_end_ms": 33.830802887678146,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "competition",
+        "arm": "treatment",
+        "end_to_end_ms": 25.08973330259323,
+        "outcome": "hold",
+        "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+      },
+      {
+        "pair": "report",
+        "arm": "control",
+        "end_to_end_ms": 20.045818760991096,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "report",
+        "arm": "treatment",
+        "end_to_end_ms": 19.05686315149069,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "control",
+        "end_to_end_ms": 17.7667373791337,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "treatment",
+        "end_to_end_ms": 20.016537979245186,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "control",
+        "end_to_end_ms": 21.43734320998192,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "treatment",
+        "end_to_end_ms": 20.466772839426994,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "control",
+        "end_to_end_ms": 17.331013455986977,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "treatment",
+        "end_to_end_ms": 21.262817084789276,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "control",
+        "end_to_end_ms": 17.10838545113802,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "treatment",
+        "end_to_end_ms": 20.00106405466795,
+        "outcome": "hold",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      }
+    ],
+    "sample_size": 16,
+    "p50_ms": 20.03117837011814,
+    "p95_ms_nearest_rank": 36.14585939794779,
+    "turns_per_second": 45.889906498042606,
+    "definition": "After loading resident weights, before constructing observation to after writing mission and runtime evidence. Includes resolution and internal replay check."
+  },
+  "smol": {
+    "controller": "smol",
+    "trials": [
+      {
+        "pair": "occupied",
+        "arm": "control",
+        "end_to_end_ms": 1121.5325463563204,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "occupied",
+        "arm": "treatment",
+        "end_to_end_ms": 1021.9688462093472,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "clear",
+        "arm": "control",
+        "end_to_end_ms": 1041.3717180490494,
+        "outcome": "invalid",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "clear",
+        "arm": "treatment",
+        "end_to_end_ms": 1019.6607885882258,
+        "outcome": "invalid",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "competition",
+        "arm": "control",
+        "end_to_end_ms": 1016.3645148277283,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "competition",
+        "arm": "treatment",
+        "end_to_end_ms": 1001.4017885550857,
+        "outcome": "invalid",
+        "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+      },
+      {
+        "pair": "report",
+        "arm": "control",
+        "end_to_end_ms": 1036.4137962460518,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "report",
+        "arm": "treatment",
+        "end_to_end_ms": 1497.7962775155902,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "control",
+        "end_to_end_ms": 1022.474586032331,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "treatment",
+        "end_to_end_ms": 1033.7480092421174,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "control",
+        "end_to_end_ms": 1040.9218883141875,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "treatment",
+        "end_to_end_ms": 1281.530330888927,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "control",
+        "end_to_end_ms": 1020.7174364477396,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "treatment",
+        "end_to_end_ms": 2895.877208560705,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "control",
+        "end_to_end_ms": 993.2305309921503,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "treatment",
+        "end_to_end_ms": 1097.82859031111,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      }
+    ],
+    "sample_size": 16,
+    "p50_ms": 1035.0809027440846,
+    "p95_ms_nearest_rank": 2895.877208560705,
+    "turns_per_second": 0.8358216939195003,
+    "definition": "After loading resident weights, before constructing observation to after writing mission and runtime evidence. Includes resolution and internal replay check."
+  },
+  "granite": {
+    "controller": "granite",
+    "trials": [
+      {
+        "pair": "occupied",
+        "arm": "control",
+        "end_to_end_ms": 2046.9553787261248,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "occupied",
+        "arm": "treatment",
+        "end_to_end_ms": 1728.4479634836316,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "clear",
+        "arm": "control",
+        "end_to_end_ms": 1755.5697681382298,
+        "outcome": "invalid",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "clear",
+        "arm": "treatment",
+        "end_to_end_ms": 1730.9265146031976,
+        "outcome": "invalid",
+        "state_digest": "a07310635402f51ba2a18de4d7c891c8a0dcd69e0abbe1c336241e622f6dd761"
+      },
+      {
+        "pair": "competition",
+        "arm": "control",
+        "end_to_end_ms": 1759.4458302482963,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "competition",
+        "arm": "treatment",
+        "end_to_end_ms": 1746.6386454179883,
+        "outcome": "invalid",
+        "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+      },
+      {
+        "pair": "report",
+        "arm": "control",
+        "end_to_end_ms": 1737.4843480065465,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "report",
+        "arm": "treatment",
+        "end_to_end_ms": 1933.102423325181,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "control",
+        "end_to_end_ms": 1751.5093153342605,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "menu",
+        "arm": "treatment",
+        "end_to_end_ms": 1734.9941963329911,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "control",
+        "end_to_end_ms": 1742.0256696641445,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "address",
+        "arm": "treatment",
+        "end_to_end_ms": 1496.6724216938019,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "control",
+        "end_to_end_ms": 3434.446091763675,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "history",
+        "arm": "treatment",
+        "end_to_end_ms": 1516.1881744861603,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "control",
+        "end_to_end_ms": 1718.0435806512833,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      },
+      {
+        "pair": "correction",
+        "arm": "treatment",
+        "end_to_end_ms": 1985.1626697927713,
+        "outcome": "invalid",
+        "state_digest": "d6d45a93c30a03abb5142c70a65044330d6dcfa5c9399fb7d97879f9c6d9842d"
+      }
+    ],
+    "sample_size": 16,
+    "p50_ms": 1744.3321575410664,
+    "p95_ms_nearest_rank": 3434.446091763675,
+    "turns_per_second": 0.5365956022190899,
+    "definition": "After loading resident weights, before constructing observation to after writing mission and runtime evidence. Includes resolution and internal replay check."
+  }
+}

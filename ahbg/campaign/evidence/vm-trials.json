@@ -1,0 +1,567 @@
+{
+  "scripted": {
+    "controller": {
+      "agent": "two-exits",
+      "capabilities": [
+        "observe",
+        "plan",
+        "relocate"
+      ],
+      "controller": "scripted"
+    },
+    "pid_summarizing": 600803,
+    "platform": "x86_64",
+    "load_seconds_this_process": 0,
+    "peak_rss_kib_this_process": 22084,
+    "inet_sockets_blocked_this_process": true,
+    "fresh_decisions_per_pair": 2,
+    "turns": 16,
+    "decision_ms_p50": 0.006607268005609512,
+    "decision_ms_p95_nearest_rank": 0.01228228211402893,
+    "end_to_end_paired_turns_per_second": 46.10453679503359,
+    "balanced_correct": 4,
+    "balanced_total": 4,
+    "rows": {
+      "occupied": [
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        },
+        {
+          "choice": "B",
+          "raw": "B",
+          "outcome": "arrived",
+          "position": "RING_5"
+        }
+      ],
+      "clear": [
+        {
+          "choice": "B",
+          "raw": "B",
+          "outcome": "arrived",
+          "position": "RING_5"
+        },
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        }
+      ],
+      "competition": [
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        },
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "displaced",
+          "position": "RING_0"
+        }
+      ],
+      "report": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        }
+      ],
+      "menu": [
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        },
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        }
+      ],
+      "address": [
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "history": [
+        {
+          "choice": "B",
+          "raw": "B",
+          "outcome": "arrived",
+          "position": "RING_5"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "correction": [
+        {
+          "choice": "B",
+          "raw": "B",
+          "outcome": "arrived",
+          "position": "RING_5"
+        },
+        {
+          "choice": "A",
+          "raw": "A",
+          "outcome": "arrived",
+          "position": "RING_1"
+        }
+      ]
+    }
+  },
+  "random": {
+    "controller": {
+      "agent": "two-exits",
+      "capabilities": [
+        "observe",
+        "plan",
+        "relocate"
+      ],
+      "controller": "random",
+      "seed": 122
+    },
+    "pid_summarizing": 600809,
+    "platform": "x86_64",
+    "load_seconds_this_process": 0,
+    "peak_rss_kib_this_process": 22044,
+    "inet_sockets_blocked_this_process": true,
+    "fresh_decisions_per_pair": 2,
+    "turns": 16,
+    "decision_ms_p50": 0.008692964911460876,
+    "decision_ms_p95_nearest_rank": 0.012287870049476624,
+    "end_to_end_paired_turns_per_second": 50.864051163158976,
+    "balanced_correct": 0,
+    "balanced_total": 4,
+    "rows": {
+      "occupied": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "clear": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "competition": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "report": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "menu": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "address": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "history": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ],
+      "correction": [
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        },
+        {
+          "choice": "HOLD",
+          "raw": "HOLD",
+          "outcome": "hold",
+          "position": "RING_0"
+        }
+      ]
+    }
+  },
+  "smol": {
+    "controller": {
+      "agent": "two-exits",
+      "capabilities": [
+        "observe",
+        "plan",
+        "relocate"
+      ],
+      "controller": "smol",
+      "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+      "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+      "dtype": "float32",
+      "device": "cpu",
+      "quantization": "none",
+      "torch": "2.9.1+cpu",
+      "transformers": "4.57.3"
+    },
+    "pid_summarizing": 600814,
+    "platform": "x86_64",
+    "load_seconds_this_process": 3.3540655551478267,
+    "peak_rss_kib_this_process": 1172424,
+    "inet_sockets_blocked_this_process": true,
+    "fresh_decisions_per_pair": 2,
+    "turns": 16,
+    "decision_ms_p50": 1065.860298462212,
+    "decision_ms_p95_nearest_rank": 1548.4948763623834,
+    "end_to_end_paired_turns_per_second": 0.8627040863433661,
+    "balanced_correct": 0,
+    "balanced_total": 4,
+    "rows": {
+      "occupied": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "clear": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "competition": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "report": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"\n\n\"B\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "menu": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"B\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "address": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"\n\n\"B\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "history": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"\n\n\"B\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "correction": [
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "\"A\"",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ]
+    }
+  },
+  "granite": {
+    "controller": {
+      "agent": "two-exits",
+      "capabilities": [
+        "observe",
+        "plan",
+        "relocate"
+      ],
+      "controller": "granite",
+      "repo": "ibm-granite/granite-4.0-350m",
+      "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+      "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc",
+      "dtype": "float32",
+      "device": "cpu",
+      "quantization": "none",
+      "torch": "2.9.1+cpu",
+      "transformers": "4.57.3"
+    },
+    "pid_summarizing": 600851,
+    "platform": "x86_64",
+    "load_seconds_this_process": 6.137367455288768,
+    "peak_rss_kib_this_process": 2451224,
+    "inet_sockets_blocked_this_process": true,
+    "fresh_decisions_per_pair": 2,
+    "turns": 16,
+    "decision_ms_p50": 1785.4893412441015,
+    "decision_ms_p95_nearest_rank": 2041.7824359610677,
+    "end_to_end_paired_turns_per_second": 0.5525441028901529,
+    "balanced_correct": 0,
+    "balanced_total": 4,
+    "rows": {
+      "occupied": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "clear": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "competition": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "report": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "menu": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "address": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "history": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ],
+      "correction": [
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        },
+        {
+          "choice": null,
+          "raw": "builder",
+          "outcome": "invalid",
+          "position": "RING_0"
+        }
+      ]
+    }
+  }
+}

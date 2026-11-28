@@ -1,0 +1,22 @@
+{
+  "__init__.py": "76bde503b944686d628133cf6d25833357797cf621b5269eea4809c7fa33cc42",
+  "canon/__init__.py": "0fc32f73fbbfb7ab6f9ffe2de502437d34bd7c0fe64fa32a83b10d35194070a7",
+  "canon/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "canon/data/bones_affixes_v1.json": "430a6b4b1fe1c74de1020e66f7105b1e81d3776569fdea7a14a6b95afa23e06d",
+  "canon/data/bones_punct_v1.json": "4ff465aa4fe0d1218d27e17df899d575f8bc855aca455407a33d9bebdd3cedda",
+  "canon/data/bones_words_v1.json": "b2287b3b2d35f1d8bafcda64c36365d354eba8b41a3562b9c23d4bafbb2013fe",
+  "canon/data/markers_v1.json": "f891788644bc100777d36233680d10a0199925fd726696aab5e4e964bea4c0cc",
+  "canon/loader.py": "c102ed1389607f7a47eed186fecf89fcfea0f02bcd3f4c67cf220e16818efa6d",
+  "compress.py": "48c4bc0bf8f6564e751b77d50cdec06d12ae8dc1c459b33422345afee7268156",
+  "metrics/__init__.py": "e38ae70b617f2e023eb145202348944aa6ce465a96fdcc41e1559818c7f3b337",
+  "metrics/compute.py": "3df401fdc62f5f8c3d2bd6bfb32867022740060314f3476810858fe0c1c057fe",
+  "metrics/matrix.py": "36517908aaedae3abbe2ce1457e70ce5b908ebb57caeb64918145cf545900b66",
+  "metrics/projection.py": "824fff20e6236b87171606361334dd37c954ed20b51931f6986b5638b3ee67db",
+  "metrics/risk.py": "dc1a6d9bdb90fd6aa9170fcf487f24284af61a3a9a87106c81c021aeeb80cc9e",
+  "metrics/stats.py": "b3a81f5bba53e96c7191042f65f17871d31103ed28dfe0b25f552cb3b09f9478",
+  "parser/__init__.py": "3ed8b2312c4dbf9622e8c6aaccd2dbc13f7e4fd37d992f14e8bd4069ab941ab2",
+  "parser/turns_rounds.py": "305351adc30912a00ab2576d2695416efa8e5a3de89a241a5d9cff627770fcbd",
+  "ucns/__init__.py": "507c3f56108e88a0e52f27e5db78408a8122b29259ae771b7e858038dba4ff26",
+  "ucns/closed_tokens.py": "5594117e799dcbf244c97c72676577a5cedc5633125b58077ed7e932fe6aa4c7",
+  "ucns/ucns_v04.py": "6411bcf292c1b0450e2789cfcd69f749b07b0f4be6b103e10669d27780b2ff76"
+}

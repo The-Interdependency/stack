@@ -1,0 +1,14 @@
+{
+  "buildable": [
+    "RING_0",
+    "RING_1",
+    "RING_2",
+    "RING_3",
+    "RING_4",
+    "RING_5"
+  ],
+  "built": [
+    "CENTER"
+  ],
+  "schema": "interdependency.ahbg.construction-ledger/1"
+}

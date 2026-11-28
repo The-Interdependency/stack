@@ -6,6 +6,10 @@ Immediate target: one functional persistent plane in which A0 can perceive, plan
 
 Do not block this target on multiplayer, federation, blockchain, ascension, monetization, or other deferred architecture.
 
+## Play the two-exit mission
+
+From Stack root run `python3 -m ahbg.campaign --lab serve` to play a turn, fork the order or a competing move, and compare the result. [Mission and VM measurements](campaign/README.md)
+
 ## Research abstract
 
 Description dated 2026-10-16; published 2026-10-18. This is a research description, not a new verification, release, or promotion of claim status.

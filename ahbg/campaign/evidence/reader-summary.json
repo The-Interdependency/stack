@@ -1,0 +1,50 @@
+{
+    "training_examples_per_reader": 16,
+    "test_examples_per_reader": 16,
+    "totals": {
+        "text": {
+            "False": 16,
+            "True": 0
+        },
+        "native-input": {
+            "False": 16,
+            "True": 0
+        },
+        "ordinal": {
+            "False": 16,
+            "True": 0
+        },
+        "additive": {
+            "False": 8,
+            "True": 8
+        },
+        "both": {
+            "False": 16,
+            "True": 0
+        },
+        "recursive": {
+            "False": 16,
+            "True": 0
+        }
+    },
+    "order_features": [
+        {
+            "text": "If occupied choose A, otherwise B",
+            "native-input": "7b152575b732958da0b7852a4f0411dc903fe0f219c37ab013b94451cddcf15a",
+            "ordinal": "f10b0150454f2390c74d922fc5e844ae850465a31fda0c54db8dfa8c614c5604",
+            "additive": "0d728613c0a920b03f16246dc65c2498f103c2fe701f900b915e678f97359a41",
+            "both": "252b6e86268ddcf9421820eb5d9928312db5e6fcb762eee9e878257c7969b7e6",
+            "recursive": "6a2cde11c1d2e712040bcdb4f8320fc94eb64440280471d51d4229725991fd3f"
+        },
+        {
+            "text": "If occupied choose B, otherwise A",
+            "native-input": "f046a697c4f96215e7300dcb4845b56da448176ed7e9a79930fe0ce96fc8e2a9",
+            "ordinal": "545ab793ceade20f8f89776f4ad98e048ed1874787735f0e759400707cd76e44",
+            "additive": "0d728613c0a920b03f16246dc65c2498f103c2fe701f900b915e678f97359a41",
+            "both": "1ecaa4b170d1e60c7aaf0361e152d6460bfe29201a39ddbe276e4e1fb77d1862",
+            "recursive": "c4c86a56636b174a8127857d2ee87c14121e1dafd6fa5cddbf86640c9729763b"
+        }
+    ],
+    "method": "One lookup per order representation and permitted center. Raw order visible only to text reader. All readers get the same separate center signal. Mismatches swap the two order representations at test time.",
+    "structural_reader": "unmeasured; complete hash-locked structural field required"
+}

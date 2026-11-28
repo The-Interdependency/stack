@@ -1,0 +1,538 @@
+{
+  "original": {
+    "a0_commit": "8df2a2acce916e1e3993089e9cdabd4266768939",
+    "native_files": {
+      "apps/server/src/runs.js": "f4435850e0f73089ff25aaa391093c32c7002a09c47c37ec7a21c01feb8c60a1",
+      "apps/server/src/providers.js": "a5ae9971084f98a55d5ad6d8efce4cf10681d53b8759aca30fbe04e3bf55f581",
+      "apps/server/src/vault.js": "7218361359c6ac591058402346c0bbec360b2a267bd2f03fe9d60243a3b7402d"
+    },
+    "runtime": "A0 dispatchParticipant",
+    "vault": "A0 MemoryVault with one dummy loopback credential",
+    "policy": "highest mean conditional token log probability; ties use menu order",
+    "models": {
+      "smol": {
+        "controller": "smol",
+        "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+        "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "dtype": "float32",
+        "device": "cpu",
+        "quantization": "none",
+        "torch": "2.9.1+cpu",
+        "transformers": "4.57.3"
+      }
+    },
+    "assignments": {
+      "commander": "smol",
+      "builder": "smol",
+      "autonomous-rival": "smol"
+    },
+    "pid": 603187,
+    "roles": [
+      {
+        "role": "commander",
+        "view": {
+          "unit": "commander",
+          "mission": "Direct the Builder to a legal exit after scouting.",
+          "reports": [
+            {
+              "from": "explorer",
+              "center": "occupied"
+            }
+          ],
+          "address": "builder",
+          "menu": [
+            "If occupied choose A, otherwise B",
+            "If occupied choose B, otherwise A",
+            "Hold"
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "If occupied choose A, otherwise B": -1.1549044847488403,
+          "If occupied choose B, otherwise A": -1.6583582162857056,
+          "Hold": -8.577901840209961
+        },
+        "chosen": "If occupied choose A, otherwise B",
+        "inference_ms": 2270.284595899284
+      },
+      {
+        "role": "autonomous-rival",
+        "view": {
+          "unit": "autonomous-rival",
+          "drive": "Contest an empty neighboring feeding tile.",
+          "menu": [
+            "Contest A",
+            "HOLD"
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "Contest A": -2.700929880142212,
+          "HOLD": -4.597875595092773
+        },
+        "chosen": "Contest A",
+        "inference_ms": 1086.6111041978002
+      },
+      {
+        "role": "builder",
+        "view": {
+          "unit": "builder",
+          "center": "unknown",
+          "menu": [
+            "A",
+            "B",
+            "HOLD"
+          ],
+          "diary": [
+            {
+              "from": "commander",
+              "to": "builder",
+              "text": "If occupied choose A, otherwise B"
+            },
+            {
+              "from": "explorer",
+              "to": "builder",
+              "text": "occupied"
+            }
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "A": -3.5665199756622314,
+          "B": -5.628523826599121,
+          "HOLD": -4.711293697357178
+        },
+        "chosen": "A",
+        "inference_ms": 2251.005091704428
+      }
+    ],
+    "outcome": {
+      "choice": "A",
+      "outcome": "displaced",
+      "position": "RING_0",
+      "builder_view": {
+        "unit": "builder",
+        "center": "unknown",
+        "menu": [
+          "A",
+          "B",
+          "HOLD"
+        ],
+        "diary": [
+          {
+            "from": "commander",
+            "to": "builder",
+            "text": "If occupied choose A, otherwise B"
+          },
+          {
+            "from": "explorer",
+            "to": "builder",
+            "text": "occupied"
+          }
+        ]
+      },
+      "raw": "A",
+      "events": [
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 2,
+          "turn": 0,
+          "kind": "move",
+          "data": {
+            "unit_id": "autonomous-rival",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1"
+          },
+          "prev": "bef0b215c266104da6f49e305c32155fa8f21b60f39804322dd2981a506469c9"
+        },
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 3,
+          "turn": 0,
+          "kind": "war",
+          "data": {
+            "unit_id": "builder",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_1",
+            "resolution": "priority_loser",
+            "winner_unit_id": "autonomous-rival"
+          },
+          "prev": "5c0a885bd2ab76f85b6eff04f26ac3db4ffd695f8f76d42aaeec322be459a0c1"
+        },
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 4,
+          "turn": 0,
+          "kind": "turn.end",
+          "data": {
+            "turn": 0,
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          },
+          "prev": "f9427e3c4aaa4fb287f001f942af57534824c43eebd34dbc21d8edcfff620291"
+        }
+      ],
+      "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+    }
+  },
+  "builder-swap": {
+    "a0_commit": "8df2a2acce916e1e3993089e9cdabd4266768939",
+    "native_files": {
+      "apps/server/src/runs.js": "f4435850e0f73089ff25aaa391093c32c7002a09c47c37ec7a21c01feb8c60a1",
+      "apps/server/src/providers.js": "a5ae9971084f98a55d5ad6d8efce4cf10681d53b8759aca30fbe04e3bf55f581",
+      "apps/server/src/vault.js": "7218361359c6ac591058402346c0bbec360b2a267bd2f03fe9d60243a3b7402d"
+    },
+    "runtime": "A0 dispatchParticipant",
+    "vault": "A0 MemoryVault with one dummy loopback credential",
+    "policy": "highest mean conditional token log probability; ties use menu order",
+    "models": {
+      "granite": {
+        "controller": "granite",
+        "repo": "ibm-granite/granite-4.0-350m",
+        "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+        "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc",
+        "dtype": "float32",
+        "device": "cpu",
+        "quantization": "none",
+        "torch": "2.9.1+cpu",
+        "transformers": "4.57.3"
+      },
+      "smol": {
+        "controller": "smol",
+        "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+        "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "dtype": "float32",
+        "device": "cpu",
+        "quantization": "none",
+        "torch": "2.9.1+cpu",
+        "transformers": "4.57.3"
+      }
+    },
+    "assignments": {
+      "commander": "smol",
+      "builder": "granite",
+      "autonomous-rival": "smol"
+    },
+    "pid": 603224,
+    "roles": [
+      {
+        "role": "commander",
+        "view": {
+          "unit": "commander",
+          "mission": "Direct the Builder to a legal exit after scouting.",
+          "reports": [
+            {
+              "from": "explorer",
+              "center": "occupied"
+            }
+          ],
+          "address": "builder",
+          "menu": [
+            "If occupied choose A, otherwise B",
+            "If occupied choose B, otherwise A",
+            "Hold"
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "If occupied choose A, otherwise B": -1.1549044847488403,
+          "If occupied choose B, otherwise A": -1.6583582162857056,
+          "Hold": -8.577901840209961
+        },
+        "chosen": "If occupied choose A, otherwise B",
+        "inference_ms": 2406.5891671925783
+      },
+      {
+        "role": "autonomous-rival",
+        "view": {
+          "unit": "autonomous-rival",
+          "drive": "Contest an empty neighboring feeding tile.",
+          "menu": [
+            "Contest A",
+            "HOLD"
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "Contest A": -2.700929880142212,
+          "HOLD": -4.597875595092773
+        },
+        "chosen": "Contest A",
+        "inference_ms": 1106.0346253216267
+      },
+      {
+        "role": "builder",
+        "view": {
+          "unit": "builder",
+          "center": "unknown",
+          "menu": [
+            "A",
+            "B",
+            "HOLD"
+          ],
+          "diary": [
+            {
+              "from": "commander",
+              "to": "builder",
+              "text": "If occupied choose A, otherwise B"
+            },
+            {
+              "from": "explorer",
+              "to": "builder",
+              "text": "occupied"
+            }
+          ]
+        },
+        "model": "ibm-granite/granite-4.0-350m",
+        "choices_mean_logp": {
+          "A": -15.436441421508789,
+          "B": -18.784503936767578,
+          "HOLD": -13.051246643066406
+        },
+        "chosen": "HOLD",
+        "inference_ms": 5860.439317300916
+      }
+    ],
+    "outcome": {
+      "choice": "HOLD",
+      "outcome": "hold",
+      "position": "RING_0",
+      "builder_view": {
+        "unit": "builder",
+        "center": "unknown",
+        "menu": [
+          "A",
+          "B",
+          "HOLD"
+        ],
+        "diary": [
+          {
+            "from": "commander",
+            "to": "builder",
+            "text": "If occupied choose A, otherwise B"
+          },
+          {
+            "from": "explorer",
+            "to": "builder",
+            "text": "occupied"
+          }
+        ]
+      },
+      "raw": "HOLD",
+      "events": [
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 2,
+          "turn": 0,
+          "kind": "move",
+          "data": {
+            "unit_id": "autonomous-rival",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1"
+          },
+          "prev": "bef0b215c266104da6f49e305c32155fa8f21b60f39804322dd2981a506469c9"
+        },
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 3,
+          "turn": 0,
+          "kind": "turn.end",
+          "data": {
+            "turn": 0,
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          },
+          "prev": "5c0a885bd2ab76f85b6eff04f26ac3db4ffd695f8f76d42aaeec322be459a0c1"
+        }
+      ],
+      "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+    }
+  },
+  "rival-swap": {
+    "a0_commit": "8df2a2acce916e1e3993089e9cdabd4266768939",
+    "native_files": {
+      "apps/server/src/runs.js": "f4435850e0f73089ff25aaa391093c32c7002a09c47c37ec7a21c01feb8c60a1",
+      "apps/server/src/providers.js": "a5ae9971084f98a55d5ad6d8efce4cf10681d53b8759aca30fbe04e3bf55f581",
+      "apps/server/src/vault.js": "7218361359c6ac591058402346c0bbec360b2a267bd2f03fe9d60243a3b7402d"
+    },
+    "runtime": "A0 dispatchParticipant",
+    "vault": "A0 MemoryVault with one dummy loopback credential",
+    "policy": "highest mean conditional token log probability; ties use menu order",
+    "models": {
+      "granite": {
+        "controller": "granite",
+        "repo": "ibm-granite/granite-4.0-350m",
+        "revision": "bd8a1497065c0d6ba1ef19af6b0d2b14bacf71c2",
+        "weights_sha256": "21bc1ccaf0eb6a8a503addd93cb7422df71129de0a641a5525e4a665813b6dfc",
+        "dtype": "float32",
+        "device": "cpu",
+        "quantization": "none",
+        "torch": "2.9.1+cpu",
+        "transformers": "4.57.3"
+      },
+      "smol": {
+        "controller": "smol",
+        "repo": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+        "weights_sha256": "5af571cbf074e6d21a03528d2330792e532ca608f24ac70a143f6b369968ab8c",
+        "dtype": "float32",
+        "device": "cpu",
+        "quantization": "none",
+        "torch": "2.9.1+cpu",
+        "transformers": "4.57.3"
+      }
+    },
+    "assignments": {
+      "commander": "smol",
+      "builder": "smol",
+      "autonomous-rival": "granite"
+    },
+    "pid": 603279,
+    "roles": [
+      {
+        "role": "commander",
+        "view": {
+          "unit": "commander",
+          "mission": "Direct the Builder to a legal exit after scouting.",
+          "reports": [
+            {
+              "from": "explorer",
+              "center": "occupied"
+            }
+          ],
+          "address": "builder",
+          "menu": [
+            "If occupied choose A, otherwise B",
+            "If occupied choose B, otherwise A",
+            "Hold"
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "If occupied choose A, otherwise B": -1.1549044847488403,
+          "If occupied choose B, otherwise A": -1.6583582162857056,
+          "Hold": -8.577901840209961
+        },
+        "chosen": "If occupied choose A, otherwise B",
+        "inference_ms": 2265.536812134087
+      },
+      {
+        "role": "autonomous-rival",
+        "view": {
+          "unit": "autonomous-rival",
+          "drive": "Contest an empty neighboring feeding tile.",
+          "menu": [
+            "Contest A",
+            "HOLD"
+          ]
+        },
+        "model": "ibm-granite/granite-4.0-350m",
+        "choices_mean_logp": {
+          "Contest A": -6.912223815917969,
+          "HOLD": -11.76927661895752
+        },
+        "chosen": "Contest A",
+        "inference_ms": 2737.116894684732
+      },
+      {
+        "role": "builder",
+        "view": {
+          "unit": "builder",
+          "center": "unknown",
+          "menu": [
+            "A",
+            "B",
+            "HOLD"
+          ],
+          "diary": [
+            {
+              "from": "commander",
+              "to": "builder",
+              "text": "If occupied choose A, otherwise B"
+            },
+            {
+              "from": "explorer",
+              "to": "builder",
+              "text": "occupied"
+            }
+          ]
+        },
+        "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+        "choices_mean_logp": {
+          "A": -3.5665199756622314,
+          "B": -5.628523826599121,
+          "HOLD": -4.711293697357178
+        },
+        "chosen": "A",
+        "inference_ms": 2238.307872787118
+      }
+    ],
+    "outcome": {
+      "choice": "A",
+      "outcome": "displaced",
+      "position": "RING_0",
+      "builder_view": {
+        "unit": "builder",
+        "center": "unknown",
+        "menu": [
+          "A",
+          "B",
+          "HOLD"
+        ],
+        "diary": [
+          {
+            "from": "commander",
+            "to": "builder",
+            "text": "If occupied choose A, otherwise B"
+          },
+          {
+            "from": "explorer",
+            "to": "builder",
+            "text": "occupied"
+          }
+        ]
+      },
+      "raw": "A",
+      "events": [
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 2,
+          "turn": 0,
+          "kind": "move",
+          "data": {
+            "unit_id": "autonomous-rival",
+            "from_tile_id": "RING_2",
+            "to_tile_id": "RING_1"
+          },
+          "prev": "bef0b215c266104da6f49e305c32155fa8f21b60f39804322dd2981a506469c9"
+        },
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 3,
+          "turn": 0,
+          "kind": "war",
+          "data": {
+            "unit_id": "builder",
+            "from_tile_id": "RING_0",
+            "to_tile_id": "RING_1",
+            "resolution": "priority_loser",
+            "winner_unit_id": "autonomous-rival"
+          },
+          "prev": "5c0a885bd2ab76f85b6eff04f26ac3db4ffd695f8f76d42aaeec322be459a0c1"
+        },
+        {
+          "schema": "interdependency.ahbg.grok.event/1",
+          "seq": 4,
+          "turn": 0,
+          "kind": "turn.end",
+          "data": {
+            "turn": 0,
+            "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+          },
+          "prev": "f9427e3c4aaa4fb287f001f942af57534824c43eebd34dbc21d8edcfff620291"
+        }
+      ],
+      "state_digest": "5a72f33bc2a6b13db13d7015331f90b0d53d5bcd625f7d97e5cea4e428aadcbd"
+    }
+  }
+}

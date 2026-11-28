@@ -1,0 +1,445 @@
+{
+  "construct": {
+    "database_sha256": "af609bbba504f95e349f3c1a30aa42923acc8e48c1e67bb481521dbf7e49162b",
+    "logical_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
+    "metadata": [
+      [
+        "character_identity",
+        "one exact scalar -> one character id"
+      ],
+      [
+        "corpus_commit",
+        "dc343f2683279ecbb13fab4e2fd778d7b162d287"
+      ],
+      [
+        "corpus_repository",
+        "globalwordnet/english-wordnet"
+      ],
+      [
+        "corpus_source_tree_sha256",
+        "3a46546a1ffbb4aed98990535ad5155c69be12ad09fdf093701b257d2a3e468f"
+      ],
+      [
+        "corpus_tag",
+        "2025-edition"
+      ],
+      [
+        "definition_component_rule",
+        "exact ordered source: each maximal non-whitespace run reuses one shared word identity; each whitespace scalar reuses one shared character identity; no normalization"
+      ],
+      [
+        "definition_topologies",
+        "[\"direct\",\"chain\"]"
+      ],
+      [
+        "evidence_channels",
+        "[\"ordinal\",\"semantic\",\"sentence-context\"]"
+      ],
+      [
+        "geometry_state",
+        "hmmm"
+      ],
+      [
+        "hmmm",
+        "the exact UCNS law mapping ordinal + semantic + sentence-context evidence to geometric displacement is unresolved; no weight, direction, distance, vector, coordinate, center, radius, tangency, motion, or substitute geometry is synthesized"
+      ],
+      [
+        "invented_geometry",
+        "false"
+      ],
+      [
+        "normalization",
+        "none"
+      ],
+      [
+        "resolution_rule",
+        "preponderance relative to the rest of the sentence in which the word appears"
+      ],
+      [
+        "schema",
+        "english-gonol.full-construct"
+      ],
+      [
+        "ucns_public_gonol_sha256",
+        "55d10c84529a4d7bc7714786357e977b68d9df2ac3f73d20e229580b552c2ef5"
+      ],
+      [
+        "version",
+        "2.0.0"
+      ],
+      [
+        "word_identity",
+        "one exact surface -> one word id"
+      ]
+    ],
+    "unicode_version": "15.0.0"
+  },
+  "glyph_occurrences": [
+    {
+      "character_id": 66,
+      "ordinal": 0,
+      "scalar": "e",
+      "utf8_end": 1,
+      "utf8_start": 0
+    },
+    {
+      "character_id": 1,
+      "ordinal": 1,
+      "scalar": " ",
+      "utf8_end": 2,
+      "utf8_start": 1
+    },
+    {
+      "character_id": 100,
+      "ordinal": 2,
+      "scalar": "ë",
+      "utf8_end": 4,
+      "utf8_start": 2
+    },
+    {
+      "character_id": 1,
+      "ordinal": 3,
+      "scalar": " ",
+      "utf8_end": 5,
+      "utf8_start": 4
+    },
+    {
+      "character_id": 66,
+      "ordinal": 4,
+      "scalar": "e",
+      "utf8_end": 6,
+      "utf8_start": 5
+    },
+    {
+      "character_id": null,
+      "ordinal": 5,
+      "scalar": "̈",
+      "utf8_end": 8,
+      "utf8_start": 6
+    },
+    {
+      "character_id": 1,
+      "ordinal": 6,
+      "scalar": " ",
+      "utf8_end": 9,
+      "utf8_start": 8
+    },
+    {
+      "character_id": 66,
+      "ordinal": 7,
+      "scalar": "e",
+      "utf8_end": 10,
+      "utf8_start": 9
+    },
+    {
+      "character_id": 1,
+      "ordinal": 8,
+      "scalar": " ",
+      "utf8_end": 11,
+      "utf8_start": 10
+    },
+    {
+      "character_id": 1,
+      "ordinal": 9,
+      "scalar": " ",
+      "utf8_end": 12,
+      "utf8_start": 11
+    },
+    {
+      "character_id": 55,
+      "ordinal": 10,
+      "scalar": "X",
+      "utf8_end": 13,
+      "utf8_start": 12
+    },
+    {
+      "character_id": 86,
+      "ordinal": 11,
+      "scalar": "y",
+      "utf8_end": 14,
+      "utf8_start": 13
+    },
+    {
+      "character_id": 87,
+      "ordinal": 12,
+      "scalar": "z",
+      "utf8_end": 15,
+      "utf8_start": 14
+    },
+    {
+      "character_id": 87,
+      "ordinal": 13,
+      "scalar": "z",
+      "utf8_end": 16,
+      "utf8_start": 15
+    },
+    {
+      "character_id": 87,
+      "ordinal": 14,
+      "scalar": "z",
+      "utf8_end": 17,
+      "utf8_start": 16
+    },
+    {
+      "character_id": 2,
+      "ordinal": 15,
+      "scalar": "!",
+      "utf8_end": 18,
+      "utf8_start": 17
+    }
+  ],
+  "glyphs": [
+    {
+      "character_id": 66,
+      "gonol": {
+        "axis_index": 67,
+        "carrier_position": 92,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          "e"
+        ],
+        "identity": "e"
+      }
+    },
+    {
+      "character_id": 1,
+      "gonol": {
+        "axis_index": 0,
+        "carrier_position": 0,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          " "
+        ],
+        "identity": " "
+      }
+    },
+    {
+      "character_id": 100,
+      "gonol": {
+        "axis_index": 104,
+        "carrier_position": null,
+        "construction_kind": "encoded-name",
+        "construction_parts": [
+          "L",
+          "A",
+          "T",
+          "I",
+          "N",
+          " ",
+          "S",
+          "M",
+          "A",
+          "L",
+          "L",
+          " ",
+          "L",
+          "E",
+          "T",
+          "T",
+          "E",
+          "R",
+          " ",
+          "E",
+          " ",
+          "W",
+          "I",
+          "T",
+          "H",
+          " ",
+          "D",
+          "I",
+          "A",
+          "E",
+          "R",
+          "E",
+          "S",
+          "I",
+          "S",
+          " ",
+          "U",
+          "+",
+          "0",
+          "0",
+          "E",
+          "B"
+        ],
+        "identity": "ë"
+      }
+    },
+    {
+      "character_id": 55,
+      "gonol": {
+        "axis_index": 58,
+        "carrier_position": 70,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          "X"
+        ],
+        "identity": "X"
+      }
+    },
+    {
+      "character_id": 86,
+      "gonol": {
+        "axis_index": 96,
+        "carrier_position": 152,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          "y"
+        ],
+        "identity": "y"
+      }
+    },
+    {
+      "character_id": 87,
+      "gonol": {
+        "axis_index": 97,
+        "carrier_position": 155,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          "z"
+        ],
+        "identity": "z"
+      }
+    },
+    {
+      "character_id": 2,
+      "gonol": {
+        "axis_index": 2,
+        "carrier_position": 2,
+        "construction_kind": "carrier",
+        "construction_parts": [
+          "!"
+        ],
+        "identity": "!"
+      }
+    }
+  ],
+  "glyphs_admitted": false,
+  "occurrences": [
+    {
+      "end": 1,
+      "identity_id": 63809,
+      "kind": "word",
+      "ordinal": 0,
+      "start": 0,
+      "surface": "e",
+      "utf8_end": 1,
+      "utf8_start": 0
+    },
+    {
+      "end": 2,
+      "identity_id": 1,
+      "kind": "character",
+      "ordinal": 1,
+      "start": 1,
+      "surface": " ",
+      "utf8_end": 2,
+      "utf8_start": 1
+    },
+    {
+      "end": 3,
+      "identity_id": null,
+      "kind": "word",
+      "ordinal": 2,
+      "start": 2,
+      "surface": "ë",
+      "utf8_end": 4,
+      "utf8_start": 2
+    },
+    {
+      "end": 4,
+      "identity_id": 1,
+      "kind": "character",
+      "ordinal": 3,
+      "start": 3,
+      "surface": " ",
+      "utf8_end": 5,
+      "utf8_start": 4
+    },
+    {
+      "end": 6,
+      "identity_id": null,
+      "kind": "word",
+      "ordinal": 4,
+      "start": 4,
+      "surface": "ë",
+      "utf8_end": 8,
+      "utf8_start": 5
+    },
+    {
+      "end": 7,
+      "identity_id": 1,
+      "kind": "character",
+      "ordinal": 5,
+      "start": 6,
+      "surface": " ",
+      "utf8_end": 9,
+      "utf8_start": 8
+    },
+    {
+      "end": 8,
+      "identity_id": 63809,
+      "kind": "word",
+      "ordinal": 6,
+      "start": 7,
+      "surface": "e",
+      "utf8_end": 10,
+      "utf8_start": 9
+    },
+    {
+      "end": 9,
+      "identity_id": 1,
+      "kind": "character",
+      "ordinal": 7,
+      "start": 8,
+      "surface": " ",
+      "utf8_end": 11,
+      "utf8_start": 10
+    },
+    {
+      "end": 10,
+      "identity_id": 1,
+      "kind": "character",
+      "ordinal": 8,
+      "start": 9,
+      "surface": " ",
+      "utf8_end": 12,
+      "utf8_start": 11
+    },
+    {
+      "end": 16,
+      "identity_id": null,
+      "kind": "word",
+      "ordinal": 9,
+      "start": 10,
+      "surface": "Xyzzz!",
+      "utf8_end": 18,
+      "utf8_start": 12
+    }
+  ],
+  "receipt_sha256": "1f406eba889f8f262dab8b0f6038b6a78f231f9cddb3988eea2d95b4d1b28b9d",
+  "schema": "uchc.english.inference-input",
+  "sense_selection": "unresolved; every definition remains a candidate",
+  "source_id": "mission:unicode",
+  "text": "e ë ë e  Xyzzz!",
+  "version": "1.0.0",
+  "words": [
+    {
+      "construct_receipt": "12277b4959c0c72b7af12097b8a77bf91866bbf669e7f4ac07b6a5f1426ebb57",
+      "definition_ids": [
+        65097,
+        65098
+      ],
+      "gonol": {
+        "axis_index": 63809,
+        "glyph_ids": [
+          66
+        ],
+        "surface": "e",
+        "word_id": 63809
+      }
+    }
+  ],
+  "words_admitted": false
+}
