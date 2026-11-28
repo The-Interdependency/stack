@@ -1,6 +1,10 @@
 "use strict";
 const byId = id => document.getElementById(id);
 const names = {environment:"Seeded environment", smol:"SmolLM2 local agent", granite:"Granite local agent", duel:"Private multiplayer"};
+const faunaNames = {environment:"Seeded", smol:"SmolLM2", granite:"Granite"};
+for (const id of ["fauna", "fork-fauna"]) {
+  for (const [value, label] of Object.entries(faunaNames)) byId(id).add(new Option(label, value));
+}
 let room = null, state = null, unit = null, busy = false;
 let orders = {}, messages = {}, camera = null, base = null;
 const nameOf = id => ({builder:"Builder",explorer:"Explorer",rival:"Rival builder",fauna:"Fauna"})[id] || id;
@@ -45,6 +49,7 @@ async function openPlane(id) {
     orders=draft.orders||{}; messages=draft.messages||{};
     if (!state.observation.owned.includes(unit)) unit=state.observation.owned[0];
     camera=null;
+    byId("fork-fauna").value="";
   }
   if (state.own_commit) {
     orders=Object.fromEntries(state.own_commit.intents.map(a=>[a.unit_id,a]));
@@ -69,7 +74,7 @@ function draw() {
     n.classList.toggle("fog",!o.visible.includes(n.dataset.tile));
   });
   byId("heading").textContent="Turn "+Math.min(o.turn+1,state.turn_limit)+" / "+state.turn_limit;
-  byId("opponent").textContent=names[state.mode]+" · "+state.seat+" seat · "+room.slice(-6);
+  byId("opponent").textContent=names[state.mode]+" · "+faunaNames[state.fauna_mode]+" fauna · "+state.seat+" seat · "+room.slice(-6);
   byId("phase").textContent=state.done?"Complete":state.committed?"Orders committed":"Planning";
   byId("share").hidden=!state.waiting_join || state.seat!=="amber";
   byId("fork-panel").hidden=state.mode==="duel";
@@ -119,7 +124,7 @@ byId("message").oninput=()=>{
   messages[unit]=text; byId("message").value=text; saveDraft();
 };
 byId("create").onclick=()=>run(async()=>{
-  const newRoom=await api("rooms",{mode:byId("mode").value,request_id:crypto.randomUUID()});
+  const newRoom=await api("rooms",{mode:byId("mode").value,fauna_mode:byId("fauna").value || undefined,request_id:crypto.randomUUID()});
   byId("invite-code").textContent=newRoom.invite||"";
   await openPlane(newRoom.room); say("");
 });
@@ -136,7 +141,8 @@ byId("commit").onclick=()=>run(async()=>{
 });
 byId("refresh").onclick=()=>run(()=>openPlane(room));
 byId("fork").onclick=()=>run(async()=>{
-  const result=await api("rooms/"+room+"/fork",{turn:Number(byId("fork-turn").value),request_id:crypto.randomUUID()});
+  const result=await api("rooms/"+room+"/fork",{turn:Number(byId("fork-turn").value),
+    fauna_mode:byId("fork-fauna").value || undefined,request_id:crypto.randomUUID()});
   await openPlane(result.room);say("Fork opened. The next agent decision runs fresh.");
 });
 byId("board").addEventListener("tile-selected",e=>{

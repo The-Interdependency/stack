@@ -18,7 +18,7 @@ def screen():
     return ET.fromstring(adb("shell", "cat", "/sdcard/ahbg-smoke.xml"))
 
 
-def target(text, *, tap=False, scroll=False, timeout=100):
+def target(text, *, tap=False, scroll=False, timeout=100, contains=False):
     until = time.monotonic() + timeout
     attempt = 0
     last = []
@@ -43,7 +43,8 @@ def target(text, *, tap=False, scroll=False, timeout=100):
             time.sleep(2)
             continue
         for node, name in zip(nodes, last):
-            if name.casefold() != text.casefold():
+            matches = text.casefold() in name.casefold() if contains else name.casefold() == text.casefold()
+            if not matches:
                 continue
             x1, y1, x2, y2 = map(int, re.findall(r"-?\d+", node.get("bounds", "")))
             if x2 <= x1 or y2 <= y1:
@@ -96,4 +97,5 @@ finally:
 target("Turn 2 / 16", scroll=True, timeout=150)
 assert visible_plane() == plane_id
 target("Commit plan", scroll=True)
+target("Builder moved to Ring 5 / Explorer moved to Center", scroll=True, contains=True)
 print("Release APK recovered the identical plane after process termination and a network interruption.", flush=True)
