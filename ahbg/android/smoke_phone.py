@@ -19,7 +19,7 @@ def screen():
     return ET.fromstring(adb("shell", "cat", "/sdcard/ahbg-smoke.xml"))
 
 
-def target(text, *, tap=False, scroll=False, timeout=100, contains=False):
+def target(text, *, tap=False, scroll=False, timeout=100, contains=False, resource_id=None):
     until = time.monotonic() + timeout
     attempt = 0
     last = []
@@ -43,9 +43,16 @@ def target(text, *, tap=False, scroll=False, timeout=100, contains=False):
             adb("shell","input","tap",str((x1+x2)//2),str((y1+y2)//2))
             time.sleep(2)
             continue
-        for node, name in zip(nodes, last):
-            matches = text.casefold() in name.casefold() if contains else name.casefold() == text.casefold()
-            if not matches:
+        def by_id(node):
+            return resource_id and node.get("resource-id", "").split("/")[-1] == resource_id
+
+        # WebView exposes the select's HTML id and accessible label. Its
+        # selected option may only appear after opening the native picker.
+        candidates = sorted(nodes, key=lambda node: not by_id(node)) if resource_id else nodes
+        for node in candidates:
+            labels = [node.get("text", "").casefold(), node.get("content-desc", "").casefold()]
+            matches = any(text.casefold() in label for label in labels) if contains else text.casefold() in labels
+            if not (matches or by_id(node)):
                 continue
             x1, y1, x2, y2 = map(int, re.findall(r"-?\d+", node.get("bounds", "")))
             if x2 <= x1 or y2 <= y1:
@@ -104,8 +111,9 @@ print("Release APK recovered the identical plane after process termination and a
 # Deployment acceptance runs after the server publishes the new WebView UI.
 if "--scouting" in sys.argv[1:]:
     target("Explorer", tap=True, scroll=True)
-    target("No report", tap=True, scroll=True)
+    target("Report a sighting to the Builder", tap=True, scroll=True, resource_id="report-tile")
     target("Center", tap=True)
+    target("Explorer report · Center to Builder", scroll=True, contains=True)
     target("Commit plan", tap=True, scroll=True)
     target("Turn 3 / 16", scroll=True, timeout=150)
     target("Builder", tap=True, scroll=True)
