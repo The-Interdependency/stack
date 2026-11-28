@@ -90,6 +90,27 @@ answers from unfinished cryptography. `EIGHT_CIRCLE.md` is historical correction
 `ASSEMBLY.md`, `IMPLEMENTED.md`, `PLAN.md` and `REPORT.md` retain the earlier transport
 experiment under its original scope. Its fixed-map attacks are not full-system verdicts.
 
+### Base-27 geometric evidence (separate Stack-local UCNS experiment)
+
+The [2026-11-28 finite midpoint research receipt](https://github.com/The-Interdependency/stack/blob/334a5fd32b8ecb7a0c7b95996c4376a1d8656cd8/research/ucns/base27_midpoint/README.md)
+([Stack PR #133](https://github.com/The-Interdependency/stack/pull/133))
+records the exact 243-to-81 projection on a generic integer-residue circle.
+Its evidence is bound to that immutable research revision; review and merge
+standing are tracked in the producer PR. It is a mathematical negative-control
+baseline: a common radius does not separate the input families, explicit
+retained labels do so only by retaining the missing distinction, public
+observations may distinguish finite residues, fixed coordinate rearrangement
+does not add information, and repeated projection saturates.
+
+This is not native Möbius geometry, a Weave round, a private-key derivation,
+or a ciphertext-recovery result. The experiment ran no operational cipher
+or external Cypher trial. The mathematical worksheet belongs to the geometric
+receipt, not the versioned Weave challenge sets. No previous challenge status,
+receiver evidence, specification, or security claim changes. Weave's private/
+public relation remains unresolved. Review the producer receipt and its replay
+instructions before quoting the result; do not transfer geometric correctness
+into confidentiality, authentication, or replay resistance.
+
 ## hmmm
 
 Actual private/public key derivation and recovery advantage, authentication/replay,
